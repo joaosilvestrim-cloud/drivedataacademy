@@ -10,6 +10,9 @@ import BlogSection from "@/components/BlogSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 
+// Revalida a home periodicamente para refletir novos posts do blog.
+export const revalidate = 60;
+
 export default function Home() {
   return (
     <>

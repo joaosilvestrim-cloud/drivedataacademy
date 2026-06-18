@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Reveal from "./Reveal";
+import { createClient } from "@/lib/supabase/client";
 
 const PERKS = [
   {
@@ -82,16 +84,68 @@ export default function EnterpriseSection() {
 }
 
 function EnterpriseForm() {
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    name: "",
+    request_type: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const supabase = createClient();
+    const { error } = await supabase.from("enterprise_leads").insert({
+      name: form.name.trim(),
+      request_type: form.request_type,
+      email: form.email.trim().toLowerCase(),
+      phone: form.phone.trim(),
+      message: form.message.trim(),
+    });
+
+    setLoading(false);
+    if (error) {
+      setError("Não foi possível enviar agora. Tente novamente em instantes.");
+      return;
+    }
+    setSent(true);
+  }
+
+  if (sent) {
+    return (
+      <div className="mt-5 flex items-center gap-3 rounded-2xl border border-brand-green/30 bg-brand-green/10 px-5 py-6 text-sm text-slate-200">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-green/20 text-brand-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <div>
+          <p className="font-semibold text-white">Solicitação enviada!</p>
+          <p className="text-slate-400">Nossa equipe entra em contato em até 1 dia útil.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={(e) => e.preventDefault()} className="mt-5 space-y-3">
+    <form onSubmit={handleSubmit} className="mt-5 space-y-3">
       <input
         required
         placeholder="Nome"
+        value={form.name}
+        onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
       />
       <select
         required
-        defaultValue=""
+        value={form.request_type}
+        onChange={(e) => setForm((f) => ({ ...f, request_type: e.target.value }))}
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-brand-green/60 [&>option]:bg-ink-900"
       >
         <option value="" disabled>
@@ -108,25 +162,33 @@ function EnterpriseForm() {
           required
           type="email"
           placeholder="E-mail corporativo"
+          value={form.email}
+          onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
           className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
         />
         <input
           required
           type="tel"
           placeholder="Telefone / WhatsApp"
+          value={form.phone}
+          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
           className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
         />
       </div>
       <textarea
         rows={3}
         placeholder="Empresa, nº de pessoas e área de interesse (Power BI, IA, outros)…"
+        value={form.message}
+        onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
         className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
       />
+      {error && <p className="text-xs text-red-400">{error}</p>}
       <button
         type="submit"
-        className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02]"
+        disabled={loading}
+        className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Enviar
+        {loading ? "Enviando..." : "Enviar"}
       </button>
     </form>
   );

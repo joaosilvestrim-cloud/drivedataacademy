@@ -1,9 +1,33 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function WaitlistForm({ compact = false }: { compact?: boolean }) {
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", whatsapp: "" });
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const supabase = createClient();
+    const { error } = await supabase.from("waitlist").insert({
+      name: form.name.trim(),
+      email: form.email.trim().toLowerCase(),
+      whatsapp: form.whatsapp.trim(),
+    });
+
+    setLoading(false);
+    if (error) {
+      setError("Não foi possível enviar agora. Tente novamente em instantes.");
+      return;
+    }
+    setSent(true);
+  }
 
   if (sent) {
     return (
@@ -22,23 +46,21 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
   }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        setSent(true);
-      }}
-      className="space-y-3"
-    >
+    <form onSubmit={handleSubmit} className="space-y-3">
       <input
         required
         type="text"
         placeholder="Seu nome"
+        value={form.name}
+        onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
       />
       <input
         required
         type="email"
         placeholder="Seu melhor e-mail"
+        value={form.email}
+        onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
       />
       <div className="flex items-stretch gap-2">
@@ -49,14 +71,18 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
           required
           type="tel"
           placeholder="WhatsApp"
+          value={form.whatsapp}
+          onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
           className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
         />
       </div>
+      {error && <p className="text-center text-xs text-red-400">{error}</p>}
       <button
         type="submit"
-        className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02]"
+        disabled={loading}
+        className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        Quero entrar na lista
+        {loading ? "Enviando..." : "Quero entrar na lista"}
       </button>
       <p className={`text-center text-xs text-slate-500 ${compact ? "hidden" : ""}`}>
         Apenas conteúdos relevantes. Você pode sair quando quiser.

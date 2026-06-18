@@ -1,29 +1,41 @@
-"use client";
-
 import Reveal from "./Reveal";
+import { createPublicClient } from "@/lib/supabase/public";
 
-const POSTS = [
-  {
-    cat: "Inteligência Artificial",
-    title: "Política de uso de IA: 12 elementos para uma governança efetiva",
-    excerpt: "O que separa um documento que realmente governa o uso de IA de um que só decora a apresentação.",
-    date: "10 jun 2026",
-  },
-  {
-    cat: "Dados & IA",
-    title: "Ferramentas de IA para criar dashboards: qual escolher?",
-    excerpt: "Comparativo honesto entre Claude, ChatGPT, Copilot e Gemini para acelerar análises de verdade.",
-    date: "03 jun 2026",
-  },
-  {
-    cat: "Power BI",
-    title: "Formatação condicional no Power BI que comunica",
-    excerpt: "Como transformar tabelas cruas em visuais que contam uma história e guiam a decisão.",
-    date: "28 mai 2026",
-  },
-];
+type Post = {
+  id: string;
+  title: string;
+  slug: string;
+  category: string | null;
+  excerpt: string | null;
+  cover_url: string | null;
+  published_at: string | null;
+};
 
-export default function BlogSection() {
+function formatDate(iso: string | null) {
+  if (!iso) return "";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  })
+    .format(new Date(iso))
+    .replace(".", "");
+}
+
+export default async function BlogSection() {
+  const supabase = createPublicClient();
+  const { data } = await supabase
+    .from("posts")
+    .select("id, title, slug, category, excerpt, cover_url, published_at")
+    .eq("published", true)
+    .order("published_at", { ascending: false })
+    .limit(6);
+
+  const posts = (data ?? []) as Post[];
+
+  // Sem posts publicados: não renderiza a seção.
+  if (posts.length === 0) return null;
+
   return (
     <section id="blog" className="relative mx-auto max-w-7xl px-6 py-24 scroll-mt-24">
       <Reveal>
@@ -44,23 +56,32 @@ export default function BlogSection() {
       </Reveal>
 
       <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {POSTS.map((p, i) => (
-          <Reveal key={p.title} delay={i * 0.08}>
+        {posts.map((p, i) => (
+          <Reveal key={p.id} delay={i * 0.08}>
             <article className="card-hover glass group flex h-full flex-col overflow-hidden rounded-3xl border border-white/8">
               {/* Cover */}
               <div className="relative aspect-[16/9] overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
-                <div className="absolute inset-0 grid-bg opacity-50" />
-                <span className="absolute left-4 top-4 rounded-full bg-ink-900/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-brand-teal backdrop-blur">
-                  {p.cat}
-                </span>
+                {p.cover_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={p.cover_url} alt={p.title} className="absolute inset-0 h-full w-full object-cover" />
+                ) : (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
+                    <div className="absolute inset-0 grid-bg opacity-50" />
+                  </>
+                )}
+                {p.category && (
+                  <span className="absolute left-4 top-4 rounded-full bg-ink-900/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-brand-teal backdrop-blur">
+                    {p.category}
+                  </span>
+                )}
               </div>
               <div className="flex flex-1 flex-col p-6">
                 <h3 className="font-display text-lg font-bold leading-snug text-white transition-colors group-hover:text-brand-green">
                   {p.title}
                 </h3>
                 <p className="mt-2 flex-1 text-sm text-slate-400">{p.excerpt}</p>
-                <p className="mt-5 text-xs text-slate-500">{p.date}</p>
+                <p className="mt-5 text-xs text-slate-500">{formatDate(p.published_at)}</p>
               </div>
             </article>
           </Reveal>
