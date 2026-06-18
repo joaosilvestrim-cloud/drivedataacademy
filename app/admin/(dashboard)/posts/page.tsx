@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { deletePost, togglePublish } from "./actions";
+import { togglePublish } from "./actions";
+import ConfirmDelete from "./ConfirmDelete";
 import AdminError from "../AdminError";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ export default async function PostsPage() {
     const supabase = createAdminClient();
     const { data } = await supabase
       .from("posts")
-      .select("id, title, category, published, published_at, updated_at")
+      .select("id, title, category, cover_url, published, published_at, updated_at")
       .order("updated_at", { ascending: false });
     rows = data ?? [];
   } catch (e) {
@@ -30,17 +31,24 @@ export default async function PostsPage() {
     );
   }
 
+  const publishedCount = rows.filter((r) => r.published).length;
+
   return (
     <div>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold text-white">Blog</h1>
-          <p className="mt-1 text-sm text-slate-400">{rows.length} post(s).</p>
+          <p className="mt-1 text-sm text-slate-400">
+            {rows.length} post(s) · {publishedCount} publicado(s)
+          </p>
         </div>
         <Link
           href="/admin/posts/new"
-          className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+          className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
         >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+          </svg>
           Novo post
         </Link>
       </div>
@@ -49,22 +57,38 @@ export default async function PostsPage() {
         {rows.map((p) => (
           <div
             key={p.id}
-            className="glass flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 p-4"
+            className="glass flex flex-wrap items-center gap-4 rounded-2xl border border-white/8 p-4"
           >
-            <div className="min-w-0">
+            {/* Miniatura */}
+            <div className="relative aspect-[16/9] w-28 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-white/5">
+              {p.cover_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={p.cover_url} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="grid h-full w-full place-items-center text-[0.65rem] text-slate-500">
+                  sem capa
+                </div>
+              )}
+            </div>
+
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span
-                  className={`inline-block h-2 w-2 rounded-full ${
-                    p.published ? "bg-brand-green" : "bg-slate-600"
+                  className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide ${
+                    p.published
+                      ? "bg-brand-green/15 text-brand-green"
+                      : "bg-white/5 text-slate-400"
                   }`}
-                />
-                <Link href={`/admin/posts/${p.id}`} className="truncate font-medium text-white hover:text-brand-green">
-                  {p.title}
-                </Link>
+                >
+                  {p.published ? "Publicado" : "Rascunho"}
+                </span>
+                {p.category && <span className="text-xs text-slate-500">{p.category}</span>}
               </div>
-              <p className="mt-1 text-xs text-slate-500">
-                {p.category || "Sem categoria"} ·{" "}
-                {p.published ? `Publicado em ${fmt(p.published_at)}` : "Rascunho"}
+              <Link href={`/admin/posts/${p.id}`} className="mt-1 block truncate font-medium text-white hover:text-brand-green">
+                {p.title}
+              </Link>
+              <p className="mt-0.5 text-xs text-slate-500">
+                {p.published ? `Publicado em ${fmt(p.published_at)}` : `Atualizado em ${fmt(p.updated_at)}`}
               </p>
             </div>
 
@@ -82,18 +106,16 @@ export default async function PostsPage() {
               >
                 Editar
               </Link>
-              <form action={deletePost}>
-                <input type="hidden" name="id" value={p.id} />
-                <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-red-400/40 hover:text-red-400">
-                  Excluir
-                </button>
-              </form>
+              <ConfirmDelete id={p.id} title={p.title} />
             </div>
           </div>
         ))}
         {rows.length === 0 && (
-          <div className="rounded-2xl border border-white/8 px-4 py-10 text-center text-slate-500">
-            Nenhum post ainda. Crie o primeiro!
+          <div className="rounded-2xl border border-dashed border-white/10 px-4 py-16 text-center">
+            <p className="text-slate-400">Nenhum post ainda.</p>
+            <Link href="/admin/posts/new" className="mt-3 inline-block text-sm font-medium text-brand-green hover:underline">
+              Criar o primeiro post →
+            </Link>
           </div>
         )}
       </div>

@@ -23,11 +23,30 @@ async function requireAdmin() {
 export async function savePost(formData: FormData) {
   await requireAdmin();
 
+  const supabase = createAdminClient();
+
   const id = (formData.get("id") as string) || null;
   const title = (formData.get("title") as string).trim();
   const slugInput = (formData.get("slug") as string).trim();
   const slug = slugInput ? slugify(slugInput) : slugify(title);
   const published = formData.get("published") === "on";
+
+  // Capa: upload de arquivo tem prioridade; senão usa a URL informada.
+  let coverUrl = ((formData.get("cover_url") as string) || "").trim() || null;
+  const file = formData.get("cover_file") as File | null;
+  if (file && file.size > 0) {
+    const ext = (file.name.split(".").pop() || "png").toLowerCase();
+    const safeSlug = (slug || "capa").slice(0, 40);
+    const path = `covers/${safeSlug}-${Date.now()}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const { error } = await supabase.storage.from("blog").upload(path, buffer, {
+      contentType: file.type || "image/png",
+      upsert: true,
+    });
+    if (!error) {
+      coverUrl = supabase.storage.from("blog").getPublicUrl(path).data.publicUrl;
+    }
+  }
 
   const payload = {
     title,
@@ -35,15 +54,13 @@ export async function savePost(formData: FormData) {
     category: ((formData.get("category") as string) || "").trim() || null,
     excerpt: ((formData.get("excerpt") as string) || "").trim() || null,
     content: ((formData.get("content") as string) || "").trim() || null,
-    cover_url: ((formData.get("cover_url") as string) || "").trim() || null,
+    cover_url: coverUrl,
     author: ((formData.get("author") as string) || "").trim() || null,
     published,
     published_at: published
       ? (formData.get("published_at") as string) || new Date().toISOString()
       : null,
   };
-
-  const supabase = createAdminClient();
 
   if (id) {
     await supabase.from("posts").update(payload).eq("id", id);
