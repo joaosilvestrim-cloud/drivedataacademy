@@ -22,6 +22,7 @@ const FOUNDERS: Founder[] = [
     name: "Tamires Cavani",
     role: "Co-Founder & Head de Negócios da DriveData Academy",
     initials: "TC",
+    photo: "/tamires-cavani.png",
     bio: "Especialista em Analytics, Business Intelligence e Inteligência Artificial, lidera iniciativas de transformação orientada por dados e projetos que impactaram centenas de empresas na DriveData. Sua missão é aproximar tecnologia e estratégia para gerar decisões mais inteligentes e resultados mensuráveis.",
   },
   {
@@ -77,18 +78,19 @@ export default function InstructorSection() {
           {FOUNDERS.map((f, i) => (
             <Reveal key={f.name} delay={i * 0.1}>
               <article className="glass card-hover flex h-full flex-col gap-5 rounded-3xl border border-white/8 p-7 sm:flex-row sm:items-start">
-                {/* Foto — substitua o avatar por uma imagem real em /public */}
-                <div className="relative shrink-0">
-                  <div className="pointer-events-none absolute -inset-2 rounded-full bg-gradient-to-br from-brand-green/30 to-brand-blue/30 blur-xl" />
+                {/* Foto — para adicionar a do Reed, coloque o arquivo em /public e preencha `photo` no array FOUNDERS */}
+                <div className="relative mx-auto shrink-0 sm:mx-0">
+                  <div className="pointer-events-none absolute -inset-2 rounded-2xl bg-gradient-to-br from-brand-green/30 to-brand-blue/30 blur-xl" />
                   {f.photo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={f.photo}
                       alt={f.name}
-                      className="relative h-24 w-24 rounded-full border border-white/10 object-cover"
+                      style={{ objectPosition: "30% 18%" }}
+                      className="relative aspect-[3/4] w-28 rounded-2xl border border-white/10 object-cover"
                     />
                   ) : (
-                    <div className="relative grid h-24 w-24 place-items-center rounded-full border border-white/10 bg-gradient-to-br from-brand-green to-brand-blue font-display text-2xl font-bold text-ink-900">
+                    <div className="relative grid aspect-[3/4] w-28 place-items-center rounded-2xl border border-white/10 bg-gradient-to-br from-brand-green to-brand-blue font-display text-3xl font-bold text-ink-900">
                       {f.initials}
                     </div>
                   )}
