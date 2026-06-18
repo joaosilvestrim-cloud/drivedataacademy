@@ -2,62 +2,85 @@
 
 import Reveal from "./Reveal";
 
-type Course = {
+type Card = {
   tag: string;
-  level: string;
   title: string;
+  headline: string;
   desc: string;
   topics: string[];
-  duration: string;
+  cta: string;
+  href: string;
   featured?: boolean;
 };
 
-const COURSES: Course[] = [
+const CARDS: Card[] = [
   {
-    tag: "Power BI",
-    level: "Iniciante → Intermediário",
-    title: "Power BI do Zero ao Dashboard",
-    desc: "Conecte dados, modele em estrela e construa relatórios que comunicam. A base de todo analista de dados moderno.",
-    topics: ["Power Query & ETL", "Modelagem estrela", "Visuais que comunicam", "Publicação no Service"],
-    duration: "16h",
+    tag: "Marketplace",
+    title: "Marketplace DriveData",
+    headline: "Acesse soluções prontas para acelerar seus resultados",
+    desc: "Templates, conectores, dashboards, automações, agentes de IA, aplicativos e aceleradores desenvolvidos e validados em projetos reais.",
+    topics: [
+      "Templates e Visuais Personalizados para Power BI",
+      "Conectores prontos",
+      "Agentes de IA",
+      "Automações e Apps",
+      "Soluções corporativas",
+    ],
+    cta: "Explorar marketplace",
+    href: "#lista",
   },
   {
-    tag: "Análise de Dados",
-    level: "Intermediário → Avançado",
-    title: "DAX & Análise Avançada",
-    desc: "Domine a linguagem que move o Power BI: contexto de filtro, time intelligence e medidas que respondem perguntas de negócio.",
-    topics: ["Contexto de avaliação", "Time Intelligence", "CALCULATE na prática", "Performance & Vertipaq"],
-    duration: "14h",
+    tag: "Formação",
+    title: "Formação e Especializações",
+    headline: "Aprenda com quem entrega projetos todos os dias",
+    desc: "Cursos práticos de Visualização de Dados, Storytelling, Inteligência Artificial, Automações, Engenharia de Dados e Analytics para negócios.",
+    topics: [
+      "Cases reais de mercado",
+      "Metodologia aplicada",
+      "Projetos guiados",
+      "Conteúdo atualizado",
+      "Do básico ao avançado",
+    ],
+    cta: "Entrar na lista de espera",
+    href: "#lista",
     featured: true,
   },
   {
-    tag: "Inteligência Artificial",
-    level: "Todos os níveis",
-    title: "IA Aplicada a Negócios",
-    desc: "Use IA generativa para acelerar análises, gerar DAX, documentar modelos e transformar dados em narrativa — com governança.",
-    topics: ["Claude & ChatGPT para dados", "Geração de DAX", "Automação de relatórios", "Governança de IA"],
-    duration: "10h",
+    tag: "Canal Direto",
+    title: "Canal Direto com Especialistas",
+    headline: "Tenha acesso ao time que constrói soluções para grandes empresas",
+    desc: "Converse diretamente com especialistas da DriveData para acelerar projetos e receber direcionamento técnico e estratégico.",
+    topics: [
+      "Consultoria especializada",
+      "Desenvolvimento sob demanda",
+      "Mentorias individuais",
+      "Apoio técnico contínuo",
+      "Networking com especialistas",
+    ],
+    cta: "Falar com especialista",
+    href: "#empresas",
   },
 ];
 
 export default function CoursesSection() {
   return (
     <section id="cursos" className="relative mx-auto max-w-7xl px-6 py-24 scroll-mt-24">
+      <span id="marketplace" className="absolute -top-24" aria-hidden />
       <Reveal>
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">Trilhas de formação</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">O ecossistema DriveData</p>
           <h2 className="mt-3 font-display text-3xl font-bold sm:text-5xl">
-            Uma jornada completa, <span className="text-gradient">do dado à decisão</span>
+            Tudo que você precisa, <span className="text-gradient">do dado à decisão</span>
           </h2>
           <p className="mt-4 text-slate-300/90">
-            Cursos modulares e práticos. Comece pela base e avance até a inteligência
-            artificial aplicada — no seu ritmo, com projetos reais.
+            De soluções prontas no marketplace à formação prática e ao acesso direto
+            aos nossos especialistas — em um só lugar.
           </p>
         </div>
       </Reveal>
 
       <div className="mt-14 grid gap-6 md:grid-cols-3">
-        {COURSES.map((c, i) => (
+        {CARDS.map((c, i) => (
           <Reveal key={c.title} delay={i * 0.08}>
             <article
               className={`card-hover relative flex h-full flex-col rounded-3xl border p-7 ${
@@ -71,17 +94,13 @@ export default function CoursesSection() {
                   Mais procurado
                 </span>
               )}
-              <div className="flex items-center justify-between">
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-brand-teal">
-                  {c.tag}
-                </span>
-                <span className="text-xs text-slate-500">{c.duration}</span>
-              </div>
+              <span className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-brand-teal">
+                {c.tag}
+              </span>
 
               <h3 className="mt-5 font-display text-xl font-bold leading-snug text-white">
-                {c.title}
+                {c.headline}
               </h3>
-              <p className="mt-1 text-xs font-medium text-slate-400">{c.level}</p>
               <p className="mt-3 text-sm text-slate-300/90">{c.desc}</p>
 
               <ul className="mt-5 space-y-2.5">
@@ -96,10 +115,10 @@ export default function CoursesSection() {
               </ul>
 
               <a
-                href="#lista"
+                href={c.href}
                 className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-brand-green/50 hover:text-brand-green"
               >
-                Entrar na lista de espera
+                {c.cta}
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

@@ -9,15 +9,27 @@ const PERKS = [
     desc: "Capacitação alinhada às ferramentas e desafios reais do seu time.",
   },
   {
-    icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM2 21v-2a6 6 0 016-6h4a6 6 0 016 6v2",
-    title: "A partir de 3 acessos",
-    desc: "Condições especiais para CNPJ, com gestão de turmas e acompanhamento.",
+    icon: "M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z",
+    title: "Presencial ou online",
+    desc: "Treinamentos in company presenciais ou ao vivo, no formato ideal para o seu time.",
+  },
+  {
+    icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+    title: "Consultoria & Desenvolvimento",
+    desc: "Solicite consultoria e desenvolvimento empresarial sob demanda com nossos especialistas.",
   },
   {
     icon: "M9 19V6l12-3v13M9 19a3 3 0 11-6 0 3 3 0 016 0zM21 16a3 3 0 11-6 0 3 3 0 016 0z",
     title: "Foco em produtividade",
     desc: "Menos achismo, mais decisões inteligentes — impacto medível no dia a dia.",
   },
+];
+
+const REQUEST_TYPES = [
+  "Treinamento corporativo (online)",
+  "Treinamento presencial (in company)",
+  "Consultoria e Desenvolvimento Empresarial",
+  "Mentoria de equipe",
 ];
 
 export default function EnterpriseSection() {
@@ -33,9 +45,10 @@ export default function EnterpriseSection() {
                 Capacite seu time em <span className="text-gradient">dados e IA</span>
               </h2>
               <p className="mt-4 max-w-lg text-slate-300/90">
-                Formação corporativa em Power BI, Análise de Dados e Inteligência Artificial
-                para times que querem produtividade real e decisões mais inteligentes.
-                Preencha os dados e nossa equipe entra em contato.
+                Treinamentos em Visualização de Dados e IA construídos a partir de desafios
+                reais de mercado, preparando profissionais para gerar análises mais rápidas,
+                decisões mais inteligentes e maior eficiência operacional. Solicite um
+                contato da nossa equipe.
               </p>
 
               <div className="mt-8 space-y-4">
@@ -76,6 +89,20 @@ function EnterpriseForm() {
         placeholder="Nome"
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
       />
+      <select
+        required
+        defaultValue=""
+        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-brand-green/60 [&>option]:bg-ink-900"
+      >
+        <option value="" disabled>
+          O que você procura?
+        </option>
+        {REQUEST_TYPES.map((t) => (
+          <option key={t} value={t}>
+            {t}
+          </option>
+        ))}
+      </select>
       <div className="grid gap-3 sm:grid-cols-2">
         <input
           required

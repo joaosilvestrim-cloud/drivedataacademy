@@ -16,7 +16,7 @@ const STEPS = [
   {
     n: "03",
     title: "IA como copiloto",
-    desc: "Aprenda a usar IA para acelerar DAX, documentação e insights — sem perder o controle do que entrega.",
+    desc: "Aprenda a usar IA para acelerar seus desenvolvimentos.",
   },
   {
     n: "04",

@@ -4,7 +4,12 @@ import { motion } from "framer-motion";
 import CountUp from "./CountUp";
 import WaitlistForm from "./WaitlistForm";
 
-const STACK = ["Power BI", "Análise de Dados", "IA aplicada", "DAX", "Power Query", "Storytelling"];
+const BENEFITS = [
+  "Mais de 1.000 projetos entregues",
+  "Mais de 350 empresas impactadas",
+  "Cases reais utilizados em aula",
+  "Metodologia validada em projetos corporativos",
+];
 
 export default function Hero() {
   return (
@@ -28,11 +33,10 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.05 }}
             className="mt-6 font-display text-4xl font-bold leading-[1.08] tracking-tight sm:text-6xl"
           >
-            Pare de decidir no{" "}
-            <span className="text-slate-400 line-through decoration-brand-blue/50">achismo</span>.
+            Não ensinamos teoria.
             <br />
-            Aprenda a decidir com{" "}
-            <span className="text-gradient">dados e IA</span>.
+            Ensinamos o que{" "}
+            <span className="text-gradient">aplicamos todos os dias</span>.
           </motion.h1>
 
           <motion.p
@@ -41,27 +45,47 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.12 }}
             className="mt-6 max-w-xl text-lg text-slate-300/90"
           >
-            Formação prática em <strong className="text-white">Power BI, Análise de Dados
-            e Inteligência Artificial</strong> aplicada a negócios. Do zero ao dashboard
-            que gera decisão — com a metodologia de quem vive dados todos os dias.
+            A DriveData atua desde 2021 transformando dados em decisões para empresas de
+            diversos segmentos. Toda a metodologia da Academy foi construída a partir de
+            desafios reais, projetos entregues e resultados gerados em clientes.
           </motion.p>
 
-          {/* Stack chips */}
-          <motion.div
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="mt-4 max-w-xl text-lg text-slate-300/90"
+          >
+            Formação prática em <strong className="text-white">técnicas avançadas de
+            Visualização de Dados e Storytelling, IA, Automações e Engenharia de Dados</strong>{" "}
+            aplicado aos negócios.
+          </motion.p>
+
+          {/* Benefit bullets */}
+          <motion.ul
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.18 }}
-            className="mt-7 flex flex-wrap gap-2"
+            className="mt-7 grid gap-2.5 sm:grid-cols-2"
           >
-            {STACK.map((s) => (
-              <span
-                key={s}
-                className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300"
-              >
-                {s}
-              </span>
+            {BENEFITS.map((b) => (
+              <li key={b} className="flex items-start gap-2.5 text-sm text-slate-300">
+                <svg className="mt-0.5 shrink-0 text-brand-green" width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {b}
+              </li>
             ))}
-          </motion.div>
+          </motion.ul>
+
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.21 }}
+            className="mt-6 max-w-xl text-base font-medium text-white"
+          >
+            Aprenda com quem não apenas ensina dados, mas vive dados todos os dias.
+          </motion.p>
 
           {/* Metrics */}
           <motion.div

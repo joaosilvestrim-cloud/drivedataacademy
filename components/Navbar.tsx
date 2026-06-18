@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import Logo from "./Logo";
 
 const LINKS = [
-  { label: "Cursos", href: "#cursos" },
+  { label: "Conteúdo", href: "#cursos" },
+  { label: "MarketPlace", href: "#marketplace" },
   { label: "Método", href: "#metodo" },
   { label: "Para Empresas", href: "#empresas" },
   { label: "Blog", href: "#blog" },
-  { label: "Instrutora", href: "#instrutora" },
+  { label: "Creators", href: "#instrutora" },
 ];
 
 export default function Navbar() {
