@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
+import AdminError from "./AdminError";
 
 export const dynamic = "force-dynamic";
 
@@ -12,12 +13,24 @@ async function count(table: string, filter?: (q: any) => any) {
 }
 
 export default async function AdminHome() {
-  const [waitlist, leads, posts, published] = await Promise.all([
-    count("waitlist"),
-    count("enterprise_leads"),
-    count("posts"),
-    count("posts", (q) => q.eq("published", true)),
-  ]);
+  let waitlist = 0, leads = 0, posts = 0, published = 0;
+  try {
+    [waitlist, leads, posts, published] = await Promise.all([
+      count("waitlist"),
+      count("enterprise_leads"),
+      count("posts"),
+      count("posts", (q) => q.eq("published", true)),
+    ]);
+  } catch (e) {
+    return (
+      <div>
+        <h1 className="font-display text-2xl font-bold text-white">Visão geral</h1>
+        <div className="mt-6">
+          <AdminError message={e instanceof Error ? e.message : "Erro desconhecido."} />
+        </div>
+      </div>
+    );
+  }
 
   const cards = [
     { label: "Inscritos na lista", value: waitlist, href: "/admin/waitlist" },

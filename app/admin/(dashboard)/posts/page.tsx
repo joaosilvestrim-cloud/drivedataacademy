@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { deletePost, togglePublish } from "./actions";
+import AdminError from "../AdminError";
 
 export const dynamic = "force-dynamic";
 
@@ -10,13 +11,24 @@ function fmt(iso: string | null) {
 }
 
 export default async function PostsPage() {
-  const supabase = createAdminClient();
-  const { data } = await supabase
-    .from("posts")
-    .select("id, title, category, published, published_at, updated_at")
-    .order("updated_at", { ascending: false });
-
-  const rows = data ?? [];
+  let rows: any[] = [];
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("posts")
+      .select("id, title, category, published, published_at, updated_at")
+      .order("updated_at", { ascending: false });
+    rows = data ?? [];
+  } catch (e) {
+    return (
+      <div>
+        <h1 className="font-display text-2xl font-bold text-white">Blog</h1>
+        <div className="mt-6">
+          <AdminError message={e instanceof Error ? e.message : "Erro desconhecido."} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
