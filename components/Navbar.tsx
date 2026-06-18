@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Logo from "./Logo";
 
 const LINKS = [
   { label: "Conteúdo", href: "#cursos" },
@@ -31,7 +30,8 @@ export default function Navbar() {
         }`}
       >
         <a href="#inicio" className="transition-transform hover:scale-[1.03]">
-          <Logo />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Drive Data Academy" className="h-8 w-auto sm:h-9" />
         </a>
 
         <ul className="hidden items-center gap-1 lg:flex">
