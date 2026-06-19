@@ -50,22 +50,37 @@ export default function Hero() {
             aplicado aos negócios.
           </motion.p>
 
-          {/* Benefit bullets */}
-          <motion.ul
+          {/* Benefit bullets — destaque */}
+          <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.18 }}
-            className="mt-7 grid gap-2.5 sm:grid-cols-2"
+            transition={{ duration: 0.6, delay: 0.18 }}
+            className="mt-8 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-white/[0.07] to-white/[0.02] p-5 shadow-[0_0_50px_-22px_rgba(52,232,160,0.55)]"
           >
-            {BENEFITS.map((b) => (
-              <li key={b} className="flex items-start gap-2.5 text-sm text-slate-300">
-                <svg className="mt-0.5 shrink-0 text-brand-green" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                {b}
-              </li>
-            ))}
-          </motion.ul>
+            <ul className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
+              {BENEFITS.map((b, i) => (
+                <motion.li
+                  key={b}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.35 + i * 0.13, ease: "easeOut" }}
+                  className="group flex items-center gap-3 text-sm font-semibold text-slate-100"
+                >
+                  <motion.span
+                    initial={{ scale: 0, rotate: -30 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 320, damping: 15, delay: 0.42 + i * 0.13 }}
+                    className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue text-ink-900 shadow-[0_0_18px_-4px_rgba(52,232,160,0.7)] transition-transform duration-300 group-hover:scale-110"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </motion.span>
+                  {b}
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
