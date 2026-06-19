@@ -1,6 +1,5 @@
 "use client";
 
-import Logo from "./Logo";
 import { NAV_LINKS } from "./Navbar";
 
 const SOCIALS = [
@@ -43,7 +42,8 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div>
-            <Logo />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Drive Data Academy" className="h-11 w-auto" />
             <p className="mt-5 max-w-xs text-sm text-slate-400">
               A escola de dados da DriveData. Formação prática em Power BI, Análise de
               Dados e Inteligência Artificial para quem decide com dados.
