@@ -12,12 +12,16 @@ export async function saveSettings(formData: FormData) {
   const promoVideoUrl = ((formData.get("promo_video_url") as string) || "").trim();
 
   const supabase = createAdminClient();
-  await supabase
+  const { error } = await supabase
     .from("site_settings")
     .upsert(
       { key: "promo_video_url", value: promoVideoUrl, updated_at: new Date().toISOString() },
       { onConflict: "key" }
     );
+
+  if (error) {
+    redirect("/admin/settings?error=" + encodeURIComponent(error.message));
+  }
 
   revalidatePath("/");
   revalidatePath("/admin/settings");
