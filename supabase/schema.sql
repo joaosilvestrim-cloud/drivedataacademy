@@ -131,5 +131,5 @@ create policy "public read settings" on public.site_settings
 -- Escrita só via service_role (portal) — sem policy de insert/update p/ anon.
 
 insert into public.site_settings (key, value)
-values ('promo_video_url', '')
+values ('promo_videos', '["https://youtu.be/xOLcyH6yrxo"]')
 on conflict (key) do nothing;
