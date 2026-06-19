@@ -112,3 +112,24 @@ values
     '2026-05-28T12:00:00Z'
   )
 on conflict (slug) do nothing;
+
+-- ---------- Configurações do site (chave/valor) ----------
+
+create table if not exists public.site_settings (
+  key        text primary key,
+  value      text,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.site_settings enable row level security;
+
+-- Leitura pública (config não sensível, ex.: URL do vídeo).
+drop policy if exists "public read settings" on public.site_settings;
+create policy "public read settings" on public.site_settings
+  for select to anon, authenticated using (true);
+
+-- Escrita só via service_role (portal) — sem policy de insert/update p/ anon.
+
+insert into public.site_settings (key, value)
+values ('promo_video_url', '')
+on conflict (key) do nothing;

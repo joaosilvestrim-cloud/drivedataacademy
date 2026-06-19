@@ -3,6 +3,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CoursesSection from "@/components/CoursesSection";
+import VideoSection from "@/components/VideoSection";
 import MethodSection from "@/components/MethodSection";
 import EnterpriseSection from "@/components/EnterpriseSection";
 import InstructorSection from "@/components/InstructorSection";
@@ -22,6 +23,7 @@ export default function Home() {
       <main>
         <Hero />
         <CoursesSection />
+        <VideoSection />
         <MethodSection />
         <EnterpriseSection />
         <InstructorSection />

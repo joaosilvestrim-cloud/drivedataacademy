@@ -8,6 +8,7 @@ const NAV = [
   { label: "Lista de espera", href: "/admin/waitlist" },
   { label: "Leads empresas", href: "/admin/leads" },
   { label: "Blog", href: "/admin/posts" },
+  { label: "Configurações", href: "/admin/settings" },
 ];
 
 export default async function DashboardLayout({
