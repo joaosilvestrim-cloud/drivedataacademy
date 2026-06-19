@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const LINKS = [
+export const NAV_LINKS = [
   { label: "Conteúdo", href: "#cursos" },
   { label: "MarketPlace", href: "#marketplace" },
   { label: "Método", href: "#metodo" },
@@ -10,6 +10,8 @@ const LINKS = [
   { label: "Blog", href: "#blog" },
   { label: "Creators", href: "#instrutora" },
 ];
+
+const LINKS = NAV_LINKS;
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
