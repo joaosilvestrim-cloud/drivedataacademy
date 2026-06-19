@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import CountUp from "./CountUp";
 import WaitlistForm from "./WaitlistForm";
 
 const BENEFITS = [
@@ -86,25 +85,6 @@ export default function Hero() {
           >
             Aprenda com quem não apenas ensina dados, mas vive dados todos os dias.
           </motion.p>
-
-          {/* Metrics */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.24 }}
-            className="mt-9 grid max-w-lg grid-cols-3 gap-4"
-          >
-            {[
-              { v: <CountUp to={3500} suffix="+" />, l: "Alunos formados" },
-              { v: <CountUp to={40} suffix="h" />, l: "De conteúdo prático" },
-              { v: <><CountUp to={92} suffix="%" /></>, l: "Recomendam a formação" },
-            ].map((m, i) => (
-              <div key={i}>
-                <div className="font-display text-2xl font-bold text-white sm:text-3xl">{m.v}</div>
-                <div className="mt-1 text-xs text-slate-400">{m.l}</div>
-              </div>
-            ))}
-          </motion.div>
         </div>
 
         {/* Right — waitlist card */}
