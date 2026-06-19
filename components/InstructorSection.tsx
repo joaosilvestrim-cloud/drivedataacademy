@@ -14,6 +14,7 @@ type Founder = {
   initials: string;
   // Troque por uma foto real adicionando o arquivo em /public e definindo `photo`.
   photo?: string;
+  objectPosition?: string;
   bio: string;
 };
 
@@ -23,12 +24,15 @@ const FOUNDERS: Founder[] = [
     role: "Co-Founder & Head de Negócios da DriveData Academy",
     initials: "TC",
     photo: "/tamires-cavani.png",
+    objectPosition: "30% 18%",
     bio: "Especialista em Analytics, Business Intelligence e Inteligência Artificial, lidera iniciativas de transformação orientada por dados e projetos que impactaram centenas de empresas na DriveData. Sua missão é aproximar tecnologia e estratégia para gerar decisões mais inteligentes e resultados mensuráveis.",
   },
   {
     name: "Reed Lopes",
     role: "Co-Founder & Head de Dados e IA da DriveData Academy",
     initials: "RL",
+    photo: "/reed-lopes.jpg",
+    objectPosition: "50% 25%",
     bio: "Especialista em Power BI, Engenharia de Dados, Automação e Inteligência Artificial, com ampla experiência na construção de soluções analíticas, visualizações avançadas e aplicações corporativas baseadas em dados. Responsável por transformar conhecimento técnico em aplicações práticas de mercado.",
   },
 ];
@@ -86,7 +90,7 @@ export default function InstructorSection() {
                     <img
                       src={f.photo}
                       alt={f.name}
-                      style={{ objectPosition: "30% 18%" }}
+                      style={{ objectPosition: f.objectPosition ?? "center" }}
                       className="relative aspect-[3/4] w-28 rounded-2xl border border-white/10 object-cover"
                     />
                   ) : (
