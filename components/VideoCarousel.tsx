@@ -17,12 +17,13 @@ export default function VideoCarousel({ ids }: { ids: string[] }) {
           <div className="relative aspect-video w-full overflow-hidden rounded-[1.75rem] bg-ink-900">
             <iframe
               key={id}
-              className="absolute inset-0 h-full w-full"
-              src={`https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1&rel=0&modestbranding=1&playsinline=1`}
+              className="pointer-events-none absolute inset-0 h-full w-full"
+              src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=0&rel=0&modestbranding=1&playsinline=1&disablekb=1&iv_load_policy=3&fs=0`}
               title="Vídeo DriveData Academy"
-              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-              allowFullScreen
+              allow="autoplay; encrypted-media; picture-in-picture"
             />
+            {/* Camada que impede a interface do YouTube (título/avatar) de aparecer */}
+            <div className="absolute inset-0" aria-hidden />
           </div>
         </div>
 
