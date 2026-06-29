@@ -1,19 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n/LanguageProvider";
+import LangSwitcher from "./LangSwitcher";
 
-export const NAV_LINKS = [
-  { label: "Conteúdo", href: "#cursos" },
-  { label: "MarketPlace", href: "#marketplace" },
-  { label: "Método", href: "#metodo" },
-  { label: "Para Empresas", href: "#empresas" },
-  { label: "Blog", href: "#blog" },
-  { label: "Creators", href: "#instrutora" },
-];
-
-const LINKS = NAV_LINKS;
+// Âncoras fixas; os rótulos vêm do dicionário (nav.links), na mesma ordem.
+export const NAV_HREFS = ["#cursos", "#marketplace", "#metodo", "#empresas", "#blog", "#instrutora"];
 
 export default function Navbar() {
+  const t = useT();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -23,6 +18,8 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const links = NAV_HREFS.map((href, i) => ({ href, label: t.nav.links[i] }));
 
   return (
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
@@ -37,7 +34,7 @@ export default function Navbar() {
         </a>
 
         <ul className="hidden items-center gap-1 lg:flex">
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
@@ -50,11 +47,12 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <LangSwitcher className="hidden sm:flex" />
           <a
             href="#lista"
             className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-[0_0_24px_-4px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.03]"
           >
-            Entrar na lista
+            {t.nav.cta}
           </a>
           <button
             onClick={() => setOpen((o) => !o)}
@@ -70,7 +68,7 @@ export default function Navbar() {
 
       {open && (
         <div className="glass absolute top-20 w-[92%] max-w-6xl rounded-2xl p-3 lg:hidden">
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
@@ -80,6 +78,9 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
+          <div className="mt-2 border-t border-white/10 px-2 pt-3 sm:hidden">
+            <LangSwitcher />
+          </div>
         </div>
       )}
     </header>

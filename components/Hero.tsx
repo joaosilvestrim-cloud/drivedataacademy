@@ -2,15 +2,10 @@
 
 import { motion } from "framer-motion";
 import WaitlistForm from "./WaitlistForm";
-
-const BENEFITS = [
-  "Mais de 1.000 projetos entregues",
-  "Mais de 350 empresas impactadas",
-  "Cases reais utilizados em aula",
-  "Metodologia validada em projetos corporativos",
-];
+import { useT } from "@/lib/i18n/LanguageProvider";
 
 export default function Hero() {
+  const t = useT();
   return (
     <section id="inicio" className="relative mx-auto max-w-7xl px-6 pb-16 pt-36 sm:pt-44">
       <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
@@ -22,10 +17,10 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.05 }}
             className="mt-6 font-display text-4xl font-bold leading-[1.08] tracking-tight sm:text-6xl"
           >
-            Não ensinamos teoria.
+            {t.hero.title1}
             <br />
-            Ensinamos o que{" "}
-            <span className="text-gradient">aplicamos todos os dias</span>.
+            {t.hero.title2pre}{" "}
+            <span className="text-gradient">{t.hero.title2grad}</span>.
           </motion.h1>
 
           <motion.p
@@ -34,9 +29,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.12 }}
             className="mt-6 max-w-xl text-lg text-slate-300/90"
           >
-            A DriveData atua desde 2021 transformando dados em decisões para empresas de
-            diversos segmentos. Toda a metodologia da Academy foi construída a partir de
-            desafios reais, projetos entregues e resultados gerados em clientes.
+            {t.hero.p1}
           </motion.p>
 
           <motion.p
@@ -45,9 +38,8 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.15 }}
             className="mt-4 max-w-xl text-lg text-slate-300/90"
           >
-            Formação prática em <strong className="text-white">técnicas avançadas de
-            Visualização de Dados e Storytelling, IA, Automações e Engenharia de Dados</strong>{" "}
-            aplicado aos negócios.
+            {t.hero.p2pre} <strong className="text-white">{t.hero.p2strong}</strong>{" "}
+            {t.hero.p2post}
           </motion.p>
 
           {/* Benefit bullets — destaque */}
@@ -58,7 +50,7 @@ export default function Hero() {
             className="mt-8 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-white/[0.07] to-white/[0.02] p-5 shadow-[0_0_50px_-22px_rgba(52,232,160,0.55)]"
           >
             <ul className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-              {BENEFITS.map((b, i) => (
+              {t.hero.benefits.map((b, i) => (
                 <motion.li
                   key={b}
                   initial={{ opacity: 0, x: -16 }}
@@ -88,7 +80,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.21 }}
             className="mt-6 max-w-xl text-base font-medium text-white"
           >
-            Aprenda com quem não apenas ensina dados, mas vive dados todos os dias.
+            {t.hero.closing}
           </motion.p>
         </div>
 
@@ -103,13 +95,12 @@ export default function Hero() {
           <div id="lista" className="glow-border relative overflow-hidden rounded-[2rem] scroll-mt-28">
             <div className="glass-strong relative rounded-[2rem] p-7 sm:p-9">
               <div className="mb-5">
-                <p className="text-sm font-semibold text-brand-green">Lista de espera · próximas turmas</p>
+                <p className="text-sm font-semibold text-brand-green">{t.hero.waitlistEyebrow}</p>
                 <h2 className="mt-2 font-display text-2xl font-bold leading-snug">
-                  Seja avisado em primeira mão
+                  {t.hero.waitlistTitle}
                 </h2>
                 <p className="mt-2 text-sm text-slate-400">
-                  Inscreva-se para garantir condições de pré-lançamento das próximas
-                  turmas de Power BI, Análise de Dados e IA.
+                  {t.hero.waitlistText}
                 </p>
               </div>
               <WaitlistForm />

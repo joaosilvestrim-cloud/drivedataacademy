@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useT } from "@/lib/i18n/LanguageProvider";
 
 export default function WaitlistForm({ compact = false }: { compact?: boolean }) {
+  const t = useT();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +25,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
 
     setLoading(false);
     if (error) {
-      setError("Não foi possível enviar agora. Tente novamente em instantes.");
+      setError(t.waitlist.error);
       return;
     }
     setSent(true);
@@ -38,8 +40,8 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
           </svg>
         </span>
         <div>
-          <p className="font-semibold text-white">Inscrição confirmada!</p>
-          <p className="text-slate-400">Você receberá novidades das próximas turmas em primeira mão.</p>
+          <p className="font-semibold text-white">{t.waitlist.okTitle}</p>
+          <p className="text-slate-400">{t.waitlist.okText}</p>
         </div>
       </div>
     );
@@ -50,7 +52,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
       <input
         required
         type="text"
-        placeholder="Seu nome"
+        placeholder={t.waitlist.name}
         value={form.name}
         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
@@ -58,7 +60,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
       <input
         required
         type="email"
-        placeholder="Seu melhor e-mail"
+        placeholder={t.waitlist.email}
         value={form.email}
         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
@@ -70,7 +72,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         <input
           required
           type="tel"
-          placeholder="WhatsApp"
+          placeholder={t.waitlist.whatsapp}
           value={form.whatsapp}
           onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
           className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
@@ -82,10 +84,10 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         disabled={loading}
         className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "Enviando..." : "Quero entrar na lista"}
+        {loading ? t.waitlist.sending : t.waitlist.submit}
       </button>
       <p className={`text-center text-xs text-slate-500 ${compact ? "hidden" : ""}`}>
-        Apenas conteúdos relevantes. Você pode sair quando quiser.
+        {t.waitlist.note}
       </p>
     </form>
   );

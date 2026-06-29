@@ -2,8 +2,10 @@
 
 import Reveal from "./Reveal";
 import WaitlistForm from "./WaitlistForm";
+import { useT } from "@/lib/i18n/LanguageProvider";
 
 export default function CTASection() {
+  const t = useT();
   return (
     <section className="relative mx-auto max-w-5xl px-6 py-24">
       <Reveal>
@@ -12,14 +14,12 @@ export default function CTASection() {
             <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-brand-green/20 blur-[100px]" />
             <div className="relative">
               <h2 className="font-display text-3xl font-bold sm:text-4xl">
-                Próxima turma a caminho.
+                {t.ctaSection.title1}
                 <br />
-                <span className="text-gradient">Garanta seu lugar.</span>
+                <span className="text-gradient">{t.ctaSection.title2}</span>
               </h2>
               <p className="mt-4 max-w-md text-slate-300/90">
-                Entre na lista de espera e seja o primeiro a saber da abertura das novas
-                turmas de Power BI, Análise de Dados e IA — com condições exclusivas de
-                pré-lançamento.
+                {t.ctaSection.text}
               </p>
             </div>
             <div className="relative">

@@ -3,38 +3,19 @@
 import { useState } from "react";
 import Reveal from "./Reveal";
 import { createClient } from "@/lib/supabase/client";
+import { useT } from "@/lib/i18n/LanguageProvider";
 
-const PERKS = [
-  {
-    icon: "M3 21h18M5 21V7l8-4v18M19 21V11l-6-3",
-    title: "Trilhas sob medida",
-    desc: "Capacitação alinhada às ferramentas e desafios reais do seu time.",
-  },
-  {
-    icon: "M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z",
-    title: "Presencial ou online",
-    desc: "Treinamentos in company presenciais ou ao vivo, no formato ideal para o seu time.",
-  },
-  {
-    icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
-    title: "Consultoria & Desenvolvimento",
-    desc: "Solicite consultoria e desenvolvimento empresarial sob demanda com nossos especialistas.",
-  },
-  {
-    icon: "M9 19V6l12-3v13M9 19a3 3 0 11-6 0 3 3 0 016 0zM21 16a3 3 0 11-6 0 3 3 0 016 0z",
-    title: "Foco em produtividade",
-    desc: "Menos achismo, mais decisões inteligentes — impacto medível no dia a dia.",
-  },
-];
-
-const REQUEST_TYPES = [
-  "Treinamento corporativo (online)",
-  "Treinamento presencial (in company)",
-  "Consultoria e Desenvolvimento Empresarial",
-  "Mentoria de equipe",
+const PERK_ICONS = [
+  "M3 21h18M5 21V7l8-4v18M19 21V11l-6-3",
+  "M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z",
+  "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5",
+  "M9 19V6l12-3v13M9 19a3 3 0 11-6 0 3 3 0 016 0zM21 16a3 3 0 11-6 0 3 3 0 016 0z",
 ];
 
 export default function EnterpriseSection() {
+  const t = useT();
+  const perks = t.enterprise.perks.map((p, i) => ({ ...p, icon: PERK_ICONS[i] }));
+
   return (
     <section id="empresas" className="relative mx-auto max-w-7xl px-6 py-24 scroll-mt-24">
       <Reveal>
@@ -42,19 +23,14 @@ export default function EnterpriseSection() {
           <div className="glass-strong relative grid gap-10 rounded-[2.5rem] p-8 sm:p-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-blue/15 blur-[110px]" />
             <div className="relative">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">Para Empresas</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{t.enterprise.eyebrow}</p>
               <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
-                Capacite seu time em <span className="text-gradient">dados e IA</span>
+                {t.enterprise.titlePre} <span className="text-gradient">{t.enterprise.titleGrad}</span>
               </h2>
-              <p className="mt-4 max-w-lg text-slate-300/90">
-                Treinamentos em Visualização de Dados e IA construídos a partir de desafios
-                reais de mercado, preparando profissionais para gerar análises mais rápidas,
-                decisões mais inteligentes e maior eficiência operacional. Solicite um
-                contato da nossa equipe.
-              </p>
+              <p className="mt-4 max-w-lg text-slate-300/90">{t.enterprise.desc}</p>
 
               <div className="mt-8 space-y-4">
-                {PERKS.map((p) => (
+                {perks.map((p) => (
                   <div key={p.title} className="flex items-start gap-4">
                     <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5 text-brand-green">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -72,8 +48,8 @@ export default function EnterpriseSection() {
 
             {/* Enterprise form */}
             <div className="relative rounded-3xl border border-white/8 bg-white/[0.03] p-6 sm:p-7">
-              <h3 className="font-display text-lg font-bold text-white">Fale com nossa equipe</h3>
-              <p className="mt-1 text-sm text-slate-400">Resposta em até 1 dia útil.</p>
+              <h3 className="font-display text-lg font-bold text-white">{t.enterprise.formTitle}</h3>
+              <p className="mt-1 text-sm text-slate-400">{t.enterprise.formSubtitle}</p>
               <EnterpriseForm />
             </div>
           </div>
@@ -84,6 +60,7 @@ export default function EnterpriseSection() {
 }
 
 function EnterpriseForm() {
+  const t = useT();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -111,7 +88,7 @@ function EnterpriseForm() {
 
     setLoading(false);
     if (error) {
-      setError("Não foi possível enviar agora. Tente novamente em instantes.");
+      setError(t.enterprise.error);
       return;
     }
     setSent(true);
@@ -126,8 +103,8 @@ function EnterpriseForm() {
           </svg>
         </span>
         <div>
-          <p className="font-semibold text-white">Solicitação enviada!</p>
-          <p className="text-slate-400">Nossa equipe entra em contato em até 1 dia útil.</p>
+          <p className="font-semibold text-white">{t.enterprise.okTitle}</p>
+          <p className="text-slate-400">{t.enterprise.okText}</p>
         </div>
       </div>
     );
@@ -137,7 +114,7 @@ function EnterpriseForm() {
     <form onSubmit={handleSubmit} className="mt-5 space-y-3">
       <input
         required
-        placeholder="Nome"
+        placeholder={t.enterprise.fName}
         value={form.name}
         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
@@ -149,11 +126,11 @@ function EnterpriseForm() {
         className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors focus:border-brand-green/60 [&>option]:bg-ink-900"
       >
         <option value="" disabled>
-          O que você procura?
+          {t.enterprise.fSelect}
         </option>
-        {REQUEST_TYPES.map((t) => (
-          <option key={t} value={t}>
-            {t}
+        {t.enterprise.requestTypes.map((rt) => (
+          <option key={rt} value={rt}>
+            {rt}
           </option>
         ))}
       </select>
@@ -161,7 +138,7 @@ function EnterpriseForm() {
         <input
           required
           type="email"
-          placeholder="E-mail corporativo"
+          placeholder={t.enterprise.fEmail}
           value={form.email}
           onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
           className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
@@ -169,7 +146,7 @@ function EnterpriseForm() {
         <input
           required
           type="tel"
-          placeholder="Telefone / WhatsApp"
+          placeholder={t.enterprise.fPhone}
           value={form.phone}
           onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
           className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
@@ -177,7 +154,7 @@ function EnterpriseForm() {
       </div>
       <textarea
         rows={3}
-        placeholder="Empresa, nº de pessoas e área de interesse (Power BI, IA, outros)…"
+        placeholder={t.enterprise.fMessage}
         value={form.message}
         onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
         className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
@@ -188,7 +165,7 @@ function EnterpriseForm() {
         disabled={loading}
         className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "Enviando..." : "Enviar"}
+        {loading ? t.enterprise.sending : t.enterprise.submit}
       </button>
     </form>
   );

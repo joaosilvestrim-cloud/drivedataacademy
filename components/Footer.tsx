@@ -1,6 +1,7 @@
 "use client";
 
-import { NAV_LINKS } from "./Navbar";
+import { useT } from "@/lib/i18n/LanguageProvider";
+import { NAV_HREFS } from "./Navbar";
 
 const SOCIALS = [
   {
@@ -37,6 +38,9 @@ function SocialIcon({ type }: { type: string }) {
 }
 
 export default function Footer() {
+  const t = useT();
+  const academyLinks = NAV_HREFS.map((href, i) => ({ href, label: t.nav.links[i] }));
+
   return (
     <footer className="relative mt-12 border-t border-white/8">
       <div className="mx-auto max-w-7xl px-6 py-16">
@@ -44,10 +48,7 @@ export default function Footer() {
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Drive Data Academy" className="h-11 w-auto" />
-            <p className="mt-5 max-w-xs text-sm text-slate-400">
-              A escola de dados da DriveData. Formação prática em Power BI, Análise de
-              Dados e Inteligência Artificial para quem decide com dados.
-            </p>
+            <p className="mt-5 max-w-xs text-sm text-slate-400">{t.footer.desc}</p>
 
             <div className="mt-6 space-y-3">
               {SOCIALS.map((s) => (
@@ -76,10 +77,10 @@ export default function Footer() {
           {/* Academy — espelha o menu do cabeçalho */}
           <div>
             <h4 className="font-display text-sm font-bold uppercase tracking-wider text-white">
-              Academy
+              {t.footer.colAcademy}
             </h4>
             <ul className="mt-4 space-y-2.5">
-              {NAV_LINKS.map((l) => (
+              {academyLinks.map((l) => (
                 <li key={l.href}>
                   <a href={l.href} className="text-sm text-slate-400 transition-colors hover:text-brand-green">
                     {l.label}
@@ -92,7 +93,7 @@ export default function Footer() {
           {/* DriveData */}
           <div>
             <h4 className="font-display text-sm font-bold uppercase tracking-wider text-white">
-              DriveData
+              {t.footer.colDriveData}
             </h4>
             <ul className="mt-4 space-y-2.5">
               <li>
@@ -102,7 +103,7 @@ export default function Footer() {
                   rel="noreferrer"
                   className="text-sm text-slate-400 transition-colors hover:text-brand-green"
                 >
-                  Site institucional
+                  {t.footer.site}
                 </a>
               </li>
             </ul>
@@ -110,11 +111,11 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/8 pt-7 text-xs text-slate-500 sm:flex-row">
-          <p>© 2026 Drive Data Academy — uma iniciativa DriveData. Todos os direitos reservados.</p>
+          <p>{t.footer.rights}</p>
           <div className="flex gap-5">
-            <a href="#" className="hover:text-slate-300">Política de Privacidade</a>
-            <a href="#" className="hover:text-slate-300">Termos de uso</a>
-            <a href="#" className="hover:text-slate-300">Política de IA</a>
+            <a href="#" className="hover:text-slate-300">{t.footer.privacy}</a>
+            <a href="#" className="hover:text-slate-300">{t.footer.terms}</a>
+            <a href="#" className="hover:text-slate-300">{t.footer.aiPolicy}</a>
           </div>
         </div>
       </div>
