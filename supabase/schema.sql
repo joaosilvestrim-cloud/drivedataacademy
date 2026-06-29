@@ -133,3 +133,74 @@ create policy "public read settings" on public.site_settings
 insert into public.site_settings (key, value)
 values ('promo_videos', '["https://youtu.be/xOLcyH6yrxo"]')
 on conflict (key) do nothing;
+
+-- ============================================================
+-- Captura de conteúdo (Lead Generation)
+-- ============================================================
+
+-- Materiais / campanhas (landing de conteúdo gated)
+create table if not exists public.materials (
+  id            uuid primary key default gen_random_uuid(),
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now(),
+  title         text not null,
+  slug          text unique not null,
+  subtitle      text,
+  description   text,
+  cover_url     text,
+  file_url      text,            -- conteúdo entregue (PDF/link)
+  cta_text      text,            -- texto do botão do formulário
+  email_subject text,            -- assunto do e-mail (opcional)
+  email_message text,            -- mensagem extra no e-mail (opcional)
+  ask_phone     boolean not null default true,
+  ask_company   boolean not null default true,
+  ask_role      boolean not null default false,
+  published     boolean not null default false
+);
+
+create index if not exists materials_published_idx on public.materials (published);
+
+drop trigger if exists materials_set_updated_at on public.materials;
+create trigger materials_set_updated_at before update on public.materials
+  for each row execute function public.set_updated_at();
+
+-- Leads capturados (um por download/preenchimento)
+create table if not exists public.material_leads (
+  id             uuid primary key default gen_random_uuid(),
+  created_at     timestamptz not null default now(),
+  material_id    uuid references public.materials(id) on delete set null,
+  material_title text,           -- conteúdo baixado (denormalizado)
+  name           text not null,
+  email          text not null,
+  phone          text,
+  company        text,
+  role           text,
+  utm_source     text,           -- campanha de origem
+  utm_medium     text,
+  utm_campaign   text,
+  referrer       text
+);
+
+create index if not exists material_leads_material_idx on public.material_leads (material_id);
+create index if not exists material_leads_created_idx on public.material_leads (created_at desc);
+
+alter table public.materials      enable row level security;
+alter table public.material_leads enable row level security;
+
+-- Materiais publicados: leitura pública. (Escrita só via service_role/portal.)
+drop policy if exists "public read materials" on public.materials;
+create policy "public read materials" on public.materials
+  for select to anon, authenticated using (published = true);
+
+-- Leads: qualquer um pode INSERIR (formulário público); ninguém lê pelo navegador.
+drop policy if exists "anon insert material_leads" on public.material_leads;
+create policy "anon insert material_leads" on public.material_leads
+  for insert to anon, authenticated with check (true);
+
+-- Gating: o público lê só as colunas de exibição. O arquivo entregue (file_url)
+-- e os textos do e-mail ficam acessíveis apenas via service_role (servidor),
+-- entregues só depois do formulário.
+revoke select on public.materials from anon, authenticated;
+grant select (id, created_at, updated_at, title, slug, subtitle, description,
+              cover_url, cta_text, ask_phone, ask_company, ask_role, published)
+  on public.materials to anon, authenticated;
