@@ -49,7 +49,10 @@ export default function MaterialForm({ material }: { material?: Material }) {
       </div>
 
       <div className={card}>
-        <p className="text-sm font-semibold text-white">Conteúdo entregue</p>
+        <div>
+          <p className="text-sm font-semibold text-white">Conteúdo entregue</p>
+          <p className="text-xs text-slate-400">O arquivo que o lead recebe por e-mail (anexo + link) e download na página. Ex.: PDF, e-book, planilha.</p>
+        </div>
         <div className="space-y-1.5">
           <label className={label} htmlFor="content_file">Arquivo (PDF, etc.) — enviado por e-mail / download</label>
           <input id="content_file" name="content_file" type="file" className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-white hover:file:bg-white/15" />
@@ -62,7 +65,10 @@ export default function MaterialForm({ material }: { material?: Material }) {
       </div>
 
       <div className={card}>
-        <p className="text-sm font-semibold text-white">Imagem de capa</p>
+        <div>
+          <p className="text-sm font-semibold text-white">Imagem de capa</p>
+          <p className="text-xs text-slate-400">Aparece na página do material (opcional).</p>
+        </div>
         {material?.cover_url && (
           <div className="aspect-[16/9] w-full max-w-xs overflow-hidden rounded-xl border border-white/10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -77,7 +83,10 @@ export default function MaterialForm({ material }: { material?: Material }) {
       </div>
 
       <div className={card}>
-        <p className="text-sm font-semibold text-white">Formulário</p>
+        <div>
+          <p className="text-sm font-semibold text-white">Campos do formulário</p>
+          <p className="text-xs text-slate-400">Nome e e-mail são sempre pedidos. Marque os campos extras que quiser exigir.</p>
+        </div>
         <div className="space-y-1.5">
           <label className={label} htmlFor="cta_text">Texto do botão</label>
           <input id="cta_text" name="cta_text" placeholder="Quero receber" defaultValue={material?.cta_text ?? ""} className={`${field} max-w-xs`} />
@@ -96,7 +105,10 @@ export default function MaterialForm({ material }: { material?: Material }) {
       </div>
 
       <div className={card}>
-        <p className="text-sm font-semibold text-white">E-mail de entrega</p>
+        <div>
+          <p className="text-sm font-semibold text-white">E-mail de entrega</p>
+          <p className="text-xs text-slate-400">Personalize o e-mail automático (opcional). O conteúdo já vai anexado e com link.</p>
+        </div>
         <div className="space-y-1.5">
           <label className={label} htmlFor="email_subject">Assunto (opcional)</label>
           <input id="email_subject" name="email_subject" placeholder="Seu material: ..." defaultValue={material?.email_subject ?? ""} className={field} />

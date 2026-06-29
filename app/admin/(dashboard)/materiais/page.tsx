@@ -2,13 +2,20 @@ import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
 import ConfirmDeleteMaterial from "./ConfirmDeleteMaterial";
+import PublicLinkInline from "./PublicLinkInline";
 import { duplicateMaterial, togglePublishMaterial } from "./actions";
 
 export const dynamic = "force-dynamic";
 
+const STEPS = [
+  { n: "1", t: "Crie o material", d: "Título, descrição e o arquivo (PDF) que o lead recebe." },
+  { n: "2", t: "Publique e copie o link", d: "Cada material tem uma página própria para divulgar." },
+  { n: "3", t: "Acompanhe os leads", d: "Veja quem baixou, qual conteúdo e de qual campanha." },
+];
+
 export default async function MaterialsPage() {
   let materials: any[] = [];
-  let counts: Record<string, number> = {};
+  const counts: Record<string, number> = {};
   try {
     const supabase = createAdminClient();
     const [{ data: mats }, { data: leads }] = await Promise.all([
@@ -35,7 +42,9 @@ export default async function MaterialsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-bold text-white">Materiais</h1>
-          <p className="mt-1 text-sm text-slate-400">Páginas de captura de leads ({materials.length}).</p>
+          <p className="mt-1 text-sm text-slate-400">
+            Páginas que capturam leads em troca de um conteúdo ({materials.length}).
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Link href="/admin/materiais/leads" className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:border-brand-green/50 hover:text-brand-green">
@@ -48,42 +57,61 @@ export default async function MaterialsPage() {
         </div>
       </div>
 
+      {/* Guia rápido */}
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        {STEPS.map((s) => (
+          <div key={s.n} className="glass rounded-2xl border border-white/8 p-4">
+            <div className="flex items-center gap-2">
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue text-xs font-bold text-ink-900">{s.n}</span>
+              <p className="text-sm font-semibold text-white">{s.t}</p>
+            </div>
+            <p className="mt-1.5 text-xs text-slate-400">{s.d}</p>
+          </div>
+        ))}
+      </div>
+
       <div className="mt-6 space-y-3">
         {materials.map((m) => (
-          <div key={m.id} className="glass flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 p-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className={`inline-block h-2 w-2 rounded-full ${m.published ? "bg-brand-green" : "bg-slate-600"}`} />
-                <Link href={`/admin/materiais/${m.id}`} className="truncate font-medium text-white hover:text-brand-green">{m.title}</Link>
-              </div>
-              <p className="mt-1 text-xs text-slate-500">
-                {counts[m.id] || 0} lead(s)
-                {" · "}
+          <div key={m.id} className="glass rounded-2xl border border-white/8 p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide ${m.published ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>
+                    {m.published ? "Publicado" : "Rascunho"}
+                  </span>
+                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[0.65rem] font-medium text-slate-300">
+                    {counts[m.id] || 0} lead(s)
+                  </span>
+                </div>
+                <Link href={`/admin/materiais/${m.id}`} className="mt-2 block truncate font-display text-lg font-bold text-white hover:text-brand-green">
+                  {m.title}
+                </Link>
                 {m.published ? (
-                  <a href={`/materiais/${m.slug}`} target="_blank" rel="noreferrer" className="text-brand-teal hover:underline">/materiais/{m.slug}</a>
+                  <PublicLinkInline slug={m.slug} />
                 ) : (
-                  <span>Rascunho</span>
+                  <p className="mt-2 text-xs text-slate-500">Publique para gerar o link público de divulgação.</p>
                 )}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <form action={togglePublishMaterial}>
-                <input type="hidden" name="id" value={m.id} />
-                <input type="hidden" name="next" value={(!m.published).toString()} />
-                <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">
-                  {m.published ? "Despublicar" : "Publicar"}
-                </button>
-              </form>
-              <form action={duplicateMaterial}>
-                <input type="hidden" name="id" value={m.id} />
-                <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white">
-                  Duplicar
-                </button>
-              </form>
-              <Link href={`/admin/materiais/${m.id}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white">
-                Editar
-              </Link>
-              <ConfirmDeleteMaterial id={m.id} title={m.title} />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <form action={togglePublishMaterial}>
+                  <input type="hidden" name="id" value={m.id} />
+                  <input type="hidden" name="next" value={(!m.published).toString()} />
+                  <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">
+                    {m.published ? "Despublicar" : "Publicar"}
+                  </button>
+                </form>
+                <form action={duplicateMaterial}>
+                  <input type="hidden" name="id" value={m.id} />
+                  <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white">
+                    Duplicar
+                  </button>
+                </form>
+                <Link href={`/admin/materiais/${m.id}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white">
+                  Editar
+                </Link>
+                <ConfirmDeleteMaterial id={m.id} title={m.title} />
+              </div>
             </div>
           </div>
         ))}
