@@ -25,6 +25,34 @@ function resolveFrom(): string {
   return fallback;
 }
 
+// Nome amigável do anexo a partir do título + extensão da URL.
+function attachmentName(title: string, url: string): string {
+  const clean = url.split("?")[0];
+  const ext = (clean.split(".").pop() || "").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 5);
+  const base =
+    (title || "material")
+      .normalize("NFD")
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .toLowerCase()
+      .slice(0, 50) || "material";
+  return ext ? `${base}.${ext}` : base;
+}
+
+// Baixa o arquivo e devolve um anexo em base64 (ou null se falhar/grande demais).
+async function buildAttachment(title: string, url: string | null) {
+  if (!url) return null;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (buf.length === 0 || buf.length > 15 * 1024 * 1024) return null; // até ~15MB
+    return { filename: attachmentName(title, url), content: buf.toString("base64") };
+  } catch {
+    return null;
+  }
+}
+
 // Envia o conteúdo por e-mail via Resend. Se a chave não estiver configurada,
 // retorna { sent: false } e o app entrega o link na própria página.
 export async function sendMaterialEmail({
@@ -63,11 +91,19 @@ export async function sendMaterialEmail({
     </td></tr></table>
   </body></html>`;
 
+  const attachment = await buildAttachment(materialTitle, fileUrl);
+
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to, subject: subj, html }),
+      body: JSON.stringify({
+        from,
+        to,
+        subject: subj,
+        html,
+        ...(attachment ? { attachments: [attachment] } : {}),
+      }),
     });
     if (!res.ok) {
       return { sent: false, reason: `resend-${res.status}` };
