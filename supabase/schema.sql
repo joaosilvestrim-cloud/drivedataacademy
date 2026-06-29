@@ -43,6 +43,14 @@ create table if not exists public.posts (
 
 create index if not exists posts_published_idx on public.posts (published, published_at desc);
 
+-- Traduções opcionais do post (EN/ES); em branco, o site usa o português.
+alter table public.posts add column if not exists title_en    text;
+alter table public.posts add column if not exists excerpt_en  text;
+alter table public.posts add column if not exists category_en text;
+alter table public.posts add column if not exists title_es    text;
+alter table public.posts add column if not exists excerpt_es  text;
+alter table public.posts add column if not exists category_es text;
+
 -- ---------- updated_at automático ----------
 
 create or replace function public.set_updated_at() returns trigger as $$

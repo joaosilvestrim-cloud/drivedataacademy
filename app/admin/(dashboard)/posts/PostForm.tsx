@@ -12,6 +12,12 @@ type Post = {
   cover_url: string | null;
   author: string | null;
   published: boolean;
+  title_en?: string | null;
+  excerpt_en?: string | null;
+  category_en?: string | null;
+  title_es?: string | null;
+  excerpt_es?: string | null;
+  category_es?: string | null;
 } | null;
 
 const field =
@@ -43,6 +49,27 @@ export default function PostForm({ post }: { post?: Post }) {
         <div className="space-y-1.5">
           <label className={label} htmlFor="excerpt">Resumo (aparece no card)</label>
           <textarea id="excerpt" name="excerpt" rows={2} defaultValue={post?.excerpt ?? ""} className={`${field} resize-none`} />
+        </div>
+      </div>
+
+      <div className="glass rounded-2xl border border-white/8 p-6 space-y-5">
+        <div>
+          <p className="text-sm font-semibold text-white">Traduções (opcional)</p>
+          <p className="text-xs text-slate-400">Preencha para o card aparecer traduzido. Em branco, o site usa o português.</p>
+        </div>
+
+        <div className="space-y-3 rounded-xl border border-white/8 bg-white/[0.02] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">🇺🇸 Inglês</p>
+          <input name="title_en" placeholder="Título (EN)" defaultValue={post?.title_en ?? ""} className={field} />
+          <textarea name="excerpt_en" rows={2} placeholder="Resumo (EN)" defaultValue={post?.excerpt_en ?? ""} className={`${field} resize-none`} />
+          <input name="category_en" placeholder="Categoria (EN)" defaultValue={post?.category_en ?? ""} className={`${field} max-w-xs`} />
+        </div>
+
+        <div className="space-y-3 rounded-xl border border-white/8 bg-white/[0.02] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">🇪🇸 Espanhol</p>
+          <input name="title_es" placeholder="Título (ES)" defaultValue={post?.title_es ?? ""} className={field} />
+          <textarea name="excerpt_es" rows={2} placeholder="Resumo (ES)" defaultValue={post?.excerpt_es ?? ""} className={`${field} resize-none`} />
+          <input name="category_es" placeholder="Categoria (ES)" defaultValue={post?.category_es ?? ""} className={`${field} max-w-xs`} />
         </div>
       </div>
 

@@ -3,9 +3,6 @@
 import Reveal from "./Reveal";
 import { useT } from "@/lib/i18n/LanguageProvider";
 
-// Números fixos; rótulos vêm do dicionário (instructor.statLabels).
-const STAT_VALUES = ["+15 anos", "+350", "+1.000"];
-
 // Dados fixos do fundador (nome/foto); cargo e bio vêm do dicionário.
 const FOUNDER_META = [
   { name: "Tamires Cavani", initials: "TC", photo: "/tamires-cavani.png", objectPosition: "30% 18%" },
@@ -14,7 +11,7 @@ const FOUNDER_META = [
 
 export default function InstructorSection() {
   const t = useT();
-  const stats = STAT_VALUES.map((v, i) => ({ v, l: t.instructor.statLabels[i] }));
+  const stats = t.instructor.statValues.map((v, i) => ({ v, l: t.instructor.statLabels[i] }));
   const founders = FOUNDER_META.map((f, i) => ({
     ...f,
     role: t.instructor.roles[i],

@@ -8,7 +8,7 @@ export default async function EditPostPage({ params }: { params: { id: string } 
   const supabase = createAdminClient();
   const { data: post } = await supabase
     .from("posts")
-    .select("id, title, slug, category, excerpt, content, cover_url, author, published")
+    .select("id, title, slug, category, excerpt, content, cover_url, author, published, title_en, excerpt_en, category_en, title_es, excerpt_es, category_es")
     .eq("id", params.id)
     .single();
 

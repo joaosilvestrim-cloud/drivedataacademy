@@ -60,6 +60,12 @@ export async function savePost(formData: FormData) {
     published_at: published
       ? (formData.get("published_at") as string) || new Date().toISOString()
       : null,
+    title_en: ((formData.get("title_en") as string) || "").trim() || null,
+    excerpt_en: ((formData.get("excerpt_en") as string) || "").trim() || null,
+    category_en: ((formData.get("category_en") as string) || "").trim() || null,
+    title_es: ((formData.get("title_es") as string) || "").trim() || null,
+    excerpt_es: ((formData.get("excerpt_es") as string) || "").trim() || null,
+    category_es: ((formData.get("category_es") as string) || "").trim() || null,
   };
 
   if (id) {
