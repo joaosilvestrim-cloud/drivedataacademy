@@ -12,6 +12,19 @@ type SendMaterialArgs = {
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// Resolve um remetente válido. Se RESEND_FROM estiver vazio/malformado
+// (ex.: "Nome <onboarding@>"), cai no domínio de teste do Resend.
+function resolveFrom(): string {
+  const fallback = "DriveData Academy <onboarding@resend.dev>";
+  const raw = (process.env.RESEND_FROM || "").trim();
+  if (!raw) return fallback;
+  const m = raw.match(/<([^>]+)>/);
+  const addr = (m ? m[1] : raw).trim();
+  // exige algo@dominio.tld
+  if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(addr)) return raw;
+  return fallback;
+}
+
 // Envia o conteúdo por e-mail via Resend. Se a chave não estiver configurada,
 // retorna { sent: false } e o app entrega o link na própria página.
 export async function sendMaterialEmail({
@@ -25,7 +38,7 @@ export async function sendMaterialEmail({
   const key = process.env.RESEND_API_KEY;
   if (!key) return { sent: false, reason: "not-configured" };
 
-  const from = process.env.RESEND_FROM || "DriveData Academy <onboarding@resend.dev>";
+  const from = resolveFrom();
   const subj = subject?.trim() || `Seu material: ${materialTitle}`;
   const firstName = esc((name || "").split(" ")[0] || "");
   const extra = message?.trim() ? `<p style="margin:0 0 16px;color:#475569">${esc(message.trim())}</p>` : "";
