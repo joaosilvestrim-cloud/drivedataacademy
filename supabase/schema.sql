@@ -401,3 +401,58 @@ alter table public.certificates enable row level security;
 drop policy if exists "own certificates read" on public.certificates;
 create policy "own certificates read" on public.certificates
   for select to authenticated using (auth.uid() = user_id);
+
+-- ============================================================
+-- Plataforma de cursos — Avaliações (quizzes)
+-- ============================================================
+
+create table if not exists public.quizzes (
+  id             uuid primary key default gen_random_uuid(),
+  created_at     timestamptz not null default now(),
+  course_id      uuid not null references public.courses(id) on delete cascade,
+  title          text not null default 'Avaliação final',
+  pass_score     int not null default 70,   -- % mínimo para passar
+  max_attempts   int not null default 3,
+  cooldown_hours int not null default 0,     -- bloqueio após esgotar tentativas
+  published      boolean not null default true,
+  unique (course_id)
+);
+
+create table if not exists public.quiz_questions (
+  id       uuid primary key default gen_random_uuid(),
+  quiz_id  uuid not null references public.quizzes(id) on delete cascade,
+  prompt   text not null,
+  options  jsonb not null default '[]',   -- [{ "text": "...", "correct": true|false }]
+  position int not null default 0
+);
+
+create table if not exists public.quiz_attempts (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  quiz_id    uuid not null references public.quizzes(id) on delete cascade,
+  course_id  uuid references public.courses(id) on delete set null,
+  score      int not null default 0,
+  passed     boolean not null default false,
+  answers    jsonb                          -- { questionId: optionIndex }
+);
+
+create index if not exists quiz_questions_quiz_idx on public.quiz_questions (quiz_id, position);
+create index if not exists quiz_attempts_user_idx on public.quiz_attempts (user_id, quiz_id);
+
+alter table public.quizzes        enable row level security;
+alter table public.quiz_questions enable row level security;
+alter table public.quiz_attempts  enable row level security;
+
+-- Config do quiz é pública (título, nota de corte). Perguntas NÃO são expostas
+-- ao cliente (evita ver a resposta certa) — leitura só via service_role no servidor.
+drop policy if exists "public read quizzes" on public.quizzes;
+create policy "public read quizzes" on public.quizzes
+  for select to anon, authenticated using (
+    published and exists (select 1 from public.courses c where c.id = course_id and c.published)
+  );
+
+-- Tentativas: o aluno lê as próprias (correção/gravação via service_role no servidor).
+drop policy if exists "own attempts read" on public.quiz_attempts;
+create policy "own attempts read" on public.quiz_attempts
+  for select to authenticated using (auth.uid() = user_id);

@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import CourseForm from "../CourseForm";
 import Curriculum from "../Curriculum";
 import CourseStudents from "../CourseStudents";
+import QuizBuilder from "../QuizBuilder";
 import { deleteCourse } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +29,13 @@ export default async function EditCoursePage({ params }: { params: { id: string 
     lessons: (lessons ?? []).filter((l: any) => l.module_id === m.id),
   }));
 
+  const { data: quizRow } = await supabase.from("quizzes").select("id, title, pass_score, max_attempts, cooldown_hours").eq("course_id", course.id).maybeSingle();
+  let quiz: any = null;
+  if (quizRow) {
+    const { data: questions } = await supabase.from("quiz_questions").select("id, prompt, options").eq("quiz_id", quizRow.id).order("position");
+    quiz = { ...quizRow, questions: questions ?? [] };
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -47,6 +55,8 @@ export default async function EditCoursePage({ params }: { params: { id: string 
       </div>
 
       <Curriculum courseId={course.id} modules={modules} />
+
+      <QuizBuilder courseId={course.id} quiz={quiz} />
 
       <CourseStudents courseId={course.id} totalLessons={(lessons ?? []).length} />
 

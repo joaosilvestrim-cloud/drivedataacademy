@@ -26,6 +26,13 @@ export async function issueCertificate(formData: FormData) {
   ]);
   if (!total || (done ?? 0) < total) redirect(`/aprender/${slug}`);
 
+  // Se o curso tem avaliação, exige aprovação antes do certificado.
+  const { data: quiz } = await admin.from("quizzes").select("id").eq("course_id", courseId).eq("published", true).maybeSingle();
+  if (quiz) {
+    const { data: passed } = await admin.from("quiz_attempts").select("id").eq("user_id", user.id).eq("quiz_id", quiz.id).eq("passed", true).maybeSingle();
+    if (!passed) redirect(`/aprender/${slug}/avaliacao`);
+  }
+
   // Já emitido? reaproveita.
   const { data: existing } = await admin.from("certificates").select("code").eq("user_id", user.id).eq("course_id", courseId).maybeSingle();
   if (existing) redirect(`/certificado/${existing.code}`);

@@ -37,6 +37,8 @@ export default async function PlayerPage({
     admin.from("lesson_progress").select("lesson_id").eq("user_id", user.id).eq("course_id", course.id).eq("completed", true),
   ]);
 
+  const { data: quiz } = await admin.from("quizzes").select("id, title").eq("course_id", course.id).eq("published", true).maybeSingle();
+
   const allLessons = lessons ?? [];
   const done = new Set((prog ?? []).map((p: any) => p.lesson_id));
   const modules = (mods ?? []).map((m: any) => ({ ...m, lessons: allLessons.filter((l: any) => l.module_id === m.id) }));
@@ -155,6 +157,13 @@ export default async function PlayerPage({
                 </ul>
               </div>
             ))}
+            {quiz && (
+              <div className="border-t border-white/5 p-2">
+                <Link href={`/aprender/${course.slug}/avaliacao`} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-brand-green hover:bg-white/5">
+                  📝 {quiz.title}
+                </Link>
+              </div>
+            )}
           </div>
         </aside>
       </div>
