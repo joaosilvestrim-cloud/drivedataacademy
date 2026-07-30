@@ -1,0 +1,128 @@
+import {
+  addModule,
+  renameModule,
+  deleteModule,
+  addLesson,
+  saveLesson,
+  deleteLesson,
+  moveItem,
+} from "./actions";
+
+type Lesson = {
+  id: string;
+  title: string;
+  type: string;
+  video_id: string | null;
+  content: string | null;
+  duration: string | null;
+  is_preview: boolean;
+};
+type Module = { id: string; title: string; lessons: Lesson[] };
+
+const field =
+  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+const smallBtn =
+  "rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white";
+
+function MoveButtons({ table, col, val, id, courseId }: { table: string; col: string; val: string; id: string; courseId: string }) {
+  return (
+    <>
+      {[-1, 1].map((dir) => (
+        <form key={dir} action={moveItem}>
+          <input type="hidden" name="table" value={table} />
+          <input type="hidden" name="filter_col" value={col} />
+          <input type="hidden" name="filter_val" value={val} />
+          <input type="hidden" name="id" value={id} />
+          <input type="hidden" name="dir" value={dir} />
+          <input type="hidden" name="course_id" value={courseId} />
+          <button className={smallBtn} aria-label={dir < 0 ? "Subir" : "Descer"}>{dir < 0 ? "↑" : "↓"}</button>
+        </form>
+      ))}
+    </>
+  );
+}
+
+export default function Curriculum({ courseId, modules }: { courseId: string; modules: Module[] }) {
+  return (
+    <div className="mt-10">
+      <h2 className="font-display text-lg font-bold text-white">Currículo</h2>
+      <p className="mt-1 text-sm text-slate-400">Organize em módulos e aulas. Use ↑ ↓ para ordenar.</p>
+
+      <div className="mt-5 space-y-5">
+        {modules.map((m) => (
+          <div key={m.id} className="glass rounded-2xl border border-white/8 p-5">
+            {/* Cabeçalho do módulo */}
+            <div className="flex flex-wrap items-center gap-2">
+              <form action={renameModule} className="flex flex-1 items-center gap-2">
+                <input type="hidden" name="id" value={m.id} />
+                <input type="hidden" name="course_id" value={courseId} />
+                <input name="title" defaultValue={m.title} className={`${field} font-semibold`} />
+                <button className={smallBtn}>Renomear</button>
+              </form>
+              <MoveButtons table="course_modules" col="course_id" val={courseId} id={m.id} courseId={courseId} />
+              <form action={deleteModule}>
+                <input type="hidden" name="id" value={m.id} />
+                <input type="hidden" name="course_id" value={courseId} />
+                <button className="rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir módulo</button>
+              </form>
+            </div>
+
+            {/* Aulas */}
+            <div className="mt-4 space-y-2">
+              {m.lessons.map((l) => (
+                <details key={l.id} className="rounded-xl border border-white/8 bg-white/[0.02]">
+                  <summary className="flex cursor-pointer items-center justify-between gap-2 px-4 py-2.5 text-sm text-slate-200">
+                    <span className="flex items-center gap-2">
+                      <span className="text-slate-500">{l.type === "video" ? "▶" : "📄"}</span>
+                      {l.title}
+                      {l.is_preview && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">preview</span>}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <MoveButtons table="lessons" col="module_id" val={m.id} id={l.id} courseId={courseId} />
+                    </span>
+                  </summary>
+                  <form action={saveLesson} className="space-y-3 border-t border-white/8 p-4">
+                    <input type="hidden" name="id" value={l.id} />
+                    <input type="hidden" name="course_id" value={courseId} />
+                    <input name="title" defaultValue={l.title} placeholder="Título da aula" className={field} />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <select name="type" defaultValue={l.type} className={`${field} [&>option]:bg-ink-900`}>
+                        <option value="video">Vídeo</option>
+                        <option value="text">Texto</option>
+                      </select>
+                      <input name="duration" defaultValue={l.duration ?? ""} placeholder="Duração (ex.: 12 min)" className={field} />
+                    </div>
+                    <input name="video_id" defaultValue={l.video_id ?? ""} placeholder="Link/ID do vídeo (YouTube por enquanto)" className={field} />
+                    <textarea name="content" defaultValue={l.content ?? ""} rows={3} placeholder="Conteúdo em texto (para aulas do tipo Texto)" className={`${field} resize-y`} />
+                    <label className="flex items-center gap-2 text-xs text-slate-300">
+                      <input type="checkbox" name="is_preview" defaultChecked={l.is_preview} className="h-4 w-4 accent-emerald-400" /> Aula de preview (aberta sem matrícula)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900">Salvar aula</button>
+                      <button formAction={deleteLesson} className="rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir</button>
+                    </div>
+                  </form>
+                </details>
+              ))}
+            </div>
+
+            {/* Nova aula */}
+            <form action={addLesson} className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-white/10 p-3">
+              <input type="hidden" name="module_id" value={m.id} />
+              <input type="hidden" name="course_id" value={courseId} />
+              <input name="title" required placeholder="Nova aula..." className={`${field} flex-1`} />
+              <button className="rounded-lg bg-white/10 px-3 py-2 text-xs font-medium text-white hover:bg-white/15">+ Aula</button>
+            </form>
+          </div>
+        ))}
+      </div>
+
+      {/* Novo módulo */}
+      <form action={addModule} className="mt-5 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-white/10 p-4">
+        <input type="hidden" name="course_id" value={courseId} />
+        <input name="title" required placeholder="Novo módulo (ex.: Introdução)" className={`${field} flex-1`} />
+        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">+ Módulo</button>
+      </form>
+    </div>
+  );
+}

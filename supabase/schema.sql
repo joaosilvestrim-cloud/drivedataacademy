@@ -261,3 +261,113 @@ $$ language plpgsql security definer;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- ============================================================
+-- Plataforma de cursos — Fase 1: cursos, módulos, aulas, matrículas, progresso
+-- ============================================================
+
+create table if not exists public.courses (
+  id              uuid primary key default gen_random_uuid(),
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now(),
+  slug            text unique not null,
+  title           text not null,
+  subtitle        text,
+  description     text,
+  cover_url       text,
+  level           text,
+  price           numeric not null default 0,     -- 0 = gratuito
+  currency        text default 'BRL',
+  instructor_name text,
+  published       boolean not null default false,
+  position        int not null default 0
+);
+
+create table if not exists public.course_modules (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  course_id  uuid not null references public.courses(id) on delete cascade,
+  title      text not null,
+  position   int not null default 0
+);
+
+create table if not exists public.lessons (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  module_id  uuid not null references public.course_modules(id) on delete cascade,
+  course_id  uuid not null references public.courses(id) on delete cascade,
+  title      text not null,
+  type       text not null default 'video',   -- video | text
+  video_id   text,
+  content    text,
+  duration   text,
+  position   int not null default 0,
+  is_preview boolean not null default false
+);
+
+create table if not exists public.enrollments (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  course_id  uuid not null references public.courses(id) on delete cascade,
+  source     text not null default 'free',
+  unique (user_id, course_id)
+);
+
+create table if not exists public.lesson_progress (
+  id         uuid primary key default gen_random_uuid(),
+  updated_at timestamptz not null default now(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  lesson_id  uuid not null references public.lessons(id) on delete cascade,
+  course_id  uuid not null references public.courses(id) on delete cascade,
+  completed  boolean not null default true,
+  unique (user_id, lesson_id)
+);
+
+create index if not exists modules_course_idx on public.course_modules (course_id, position);
+create index if not exists lessons_module_idx on public.lessons (module_id, position);
+create index if not exists enrollments_user_idx on public.enrollments (user_id);
+create index if not exists progress_user_idx on public.lesson_progress (user_id, course_id);
+
+drop trigger if exists courses_set_updated_at on public.courses;
+create trigger courses_set_updated_at before update on public.courses
+  for each row execute function public.set_updated_at();
+
+alter table public.courses         enable row level security;
+alter table public.course_modules  enable row level security;
+alter table public.lessons         enable row level security;
+alter table public.enrollments     enable row level security;
+alter table public.lesson_progress enable row level security;
+
+-- Catálogo público (cursos publicados e sua estrutura). Escrita só via service_role/portal.
+drop policy if exists "public read courses" on public.courses;
+create policy "public read courses" on public.courses
+  for select to anon, authenticated using (published = true);
+
+drop policy if exists "public read modules" on public.course_modules;
+create policy "public read modules" on public.course_modules
+  for select to anon, authenticated using (
+    exists (select 1 from public.courses c where c.id = course_id and c.published)
+  );
+
+drop policy if exists "public read lessons" on public.lessons;
+create policy "public read lessons" on public.lessons
+  for select to anon, authenticated using (
+    exists (select 1 from public.courses c where c.id = course_id and c.published)
+  );
+
+-- Matrículas: cada usuário lê/cria/remove as próprias.
+drop policy if exists "own enrollments read" on public.enrollments;
+create policy "own enrollments read" on public.enrollments
+  for select to authenticated using (auth.uid() = user_id);
+drop policy if exists "own enrollments insert" on public.enrollments;
+create policy "own enrollments insert" on public.enrollments
+  for insert to authenticated with check (auth.uid() = user_id);
+drop policy if exists "own enrollments delete" on public.enrollments;
+create policy "own enrollments delete" on public.enrollments
+  for delete to authenticated using (auth.uid() = user_id);
+
+-- Progresso: cada usuário gerencia o próprio.
+drop policy if exists "own progress all" on public.lesson_progress;
+create policy "own progress all" on public.lesson_progress
+  for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
