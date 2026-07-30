@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import CourseForm from "../CourseForm";
 import Curriculum from "../Curriculum";
+import CourseStudents from "../CourseStudents";
 import { deleteCourse } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,8 @@ export default async function EditCoursePage({ params }: { params: { id: string 
       </div>
 
       <Curriculum courseId={course.id} modules={modules} />
+
+      <CourseStudents courseId={course.id} totalLessons={(lessons ?? []).length} />
 
       <form action={deleteCourse} className="mt-12 border-t border-white/8 pt-6">
         <input type="hidden" name="id" value={course.id} />

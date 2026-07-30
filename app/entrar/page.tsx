@@ -50,6 +50,9 @@ export default function EntrarPage() {
             <form onSubmit={handleSubmit} className="mt-6 space-y-3">
               <input required type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
               <input required type="password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+              <div className="text-right">
+                <Link href="/esqueci-senha" className="text-xs text-slate-400 hover:text-brand-green">Esqueci minha senha</Link>
+              </div>
               {error && <p className="text-xs text-red-400">{error}</p>}
               <button
                 type="submit"

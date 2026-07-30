@@ -41,12 +41,12 @@ export default async function AdminHome() {
       return q;
     };
 
-    const [waitlistC, leadsC, postsC, publishedC, recentWaitlist, recentLeads, recentPosts] =
+    const [waitlistC, coursesC, studentsC, enrollC, recentWaitlist, recentLeads, recentPosts] =
       await Promise.all([
         head("waitlist"),
-        head("enterprise_leads"),
-        head("posts"),
-        head("posts", (q) => q.eq("published", true)),
+        head("courses"),
+        head("profiles"),
+        head("enrollments"),
         supabase.from("waitlist").select("name, email, created_at").order("created_at", { ascending: false }).limit(5),
         supabase.from("enterprise_leads").select("name, request_type, created_at").order("created_at", { ascending: false }).limit(5),
         supabase.from("posts").select("id, title, published, updated_at").order("updated_at", { ascending: false }).limit(5),
@@ -58,10 +58,10 @@ export default async function AdminHome() {
         <p className="mt-1 text-sm text-slate-400">Resumo do que está chegando pelo site.</p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard label="Cursos" value={coursesC.count ?? 0} href="/admin/cursos" icon="doc" />
+          <StatCard label="Alunos" value={studentsC.count ?? 0} href="/admin/alunos" icon="building" />
+          <StatCard label="Matrículas" value={enrollC.count ?? 0} href="/admin/alunos" icon="check" />
           <StatCard label="Inscritos na lista" value={waitlistC.count ?? 0} href="/admin/waitlist" icon="list" />
-          <StatCard label="Leads de empresas" value={leadsC.count ?? 0} href="/admin/leads" icon="building" />
-          <StatCard label="Posts no total" value={postsC.count ?? 0} href="/admin/posts" icon="doc" />
-          <StatCard label="Posts publicados" value={publishedC.count ?? 0} href="/admin/posts" icon="check" />
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">

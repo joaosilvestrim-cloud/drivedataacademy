@@ -6,7 +6,7 @@ import LangSwitcher from "./LangSwitcher";
 import AccountNav from "./AccountNav";
 
 // Âncoras fixas; os rótulos vêm do dicionário (nav.links), na mesma ordem.
-export const NAV_HREFS = ["#cursos", "#marketplace", "#metodo", "#empresas", "#blog", "#instrutora"];
+export const NAV_HREFS = ["/cursos", "#marketplace", "#metodo", "#empresas", "#blog", "#instrutora"];
 
 export default function Navbar() {
   const t = useT();
