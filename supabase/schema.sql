@@ -371,3 +371,33 @@ create policy "own enrollments delete" on public.enrollments
 drop policy if exists "own progress all" on public.lesson_progress;
 create policy "own progress all" on public.lesson_progress
   for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- ============================================================
+-- Plataforma de cursos — Certificação
+-- ============================================================
+
+alter table public.courses add column if not exists workload text;   -- carga horária (ex.: "8 horas")
+
+create table if not exists public.certificates (
+  id           uuid primary key default gen_random_uuid(),
+  created_at   timestamptz not null default now(),   -- data de emissão
+  user_id      uuid not null references auth.users(id) on delete cascade,
+  course_id    uuid references public.courses(id) on delete set null,
+  code         text unique not null,                 -- código de autenticidade (hash)
+  student_name text,
+  course_title text,
+  workload     text,
+  expires_at   timestamptz,                          -- validade opcional (compliance/NR)
+  revoked      boolean not null default false,
+  unique (user_id, course_id)
+);
+
+create index if not exists certificates_user_idx on public.certificates (user_id);
+
+alter table public.certificates enable row level security;
+
+-- O aluno lê os próprios certificados (carteira). Emissão e validação pública
+-- acontecem via service_role no servidor (por código), sem expor a tabela ao anon.
+drop policy if exists "own certificates read" on public.certificates;
+create policy "own certificates read" on public.certificates
+  for select to authenticated using (auth.uid() = user_id);

@@ -12,7 +12,7 @@ export default async function EditCoursePage({ params }: { params: { id: string 
   const supabase = createAdminClient();
   const { data: course } = await supabase
     .from("courses")
-    .select("id, title, slug, subtitle, description, cover_url, level, instructor_name, price, published")
+    .select("id, title, slug, subtitle, description, cover_url, level, instructor_name, price, workload, published")
     .eq("id", params.id)
     .single();
 

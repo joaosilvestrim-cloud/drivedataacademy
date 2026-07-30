@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { youtubeId } from "@/lib/youtube";
 import { markComplete } from "./actions";
+import { issueCertificate } from "@/app/certificado/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,19 @@ export default async function PlayerPage({
           </div>
         </div>
       </header>
+
+      {pct === 100 && (
+        <div className="mx-auto max-w-7xl px-6 pt-6">
+          <form action={issueCertificate} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-green/30 bg-brand-green/10 p-4">
+            <input type="hidden" name="course_id" value={course.id} />
+            <input type="hidden" name="slug" value={course.slug} />
+            <p className="text-sm font-medium text-white">🎉 Você concluiu o curso! Emita seu certificado.</p>
+            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+              Emitir certificado
+            </button>
+          </form>
+        </div>
+      )}
 
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[1fr_320px]">
         {/* Player */}

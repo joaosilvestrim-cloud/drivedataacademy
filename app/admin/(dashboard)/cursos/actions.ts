@@ -44,6 +44,7 @@ export async function saveCourse(formData: FormData) {
     level: ((formData.get("level") as string) || "").trim() || null,
     instructor_name: ((formData.get("instructor_name") as string) || "").trim() || null,
     price: Number((formData.get("price") as string) || "0") || 0,
+    workload: ((formData.get("workload") as string) || "").trim() || null,
     published: formData.get("published") === "on",
   };
 

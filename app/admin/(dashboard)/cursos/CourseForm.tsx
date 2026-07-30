@@ -11,6 +11,7 @@ type Course = {
   level: string | null;
   instructor_name: string | null;
   price: number;
+  workload: string | null;
   published: boolean;
 } | null;
 
@@ -37,6 +38,10 @@ export default function CourseForm({ course }: { course?: Course }) {
             <label className={label} htmlFor="level">Nível</label>
             <input id="level" name="level" placeholder="Iniciante, Intermediário..." defaultValue={course?.level ?? ""} className={field} />
           </div>
+        </div>
+        <div className="space-y-1.5">
+          <label className={label} htmlFor="workload">Carga horária (no certificado)</label>
+          <input id="workload" name="workload" placeholder="Ex.: 8 horas" defaultValue={course?.workload ?? ""} className={`${field} max-w-xs`} />
         </div>
         <div className="space-y-1.5">
           <label className={label} htmlFor="subtitle">Subtítulo</label>
