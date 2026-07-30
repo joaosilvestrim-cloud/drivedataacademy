@@ -212,3 +212,52 @@ revoke select on public.materials from anon, authenticated;
 grant select (id, created_at, updated_at, title, slug, subtitle, description,
               cover_url, cta_text, ask_phone, ask_company, ask_role, published)
   on public.materials to anon, authenticated;
+
+-- ============================================================
+-- Plataforma de cursos — Fase 0: perfis de aluno
+-- ============================================================
+
+create table if not exists public.profiles (
+  id         uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  full_name  text,
+  avatar_url text,
+  role       text not null default 'student',   -- student | instructor | admin
+  phone      text,
+  country    text,
+  locale     text default 'pt'
+);
+
+alter table public.profiles enable row level security;
+
+-- Cada usuário só enxerga e edita o próprio perfil.
+drop policy if exists "own profile read" on public.profiles;
+create policy "own profile read" on public.profiles
+  for select to authenticated using (auth.uid() = id);
+
+drop policy if exists "own profile update" on public.profiles;
+create policy "own profile update" on public.profiles
+  for update to authenticated using (auth.uid() = id) with check (auth.uid() = id);
+
+drop policy if exists "own profile insert" on public.profiles;
+create policy "own profile insert" on public.profiles
+  for insert to authenticated with check (auth.uid() = id);
+
+drop trigger if exists profiles_set_updated_at on public.profiles;
+create trigger profiles_set_updated_at before update on public.profiles
+  for each row execute function public.set_updated_at();
+
+-- Cria o perfil automaticamente quando um usuário se cadastra.
+create or replace function public.handle_new_user() returns trigger as $$
+begin
+  insert into public.profiles (id, full_name)
+  values (new.id, coalesce(new.raw_user_meta_data->>'full_name', ''))
+  on conflict (id) do nothing;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users
+  for each row execute function public.handle_new_user();

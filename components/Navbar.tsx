@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import LangSwitcher from "./LangSwitcher";
+import AccountNav from "./AccountNav";
 
 // Âncoras fixas; os rótulos vêm do dicionário (nav.links), na mesma ordem.
 export const NAV_HREFS = ["#cursos", "#marketplace", "#metodo", "#empresas", "#blog", "#instrutora"];
@@ -47,6 +48,7 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <AccountNav />
           <LangSwitcher className="hidden sm:flex" />
           <a
             href="#lista"

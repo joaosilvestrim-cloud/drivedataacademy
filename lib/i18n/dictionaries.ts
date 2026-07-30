@@ -12,6 +12,8 @@ const pt = {
   nav: {
     links: ["Conteúdo", "MarketPlace", "Método", "Para Empresas", "Blog", "Creators"],
     cta: "Entrar na lista",
+    login: "Entrar",
+    account: "Minha conta",
   },
   hero: {
     title1: "Não ensinamos teoria.",
@@ -196,6 +198,8 @@ const en: Dictionary = {
   nav: {
     links: ["Content", "Marketplace", "Method", "For Business", "Blog", "Creators"],
     cta: "Join the list",
+    login: "Log in",
+    account: "My account",
   },
   hero: {
     title1: "We don't teach theory.",
@@ -378,6 +382,8 @@ const es: Dictionary = {
   nav: {
     links: ["Contenido", "Marketplace", "Método", "Para Empresas", "Blog", "Creators"],
     cta: "Unirme a la lista",
+    login: "Entrar",
+    account: "Mi cuenta",
   },
   hero: {
     title1: "No enseñamos teoría.",
