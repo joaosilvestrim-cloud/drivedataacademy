@@ -21,6 +21,18 @@ async function admin() {
   return createAdminClient();
 }
 
+// "Título | https://..." por linha -> [{title, url}]
+function parseMaterials(raw: string) {
+  return (raw || "")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => {
+      const parts = l.split("|").map((s) => s.trim());
+      return parts[1] ? { title: parts[0], url: parts[1] } : { title: "Material", url: parts[0] };
+    });
+}
+
 function refresh(courseId?: string) {
   revalidatePath("/admin/cursos");
   if (courseId) revalidatePath(`/admin/cursos/${courseId}`);
@@ -108,6 +120,7 @@ export async function addLesson(formData: FormData) {
     video_id: ((formData.get("video_id") as string) || "").trim() || null,
     duration: ((formData.get("duration") as string) || "").trim() || null,
     is_preview: formData.get("is_preview") === "on",
+    materials: parseMaterials(formData.get("materials") as string),
     position: count ?? 0,
   });
   refresh(course_id);
@@ -122,6 +135,7 @@ export async function saveLesson(formData: FormData) {
     content: ((formData.get("content") as string) || "").trim() || null,
     duration: ((formData.get("duration") as string) || "").trim() || null,
     is_preview: formData.get("is_preview") === "on",
+    materials: parseMaterials(formData.get("materials") as string),
   }).eq("id", formData.get("id") as string);
   refresh(formData.get("course_id") as string);
 }

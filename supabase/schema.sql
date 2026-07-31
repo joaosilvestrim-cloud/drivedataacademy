@@ -302,7 +302,8 @@ create table if not exists public.lessons (
   content    text,
   duration   text,
   position   int not null default 0,
-  is_preview boolean not null default false
+  is_preview boolean not null default false,
+  materials  jsonb not null default '[]'      -- [{ "title": "...", "url": "..." }]
 );
 
 create table if not exists public.enrollments (

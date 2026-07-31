@@ -16,6 +16,7 @@ type Lesson = {
   content: string | null;
   duration: string | null;
   is_preview: boolean;
+  materials: { title: string; url: string }[] | null;
 };
 type Module = { id: string; title: string; lessons: Lesson[] };
 
@@ -94,6 +95,16 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                     </div>
                     <input name="video_id" defaultValue={l.video_id ?? ""} placeholder="Link/ID do vídeo (YouTube por enquanto)" className={field} />
                     <textarea name="content" defaultValue={l.content ?? ""} rows={3} placeholder="Conteúdo em texto (para aulas do tipo Texto)" className={`${field} resize-y`} />
+                    <div className="space-y-1">
+                      <textarea
+                        name="materials"
+                        rows={2}
+                        defaultValue={(l.materials ?? []).map((m) => `${m.title} | ${m.url}`).join("\n")}
+                        placeholder="Materiais de apoio (um por linha): Ex.: Apostila PDF | https://..."
+                        className={`${field} resize-y`}
+                      />
+                      <p className="text-[0.7rem] text-slate-500">Um material por linha, no formato <span className="text-slate-400">Título | URL</span>.</p>
+                    </div>
                     <label className="flex items-center gap-2 text-xs text-slate-300">
                       <input type="checkbox" name="is_preview" defaultChecked={l.is_preview} className="h-4 w-4 accent-emerald-400" /> Aula de preview (aberta sem matrícula)
                     </label>
