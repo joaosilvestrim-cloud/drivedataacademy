@@ -21,7 +21,7 @@ export default function AccountNav() {
   return (
     <Link
       href={logged ? "/conta" : "/entrar"}
-      className="hidden rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-brand-green sm:inline-block"
+      className="hidden whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-brand-green sm:inline-block"
     >
       {logged ? t.nav.account : t.nav.login}
     </Link>

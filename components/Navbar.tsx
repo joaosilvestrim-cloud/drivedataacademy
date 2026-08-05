@@ -34,12 +34,12 @@ export default function Navbar() {
           <img src="/logo.png" alt="Drive Data Academy" className="h-12 w-auto sm:h-14" />
         </a>
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden items-center gap-0.5 lg:flex">
           {links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
-                className="rounded-full px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-brand-green"
+                className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-brand-green"
               >
                 {l.label}
               </a>
