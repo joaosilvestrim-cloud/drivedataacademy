@@ -118,6 +118,7 @@ export async function addLesson(formData: FormData) {
     course_id,
     title: (formData.get("title") as string).trim(),
     type: (formData.get("type") as string) || "video",
+    video_provider: (formData.get("video_provider") as string) || "youtube",
     video_id: ((formData.get("video_id") as string) || "").trim() || null,
     duration: ((formData.get("duration") as string) || "").trim() || null,
     is_preview: formData.get("is_preview") === "on",

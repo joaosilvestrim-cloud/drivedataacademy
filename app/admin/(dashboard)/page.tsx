@@ -41,12 +41,15 @@ export default async function AdminHome() {
       return q;
     };
 
-    const [waitlistC, coursesC, studentsC, enrollC, recentWaitlist, recentLeads, recentPosts] =
+    const [waitlistC, coursesC, studentsC, enrollC, fullC, threadsC, unansweredC, recentWaitlist, recentLeads, recentPosts] =
       await Promise.all([
         head("waitlist"),
         head("courses"),
         head("profiles"),
         head("enrollments"),
+        head("memberships", (q) => q.eq("status", "active")),
+        head("forum_threads"),
+        head("forum_threads", (q) => q.eq("reply_count", 0)),
         supabase.from("waitlist").select("name, email, created_at").order("created_at", { ascending: false }).limit(5),
         supabase.from("enterprise_leads").select("name, request_type, created_at").order("created_at", { ascending: false }).limit(5),
         supabase.from("posts").select("id, title, published, updated_at").order("updated_at", { ascending: false }).limit(5),
@@ -57,12 +60,24 @@ export default async function AdminHome() {
         <h1 className="font-display text-2xl font-bold text-white">Visão geral</h1>
         <p className="mt-1 text-sm text-slate-400">Resumo do que está chegando pelo site.</p>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <StatCard label="Cursos" value={coursesC.count ?? 0} href="/admin/cursos" icon="doc" />
           <StatCard label="Alunos" value={studentsC.count ?? 0} href="/admin/alunos" icon="building" />
           <StatCard label="Matrículas" value={enrollC.count ?? 0} href="/admin/alunos" icon="check" />
+          <StatCard label="Acessos full ativos" value={fullC.count ?? 0} href="/admin/acessos" icon="check" />
+          <StatCard label="Tópicos na comunidade" value={threadsC.count ?? 0} href="/admin/comunidade" icon="doc" />
           <StatCard label="Inscritos na lista" value={waitlistC.count ?? 0} href="/admin/waitlist" icon="list" />
         </div>
+
+        {(unansweredC.count ?? 0) > 0 && (
+          <Link href="/admin/comunidade" className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] px-5 py-3 transition-colors hover:border-amber-400/40">
+            <span className="flex items-center gap-2.5 text-sm text-amber-200">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9l-8 14A2 2 0 004 21h16a2 2 0 001.7-3l-8-14a2 2 0 00-3.4 0z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              {unansweredC.count} tópico(s) sem resposta na comunidade
+            </span>
+            <span className="shrink-0 text-xs font-medium text-amber-200/80">Moderar →</span>
+          </Link>
+        )}
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           {/* Últimos inscritos */}

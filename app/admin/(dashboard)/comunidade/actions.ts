@@ -60,3 +60,27 @@ export async function moveChannel(formData: FormData) {
   await supabase.from("forum_channels").update({ position: a.position }).eq("id", b.id);
   revalidatePath("/admin/comunidade");
 }
+
+// ---------- Moderação de tópicos ----------
+export async function togglePinThread(formData: FormData) {
+  const supabase = await admin();
+  await supabase.from("forum_threads").update({ pinned: formData.get("next") === "true" }).eq("id", formData.get("id") as string);
+  revalidatePath("/admin/comunidade");
+}
+
+export async function toggleLockThread(formData: FormData) {
+  const supabase = await admin();
+  await supabase.from("forum_threads").update({ locked: formData.get("next") === "true" }).eq("id", formData.get("id") as string);
+  revalidatePath("/admin/comunidade");
+}
+
+export async function deleteThread(formData: FormData) {
+  const supabase = await admin();
+  // apaga respostas e pontos ligados antes do tópico
+  const id = formData.get("id") as string;
+  const { data: posts } = await supabase.from("forum_posts").select("id").eq("thread_id", id);
+  const postIds = (posts ?? []).map((p: any) => p.id);
+  if (postIds.length) await supabase.from("point_events").delete().in("ref_id", postIds).eq("kind", "solution");
+  await supabase.from("forum_threads").delete().eq("id", id);
+  revalidatePath("/admin/comunidade");
+}
