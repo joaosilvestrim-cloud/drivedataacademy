@@ -12,6 +12,7 @@ type Course = {
   instructor_name: string | null;
   price: number;
   workload: string | null;
+  certificate_enabled?: boolean;
   published: boolean;
 } | null;
 
@@ -40,10 +41,6 @@ export default function CourseForm({ course }: { course?: Course }) {
           </div>
         </div>
         <div className="space-y-1.5">
-          <label className={label} htmlFor="workload">Carga horária (no certificado)</label>
-          <input id="workload" name="workload" placeholder="Ex.: 8 horas" defaultValue={course?.workload ?? ""} className={`${field} max-w-xs`} />
-        </div>
-        <div className="space-y-1.5">
           <label className={label} htmlFor="subtitle">Subtítulo</label>
           <input id="subtitle" name="subtitle" defaultValue={course?.subtitle ?? ""} className={field} />
         </div>
@@ -65,6 +62,31 @@ export default function CourseForm({ course }: { course?: Course }) {
           <label className={label} htmlFor="cover_url">URL da imagem de capa</label>
           <input id="cover_url" name="cover_url" placeholder="https://..." defaultValue={course?.cover_url ?? ""} className={field} />
         </div>
+      </div>
+
+      {/* Certificado */}
+      <div className="glass rounded-2xl border border-white/8 p-6 space-y-4">
+        <div className="flex items-start gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-green to-brand-blue text-lg text-ink-900">🎓</span>
+          <div>
+            <p className="font-display text-base font-bold text-white">Certificado</p>
+            <p className="text-sm text-slate-400">Emitido automaticamente quando o aluno conclui 100% das aulas (e é aprovado na avaliação, se houver).</p>
+          </div>
+        </div>
+
+        <label className="flex items-center gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm text-slate-200">
+          <input type="checkbox" name="certificate_enabled" defaultChecked={course?.certificate_enabled ?? true} className="h-4 w-4 accent-emerald-400" />
+          Este curso emite certificado
+        </label>
+
+        <div className="space-y-1.5">
+          <label className={label} htmlFor="workload">Carga horária (aparece no certificado)</label>
+          <input id="workload" name="workload" placeholder="Ex.: 8 horas" defaultValue={course?.workload ?? ""} className={`${field} max-w-xs`} />
+        </div>
+
+        <a href={`/certificado/modelo${course?.title ? `?curso=${encodeURIComponent(course.title)}${course.workload ? `&carga=${encodeURIComponent(course.workload)}` : ""}` : ""}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-brand-teal transition-colors hover:border-brand-teal/50">
+          Ver modelo do certificado ↗
+        </a>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">

@@ -626,3 +626,6 @@ create policy "lives read" on public.live_events for select to authenticated usi
 
 -- Drip: libera o módulo a partir de uma data (null = liberado)
 alter table public.course_modules add column if not exists available_at timestamptz;
+
+-- Certificado: liga/desliga por curso (default ligado)
+alter table public.courses add column if not exists certificate_enabled boolean not null default true;

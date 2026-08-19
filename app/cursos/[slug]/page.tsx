@@ -15,7 +15,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const pub = createPublicClient();
   const { data: course } = await pub
     .from("courses")
-    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name")
+    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled")
     .eq("slug", params.slug)
     .eq("published", true)
     .maybeSingle();
@@ -56,10 +56,16 @@ export default async function CoursePage({ params }: { params: { slug: string } 
               <h2 className="font-display text-lg font-bold text-white">Conteúdo do curso</h2>
               <p className="mt-1 text-sm text-slate-500">{modules.length} módulo(s) · {lessonCount} aula(s)</p>
               <div className="mt-4 space-y-3">
-                {modules.map((m: any) => (
-                  <div key={m.id} className="glass rounded-2xl border border-white/8 p-5">
-                    <p className="font-semibold text-white">{m.title}</p>
-                    <ul className="mt-3 space-y-2">
+                {modules.map((m: any, mi: number) => (
+                  <details key={m.id} className="glass overflow-hidden rounded-2xl border border-white/8" open={mi === 0}>
+                    <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-4">
+                      <span className="flex items-center gap-3">
+                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/5 text-xs font-bold text-brand-green">{mi + 1}</span>
+                        <span className="font-semibold text-white">{m.title}</span>
+                      </span>
+                      <span className="shrink-0 text-xs text-slate-500">{m.lessons.length} aula(s)</span>
+                    </summary>
+                    <ul className="space-y-2 border-t border-white/5 px-5 py-4">
                       {m.lessons.map((l: any) => (
                         <li key={l.id} className="flex items-center justify-between gap-3 text-sm text-slate-300">
                           <span className="flex items-center gap-2">
@@ -71,7 +77,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                         </li>
                       ))}
                     </ul>
-                  </div>
+                  </details>
                 ))}
               </div>
             </div>
@@ -114,6 +120,22 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                   )}
                 </div>
                 <p className="mt-3 text-center text-xs text-slate-500">Acesso imediato após a matrícula.</p>
+
+                {/* O que você recebe */}
+                <div className="mt-6 space-y-2.5 border-t border-white/10 pt-5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Este curso inclui</p>
+                  {[
+                    { icon: "🎬", label: `${lessonCount} aula(s) em vídeo` },
+                    { icon: "♾️", label: "Acesso vitalício ao conteúdo" },
+                    ...(course.certificate_enabled !== false ? [{ icon: "🎓", label: "Certificado de conclusão" }] : []),
+                    { icon: "💬", label: "Comunidade de alunos" },
+                  ].map((it) => (
+                    <div key={it.label} className="flex items-center gap-2.5 text-sm text-slate-300">
+                      <span>{it.icon}</span>
+                      {it.label}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

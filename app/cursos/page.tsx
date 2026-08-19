@@ -13,7 +13,7 @@ export default async function CatalogPage() {
       const supabase = createPublicClient();
       const { data } = await supabase
         .from("courses")
-        .select("id, slug, title, subtitle, cover_url, level, price")
+        .select("id, slug, title, subtitle, cover_url, level, price, certificate_enabled")
         .eq("published", true)
         .order("position");
       courses = data ?? [];
@@ -55,8 +55,11 @@ export default async function CatalogPage() {
                   </span>
                 </div>
                 <div className="flex flex-1 flex-col p-6">
-                  {c.level && <p className="text-xs font-medium text-slate-500">{c.level}</p>}
-                  <h2 className="mt-1 font-display text-lg font-bold text-white transition-colors group-hover:text-brand-green">{c.title}</h2>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {c.level && <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-[0.7rem] font-medium text-slate-400">{c.level}</span>}
+                    {c.certificate_enabled !== false && <span className="rounded-full bg-brand-green/10 px-2.5 py-0.5 text-[0.7rem] font-medium text-brand-green">🎓 Certificado</span>}
+                  </div>
+                  <h2 className="mt-2 font-display text-lg font-bold text-white transition-colors group-hover:text-brand-green">{c.title}</h2>
                   {c.subtitle && <p className="mt-2 flex-1 text-sm text-slate-400">{c.subtitle}</p>}
                   <span className="mt-4 text-sm font-medium text-brand-green">Ver curso →</span>
                 </div>

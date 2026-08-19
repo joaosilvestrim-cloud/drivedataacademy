@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import Avatar from "@/components/Avatar";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
@@ -54,15 +55,20 @@ export default function PerfilPage() {
   }
 
   return (
-    <div>
-      <h1 className="font-display text-2xl font-bold text-white">Perfil</h1>
-      <p className="mt-1 text-sm text-slate-400">Seus dados de aluno.</p>
+    <div className="max-w-2xl">
+      <h1 className="font-display text-3xl font-bold text-white">Meu perfil</h1>
+      <p className="mt-1 text-sm text-slate-400">Seus dados de aluno na DriveData Academy.</p>
 
-      <form onSubmit={save} className="mt-6 max-w-lg space-y-5">
-        <div className="space-y-1.5">
-          <label className={label}>E-mail</label>
-          <input value={email} disabled className={`${field} cursor-not-allowed opacity-60`} />
+      {/* Cabeçalho com avatar */}
+      <div className="mt-6 flex items-center gap-4 rounded-2xl border border-white/8 bg-gradient-to-r from-brand-green/[0.08] to-brand-blue/[0.05] p-5">
+        <Avatar name={form.full_name || email} size="lg" />
+        <div className="min-w-0">
+          <p className="truncate font-display text-lg font-bold text-white">{form.full_name || "Complete seu nome"}</p>
+          <p className="truncate text-sm text-slate-400">{email}</p>
         </div>
+      </div>
+
+      <form onSubmit={save} className="mt-6 space-y-5 rounded-2xl border border-white/8 bg-white/[0.02] p-6">
         <div className="space-y-1.5">
           <label className={label} htmlFor="full_name">Nome completo</label>
           <input id="full_name" value={form.full_name} onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))} className={field} />

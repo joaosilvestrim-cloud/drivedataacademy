@@ -31,50 +31,87 @@ export default async function ContaHome() {
   }
 
   const firstName = (profile?.full_name || "").split(" ")[0];
+  const withPct = courses.map((c) => {
+    const total = lessonTotals[c.id] || 0;
+    const done = doneCounts[c.id] || 0;
+    return { ...c, total, done, pct: total ? Math.round((done / total) * 100) : 0 };
+  });
+  const completedCount = withPct.filter((c) => c.total > 0 && c.pct === 100).length;
+  const inProgress = withPct.filter((c) => c.pct > 0 && c.pct < 100).length;
 
   return (
     <div>
       <h1 className="font-display text-3xl font-bold text-white">Olá{firstName ? `, ${firstName}` : ""}! 👋</h1>
       <p className="mt-1 text-slate-400">Bem-vindo à sua área de aluno.</p>
 
+      {courses.length > 0 && (
+        <div className="mt-6 grid grid-cols-3 gap-3">
+          {[
+            { label: "Matriculado", value: courses.length, icon: "📚" },
+            { label: "Em andamento", value: inProgress, icon: "⏳" },
+            { label: "Concluídos", value: completedCount, icon: "🎓" },
+          ].map((s) => (
+            <div key={s.label} className="glass rounded-2xl border border-white/8 p-4 text-center">
+              <p className="text-2xl">{s.icon}</p>
+              <p className="mt-1 font-display text-2xl font-bold text-white">{s.value}</p>
+              <p className="text-xs text-slate-400">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="mt-8">
-        <h2 className="font-display text-lg font-bold text-white">Meus cursos</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-lg font-bold text-white">Meus cursos</h2>
+          {courses.length > 0 && <Link href="/cursos" className="text-sm font-medium text-brand-green hover:underline">Ver catálogo →</Link>}
+        </div>
 
         {courses.length === 0 ? (
           <div className="mt-4 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center">
+            <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-3xl text-ink-900">📚</div>
             <p className="font-medium text-white">Você ainda não está matriculado.</p>
             <p className="mt-1 text-sm text-slate-400">Explore o catálogo e comece agora.</p>
-            <Link href="/cursos" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">
+            <Link href="/cursos" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
               Ver cursos
             </Link>
           </div>
         ) : (
           <div className="mt-4 grid gap-5 sm:grid-cols-2">
-            {courses.map((c) => {
-              const total = lessonTotals[c.id] || 0;
-              const done = doneCounts[c.id] || 0;
-              const pct = total ? Math.round((done / total) * 100) : 0;
+            {withPct.map((c) => {
+              const complete = c.total > 0 && c.pct === 100;
               return (
-                <Link key={c.id} href={`/aprender/${c.slug}`} className="card-hover glass group overflow-hidden rounded-3xl border border-white/8">
+                <Link key={c.id} href={`/aprender/${c.slug}`} className="card-hover glass group flex flex-col overflow-hidden rounded-3xl border border-white/8">
                   <div className="relative aspect-[16/9] overflow-hidden">
                     {c.cover_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={c.cover_url} alt={c.title} className="absolute inset-0 h-full w-full object-cover" />
+                      <img src={c.cover_url} alt={c.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
                     )}
+                    {complete && <span className="absolute right-3 top-3 rounded-full bg-brand-green px-2.5 py-1 text-[0.65rem] font-bold text-ink-900">Concluído ✓</span>}
                   </div>
-                  <div className="p-5">
+                  <div className="flex flex-1 flex-col p-5">
                     <h3 className="font-display text-lg font-bold text-white transition-colors group-hover:text-brand-green">{c.title}</h3>
-                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-                      <div className="h-full bg-gradient-to-r from-brand-green to-brand-blue" style={{ width: `${pct}%` }} />
+                    <div className="mt-auto pt-4">
+                      <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                        <div className="h-full bg-gradient-to-r from-brand-green to-brand-blue transition-all" style={{ width: `${c.pct}%` }} />
+                      </div>
+                      <div className="mt-2 flex items-center justify-between">
+                        <p className="text-xs text-slate-400">{c.done}/{c.total} aulas · {c.pct}%</p>
+                        <span className="text-xs font-medium text-brand-green">{complete ? "Rever →" : c.pct > 0 ? "Continuar →" : "Começar →"}</span>
+                      </div>
                     </div>
-                    <p className="mt-2 text-xs text-slate-400">{done}/{total} aulas · {pct}%</p>
                   </div>
                 </Link>
               );
             })}
           </div>
+        )}
+
+        {completedCount > 0 && (
+          <Link href="/conta/certificados" className="mt-5 inline-flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">
+            🎓 Ver meus certificados
+          </Link>
         )}
       </div>
     </div>

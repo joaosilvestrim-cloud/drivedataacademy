@@ -25,7 +25,7 @@ export default async function PlayerPage({
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();
-  const { data: course } = await admin.from("courses").select("id, slug, title").eq("slug", params.slug).maybeSingle();
+  const { data: course } = await admin.from("courses").select("id, slug, title, certificate_enabled").eq("slug", params.slug).maybeSingle();
   if (!course) notFound();
 
   if (!(await canAccessCourse(admin, user.id, course.id))) redirect(`/cursos/${params.slug}`);
@@ -103,7 +103,7 @@ export default async function PlayerPage({
         </div>
       </header>
 
-      {pct === 100 && (
+      {pct === 100 && course.certificate_enabled !== false && (
         <div className="mx-auto max-w-7xl px-6 pt-6">
           <form action={issueCertificate} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-green/30 bg-brand-green/10 p-4">
             <input type="hidden" name="course_id" value={course.id} />
@@ -178,7 +178,7 @@ export default async function PlayerPage({
             </>
           )}
 
-          {modules.length > 1 && completedModules.length > 0 && (
+          {course.certificate_enabled !== false && modules.length > 1 && completedModules.length > 0 && (
             <div className="mt-8 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
               <p className="text-sm font-semibold text-white">Certificados por módulo</p>
               <p className="mt-1 text-xs text-slate-400">Emita o certificado de cada módulo concluído.</p>

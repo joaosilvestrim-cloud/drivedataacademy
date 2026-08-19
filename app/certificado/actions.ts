@@ -19,6 +19,10 @@ export async function issueCertificate(formData: FormData) {
   // Precisa ter acesso (matrícula ou acesso full).
   if (!(await canAccessCourse(admin, user.id, courseId))) redirect(`/cursos/${slug}`);
 
+  // Certificado precisa estar habilitado no curso.
+  const { data: courseCfg } = await admin.from("courses").select("certificate_enabled").eq("id", courseId).maybeSingle();
+  if (courseCfg && courseCfg.certificate_enabled === false) redirect(`/aprender/${slug}`);
+
   // Precisa ter 100% de conclusão.
   const [{ count: total }, { count: done }] = await Promise.all([
     admin.from("lessons").select("*", { count: "exact", head: true }).eq("course_id", courseId),
@@ -67,6 +71,9 @@ export async function issueModuleCertificate(formData: FormData) {
 
   const admin = createAdminClient();
   if (!(await canAccessCourse(admin, user.id, courseId))) redirect(`/cursos/${slug}`);
+
+  const { data: courseCfg } = await admin.from("courses").select("certificate_enabled").eq("id", courseId).maybeSingle();
+  if (courseCfg && courseCfg.certificate_enabled === false) redirect(`/aprender/${slug}`);
 
   // O módulo precisa ser do curso e ter aulas.
   const { data: mod } = await admin.from("course_modules").select("id, title").eq("id", moduleId).eq("course_id", courseId).maybeSingle();
