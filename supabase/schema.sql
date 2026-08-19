@@ -509,3 +509,97 @@ create policy "own orders read" on public.orders
 drop trigger if exists orders_set_updated_at on public.orders;
 create trigger orders_set_updated_at before update on public.orders
   for each row execute function public.set_updated_at();
+
+-- ============================================================
+-- Comunidade (fórum) + Gamificação
+-- ============================================================
+
+create table if not exists public.forum_channels (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  slug        text unique not null,
+  name        text not null,
+  description text,
+  position    int not null default 0
+);
+alter table public.forum_channels enable row level security;
+drop policy if exists "channels read" on public.forum_channels;
+create policy "channels read" on public.forum_channels for select to authenticated using (true);
+
+-- canais iniciais
+insert into public.forum_channels (slug, name, description, position) values
+  ('geral', 'Geral', 'Avisos, apresentações e conversa livre', 0),
+  ('power-bi', 'Power BI', 'Dúvidas de Power BI e DAX', 1),
+  ('ia', 'Inteligência Artificial', 'IA aplicada a negócios', 2),
+  ('html-web', 'HTML & Web', 'Front-end e desenvolvimento web', 3),
+  ('gestao-projetos', 'Gestão de Projetos', 'Métodos, ferramentas e carreira', 4)
+on conflict (slug) do nothing;
+
+create table if not exists public.forum_threads (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  channel_id  uuid not null references public.forum_channels(id) on delete cascade,
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  title       text not null,
+  body        text not null default '',
+  solved      boolean not null default false,
+  answer_id   uuid,
+  pinned      boolean not null default false,
+  locked      boolean not null default false,
+  reply_count int not null default 0
+);
+create index if not exists forum_threads_channel_idx on public.forum_threads (channel_id, created_at desc);
+alter table public.forum_threads enable row level security;
+drop policy if exists "threads read" on public.forum_threads;
+create policy "threads read" on public.forum_threads for select to authenticated using (true);
+drop policy if exists "threads insert own" on public.forum_threads;
+create policy "threads insert own" on public.forum_threads for insert to authenticated with check (auth.uid() = user_id);
+drop policy if exists "threads update own" on public.forum_threads;
+create policy "threads update own" on public.forum_threads for update to authenticated using (auth.uid() = user_id);
+drop policy if exists "threads delete own" on public.forum_threads;
+create policy "threads delete own" on public.forum_threads for delete to authenticated using (auth.uid() = user_id);
+
+create table if not exists public.forum_posts (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  thread_id  uuid not null references public.forum_threads(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  body       text not null,
+  is_answer  boolean not null default false
+);
+create index if not exists forum_posts_thread_idx on public.forum_posts (thread_id, created_at);
+alter table public.forum_posts enable row level security;
+drop policy if exists "posts read" on public.forum_posts;
+create policy "posts read" on public.forum_posts for select to authenticated using (true);
+drop policy if exists "posts insert own" on public.forum_posts;
+create policy "posts insert own" on public.forum_posts for insert to authenticated with check (auth.uid() = user_id);
+drop policy if exists "posts update own" on public.forum_posts;
+create policy "posts update own" on public.forum_posts for update to authenticated using (auth.uid() = user_id);
+drop policy if exists "posts delete own" on public.forum_posts;
+create policy "posts delete own" on public.forum_posts for delete to authenticated using (auth.uid() = user_id);
+
+-- Gamificação: eventos de pontos (append-only) + badges
+create table if not exists public.point_events (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  kind       text not null,   -- solution | thread | post
+  points     int not null default 0,
+  ref_id     uuid
+);
+create unique index if not exists point_events_solution_uidx on public.point_events (kind, ref_id) where kind = 'solution';
+create index if not exists point_events_user_idx on public.point_events (user_id);
+alter table public.point_events enable row level security;
+drop policy if exists "points read" on public.point_events;
+create policy "points read" on public.point_events for select to authenticated using (true);
+
+create table if not exists public.user_badges (
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  badge      text not null,   -- fundador | top | ...
+  created_at timestamptz not null default now(),
+  primary key (user_id, badge)
+);
+alter table public.user_badges enable row level security;
+drop policy if exists "badges read" on public.user_badges;
+create policy "badges read" on public.user_badges for select to authenticated using (true);

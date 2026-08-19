@@ -6,6 +6,8 @@ import SignOutButton from "./SignOutButton";
 
 const NAV = [
   { label: "Meus cursos", href: "/conta" },
+  { label: "Comunidade", href: "/conta/comunidade" },
+  { label: "Ranking", href: "/conta/ranking" },
   { label: "Certificados", href: "/conta/certificados" },
   { label: "Perfil", href: "/conta/perfil" },
 ];

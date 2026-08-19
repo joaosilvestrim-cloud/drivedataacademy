@@ -50,6 +50,9 @@ export async function grantFullAccess(formData: FormData) {
   });
   if (error) redirect("/admin/acessos?error=" + encodeURIComponent(error.message));
 
+  // selo de Fundador (1ª turma). Não duplica.
+  await admin.from("user_badges").upsert({ user_id: target!.id, badge: "fundador" }, { onConflict: "user_id,badge" });
+
   // boas-vindas (silencioso se o Resend não estiver configurado)
   const name = (target!.user_metadata?.full_name as string) || "";
   await sendAccessGrantedEmail(target!.email || email, name, SITE_URL);

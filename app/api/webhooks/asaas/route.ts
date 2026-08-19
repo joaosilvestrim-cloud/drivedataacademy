@@ -71,6 +71,7 @@ export async function POST(req: Request) {
         source: "asaas",
         expires_at: expires.toISOString(),
       });
+      await admin.from("user_badges").upsert({ user_id: order.user_id, badge: "fundador" }, { onConflict: "user_id,badge" });
       if (order.email) {
         const { data: prof } = await admin.from("profiles").select("full_name").eq("id", order.user_id).maybeSingle();
         await sendAccessGrantedEmail(order.email, prof?.full_name || "", SITE_URL);
