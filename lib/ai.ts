@@ -35,8 +35,11 @@ export async function chatSupportAI(history: ChatMsg[], context?: string): Promi
     .slice(-12)
     .map((m) => ({ role: m.role, content: m.content.slice(0, 2000) }));
 
+  const escalationRule =
+    "\n\nIMPORTANTE: se a dúvida depende da conta do aluno ou de ação humana (pagamento não reconhecido, não consegue acessar, reembolso, cobrança, erro/bug, ou algo que você não consegue resolver), responda acolhendo e avisando que vai encaminhar para o time, e adicione EXATAMENTE o marcador [[ESCALAR]] na última linha da sua resposta. Só use o marcador quando realmente precisar de um humano.";
+
   const messages = [
-    { role: "system", content: SYSTEM_PROMPT + (context ? `\n\nCursos disponíveis no momento:\n${context}` : "") },
+    { role: "system", content: SYSTEM_PROMPT + escalationRule + (context ? `\n\nCursos disponíveis no momento:\n${context}` : "") },
     ...trimmed,
   ];
 
