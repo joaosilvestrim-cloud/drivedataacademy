@@ -14,6 +14,7 @@ const ICONS: Record<string, string> = {
   materials: "M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2",
   blog: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
   settings: "M10.3 3.2a1 1 0 013.4 0l.2.8a1 1 0 001.4.7l.7-.3a1 1 0 011.3 1.3l-.3.7a1 1 0 00.7 1.4l.8.2a1 1 0 010 3.4l-.8.2a1 1 0 00-.7 1.4l.3.7a1 1 0 01-1.3 1.3l-.7-.3a1 1 0 00-1.4.7l-.2.8a1 1 0 01-3.4 0l-.2-.8a1 1 0 00-1.4-.7l-.7.3a1 1 0 01-1.3-1.3l.3-.7a1 1 0 00-.7-1.4l-.8-.2a1 1 0 010-3.4l.8-.2a1 1 0 00.7-1.4l-.3-.7a1 1 0 011.3-1.3l.7.3a1 1 0 001.4-.7l.2-.8zM12 15a3 3 0 100-6 3 3 0 000 6z",
+  access: "M12 1l9 4v6c0 5-3.8 9-9 11-5.2-2-9-6-9-11V5l9-4zM9.5 12l1.8 1.8L15 10",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string }[] }[] = [
@@ -23,6 +24,12 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Cursos", href: "/admin/cursos", icon: "courses" },
       { label: "Alunos", href: "/admin/alunos", icon: "students" },
+    ],
+  },
+  {
+    title: "Vendas",
+    items: [
+      { label: "Acessos", href: "/admin/acessos", icon: "access" },
     ],
   },
   {
