@@ -3,9 +3,11 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { youtubeId } from "@/lib/youtube";
+import { canAccessCourse } from "@/lib/access";
 import { markComplete } from "./actions";
 import { issueCertificate } from "@/app/certificado/actions";
 import CourseContents from "./CourseContents";
+import PandaPlayer from "./PandaPlayer";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +28,11 @@ export default async function PlayerPage({
   const { data: course } = await admin.from("courses").select("id, slug, title").eq("slug", params.slug).maybeSingle();
   if (!course) notFound();
 
-  const { data: enr } = await admin.from("enrollments").select("id").eq("user_id", user.id).eq("course_id", course.id).maybeSingle();
-  if (!enr) redirect(`/cursos/${params.slug}`);
+  if (!(await canAccessCourse(admin, user.id, course.id))) redirect(`/cursos/${params.slug}`);
 
   const [{ data: mods }, { data: lessons }, { data: prog }] = await Promise.all([
     admin.from("course_modules").select("id, title").eq("course_id", course.id).order("position"),
-    admin.from("lessons").select("id, module_id, title, type, video_id, content, duration, materials").eq("course_id", course.id).order("position"),
+    admin.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, materials").eq("course_id", course.id).order("position"),
     admin.from("lesson_progress").select("lesson_id").eq("user_id", user.id).eq("course_id", course.id).eq("completed", true),
   ]);
   const { data: quiz } = await admin.from("quizzes").select("id, title").eq("course_id", course.id).eq("published", true).maybeSingle();
@@ -98,7 +99,9 @@ export default async function PlayerPage({
             </div>
           ) : (
             <>
-              {vid ? (
+              {current.video_provider === "panda" && current.video_id ? (
+                <PandaPlayer videoId={current.video_id} host={process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST || null} lessonId={current.id} courseId={course.id} slug={course.slug} />
+              ) : vid ? (
                 <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
                   <div className="relative aspect-video">
                     <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`} title={current.title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />

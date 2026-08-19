@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { canAccessCourse } from "@/lib/access";
 import { gradeQuiz } from "../quizActions";
 
 export const dynamic = "force-dynamic";
@@ -21,8 +22,7 @@ export default async function AvaliacaoPage({
   const { data: course } = await admin.from("courses").select("id, slug, title").eq("slug", params.slug).maybeSingle();
   if (!course) notFound();
 
-  const { data: enr } = await admin.from("enrollments").select("id").eq("user_id", user.id).eq("course_id", course.id).maybeSingle();
-  if (!enr) redirect(`/cursos/${params.slug}`);
+  if (!(await canAccessCourse(admin, user.id, course.id))) redirect(`/cursos/${params.slug}`);
 
   const { data: quiz } = await admin.from("quizzes").select("id, title, pass_score, max_attempts, cooldown_hours").eq("course_id", course.id).eq("published", true).maybeSingle();
   if (!quiz) redirect(`/aprender/${params.slug}`);

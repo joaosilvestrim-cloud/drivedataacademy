@@ -4,6 +4,7 @@ import { randomBytes } from "crypto";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { canAccessCourse } from "@/lib/access";
 
 export async function issueCertificate(formData: FormData) {
   const courseId = formData.get("course_id") as string;
@@ -15,9 +16,8 @@ export async function issueCertificate(formData: FormData) {
 
   const admin = createAdminClient();
 
-  // Precisa estar matriculado.
-  const { data: enr } = await admin.from("enrollments").select("id").eq("user_id", user.id).eq("course_id", courseId).maybeSingle();
-  if (!enr) redirect(`/cursos/${slug}`);
+  // Precisa ter acesso (matrícula ou acesso full).
+  if (!(await canAccessCourse(admin, user.id, courseId))) redirect(`/cursos/${slug}`);
 
   // Precisa ter 100% de conclusão.
   const [{ count: total }, { count: done }] = await Promise.all([

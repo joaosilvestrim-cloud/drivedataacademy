@@ -13,6 +13,7 @@ type Lesson = {
   title: string;
   type: string;
   video_id: string | null;
+  video_provider: string | null;
   content: string | null;
   duration: string | null;
   is_preview: boolean;
@@ -93,7 +94,13 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       </select>
                       <input name="duration" defaultValue={l.duration ?? ""} placeholder="Duração (ex.: 12 min)" className={field} />
                     </div>
-                    <input name="video_id" defaultValue={l.video_id ?? ""} placeholder="Link/ID do vídeo (YouTube por enquanto)" className={field} />
+                    <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
+                      <select name="video_provider" defaultValue={l.video_provider ?? "youtube"} className={`${field} [&>option]:bg-ink-900`}>
+                        <option value="youtube">YouTube</option>
+                        <option value="panda">Panda Video</option>
+                      </select>
+                      <input name="video_id" defaultValue={l.video_id ?? ""} placeholder="Link/ID do vídeo (YouTube ou id da Panda)" className={field} />
+                    </div>
                     <textarea name="content" defaultValue={l.content ?? ""} rows={3} placeholder="Conteúdo em texto (para aulas do tipo Texto)" className={`${field} resize-y`} />
                     <div className="space-y-1">
                       <textarea

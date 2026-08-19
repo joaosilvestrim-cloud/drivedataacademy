@@ -457,3 +457,55 @@ create policy "public read quizzes" on public.quizzes
 drop policy if exists "own attempts read" on public.quiz_attempts;
 create policy "own attempts read" on public.quiz_attempts
   for select to authenticated using (auth.uid() = user_id);
+
+-- ============================================================
+-- LMS — Terreno das 10 frentes (acesso full, pagamento, panda, talentos)
+-- ============================================================
+
+-- Colunas de apoio
+alter table public.certificates   add column if not exists module_id uuid references public.course_modules(id) on delete set null;
+alter table public.lessons         add column if not exists video_provider text not null default 'youtube';  -- youtube | panda
+alter table public.lesson_progress add column if not exists pct int not null default 0;                      -- % assistido
+alter table public.profiles        add column if not exists linkedin_url text;                               -- banco de talentos
+
+-- Acesso "full por turma" (uma compra libera todos os cursos)
+create table if not exists public.memberships (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  plan       text not null default 'full',      -- full = acesso a tudo
+  status     text not null default 'active',     -- active | expired | canceled
+  source     text,                               -- asaas | admin | cortesia
+  starts_at  timestamptz not null default now(),
+  expires_at timestamptz                         -- null = sem expiração
+);
+create index if not exists memberships_user_idx on public.memberships (user_id, status);
+alter table public.memberships enable row level security;
+drop policy if exists "own memberships read" on public.memberships;
+create policy "own memberships read" on public.memberships
+  for select to authenticated using (auth.uid() = user_id);
+
+-- Pedidos (checkout / Asaas). Escrita e leitura sensível via service_role.
+create table if not exists public.orders (
+  id                 uuid primary key default gen_random_uuid(),
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now(),
+  user_id            uuid references auth.users(id) on delete set null,
+  email              text,
+  product            text not null default 'full_access',
+  amount             numeric,
+  status             text not null default 'pending',   -- pending | paid | refunded | canceled
+  gateway            text default 'asaas',
+  gateway_id         text,                               -- id da cobranca no gateway
+  external_reference text
+);
+create index if not exists orders_user_idx on public.orders (user_id);
+create index if not exists orders_gateway_idx on public.orders (gateway_id);
+alter table public.orders enable row level security;
+drop policy if exists "own orders read" on public.orders;
+create policy "own orders read" on public.orders
+  for select to authenticated using (auth.uid() = user_id);
+
+drop trigger if exists orders_set_updated_at on public.orders;
+create trigger orders_set_updated_at before update on public.orders
+  for each row execute function public.set_updated_at();

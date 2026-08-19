@@ -28,3 +28,18 @@ export async function markComplete(formData: FormData) {
   revalidatePath(`/aprender/${slug}`);
   redirect(`/aprender/${slug}${nextLesson ? `?l=${nextLesson}` : `?l=${lessonId}`}`);
 }
+
+// Marca a aula como concluída sem redirecionar (usado pelo progresso automático do Panda).
+export async function markLessonDone(lessonId: string, courseId: string, slug: string, pct = 100) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false };
+
+  const admin = createAdminClient();
+  await admin.from("lesson_progress").upsert(
+    { user_id: user.id, lesson_id: lessonId, course_id: courseId, completed: true, pct, updated_at: new Date().toISOString() },
+    { onConflict: "user_id,lesson_id" }
+  );
+  revalidatePath(`/aprender/${slug}`);
+  return { ok: true };
+}

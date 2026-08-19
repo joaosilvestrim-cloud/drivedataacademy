@@ -131,6 +131,7 @@ export async function saveLesson(formData: FormData) {
   await supabase.from("lessons").update({
     title: (formData.get("title") as string).trim(),
     type: (formData.get("type") as string) || "video",
+    video_provider: (formData.get("video_provider") as string) || "youtube",
     video_id: ((formData.get("video_id") as string) || "").trim() || null,
     content: ((formData.get("content") as string) || "").trim() || null,
     duration: ((formData.get("duration") as string) || "").trim() || null,

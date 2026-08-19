@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { canAccessCourse } from "@/lib/access";
 import { enrollFree } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -32,8 +34,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const { data: { user } } = await supabase.auth.getUser();
   let enrolled = false;
   if (user) {
-    const { data: e } = await supabase.from("enrollments").select("id").eq("user_id", user.id).eq("course_id", course.id).maybeSingle();
-    enrolled = !!e;
+    enrolled = await canAccessCourse(createAdminClient(), user.id, course.id);
   }
   const isPaid = Number(course.price) > 0;
 

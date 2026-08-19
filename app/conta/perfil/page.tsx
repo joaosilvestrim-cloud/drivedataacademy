@@ -9,7 +9,7 @@ const label = "block text-sm font-medium text-slate-300";
 
 export default function PerfilPage() {
   const [email, setEmail] = useState("");
-  const [form, setForm] = useState({ full_name: "", phone: "", country: "" });
+  const [form, setForm] = useState({ full_name: "", phone: "", country: "", linkedin_url: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -22,10 +22,10 @@ export default function PerfilPage() {
       setEmail(user.email || "");
       const { data } = await supabase
         .from("profiles")
-        .select("full_name, phone, country")
+        .select("full_name, phone, country, linkedin_url")
         .eq("id", user.id)
         .maybeSingle();
-      if (data) setForm({ full_name: data.full_name || "", phone: data.phone || "", country: data.country || "" });
+      if (data) setForm({ full_name: data.full_name || "", phone: data.phone || "", country: data.country || "", linkedin_url: data.linkedin_url || "" });
       setLoading(false);
     })();
   }, []);
@@ -41,6 +41,7 @@ export default function PerfilPage() {
         full_name: form.full_name.trim(),
         phone: form.phone.trim() || null,
         country: form.country.trim() || null,
+        linkedin_url: form.linkedin_url.trim() || null,
       }).eq("id", user.id);
     }
     setSaving(false);
@@ -75,6 +76,11 @@ export default function PerfilPage() {
             <label className={label} htmlFor="country">País</label>
             <input id="country" value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} placeholder="Brasil" className={field} />
           </div>
+        </div>
+        <div className="space-y-1.5">
+          <label className={label} htmlFor="linkedin_url">LinkedIn</label>
+          <input id="linkedin_url" value={form.linkedin_url} onChange={(e) => setForm((f) => ({ ...f, linkedin_url: e.target.value }))} placeholder="https://linkedin.com/in/seu-perfil" className={field} />
+          <p className="text-xs text-slate-500">Entra no banco de talentos da DriveData.</p>
         </div>
 
         <div className="flex items-center gap-3">
