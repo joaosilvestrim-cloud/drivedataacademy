@@ -40,7 +40,7 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
         <Mascot className="h-20 w-20 shrink-0" />
         <div>
           <h1 className="font-display text-2xl font-bold text-white">Central de Ajuda</h1>
-          <p className="mt-1 text-sm text-slate-300">Oi! Sou o assistente da DriveData. Abra um chamado e nosso time responde por aqui. Em breve eu mesmo respondo as dúvidas mais comuns na hora.</p>
+          <p className="mt-1 text-sm text-slate-300">Oi! Sou o assistente da DriveData. Abra um chamado que eu respondo na hora as dúvidas mais comuns. Quando precisar, chamo o time para dar sequência.</p>
         </div>
       </div>
 

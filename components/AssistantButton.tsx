@@ -27,7 +27,7 @@ export default function AssistantButton() {
             <Link href="/conta/ajuda?novo=1" onClick={() => setOpen(false)} className="block rounded-xl border border-white/10 px-4 py-2.5 text-center text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">
               Abrir um chamado
             </Link>
-            <p className="text-center text-[0.7rem] text-slate-500">Respostas por IA em breve</p>
+            <p className="text-center text-[0.7rem] text-slate-500">Respondo na hora e chamo o time quando precisar</p>
           </div>
         </div>
       )}
