@@ -9,6 +9,7 @@ type Student = {
   email: string;
   created_at: string;
   enrollments: number;
+  linkedin_url?: string | null;
 };
 
 function fmt(iso: string) {
@@ -39,6 +40,7 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
               <th className="px-4 py-3 font-medium">E-mail</th>
               <th className="px-4 py-3 font-medium">Cadastro</th>
               <th className="px-4 py-3 font-medium">Cursos</th>
+              <th className="px-4 py-3 font-medium">LinkedIn</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
@@ -49,6 +51,13 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
                 <td className="px-4 py-3">{r.email}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-slate-400">{fmt(r.created_at)}</td>
                 <td className="px-4 py-3">{r.enrollments}</td>
+                <td className="px-4 py-3">
+                  {r.linkedin_url ? (
+                    <a href={r.linkedin_url} target="_blank" rel="noreferrer" className="text-brand-teal hover:underline">Perfil ↗</a>
+                  ) : (
+                    <span className="text-slate-600">—</span>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-right">
                   <Link href={`/admin/alunos/${r.id}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">
                     Ver
@@ -57,7 +66,7 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-10 text-center text-slate-500">{rows.length === 0 ? "Nenhum aluno ainda." : "Nada encontrado."}</td></tr>
+              <tr><td colSpan={6} className="px-4 py-10 text-center text-slate-500">{rows.length === 0 ? "Nenhum aluno ainda." : "Nada encontrado."}</td></tr>
             )}
           </tbody>
         </table>

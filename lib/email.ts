@@ -53,6 +53,61 @@ async function buildAttachment(title: string, url: string | null) {
   }
 }
 
+// Envio genérico via Resend. Sem chave configurada, retorna { sent: false }.
+export async function sendHtmlEmail(to: string, subject: string, html: string): Promise<{ sent: boolean; reason?: string }> {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return { sent: false, reason: "not-configured" };
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: resolveFrom(), to, subject, html }),
+    });
+    if (!res.ok) return { sent: false, reason: `resend-${res.status}` };
+    return { sent: true };
+  } catch {
+    return { sent: false, reason: "network" };
+  }
+}
+
+function shell(title: string, bodyHtml: string): string {
+  return `<!doctype html><html><body style="margin:0;background:#0b1220;padding:32px 0;font-family:Arial,Helvetica,sans-serif">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+      <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden">
+        <tr><td style="padding:32px">
+          <p style="margin:0 0 4px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#15c47e;font-weight:700">DriveData Academy</p>
+          <h1 style="margin:0 0 16px;color:#fff;font-size:22px">${esc(title)}</h1>
+          ${bodyHtml}
+        </td></tr>
+      </table>
+      <p style="margin:16px 0 0;color:#64748b;font-size:12px">© DriveData Academy</p>
+    </td></tr></table>
+  </body></html>`;
+}
+
+// Boas-vindas quando o aluno ganha acesso full.
+export async function sendAccessGrantedEmail(to: string, name: string, siteUrl: string) {
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const body = `
+    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu acesso à DriveData Academy foi liberado. 🎉</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">Agora você tem acesso a <b style="color:#fff">todos os cursos</b>, avaliações e certificados.</p>
+    <a href="${siteUrl}/conta" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Entrar na plataforma</a>
+    <p style="margin:24px 0 0;color:#64748b;font-size:12px">Bons estudos!</p>`;
+  return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body));
+}
+
+// Aviso interno de novo pedido/intenção de matrícula (antes do pagamento automático).
+export async function sendOrderNotice(adminTo: string, data: { name: string; email: string; phone?: string | null; amount?: number | null }) {
+  const body = `
+    <p style="margin:0 0 12px;color:#cbd5e1">Nova intenção de matrícula no acesso full:</p>
+    <p style="margin:0 0 6px;color:#fff"><b>${esc(data.name)}</b></p>
+    <p style="margin:0 0 6px;color:#cbd5e1">${esc(data.email)}</p>
+    ${data.phone ? `<p style="margin:0 0 6px;color:#cbd5e1">WhatsApp: ${esc(data.phone)}</p>` : ""}
+    ${data.amount != null ? `<p style="margin:0 0 6px;color:#cbd5e1">Valor: R$ ${data.amount.toFixed(2)}</p>` : ""}
+    <p style="margin:16px 0 0;color:#64748b;font-size:12px">Confirme o pagamento e libere em Admin → Vendas → Acessos.</p>`;
+  return sendHtmlEmail(adminTo, "Nova matrícula (acesso full)", shell("Nova matrícula", body));
+}
+
 // Envia o conteúdo por e-mail via Resend. Se a chave não estiver configurada,
 // retorna { sent: false } e o app entrega o link na própria página.
 export async function sendMaterialEmail({

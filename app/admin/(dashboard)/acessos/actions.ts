@@ -4,6 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendAccessGrantedEmail } from "@/lib/email";
+
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
 async function findUserByEmail(admin: ReturnType<typeof createAdminClient>, email: string) {
   const target = email.trim().toLowerCase();
@@ -46,6 +49,10 @@ export async function grantFullAccess(formData: FormData) {
     expires_at,
   });
   if (error) redirect("/admin/acessos?error=" + encodeURIComponent(error.message));
+
+  // boas-vindas (silencioso se o Resend não estiver configurado)
+  const name = (target!.user_metadata?.full_name as string) || "";
+  await sendAccessGrantedEmail(target!.email || email, name, SITE_URL);
 
   revalidatePath("/admin/acessos");
   redirect("/admin/acessos?ok=" + encodeURIComponent("Acesso liberado para " + email));
