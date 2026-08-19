@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Background from "@/components/Background";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "./SignOutButton";
+import AssistantButton from "@/components/AssistantButton";
 
 const NAV = [
   { label: "Meus cursos", href: "/conta" },
@@ -10,6 +11,7 @@ const NAV = [
   { label: "Agenda", href: "/conta/agenda" },
   { label: "Ranking", href: "/conta/ranking" },
   { label: "Certificados", href: "/conta/certificados" },
+  { label: "Ajuda", href: "/conta/ajuda" },
   { label: "Perfil", href: "/conta/perfil" },
 ];
 
@@ -54,6 +56,7 @@ export default async function ContaLayout({ children }: { children: React.ReactN
         </header>
 
         <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+        <AssistantButton />
       </div>
     </>
   );

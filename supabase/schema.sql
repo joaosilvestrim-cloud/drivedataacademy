@@ -629,3 +629,44 @@ alter table public.course_modules add column if not exists available_at timestam
 
 -- Certificado: liga/desliga por curso (default ligado)
 alter table public.courses add column if not exists certificate_enabled boolean not null default true;
+
+-- ============================================================
+-- Suporte / Central de Ajuda (chamados) — base para IA de triagem
+-- ============================================================
+
+create table if not exists public.support_tickets (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  email      text,
+  subject    text not null,
+  category   text not null default 'duvida',   -- duvida | tecnico | financeiro | certificado | outro
+  status     text not null default 'open',     -- open | answered | resolved
+  last_actor text not null default 'user'      -- user | agent | ai
+);
+create index if not exists support_tickets_user_idx on public.support_tickets (user_id, created_at desc);
+create index if not exists support_tickets_status_idx on public.support_tickets (status);
+alter table public.support_tickets enable row level security;
+drop policy if exists "own tickets read" on public.support_tickets;
+create policy "own tickets read" on public.support_tickets
+  for select to authenticated using (auth.uid() = user_id);
+
+create table if not exists public.support_messages (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  ticket_id  uuid not null references public.support_tickets(id) on delete cascade,
+  author     text not null,   -- user | agent | ai
+  body       text not null
+);
+create index if not exists support_messages_ticket_idx on public.support_messages (ticket_id, created_at);
+alter table public.support_messages enable row level security;
+drop policy if exists "own ticket messages read" on public.support_messages;
+create policy "own ticket messages read" on public.support_messages
+  for select to authenticated using (
+    exists (select 1 from public.support_tickets t where t.id = ticket_id and t.user_id = auth.uid())
+  );
+
+drop trigger if exists support_tickets_set_updated_at on public.support_tickets;
+create trigger support_tickets_set_updated_at before update on public.support_tickets
+  for each row execute function public.set_updated_at();

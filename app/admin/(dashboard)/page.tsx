@@ -41,7 +41,7 @@ export default async function AdminHome() {
       return q;
     };
 
-    const [waitlistC, coursesC, studentsC, enrollC, fullC, threadsC, unansweredC, recentWaitlist, recentLeads, recentPosts] =
+    const [waitlistC, coursesC, studentsC, enrollC, fullC, threadsC, unansweredC, openTicketsC, recentWaitlist, recentLeads, recentPosts] =
       await Promise.all([
         head("waitlist"),
         head("courses"),
@@ -50,6 +50,7 @@ export default async function AdminHome() {
         head("memberships", (q) => q.eq("status", "active")),
         head("forum_threads"),
         head("forum_threads", (q) => q.eq("reply_count", 0)),
+        head("support_tickets", (q) => q.eq("status", "open")),
         supabase.from("waitlist").select("name, email, created_at").order("created_at", { ascending: false }).limit(5),
         supabase.from("enterprise_leads").select("name, request_type, created_at").order("created_at", { ascending: false }).limit(5),
         supabase.from("posts").select("id, title, published, updated_at").order("updated_at", { ascending: false }).limit(5),
@@ -69,14 +70,27 @@ export default async function AdminHome() {
           <StatCard label="Inscritos na lista" value={waitlistC.count ?? 0} href="/admin/waitlist" icon="list" />
         </div>
 
-        {(unansweredC.count ?? 0) > 0 && (
-          <Link href="/admin/comunidade" className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] px-5 py-3 transition-colors hover:border-amber-400/40">
-            <span className="flex items-center gap-2.5 text-sm text-amber-200">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9l-8 14A2 2 0 004 21h16a2 2 0 001.7-3l-8-14a2 2 0 00-3.4 0z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              {unansweredC.count} tópico(s) sem resposta na comunidade
-            </span>
-            <span className="shrink-0 text-xs font-medium text-amber-200/80">Moderar →</span>
-          </Link>
+        {((unansweredC.count ?? 0) > 0 || (openTicketsC.count ?? 0) > 0) && (
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {(openTicketsC.count ?? 0) > 0 && (
+              <Link href="/admin/suporte" className="flex items-center justify-between gap-3 rounded-2xl border border-brand-blue/25 bg-brand-blue/[0.06] px-5 py-3 transition-colors hover:border-brand-blue/40">
+                <span className="flex items-center gap-2.5 text-sm text-slate-200">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-blue"><path d="M18 10a6 6 0 10-12 0v4a2 2 0 002 2h1v-6H6M18 10v4a2 2 0 01-2 2h-1v-6h3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  {openTicketsC.count} chamado(s) aguardando resposta
+                </span>
+                <span className="shrink-0 text-xs font-medium text-slate-400">Responder →</span>
+              </Link>
+            )}
+            {(unansweredC.count ?? 0) > 0 && (
+              <Link href="/admin/comunidade" className="flex items-center justify-between gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] px-5 py-3 transition-colors hover:border-amber-400/40">
+                <span className="flex items-center gap-2.5 text-sm text-amber-200">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9l-8 14A2 2 0 004 21h16a2 2 0 001.7-3l-8-14a2 2 0 00-3.4 0z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  {unansweredC.count} tópico(s) sem resposta na comunidade
+                </span>
+                <span className="shrink-0 text-xs font-medium text-amber-200/80">Moderar →</span>
+              </Link>
+            )}
+          </div>
         )}
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
