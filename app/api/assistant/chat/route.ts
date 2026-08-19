@@ -8,10 +8,89 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
-
 const BADGE_LABELS: Record<string, string> = { fundador: "Fundador", top: "Top do ranking" };
 
-// Monta o contexto: dados do próprio aluno + catálogo. Deixa a IA "por dentro".
+// Cria um chamado a partir da conversa do chat e avisa o time.
+async function ticketFromChat(admin: ReturnType<typeof createAdminClient>, user: any, clean: any[], closingNote: string) {
+  const firstUser = [...clean].reverse().find((m: any) => m.role === "user")?.content || "Atendimento pelo chat";
+  const subject = firstUser.slice(0, 80);
+  const { data: ticket } = await admin
+    .from("support_tickets")
+    .insert({ user_id: user.id, email: user.email, subject, category: "outro", status: "open", last_actor: "ai" })
+    .select("id")
+    .single();
+  if (!ticket) return null;
+
+  const rows = [
+    ...clean.map((m: any) => ({ ticket_id: ticket.id, author: m.role === "user" ? "user" : "ai", body: m.content })),
+    { ticket_id: ticket.id, author: "ai", body: closingNote },
+  ];
+  await admin.from("support_messages").insert(rows);
+
+  const adminEmail = (process.env.ADMIN_EMAILS || "").split(",")[0]?.trim();
+  if (adminEmail) {
+    await sendHtmlEmail(
+      adminEmail,
+      `Chamado do assistente: ${subject}`,
+      `<p style="font-family:Arial">O assistente encaminhou uma conversa de <b>${user.email}</b> para o time.</p><p style="font-family:Arial">Assunto: ${subject}</p><p><a href="${SITE_URL}/admin/suporte">Abrir no painel</a></p>`
+    );
+  }
+  return ticket.id as string;
+}
+
+export async function POST(req: Request) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "invalid json" }, { status: 400 });
+  }
+
+  const history = Array.isArray(body?.messages) ? body.messages : [];
+  const alreadyEscalated = body?.escalated === true;
+  const forceEscalate = body?.forceEscalate === true;
+  const clean = history
+    .filter((m: any) => (m?.role === "user" || m?.role === "assistant") && typeof m?.content === "string")
+    .slice(-12);
+
+  const admin = createAdminClient();
+
+  // "Falar com o time": cria o chamado direto, sem formulário.
+  if (forceEscalate && !alreadyEscalated) {
+    const note = "Encaminhei sua conversa para o time da DriveData. Eles vão dar sequência por aqui e também respondemos por e-mail.";
+    const id = await ticketFromChat(admin, user, clean.length ? clean : [{ role: "user", content: "Quero falar com o time." }], note);
+    return NextResponse.json({ reply: note, escalated: !!id, ticketId: id });
+  }
+
+  if (clean.length === 0) return NextResponse.json({ reply: "Como posso ajudar?" });
+
+  const ctx = await buildContext(admin, user);
+  const raw = await chatSupportAI(clean, ctx);
+  if (!raw) {
+    // sem IA: escala direto para o time
+    const note = "No momento não consegui responder por aqui, então encaminhei para o time da DriveData. Eles respondem em breve.";
+    const id = alreadyEscalated ? null : await ticketFromChat(admin, user, clean, note);
+    return NextResponse.json({ reply: note, escalated: !!id, ticketId: id, fallback: true });
+  }
+
+  const needsHuman = raw.includes("[[ESCALAR]]");
+  const reply = raw.replace(/\[\[ESCALAR\]\]/g, "").trim();
+
+  let escalated = false;
+  let ticketId: string | null = null;
+  if (needsHuman && !alreadyEscalated) {
+    ticketId = await ticketFromChat(admin, user, clean, reply);
+    escalated = !!ticketId;
+  }
+
+  return NextResponse.json({ reply, escalated, ticketId });
+}
+
+// Contexto: dados do próprio aluno + catálogo. Deixa a IA "por dentro".
 async function buildContext(admin: ReturnType<typeof createAdminClient>, user: any): Promise<string> {
   const [{ data: profile }, { data: enrolls }, { data: mem }, { data: allPoints }, { data: myBadges }, { count: certCount }, { data: pub }] =
     await Promise.all([
@@ -27,7 +106,6 @@ async function buildContext(admin: ReturnType<typeof createAdminClient>, user: a
   const now = Date.now();
   const fullAccess = (mem ?? []).some((m: any) => !m.expires_at || new Date(m.expires_at).getTime() > now);
 
-  // pontos e ranking
   const totals: Record<string, number> = {};
   for (const e of allPoints ?? []) totals[e.user_id] = (totals[e.user_id] || 0) + (e.points || 0);
   const myPoints = totals[user.id] || 0;
@@ -35,7 +113,6 @@ async function buildContext(admin: ReturnType<typeof createAdminClient>, user: a
   const myRank = ranked.findIndex(([id]) => id === user.id);
   const mySolutions = Math.round(myPoints / 10);
 
-  // progresso por curso matriculado
   const courseIds = (enrolls ?? []).map((e: any) => e.course_id);
   const progressLines: string[] = [];
   if (courseIds.length) {
@@ -73,75 +150,4 @@ async function buildContext(admin: ReturnType<typeof createAdminClient>, user: a
     : "Catálogo: nenhum curso publicado no momento.";
 
   return `${student}\n\n${catalog}`;
-}
-
-export async function POST(req: Request) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-
-  let body: any;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "invalid json" }, { status: 400 });
-  }
-
-  const history = Array.isArray(body?.messages) ? body.messages : [];
-  const alreadyEscalated = body?.escalated === true;
-  const clean = history
-    .filter((m: any) => (m?.role === "user" || m?.role === "assistant") && typeof m?.content === "string")
-    .slice(-12);
-
-  if (clean.length === 0) return NextResponse.json({ reply: "Como posso ajudar?" });
-
-  const admin = createAdminClient();
-  const ctx = await buildContext(admin, user);
-
-  const raw = await chatSupportAI(clean, ctx);
-  if (!raw) {
-    return NextResponse.json({
-      reply: "No momento não consegui responder por aqui. Você pode abrir um chamado que o time da DriveData te ajuda.",
-      fallback: true,
-    });
-  }
-
-  // A IA marca [[ESCALAR]] quando precisa de um humano.
-  const needsHuman = raw.includes("[[ESCALAR]]");
-  const reply = raw.replace(/\[\[ESCALAR\]\]/g, "").trim();
-
-  let escalated = false;
-  let ticketId: string | null = null;
-
-  if (needsHuman && !alreadyEscalated) {
-    const firstUser = [...clean].reverse().find((m: any) => m.role === "user")?.content || "Atendimento pelo chat";
-    const subject = firstUser.slice(0, 80);
-    const { data: ticket } = await admin
-      .from("support_tickets")
-      .insert({ user_id: user.id, email: user.email, subject, category: "outro", status: "open", last_actor: "ai" })
-      .select("id")
-      .single();
-
-    if (ticket) {
-      ticketId = ticket.id;
-      escalated = true;
-      // grava a conversa como histórico do chamado
-      const rows = [
-        ...clean.map((m: any) => ({ ticket_id: ticket.id, author: m.role === "user" ? "user" : "ai", body: m.content })),
-        { ticket_id: ticket.id, author: "ai", body: reply },
-      ];
-      await admin.from("support_messages").insert(rows);
-
-      const adminEmail = (process.env.ADMIN_EMAILS || "").split(",")[0]?.trim();
-      if (adminEmail) {
-        await sendHtmlEmail(
-          adminEmail,
-          `Chamado do assistente: ${subject}`,
-          `<p style="font-family:Arial">A IA encaminhou uma conversa de <b>${user.email}</b> para o time.</p><p style="font-family:Arial">Assunto: ${subject}</p><p><a href="${SITE_URL}/admin/suporte">Abrir no painel</a></p>`
-        );
-      }
-    }
-  }
-
-  return NextResponse.json({ reply, escalated, ticketId });
 }
