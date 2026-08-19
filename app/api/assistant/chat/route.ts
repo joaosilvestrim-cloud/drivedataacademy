@@ -9,6 +9,72 @@ export const dynamic = "force-dynamic";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
+const BADGE_LABELS: Record<string, string> = { fundador: "Fundador", top: "Top do ranking" };
+
+// Monta o contexto: dados do próprio aluno + catálogo. Deixa a IA "por dentro".
+async function buildContext(admin: ReturnType<typeof createAdminClient>, user: any): Promise<string> {
+  const [{ data: profile }, { data: enrolls }, { data: mem }, { data: allPoints }, { data: myBadges }, { count: certCount }, { data: pub }] =
+    await Promise.all([
+      admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+      admin.from("enrollments").select("course_id").eq("user_id", user.id),
+      admin.from("memberships").select("expires_at").eq("user_id", user.id).eq("status", "active"),
+      admin.from("point_events").select("user_id, points"),
+      admin.from("user_badges").select("badge").eq("user_id", user.id),
+      admin.from("certificates").select("*", { count: "exact", head: true }).eq("user_id", user.id),
+      admin.from("courses").select("title, subtitle").eq("published", true).order("position"),
+    ]);
+
+  const now = Date.now();
+  const fullAccess = (mem ?? []).some((m: any) => !m.expires_at || new Date(m.expires_at).getTime() > now);
+
+  // pontos e ranking
+  const totals: Record<string, number> = {};
+  for (const e of allPoints ?? []) totals[e.user_id] = (totals[e.user_id] || 0) + (e.points || 0);
+  const myPoints = totals[user.id] || 0;
+  const ranked = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+  const myRank = ranked.findIndex(([id]) => id === user.id);
+  const mySolutions = Math.round(myPoints / 10);
+
+  // progresso por curso matriculado
+  const courseIds = (enrolls ?? []).map((e: any) => e.course_id);
+  const progressLines: string[] = [];
+  if (courseIds.length) {
+    const [{ data: cs }, { data: ls }, { data: pr }] = await Promise.all([
+      admin.from("courses").select("id, title").in("id", courseIds),
+      admin.from("lessons").select("course_id").in("course_id", courseIds),
+      admin.from("lesson_progress").select("course_id").eq("user_id", user.id).eq("completed", true).in("course_id", courseIds),
+    ]);
+    const total: Record<string, number> = {};
+    for (const l of ls ?? []) total[l.course_id] = (total[l.course_id] || 0) + 1;
+    const done: Record<string, number> = {};
+    for (const p of pr ?? []) done[p.course_id] = (done[p.course_id] || 0) + 1;
+    for (const c of cs ?? []) {
+      const t = total[c.id] || 0, d = done[c.id] || 0;
+      const pct = t ? Math.round((d / t) * 100) : 0;
+      progressLines.push(`  - ${c.title}: ${pct}% concluído (${d}/${t} aulas)`);
+    }
+  }
+
+  const badges = (myBadges ?? []).map((b: any) => BADGE_LABELS[b.badge] || b.badge);
+  const firstName = (profile?.full_name || "").split(" ")[0];
+
+  const student = [
+    "Dados do aluno (use quando ele perguntar sobre a própria conta; não repita tudo sem necessidade):",
+    `- Nome: ${firstName || "(não informado)"}`,
+    `- Acesso full (todos os cursos): ${fullAccess ? "sim" : "não"}`,
+    `- Pontos na comunidade: ${myPoints} · Posição no ranking: ${myRank >= 0 ? "#" + (myRank + 1) : "sem pontos ainda"} · Soluções dadas: ${mySolutions}`,
+    `- Selos: ${badges.length ? badges.join(", ") : "nenhum ainda"}`,
+    `- Certificados já emitidos: ${certCount ?? 0}`,
+    courseIds.length ? `- Cursos matriculados:\n${progressLines.join("\n")}` : "- Ainda não está matriculado em nenhum curso.",
+  ].join("\n");
+
+  const catalog = (pub ?? []).length
+    ? "Catálogo de cursos publicados:\n" + (pub ?? []).map((c: any) => `- ${c.title}${c.subtitle ? `: ${c.subtitle}` : ""}`).join("\n")
+    : "Catálogo: nenhum curso publicado no momento.";
+
+  return `${student}\n\n${catalog}`;
+}
+
 export async function POST(req: Request) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -30,8 +96,7 @@ export async function POST(req: Request) {
   if (clean.length === 0) return NextResponse.json({ reply: "Como posso ajudar?" });
 
   const admin = createAdminClient();
-  const { data: courses } = await admin.from("courses").select("title, subtitle").eq("published", true).order("position");
-  const ctx = (courses ?? []).map((c: any) => `- ${c.title}${c.subtitle ? `: ${c.subtitle}` : ""}`).join("\n");
+  const ctx = await buildContext(admin, user);
 
   const raw = await chatSupportAI(clean, ctx);
   if (!raw) {
