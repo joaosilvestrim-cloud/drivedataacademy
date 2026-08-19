@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { youtubeId } from "@/lib/youtube";
 import { canAccessCourse } from "@/lib/access";
 import { markComplete } from "./actions";
-import { issueCertificate } from "@/app/certificado/actions";
+import { issueCertificate, issueModuleCertificate } from "@/app/certificado/actions";
 import CourseContents from "./CourseContents";
 import PandaPlayer from "./PandaPlayer";
 
@@ -36,10 +36,18 @@ export default async function PlayerPage({
     admin.from("lesson_progress").select("lesson_id").eq("user_id", user.id).eq("course_id", course.id).eq("completed", true),
   ]);
   const { data: quiz } = await admin.from("quizzes").select("id, title").eq("course_id", course.id).eq("published", true).maybeSingle();
+  const { data: certs } = await admin.from("certificates").select("code, module_id").eq("user_id", user.id).eq("course_id", course.id);
+  const certByModule = new Map<string, string>();
+  for (const c of certs ?? []) if (c.module_id) certByModule.set(c.module_id, c.code);
 
   const allLessons = lessons ?? [];
   const done = new Set((prog ?? []).map((p: any) => p.lesson_id));
   const modules = (mods ?? []).map((m: any) => ({ ...m, lessons: allLessons.filter((l: any) => l.module_id === m.id) }));
+
+  // Módulos 100% concluídos (para certificado por módulo). Só faz sentido com >1 módulo.
+  const completedModules = modules
+    .filter((m: any) => m.lessons.length > 0 && m.lessons.every((l: any) => done.has(l.id)))
+    .map((m: any) => ({ id: m.id, title: m.title, code: certByModule.get(m.id) || null }));
 
   const flat = modules.flatMap((m: any) => m.lessons);
   const current = flat.find((l: any) => l.id === searchParams.l) || flat.find((l: any) => !done.has(l.id)) || flat[0];
@@ -153,6 +161,30 @@ export default async function PlayerPage({
                 </div>
               </div>
             </>
+          )}
+
+          {modules.length > 1 && completedModules.length > 0 && (
+            <div className="mt-8 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
+              <p className="text-sm font-semibold text-white">Certificados por módulo</p>
+              <p className="mt-1 text-xs text-slate-400">Emita o certificado de cada módulo concluído.</p>
+              <ul className="mt-4 space-y-2">
+                {completedModules.map((m: any) => (
+                  <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+                    <span className="text-sm text-slate-200">{m.title}</span>
+                    {m.code ? (
+                      <Link href={`/certificado/${m.code}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-brand-teal hover:border-brand-teal/50">Ver certificado</Link>
+                    ) : (
+                      <form action={issueModuleCertificate}>
+                        <input type="hidden" name="course_id" value={course.id} />
+                        <input type="hidden" name="module_id" value={m.id} />
+                        <input type="hidden" name="slug" value={course.slug} />
+                        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-1.5 text-xs font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Emitir certificado</button>
+                      </form>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 
