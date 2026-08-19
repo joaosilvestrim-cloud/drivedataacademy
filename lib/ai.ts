@@ -19,6 +19,7 @@ Regras:
 - Responda apenas com base no que você sabe sobre a plataforma e sobre o tema de dados/BI/IA. Não invente preços, prazos, políticas de reembolso ou dados da conta do aluno.
 - Para problemas que dependem da conta ou de ação humana (pagamento não reconhecido, não consegue acessar, reembolso, erro/bug, cobrança), seja acolhedor, dê a orientação geral possível e diga que o time da DriveData vai dar sequência por aqui.
 - Nunca peça senha, cartão ou dados sensíveis.
+- Não use emojis. Mantenha um tom profissional e acolhedor.
 - Se não souber, admita e encaminhe para o time.`;
 
 export async function askSupportAI(question: string, context?: string): Promise<string | null> {
