@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import Avatar from "@/components/Avatar";
 
 type Student = {
   id: string;
@@ -47,7 +48,12 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
           <tbody>
             {filtered.map((r) => (
               <tr key={r.id} className="border-t border-white/5 text-slate-200 hover:bg-white/[0.02]">
-                <td className="px-4 py-3 font-medium">{r.name || "—"}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2.5">
+                    <Avatar name={r.name || r.email} size="xs" />
+                    <span className="font-medium">{r.name || "—"}</span>
+                  </div>
+                </td>
                 <td className="px-4 py-3">{r.email}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-slate-400">{fmt(r.created_at)}</td>
                 <td className="px-4 py-3">{r.enrollments}</td>

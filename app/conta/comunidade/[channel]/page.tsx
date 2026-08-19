@@ -4,11 +4,20 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, displayName } from "@/lib/community";
 import { createThread } from "../actions";
+import Avatar from "@/components/Avatar";
 
 export const dynamic = "force-dynamic";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+
+const CHANNEL_STYLE: Record<string, { icon: string; from: string; to: string }> = {
+  geral: { icon: "💬", from: "#34e8a0", to: "#2ee6d6" },
+  "power-bi": { icon: "📊", from: "#fbbf24", to: "#f59e0b" },
+  ia: { icon: "🤖", from: "#a78bfa", to: "#3b9dff" },
+  "html-web": { icon: "🌐", from: "#3b9dff", to: "#22d3ee" },
+  "gestao-projetos": { icon: "🗂️", from: "#2ee6d6", to: "#34e8a0" },
+};
 
 function ago(iso: string) {
   const d = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -36,30 +45,47 @@ export default async function ChannelPage({ params }: { params: { channel: strin
     .order("created_at", { ascending: false });
 
   const { nameById } = await loadProfiles(admin, (threads ?? []).map((t: any) => t.user_id));
+  const s = CHANNEL_STYLE[channel.slug] || { icon: "📌", from: "#3b9dff", to: "#22d3ee" };
 
   return (
-    <div>
-      <Link href="/conta/comunidade" className="text-xs text-slate-500 hover:text-white">← Comunidade</Link>
-      <h1 className="mt-1 font-display text-2xl font-bold text-white">{channel.name}</h1>
-      {channel.description && <p className="mt-1 text-sm text-slate-400">{channel.description}</p>}
+    <div className="mx-auto max-w-3xl">
+      <Link href="/conta/comunidade" className="text-xs text-slate-500 transition-colors hover:text-white">← Comunidade</Link>
+
+      {/* Cabeçalho do canal */}
+      <div className="mt-2 flex items-center gap-4">
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl text-3xl text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>{s.icon}</span>
+        <div>
+          <h1 className="font-display text-2xl font-bold text-white">{channel.name}</h1>
+          {channel.description && <p className="text-sm text-slate-400">{channel.description}</p>}
+        </div>
+      </div>
 
       {/* Novo tópico */}
       <details className="mt-6 glass rounded-2xl border border-white/8 p-5">
-        <summary className="cursor-pointer text-sm font-semibold text-white">+ Novo tópico</summary>
+        <summary className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-white">
+          <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue text-ink-900">+</span>
+          Novo tópico
+        </summary>
         <form action={createThread} className="mt-4 space-y-3">
           <input type="hidden" name="channel_id" value={channel.id} />
           <input name="title" required placeholder="Título da sua dúvida" className={field} />
           <textarea name="body" rows={4} placeholder="Descreva com detalhes (opcional)" className={`${field} resize-y`} />
-          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Publicar tópico</button>
+          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Publicar tópico</button>
         </form>
       </details>
 
       {/* Tópicos */}
-      <div className="mt-6 divide-y divide-white/5 overflow-hidden rounded-2xl border border-white/8">
-        {(threads ?? []).length === 0 && <p className="px-4 py-10 text-center text-slate-500">Nenhum tópico neste canal ainda.</p>}
+      <div className="mt-6 space-y-2">
+        {(threads ?? []).length === 0 && (
+          <div className="rounded-2xl border border-dashed border-white/10 px-6 py-14 text-center">
+            <p className="font-medium text-white">Nenhum tópico neste canal ainda.</p>
+            <p className="mt-1 text-sm text-slate-400">Comece a conversa acima.</p>
+          </div>
+        )}
         {(threads ?? []).map((t: any) => (
-          <Link key={t.id} href={`/conta/comunidade/t/${t.id}`} className="flex items-center justify-between gap-4 px-4 py-3.5 hover:bg-white/[0.02]">
-            <div className="min-w-0">
+          <Link key={t.id} href={`/conta/comunidade/t/${t.id}`} className="flex items-center gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3.5 transition-colors hover:border-white/15 hover:bg-white/[0.04]">
+            <Avatar name={displayName(nameById, t.user_id)} size="sm" />
+            <div className="min-w-0 flex-1">
               <p className="truncate font-medium text-white">
                 {t.pinned && <span className="mr-1.5 text-brand-teal">📌</span>}
                 {t.solved && <span className="mr-1.5 text-brand-green">✓</span>}
@@ -67,7 +93,7 @@ export default async function ChannelPage({ params }: { params: { channel: strin
               </p>
               <p className="text-xs text-slate-500">{displayName(nameById, t.user_id)} · {ago(t.created_at)} atrás</p>
             </div>
-            <span className="shrink-0 text-xs text-slate-400">{t.reply_count} resp.</span>
+            <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-400">{t.reply_count} 💬</span>
           </Link>
         ))}
       </div>

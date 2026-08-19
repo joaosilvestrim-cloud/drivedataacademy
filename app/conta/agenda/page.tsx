@@ -9,6 +9,18 @@ export const dynamic = "force-dynamic";
 function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "full", timeStyle: "short", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
 }
+function shortDate(iso: string) {
+  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
+}
+function countdown(iso: string): string {
+  const diff = new Date(iso).getTime() - Date.now();
+  if (diff <= 0) return "começando";
+  const days = Math.floor(diff / 864e5);
+  if (days >= 1) return `em ${days} dia${days > 1 ? "s" : ""}`;
+  const hours = Math.floor(diff / 36e5);
+  if (hours >= 1) return `em ${hours} h`;
+  return `em ${Math.max(1, Math.floor(diff / 6e4))} min`;
+}
 
 export default async function AgendaPage() {
   const supabase = createClient();
@@ -18,71 +30,96 @@ export default async function AgendaPage() {
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-16 text-center">
+      <div className="rounded-3xl border border-white/10 bg-white/[0.02] px-6 py-20 text-center">
+        <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-3xl text-ink-900">📅</div>
         <h1 className="font-display text-2xl font-bold text-white">Agenda de lives</h1>
         <p className="mt-2 text-slate-400">Exclusivo para alunos com acesso ativo.</p>
-        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Garantir meu acesso</Link>
+        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Garantir meu acesso</Link>
       </div>
     );
   }
 
   const { data: lives } = await admin.from("live_events").select("*").eq("published", true).order("starts_at");
   const now = Date.now();
-  const upcoming = (lives ?? []).filter((l: any) => new Date(l.starts_at).getTime() + (l.duration_min || 60) * 60000 >= now);
-  const past = (lives ?? []).filter((l: any) => new Date(l.starts_at).getTime() + (l.duration_min || 60) * 60000 < now).reverse();
+  const endOf = (l: any) => new Date(l.starts_at).getTime() + (l.duration_min || 60) * 60000;
+  const upcoming = (lives ?? []).filter((l: any) => endOf(l) >= now);
+  const past = (lives ?? []).filter((l: any) => endOf(l) < now).reverse();
+  const isLiveNow = (l: any) => now >= new Date(l.starts_at).getTime() - 15 * 60000 && now <= endOf(l);
 
-  const isLiveNow = (l: any) => {
-    const s = new Date(l.starts_at).getTime();
-    return now >= s - 15 * 60000 && now <= s + (l.duration_min || 60) * 60000;
-  };
+  const next = upcoming[0];
+  const rest = upcoming.slice(1);
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Agenda de lives</h1>
+      <h1 className="font-display text-3xl font-bold text-white">Agenda de lives</h1>
       <p className="mt-1 text-sm text-slate-400">Encontros ao vivo e o roadmap de conteúdo da turma.</p>
 
-      {/* Próximas */}
-      <h2 className="mt-8 font-display text-lg font-bold text-white">Próximas</h2>
-      {upcoming.length === 0 ? (
-        <p className="mt-3 rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-slate-500">Nenhuma live agendada por enquanto.</p>
+      {/* Próxima live em destaque */}
+      {next ? (
+        <div className="mt-6 glow-border overflow-hidden rounded-3xl">
+          <div className="glass relative p-6 sm:p-8">
+            <div className="flex flex-wrap items-center gap-2">
+              {isLiveNow(next) ? (
+                <span className="inline-flex items-center gap-2 rounded-full bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-300">
+                  <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" /></span>
+                  AO VIVO AGORA
+                </span>
+              ) : (
+                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Próxima live · {countdown(next.starts_at)}</span>
+              )}
+            </div>
+            <h2 className="mt-3 font-display text-2xl font-bold text-white">{next.title}</h2>
+            <p className="mt-1 text-sm text-brand-teal">{fmt(next.starts_at)}{next.duration_min ? ` · ${next.duration_min} min` : ""}</p>
+            {next.description && <p className="mt-3 max-w-2xl text-sm text-slate-300">{next.description}</p>}
+            {next.url && (isLiveNow(next) ? (
+              <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Entrar na live →</a>
+            ) : (
+              <span className="mt-5 inline-block rounded-xl border border-white/10 px-6 py-3 text-sm font-medium text-slate-400">O link libera no horário</span>
+            ))}
+          </div>
+        </div>
       ) : (
-        <ol className="mt-4 space-y-4 border-l border-white/10 pl-6">
-          {upcoming.map((l: any) => {
-            const live = isLiveNow(l);
-            return (
+        <div className="mt-6 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center">
+          <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-white/5 text-3xl">📅</div>
+          <p className="font-medium text-white">Nenhuma live agendada por enquanto.</p>
+          <p className="mt-1 text-sm text-slate-400">Fique de olho, o calendário é atualizado toda semana.</p>
+        </div>
+      )}
+
+      {/* Próximas (roadmap) */}
+      {rest.length > 0 && (
+        <>
+          <h2 className="mt-10 font-display text-lg font-bold text-white">No roadmap</h2>
+          <ol className="mt-4 space-y-4 border-l border-white/10 pl-6">
+            {rest.map((l: any) => (
               <li key={l.id} className="relative">
-                <span className={`absolute -left-[31px] top-1.5 h-3.5 w-3.5 rounded-full ${live ? "bg-red-500 ring-4 ring-red-500/20" : "bg-brand-green"}`} />
+                <span className="absolute -left-[31px] top-4 grid h-6 w-6 place-items-center rounded-full border border-white/10 bg-ink-800 text-[0.6rem] font-bold text-brand-green">{shortDate(l.starts_at).split(" ")[0]}</span>
                 <div className="glass rounded-2xl border border-white/8 p-5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-display text-lg font-bold text-white">{l.title}</h3>
-                    {live && <span className="rounded-full bg-red-500/15 px-2.5 py-1 text-xs font-semibold text-red-300">AO VIVO</span>}
-                  </div>
-                  <p className="mt-1 text-sm text-brand-teal">{fmt(l.starts_at)}{l.duration_min ? ` · ${l.duration_min} min` : ""}</p>
+                  <h3 className="font-display text-lg font-bold text-white">{l.title}</h3>
+                  <p className="mt-1 text-sm text-brand-teal">{fmt(l.starts_at)}{l.duration_min ? ` · ${l.duration_min} min` : ""} <span className="text-slate-500">· {countdown(l.starts_at)}</span></p>
                   {l.description && <p className="mt-2 text-sm text-slate-300">{l.description}</p>}
-                  {l.url && (live ? (
-                    <a href={l.url} target="_blank" rel="noreferrer" className="mt-4 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Entrar na live →</a>
-                  ) : (
-                    <span className="mt-4 inline-block rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-slate-400">Link disponível no horário</span>
-                  ))}
                 </div>
               </li>
-            );
-          })}
-        </ol>
+            ))}
+          </ol>
+        </>
       )}
 
       {/* Anteriores */}
       {past.length > 0 && (
         <>
-          <h2 className="mt-10 font-display text-lg font-bold text-white">Anteriores</h2>
+          <h2 className="mt-10 font-display text-lg font-bold text-white">Gravações anteriores</h2>
           <div className="mt-4 space-y-3">
             {past.map((l: any) => (
               <div key={l.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4">
-                <div>
-                  <p className="font-medium text-white">{l.title}</p>
-                  <p className="text-xs text-slate-500">{fmt(l.starts_at)}</p>
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-lg">🎬</span>
+                  <div>
+                    <p className="font-medium text-white">{l.title}</p>
+                    <p className="text-xs text-slate-500">{fmt(l.starts_at)}</p>
+                  </div>
                 </div>
-                {l.url && <a href={l.url} target="_blank" rel="noreferrer" className="text-sm text-brand-teal hover:underline">Ver gravação ↗</a>}
+                {l.url && <a href={l.url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-4 py-2 text-sm text-brand-teal transition-colors hover:border-brand-teal/50">Ver gravação ↗</a>}
               </div>
             ))}
           </div>

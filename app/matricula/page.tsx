@@ -68,19 +68,24 @@ export default async function MatriculaPage() {
               </ul>
 
               {price > 0 && (
-                <div className="mt-8 inline-flex items-baseline gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4">
-                  <span className="text-sm text-slate-400">Acesso full por</span>
-                  <span className="font-display text-3xl font-bold text-white">{brl(price)}</span>
+                <div className="mt-8 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
+                  <div>
+                    <span className="block text-xs uppercase tracking-wide text-slate-400">Acesso full</span>
+                    <span className="font-display text-3xl font-bold text-white">{brl(price)}</span>
+                  </div>
+                  <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Vagas limitadas</span>
                 </div>
               )}
             </div>
 
             {/* Form */}
-            <div className="glass rounded-2xl border border-white/10 p-6 sm:p-8">
-              <h2 className="font-display text-xl font-bold text-white">Garanta sua vaga</h2>
-              <p className="mt-1 text-sm text-slate-400">Preencha e a gente cuida do resto.</p>
-              <div className="mt-6">
-                <MatriculaForm turmaNome={nome} />
+            <div className="glow-border rounded-2xl">
+              <div className="glass rounded-2xl p-6 sm:p-8">
+                <h2 className="font-display text-xl font-bold text-white">Garanta sua vaga</h2>
+                <p className="mt-1 text-sm text-slate-400">Preencha e a gente cuida do resto.</p>
+                <div className="mt-6">
+                  <MatriculaForm turmaNome={nome} />
+                </div>
               </div>
             </div>
           </div>

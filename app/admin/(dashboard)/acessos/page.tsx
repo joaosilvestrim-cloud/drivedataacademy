@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
+import Avatar from "@/components/Avatar";
 import GrantForm from "./GrantForm";
 import { revokeMembership, reactivateMembership } from "./actions";
 
@@ -97,8 +98,13 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
             {members.map((m) => (
               <tr key={m.id} className="text-slate-200">
                 <td className="px-4 py-3">
-                  <div className="font-medium text-white">{m.name || m.email}</div>
-                  {m.name && <div className="text-xs text-slate-500">{m.email}</div>}
+                  <div className="flex items-center gap-2.5">
+                    <Avatar name={m.name || m.email} size="xs" />
+                    <div>
+                      <div className="font-medium text-white">{m.name || m.email}</div>
+                      {m.name && <div className="text-xs text-slate-500">{m.email}</div>}
+                    </div>
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-slate-400">{m.source || "—"}</td>
                 <td className="px-4 py-3 text-slate-400">{fmt(m.starts_at)}</td>
