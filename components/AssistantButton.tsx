@@ -1,46 +1,132 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Mascot from "./Mascot";
 
+type Msg = { role: "user" | "assistant"; content: string };
+
+const GREETING = "Oi! Sou o assistente da DriveData. Posso ajudar com dúvidas sobre os cursos, certificados, comunidade e como a plataforma funciona. O que você precisa?";
+
 export default function AssistantButton() {
   const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: GREETING }]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (open && scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, loading, open]);
+
+  async function send() {
+    const text = input.trim();
+    if (!text || loading) return;
+    const next = [...messages, { role: "user" as const, content: text }];
+    setMessages(next);
+    setInput("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/assistant/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const data = await res.json();
+      setMessages((m) => [...m, { role: "assistant", content: data.reply || "Não consegui responder agora." }]);
+    } catch {
+      setMessages((m) => [...m, { role: "assistant", content: "Tive um problema de conexão. Tente de novo ou abra um chamado." }]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function onKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
 
   return (
     <div className="fixed bottom-5 right-5 z-50 print:hidden">
-      {/* Popover */}
+      {/* Janela de chat */}
       {open && (
-        <div className="mb-3 w-[300px] overflow-hidden rounded-2xl border border-white/10 bg-ink-800/95 shadow-2xl backdrop-blur">
-          <div className="flex items-center gap-3 bg-gradient-to-r from-brand-green/20 to-brand-blue/15 p-4">
-            <Mascot className="h-12 w-12 shrink-0 object-contain" />
-            <div>
+        <div className="mb-3 flex h-[520px] w-[360px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-ink-800/95 shadow-2xl backdrop-blur">
+          {/* Header */}
+          <div className="flex items-center gap-3 border-b border-white/10 bg-gradient-to-r from-brand-green/20 to-brand-blue/15 px-4 py-3">
+            <Mascot className="h-11 w-11 animate-float drop-shadow" />
+            <div className="flex-1">
               <p className="font-display text-sm font-bold text-white">Assistente DriveData</p>
-              <p className="text-xs text-slate-300">Estou aqui para ajudar</p>
+              <p className="flex items-center gap-1.5 text-xs text-slate-300"><span className="h-1.5 w-1.5 rounded-full bg-brand-green" /> Online</p>
             </div>
+            <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-white/10 hover:text-white">✕</button>
           </div>
-          <div className="space-y-3 p-4">
-            <p className="text-sm text-slate-300">Tem uma dúvida sobre os cursos, certificados ou pagamento? Fale com a gente.</p>
-            <Link href="/conta/ajuda" onClick={() => setOpen(false)} className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-              Central de Ajuda
-            </Link>
-            <Link href="/conta/ajuda?novo=1" onClick={() => setOpen(false)} className="block rounded-xl border border-white/10 px-4 py-2.5 text-center text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">
-              Abrir um chamado
-            </Link>
-            <p className="text-center text-[0.7rem] text-slate-500">Respondo na hora e chamo o time quando precisar</p>
+
+          {/* Mensagens */}
+          <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+            {messages.map((m, i) =>
+              m.role === "assistant" ? (
+                <div key={i} className="flex items-end gap-2">
+                  <Mascot className="h-7 w-7 shrink-0" />
+                  <div className="max-w-[80%] rounded-2xl rounded-bl-sm border border-white/8 bg-white/[0.04] px-3.5 py-2.5 text-sm leading-relaxed text-slate-100 whitespace-pre-line">{m.content}</div>
+                </div>
+              ) : (
+                <div key={i} className="flex justify-end">
+                  <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-gradient-to-br from-brand-green to-brand-blue px-3.5 py-2.5 text-sm leading-relaxed text-ink-900 whitespace-pre-line">{m.content}</div>
+                </div>
+              )
+            )}
+            {loading && (
+              <div className="flex items-end gap-2">
+                <Mascot className="h-7 w-7 shrink-0" />
+                <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm border border-white/8 bg-white/[0.04] px-4 py-3">
+                  {[0, 150, 300].map((d) => (
+                    <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: `${d}ms` }} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input */}
+          <div className="border-t border-white/10 p-3">
+            <div className="flex items-end gap-2">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={onKey}
+                rows={1}
+                placeholder="Escreva sua dúvida..."
+                className="max-h-24 flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
+              />
+              <button
+                onClick={send}
+                disabled={loading || !input.trim()}
+                aria-label="Enviar"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
+            </div>
+            <div className="mt-2 flex items-center justify-between px-1">
+              <span className="text-[0.65rem] text-slate-500">Respostas por IA · pode conter imprecisões</span>
+              <Link href="/conta/ajuda?novo=1" onClick={() => setOpen(false)} className="text-[0.7rem] font-medium text-brand-teal hover:underline">Falar com o time</Link>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Botão */}
+      {/* Botão flutuante */}
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Assistente de dúvidas"
-        className="group relative grid h-16 w-16 place-items-center rounded-full border border-white/10 bg-ink-800 shadow-xl transition-transform hover:scale-105"
+        className="group relative grid h-16 w-16 place-items-center rounded-full transition-transform hover:scale-105"
       >
-        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-green/30 to-brand-blue/20 blur-md transition-opacity group-hover:opacity-100" />
-        <Mascot className="relative h-14 w-14 object-contain" />
-        {!open && <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-ink-800 bg-brand-green" />}
+        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-green/40 to-brand-blue/30 blur-lg" />
+        <span className="absolute inset-1 rounded-full border border-white/10 bg-ink-800/80 backdrop-blur" />
+        <Mascot className={`relative h-16 w-16 ${open ? "" : "animate-float"} drop-shadow-lg`} />
+        {!open && <span className="absolute right-1 top-1 h-3 w-3 rounded-full border-2 border-ink-800 bg-brand-green" />}
       </button>
     </div>
   );

@@ -22,6 +22,38 @@ Regras:
 - Não use emojis. Mantenha um tom profissional e acolhedor.
 - Se não souber, admita e encaminhe para o time.`;
 
+type ChatMsg = { role: "user" | "assistant"; content: string };
+
+// Conversa (chat) com histórico. Usado pelo widget do assistente.
+export async function chatSupportAI(history: ChatMsg[], context?: string): Promise<string | null> {
+  const key = process.env.GROQ_API_KEY;
+  if (!key) return null;
+  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+
+  const trimmed = history
+    .filter((m) => (m.role === "user" || m.role === "assistant") && m.content?.trim())
+    .slice(-12)
+    .map((m) => ({ role: m.role, content: m.content.slice(0, 2000) }));
+
+  const messages = [
+    { role: "system", content: SYSTEM_PROMPT + (context ? `\n\nCursos disponíveis no momento:\n${context}` : "") },
+    ...trimmed,
+  ];
+
+  try {
+    const res = await fetch(GROQ_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model, messages, temperature: 0.3, max_tokens: 600 }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.choices?.[0]?.message?.content?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function askSupportAI(question: string, context?: string): Promise<string | null> {
   const key = process.env.GROQ_API_KEY;
   if (!key) return null;
