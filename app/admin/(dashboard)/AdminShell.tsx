@@ -17,6 +17,7 @@ const ICONS: Record<string, string> = {
   access: "M12 1l9 4v6c0 5-3.8 9-9 11-5.2-2-9-6-9-11V5l9-4zM9.5 12l1.8 1.8L15 10",
   launch: "M4 13c3-7 8-10 15-10 0 7-3 12-10 15l-3-2-2-3zM9 15l-4 4M14 9.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z",
   community: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75",
+  live: "M23 7l-7 5 7 5V7zM1 5h15v14H1zM6 9.5v5l4-2.5-4-2.5z",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string }[] }[] = [
@@ -27,6 +28,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Cursos", href: "/admin/cursos", icon: "courses" },
       { label: "Alunos", href: "/admin/alunos", icon: "students" },
       { label: "Comunidade", href: "/admin/comunidade", icon: "community" },
+      { label: "Lives", href: "/admin/lives", icon: "live" },
     ],
   },
   {

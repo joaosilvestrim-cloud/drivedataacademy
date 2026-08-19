@@ -31,7 +31,7 @@ export default async function PlayerPage({
   if (!(await canAccessCourse(admin, user.id, course.id))) redirect(`/cursos/${params.slug}`);
 
   const [{ data: mods }, { data: lessons }, { data: prog }] = await Promise.all([
-    admin.from("course_modules").select("id, title").eq("course_id", course.id).order("position"),
+    admin.from("course_modules").select("id, title, available_at").eq("course_id", course.id).order("position"),
     admin.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, materials").eq("course_id", course.id).order("position"),
     admin.from("lesson_progress").select("lesson_id").eq("user_id", user.id).eq("course_id", course.id).eq("completed", true),
   ]);
@@ -42,21 +42,34 @@ export default async function PlayerPage({
 
   const allLessons = lessons ?? [];
   const done = new Set((prog ?? []).map((p: any) => p.lesson_id));
-  const modules = (mods ?? []).map((m: any) => ({ ...m, lessons: allLessons.filter((l: any) => l.module_id === m.id) }));
+  const nowMs = Date.now();
+  const relFmt = (iso: string) =>
+    new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
+  const modules = (mods ?? []).map((m: any) => {
+    const locked = !!m.available_at && new Date(m.available_at).getTime() > nowMs;
+    return {
+      ...m,
+      locked,
+      releaseLabel: locked ? relFmt(m.available_at) : null,
+      lessons: allLessons.filter((l: any) => l.module_id === m.id),
+    };
+  });
 
-  // Módulos 100% concluídos (para certificado por módulo). Só faz sentido com >1 módulo.
+  // Módulos 100% concluídos (para certificado por módulo). Ignora bloqueados.
   const completedModules = modules
-    .filter((m: any) => m.lessons.length > 0 && m.lessons.every((l: any) => done.has(l.id)))
+    .filter((m: any) => !m.locked && m.lessons.length > 0 && m.lessons.every((l: any) => done.has(l.id)))
     .map((m: any) => ({ id: m.id, title: m.title, code: certByModule.get(m.id) || null }));
 
-  const flat = modules.flatMap((m: any) => m.lessons);
+  // Navegação só entre aulas liberadas (drip).
+  const flat = modules.filter((m: any) => !m.locked).flatMap((m: any) => m.lessons);
   const current = flat.find((l: any) => l.id === searchParams.l) || flat.find((l: any) => !done.has(l.id)) || flat[0];
   const currentIdx = current ? flat.findIndex((l: any) => l.id === current.id) : -1;
   const prev = currentIdx > 0 ? flat[currentIdx - 1] : null;
   const next = currentIdx >= 0 && currentIdx < flat.length - 1 ? flat[currentIdx + 1] : null;
 
-  const total = flat.length;
-  const completed = flat.filter((l: any) => done.has(l.id)).length;
+  // Progresso considera todas as aulas do curso (o certificado só sai com tudo liberado e concluído).
+  const total = allLessons.length;
+  const completed = allLessons.filter((l: any) => done.has(l.id)).length;
   const pct = total ? Math.round((completed / total) * 100) : 0;
 
   const vid = current?.type === "video" ? youtubeId(current.video_id) : null;
@@ -65,6 +78,8 @@ export default async function PlayerPage({
   const sidebarModules = modules.map((m: any) => ({
     id: m.id,
     title: m.title,
+    locked: m.locked,
+    releaseLabel: m.releaseLabel,
     lessons: m.lessons.map((l: any) => ({ id: l.id, title: l.title, duration: l.duration })),
   }));
 
@@ -123,7 +138,7 @@ export default async function PlayerPage({
                 <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] text-slate-500">Aula em preparação.</div>
               )}
 
-              <p className="mt-5 text-xs font-medium uppercase tracking-wide text-brand-green">Aula {currentIdx + 1} de {total}</p>
+              <p className="mt-5 text-xs font-medium uppercase tracking-wide text-brand-green">Aula {currentIdx + 1} de {flat.length}</p>
               <h1 className="mt-1 font-display text-2xl font-bold text-white">{current.title}</h1>
 
               {materials.length > 0 && (

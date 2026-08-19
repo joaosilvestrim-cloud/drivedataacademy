@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 type Lesson = { id: string; title: string; duration: string | null };
-type Module = { id: string; title: string; lessons: Lesson[] };
+type Module = { id: string; title: string; lessons: Lesson[]; locked?: boolean; releaseLabel?: string | null };
 
 export default function CourseContents({
   slug,
@@ -31,12 +31,28 @@ export default function CourseContents({
           <div key={m.id} className="border-b border-white/5 last:border-0">
             <div className="flex items-center justify-between gap-2 px-4 pt-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{m.title}</p>
-              <span className="shrink-0 text-[0.7rem] text-slate-500">{completed}/{total}</span>
+              {m.locked ? (
+                <span className="shrink-0 text-[0.7rem] text-amber-300/80">🔒 {m.releaseLabel}</span>
+              ) : (
+                <span className="shrink-0 text-[0.7rem] text-slate-500">{completed}/{total}</span>
+              )}
             </div>
             <ul className="p-2">
               {m.lessons.map((l, li) => {
                 const active = l.id === currentId;
                 const isDone = done.has(l.id);
+                if (m.locked) {
+                  return (
+                    <li key={l.id}>
+                      <div className="flex cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-slate-500">
+                        <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-white/15 text-slate-600">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M6 10V8a6 6 0 1112 0v2M5 10h14v10H5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </span>
+                        <span className="flex-1 truncate">{l.title}</span>
+                      </div>
+                    </li>
+                  );
+                }
                 return (
                   <li key={l.id}>
                     <Link

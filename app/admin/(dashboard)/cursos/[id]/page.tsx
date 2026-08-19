@@ -20,7 +20,7 @@ export default async function EditCoursePage({ params }: { params: { id: string 
   if (!course) notFound();
 
   const [{ data: mods }, { data: lessons }] = await Promise.all([
-    supabase.from("course_modules").select("id, title").eq("course_id", course.id).order("position"),
+    supabase.from("course_modules").select("id, title, available_at").eq("course_id", course.id).order("position"),
     supabase.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, is_preview, materials").eq("course_id", course.id).order("position"),
   ]);
 

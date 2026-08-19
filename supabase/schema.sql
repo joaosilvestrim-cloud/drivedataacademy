@@ -603,3 +603,26 @@ create table if not exists public.user_badges (
 alter table public.user_badges enable row level security;
 drop policy if exists "badges read" on public.user_badges;
 create policy "badges read" on public.user_badges for select to authenticated using (true);
+
+-- ============================================================
+-- Lives / roadmap + liberação de conteúdo por data (drip)
+-- ============================================================
+
+create table if not exists public.live_events (
+  id           uuid primary key default gen_random_uuid(),
+  created_at   timestamptz not null default now(),
+  title        text not null,
+  description  text,
+  starts_at    timestamptz not null,
+  duration_min int,
+  url          text,
+  cover_url    text,
+  published    boolean not null default true
+);
+create index if not exists live_events_starts_idx on public.live_events (starts_at);
+alter table public.live_events enable row level security;
+drop policy if exists "lives read" on public.live_events;
+create policy "lives read" on public.live_events for select to authenticated using (published);
+
+-- Drip: libera o módulo a partir de uma data (null = liberado)
+alter table public.course_modules add column if not exists available_at timestamptz;

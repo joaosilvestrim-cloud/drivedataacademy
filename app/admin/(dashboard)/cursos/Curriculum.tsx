@@ -7,6 +7,18 @@ import {
   deleteLesson,
   moveItem,
 } from "./actions";
+import { setModuleRelease } from "../lives/actions";
+
+// ISO -> "YYYY-MM-DDTHH:mm" no fuso do Brasil (para datetime-local).
+function toLocalInput(iso: string | null): string {
+  if (!iso) return "";
+  const p = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false,
+  }).formatToParts(new Date(iso));
+  const g = (t: string) => p.find((x) => x.type === t)?.value || "";
+  return `${g("year")}-${g("month")}-${g("day")}T${g("hour")}:${g("minute")}`;
+}
 
 type Lesson = {
   id: string;
@@ -19,7 +31,7 @@ type Lesson = {
   is_preview: boolean;
   materials: { title: string; url: string }[] | null;
 };
-type Module = { id: string; title: string; lessons: Lesson[] };
+type Module = { id: string; title: string; available_at?: string | null; lessons: Lesson[] };
 
 const field =
   "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
@@ -68,6 +80,16 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                 <button className="rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir módulo</button>
               </form>
             </div>
+
+            {/* Drip: liberar em */}
+            <form action={setModuleRelease} className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
+              <input type="hidden" name="module_id" value={m.id} />
+              <input type="hidden" name="course_id" value={courseId} />
+              <span>Liberar em:</span>
+              <input type="datetime-local" name="available_at" defaultValue={toLocalInput(m.available_at ?? null)} className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-brand-green/60" />
+              <button className={smallBtn}>Salvar data</button>
+              <span className="text-slate-500">(vazio = liberado)</span>
+            </form>
 
             {/* Aulas */}
             <div className="mt-4 space-y-2">
