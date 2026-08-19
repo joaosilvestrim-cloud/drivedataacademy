@@ -53,7 +53,7 @@ export default async function AvaliacaoPage({
         <div className={`rounded-2xl border p-6 text-center ${attempt.passed ? "border-brand-green/30 bg-brand-green/10" : "border-amber-400/30 bg-amber-400/10"}`}>
           <p className="font-display text-3xl font-bold text-white">{attempt.score}%</p>
           <p className={`mt-1 font-semibold ${attempt.passed ? "text-brand-green" : "text-amber-300"}`}>
-            {attempt.passed ? "Aprovado! 🎉" : `Não atingiu a nota mínima (${quiz.pass_score}%)`}
+            {attempt.passed ? "Aprovado!" : `Não atingiu a nota mínima (${quiz.pass_score}%)`}
           </p>
         </div>
         <div className="mt-6 space-y-4">
@@ -67,7 +67,14 @@ export default async function AvaliacaoPage({
                   {opts.map((o: any, idx: number) => {
                     const isPicked = picked === idx;
                     const cls = o.correct ? "text-brand-green" : isPicked ? "text-red-400" : "text-slate-400";
-                    return <li key={idx} className={cls}>{o.correct ? "✓" : isPicked ? "✕" : "•"} {o.text}{isPicked ? " (sua resposta)" : ""}</li>;
+                    const mark = o.correct ? (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="inline"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    ) : isPicked ? (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="inline"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    ) : (
+                      <span className="inline-block h-1 w-1 rounded-full bg-current align-middle" />
+                    );
+                    return <li key={idx} className={cls}><span className="mr-1.5">{mark}</span>{o.text}{isPicked ? " (sua resposta)" : ""}</li>;
                   })}
                 </ul>
               </div>
@@ -90,7 +97,7 @@ export default async function AvaliacaoPage({
     return (
       <Shell>
         <div className="rounded-2xl border border-brand-green/30 bg-brand-green/10 p-6 text-center">
-          <p className="font-display text-2xl font-bold text-white">Você já foi aprovado 🎉</p>
+          <p className="font-display text-2xl font-bold text-white">Você já foi aprovado</p>
           <p className="mt-1 text-brand-green">Nota: {bestPassed.score}%</p>
           <Link href={`/aprender/${params.slug}/avaliacao?attempt=${bestPassed.id}`} className="mt-4 inline-block text-sm text-slate-300 hover:underline">Ver gabarito</Link>
         </div>

@@ -32,7 +32,10 @@ export default function CourseContents({
             <div className="flex items-center justify-between gap-2 px-4 pt-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{m.title}</p>
               {m.locked ? (
-                <span className="shrink-0 text-[0.7rem] text-amber-300/80">🔒 {m.releaseLabel}</span>
+                <span className="inline-flex shrink-0 items-center gap-1 text-[0.7rem] text-amber-300/80">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M6 10V8a6 6 0 1112 0v2M5 10h14v10H5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  {m.releaseLabel}
+                </span>
               ) : (
                 <span className="shrink-0 text-[0.7rem] text-slate-500">{completed}/{total}</span>
               )}
@@ -80,7 +83,8 @@ export default function CourseContents({
       {quiz && (
         <div className="border-t border-white/5 p-2">
           <Link href={`/aprender/${slug}/avaliacao`} onClick={() => setOpen(false)} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-brand-green hover:bg-white/5">
-            📝 {quiz.title}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            {quiz.title}
           </Link>
         </div>
       )}

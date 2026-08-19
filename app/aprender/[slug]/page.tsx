@@ -108,7 +108,7 @@ export default async function PlayerPage({
           <form action={issueCertificate} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-green/30 bg-brand-green/10 p-4">
             <input type="hidden" name="course_id" value={course.id} />
             <input type="hidden" name="slug" value={course.slug} />
-            <p className="text-sm font-medium text-white">🎉 Você concluiu o curso! Emita seu certificado.</p>
+            <p className="text-sm font-medium text-white">Você concluiu o curso. Emita seu certificado.</p>
             <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Emitir certificado</button>
           </form>
         </div>
@@ -170,7 +170,7 @@ export default async function PlayerPage({
                     <input type="hidden" name="course_id" value={course.id} />
                     {next && <input type="hidden" name="next_lesson" value={next.id} />}
                     <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                      {done.has(current.id) ? (next ? "Concluída · avançar" : "Concluída ✓") : next ? "Concluir e avançar" : "Marcar como concluída"}
+                      {done.has(current.id) ? (next ? "Concluída · avançar" : "Concluída") : next ? "Concluir e avançar" : "Marcar como concluída"}
                     </button>
                   </form>
                 </div>

@@ -64,7 +64,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="font-display text-2xl font-bold text-white">{thread.title}</h1>
-              {thread.solved && <span className="rounded-full bg-brand-green/15 px-2.5 py-1 text-xs font-semibold text-brand-green">Resolvido ✓</span>}
+              {thread.solved && <span className="inline-flex items-center gap-1 rounded-full bg-brand-green/15 px-2.5 py-1 text-xs font-semibold text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>Resolvido</span>}
             </div>
             <p className="mt-1 text-xs text-slate-500">{authorName}<Badges list={badgeById[thread.user_id]} /> · {fmt(thread.created_at)}</p>
             {thread.body && <p className="mt-4 whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{thread.body}</p>}
@@ -106,7 +106,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                     <form action={markSolution} className="mt-3">
                       <input type="hidden" name="thread_id" value={thread.id} />
                       <input type="hidden" name="post_id" value={p.id} />
-                      <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green">✓ Marcar como solução</button>
+                      <button className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>Marcar como solução</button>
                     </form>
                   )}
                 </div>

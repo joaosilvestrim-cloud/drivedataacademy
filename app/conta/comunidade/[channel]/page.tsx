@@ -11,12 +11,12 @@ export const dynamic = "force-dynamic";
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
 
-const CHANNEL_STYLE: Record<string, { icon: string; from: string; to: string }> = {
-  geral: { icon: "💬", from: "#34e8a0", to: "#2ee6d6" },
-  "power-bi": { icon: "📊", from: "#fbbf24", to: "#f59e0b" },
-  ia: { icon: "🤖", from: "#a78bfa", to: "#3b9dff" },
-  "html-web": { icon: "🌐", from: "#3b9dff", to: "#22d3ee" },
-  "gestao-projetos": { icon: "🗂️", from: "#2ee6d6", to: "#34e8a0" },
+const CHANNEL_STYLE: Record<string, { from: string; to: string }> = {
+  geral: { from: "#34e8a0", to: "#2ee6d6" },
+  "power-bi": { from: "#fbbf24", to: "#f59e0b" },
+  ia: { from: "#a78bfa", to: "#3b9dff" },
+  "html-web": { from: "#3b9dff", to: "#22d3ee" },
+  "gestao-projetos": { from: "#2ee6d6", to: "#34e8a0" },
 };
 
 function ago(iso: string) {
@@ -45,7 +45,7 @@ export default async function ChannelPage({ params }: { params: { channel: strin
     .order("created_at", { ascending: false });
 
   const { nameById } = await loadProfiles(admin, (threads ?? []).map((t: any) => t.user_id));
-  const s = CHANNEL_STYLE[channel.slug] || { icon: "📌", from: "#3b9dff", to: "#22d3ee" };
+  const s = CHANNEL_STYLE[channel.slug] || { from: "#3b9dff", to: "#22d3ee" };
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -53,7 +53,7 @@ export default async function ChannelPage({ params }: { params: { channel: strin
 
       {/* Cabeçalho do canal */}
       <div className="mt-2 flex items-center gap-4">
-        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl text-3xl text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>{s.icon}</span>
+        <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl font-display text-2xl font-bold text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>{channel.name.charAt(0).toUpperCase()}</span>
         <div>
           <h1 className="font-display text-2xl font-bold text-white">{channel.name}</h1>
           {channel.description && <p className="text-sm text-slate-400">{channel.description}</p>}
@@ -87,13 +87,13 @@ export default async function ChannelPage({ params }: { params: { channel: strin
             <Avatar name={displayName(nameById, t.user_id)} size="sm" />
             <div className="min-w-0 flex-1">
               <p className="truncate font-medium text-white">
-                {t.pinned && <span className="mr-1.5 text-brand-teal">📌</span>}
-                {t.solved && <span className="mr-1.5 text-brand-green">✓</span>}
+                {t.pinned && <span className="mr-1.5 text-[0.65rem] font-semibold uppercase tracking-wide text-brand-teal">fixado</span>}
+                {t.solved && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="mr-1.5 inline text-brand-green"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                 {t.title}
               </p>
               <p className="text-xs text-slate-500">{displayName(nameById, t.user_id)} · {ago(t.created_at)} atrás</p>
             </div>
-            <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-400">{t.reply_count} 💬</span>
+            <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-400">{t.reply_count} resp.</span>
           </Link>
         ))}
       </div>

@@ -47,7 +47,7 @@ export default async function RankingPage() {
   const podiumOrder = [podium[1], podium[0], podium[2]];
   const heights = ["h-24", "h-32", "h-20"];
   const rings = ["ring-slate-300/40", "ring-amber-300/60", "ring-orange-400/40"];
-  const medals = ["🥈", "🥇", "🥉"];
+  const rankColors = ["bg-slate-300 text-ink-900", "bg-amber-300 text-ink-900", "bg-orange-400 text-ink-900"];
   const realRank = [2, 1, 3];
 
   return (
@@ -68,7 +68,7 @@ export default async function RankingPage() {
               <div key={r.id} className="flex w-24 flex-col items-center sm:w-32">
                 <div className="relative">
                   <Avatar name={displayName(nameById, r.id)} size={i === 1 ? "lg" : "md"} className={`ring-2 ${rings[i]}`} />
-                  <span className="absolute -bottom-1 -right-1 text-lg">{medals[i]}</span>
+                  <span className={`absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full text-xs font-bold ${rankColors[i]}`}>{realRank[i]}</span>
                 </div>
                 <p className="mt-2 max-w-full truncate text-center text-sm font-semibold text-white">{displayName(nameById, r.id)}</p>
                 <p className="text-xs font-bold text-brand-green">{r.pts} pts</p>
@@ -117,7 +117,9 @@ export default async function RankingPage() {
 
       {top.length === 0 && (
         <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
-          <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-white/5 text-3xl">🏆</div>
+          <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-white/5 text-brand-green">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </div>
           <p className="font-medium text-white">O ranking está em branco.</p>
           <p className="mt-1 text-sm text-slate-400">Seja o primeiro a pontuar respondendo dúvidas na comunidade.</p>
           <Link href="/conta/comunidade" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Ir para a comunidade</Link>
