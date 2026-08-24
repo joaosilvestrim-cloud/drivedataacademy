@@ -8,6 +8,7 @@ import { markComplete } from "./actions";
 import { issueCertificate, issueModuleCertificate } from "@/app/certificado/actions";
 import CourseContents from "./CourseContents";
 import PandaPlayer from "./PandaPlayer";
+import ProtectedPlayer from "./ProtectedPlayer";
 
 export const dynamic = "force-dynamic";
 
@@ -123,13 +124,17 @@ export default async function PlayerPage({
           ) : (
             <>
               {current.video_provider === "panda" && current.video_id ? (
-                <PandaPlayer videoId={current.video_id} host={process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST || null} lessonId={current.id} courseId={course.id} slug={course.slug} />
+                <ProtectedPlayer>
+                  <PandaPlayer videoId={current.video_id} host={process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST || null} lessonId={current.id} courseId={course.id} slug={course.slug} />
+                </ProtectedPlayer>
               ) : vid ? (
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-                  <div className="relative aspect-video">
-                    <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`} title={current.title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+                <ProtectedPlayer>
+                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
+                    <div className="relative aspect-video">
+                      <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`} title={current.title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+                    </div>
                   </div>
-                </div>
+                </ProtectedPlayer>
               ) : current.type === "text" ? (
                 <article className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
                   <div className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{current.content || "—"}</div>
