@@ -19,6 +19,18 @@ export default function PandaPlayer({
 }) {
   const marked = useRef(false);
 
+  // Aceita: link de embed, código <iframe> colado, ou só o ID (usando o host do ambiente).
+  function resolveSrc(raw: string, host: string | null): string | null {
+    let v = (raw || "").trim();
+    const iframe = v.match(/src=["']([^"']+)["']/i);
+    if (iframe) v = iframe[1];
+    if (/^https?:\/\//i.test(v)) return v; // já é a URL do player
+    const idMatch = v.match(/[?&]v=([^&\s"']+)/);
+    const id = idMatch ? idMatch[1] : v;
+    return host ? `https://${host}/embed/?v=${id}` : null;
+  }
+  const src = resolveSrc(videoId, host);
+
   useEffect(() => {
     marked.current = false;
     function onMessage(e: MessageEvent) {
@@ -44,10 +56,10 @@ export default function PandaPlayer({
     return () => window.removeEventListener("message", onMessage);
   }, [lessonId, courseId, slug]);
 
-  if (!host) {
+  if (!src) {
     return (
       <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] px-6 text-center text-sm text-slate-500">
-        Vídeo Panda configurado (id: {videoId}). Defina <code className="text-slate-400">NEXT_PUBLIC_PANDA_PLAYER_HOST</code> para exibir o player.
+        Cole o link de compartilhamento do Panda nesta aula (ou o código de incorporar). Se preferir usar só o ID, defina <code className="text-slate-400">NEXT_PUBLIC_PANDA_PLAYER_HOST</code>.
       </div>
     );
   }
@@ -57,7 +69,7 @@ export default function PandaPlayer({
       <div className="relative aspect-video">
         <iframe
           className="absolute inset-0 h-full w-full"
-          src={`https://${host}/embed/?v=${videoId}`}
+          src={src}
           title="Aula"
           allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
           allowFullScreen

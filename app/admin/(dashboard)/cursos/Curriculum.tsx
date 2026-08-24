@@ -161,8 +161,9 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                           <option value="youtube">YouTube</option>
                           <option value="panda">Panda Video</option>
                         </select>
-                        <input name="video_id" defaultValue={l.video_id ?? ""} placeholder="Link do YouTube ou ID da Panda" className={field} />
+                        <input name="video_id" defaultValue={l.video_id ?? ""} placeholder="YouTube: link/ID · Panda: cole o link de compartilhamento" className={field} />
                       </div>
+                      <p className="mt-1.5 text-[0.7rem] text-slate-500">Panda: abra o vídeo → <span className="text-slate-400">Compartilhar</span> e cole o link aqui (pode colar o código &lt;iframe&gt; inteiro). Não precisa de API.</p>
                     </div>
 
                     {/* Texto */}
