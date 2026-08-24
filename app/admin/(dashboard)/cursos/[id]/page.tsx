@@ -9,7 +9,7 @@ import { deleteCourse } from "../actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function EditCoursePage({ params }: { params: { id: string } }) {
+export default async function EditCoursePage({ params, searchParams }: { params: { id: string }; searchParams: { ok?: string } }) {
   const supabase = createAdminClient();
   const { data: course } = await supabase
     .from("courses")
@@ -49,6 +49,13 @@ export default async function EditCoursePage({ params }: { params: { id: string 
           </a>
         )}
       </div>
+
+      {searchParams?.ok && (
+        <div className="mt-5 flex items-center gap-2 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm font-medium text-brand-green">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          {searchParams.ok}
+        </div>
+      )}
 
       <div className="mt-6">
         <CourseForm course={course} />

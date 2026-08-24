@@ -140,7 +140,9 @@ export async function saveLesson(formData: FormData) {
     is_preview: formData.get("is_preview") === "on",
     materials: parseMaterials(formData.get("materials") as string),
   }).eq("id", formData.get("id") as string);
-  refresh(formData.get("course_id") as string);
+  const courseId = formData.get("course_id") as string;
+  refresh(courseId);
+  redirect(`/admin/cursos/${courseId}?ok=Aula+salva`);
 }
 
 export async function deleteLesson(formData: FormData) {
