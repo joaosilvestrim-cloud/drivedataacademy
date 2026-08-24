@@ -3,39 +3,19 @@
 import { useEffect, useRef } from "react";
 import { markLessonDone } from "./actions";
 
-// Extrai pullzone (library_id) e video_external_id de um iframe/URL/ID colado.
-function parsePanda(raw: string): { pullzone: string | null; videoId: string | null; embedUrl: string | null } {
+// Resolve a URL de embed a partir de iframe/URL/ID colado.
+function resolveSrc(raw: string, host: string | null): string | null {
   let v = (raw || "").trim();
   const iframe = v.match(/src=["']([^"']+)["']/i);
   if (iframe) v = iframe[1];
-  const embedUrl = /^https?:\/\//i.test(v) ? v : null;
-  // host: player-<pullzone>.tv.pandavideo.com.br
-  const hostMatch = v.match(/player-([a-z0-9-]+)\.tv\.pandavideo\.com\.br/i);
-  const pullzone = hostMatch ? hostMatch[1] : null;
-  // video_external_id: valor de v= ou UUID
-  const vMatch = v.match(/[?&]v=([0-9a-f-]{16,})/i);
-  const uuid = v.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
-  const videoId = vMatch ? vMatch[1] : uuid ? uuid[0] : null;
-  return { pullzone, videoId, embedUrl };
-}
-
-let scriptPromise: Promise<void> | null = null;
-function loadPandaScript(): Promise<void> {
-  if (typeof window === "undefined") return Promise.resolve();
-  if ((window as any).PandaPlayer) return Promise.resolve();
-  if (scriptPromise) return scriptPromise;
-  scriptPromise = new Promise<void>((resolve) => {
-    const s = document.createElement("script");
-    s.src = "https://player.pandavideo.com.br/api.v2.js";
-    s.async = true;
-    s.onload = () => resolve();
-    document.head.appendChild(s);
-  });
-  return scriptPromise;
+  if (/^https?:\/\//i.test(v)) return v;
+  const idMatch = v.match(/[?&]v=([^&\s"']+)/);
+  const id = idMatch ? idMatch[1] : v;
+  return host ? `https://${host}/embed/?v=${id}` : null;
 }
 
 export default function PandaPlayer({
-  videoId: raw,
+  videoId,
   host,
   lessonId,
   courseId,
@@ -50,18 +30,12 @@ export default function PandaPlayer({
   const marked = useRef(false);
   const watched = useRef(0);
   const lastT = useRef<number | null>(null);
-  const { pullzone, videoId, embedUrl } = parsePanda(raw);
-  const effPullzone = pullzone || (host ? host.replace(/^player-/, "").replace(/\.tv\.pandavideo\.com\.br.*/i, "") : null);
-  const domId = videoId ? `panda-${videoId}` : "panda-player";
+  const src = resolveSrc(videoId, host);
 
   useEffect(() => {
     marked.current = false;
     watched.current = 0;
     lastT.current = null;
-    if (!effPullzone || !videoId) return;
-
-    let player: any;
-    let cancelled = false;
 
     function done(pct: number) {
       if (marked.current) return;
@@ -69,10 +43,13 @@ export default function PandaPlayer({
       markLessonDone(lessonId, courseId, slug, Math.min(100, Math.max(0, Math.round(pct))));
     }
 
-    function onEvent(e: any) {
-      const msg = e?.message || e?.event;
-      const ct = e?.currentTime ?? e?.data?.currentTime;
-      const dur = e?.duration ?? e?.data?.duration;
+    function onMessage(e: MessageEvent) {
+      let d: any = e.data;
+      if (typeof d === "string") { try { d = JSON.parse(d); } catch { return; } }
+      if (!d || typeof d !== "object") return;
+      const msg = d.message || d.event;
+      const ct = d.currentTime ?? d.data?.currentTime;
+      const dur = d.duration ?? d.data?.duration;
       if (msg === "panda_ended" || msg === "ended") return done(100);
       if (typeof ct === "number" && typeof dur === "number" && dur > 0) {
         // soma só o tempo assistido de fato (evita "pular pro fim")
@@ -84,42 +61,10 @@ export default function PandaPlayer({
       }
     }
 
-    loadPandaScript().then(() => {
-      if (cancelled) return;
-      (window as any).pandascripttag = (window as any).pandascripttag || [];
-      (window as any).pandascripttag.push(() => {
-        if (cancelled) return;
-        try {
-          player = new (window as any).PandaPlayer(domId, {
-            library_id: effPullzone,
-            video_id: videoId,
-            onReady: () => player?.onEvent?.(onEvent),
-          });
-        } catch {
-          /* fallback fica no iframe abaixo */
-        }
-      });
-    });
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [lessonId, courseId, slug]);
 
-    return () => {
-      cancelled = true;
-      try { player?.destroy?.(); } catch {}
-    };
-  }, [effPullzone, videoId, domId, lessonId, courseId, slug]);
-
-  // SDK oficial (rastreamento confiável)
-  if (effPullzone && videoId) {
-    return (
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-        <div className="relative aspect-video">
-          <div id={domId} className="absolute inset-0 h-full w-full" />
-        </div>
-      </div>
-    );
-  }
-
-  // Fallback: iframe simples (sem rastreamento fino) se não deu pra extrair os dados
-  const src = embedUrl || (host && videoId ? `https://${host}/embed/?v=${videoId}` : null);
   if (!src) {
     return (
       <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] px-6 text-center text-sm text-slate-500">
@@ -127,10 +72,17 @@ export default function PandaPlayer({
       </div>
     );
   }
+
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
       <div className="relative aspect-video">
-        <iframe className="absolute inset-0 h-full w-full" src={src} title="Aula" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+        <iframe
+          className="absolute inset-0 h-full w-full"
+          src={src}
+          title="Aula"
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+        />
       </div>
     </div>
   );
