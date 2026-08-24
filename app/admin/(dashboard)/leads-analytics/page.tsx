@@ -118,7 +118,8 @@ export default async function LeadsAnalyticsPage() {
           <h1 className="font-display text-2xl font-bold text-white">Analytics de Leads</h1>
           <p className="mt-1 text-sm text-slate-400">Visão consolidada de todas as fontes de captação.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/leads-analytics/consolidado" className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1.5 text-xs font-semibold text-ink-900">Contatos consolidados</Link>
           <Link href="/admin/materiais/leads" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">Leads de materiais</Link>
           <Link href="/admin/waitlist" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">Lista de espera</Link>
         </div>
