@@ -670,3 +670,23 @@ create policy "own ticket messages read" on public.support_messages
 drop trigger if exists support_tickets_set_updated_at on public.support_tickets;
 create trigger support_tickets_set_updated_at before update on public.support_tickets
   for each row execute function public.set_updated_at();
+
+-- ============================================================
+-- Turmas / lotes de acesso (liberar acesso por turma)
+-- ============================================================
+
+create table if not exists public.turmas (
+  id          uuid primary key default gen_random_uuid(),
+  created_at  timestamptz not null default now(),
+  name        text not null,
+  starts_at   date,
+  access_days int,                 -- duração do acesso em dias (vazio = sem expiração)
+  price       numeric,
+  status      text not null default 'open',   -- open | closed
+  notes       text
+);
+alter table public.turmas enable row level security;
+-- Sem policy de select: alunos não leem turmas; admin acessa via service role.
+
+-- Liga a compra/acesso à turma que liberou
+alter table public.memberships add column if not exists turma_id uuid references public.turmas(id) on delete set null;

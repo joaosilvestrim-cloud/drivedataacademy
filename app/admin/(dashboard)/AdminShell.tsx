@@ -19,6 +19,7 @@ const ICONS: Record<string, string> = {
   community: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75",
   live: "M23 7l-7 5 7 5V7zM1 5h15v14H1zM6 9.5v5l4-2.5-4-2.5z",
   support: "M18 10a6 6 0 10-12 0v4a2 2 0 002 2h1v-6H6M18 10v4a2 2 0 01-2 2h-1v-6h3M12 20a4 4 0 004-4",
+  cohort: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string }[] }[] = [
@@ -35,8 +36,9 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   {
     title: "Vendas",
     items: [
-      { label: "Turma", href: "/admin/turma", icon: "launch" },
+      { label: "Turmas", href: "/admin/turmas", icon: "cohort" },
       { label: "Acessos", href: "/admin/acessos", icon: "access" },
+      { label: "Matrícula", href: "/admin/turma", icon: "launch" },
     ],
   },
   {

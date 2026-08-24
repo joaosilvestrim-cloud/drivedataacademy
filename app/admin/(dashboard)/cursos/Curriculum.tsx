@@ -8,6 +8,7 @@ import {
   moveItem,
 } from "./actions";
 import { setModuleRelease } from "../lives/actions";
+import VideoField from "./VideoField";
 
 // ISO -> "YYYY-MM-DDTHH:mm" no fuso do Brasil (para datetime-local).
 function toLocalInput(iso: string | null): string {
@@ -153,18 +154,8 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       </div>
                     </div>
 
-                    {/* Vídeo */}
-                    <div className="rounded-xl border border-white/8 bg-white/[0.02] p-3">
-                      <p className="mb-2 flex items-center gap-1.5 text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500"><VideoIcon /> Vídeo (para aulas do tipo Vídeo)</p>
-                      <div className="grid gap-3 sm:grid-cols-[150px_1fr]">
-                        <select name="video_provider" defaultValue={l.video_provider ?? "youtube"} className={`${field} [&>option]:bg-ink-900`}>
-                          <option value="youtube">YouTube</option>
-                          <option value="panda">Panda Video</option>
-                        </select>
-                        <input name="video_id" defaultValue={l.video_id ?? ""} placeholder="YouTube: link/ID · Panda: cole o link de compartilhamento" className={field} />
-                      </div>
-                      <p className="mt-1.5 text-[0.7rem] text-slate-500">Panda: abra o vídeo → <span className="text-slate-400">Compartilhar</span> e cole o link aqui (pode colar o código &lt;iframe&gt; inteiro). Não precisa de API.</p>
-                    </div>
+                    {/* Vídeo + preview */}
+                    <VideoField defaultProvider={l.video_provider ?? "youtube"} defaultValue={l.video_id ?? ""} />
 
                     {/* Texto */}
                     <div className="space-y-1.5">
