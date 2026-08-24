@@ -690,3 +690,25 @@ alter table public.turmas enable row level security;
 
 -- Liga a compra/acesso à turma que liberou
 alter table public.memberships add column if not exists turma_id uuid references public.turmas(id) on delete set null;
+
+-- ============================================================
+-- Cobrança: modelos de pagamento (base p/ Asaas)
+-- ============================================================
+
+create table if not exists public.payment_products (
+  id              uuid primary key default gen_random_uuid(),
+  created_at      timestamptz not null default now(),
+  name            text not null,
+  description     text,
+  price           numeric not null default 0,
+  kind            text not null default 'full_access',  -- full_access | course
+  course_id       uuid references public.courses(id) on delete set null,
+  access_days     int,                                  -- duração do acesso (full_access)
+  methods         text not null default 'pix,card,boleto',
+  max_installments int not null default 1,
+  active          boolean not null default true,
+  position        int not null default 0
+);
+alter table public.payment_products enable row level security;
+drop policy if exists "products read" on public.payment_products;
+create policy "products read" on public.payment_products for select to anon, authenticated using (active);

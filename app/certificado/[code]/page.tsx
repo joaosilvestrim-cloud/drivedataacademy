@@ -60,7 +60,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
           />
         </div>
 
-        <CertActions shareUrl={url} />
+        <CertActions shareUrl={url} courseTitle={cert.course_title} code={cert.code} dateISO={cert.created_at} />
       </div>
     </main>
   );
