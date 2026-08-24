@@ -81,6 +81,17 @@ export async function markSolution(formData: FormData) {
   redirect(`/conta/comunidade/t/${threadId}`);
 }
 
+export async function toggleLike(formData: FormData) {
+  const { user, admin } = await requireCommunityUser();
+  const postId = formData.get("post_id") as string;
+  const threadId = formData.get("thread_id") as string;
+  const { data: existing } = await admin.from("forum_reactions").select("post_id").eq("post_id", postId).eq("user_id", user.id).maybeSingle();
+  if (existing) await admin.from("forum_reactions").delete().eq("post_id", postId).eq("user_id", user.id);
+  else await admin.from("forum_reactions").insert({ post_id: postId, user_id: user.id });
+  revalidatePath(`/conta/comunidade/t/${threadId}`);
+  redirect(`/conta/comunidade/t/${threadId}`);
+}
+
 export async function unmarkSolution(formData: FormData) {
   const { user, admin } = await requireCommunityUser();
   const threadId = formData.get("thread_id") as string;

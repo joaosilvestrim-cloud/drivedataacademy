@@ -29,6 +29,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   {
     title: "Ensino",
     items: [
+      { label: "Painel", href: "/admin/ensino", icon: "overview" },
       { label: "Cursos", href: "/admin/cursos", icon: "courses" },
       { label: "Alunos", href: "/admin/alunos", icon: "students" },
       { label: "Comunidade", href: "/admin/comunidade", icon: "community" },
@@ -56,7 +57,10 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   },
   {
     title: "Suporte",
-    items: [{ label: "Chamados", href: "/admin/suporte", icon: "support" }],
+    items: [
+      { label: "Chamados", href: "/admin/suporte", icon: "support" },
+      { label: "Assistente IA", href: "/admin/ia", icon: "community" },
+    ],
   },
   { title: "Sistema", items: [{ label: "Configurações", href: "/admin/settings", icon: "settings" }] },
 ];

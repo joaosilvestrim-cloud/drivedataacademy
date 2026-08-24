@@ -38,6 +38,13 @@ async function ticketFromChat(admin: ReturnType<typeof createAdminClient>, user:
   return ticket.id as string;
 }
 
+async function logChat(admin: ReturnType<typeof createAdminClient>, user: any, clean: any[], answer: string, escalated: boolean, ticketId: string | null) {
+  const question = [...clean].reverse().find((m: any) => m.role === "user")?.content || "";
+  try {
+    await admin.from("ai_chat_logs").insert({ user_id: user.id, email: user.email, question, answer, escalated, ticket_id: ticketId });
+  } catch {}
+}
+
 export async function POST(req: Request) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -63,6 +70,7 @@ export async function POST(req: Request) {
   if (forceEscalate && !alreadyEscalated) {
     const note = "Encaminhei sua conversa para o time da DriveData. Eles vão dar sequência por aqui e também respondemos por e-mail.";
     const id = await ticketFromChat(admin, user, clean.length ? clean : [{ role: "user", content: "Quero falar com o time." }], note);
+    await logChat(admin, user, clean, note, true, id);
     return NextResponse.json({ reply: note, escalated: !!id, ticketId: id });
   }
 
@@ -74,6 +82,7 @@ export async function POST(req: Request) {
     // sem IA: escala direto para o time
     const note = "No momento não consegui responder por aqui, então encaminhei para o time da DriveData. Eles respondem em breve.";
     const id = alreadyEscalated ? null : await ticketFromChat(admin, user, clean, note);
+    await logChat(admin, user, clean, note, !!id, id);
     return NextResponse.json({ reply: note, escalated: !!id, ticketId: id, fallback: true });
   }
 
@@ -87,6 +96,7 @@ export async function POST(req: Request) {
     escalated = !!ticketId;
   }
 
+  await logChat(admin, user, clean, reply, escalated, ticketId);
   return NextResponse.json({ reply, escalated, ticketId });
 }
 

@@ -9,6 +9,7 @@ import { issueCertificate, issueModuleCertificate } from "@/app/certificado/acti
 import CourseContents from "./CourseContents";
 import PandaPlayer from "./PandaPlayer";
 import ProtectedPlayer from "./ProtectedPlayer";
+import NpsPrompt from "./NpsPrompt";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export default async function PlayerPage({
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { l?: string };
+  searchParams: { l?: string; nps?: string };
 }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -38,6 +39,7 @@ export default async function PlayerPage({
   ]);
   const { data: quiz } = await admin.from("quizzes").select("id, title").eq("course_id", course.id).eq("published", true).maybeSingle();
   const { data: certs } = await admin.from("certificates").select("code, module_id").eq("user_id", user.id).eq("course_id", course.id);
+  const { data: npsRow } = await admin.from("course_nps").select("score").eq("course_id", course.id).eq("user_id", user.id).maybeSingle();
   const certByModule = new Map<string, string>();
   for (const c of certs ?? []) if (c.module_id) certByModule.set(c.module_id, c.code);
 
@@ -114,6 +116,16 @@ export default async function PlayerPage({
           </form>
         </div>
       )}
+
+      {pct === 100 && (searchParams.nps === "ok" ? (
+        <div className="mx-auto max-w-7xl px-6 pt-6">
+          <div className="rounded-2xl border border-brand-green/25 bg-brand-green/[0.06] px-5 py-3 text-sm font-medium text-brand-green">Obrigado pela sua avaliação!</div>
+        </div>
+      ) : !npsRow ? (
+        <div className="mx-auto max-w-7xl px-6 pt-6">
+          <NpsPrompt courseId={course.id} slug={course.slug} />
+        </div>
+      ) : null)}
 
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[1fr_340px]">
         <div className="min-w-0">

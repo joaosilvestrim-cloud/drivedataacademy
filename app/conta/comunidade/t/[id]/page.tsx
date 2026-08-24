@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS } from "@/lib/community";
-import { createReply, markSolution, unmarkSolution } from "../../actions";
+import { createReply, markSolution, unmarkSolution, toggleLike } from "../../actions";
 import Avatar from "@/components/Avatar";
 
 export const dynamic = "force-dynamic";
@@ -43,10 +43,29 @@ export default async function ThreadPage({ params }: { params: { id: string } })
     .maybeSingle();
   if (!thread) notFound();
 
-  const [{ data: channel }, { data: posts }] = await Promise.all([
+  const [{ data: channel }, { data: rawPosts }] = await Promise.all([
     admin.from("forum_channels").select("slug, name").eq("id", thread.channel_id).maybeSingle(),
-    admin.from("forum_posts").select("id, user_id, body, is_answer, created_at").eq("thread_id", thread.id).order("is_answer", { ascending: false }).order("created_at"),
+    admin.from("forum_posts").select("id, user_id, body, is_answer, created_at").eq("thread_id", thread.id),
   ]);
+
+  // curtidas
+  const postIds = (rawPosts ?? []).map((p: any) => p.id);
+  const likeCount: Record<string, number> = {};
+  const myLikes = new Set<string>();
+  if (postIds.length) {
+    const { data: reacts } = await admin.from("forum_reactions").select("post_id, user_id").in("post_id", postIds);
+    for (const r of reacts ?? []) {
+      likeCount[r.post_id] = (likeCount[r.post_id] || 0) + 1;
+      if (r.user_id === user.id) myLikes.add(r.post_id);
+    }
+  }
+  // ordena: solução primeiro, depois mais curtidas, depois mais antigas
+  const posts = (rawPosts ?? []).slice().sort((a: any, b: any) => {
+    if (a.is_answer !== b.is_answer) return a.is_answer ? -1 : 1;
+    const d = (likeCount[b.id] || 0) - (likeCount[a.id] || 0);
+    if (d !== 0) return d;
+    return a.created_at.localeCompare(b.created_at);
+  });
 
   const ids = [thread.user_id, ...(posts ?? []).map((p: any) => p.user_id)];
   const { nameById, badgeById } = await loadProfiles(admin, ids);
@@ -102,13 +121,23 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-slate-500">{name}<Badges list={badgeById[p.user_id]} /> · {fmt(p.created_at)}</p>
                   <p className="mt-2 whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{p.body}</p>
-                  {isAuthor && !p.is_answer && (
-                    <form action={markSolution} className="mt-3">
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <form action={toggleLike}>
                       <input type="hidden" name="thread_id" value={thread.id} />
                       <input type="hidden" name="post_id" value={p.id} />
-                      <button className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>Marcar como solução</button>
+                      <button className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${myLikes.has(p.id) ? "border-brand-green/50 bg-brand-green/10 text-brand-green" : "border-white/10 text-slate-300 hover:border-white/30"}`}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill={myLikes.has(p.id) ? "currentColor" : "none"}><path d="M7 10v11M2 13v6a2 2 0 002 2h13.4a2 2 0 002-1.6l1.4-7A2 2 0 0018.8 10H14V5a2 2 0 00-2-2l-3 7z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+                        {likeCount[p.id] ? likeCount[p.id] : "Curtir"}
+                      </button>
                     </form>
-                  )}
+                    {isAuthor && !p.is_answer && (
+                      <form action={markSolution}>
+                        <input type="hidden" name="thread_id" value={thread.id} />
+                        <input type="hidden" name="post_id" value={p.id} />
+                        <button className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>Marcar como solução</button>
+                      </form>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

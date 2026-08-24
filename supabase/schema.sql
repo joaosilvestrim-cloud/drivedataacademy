@@ -712,3 +712,49 @@ create table if not exists public.payment_products (
 alter table public.payment_products enable row level security;
 drop policy if exists "products read" on public.payment_products;
 create policy "products read" on public.payment_products for select to anon, authenticated using (active);
+
+-- Curtidas em respostas do fórum (interatividade)
+create table if not exists public.forum_reactions (
+  post_id    uuid not null references public.forum_posts(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (post_id, user_id)
+);
+alter table public.forum_reactions enable row level security;
+drop policy if exists "reactions read" on public.forum_reactions;
+create policy "reactions read" on public.forum_reactions for select to authenticated using (true);
+
+-- ============================================================
+-- NPS por curso (satisfação / desempenho)
+-- ============================================================
+
+create table if not exists public.course_nps (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  course_id  uuid not null references public.courses(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  score      int not null,     -- 0 a 10
+  comment    text,
+  unique (course_id, user_id)
+);
+alter table public.course_nps enable row level security;
+drop policy if exists "nps own read" on public.course_nps;
+create policy "nps own read" on public.course_nps for select to authenticated using (auth.uid() = user_id);
+
+
+-- ============================================================
+-- Log das conversas com a IA (assistente) — gestão/auditoria
+-- ============================================================
+
+create table if not exists public.ai_chat_logs (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  user_id    uuid references auth.users(id) on delete set null,
+  email      text,
+  question   text,
+  answer     text,
+  escalated  boolean not null default false,
+  ticket_id  uuid references public.support_tickets(id) on delete set null
+);
+create index if not exists ai_chat_logs_created_idx on public.ai_chat_logs (created_at desc);
+alter table public.ai_chat_logs enable row level security;
