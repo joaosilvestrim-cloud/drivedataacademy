@@ -50,6 +50,10 @@ export default async function CobrancaPage({ searchParams }: { searchParams: { o
         {asaasOn ? "Asaas ligado — os modelos abaixo geram cobrança automática." : "Asaas ainda não ligado — configure os modelos agora; o checkout automático entra quando a chave do Asaas for adicionada."}
       </div>
 
+      <div className="mt-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-xs text-slate-400">
+        <span className="text-slate-300">Sobre as parcelas do cartão:</span> o número aqui é o que aparece na matrícula ("em até Nx"). O aluno escolhe as parcelas na hora de pagar. O limite real de parcelas é um ajuste único na sua conta Asaas (Configurações → Parcelamento) — deixe igual a este número. Preço e formas de pagamento são 100% controlados aqui.
+      </div>
+
       {/* Novo modelo */}
       <form action={createProduct} className="mt-6 grid gap-3 rounded-2xl border border-dashed border-white/10 p-4 sm:grid-cols-[1fr_140px_160px_140px_auto]">
         <input name="name" required placeholder="Nome (ex.: Acesso Full - Turma Set)" className={field} />

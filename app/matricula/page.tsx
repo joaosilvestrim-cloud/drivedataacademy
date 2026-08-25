@@ -20,7 +20,7 @@ export default async function MatriculaPage() {
     const admin = createAdminClient();
     const [{ data }, { data: prod }] = await Promise.all([
       admin.from("site_settings").select("key, value").in("key", TURMA_KEYS),
-      admin.from("payment_products").select("name, price, description").eq("active", true).eq("kind", "full_access").order("position").limit(1).maybeSingle(),
+      admin.from("payment_products").select("name, price, description, max_installments, methods").eq("active", true).eq("kind", "full_access").order("position").limit(1).maybeSingle(),
     ]);
     cfg = Object.fromEntries((data ?? []).map((r: any) => [r.key, r.value]));
     product = prod;
@@ -33,6 +33,9 @@ export default async function MatriculaPage() {
   const data = cfg.turma_data || "";
   const descricao = product?.description || cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados.";
   const price = product ? Number(product.price) : Number(cfg.full_access_price || "0") || 0;
+  const maxInst = Number(product?.max_installments || 1);
+  const allowsCard = (product?.methods || "pix,card,boleto").includes("card");
+  const installmentHint = allowsCard && maxInst > 1 ? `em até ${maxInst}x no cartão · R$ ${(price / maxInst).toFixed(2)}/mês` : null;
 
   const beneficios = [
     "Todos os cursos da plataforma, sem limite",
@@ -77,6 +80,7 @@ export default async function MatriculaPage() {
                   <div>
                     <span className="block text-xs uppercase tracking-wide text-slate-400">Acesso full</span>
                     <span className="font-display text-3xl font-bold text-white">{brl(price)}</span>
+                    {installmentHint && <span className="mt-0.5 block text-xs text-brand-teal">{installmentHint}</span>}
                   </div>
                   <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Vagas limitadas</span>
                 </div>
