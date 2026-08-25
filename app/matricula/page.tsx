@@ -15,19 +15,24 @@ function brl(v: number) {
 
 export default async function MatriculaPage() {
   let cfg: Record<string, string> = {};
+  let product: any = null;
   try {
     const admin = createAdminClient();
-    const { data } = await admin.from("site_settings").select("key, value").in("key", TURMA_KEYS);
+    const [{ data }, { data: prod }] = await Promise.all([
+      admin.from("site_settings").select("key, value").in("key", TURMA_KEYS),
+      admin.from("payment_products").select("name, price, description").eq("active", true).eq("kind", "full_access").order("position").limit(1).maybeSingle(),
+    ]);
     cfg = Object.fromEntries((data ?? []).map((r: any) => [r.key, r.value]));
+    product = prod;
   } catch {
     cfg = {};
   }
 
   const open = cfg.sales_open === "1";
-  const nome = cfg.turma_nome || "Acesso Full DriveData Academy";
+  const nome = product?.name || cfg.turma_nome || "Acesso Full DriveData Academy";
   const data = cfg.turma_data || "";
-  const descricao = cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados.";
-  const price = Number(cfg.full_access_price || "0") || 0;
+  const descricao = product?.description || cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados.";
+  const price = product ? Number(product.price) : Number(cfg.full_access_price || "0") || 0;
 
   const beneficios = [
     "Todos os cursos da plataforma, sem limite",

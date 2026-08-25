@@ -42,7 +42,7 @@ export default async function CobrancaPage({ searchParams }: { searchParams: { o
   return (
     <div>
       <h1 className="font-display text-2xl font-bold text-white">Cobrança</h1>
-      <p className="mt-1 text-sm text-slate-400">Modelos de pagamento da plataforma. Serão usados no checkout quando o Asaas estiver ligado.</p>
+      <p className="mt-1 text-sm text-slate-400">Você controla os preços e as formas de pagamento aqui — nada é configurado direto no Asaas. O <span className="text-slate-200">primeiro modelo de "Acesso full" ativo</span> é o que vale na página de matrícula.</p>
 
       {searchParams?.ok && <div className="mt-4 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</div>}
 

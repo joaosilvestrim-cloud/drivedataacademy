@@ -42,7 +42,19 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
 
   if (map.sales_open !== "1") return { ok: false, error: "As matrículas estão fechadas no momento." };
 
-  const amount = Number(map.full_access_price || "0") || null;
+  // Preço e forma vêm do modelo de Cobrança (admin). Cai no preço avulso da Matrícula se não houver modelo.
+  const { data: product } = await admin
+    .from("payment_products")
+    .select("name, price, methods")
+    .eq("active", true)
+    .eq("kind", "full_access")
+    .order("position")
+    .limit(1)
+    .maybeSingle();
+
+  const amount = product ? Number(product.price) : Number(map.full_access_price || "0") || null;
+  const methods = product?.methods || "pix,card,boleto";
+  const description = product?.name || "Acesso Full - DriveData Academy";
   const user_id = await findUserIdByEmail(admin, email);
 
   const { data: order, error } = await admin
@@ -67,7 +79,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   // Pagamento automático: ligado quando ASAAS_API_KEY existir (a cobrança é criada aqui).
   // Por enquanto, fluxo manual orientado por WhatsApp.
   if (process.env.ASAAS_API_KEY) {
-    const res = await createAsaasCheckout(admin, { orderId: order.id, name, email, phone, cpf, amount });
+    const res = await createAsaasCheckout(admin, { orderId: order.id, name, email, phone, cpf, amount, methods, description });
     if (res) return { ok: true, mode: "asaas", url: res };
     // se falhar, cai no manual
   }
@@ -77,10 +89,16 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
 
 const ASAAS_BASE = process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3";
 
+function billingTypeFrom(methods: string): string {
+  const set = (methods || "").split(",").map((s) => s.trim()).filter(Boolean);
+  if (set.length === 1) return set[0] === "pix" ? "PIX" : set[0] === "card" ? "CREDIT_CARD" : set[0] === "boleto" ? "BOLETO" : "UNDEFINED";
+  return "UNDEFINED"; // várias formas: o aluno escolhe na tela do Asaas
+}
+
 // Cria cliente + cobrança no Asaas e devolve a invoiceUrl (página de pagamento).
 async function createAsaasCheckout(
   admin: ReturnType<typeof createAdminClient>,
-  { orderId, name, email, phone, cpf, amount }: { orderId: string; name: string; email: string; phone: string; cpf: string; amount: number | null }
+  { orderId, name, email, phone, cpf, amount, methods, description }: { orderId: string; name: string; email: string; phone: string; cpf: string; amount: number | null; methods: string; description: string }
 ): Promise<string | null> {
   const key = process.env.ASAAS_API_KEY!;
   const headers = { access_token: key, "Content-Type": "application/json" };
@@ -102,11 +120,11 @@ async function createAsaasCheckout(
       headers,
       body: JSON.stringify({
         customer: cust.id,
-        billingType: "UNDEFINED",
+        billingType: billingTypeFrom(methods),
         value: amount ?? 0,
         dueDate: due,
         externalReference: orderId,
-        description: "Acesso Full - DriveData Academy",
+        description,
       }),
     });
     const pay = await payRes.json();
