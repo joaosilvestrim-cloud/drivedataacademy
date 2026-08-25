@@ -26,8 +26,10 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   const name = ((formData.get("name") as string) || "").trim();
   const email = ((formData.get("email") as string) || "").trim().toLowerCase();
   const phone = ((formData.get("phone") as string) || "").replace(/\D/g, "");
+  const cpf = ((formData.get("cpf") as string) || "").replace(/\D/g, "");
 
   if (!name || !email) return { ok: false, error: "Preencha nome e e-mail." };
+  if (process.env.ASAAS_API_KEY && cpf.length !== 11) return { ok: false, error: "Informe um CPF válido (11 dígitos) para gerar o pagamento." };
 
   const admin = createAdminClient();
 
@@ -65,22 +67,53 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   // Pagamento automático: ligado quando ASAAS_API_KEY existir (a cobrança é criada aqui).
   // Por enquanto, fluxo manual orientado por WhatsApp.
   if (process.env.ASAAS_API_KEY) {
-    const url = await createAsaasCheckout({ orderId: order.id, name, email, phone, amount });
-    if (url) return { ok: true, mode: "asaas", url };
+    const res = await createAsaasCheckout(admin, { orderId: order.id, name, email, phone, cpf, amount });
+    if (res) return { ok: true, mode: "asaas", url: res };
     // se falhar, cai no manual
   }
 
   return { ok: true, mode: "manual", whatsapp: map.checkout_whatsapp || null };
 }
 
-// Placeholder do checkout Asaas. Será implementado quando a chave estiver disponível.
-// Deve criar cliente + cobrança e devolver a URL de pagamento (invoiceUrl).
-async function createAsaasCheckout(_args: {
-  orderId: string;
-  name: string;
-  email: string;
-  phone: string;
-  amount: number | null;
-}): Promise<string | null> {
-  return null;
+const ASAAS_BASE = process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3";
+
+// Cria cliente + cobrança no Asaas e devolve a invoiceUrl (página de pagamento).
+async function createAsaasCheckout(
+  admin: ReturnType<typeof createAdminClient>,
+  { orderId, name, email, phone, cpf, amount }: { orderId: string; name: string; email: string; phone: string; cpf: string; amount: number | null }
+): Promise<string | null> {
+  const key = process.env.ASAAS_API_KEY!;
+  const headers = { access_token: key, "Content-Type": "application/json" };
+  try {
+    // 1) cliente
+    const custRes = await fetch(`${ASAAS_BASE}/customers`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ name, email, cpfCnpj: cpf, mobilePhone: phone || undefined, externalReference: email }),
+    });
+    const cust = await custRes.json();
+    if (!custRes.ok || !cust?.id) return null;
+
+    // 2) cobrança (billingType UNDEFINED = o pagador escolhe PIX/cartão/boleto)
+    const due = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
+    const payRes = await fetch(`${ASAAS_BASE}/payments`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        customer: cust.id,
+        billingType: "UNDEFINED",
+        value: amount ?? 0,
+        dueDate: due,
+        externalReference: orderId,
+        description: "Acesso Full - DriveData Academy",
+      }),
+    });
+    const pay = await payRes.json();
+    if (!payRes.ok || !pay?.invoiceUrl) return null;
+
+    await admin.from("orders").update({ gateway_id: pay.id, external_reference: orderId }).eq("id", orderId);
+    return pay.invoiceUrl as string;
+  } catch {
+    return null;
+  }
 }

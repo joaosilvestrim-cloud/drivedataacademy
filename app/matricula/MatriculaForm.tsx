@@ -57,6 +57,7 @@ export default function MatriculaForm({ turmaNome }: { turmaNome: string }) {
         placeholder="WhatsApp com DDD"
         className={field}
       />
+      <input name="cpf" inputMode="numeric" placeholder="CPF (para emitir o pagamento)" className={field} />
       {result && !result.ok && (
         <p className="rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-200">{result.error}</p>
       )}
