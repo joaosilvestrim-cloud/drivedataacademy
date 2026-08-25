@@ -85,11 +85,12 @@ async function createAsaasCheckout(
   const key = process.env.ASAAS_API_KEY!;
   const headers = { access_token: key, "Content-Type": "application/json" };
   try {
-    // 1) cliente
+    // 1) cliente (telefone só se parecer válido, senão o Asaas rejeita)
+    const validPhone = /^\d{10,11}$/.test(phone) && !/^(\d)\1+$/.test(phone) ? phone : undefined;
     const custRes = await fetch(`${ASAAS_BASE}/customers`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ name, email, cpfCnpj: cpf, mobilePhone: phone || undefined, externalReference: email }),
+      body: JSON.stringify({ name, email, cpfCnpj: cpf, mobilePhone: validPhone, externalReference: email }),
     });
     const cust = await custRes.json();
     if (!custRes.ok || !cust?.id) return null;
