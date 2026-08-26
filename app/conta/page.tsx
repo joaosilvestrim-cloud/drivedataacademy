@@ -64,29 +64,34 @@ export default async function ContaHome() {
   const resume = inProgress[0] || withPct.find((c) => c.pct === 0) || null;
 
   const stats = [
-    { label: "Cursos", value: courses.length, d: "M4 6h16v12H4zM4 10h16" },
-    { label: "Em andamento", value: inProgress.length, d: "M12 7v5l3 2M12 21a9 9 0 100-18 9 9 0 000 18z" },
-    { label: "Concluídos", value: completedCount, d: "M20 6L9 17l-5-5" },
-    { label: "Certificados", value: certCount ?? 0, d: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5" },
+    { label: "Cursos", value: courses.length, d: "M4 6h16v12H4zM4 10h16", from: "#34e8a0", to: "#2ee6d6" },
+    { label: "Em andamento", value: inProgress.length, d: "M12 7v5l3 2M12 21a9 9 0 100-18 9 9 0 000 18z", from: "#3b9dff", to: "#22d3ee" },
+    { label: "Concluídos", value: completedCount, d: "M20 6L9 17l-5-5", from: "#34e8a0", to: "#3b9dff" },
+    { label: "Certificados", value: certCount ?? 0, d: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5", from: "#a78bfa", to: "#3b9dff" },
   ];
 
   const shortcuts = [
-    { label: "Comunidade", href: "/conta/comunidade", d: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" },
-    { label: "Agenda", href: "/conta/agenda", d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" },
-    { label: "Ranking", href: "/conta/ranking", d: "M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" },
-    { label: "Certificados", href: "/conta/certificados", d: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5" },
+    { label: "Comunidade", sub: "Converse e ajude", href: "/conta/comunidade", d: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z", from: "#34e8a0", to: "#2ee6d6" },
+    { label: "Agenda", sub: "Lives e roadmap", href: "/conta/agenda", d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z", from: "#3b9dff", to: "#22d3ee" },
+    { label: "Ranking", sub: "Seus pontos", href: "/conta/ranking", d: "M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3", from: "#fbbf24", to: "#f59e0b" },
+    { label: "Certificados", sub: "Suas conquistas", href: "/conta/certificados", d: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5", from: "#a78bfa", to: "#3b9dff" },
   ];
 
   return (
     <div>
-      {/* Cabeçalho */}
-      <div className="flex items-center gap-4">
-        <Avatar name={fullName || "Aluno"} size="lg" />
-        <div>
-          <h1 className="font-display text-3xl font-bold text-white">Olá{firstName ? ", " : ""}<span className="text-gradient">{firstName}</span></h1>
-          <div className="mt-1 flex items-center gap-2">
-            <p className="text-sm text-slate-400">Bem-vindo à sua área de aluno.</p>
-            {full && <span className="rounded-full border border-brand-green/30 bg-brand-green/10 px-2.5 py-0.5 text-[0.7rem] font-semibold text-brand-green">Acesso Full</span>}
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-3xl border border-white/8">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-green/15 via-brand-blue/10 to-brand-teal/15 bg-[length:200%_200%] animate-gradient-x" />
+        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-brand-green/20 blur-3xl animate-pulse-glow" />
+        <div className="pointer-events-none absolute -bottom-20 left-10 h-40 w-40 rounded-full bg-brand-blue/20 blur-3xl" />
+        <div className="relative flex items-center gap-4 p-6">
+          <Avatar name={fullName || "Aluno"} size="lg" className="ring-2 ring-white/20" />
+          <div>
+            <h1 className="font-display text-3xl font-bold text-white">Olá{firstName ? ", " : ""}<span className="text-gradient">{firstName}</span></h1>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <p className="text-sm text-slate-300">Bem-vindo à sua jornada de dados.</p>
+              {full && <span className="rounded-full border border-brand-green/40 bg-brand-green/15 px-2.5 py-0.5 text-[0.7rem] font-semibold text-brand-green">Acesso Full</span>}
+            </div>
           </div>
         </div>
       </div>
@@ -95,9 +100,9 @@ export default async function ContaHome() {
       {courses.length > 0 && (
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {stats.map((s) => (
-            <div key={s.label} className="glass rounded-2xl border border-white/8 p-4">
-              <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-green/10">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-green"><path d={s.d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <div key={s.label} className="card-hover glass rounded-2xl border border-white/8 p-4">
+              <div className="grid h-9 w-9 place-items-center rounded-xl text-ink-900 shadow" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d={s.d} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </div>
               <p className="mt-3 font-display text-2xl font-bold text-white">{s.value}</p>
               <p className="text-xs text-slate-400">{s.label}</p>
@@ -188,11 +193,13 @@ export default async function ContaHome() {
         <h2 className="font-display text-lg font-bold text-white">Acesso rápido</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {shortcuts.map((s) => (
-            <Link key={s.href} href={s.href} className="card-hover glass flex items-center gap-3 rounded-2xl border border-white/8 p-4">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-green/10">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-brand-green"><path d={s.d} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <Link key={s.href} href={s.href} className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
+              <span className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }} />
+              <span className="relative grid h-11 w-11 place-items-center rounded-xl text-ink-900 shadow-lg transition-transform duration-300 group-hover:scale-110" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d={s.d} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </span>
-              <span className="text-sm font-medium text-white">{s.label}</span>
+              <p className="relative mt-3 text-sm font-semibold text-white">{s.label}</p>
+              <p className="relative text-[0.7rem] text-slate-400">{s.sub}</p>
             </Link>
           ))}
         </div>

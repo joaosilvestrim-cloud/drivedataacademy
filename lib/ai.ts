@@ -94,6 +94,31 @@ export async function chatSupportAI(history: ChatMsg[], context?: string): Promi
   }
 }
 
+// Extrai dados de trajetória de um texto (LinkedIn/CV colado) via Groq.
+export async function extractProfile(text: string): Promise<{ headline: string; bio: string; skills: string } | null> {
+  const key = process.env.GROQ_API_KEY;
+  if (!key) return null;
+  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+  const sys = `Você extrai dados de perfil profissional de um texto (currículo ou LinkedIn colado). Responda SOMENTE um JSON válido, sem texto extra, no formato:
+{"headline": "título profissional curto (ex.: Analista de Dados | Power BI)", "bio": "resumo em 2-3 frases da trajetória, em 1ª pessoa", "skills": "principais habilidades separadas por vírgula"}
+Se algo não estiver claro, deduza com bom senso a partir do texto. Não invente empregos específicos que não estejam no texto.`;
+  try {
+    const res = await fetch(GROQ_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model, temperature: 0.2, max_tokens: 500, response_format: { type: "json_object" }, messages: [{ role: "system", content: sys }, { role: "user", content: text.slice(0, 6000) }] }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const raw = data?.choices?.[0]?.message?.content?.trim();
+    if (!raw) return null;
+    const j = JSON.parse(raw);
+    return { headline: String(j.headline || "").slice(0, 160), bio: String(j.bio || "").slice(0, 800), skills: String(j.skills || "").slice(0, 400) };
+  } catch {
+    return null;
+  }
+}
+
 export async function askSupportAI(question: string, context?: string): Promise<string | null> {
   const key = process.env.GROQ_API_KEY;
   if (!key) return null;
