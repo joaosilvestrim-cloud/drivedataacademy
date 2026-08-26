@@ -758,3 +758,20 @@ create table if not exists public.ai_chat_logs (
 );
 create index if not exists ai_chat_logs_created_idx on public.ai_chat_logs (created_at desc);
 alter table public.ai_chat_logs enable row level security;
+
+
+-- ============================================================
+-- Comunidade estilo chat (Discord): mensagens por canal
+-- ============================================================
+
+create table if not exists public.channel_messages (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  channel_id uuid not null references public.forum_channels(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  body       text not null
+);
+create index if not exists channel_messages_idx on public.channel_messages (channel_id, created_at);
+alter table public.channel_messages enable row level security;
+drop policy if exists "chat read" on public.channel_messages;
+create policy "chat read" on public.channel_messages for select to authenticated using (true);

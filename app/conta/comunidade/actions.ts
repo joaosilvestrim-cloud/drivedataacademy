@@ -81,6 +81,17 @@ export async function markSolution(formData: FormData) {
   redirect(`/conta/comunidade/t/${threadId}`);
 }
 
+export async function sendMessage(formData: FormData) {
+  const { user, admin } = await requireCommunityUser();
+  const channelId = formData.get("channel_id") as string;
+  const slug = formData.get("slug") as string;
+  const body = ((formData.get("body") as string) || "").trim();
+  if (!channelId || !body) redirect(`/conta/comunidade/${slug}`);
+  await admin.from("channel_messages").insert({ channel_id: channelId, user_id: user.id, body: body.slice(0, 4000) });
+  revalidatePath(`/conta/comunidade/${slug}`);
+  redirect(`/conta/comunidade/${slug}`);
+}
+
 export async function toggleLike(formData: FormData) {
   const { user, admin } = await requireCommunityUser();
   const postId = formData.get("post_id") as string;
