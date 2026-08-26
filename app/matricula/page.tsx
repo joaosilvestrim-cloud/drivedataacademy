@@ -20,7 +20,7 @@ export default async function MatriculaPage() {
     const admin = createAdminClient();
     const [{ data }, { data: prod }] = await Promise.all([
       admin.from("site_settings").select("key, value").in("key", TURMA_KEYS),
-      admin.from("payment_products").select("name, price, description, max_installments, methods").eq("active", true).eq("kind", "full_access").order("position").limit(1).maybeSingle(),
+      admin.from("turmas").select("name, description, price, max_installments, methods, starts_at").eq("status", "open").eq("online_sale", true).order("created_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     cfg = Object.fromEntries((data ?? []).map((r: any) => [r.key, r.value]));
     product = prod;
@@ -28,9 +28,9 @@ export default async function MatriculaPage() {
     cfg = {};
   }
 
-  const open = cfg.sales_open === "1";
+  const open = cfg.sales_open === "1" || !!product;
   const nome = product?.name || cfg.turma_nome || "Acesso Full DriveData Academy";
-  const data = cfg.turma_data || "";
+  const data = (product?.starts_at ? new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long" }).format(new Date(product.starts_at + "T00:00:00")) : cfg.turma_data) || "";
   const descricao = product?.description || cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados.";
   const price = product ? Number(product.price) : Number(cfg.full_access_price || "0") || 0;
   const maxInst = Number(product?.max_installments || 1);

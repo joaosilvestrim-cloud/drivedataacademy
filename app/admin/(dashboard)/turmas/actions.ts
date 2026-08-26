@@ -19,28 +19,35 @@ export async function createTurma(formData: FormData) {
   const supabase = await admin();
   const name = ((formData.get("name") as string) || "").trim();
   if (!name) redirect("/admin/turmas");
-  const { data } = await supabase.from("turmas").insert({
-    name,
-    starts_at: ((formData.get("starts_at") as string) || "").trim() || null,
-    access_days: Number((formData.get("access_days") as string) || "0") || null,
-    price: Number(((formData.get("price") as string) || "").replace(",", ".")) || null,
-    status: "open",
-  }).select("id").single();
+  const { data } = await supabase.from("turmas").insert({ name, status: "open", includes: "full" }).select("id").single();
   revalidatePath("/admin/turmas");
   redirect(`/admin/turmas/${data?.id ?? ""}`);
+}
+
+function methodsFrom(formData: FormData): string {
+  const m: string[] = [];
+  if (formData.get("m_pix") === "on") m.push("pix");
+  if (formData.get("m_card") === "on") m.push("card");
+  if (formData.get("m_boleto") === "on") m.push("boleto");
+  return m.join(",") || "pix";
 }
 
 export async function updateTurma(formData: FormData) {
   const supabase = await admin();
   const id = formData.get("id") as string;
+  const includes = (formData.get("includes") as string) || "full";
   await supabase.from("turmas").update({
     name: ((formData.get("name") as string) || "").trim(),
+    description: ((formData.get("description") as string) || "").trim() || null,
     starts_at: ((formData.get("starts_at") as string) || "").trim() || null,
     access_days: Number((formData.get("access_days") as string) || "0") || null,
     price: Number(((formData.get("price") as string) || "").replace(",", ".")) || null,
     status: (formData.get("status") as string) || "open",
-    product_id: ((formData.get("product_id") as string) || "").trim() || null,
-    notes: ((formData.get("notes") as string) || "").trim() || null,
+    includes,
+    course_ids: includes === "selected" ? (formData.getAll("course_ids") as string[]).filter(Boolean).join(",") || null : null,
+    methods: methodsFrom(formData),
+    max_installments: Number((formData.get("max_installments") as string) || "12") || 12,
+    online_sale: formData.get("online_sale") === "on",
   }).eq("id", id);
   revalidatePath(`/admin/turmas/${id}`);
   redirect(`/admin/turmas/${id}?ok=Turma+salva`);
@@ -53,15 +60,13 @@ export async function grantBatch(formData: FormData) {
   const raw = (formData.get("emails") as string) || "";
   const emails = Array.from(new Set(raw.split(/[\n,;]+/).map((e) => e.trim().toLowerCase()).filter(Boolean)));
 
-  const { data: turma } = await supabase.from("turmas").select("id, access_days, product_id").eq("id", turmaId).maybeSingle();
+  const { data: turma } = await supabase.from("turmas").select("id, access_days, includes, course_ids").eq("id", turmaId).maybeSingle();
   if (!turma) redirect("/admin/turmas");
 
-  // Oferta da turma: um produto escolhido, ou Acesso Full por padrão.
-  let offer: any = { kind: "full_access", access_days: turma.access_days };
-  if (turma.product_id) {
-    const { data: prod } = await supabase.from("payment_products").select("kind, course_id, course_ids, access_days").eq("id", turma.product_id).maybeSingle();
-    if (prod) offer = prod;
-  }
+  // A própria turma define o que libera.
+  const offer: any = turma.includes === "selected"
+    ? { kind: "bundle", course_ids: turma.course_ids, access_days: turma.access_days }
+    : { kind: "full_access", access_days: turma.access_days };
 
   // mapa e-mail -> user_id (varre a base uma vez)
   const emailToId: Record<string, string> = {};

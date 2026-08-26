@@ -3,25 +3,25 @@ import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import Avatar from "@/components/Avatar";
-import { updateTurma, grantBatch, revokeFromTurma } from "../actions";
+import { grantBatch, revokeFromTurma } from "../actions";
+import TurmaForm from "../TurmaForm";
 
 export const dynamic = "force-dynamic";
 
 const field =
   "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
-const label = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500";
-
-function toDateInput(d: string | null) {
-  return d ? d.slice(0, 10) : "";
-}
 
 export default async function TurmaDetail({ params, searchParams }: { params: { id: string }; searchParams: { ok?: string; granted?: string; existed?: string; missing?: string } }) {
   const admin = createAdminClient();
   const { data: turma } = await admin.from("turmas").select("*").eq("id", params.id).maybeSingle();
   if (!turma) notFound();
 
-  const { data: products } = await admin.from("payment_products").select("id, name, kind").order("created_at");
-  const offerName = turma.product_id ? (products ?? []).find((p: any) => p.id === turma.product_id)?.name : null;
+  const { data: courses } = await admin.from("courses").select("id, title").order("title");
+  const titleById: Record<string, string> = {};
+  for (const c of courses ?? []) titleById[c.id] = c.title;
+  const includesSummary = turma.includes === "selected"
+    ? ((turma.course_ids || "").split(",").filter(Boolean).map((i: string) => titleById[i] || "?").join(", ") || "Nenhum curso selecionado")
+    : "Todos os treinamentos (acesso full)";
   const { data: members } = await admin.from("memberships").select("id, user_id, expires_at, starts_at").eq("turma_id", turma.id).eq("status", "active").order("starts_at", { ascending: false });
   const ids = (members ?? []).map((m: any) => m.user_id);
   const { data: userData } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
@@ -37,36 +37,24 @@ export default async function TurmaDetail({ params, searchParams }: { params: { 
   return (
     <div>
       <Link href="/admin/turmas" className="text-xs text-slate-500 hover:text-white">← Turmas</Link>
-      <h1 className="mt-1 font-display text-2xl font-bold text-white">{turma.name}</h1>
+      <div className="mt-1 flex flex-wrap items-center gap-2">
+        <h1 className="font-display text-2xl font-bold text-white">{turma.name}</h1>
+        <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase ${turma.status === "open" ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{turma.status === "open" ? "Aberta" : "Fechada"}</span>
+        {turma.online_sale && <span className="rounded-full bg-brand-blue/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase text-brand-cyan">venda online</span>}
+      </div>
+      <p className="mt-1 text-sm text-slate-400">Inclui: <span className="text-slate-200">{includesSummary}</span>{turma.price ? ` · R$ ${Number(turma.price).toFixed(2)}` : ""}</p>
 
       {searchParams?.ok && <div className="mt-4 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</div>}
 
-      {/* Editar turma */}
-      <form action={updateTurma} className="mt-6 glass grid gap-4 rounded-2xl border border-white/8 p-5 sm:grid-cols-2">
-        <input type="hidden" name="id" value={turma.id} />
-        <div className="space-y-1.5 sm:col-span-2"><label className={label}>Nome</label><input name="name" defaultValue={turma.name} className={field} /></div>
-        <div className="space-y-1.5 sm:col-span-2">
-          <label className={label}>O que esta turma libera</label>
-          <select name="product_id" defaultValue={turma.product_id ?? ""} className={`${field} [&>option]:bg-ink-900`}>
-            <option value="">Acesso Full (todos os cursos) — padrão</option>
-            {(products ?? []).map((p: any) => <option key={p.id} value={p.id}>{p.name} ({p.kind === "full_access" ? "Full" : p.kind === "bundle" ? "Pacote" : "Avulso"})</option>)}
-          </select>
-          <p className="text-[0.7rem] text-slate-500">Escolha um produto da Cobrança. Ao liberar em lote, cada aluno recebe exatamente esse acesso.</p>
-        </div>
-        <div className="space-y-1.5"><label className={label}>Início</label><input name="starts_at" type="date" defaultValue={toDateInput(turma.starts_at)} className={field} /></div>
-        <div className="space-y-1.5"><label className={label}>Dias de acesso (vazio = sem expiração)</label><input name="access_days" type="number" defaultValue={turma.access_days ?? ""} className={field} /></div>
-        <div className="space-y-1.5"><label className={label}>Preço (R$)</label><input name="price" defaultValue={turma.price ?? ""} className={field} /></div>
-        <div className="space-y-1.5"><label className={label}>Status</label>
-          <select name="status" defaultValue={turma.status} className={`${field} [&>option]:bg-ink-900`}><option value="open">Aberta</option><option value="closed">Fechada</option></select>
-        </div>
-        <div className="space-y-1.5 sm:col-span-2"><label className={label}>Anotações</label><textarea name="notes" defaultValue={turma.notes ?? ""} rows={2} className={`${field} resize-y`} /></div>
-        <div><button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">Salvar turma</button></div>
-      </form>
+      {/* Configuração da turma (o que inclui + cobrança) */}
+      <div className="mt-6 glass rounded-2xl border border-white/8 p-5">
+        <TurmaForm turma={turma} courses={courses ?? []} />
+      </div>
 
       {/* Liberar acesso em lote */}
       <div className="mt-8 glass rounded-2xl border border-white/8 p-5">
-        <h2 className="font-display text-lg font-bold text-white">Liberar acesso em lote</h2>
-        <p className="mt-1 text-sm text-slate-400">Cole os e-mails dos alunos (um por linha, ou separados por vírgula). Quem já tem conta ganha acesso full na hora, com o selo Fundador e e-mail de boas-vindas.</p>
+        <h2 className="font-display text-lg font-bold text-white">Dar acesso a uma lista de alunos</h2>
+        <p className="mt-1 text-sm text-slate-400">Cole os e-mails (um por linha ou separados por vírgula). Cada aluno recebe <span className="text-slate-200">{includesSummary}</span> na hora, com e-mail de boas-vindas. Quem ainda não tem conta precisa se cadastrar antes.</p>
 
         {showResult && (
           <div className="mt-4 space-y-2">
@@ -86,7 +74,7 @@ export default async function TurmaDetail({ params, searchParams }: { params: { 
         <form action={grantBatch} className="mt-4 space-y-3">
           <input type="hidden" name="turma_id" value={turma.id} />
           <textarea name="emails" rows={5} required placeholder={"aluno1@email.com\naluno2@email.com\naluno3@email.com"} className={`${field} resize-y font-mono`} />
-          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Liberar acesso para a lista</button>
+          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Dar acesso a estes alunos</button>
         </form>
       </div>
 

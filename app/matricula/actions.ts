@@ -40,21 +40,21 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
     .in("key", ["full_access_price", "sales_open", "checkout_whatsapp"]);
   const map = Object.fromEntries((cfg ?? []).map((r: any) => [r.key, r.value]));
 
-  if (map.sales_open !== "1") return { ok: false, error: "As matrículas estão fechadas no momento." };
-
-  // Preço e forma vêm do modelo de Cobrança (admin). Cai no preço avulso da Matrícula se não houver modelo.
-  const { data: product } = await admin
-    .from("payment_products")
-    .select("name, price, methods")
-    .eq("active", true)
-    .eq("kind", "full_access")
-    .order("position")
+  // Preço, formas e o que inclui vêm da TURMA marcada para venda online.
+  const { data: turma } = await admin
+    .from("turmas")
+    .select("id, name, description, price, methods")
+    .eq("status", "open")
+    .eq("online_sale", true)
+    .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  const amount = product ? Number(product.price) : Number(map.full_access_price || "0") || null;
-  const methods = product?.methods || "pix,card,boleto";
-  const description = product?.name || "Acesso Full - DriveData Academy";
+  if (map.sales_open !== "1" && !turma) return { ok: false, error: "As matrículas estão fechadas no momento." };
+
+  const amount = turma ? Number(turma.price) : Number(map.full_access_price || "0") || null;
+  const methods = turma?.methods || "pix,card,boleto";
+  const description = turma?.description || turma?.name || "Acesso Full - DriveData Academy";
   const user_id = await findUserIdByEmail(admin, email);
 
   const { data: order, error } = await admin
@@ -63,6 +63,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
       user_id,
       email,
       product: "full_access",
+      turma_id: turma?.id ?? null,
       amount,
       status: "pending",
       gateway: process.env.ASAAS_API_KEY ? "asaas" : "manual",

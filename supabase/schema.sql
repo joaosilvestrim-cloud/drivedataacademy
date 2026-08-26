@@ -842,3 +842,14 @@ create index if not exists lesson_comments_status_idx on public.lesson_comments 
 alter table public.lesson_comments enable row level security;
 drop policy if exists "lc read" on public.lesson_comments;
 create policy "lc read" on public.lesson_comments for select to authenticated using (status = 'approved' or auth.uid() = user_id);
+
+
+-- Turma passa a conter a cobranca (preco/formas/parcelas) e o que inclui
+alter table public.turmas add column if not exists includes text not null default 'full';       -- full | selected
+alter table public.turmas add column if not exists course_ids text;                              -- csv (quando selected)
+alter table public.turmas add column if not exists methods text not null default 'pix,card,boleto';
+alter table public.turmas add column if not exists max_installments int not null default 12;
+alter table public.turmas add column if not exists online_sale boolean not null default false;   -- vende na pagina /matricula
+alter table public.turmas add column if not exists description text;
+
+alter table public.orders add column if not exists turma_id uuid references public.turmas(id) on delete set null;

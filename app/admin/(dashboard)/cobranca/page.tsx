@@ -40,8 +40,8 @@ export default async function CobrancaPage({ searchParams }: { searchParams: { o
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Cobrança</h1>
-      <p className="mt-1 text-sm text-slate-400">Aqui você define <span className="text-slate-200">o que vende e por quanto</span>. O Asaas só processa o pagamento.</p>
+      <h1 className="font-display text-2xl font-bold text-white">Produtos avulsos</h1>
+      <p className="mt-1 text-sm text-slate-400">Para vender treinamentos específicos fora de uma turma. Os <span className="text-slate-200">lançamentos (preço + acesso)</span> ficam em <span className="text-slate-200">Turmas</span> — lá o preço e o que inclui ficam no mesmo lugar.</p>
 
       {searchParams?.ok && <div className="mt-4 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</div>}
 
