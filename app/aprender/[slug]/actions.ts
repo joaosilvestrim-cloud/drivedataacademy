@@ -29,6 +29,24 @@ export async function markComplete(formData: FormData) {
   redirect(`/aprender/${slug}${nextLesson ? `?l=${nextLesson}` : `?l=${lessonId}`}`);
 }
 
+// Comentário de aula (entra como pendente e vai para moderação no admin).
+export async function addComment(formData: FormData) {
+  const slug = formData.get("slug") as string;
+  const lessonId = formData.get("lesson_id") as string;
+  const courseId = formData.get("course_id") as string;
+  const body = ((formData.get("body") as string) || "").trim();
+  if (!body) redirect(`/aprender/${slug}?l=${lessonId}`);
+
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/entrar");
+
+  const admin = createAdminClient();
+  await admin.from("lesson_comments").insert({ lesson_id: lessonId, course_id: courseId, user_id: user.id, body: body.slice(0, 2000), status: "pending" });
+  revalidatePath(`/aprender/${slug}`);
+  redirect(`/aprender/${slug}?l=${lessonId}&c=ok`);
+}
+
 // NPS do curso (0 a 10 + comentário). Um por aluno por curso.
 export async function submitNps(formData: FormData) {
   const slug = formData.get("slug") as string;

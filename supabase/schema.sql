@@ -822,3 +822,23 @@ create policy "mr delete own" on public.message_reactions for delete to authenti
 -- Realtime
 alter publication supabase_realtime add table public.channel_messages;
 alter publication supabase_realtime add table public.message_reactions;
+
+
+-- ============================================================
+-- Comentarios de aula (com moderacao no admin)
+-- ============================================================
+
+create table if not exists public.lesson_comments (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  lesson_id  uuid not null references public.lessons(id) on delete cascade,
+  course_id  uuid references public.courses(id) on delete set null,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  body       text not null,
+  status     text not null default 'pending'   -- pending | approved | rejected
+);
+create index if not exists lesson_comments_lesson_idx on public.lesson_comments (lesson_id, created_at desc);
+create index if not exists lesson_comments_status_idx on public.lesson_comments (status);
+alter table public.lesson_comments enable row level security;
+drop policy if exists "lc read" on public.lesson_comments;
+create policy "lc read" on public.lesson_comments for select to authenticated using (status = 'approved' or auth.uid() = user_id);

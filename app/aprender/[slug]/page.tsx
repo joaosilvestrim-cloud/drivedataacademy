@@ -4,7 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { youtubeId } from "@/lib/youtube";
 import { canAccessCourse } from "@/lib/access";
-import { markComplete } from "./actions";
+import { loadProfiles, displayName } from "@/lib/community";
+import { markComplete, addComment } from "./actions";
+import Avatar from "@/components/Avatar";
 import { issueCertificate, issueModuleCertificate } from "@/app/certificado/actions";
 import CourseContents from "./CourseContents";
 import PandaPlayer from "./PandaPlayer";
@@ -77,6 +79,21 @@ export default async function PlayerPage({
 
   const vid = current?.type === "video" ? youtubeId(current.video_id) : null;
   const materials: { title: string; url: string }[] = (current?.materials as any) || [];
+
+  // Comentários da aula (aprovados + os próprios pendentes)
+  let comments: any[] = [];
+  let commentNames: Record<string, string> = {};
+  if (current) {
+    const { data: cm } = await admin
+      .from("lesson_comments")
+      .select("id, user_id, body, status, created_at")
+      .eq("lesson_id", current.id)
+      .or(`status.eq.approved,user_id.eq.${user.id}`)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    comments = cm ?? [];
+    commentNames = (await loadProfiles(admin, comments.map((c: any) => c.user_id))).nameById;
+  }
 
   const sidebarModules = modules.map((m: any) => ({
     id: m.id,
@@ -190,6 +207,37 @@ export default async function PlayerPage({
                       {done.has(current.id) ? (next ? "Concluída · avançar" : "Concluída") : next ? "Concluir e avançar" : "Marcar como concluída"}
                     </button>
                   </form>
+                </div>
+              </div>
+
+              {/* Comentários da aula */}
+              <div className="mt-8">
+                <h2 className="font-display text-lg font-bold text-white">Comentários</h2>
+                <form action={addComment} className="mt-3 space-y-2">
+                  <input type="hidden" name="slug" value={course.slug} />
+                  <input type="hidden" name="lesson_id" value={current.id} />
+                  <input type="hidden" name="course_id" value={course.id} />
+                  <textarea name="body" required rows={2} placeholder="Comente ou tire uma dúvida sobre esta aula..." className="w-full resize-y rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+                  <div className="flex items-center gap-3">
+                    <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">Comentar</button>
+                    <span className="text-xs text-slate-500">Comentários passam por aprovação antes de aparecer.</span>
+                  </div>
+                </form>
+
+                <div className="mt-5 space-y-3">
+                  {comments.length === 0 && <p className="text-sm text-slate-500">Seja o primeiro a comentar.</p>}
+                  {comments.map((c: any) => (
+                    <div key={c.id} className="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
+                      <Avatar name={displayName(commentNames, c.user_id)} size="sm" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-slate-500">
+                          {displayName(commentNames, c.user_id)}
+                          {c.status === "pending" && <span className="ml-2 rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-amber-300">em análise</span>}
+                        </p>
+                        <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.body}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </>
