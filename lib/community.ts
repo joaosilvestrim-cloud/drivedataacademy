@@ -40,3 +40,21 @@ export async function loadProfiles(admin: SupabaseClient, ids: string[]) {
 export function displayName(nameById: Record<string, string>, id: string): string {
   return nameById[id] || "Aluno";
 }
+
+// Pontos totais por usuário: eventos (solução = 10) + curtidas no chat (2 por curtida de outra pessoa).
+export async function pointsByUser(admin: SupabaseClient): Promise<Record<string, number>> {
+  const [{ data: events }, { data: reacts }, { data: msgs }] = await Promise.all([
+    admin.from("point_events").select("user_id, points"),
+    admin.from("message_reactions").select("message_id, user_id"),
+    admin.from("channel_messages").select("id, user_id"),
+  ]);
+  const totals: Record<string, number> = {};
+  for (const e of events ?? []) totals[e.user_id] = (totals[e.user_id] || 0) + (e.points || 0);
+  const author: Record<string, string> = {};
+  for (const m of msgs ?? []) author[m.id] = m.user_id;
+  for (const r of reacts ?? []) {
+    const a = author[r.message_id];
+    if (a && a !== r.user_id) totals[a] = (totals[a] || 0) + 2;
+  }
+  return totals;
+}

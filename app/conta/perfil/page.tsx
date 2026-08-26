@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { BADGE_LABELS } from "@/lib/community";
+import { BADGE_LABELS, pointsByUser } from "@/lib/community";
 import ProfileForm from "./ProfileForm";
 
 export const dynamic = "force-dynamic";
@@ -13,14 +13,12 @@ export default async function PerfilPage() {
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();
-  const [{ data: events }, { data: myEvents }, { data: badges }] = await Promise.all([
-    admin.from("point_events").select("user_id, points"),
+  const [totals, { data: myEvents }, { data: badges }] = await Promise.all([
+    pointsByUser(admin),
     admin.from("point_events").select("kind, points").eq("user_id", user.id),
     admin.from("user_badges").select("badge").eq("user_id", user.id),
   ]);
 
-  const totals: Record<string, number> = {};
-  for (const e of events ?? []) totals[e.user_id] = (totals[e.user_id] || 0) + (e.points || 0);
   const ranked = Object.entries(totals).sort((a, b) => b[1] - a[1]);
   const myPoints = totals[user.id] || 0;
   const myRank = ranked.findIndex(([id]) => id === user.id);
@@ -47,7 +45,7 @@ export default async function PerfilPage() {
       {/* Gamificação */}
       <div className="mt-8">
         <h2 className="font-display text-lg font-bold text-white">Minha gamificação</h2>
-        <p className="mt-1 text-sm text-slate-400">Você ganha pontos ajudando colegas na comunidade. Cada resposta marcada como solução vale 10 pontos.</p>
+        <p className="mt-1 text-sm text-slate-400">Você ganha pontos participando da comunidade: cada curtida que suas mensagens recebem vale pontos e te faz subir no ranking.</p>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
           {stats.map((s) => (

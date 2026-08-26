@@ -794,3 +794,31 @@ create policy "cv insert own" on storage.objects for insert to authenticated
 drop policy if exists "cv update own" on storage.objects;
 create policy "cv update own" on storage.objects for update to authenticated
   using (bucket_id = 'cv' and (storage.foldername(name))[1] = auth.uid()::text);
+
+
+-- ============================================================
+-- Comunidade: tempo real + reacoes (pontos)
+-- ============================================================
+
+-- Aluno envia mensagem direto (client) e realtime
+drop policy if exists "chat insert own" on public.channel_messages;
+create policy "chat insert own" on public.channel_messages for insert to authenticated with check (auth.uid() = user_id);
+
+-- Reacoes (curtidas) em mensagens
+create table if not exists public.message_reactions (
+  message_id uuid not null references public.channel_messages(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (message_id, user_id)
+);
+alter table public.message_reactions enable row level security;
+drop policy if exists "mr read" on public.message_reactions;
+create policy "mr read" on public.message_reactions for select to authenticated using (true);
+drop policy if exists "mr insert own" on public.message_reactions;
+create policy "mr insert own" on public.message_reactions for insert to authenticated with check (auth.uid() = user_id);
+drop policy if exists "mr delete own" on public.message_reactions;
+create policy "mr delete own" on public.message_reactions for delete to authenticated using (auth.uid() = user_id);
+
+-- Realtime
+alter publication supabase_realtime add table public.channel_messages;
+alter publication supabase_realtime add table public.message_reactions;

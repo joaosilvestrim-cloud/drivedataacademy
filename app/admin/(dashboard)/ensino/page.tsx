@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { loadProfiles, displayName, BADGE_LABELS } from "@/lib/community";
+import { loadProfiles, displayName, BADGE_LABELS, pointsByUser } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 import AdminError from "../AdminError";
 import { grantBadge } from "./actions";
@@ -17,7 +17,7 @@ function npsOf(scores: number[]) {
 export default async function EnsinoPanel({ searchParams }: { searchParams: { ok?: string; error?: string } }) {
   try {
     const admin = createAdminClient();
-    const [{ data: courses }, { data: enr }, { data: lessons }, { data: prog }, { data: certs }, { data: nps }, { data: points }, { count: fullCount }] =
+    const [{ data: courses }, { data: enr }, { data: lessons }, { data: prog }, { data: certs }, { data: nps }, totals, { count: fullCount }] =
       await Promise.all([
         admin.from("courses").select("id, title, published").order("position"),
         admin.from("enrollments").select("course_id, user_id"),
@@ -25,7 +25,7 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
         admin.from("lesson_progress").select("course_id, user_id").eq("completed", true),
         admin.from("certificates").select("course_id"),
         admin.from("course_nps").select("course_id, score, comment, user_id, created_at"),
-        admin.from("point_events").select("user_id, points"),
+        pointsByUser(admin),
         admin.from("memberships").select("*", { count: "exact", head: true }).eq("status", "active"),
       ]);
 
@@ -51,8 +51,6 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
     const npsGeral = npsOf((nps ?? []).map((r: any) => r.score));
 
     // ranking
-    const totals: Record<string, number> = {};
-    for (const e of points ?? []) totals[e.user_id] = (totals[e.user_id] || 0) + (e.points || 0);
     const ranked = Object.entries(totals).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
     const recentComments = (nps ?? []).filter((r: any) => r.comment).sort((a: any, b: any) => (b.created_at || "").localeCompare(a.created_at || "")).slice(0, 8);

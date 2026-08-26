@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS } from "@/lib/community";
+import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS, pointsByUser } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 
 export const dynamic = "force-dynamic";
@@ -28,9 +28,7 @@ export default async function RankingPage() {
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/conta");
 
-  const { data: events } = await admin.from("point_events").select("user_id, points");
-  const totals: Record<string, number> = {};
-  for (const e of events ?? []) totals[e.user_id] = (totals[e.user_id] || 0) + (e.points || 0);
+  const totals = await pointsByUser(admin);
 
   const ranked = Object.entries(totals).map(([id, pts]) => ({ id, pts })).sort((a, b) => b.pts - a.pts);
   const top = ranked.slice(0, 50);
