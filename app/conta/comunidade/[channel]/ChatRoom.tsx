@@ -81,36 +81,38 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
   }
 
   return (
-    <div className="-mx-6 -my-10 flex h-[calc(100vh-57px)] overflow-hidden bg-ink-900">
+    <div className="-mx-6 -my-10 flex h-[calc(100vh-57px)] overflow-hidden bg-gradient-to-br from-ink-800 via-ink-900 to-ink-900">
       {/* Canais */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-white/8 bg-ink-800/50 sm:flex">
-        <div className="flex items-center gap-2 border-b border-white/8 px-4 py-4">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-green to-brand-blue text-sm font-bold text-ink-900">D</span>
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-white/[0.06] bg-gradient-to-b from-white/[0.04] to-transparent sm:flex">
+        <div className="flex items-center gap-2.5 border-b border-white/[0.06] px-4 py-4">
+          <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-green to-brand-blue text-sm font-bold text-ink-900 shadow-lg shadow-brand-green/20">D</span>
           <span className="font-display text-sm font-bold text-white">Comunidade</span>
         </div>
-        <nav className="flex-1 space-y-0.5 overflow-y-auto p-2">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-2.5">
           <p className="px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">Canais</p>
           {channels.map((c) => {
             const active = c.slug === channel.slug;
             return (
-              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${active ? "bg-white/10 font-medium text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-200"}`}>
-                <span className={active ? "text-brand-green" : "text-slate-600"}>#</span>
+              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`group flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200 ${active ? "border-l-2 border-brand-green bg-gradient-to-r from-brand-green/15 to-transparent pl-2.5 font-medium text-white" : "text-slate-400 hover:translate-x-0.5 hover:bg-white/5 hover:text-slate-100"}`}>
+                <span className={active ? "text-brand-green" : "text-slate-600 group-hover:text-slate-400"}>#</span>
                 <span className="truncate">{c.name}</span>
               </Link>
             );
           })}
         </nav>
-        <div className="border-t border-white/8 p-3">
-          <div className="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-2">
-            <Avatar name={me.name} size="xs" />
-            <span className="truncate text-xs text-slate-300">{me.name}</span>
+        <div className="border-t border-white/[0.06] p-3">
+          <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] px-3 py-2">
+            <Avatar name={me.name} size="xs" className="ring-1 ring-white/10" />
+            <span className="truncate text-xs font-medium text-slate-200">{me.name}</span>
+            <span className="ml-auto h-2 w-2 rounded-full bg-brand-green shadow-[0_0_8px] shadow-brand-green/60" />
           </div>
         </div>
       </aside>
 
       {/* Chat */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-2 border-b border-white/8 bg-ink-800/30 px-5 py-3.5">
+      <div className="relative flex min-w-0 flex-1 flex-col">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-brand-blue/[0.05] to-transparent" />
+        <header className="relative flex items-center gap-2 border-b border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent px-5 py-3.5">
           <span className="text-lg text-slate-500">#</span>
           <span className="font-display font-bold text-white">{channel.name}</span>
           {channel.description && <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 sm:block">{channel.description}</span>}
@@ -123,11 +125,14 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
           ))}
         </div>
 
-        <div ref={scrollRef} className="flex-1 space-y-0.5 overflow-y-auto px-4 py-4">
+        <div ref={scrollRef} className="relative flex-1 space-y-0.5 overflow-y-auto px-4 py-4">
           {messages.length === 0 && (
             <div className="grid h-full place-items-center text-center text-slate-500">
               <div>
-                <div className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-2xl text-ink-900">#</div>
+                <div className="relative mx-auto mb-4 grid h-20 w-20 place-items-center">
+                  <span className="absolute inset-0 rounded-3xl bg-gradient-to-br from-brand-green to-brand-blue opacity-30 blur-xl" />
+                  <span className="relative grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-2xl text-ink-900 shadow-lg">#</span>
+                </div>
                 <p className="font-display text-lg font-bold text-white">Bem-vindo ao #{channel.name}</p>
                 <p className="mt-1 text-sm">Este é o começo do canal. Manda a primeira mensagem!</p>
               </div>
@@ -146,8 +151,8 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
                     <div className="h-px flex-1 bg-white/8" />
                   </div>
                 )}
-                <div className={`group flex items-start gap-3 rounded-lg px-2 ${grouped ? "py-0.5" : "py-1.5"} hover:bg-white/[0.03]`}>
-                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <Avatar name={m.name} size="sm" /> : <span className="hidden text-[0.6rem] text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
+                <div className={`group flex items-start gap-3 rounded-xl px-2.5 transition-colors duration-150 ${grouped ? "py-0.5" : "py-1.5"} hover:bg-white/[0.04]`}>
+                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <Avatar name={m.name} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex items-baseline gap-2">
@@ -173,8 +178,8 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
         </div>
 
         {/* Enviar */}
-        <div className="px-4 pb-4 pt-1">
-          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-2 py-1.5 focus-within:border-brand-green/50">
+        <div className="relative px-4 pb-4 pt-1">
+          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.05] px-2 py-1.5 backdrop-blur transition-all duration-200 focus-within:border-brand-green/50 focus-within:shadow-[0_0_0_3px_rgba(52,232,160,0.10)]">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -183,7 +188,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
               placeholder={`Mensagem em #${channel.name}`}
               className="flex-1 bg-transparent px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none"
             />
-            <button onClick={send} disabled={!input.trim()} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
+            <button onClick={send} disabled={!input.trim()} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 shadow-md shadow-brand-green/20 transition-transform hover:scale-105 disabled:opacity-40 disabled:shadow-none">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
