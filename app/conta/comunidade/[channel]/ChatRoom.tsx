@@ -11,8 +11,10 @@ type Channel = { id: string; slug: string; name: string; description: string | n
 const CHANNEL_COLORS: Record<string, [string, string]> = {
   geral: ["#34e8a0", "#2ee6d6"],
   "power-bi": ["#fbbf24", "#f59e0b"],
+  "inteligencia-artificial": ["#a78bfa", "#3b9dff"],
   ia: ["#a78bfa", "#3b9dff"],
   "html-web": ["#3b9dff", "#22d3ee"],
+  "gestao-de-projetos": ["#2ee6d6", "#34e8a0"],
   "gestao-projetos": ["#2ee6d6", "#34e8a0"],
 };
 const colorOf = (slug: string): [string, string] => CHANNEL_COLORS[slug] || ["#3b9dff", "#22d3ee"];
@@ -92,7 +94,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
   const [cFrom, cTo] = colorOf(channel.slug);
 
   return (
-    <div className="-mx-4 -my-6 flex h-[calc(100vh-52px)] overflow-hidden bg-gradient-to-br from-ink-800 via-ink-900 to-ink-900 sm:-mx-6 sm:-my-10 sm:h-[calc(100vh-57px)]">
+    <div className="flex h-[calc(100dvh-190px)] min-h-[440px] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-ink-800 via-ink-900 to-ink-900 shadow-2xl sm:h-[calc(100vh-150px)]">
       {/* Canais */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-white/[0.06] bg-gradient-to-b from-white/[0.04] to-transparent sm:flex">
         <div className="flex items-center gap-2.5 border-b border-white/[0.06] px-4 py-4">

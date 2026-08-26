@@ -61,7 +61,14 @@ export async function moveChannel(formData: FormData) {
   revalidatePath("/admin/comunidade");
 }
 
-// ---------- Moderação de tópicos ----------
+// ---------- Moderação de mensagens (chat) ----------
+export async function deleteMessage(formData: FormData) {
+  const supabase = await admin();
+  await supabase.from("channel_messages").delete().eq("id", formData.get("id") as string);
+  revalidatePath("/admin/comunidade");
+}
+
+// ---------- Moderação de tópicos (legado) ----------
 export async function togglePinThread(formData: FormData) {
   const supabase = await admin();
   await supabase.from("forum_threads").update({ pinned: formData.get("next") === "true" }).eq("id", formData.get("id") as string);
