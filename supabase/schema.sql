@@ -775,3 +775,22 @@ create index if not exists channel_messages_idx on public.channel_messages (chan
 alter table public.channel_messages enable row level security;
 drop policy if exists "chat read" on public.channel_messages;
 create policy "chat read" on public.channel_messages for select to authenticated using (true);
+
+
+-- Precificação: pacote (cursos selecionados) + turma referencia um produto
+alter table public.payment_products add column if not exists course_ids text;
+alter table public.turmas add column if not exists product_id uuid references public.payment_products(id) on delete set null;
+
+-- Perfil do aluno: trajetória + CV
+alter table public.profiles add column if not exists headline text;
+alter table public.profiles add column if not exists bio text;
+alter table public.profiles add column if not exists skills text;
+alter table public.profiles add column if not exists cv_url text;
+
+-- Storage: alunos podem subir o próprio CV (bucket cv)
+drop policy if exists "cv insert own" on storage.objects;
+create policy "cv insert own" on storage.objects for insert to authenticated
+  with check (bucket_id = 'cv' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "cv update own" on storage.objects;
+create policy "cv update own" on storage.objects for update to authenticated
+  using (bucket_id = 'cv' and (storage.foldername(name))[1] = auth.uid()::text);

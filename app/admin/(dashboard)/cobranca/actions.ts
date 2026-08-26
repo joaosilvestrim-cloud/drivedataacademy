@@ -19,14 +19,22 @@ function methodsFrom(formData: FormData): string {
   return m.join(",") || "pix";
 }
 
+function courseFields(formData: FormData, kind: string) {
+  const course_id = kind === "course" ? ((formData.get("course_id") as string) || "").trim() || null : null;
+  const course_ids = kind === "bundle" ? (formData.getAll("course_ids") as string[]).filter(Boolean).join(",") || null : null;
+  return { course_id, course_ids };
+}
+
 export async function createProduct(formData: FormData) {
   const supabase = await admin();
   const name = ((formData.get("name") as string) || "").trim();
   if (!name) redirect("/admin/cobranca");
+  const kind = (formData.get("kind") as string) || "full_access";
   await supabase.from("payment_products").insert({
     name,
     price: Number(((formData.get("price") as string) || "").replace(",", ".")) || 0,
-    kind: (formData.get("kind") as string) || "full_access",
+    kind,
+    ...courseFields(formData, kind),
     access_days: Number((formData.get("access_days") as string) || "0") || null,
     max_installments: Number((formData.get("max_installments") as string) || "1") || 1,
     methods: methodsFrom(formData),
@@ -38,12 +46,13 @@ export async function createProduct(formData: FormData) {
 
 export async function saveProduct(formData: FormData) {
   const supabase = await admin();
+  const kind = (formData.get("kind") as string) || "full_access";
   await supabase.from("payment_products").update({
     name: ((formData.get("name") as string) || "").trim(),
     description: ((formData.get("description") as string) || "").trim() || null,
     price: Number(((formData.get("price") as string) || "").replace(",", ".")) || 0,
-    kind: (formData.get("kind") as string) || "full_access",
-    course_id: ((formData.get("course_id") as string) || "").trim() || null,
+    kind,
+    ...courseFields(formData, kind),
     access_days: Number((formData.get("access_days") as string) || "0") || null,
     max_installments: Number((formData.get("max_installments") as string) || "1") || 1,
     methods: methodsFrom(formData),

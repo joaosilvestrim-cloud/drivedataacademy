@@ -20,6 +20,8 @@ export default async function TurmaDetail({ params, searchParams }: { params: { 
   const { data: turma } = await admin.from("turmas").select("*").eq("id", params.id).maybeSingle();
   if (!turma) notFound();
 
+  const { data: products } = await admin.from("payment_products").select("id, name, kind").order("created_at");
+  const offerName = turma.product_id ? (products ?? []).find((p: any) => p.id === turma.product_id)?.name : null;
   const { data: members } = await admin.from("memberships").select("id, user_id, expires_at, starts_at").eq("turma_id", turma.id).eq("status", "active").order("starts_at", { ascending: false });
   const ids = (members ?? []).map((m: any) => m.user_id);
   const { data: userData } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
@@ -43,6 +45,14 @@ export default async function TurmaDetail({ params, searchParams }: { params: { 
       <form action={updateTurma} className="mt-6 glass grid gap-4 rounded-2xl border border-white/8 p-5 sm:grid-cols-2">
         <input type="hidden" name="id" value={turma.id} />
         <div className="space-y-1.5 sm:col-span-2"><label className={label}>Nome</label><input name="name" defaultValue={turma.name} className={field} /></div>
+        <div className="space-y-1.5 sm:col-span-2">
+          <label className={label}>O que esta turma libera</label>
+          <select name="product_id" defaultValue={turma.product_id ?? ""} className={`${field} [&>option]:bg-ink-900`}>
+            <option value="">Acesso Full (todos os cursos) — padrão</option>
+            {(products ?? []).map((p: any) => <option key={p.id} value={p.id}>{p.name} ({p.kind === "full_access" ? "Full" : p.kind === "bundle" ? "Pacote" : "Avulso"})</option>)}
+          </select>
+          <p className="text-[0.7rem] text-slate-500">Escolha um produto da Cobrança. Ao liberar em lote, cada aluno recebe exatamente esse acesso.</p>
+        </div>
         <div className="space-y-1.5"><label className={label}>Início</label><input name="starts_at" type="date" defaultValue={toDateInput(turma.starts_at)} className={field} /></div>
         <div className="space-y-1.5"><label className={label}>Dias de acesso (vazio = sem expiração)</label><input name="access_days" type="number" defaultValue={turma.access_days ?? ""} className={field} /></div>
         <div className="space-y-1.5"><label className={label}>Preço (R$)</label><input name="price" defaultValue={turma.price ?? ""} className={field} /></div>

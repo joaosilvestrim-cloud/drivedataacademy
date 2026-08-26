@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendAccessGrantedEmail } from "@/lib/email";
+import { grantOffer } from "@/lib/offers";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -38,6 +39,7 @@ export async function updateTurma(formData: FormData) {
     access_days: Number((formData.get("access_days") as string) || "0") || null,
     price: Number(((formData.get("price") as string) || "").replace(",", ".")) || null,
     status: (formData.get("status") as string) || "open",
+    product_id: ((formData.get("product_id") as string) || "").trim() || null,
     notes: ((formData.get("notes") as string) || "").trim() || null,
   }).eq("id", id);
   revalidatePath(`/admin/turmas/${id}`);
@@ -51,8 +53,15 @@ export async function grantBatch(formData: FormData) {
   const raw = (formData.get("emails") as string) || "";
   const emails = Array.from(new Set(raw.split(/[\n,;]+/).map((e) => e.trim().toLowerCase()).filter(Boolean)));
 
-  const { data: turma } = await supabase.from("turmas").select("id, access_days").eq("id", turmaId).maybeSingle();
+  const { data: turma } = await supabase.from("turmas").select("id, access_days, product_id").eq("id", turmaId).maybeSingle();
   if (!turma) redirect("/admin/turmas");
+
+  // Oferta da turma: um produto escolhido, ou Acesso Full por padrão.
+  let offer: any = { kind: "full_access", access_days: turma.access_days };
+  if (turma.product_id) {
+    const { data: prod } = await supabase.from("payment_products").select("kind, course_id, course_ids, access_days").eq("id", turma.product_id).maybeSingle();
+    if (prod) offer = prod;
+  }
 
   // mapa e-mail -> user_id (varre a base uma vez)
   const emailToId: Record<string, string> = {};
@@ -65,23 +74,21 @@ export async function grantBatch(formData: FormData) {
     page++;
   }
 
-  // acessos ativos existentes (para não duplicar)
+  // acessos full ativos existentes (para não duplicar quando a oferta é Full)
   const { data: activeMem } = await supabase.from("memberships").select("user_id").eq("status", "active");
   const hasActive = new Set((activeMem ?? []).map((m: any) => m.user_id));
-
-  const expires = turma.access_days ? new Date(Date.now() + turma.access_days * 864e5).toISOString() : null;
+  const isFull = offer.kind === "full_access";
 
   let granted = 0, existed = 0;
   const missing: string[] = [];
   for (const email of emails) {
     const uid = emailToId[email];
     if (!uid) { missing.push(email); continue; }
-    if (hasActive.has(uid)) { existed++; continue; }
-    await supabase.from("memberships").insert({ user_id: uid, plan: "full", status: "active", source: "turma", turma_id: turmaId, expires_at: expires });
-    await supabase.from("user_badges").upsert({ user_id: uid, badge: "fundador" }, { onConflict: "user_id,badge" });
+    if (isFull && hasActive.has(uid)) { existed++; continue; }
+    await grantOffer(supabase, uid, offer, turmaId);
+    if (isFull) { await supabase.from("user_badges").upsert({ user_id: uid, badge: "fundador" }, { onConflict: "user_id,badge" }); hasActive.add(uid); }
     await sendAccessGrantedEmail(email, "", SITE_URL);
     granted++;
-    hasActive.add(uid);
   }
 
   revalidatePath(`/admin/turmas/${turmaId}`);
