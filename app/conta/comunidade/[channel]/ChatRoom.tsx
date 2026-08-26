@@ -8,6 +8,15 @@ import Avatar from "@/components/Avatar";
 type Msg = { id: string; user_id: string; body: string; created_at: string; name: string; likes: number; liked: boolean };
 type Channel = { id: string; slug: string; name: string; description: string | null };
 
+const CHANNEL_COLORS: Record<string, [string, string]> = {
+  geral: ["#34e8a0", "#2ee6d6"],
+  "power-bi": ["#fbbf24", "#f59e0b"],
+  ia: ["#a78bfa", "#3b9dff"],
+  "html-web": ["#3b9dff", "#22d3ee"],
+  "gestao-projetos": ["#2ee6d6", "#34e8a0"],
+};
+const colorOf = (slug: string): [string, string] => CHANNEL_COLORS[slug] || ["#3b9dff", "#22d3ee"];
+
 function timeStr(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
@@ -80,8 +89,10 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
     else await supa.current.from("message_reactions").insert({ message_id: m.id, user_id: me.id });
   }
 
+  const [cFrom, cTo] = colorOf(channel.slug);
+
   return (
-    <div className="-mx-6 -my-10 flex h-[calc(100vh-57px)] overflow-hidden bg-gradient-to-br from-ink-800 via-ink-900 to-ink-900">
+    <div className="-mx-4 -my-6 flex h-[calc(100vh-52px)] overflow-hidden bg-gradient-to-br from-ink-800 via-ink-900 to-ink-900 sm:-mx-6 sm:-my-10 sm:h-[calc(100vh-57px)]">
       {/* Canais */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-white/[0.06] bg-gradient-to-b from-white/[0.04] to-transparent sm:flex">
         <div className="flex items-center gap-2.5 border-b border-white/[0.06] px-4 py-4">
@@ -92,9 +103,10 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
           <p className="px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">Canais</p>
           {channels.map((c) => {
             const active = c.slug === channel.slug;
+            const [from, to] = colorOf(c.slug);
             return (
-              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`group flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition-all duration-200 ${active ? "border-l-2 border-brand-green bg-gradient-to-r from-brand-green/15 to-transparent pl-2.5 font-medium text-white" : "text-slate-400 hover:translate-x-0.5 hover:bg-white/5 hover:text-slate-100"}`}>
-                <span className={active ? "text-brand-green" : "text-slate-600 group-hover:text-slate-400"}>#</span>
+              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-all duration-200 ${active ? "bg-white/[0.06] font-medium text-white" : "text-slate-400 hover:translate-x-0.5 hover:bg-white/5 hover:text-slate-100"}`}>
+                <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg text-[0.7rem] font-bold text-ink-900 transition-all ${active ? "shadow-md" : "opacity-70 group-hover:opacity-100"}`} style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}>{c.name.charAt(0).toUpperCase()}</span>
                 <span className="truncate">{c.name}</span>
               </Link>
             );
@@ -111,18 +123,25 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
 
       {/* Chat */}
       <div className="relative flex min-w-0 flex-1 flex-col">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-brand-blue/[0.05] to-transparent" />
-        <header className="relative flex items-center gap-2 border-b border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent px-5 py-3.5">
-          <span className="text-lg text-slate-500">#</span>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-64 opacity-[0.07]" style={{ background: `radial-gradient(60% 100% at 50% 0%, ${cFrom}, transparent)` }} />
+        <header className="relative flex items-center gap-2.5 border-b border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent px-4 py-3 sm:px-5 sm:py-3.5">
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-xs font-bold text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>{channel.name.charAt(0).toUpperCase()}</span>
           <span className="font-display font-bold text-white">{channel.name}</span>
-          {channel.description && <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 sm:block">{channel.description}</span>}
+          {channel.description && <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 md:block">{channel.description}</span>}
         </header>
 
         {/* Canais (mobile) */}
-        <div className="flex gap-1 overflow-x-auto border-b border-white/8 px-3 py-2 sm:hidden">
-          {channels.map((c) => (
-            <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`shrink-0 rounded-full px-3 py-1 text-xs ${c.slug === channel.slug ? "bg-white/10 text-white" : "text-slate-400"}`}># {c.name}</Link>
-          ))}
+        <div className="flex gap-1.5 overflow-x-auto border-b border-white/8 px-3 py-2 sm:hidden">
+          {channels.map((c) => {
+            const active = c.slug === channel.slug;
+            const [f, t] = colorOf(c.slug);
+            return (
+              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`flex shrink-0 items-center gap-1.5 rounded-full py-1 pl-1 pr-3 text-xs ${active ? "bg-white/10 text-white" : "text-slate-400"}`}>
+                <span className="grid h-5 w-5 place-items-center rounded-full text-[0.6rem] font-bold text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${f}, ${t})` }}>{c.name.charAt(0).toUpperCase()}</span>
+                {c.name}
+              </Link>
+            );
+          })}
         </div>
 
         <div ref={scrollRef} className="relative flex-1 space-y-0.5 overflow-y-auto px-4 py-4">
@@ -130,8 +149,8 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
             <div className="grid h-full place-items-center text-center text-slate-500">
               <div>
                 <div className="relative mx-auto mb-4 grid h-20 w-20 place-items-center">
-                  <span className="absolute inset-0 rounded-3xl bg-gradient-to-br from-brand-green to-brand-blue opacity-30 blur-xl" />
-                  <span className="relative grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-2xl text-ink-900 shadow-lg">#</span>
+                  <span className="absolute inset-0 rounded-3xl opacity-40 blur-xl" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }} />
+                  <span className="relative grid h-16 w-16 place-items-center rounded-2xl text-2xl font-bold text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>{channel.name.charAt(0).toUpperCase()}</span>
                 </div>
                 <p className="font-display text-lg font-bold text-white">Bem-vindo ao #{channel.name}</p>
                 <p className="mt-1 text-sm">Este é o começo do canal. Manda a primeira mensagem!</p>

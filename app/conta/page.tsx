@@ -158,26 +158,36 @@ export default async function ContaHome() {
             {withPct.map((c) => {
               const complete = c.total > 0 && c.pct === 100;
               return (
-                <Link key={c.id} href={`/aprender/${c.slug}`} className="card-hover glass group flex flex-col overflow-hidden rounded-3xl border border-white/8">
+                <Link key={c.id} href={`/aprender/${c.slug}`} className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/8 bg-white/[0.02] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-green/30 hover:shadow-[0_24px_60px_-24px_rgba(52,232,160,0.45)]">
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Cover url={c.cover_url} title={c.title} />
+                    {/* Play no hover */}
+                    <span className="absolute inset-0 grid place-items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                      <span className="grid h-14 w-14 place-items-center rounded-full bg-white/15 backdrop-blur-sm ring-1 ring-white/30">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z" /></svg>
+                      </span>
+                    </span>
                     {complete ? (
-                      <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-brand-green px-2.5 py-1 text-[0.65rem] font-bold text-ink-900"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>Concluído</span>
+                      <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-brand-green px-2.5 py-1 text-[0.65rem] font-bold text-ink-900 shadow-lg"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>Concluído</span>
                     ) : c.pct > 0 ? (
-                      <span className="absolute right-3 top-3 rounded-full bg-ink-900/80 px-2.5 py-1 text-[0.65rem] font-bold text-brand-teal backdrop-blur">{c.pct}%</span>
+                      <span className="absolute right-3 top-3 rounded-full bg-ink-900/80 px-2.5 py-1 text-[0.65rem] font-bold text-brand-teal shadow-lg backdrop-blur">{c.pct}%</span>
                     ) : (
-                      <span className="absolute right-3 top-3 rounded-full bg-ink-900/80 px-2.5 py-1 text-[0.65rem] font-bold text-slate-300 backdrop-blur">Novo</span>
+                      <span className="absolute right-3 top-3 rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-2.5 py-1 text-[0.65rem] font-bold text-ink-900 shadow-lg">Novo</span>
                     )}
                   </div>
                   <div className="flex flex-1 flex-col p-5">
                     <h3 className="font-display text-lg font-bold text-white transition-colors group-hover:text-brand-green">{c.title}</h3>
                     <div className="mt-auto pt-4">
-                      <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-                        <div className="h-full bg-gradient-to-r from-brand-green to-brand-blue transition-all" style={{ width: `${c.pct}%` }} />
+                      <div className="mb-1.5 flex items-center justify-between text-xs">
+                        <span className="text-slate-400">{c.done}/{c.total} aulas</span>
+                        <span className="font-bold text-brand-green">{c.pct}%</span>
                       </div>
-                      <div className="mt-2 flex items-center justify-between">
-                        <p className="text-xs text-slate-400">{c.done}/{c.total} aulas</p>
-                        <span className="text-xs font-medium text-brand-green">{complete ? "Rever" : c.pct > 0 ? "Continuar" : "Começar"} →</span>
+                      <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                        <div className="h-full rounded-full bg-gradient-to-r from-brand-green via-brand-teal to-brand-blue bg-[length:200%_auto] animate-gradient-x transition-all duration-500" style={{ width: `${Math.max(complete ? 100 : c.pct, 4)}%` }} />
+                      </div>
+                      <div className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900 opacity-90 transition-all duration-300 group-hover:opacity-100 group-hover:shadow-md">
+                        {complete ? "Rever curso" : c.pct > 0 ? "Continuar" : "Começar agora"}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       </div>
                     </div>
                   </div>
