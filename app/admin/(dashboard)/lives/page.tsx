@@ -49,7 +49,13 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
       <details className="mt-6 glass rounded-2xl border border-white/8 p-5" open={lives.length === 0}>
         <summary className="cursor-pointer text-sm font-semibold text-white">+ Nova live</summary>
         <form action={saveLive} className="mt-4 space-y-3">
-          <input name="title" required placeholder="Título da live" className={field} />
+          <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
+            <select name="kind" defaultValue="live" className={field}>
+              <option value="live">Live / Aula</option>
+              <option value="mentoria">Mentoria</option>
+            </select>
+            <input name="title" required placeholder="Título" className={field} />
+          </div>
           <textarea name="description" rows={2} placeholder="Descrição (opcional)" className={`${field} resize-y`} />
           <div className="grid gap-3 sm:grid-cols-3">
             <input name="starts_at" type="datetime-local" required className={field} />
@@ -67,12 +73,21 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
         {lives.map((l) => (
           <details key={l.id} className="glass rounded-2xl border border-white/8 p-5">
             <summary className="flex cursor-pointer items-center justify-between gap-3">
-              <span className="font-medium text-white">{l.title}</span>
+              <span className="flex items-center gap-2 font-medium text-white">
+                {l.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>}
+                {l.title}
+              </span>
               <span className="text-xs text-slate-400">{fmt(l.starts_at)}{!l.published && " · rascunho"}</span>
             </summary>
             <form action={saveLive} className="mt-4 space-y-3">
               <input type="hidden" name="id" value={l.id} />
-              <input name="title" defaultValue={l.title} className={field} />
+              <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
+                <select name="kind" defaultValue={l.kind || "live"} className={field}>
+                  <option value="live">Live / Aula</option>
+                  <option value="mentoria">Mentoria</option>
+                </select>
+                <input name="title" defaultValue={l.title} className={field} />
+              </div>
               <textarea name="description" rows={2} defaultValue={l.description ?? ""} className={`${field} resize-y`} />
               <div className="grid gap-3 sm:grid-cols-3">
                 <input name="starts_at" type="datetime-local" defaultValue={toLocalInput(l.starts_at)} className={field} />

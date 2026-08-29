@@ -67,8 +67,9 @@ export default async function AgendaPage() {
                   AO VIVO AGORA
                 </span>
               ) : (
-                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Próxima live · {countdown(next.starts_at)}</span>
+                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">{next.kind === "mentoria" ? "Próxima mentoria" : "Próxima live"} · {countdown(next.starts_at)}</span>
               )}
+              {next.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-3 py-1 text-xs font-semibold text-brand-teal">Mentoria</span>}
             </div>
             <h2 className="mt-3 font-display text-2xl font-bold text-white">{next.title}</h2>
             <p className="mt-1 text-sm text-brand-teal">{fmt(next.starts_at)}{next.duration_min ? ` · ${next.duration_min} min` : ""}</p>
@@ -99,7 +100,10 @@ export default async function AgendaPage() {
               <li key={l.id} className="relative">
                 <span className="absolute -left-[31px] top-4 grid h-6 w-6 place-items-center rounded-full border border-white/10 bg-ink-800 text-[0.6rem] font-bold text-brand-green">{shortDate(l.starts_at).split(" ")[0]}</span>
                 <div className="glass rounded-2xl border border-white/8 p-5">
-                  <h3 className="font-display text-lg font-bold text-white">{l.title}</h3>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-display text-lg font-bold text-white">{l.title}</h3>
+                    {l.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>}
+                  </div>
                   <p className="mt-1 text-sm text-brand-teal">{fmt(l.starts_at)}{l.duration_min ? ` · ${l.duration_min} min` : ""} <span className="text-slate-500">· {countdown(l.starts_at)}</span></p>
                   {l.description && <p className="mt-2 text-sm text-slate-300">{l.description}</p>}
                 </div>

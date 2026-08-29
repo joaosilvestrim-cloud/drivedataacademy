@@ -31,6 +31,7 @@ export async function saveLive(formData: FormData) {
     duration_min: Number((formData.get("duration_min") as string) || "0") || null,
     url: ((formData.get("url") as string) || "").trim() || null,
     cover_url: ((formData.get("cover_url") as string) || "").trim() || null,
+    kind: (formData.get("kind") as string) === "mentoria" ? "mentoria" : "live",
     published: formData.get("published") === "on",
   };
 
