@@ -7,6 +7,7 @@ import AssistantButton from "@/components/AssistantButton";
 
 const NAV = [
   { label: "Meus cursos", href: "/conta" },
+  { label: "Ferramenta", href: "/ferramenta" },
   { label: "Comunidade", href: "/conta/comunidade" },
   { label: "Agenda", href: "/conta/agenda" },
   { label: "Ranking", href: "/conta/ranking" },

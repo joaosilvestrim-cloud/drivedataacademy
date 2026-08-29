@@ -853,3 +853,20 @@ alter table public.turmas add column if not exists online_sale boolean not null 
 alter table public.turmas add column if not exists description text;
 
 alter table public.orders add column if not exists turma_id uuid references public.turmas(id) on delete set null;
+
+
+-- Ferramenta de Visuais: visuais salvos pelo aluno (config = VisualDocument em JSON)
+create table if not exists public.saved_visuals (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users (id) on delete cascade,
+  template_id text,
+  nome        text not null,
+  config      jsonb not null,
+  dax_gerado  text,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+alter table public.saved_visuals enable row level security;
+drop policy if exists "saved_owner" on public.saved_visuals;
+create policy "saved_owner" on public.saved_visuals
+  for all using (user_id = auth.uid()) with check (user_id = auth.uid());

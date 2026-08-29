@@ -20,6 +20,17 @@ const config: Config = {
           blue: "#3b9dff",
           cyan: "#22d3ee",
         },
+        // Tokens da Ferramenta de Visuais (editor). Tema claro próprio.
+        viz: {
+          DEFAULT: "#0891b2",
+          light: "#06b6d4",
+          dark: "#0e7490",
+        },
+        surface: "#ffffff",
+        border: "#e2e8f0",
+        muted: "#64748b",
+        foreground: "#0f172a",
+        background: "#f8fafc",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
