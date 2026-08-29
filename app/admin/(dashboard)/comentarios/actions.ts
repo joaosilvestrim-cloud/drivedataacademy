@@ -24,3 +24,19 @@ export async function deleteComment(formData: FormData) {
   await supabase.from("lesson_comments").delete().eq("id", formData.get("id") as string);
   revalidatePath("/admin/comentarios");
 }
+
+// Responde o comentário (aparece para o aluno na aula). Aprova junto, para o par pergunta/resposta ficar visível.
+export async function replyComment(formData: FormData) {
+  const supabase = await admin();
+  const id = formData.get("id") as string;
+  const reply = ((formData.get("reply") as string) || "").trim();
+  await supabase
+    .from("lesson_comments")
+    .update({
+      admin_reply: reply || null,
+      replied_at: reply ? new Date().toISOString() : null,
+      ...(reply ? { status: "approved" } : {}),
+    })
+    .eq("id", id);
+  revalidatePath("/admin/comentarios");
+}

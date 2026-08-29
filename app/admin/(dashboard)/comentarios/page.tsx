@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 import AdminError from "../AdminError";
-import { setCommentStatus, deleteComment } from "./actions";
+import { setCommentStatus, deleteComment, replyComment } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +26,7 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
   const counts: Record<string, number> = { pending: 0, approved: 0, rejected: 0, all: 0 };
   try {
     const admin = createAdminClient();
-    const { data, error } = await admin.from("lesson_comments").select("id, lesson_id, course_id, user_id, body, status, created_at").order("created_at", { ascending: false }).limit(300);
+    const { data, error } = await admin.from("lesson_comments").select("id, lesson_id, course_id, user_id, body, status, created_at, admin_reply, replied_at").order("created_at", { ascending: false }).limit(300);
     if (error) throw new Error(error.message);
     const all = data ?? [];
     for (const c of all) { counts.all++; counts[c.status] = (counts[c.status] || 0) + 1; }
@@ -76,6 +76,20 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
                   </div>
                   <p className="mt-0.5 text-xs text-slate-500">{courseTitle[c.course_id] || "—"} · aula: {lessonTitle[c.lesson_id] || "—"}</p>
                   <p className="mt-2 whitespace-pre-line text-sm text-slate-200">{c.body}</p>
+
+                  {c.admin_reply && (
+                    <div className="mt-2 rounded-xl border border-brand-blue/25 bg-brand-blue/[0.06] p-3">
+                      <p className="text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">Resposta da equipe</p>
+                      <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.admin_reply}</p>
+                    </div>
+                  )}
+
+                  <form action={replyComment} className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <input type="hidden" name="id" value={c.id} />
+                    <input name="reply" defaultValue={c.admin_reply || ""} placeholder={c.admin_reply ? "Editar resposta" : "Responder o aluno (aparece na aula)"} className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+                    <button className="rounded-lg border border-brand-blue/40 bg-brand-blue/10 px-3 py-2 text-xs font-medium text-brand-teal">{c.admin_reply ? "Atualizar" : "Responder"}</button>
+                  </form>
+
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     {c.status !== "approved" && (
                       <form action={setCommentStatus}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="status" value="approved" /><button className="rounded-lg border border-brand-green/40 bg-brand-green/10 px-3 py-1.5 text-xs font-medium text-brand-green">Aprovar</button></form>

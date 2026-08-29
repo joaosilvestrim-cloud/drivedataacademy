@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
 import VideoManager from "./VideoManager";
+import CertSignatureForm from "./CertSignatureForm";
 
 export const dynamic = "force-dynamic";
 
@@ -10,15 +11,21 @@ export default async function SettingsPage({
   searchParams: { ok?: string; error?: string };
 }) {
   let videos: string[] = [];
+  let cert: Record<string, string> = {};
   try {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["promo_videos", "promo_video_url"]);
+      .in("key", ["promo_videos", "promo_video_url", "cert_signature_url", "cert_signature_name", "cert_signature_role"]);
     if (error) throw new Error(error.message);
 
     const map = Object.fromEntries((data ?? []).map((r: any) => [r.key, r.value]));
+    cert = {
+      cert_signature_url: map.cert_signature_url || "",
+      cert_signature_name: map.cert_signature_name || "",
+      cert_signature_role: map.cert_signature_role || "",
+    };
     if (map.promo_videos) {
       try {
         const arr = JSON.parse(map.promo_videos);
@@ -64,6 +71,10 @@ export default async function SettingsPage({
 
       <div className="mt-6">
         <VideoManager initial={videos} />
+      </div>
+
+      <div className="mt-10">
+        <CertSignatureForm initial={cert} />
       </div>
     </div>
   );

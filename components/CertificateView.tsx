@@ -17,6 +17,9 @@ export default function CertificateView({
   code,
   host,
   qrSvg,
+  signatureUrl,
+  signatureName,
+  signatureRole,
 }: {
   studentName: string;
   courseTitle: string;
@@ -25,6 +28,9 @@ export default function CertificateView({
   code: string;
   host: string;
   qrSvg?: string | null;
+  signatureUrl?: string | null;
+  signatureName?: string | null;
+  signatureRole?: string | null;
 }) {
   return (
     <div
@@ -67,8 +73,13 @@ export default function CertificateView({
               <p className="mt-1 text-[1.1cqw] text-slate-400">{host}/certificado/{code}</p>
             </div>
             <div className="text-center">
+              {signatureUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={signatureUrl} alt="Assinatura" className="mx-auto mb-1 h-[8cqw] max-h-[64px] w-auto object-contain" />
+              )}
               <div className="mx-auto mb-1 w-2/3 border-t border-slate-400" />
-              <p className="text-[1.4cqw] text-slate-500">Assinatura do Responsável</p>
+              <p className="text-[1.5cqw] font-semibold text-slate-700">{signatureName || "Assinatura do Responsável"}</p>
+              {signatureName && signatureRole && <p className="text-[1.2cqw] text-slate-500">{signatureRole}</p>}
             </div>
             <div className="flex flex-col items-end">
               {qrSvg ? (

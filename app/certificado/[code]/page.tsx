@@ -12,11 +12,15 @@ function fmtDate(iso: string) {
 
 export default async function CertificatePage({ params }: { params: { code: string } }) {
   const admin = createAdminClient();
-  const { data: cert } = await admin
-    .from("certificates")
-    .select("code, student_name, course_title, workload, created_at, expires_at, revoked")
-    .eq("code", params.code)
-    .maybeSingle();
+  const [{ data: cert }, { data: sig }] = await Promise.all([
+    admin
+      .from("certificates")
+      .select("code, student_name, course_title, workload, created_at, expires_at, revoked")
+      .eq("code", params.code)
+      .maybeSingle(),
+    admin.from("site_settings").select("key, value").in("key", ["cert_signature_url", "cert_signature_name", "cert_signature_role"]),
+  ]);
+  const sigMap = Object.fromEntries((sig ?? []).map((r: any) => [r.key, r.value]));
 
   const h = headers();
   const host = h.get("x-forwarded-host") || h.get("host") || "academy.drivedata.com.br";
@@ -57,6 +61,9 @@ export default async function CertificatePage({ params }: { params: { code: stri
             code={cert.code}
             host={host}
             qrSvg={qrSvg}
+            signatureUrl={sigMap.cert_signature_url || null}
+            signatureName={sigMap.cert_signature_name || null}
+            signatureRole={sigMap.cert_signature_role || null}
           />
         </div>
 

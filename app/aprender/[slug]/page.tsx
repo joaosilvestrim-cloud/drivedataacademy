@@ -86,7 +86,7 @@ export default async function PlayerPage({
   if (current) {
     const { data: cm } = await admin
       .from("lesson_comments")
-      .select("id, user_id, body, status, created_at")
+      .select("id, user_id, body, status, created_at, admin_reply, replied_at")
       .eq("lesson_id", current.id)
       .or(`status.eq.approved,user_id.eq.${user.id}`)
       .order("created_at", { ascending: false })
@@ -235,6 +235,12 @@ export default async function PlayerPage({
                           {c.status === "pending" && <span className="ml-2 rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-amber-300">em análise</span>}
                         </p>
                         <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.body}</p>
+                        {c.admin_reply && (
+                          <div className="mt-2 rounded-xl border border-brand-blue/25 bg-brand-blue/[0.06] p-3">
+                            <p className="text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">Resposta da equipe DriveData</p>
+                            <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.admin_reply}</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
