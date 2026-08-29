@@ -24,6 +24,19 @@ function Cover({ url, title }: { url: string | null; title: string }) {
   );
 }
 
+function evtWhen(iso: string) {
+  return new Intl.DateTimeFormat("pt-BR", { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
+}
+function evtCountdown(iso: string) {
+  const diff = new Date(iso).getTime() - Date.now();
+  if (diff <= 0) return "ao vivo";
+  const days = Math.floor(diff / 864e5);
+  if (days >= 1) return `em ${days}d`;
+  const h = Math.floor(diff / 36e5);
+  if (h >= 1) return `em ${h}h`;
+  return `em ${Math.max(1, Math.floor(diff / 6e4))}min`;
+}
+
 export default async function ContaHome() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -35,6 +48,16 @@ export default async function ContaHome() {
     hasFullAccess(admin, user!.id),
     admin.from("certificates").select("*", { count: "exact", head: true }).eq("user_id", user!.id),
   ]);
+
+  // Próximos eventos ao vivo / mentorias da turma (inclui os que já começaram há < 2h)
+  const { data: livesData } = await admin
+    .from("live_events")
+    .select("id, title, starts_at, kind")
+    .eq("published", true)
+    .gte("starts_at", new Date(Date.now() - 2 * 3600e3).toISOString())
+    .order("starts_at")
+    .limit(3);
+  const upcoming = livesData ?? [];
 
   const courseIds = (enrolls ?? []).map((e: any) => e.course_id);
   let courses: any[] = [];
@@ -135,6 +158,40 @@ export default async function ContaHome() {
             </div>
           </div>
         </Link>
+      )}
+
+      {/* Próximos ao vivo / mentorias da turma */}
+      {upcoming.length > 0 && (full || courses.length > 0) && (
+        <div className="mt-8 overflow-hidden rounded-3xl border border-white/8 bg-gradient-to-br from-brand-blue/[0.07] via-transparent to-brand-teal/[0.05] p-5 sm:p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-blue to-brand-cyan text-ink-900 shadow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </span>
+              <div>
+                <h2 className="font-display text-lg font-bold text-white">Próximos ao vivo</h2>
+                <p className="text-xs text-slate-400">Encontros e mentorias da sua turma</p>
+              </div>
+            </div>
+            <Link href="/conta/agenda" className="text-sm font-medium text-brand-teal hover:underline">Ver agenda →</Link>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {upcoming.map((l: any) => (
+              <Link key={l.id} href="/conta/agenda" className="group rounded-2xl border border-white/8 bg-white/[0.03] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-teal/30">
+                <div className="flex items-center gap-2">
+                  {l.kind === "mentoria" ? (
+                    <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>
+                  ) : (
+                    <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">Live</span>
+                  )}
+                  <span className="text-xs font-semibold text-brand-teal">{evtCountdown(l.starts_at)}</span>
+                </div>
+                <p className="mt-2 font-semibold text-white transition-colors group-hover:text-brand-teal">{l.title}</p>
+                <p className="mt-1 text-xs capitalize text-slate-400">{evtWhen(l.starts_at)}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Meus cursos */}
