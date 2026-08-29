@@ -12,6 +12,7 @@ const TURMA_KEYS = [
   "turma_descricao",
   "sales_open",
   "checkout_whatsapp",
+  "pix_discount_pct",
 ] as const;
 
 export async function saveTurma(formData: FormData) {
@@ -26,6 +27,7 @@ export async function saveTurma(formData: FormData) {
     turma_descricao: ((formData.get("turma_descricao") as string) || "").trim(),
     sales_open: formData.get("sales_open") === "on" ? "1" : "0",
     checkout_whatsapp: ((formData.get("checkout_whatsapp") as string) || "").replace(/\D/g, ""),
+    pix_discount_pct: (((formData.get("pix_discount_pct") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".")) || "3.99",
   };
 
   const admin = createAdminClient();

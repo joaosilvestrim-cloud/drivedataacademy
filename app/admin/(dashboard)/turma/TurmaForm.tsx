@@ -26,6 +26,12 @@ export default function TurmaForm({ initial }: { initial: Record<string, string>
       </div>
 
       <div className="space-y-1.5">
+        <label className={label} htmlFor="pix_discount_pct">Desconto no Pix à vista (%)</label>
+        <input id="pix_discount_pct" name="pix_discount_pct" defaultValue={initial.pix_discount_pct || "3.99"} placeholder="3.99" inputMode="decimal" className={field} />
+        <p className="text-xs text-slate-500">Quem paga no Pix ganha esse desconto. Sugestão: igual à taxa da plataforma (~3,99%). Cartão é o preço cheio, em até Nx.</p>
+      </div>
+
+      <div className="space-y-1.5">
         <label className={label} htmlFor="turma_descricao">Descrição curta</label>
         <textarea id="turma_descricao" name="turma_descricao" rows={3} defaultValue={initial.turma_descricao || ""} placeholder="Acesso a todos os cursos, certificados e comunidade por 1 ano." className={`${field} resize-y`} />
       </div>

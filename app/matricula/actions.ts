@@ -27,6 +27,17 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   const email = ((formData.get("email") as string) || "").trim().toLowerCase();
   const phone = ((formData.get("phone") as string) || "").replace(/\D/g, "");
   const cpf = ((formData.get("cpf") as string) || "").replace(/\D/g, "");
+  const method = (((formData.get("method") as string) || "card").trim() === "pix") ? "pix" : "card";
+
+  // Endereço (vai para o cadastro do cliente no Asaas)
+  const address = {
+    postalCode: ((formData.get("cep") as string) || "").replace(/\D/g, ""),
+    address: ((formData.get("endereco") as string) || "").trim(),
+    addressNumber: ((formData.get("numero") as string) || "").trim(),
+    province: ((formData.get("bairro") as string) || "").trim(),
+    city: ((formData.get("cidade") as string) || "").trim(),
+    state: ((formData.get("uf") as string) || "").trim().toUpperCase().slice(0, 2),
+  };
 
   if (!name || !email) return { ok: false, error: "Preencha nome e e-mail." };
   if (process.env.ASAAS_API_KEY && cpf.length !== 11) return { ok: false, error: "Informe um CPF válido (11 dígitos) para gerar o pagamento." };
@@ -37,7 +48,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   const { data: cfg } = await admin
     .from("site_settings")
     .select("key, value")
-    .in("key", ["full_access_price", "sales_open", "checkout_whatsapp"]);
+    .in("key", ["full_access_price", "sales_open", "checkout_whatsapp", "pix_discount_pct"]);
   const map = Object.fromEntries((cfg ?? []).map((r: any) => [r.key, r.value]));
 
   // Preço, formas e o que inclui vêm da TURMA marcada para venda online.
@@ -52,8 +63,17 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
 
   if (map.sales_open !== "1" && !turma) return { ok: false, error: "As matrículas estão fechadas no momento." };
 
-  const amount = turma ? Number(turma.price) : Number(map.full_access_price || "0") || null;
-  const methods = turma?.methods || "pix,card,boleto";
+  const methods = turma?.methods || "pix,card";
+  const fullPrice = turma ? Number(turma.price) : Number(map.full_access_price || "0") || null;
+
+  // Desconto no Pix = taxa da plataforma (config pix_discount_pct, padrão 3.99%)
+  const pixPct = Number(map.pix_discount_pct || "3.99") || 0;
+  const chosen = methods.includes(method) ? method : (methods.includes("card") ? "card" : "pix");
+  const amount =
+    fullPrice != null && chosen === "pix"
+      ? Math.round(fullPrice * (1 - pixPct / 100) * 100) / 100
+      : fullPrice;
+
   const description = turma?.description || turma?.name || "Acesso Full - DriveData Academy";
   const user_id = await findUserIdByEmail(admin, email);
 
@@ -80,7 +100,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   // Pagamento automático: ligado quando ASAAS_API_KEY existir (a cobrança é criada aqui).
   // Por enquanto, fluxo manual orientado por WhatsApp.
   if (process.env.ASAAS_API_KEY) {
-    const res = await createAsaasCheckout(admin, { orderId: order.id, name, email, phone, cpf, amount, methods, description });
+    const res = await createAsaasCheckout(admin, { orderId: order.id, name, email, phone, cpf, amount, method: chosen, address, description });
     if (res) return { ok: true, mode: "asaas", url: res };
     // se falhar, cai no manual
   }
@@ -90,16 +110,14 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
 
 const ASAAS_BASE = process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3";
 
-function billingTypeFrom(methods: string): string {
-  const set = (methods || "").split(",").map((s) => s.trim()).filter(Boolean);
-  if (set.length === 1) return set[0] === "pix" ? "PIX" : set[0] === "card" ? "CREDIT_CARD" : set[0] === "boleto" ? "BOLETO" : "UNDEFINED";
-  return "UNDEFINED"; // várias formas: o aluno escolhe na tela do Asaas
-}
+type Address = { postalCode: string; address: string; addressNumber: string; province: string; city: string; state: string };
 
 // Cria cliente + cobrança no Asaas e devolve a invoiceUrl (página de pagamento).
+// Pix = à vista (valor já com desconto). Cartão = valor cheio; o aluno escolhe as
+// parcelas (até o limite da conta Asaas) na própria tela de pagamento.
 async function createAsaasCheckout(
   admin: ReturnType<typeof createAdminClient>,
-  { orderId, name, email, phone, cpf, amount, methods, description }: { orderId: string; name: string; email: string; phone: string; cpf: string; amount: number | null; methods: string; description: string }
+  { orderId, name, email, phone, cpf, amount, method, address, description }: { orderId: string; name: string; email: string; phone: string; cpf: string; amount: number | null; method: "pix" | "card"; address: Address; description: string }
 ): Promise<string | null> {
   const key = process.env.ASAAS_API_KEY!;
   const headers = { access_token: key, "Content-Type": "application/json" };
@@ -109,19 +127,29 @@ async function createAsaasCheckout(
     const custRes = await fetch(`${ASAAS_BASE}/customers`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ name, email, cpfCnpj: cpf, mobilePhone: validPhone, externalReference: email }),
+      body: JSON.stringify({
+        name,
+        email,
+        cpfCnpj: cpf,
+        mobilePhone: validPhone,
+        externalReference: email,
+        postalCode: address.postalCode || undefined,
+        address: address.address || undefined,
+        addressNumber: address.addressNumber || undefined,
+        province: address.province || undefined,
+      }),
     });
     const cust = await custRes.json();
     if (!custRes.ok || !cust?.id) return null;
 
-    // 2) cobrança (billingType UNDEFINED = o pagador escolhe PIX/cartão/boleto)
+    // 2) cobrança (Pix ou Cartão, conforme escolha do aluno na matrícula)
     const due = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
     const payRes = await fetch(`${ASAAS_BASE}/payments`, {
       method: "POST",
       headers,
       body: JSON.stringify({
         customer: cust.id,
-        billingType: billingTypeFrom(methods),
+        billingType: method === "pix" ? "PIX" : "CREDIT_CARD",
         value: amount ?? 0,
         dueDate: due,
         externalReference: orderId,

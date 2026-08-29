@@ -7,7 +7,7 @@ import MatriculaForm from "./MatriculaForm";
 
 export const dynamic = "force-dynamic";
 
-const TURMA_KEYS = ["full_access_price", "turma_nome", "turma_data", "turma_descricao", "sales_open"];
+const TURMA_KEYS = ["full_access_price", "turma_nome", "turma_data", "turma_descricao", "sales_open", "pix_discount_pct"];
 
 function brl(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 });
@@ -34,7 +34,11 @@ export default async function MatriculaPage() {
   const descricao = product?.description || cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados.";
   const price = product ? Number(product.price) : Number(cfg.full_access_price || "0") || 0;
   const maxInst = Number(product?.max_installments || 1);
-  const allowsCard = (product?.methods || "pix,card,boleto").includes("card");
+  const methods = product?.methods || "pix,card";
+  const allowsCard = methods.includes("card");
+  const allowsPix = methods.includes("pix");
+  const pixPct = Number(cfg.pix_discount_pct || "3.99") || 0;
+  const pixPrice = Math.round(price * (1 - pixPct / 100) * 100) / 100;
   const installmentHint = allowsCard && maxInst > 1 ? `em até ${maxInst}x no cartão · R$ ${(price / maxInst).toFixed(2)}/mês` : null;
 
   const beneficios = [
@@ -81,6 +85,7 @@ export default async function MatriculaPage() {
                     <span className="block text-xs uppercase tracking-wide text-slate-400">Acesso full</span>
                     <span className="font-display text-3xl font-bold text-white">{brl(price)}</span>
                     {installmentHint && <span className="mt-0.5 block text-xs text-brand-teal">{installmentHint}</span>}
+                    {allowsPix && pixPrice < price && <span className="mt-0.5 block text-xs text-brand-green">ou {brl(pixPrice)} no Pix à vista</span>}
                   </div>
                   <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Vagas limitadas</span>
                 </div>
@@ -93,7 +98,7 @@ export default async function MatriculaPage() {
                 <h2 className="font-display text-xl font-bold text-white">Garanta sua vaga</h2>
                 <p className="mt-1 text-sm text-slate-400">Preencha e a gente cuida do resto.</p>
                 <div className="mt-6">
-                  <MatriculaForm turmaNome={nome} />
+                  <MatriculaForm turmaNome={nome} price={price} pixPrice={pixPrice} maxInst={maxInst} allowsPix={allowsPix} allowsCard={allowsCard} />
                 </div>
               </div>
             </div>

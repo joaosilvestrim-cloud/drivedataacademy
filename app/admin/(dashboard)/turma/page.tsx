@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
 import TurmaForm from "./TurmaForm";
 
-const TURMA_KEYS = ["full_access_price", "turma_nome", "turma_data", "turma_descricao", "sales_open", "checkout_whatsapp"];
+const TURMA_KEYS = ["full_access_price", "turma_nome", "turma_data", "turma_descricao", "sales_open", "checkout_whatsapp", "pix_discount_pct"];
 
 export const dynamic = "force-dynamic";
 

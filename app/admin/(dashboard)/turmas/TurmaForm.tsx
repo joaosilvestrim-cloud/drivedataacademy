@@ -15,7 +15,7 @@ function toDate(d: string | null) { return d ? d.slice(0, 10) : ""; }
 export default function TurmaForm({ turma, courses }: { turma: Turma; courses: Course[] }) {
   const [includes, setIncludes] = useState(turma.includes || "full");
   const selected = new Set((turma.course_ids || "").split(",").map((s: string) => s.trim()).filter(Boolean));
-  const methods = new Set((turma.methods || "pix,card,boleto").split(","));
+  const methods = new Set((turma.methods || "pix,card").split(","));
 
   return (
     <form action={updateTurma} className="space-y-6">
@@ -69,10 +69,10 @@ export default function TurmaForm({ turma, courses }: { turma: Turma; courses: C
         <div className="mt-3 space-y-1.5">
           <label className={flabel}>Formas de pagamento</label>
           <div className="flex flex-wrap gap-4 text-sm text-slate-300">
-            <label className="flex items-center gap-1.5"><input type="checkbox" name="m_pix" defaultChecked={methods.has("pix")} className="h-4 w-4 accent-emerald-400" /> PIX</label>
-            <label className="flex items-center gap-1.5"><input type="checkbox" name="m_card" defaultChecked={methods.has("card")} className="h-4 w-4 accent-emerald-400" /> Cartão</label>
-            <label className="flex items-center gap-1.5"><input type="checkbox" name="m_boleto" defaultChecked={methods.has("boleto")} className="h-4 w-4 accent-emerald-400" /> Boleto</label>
+            <label className="flex items-center gap-1.5"><input type="checkbox" name="m_pix" defaultChecked={methods.has("pix")} className="h-4 w-4 accent-emerald-400" /> PIX (à vista, com desconto)</label>
+            <label className="flex items-center gap-1.5"><input type="checkbox" name="m_card" defaultChecked={methods.has("card")} className="h-4 w-4 accent-emerald-400" /> Cartão (até Nx)</label>
           </div>
+          <p className="text-xs text-slate-500">Boleto está desativado. O desconto do Pix é configurado em Matrícula.</p>
         </div>
         <label className="mt-3 flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2.5 text-sm text-slate-200">
           <input type="checkbox" name="online_sale" defaultChecked={turma.online_sale} className="h-4 w-4 accent-emerald-400" />

@@ -28,7 +28,6 @@ function methodsFrom(formData: FormData): string {
   const m: string[] = [];
   if (formData.get("m_pix") === "on") m.push("pix");
   if (formData.get("m_card") === "on") m.push("card");
-  if (formData.get("m_boleto") === "on") m.push("boleto");
   return m.join(",") || "pix";
 }
 
