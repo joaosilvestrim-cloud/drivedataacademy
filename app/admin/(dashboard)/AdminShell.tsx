@@ -41,6 +41,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     title: "Vendas",
     items: [
       { label: "Turmas", href: "/admin/turmas", icon: "cohort" },
+      { label: "Ferramenta", href: "/admin/ferramenta", icon: "courses" },
       { label: "Produtos avulsos", href: "/admin/cobranca", icon: "billing" },
       { label: "Acessos", href: "/admin/acessos", icon: "access" },
       { label: "Matrícula", href: "/admin/turma", icon: "launch" },

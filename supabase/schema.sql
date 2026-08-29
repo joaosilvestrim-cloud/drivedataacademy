@@ -870,3 +870,21 @@ alter table public.saved_visuals enable row level security;
 drop policy if exists "saved_owner" on public.saved_visuals;
 create policy "saved_owner" on public.saved_visuals
   for all using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+
+-- Assinatura da Ferramenta de Visuais (produto separado, mensal R$19,90 via Asaas)
+create table if not exists public.tool_subscriptions (
+  id                   uuid primary key default gen_random_uuid(),
+  user_id              uuid not null references auth.users (id) on delete cascade,
+  email                text,
+  status               text not null default 'pending',   -- pending | active | canceled | overdue
+  asaas_subscription_id text,
+  asaas_customer_id    text,
+  current_period_end   timestamptz,
+  created_at           timestamptz not null default now(),
+  updated_at           timestamptz not null default now()
+);
+create unique index if not exists tool_subscriptions_user_idx on public.tool_subscriptions (user_id);
+alter table public.tool_subscriptions enable row level security;
+drop policy if exists "tool_sub_own" on public.tool_subscriptions;
+create policy "tool_sub_own" on public.tool_subscriptions for select using (user_id = auth.uid());

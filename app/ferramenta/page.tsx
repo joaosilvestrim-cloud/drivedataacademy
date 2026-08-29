@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canUseCommunity } from "@/lib/community";
+import { hasToolAccess } from "@/lib/tool";
 import EditorClient from "@/components/editor/EditorClient";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +13,11 @@ export default async function FerramentaPage() {
   if (!user) redirect("/entrar?next=/ferramenta");
 
   const admin = createAdminClient();
-  const liberado = await canUseCommunity(admin, user.id, user.email);
+  const liberado = await hasToolAccess(admin, user.id, user.email);
 
   if (!liberado) {
+    const { data: cfg } = await admin.from("site_settings").select("value").eq("key", "tool_price").maybeSingle();
+    const price = (Number(cfg?.value || "19.90") || 19.9).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     return (
       <main className="grid min-h-screen place-items-center bg-ink-900 px-6">
         <div className="max-w-md rounded-3xl border border-white/10 bg-white/[0.02] p-8 text-center">
@@ -24,8 +26,8 @@ export default async function FerramentaPage() {
           </div>
           <h1 className="font-display text-2xl font-bold text-white">Ferramenta de Visuais</h1>
           <p className="mt-2 text-slate-300">Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.</p>
-          <p className="mt-2 text-sm text-slate-500">Disponível para alunos com acesso ativo.</p>
-          <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Garantir meu acesso</Link>
+          <p className="mt-3 text-sm text-slate-400">Assinatura mensal de <span className="font-semibold text-white">{price}</span>. Cancele quando quiser.</p>
+          <Link href="/ferramenta/assinar" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar a ferramenta</Link>
           <Link href="/conta" className="mt-3 block text-sm text-slate-400 hover:text-white">Voltar ao portal</Link>
         </div>
       </main>

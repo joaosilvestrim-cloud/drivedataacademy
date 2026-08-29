@@ -29,11 +29,28 @@ export async function POST(req: Request) {
   const payment = body?.payment || {};
   const paidEvents = ["PAYMENT_CONFIRMED", "PAYMENT_RECEIVED"];
 
+  const admin = createAdminClient();
+
+  // Assinatura da Ferramenta de Visuais (externalReference = "tool:<userId>")
+  const extRef = (payment.externalReference as string | undefined) || "";
+  if (extRef.startsWith("tool:")) {
+    const userId = extRef.slice(5);
+    if (paidEvents.includes(event)) {
+      // libera/renova por ~35 dias (cobre o mês + margem até a próxima cobrança)
+      const periodEnd = new Date(Date.now() + 35 * 864e5).toISOString();
+      await admin.from("tool_subscriptions").upsert(
+        { user_id: userId, status: "active", current_period_end: periodEnd, asaas_subscription_id: payment.subscription ?? null, updated_at: new Date().toISOString() },
+        { onConflict: "user_id" }
+      );
+    } else if (event === "PAYMENT_OVERDUE") {
+      await admin.from("tool_subscriptions").update({ status: "overdue", updated_at: new Date().toISOString() }).eq("user_id", userId);
+    }
+    return NextResponse.json({ ok: true, tool: event });
+  }
+
   if (!paidEvents.includes(event)) {
     return NextResponse.json({ ok: true, ignored: event });
   }
-
-  const admin = createAdminClient();
 
   // Localiza o pedido pela nossa referência ou pelo id da cobrança.
   const ref = payment.externalReference as string | undefined;
