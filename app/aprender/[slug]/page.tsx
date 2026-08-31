@@ -4,18 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { youtubeId } from "@/lib/youtube";
 import { canAccessCourse } from "@/lib/access";
-import { loadProfiles, displayName } from "@/lib/community";
-import { markComplete, addComment } from "./actions";
-import Avatar from "@/components/Avatar";
+import { loadProfiles } from "@/lib/community";
 import { issueCertificate, issueModuleCertificate } from "@/app/certificado/actions";
-import CourseContents from "./CourseContents";
-import PandaPlayer from "./PandaPlayer";
-import ProtectedPlayer from "./ProtectedPlayer";
+import CoursePlayer from "./CoursePlayer";
 import NpsPrompt from "./NpsPrompt";
 
 export const dynamic = "force-dynamic";
-
-const linkBtn = "rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-white/30 hover:text-white";
 
 export default async function PlayerPage({
   params,
@@ -68,32 +62,40 @@ export default async function PlayerPage({
   // Navegação só entre aulas liberadas (drip).
   const flat = modules.filter((m: any) => !m.locked).flatMap((m: any) => m.lessons);
   const current = flat.find((l: any) => l.id === searchParams.l) || flat.find((l: any) => !done.has(l.id)) || flat[0];
-  const currentIdx = current ? flat.findIndex((l: any) => l.id === current.id) : -1;
-  const prev = currentIdx > 0 ? flat[currentIdx - 1] : null;
-  const next = currentIdx >= 0 && currentIdx < flat.length - 1 ? flat[currentIdx + 1] : null;
 
   // Progresso considera todas as aulas do curso (o certificado só sai com tudo liberado e concluído).
   const total = allLessons.length;
   const completed = allLessons.filter((l: any) => done.has(l.id)).length;
   const pct = total ? Math.round((completed / total) * 100) : 0;
 
-  const vid = current?.type === "video" ? youtubeId(current.video_id) : null;
-  const materials: { title: string; url: string }[] = (current?.materials as any) || [];
-
-  // Comentários da aula (aprovados + os próprios pendentes)
-  let comments: any[] = [];
-  let commentNames: Record<string, string> = {};
-  if (current) {
-    const { data: cm } = await admin
-      .from("lesson_comments")
-      .select("id, user_id, body, status, created_at, admin_reply, replied_at")
-      .eq("lesson_id", current.id)
-      .or(`status.eq.approved,user_id.eq.${user.id}`)
-      .order("created_at", { ascending: false })
-      .limit(50);
-    comments = cm ?? [];
-    commentNames = (await loadProfiles(admin, comments.map((c: any) => c.user_id))).nameById;
+  // Dados das aulas para o player client (troca sem recarregar a página)
+  const lessonsById: Record<string, any> = {};
+  for (const l of flat as any[]) {
+    lessonsById[l.id] = {
+      id: l.id,
+      title: l.title,
+      duration: l.duration ?? null,
+      type: l.type,
+      video_provider: l.video_provider ?? null,
+      video_id: l.video_id ?? null,
+      yt: l.type === "video" ? youtubeId(l.video_id) : null,
+      content: l.content ?? null,
+      materials: (l.materials as any) || [],
+    };
   }
+  const flatIds = (flat as any[]).map((l) => l.id);
+
+  // Comentários de TODAS as aulas (aprovados + os próprios pendentes), agrupados por aula
+  const { data: allComments } = await admin
+    .from("lesson_comments")
+    .select("id, lesson_id, user_id, body, status, created_at, admin_reply")
+    .eq("course_id", course.id)
+    .or(`status.eq.approved,user_id.eq.${user.id}`)
+    .order("created_at", { ascending: false })
+    .limit(500);
+  const commentsByLesson: Record<string, any[]> = {};
+  for (const c of allComments ?? []) (commentsByLesson[c.lesson_id] ||= []).push(c);
+  const commentNames = (await loadProfiles(admin, (allComments ?? []).map((c: any) => c.user_id))).nameById;
 
   const sidebarModules = modules.map((m: any) => ({
     id: m.id,
@@ -144,137 +146,44 @@ export default async function PlayerPage({
         </div>
       ) : null)}
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-8 lg:grid-cols-[1fr_340px]">
-        <div className="min-w-0">
-          {!current ? (
-            <div className="rounded-2xl border border-dashed border-white/10 px-6 py-20 text-center text-slate-400">
-              Este curso ainda não tem aulas publicadas.
-            </div>
-          ) : (
-            <>
-              {current.video_provider === "panda" && current.video_id ? (
-                <ProtectedPlayer>
-                  <PandaPlayer videoId={current.video_id} host={process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST || null} lessonId={current.id} courseId={course.id} slug={course.slug} />
-                </ProtectedPlayer>
-              ) : vid ? (
-                <ProtectedPlayer>
-                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-                    <div className="relative aspect-video">
-                      <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`} title={current.title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
-                    </div>
-                  </div>
-                </ProtectedPlayer>
-              ) : current.type === "text" ? (
-                <article className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8">
-                  <div className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{current.content || "—"}</div>
-                </article>
-              ) : (
-                <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] text-slate-500">Aula em preparação.</div>
-              )}
+      <div className="mx-auto max-w-7xl px-6 py-8">
+        <CoursePlayer
+          slug={course.slug}
+          courseId={course.id}
+          pandaHost={process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST || null}
+          modules={sidebarModules}
+          lessonsById={lessonsById}
+          flatIds={flatIds}
+          initialId={current?.id || ""}
+          doneIds={Array.from(done) as string[]}
+          quiz={quiz ? { title: quiz.title } : null}
+          commentsByLesson={commentsByLesson}
+          commentNames={commentNames}
+        />
 
-              <p className="mt-5 text-xs font-medium uppercase tracking-wide text-brand-green">Aula {currentIdx + 1} de {flat.length}</p>
-              <h1 className="mt-1 font-display text-2xl font-bold text-white">{current.title}</h1>
-
-              {materials.length > 0 && (
-                <div className="mt-5 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-                  <p className="text-sm font-semibold text-white">Materiais de apoio</p>
-                  <ul className="mt-3 space-y-2">
-                    {materials.map((mat, i) => (
-                      <li key={i}>
-                        <a href={mat.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-brand-teal hover:underline">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                          {mat.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Navegação */}
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-                {prev ? (
-                  <Link href={`/aprender/${course.slug}?l=${prev.id}`} className={linkBtn}>← Aula anterior</Link>
-                ) : <span />}
-                <div className="flex items-center gap-2">
-                  {next && <Link href={`/aprender/${course.slug}?l=${next.id}`} className={linkBtn}>Próxima aula →</Link>}
-                  <form action={markComplete}>
-                    <input type="hidden" name="slug" value={course.slug} />
-                    <input type="hidden" name="lesson_id" value={current.id} />
-                    <input type="hidden" name="course_id" value={course.id} />
-                    {next && <input type="hidden" name="next_lesson" value={next.id} />}
-                    <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                      {done.has(current.id) ? (next ? "Concluída · avançar" : "Concluída") : next ? "Concluir e avançar" : "Marcar como concluída"}
-                    </button>
-                  </form>
-                </div>
-              </div>
-
-              {/* Comentários da aula */}
-              <div className="mt-8">
-                <h2 className="font-display text-lg font-bold text-white">Comentários</h2>
-                <form action={addComment} className="mt-3 space-y-2">
-                  <input type="hidden" name="slug" value={course.slug} />
-                  <input type="hidden" name="lesson_id" value={current.id} />
-                  <input type="hidden" name="course_id" value={course.id} />
-                  <textarea name="body" required rows={2} placeholder="Comente ou tire uma dúvida sobre esta aula..." className="w-full resize-y rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-                  <div className="flex items-center gap-3">
-                    <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">Comentar</button>
-                    <span className="text-xs text-slate-500">Comentários passam por aprovação antes de aparecer.</span>
-                  </div>
-                </form>
-
-                <div className="mt-5 space-y-3">
-                  {comments.length === 0 && <p className="text-sm text-slate-500">Seja o primeiro a comentar.</p>}
-                  {comments.map((c: any) => (
-                    <div key={c.id} className="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-                      <Avatar name={displayName(commentNames, c.user_id)} size="sm" />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs text-slate-500">
-                          {displayName(commentNames, c.user_id)}
-                          {c.status === "pending" && <span className="ml-2 rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-amber-300">em análise</span>}
-                        </p>
-                        <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.body}</p>
-                        {c.admin_reply && (
-                          <div className="mt-2 rounded-xl border border-brand-blue/25 bg-brand-blue/[0.06] p-3">
-                            <p className="text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">Resposta da equipe DriveData</p>
-                            <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.admin_reply}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-          {course.certificate_enabled !== false && modules.length > 1 && completedModules.length > 0 && (
-            <div className="mt-8 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-              <p className="text-sm font-semibold text-white">Certificados por módulo</p>
-              <p className="mt-1 text-xs text-slate-400">Emita o certificado de cada módulo concluído.</p>
-              <ul className="mt-4 space-y-2">
-                {completedModules.map((m: any) => (
-                  <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
-                    <span className="text-sm text-slate-200">{m.title}</span>
-                    {m.code ? (
-                      <Link href={`/certificado/${m.code}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-brand-teal hover:border-brand-teal/50">Ver certificado</Link>
-                    ) : (
-                      <form action={issueModuleCertificate}>
-                        <input type="hidden" name="course_id" value={course.id} />
-                        <input type="hidden" name="module_id" value={m.id} />
-                        <input type="hidden" name="slug" value={course.slug} />
-                        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-1.5 text-xs font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Emitir certificado</button>
-                      </form>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        <CourseContents slug={course.slug} modules={sidebarModules} doneIds={Array.from(done) as string[]} currentId={current?.id} quiz={quiz} />
+        {course.certificate_enabled !== false && modules.length > 1 && completedModules.length > 0 && (
+          <div className="mt-8 max-w-3xl rounded-2xl border border-white/8 bg-white/[0.02] p-5">
+            <p className="text-sm font-semibold text-white">Certificados por módulo</p>
+            <p className="mt-1 text-xs text-slate-400">Emita o certificado de cada módulo concluído.</p>
+            <ul className="mt-4 space-y-2">
+              {completedModules.map((m: any) => (
+                <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+                  <span className="text-sm text-slate-200">{m.title}</span>
+                  {m.code ? (
+                    <Link href={`/certificado/${m.code}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-brand-teal hover:border-brand-teal/50">Ver certificado</Link>
+                  ) : (
+                    <form action={issueModuleCertificate}>
+                      <input type="hidden" name="course_id" value={course.id} />
+                      <input type="hidden" name="module_id" value={m.id} />
+                      <input type="hidden" name="slug" value={course.slug} />
+                      <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-1.5 text-xs font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Emitir certificado</button>
+                    </form>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
