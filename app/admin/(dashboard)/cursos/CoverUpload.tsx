@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { signCoverUpload } from "./actions";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
@@ -18,14 +19,13 @@ export default function CoverUpload({ initialUrl }: { initialUrl?: string | null
     setUploading(true);
     setError("");
     try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const signed = await signCoverUpload(ext);
+      if (!signed.ok) { setError("Erro ao preparar upload: " + signed.error); setUploading(false); return; }
       const supabase = createClient();
-      const { data: sess } = await supabase.auth.getSession();
-      if (!sess?.session) { setError("Sessão não encontrada no navegador. Saia e entre de novo no admin, depois tente."); setUploading(false); return; }
-      const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-      const path = `course-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("covers").upload(path, file, { upsert: true, contentType: file.type });
+      const { error: upErr } = await supabase.storage.from("covers").uploadToSignedUrl(signed.path, signed.token, file, { contentType: file.type });
       if (upErr) throw upErr;
-      const { data } = supabase.storage.from("covers").getPublicUrl(path);
+      const { data } = supabase.storage.from("covers").getPublicUrl(signed.path);
       setUrl(data.publicUrl + `?v=${Date.now()}`);
     } catch (err: any) {
       setError("Erro ao subir: " + (err?.message || err?.error || JSON.stringify(err) || "desconhecido"));

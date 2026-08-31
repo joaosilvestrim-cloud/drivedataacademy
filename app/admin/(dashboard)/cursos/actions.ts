@@ -21,6 +21,19 @@ async function admin() {
   return createAdminClient();
 }
 
+// Gera uma URL de upload ASSINADA para a capa (via service role). O navegador sobe
+// direto por essa URL, sem depender de RLS do Storage nem do limite de corpo do Vercel.
+export async function signCoverUpload(ext: string) {
+  const supabase = await admin();
+  const bucket = "covers";
+  await supabase.storage.createBucket(bucket, { public: true }).catch(() => {}); // garante o bucket
+  const clean = (ext || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `course-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${clean}`;
+  const { data, error } = await supabase.storage.from(bucket).createSignedUploadUrl(path);
+  if (error || !data) return { ok: false as const, error: error?.message || "Não consegui preparar o upload." };
+  return { ok: true as const, path: data.path, token: data.token };
+}
+
 // "Título | https://..." por linha -> [{title, url}]
 function parseMaterials(raw: string) {
   return (raw || "")
