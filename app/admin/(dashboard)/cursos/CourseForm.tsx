@@ -58,9 +58,19 @@ export default function CourseForm({ course }: { course?: Course }) {
             <input id="price" name="price" type="number" min="0" step="0.01" defaultValue={course?.price ?? 0} className={field} />
           </div>
         </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="cover_url">URL da imagem de capa</label>
-          <input id="cover_url" name="cover_url" placeholder="https://..." defaultValue={course?.cover_url ?? ""} className={field} />
+        <div className="space-y-2">
+          <label className={label}>Imagem de capa</label>
+          <div className="flex items-start gap-4">
+            {course?.cover_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={course.cover_url} alt="Capa atual" className="h-20 w-32 shrink-0 rounded-lg border border-white/10 object-cover" />
+            )}
+            <div className="flex-1 space-y-2">
+              <input id="cover_file" name="cover_file" type="file" accept="image/*" className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-gradient-to-r file:from-brand-green file:to-brand-blue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-ink-900 hover:file:opacity-90" />
+              <p className="text-xs text-slate-500">Faça upload de uma imagem (JPG/PNG). Ou cole uma URL abaixo. O upload tem prioridade.</p>
+              <input id="cover_url" name="cover_url" placeholder="https://... (opcional)" defaultValue={course?.cover_url ?? ""} className={field} />
+            </div>
+          </div>
         </div>
       </div>
 

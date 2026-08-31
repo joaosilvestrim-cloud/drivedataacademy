@@ -21,6 +21,22 @@ async function admin() {
   return createAdminClient();
 }
 
+// Sobe a imagem de capa para o Storage (bucket público "covers") e devolve a URL pública.
+// Retorna null se não veio arquivo (aí mantém a URL digitada).
+async function uploadCover(supabase: ReturnType<typeof createAdminClient>, file: FormDataEntryValue | null): Promise<string | null> {
+  if (!file || typeof file === "string") return null;
+  const f = file as File;
+  if (!f.size) return null;
+  const bucket = "covers";
+  await supabase.storage.createBucket(bucket, { public: true }).catch(() => {}); // ignora se já existe
+  const ext = (f.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `course-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const buf = Buffer.from(await f.arrayBuffer());
+  const { error } = await supabase.storage.from(bucket).upload(path, buf, { contentType: f.type || "image/jpeg", upsert: false });
+  if (error) return null;
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+}
+
 // "Título | https://..." por linha -> [{title, url}]
 function parseMaterials(raw: string) {
   return (raw || "")
@@ -47,12 +63,15 @@ export async function saveCourse(formData: FormData) {
   const slugInput = (formData.get("slug") as string).trim();
   const slug = slugInput ? slugify(slugInput) : slugify(title);
 
+  // Se veio arquivo de capa, faz upload e usa a URL dele; senão mantém a URL digitada.
+  const uploadedCover = await uploadCover(supabase, formData.get("cover_file"));
+
   const payload = {
     title,
     slug,
     subtitle: ((formData.get("subtitle") as string) || "").trim() || null,
     description: ((formData.get("description") as string) || "").trim() || null,
-    cover_url: ((formData.get("cover_url") as string) || "").trim() || null,
+    cover_url: uploadedCover || ((formData.get("cover_url") as string) || "").trim() || null,
     level: ((formData.get("level") as string) || "").trim() || null,
     instructor_name: ((formData.get("instructor_name") as string) || "").trim() || null,
     price: Number((formData.get("price") as string) || "0") || 0,
