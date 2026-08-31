@@ -98,6 +98,50 @@ export async function deleteCourse(formData: FormData) {
   redirect("/admin/cursos");
 }
 
+async function findUserByEmail(supabase: ReturnType<typeof createAdminClient>, email: string) {
+  const target = email.trim().toLowerCase();
+  let page = 1;
+  for (let i = 0; i < 10; i++) {
+    const { data } = await supabase.auth.admin.listUsers({ page, perPage: 1000 });
+    const users = data?.users ?? [];
+    const found = users.find((u: any) => (u.email || "").toLowerCase() === target);
+    if (found) return found;
+    if (users.length < 1000) break;
+    page++;
+  }
+  return null;
+}
+
+// Aloca (matricula) um aluno neste curso, na hora.
+export async function enrollInCourse(formData: FormData) {
+  const supabase = await admin();
+  const courseId = formData.get("course_id") as string;
+  const email = ((formData.get("email") as string) || "").trim();
+  const back = (m: string, ok = true) => redirect(`/admin/cursos/${courseId}?${ok ? "ok" : "error"}=` + encodeURIComponent(m));
+  if (!email) back("Informe o e-mail do aluno.", false);
+
+  const target = await findUserByEmail(supabase, email);
+  if (!target) back("Nenhum aluno com esse e-mail. Crie a conta em Acessos primeiro.", false);
+
+  const { data: existing } = await supabase.from("enrollments").select("user_id").eq("course_id", courseId).eq("user_id", target!.id).maybeSingle();
+  if (!existing) {
+    const { error } = await supabase.from("enrollments").insert({ user_id: target!.id, course_id: courseId, source: "admin" });
+    if (error) back(error.message, false);
+  }
+  refresh(courseId);
+  back(`Aluno alocado: ${email}`);
+}
+
+// Remove a matrícula de um aluno neste curso.
+export async function unenrollFromCourse(formData: FormData) {
+  const supabase = await admin();
+  const courseId = formData.get("course_id") as string;
+  const userId = formData.get("user_id") as string;
+  await supabase.from("enrollments").delete().eq("course_id", courseId).eq("user_id", userId);
+  refresh(courseId);
+  redirect(`/admin/cursos/${courseId}?ok=` + encodeURIComponent("Aluno removido do curso."));
+}
+
 export async function togglePublishCourse(formData: FormData) {
   const supabase = await admin();
   const id = formData.get("id") as string;

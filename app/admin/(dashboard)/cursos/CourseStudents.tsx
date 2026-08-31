@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { enrollInCourse, unenrollFromCourse } from "./actions";
 
 function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(new Date(iso));
@@ -28,6 +29,14 @@ export default async function CourseStudents({ courseId, totalLessons }: { cours
     <div className="mt-10">
       <h2 className="font-display text-lg font-bold text-white">Alunos matriculados</h2>
       <p className="mt-1 text-sm text-slate-400">{rows.length} aluno(s) neste curso.</p>
+
+      {/* Alocar aluno na hora */}
+      <form action={enrollInCourse} className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
+        <input type="hidden" name="course_id" value={courseId} />
+        <input name="email" type="email" required placeholder="email@aluno.com" className="min-w-[220px] flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">Alocar aluno</button>
+        <p className="w-full text-xs text-slate-500">Matricula direto neste curso. O aluno precisa já ter conta (crie em Acessos).</p>
+      </form>
 
       <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
         <table className="w-full text-sm">
@@ -58,8 +67,15 @@ export default async function CourseStudents({ courseId, totalLessons }: { cours
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3 text-slate-400">{fmt(e.created_at)} {e.source === "admin" ? "· cortesia" : ""}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Link href={`/admin/alunos/${e.user_id}`} className="text-xs text-brand-green hover:underline">Ver aluno</Link>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-3">
+                      <Link href={`/admin/alunos/${e.user_id}`} className="text-xs text-brand-green hover:underline">Ver aluno</Link>
+                      <form action={unenrollFromCourse} className="inline">
+                        <input type="hidden" name="course_id" value={courseId} />
+                        <input type="hidden" name="user_id" value={e.user_id} />
+                        <button className="text-xs text-slate-500 hover:text-red-400" title="Remover do curso">Remover</button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               );
