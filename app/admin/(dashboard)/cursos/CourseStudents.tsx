@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { enrollInCourse, unenrollFromCourse } from "./actions";
+import { unenrollFromCourse } from "./actions";
+import AllocateStudent from "./AllocateStudent";
 
 function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(new Date(iso));
@@ -25,18 +26,20 @@ export default async function CourseStudents({ courseId, totalLessons }: { cours
 
   const rows = enrolls ?? [];
 
+  // alunos ainda NÃO matriculados neste curso (para o dropdown de alocação)
+  const enrolledIds = new Set(rows.map((e: any) => e.user_id));
+  const available = (userData?.users ?? [])
+    .filter((u: any) => !enrolledIds.has(u.id))
+    .map((u: any) => ({ id: u.id, name: nameById[u.id] || "", email: u.email || "" }))
+    .sort((a, b) => (a.name || a.email).localeCompare(b.name || b.email));
+
   return (
     <div className="mt-10">
       <h2 className="font-display text-lg font-bold text-white">Alunos matriculados</h2>
       <p className="mt-1 text-sm text-slate-400">{rows.length} aluno(s) neste curso.</p>
 
-      {/* Alocar aluno na hora */}
-      <form action={enrollInCourse} className="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-        <input type="hidden" name="course_id" value={courseId} />
-        <input name="email" type="email" required placeholder="email@aluno.com" className="min-w-[220px] flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">Alocar aluno</button>
-        <p className="w-full text-xs text-slate-500">Matricula direto neste curso. O aluno precisa já ter conta (crie em Acessos).</p>
-      </form>
+      {/* Alocar aluno na hora (busca + dropdown) */}
+      <AllocateStudent courseId={courseId} students={available} />
 
       <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
         <table className="w-full text-sm">

@@ -112,24 +112,32 @@ async function findUserByEmail(supabase: ReturnType<typeof createAdminClient>, e
   return null;
 }
 
-// Aloca (matricula) um aluno neste curso, na hora.
+// Aloca (matricula) um aluno neste curso, na hora. Aceita user_id (do dropdown) ou e-mail.
 export async function enrollInCourse(formData: FormData) {
   const supabase = await admin();
   const courseId = formData.get("course_id") as string;
+  const userId = ((formData.get("user_id") as string) || "").trim();
   const email = ((formData.get("email") as string) || "").trim();
   const back = (m: string, ok = true) => redirect(`/admin/cursos/${courseId}?${ok ? "ok" : "error"}=` + encodeURIComponent(m));
-  if (!email) back("Informe o e-mail do aluno.", false);
 
-  const target = await findUserByEmail(supabase, email);
-  if (!target) back("Nenhum aluno com esse e-mail. Crie a conta em Acessos primeiro.", false);
+  let target: any = null;
+  if (userId) {
+    const { data } = await supabase.auth.admin.getUserById(userId);
+    target = data?.user ?? null;
+  } else if (email) {
+    target = await findUserByEmail(supabase, email);
+  } else {
+    back("Selecione um aluno.", false);
+  }
+  if (!target) back("Aluno não encontrado. Crie a conta em Acessos primeiro.", false);
 
-  const { data: existing } = await supabase.from("enrollments").select("user_id").eq("course_id", courseId).eq("user_id", target!.id).maybeSingle();
+  const { data: existing } = await supabase.from("enrollments").select("user_id").eq("course_id", courseId).eq("user_id", target.id).maybeSingle();
   if (!existing) {
-    const { error } = await supabase.from("enrollments").insert({ user_id: target!.id, course_id: courseId, source: "admin" });
+    const { error } = await supabase.from("enrollments").insert({ user_id: target.id, course_id: courseId, source: "admin" });
     if (error) back(error.message, false);
   }
   refresh(courseId);
-  back(`Aluno alocado: ${email}`);
+  back(`Aluno alocado: ${target.email || ""}`);
 }
 
 // Remove a matrícula de um aluno neste curso.
