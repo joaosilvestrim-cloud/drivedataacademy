@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
 import Avatar from "@/components/Avatar";
 import GrantForm from "./GrantForm";
+import CreateStudentForm from "./CreateStudentForm";
+import GrantCoursesForm from "./GrantCoursesForm";
 import { revokeMembership, reactivateMembership } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -18,15 +20,18 @@ function fmt(d: string | null) {
 export default async function AcessosPage({ searchParams }: { searchParams: { ok?: string; error?: string } }) {
   let members: any[] = [];
   let orders: any[] = [];
+  let courses: { id: string; title: string }[] = [];
   try {
     const admin = createAdminClient();
-    const [{ data: mem, error: memErr }, { data: userData }, { data: profs }, { data: ord }] = await Promise.all([
+    const [{ data: mem, error: memErr }, { data: userData }, { data: profs }, { data: ord }, { data: cs }] = await Promise.all([
       admin.from("memberships").select("id, user_id, plan, status, source, starts_at, expires_at").order("starts_at", { ascending: false }),
       admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
       admin.from("profiles").select("id, full_name"),
       admin.from("orders").select("id, email, amount, status, gateway, created_at").order("created_at", { ascending: false }).limit(50),
+      admin.from("courses").select("id, title").order("title"),
     ]);
     if (memErr) throw new Error(memErr.message);
+    courses = cs ?? [];
 
     const emailById: Record<string, string> = {};
     for (const u of userData?.users ?? []) emailById[u.id] = u.email || "";
@@ -73,8 +78,10 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
         <div className="mt-5 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{searchParams.error}</div>
       )}
 
-      <div className="mt-6">
+      <div className="mt-6 grid gap-4">
+        <CreateStudentForm />
         <GrantForm />
+        <GrantCoursesForm courses={courses} />
       </div>
 
       {/* Memberships */}

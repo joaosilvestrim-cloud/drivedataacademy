@@ -61,6 +61,60 @@ export async function grantFullAccess(formData: FormData) {
   redirect("/admin/acessos?ok=" + encodeURIComponent("Acesso liberado para " + email));
 }
 
+// Cria a conta do aluno na mão (para vendas fechadas, cortesias, migração).
+export async function createStudent(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+
+  const name = ((formData.get("name") as string) || "").trim();
+  const email = ((formData.get("email") as string) || "").trim().toLowerCase();
+  let password = ((formData.get("password") as string) || "").trim();
+  if (!email) redirect("/admin/acessos?error=" + encodeURIComponent("Informe o e-mail do aluno."));
+
+  const generated = !password;
+  if (generated) password = "Dd" + Math.random().toString(36).slice(2, 9) + "!9";
+
+  const admin = createAdminClient();
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { full_name: name },
+  });
+  if (error) redirect("/admin/acessos?error=" + encodeURIComponent(error.message));
+  if (data.user) await admin.from("profiles").upsert({ id: data.user.id, full_name: name }, { onConflict: "id" });
+
+  revalidatePath("/admin/acessos");
+  const msg = `Aluno criado: ${email}` + (generated ? ` · senha temporária: ${password}` : "");
+  redirect("/admin/acessos?ok=" + encodeURIComponent(msg));
+}
+
+// Libera acesso instantâneo a cursos específicos (matrícula direta, sem acesso full).
+export async function grantCourses(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+
+  const email = ((formData.get("email") as string) || "").trim();
+  const ids = (formData.getAll("course_ids") as string[]).filter(Boolean);
+  if (!email) redirect("/admin/acessos?error=" + encodeURIComponent("Informe o e-mail do aluno."));
+  if (!ids.length) redirect("/admin/acessos?error=" + encodeURIComponent("Selecione ao menos um treinamento."));
+
+  const admin = createAdminClient();
+  const target = await findUserByEmail(admin, email);
+  if (!target) redirect("/admin/acessos?error=" + encodeURIComponent("Nenhum aluno com esse e-mail. Crie a conta primeiro."));
+
+  const { data: existing } = await admin.from("enrollments").select("course_id").eq("user_id", target!.id).in("course_id", ids);
+  const have = new Set((existing ?? []).map((e: any) => e.course_id));
+  const toAdd = ids.filter((c) => !have.has(c)).map((course_id) => ({ user_id: target!.id, course_id }));
+  if (toAdd.length) {
+    const { error } = await admin.from("enrollments").insert(toAdd);
+    if (error) redirect("/admin/acessos?error=" + encodeURIComponent(error.message));
+  }
+
+  revalidatePath("/admin/acessos");
+  redirect("/admin/acessos?ok=" + encodeURIComponent(`Liberado ${ids.length} treinamento(s) para ${email} na hora.`));
+}
+
 export async function revokeMembership(formData: FormData) {
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");
