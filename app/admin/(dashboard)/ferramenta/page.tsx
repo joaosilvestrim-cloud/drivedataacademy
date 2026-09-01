@@ -1,7 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import AdminError from "../AdminError";
-import { saveToolPrice } from "./actions";
+import { saveToolPrice, revokeToolAccess } from "./actions";
+import ToolGrantForm from "./ToolGrantForm";
 
 export const dynamic = "force-dynamic";
 
@@ -20,13 +21,16 @@ function fmt(iso: string | null) {
 export default async function AdminFerramentaPage({ searchParams }: { searchParams: { ok?: string } }) {
   let subs: any[] = [], nameById: Record<string, string> = {};
   let visualCount = 0, userCount = 0, activeCount = 0, price = "19.90";
+  let students: { id: string; name: string; email: string }[] = [];
   try {
     const admin = createAdminClient();
-    const [{ data: s, error }, { count: vc }, { data: visualsUsers }, { data: cfg }] = await Promise.all([
-      admin.from("tool_subscriptions").select("user_id, email, status, current_period_end, created_at").order("created_at", { ascending: false }).limit(100),
+    const [{ data: s, error }, { count: vc }, { data: visualsUsers }, { data: cfg }, { data: userData }, { data: profs }] = await Promise.all([
+      admin.from("tool_subscriptions").select("user_id, email, status, current_period_end, created_at, asaas_subscription_id").order("created_at", { ascending: false }).limit(100),
       admin.from("saved_visuals").select("*", { count: "exact", head: true }),
       admin.from("saved_visuals").select("user_id"),
       admin.from("site_settings").select("value").eq("key", "tool_price").maybeSingle(),
+      admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
+      admin.from("profiles").select("id, full_name"),
     ]);
     if (error) throw new Error(error.message);
     subs = s ?? [];
@@ -35,6 +39,11 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
     activeCount = subs.filter((x) => x.status === "active").length;
     if (cfg?.value) price = cfg.value;
     nameById = (await loadProfiles(admin, subs.map((x) => x.user_id))).nameById;
+    const pnames: Record<string, string> = {};
+    for (const p of profs ?? []) pnames[p.id] = p.full_name || "";
+    students = (userData?.users ?? [])
+      .map((u: any) => ({ id: u.id, name: pnames[u.id] || "", email: u.email || "" }))
+      .sort((a, b) => (a.name || a.email).localeCompare(b.name || b.email));
   } catch (e) {
     return (
       <div>
@@ -80,23 +89,38 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
         <p className="w-full text-xs text-slate-500">A ferramenta é um produto à parte. Quem assina usa em /ferramenta, independente de ter comprado o curso. Admin sempre tem acesso.</p>
       </form>
 
+      {/* Cortesia / brinde */}
+      <ToolGrantForm students={students} />
+
       {/* Assinantes */}
       <h2 className="mt-8 font-display text-lg font-bold text-white">Assinantes</h2>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
-            <tr><th className="px-4 py-3">Aluno</th><th className="px-4 py-3">E-mail</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Válido até</th></tr>
+            <tr><th className="px-4 py-3">Aluno</th><th className="px-4 py-3">E-mail</th><th className="px-4 py-3">Origem</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Válido até</th><th className="px-4 py-3 text-right">Ação</th></tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {subs.length === 0 && <tr><td colSpan={4} className="px-4 py-12 text-center text-slate-500">Nenhuma assinatura ainda.</td></tr>}
+            {subs.length === 0 && <tr><td colSpan={6} className="px-4 py-12 text-center text-slate-500">Nenhuma assinatura ainda.</td></tr>}
             {subs.map((x) => {
               const st = STATUS[x.status] || STATUS.pending;
+              const cortesia = !x.asaas_subscription_id;
               return (
                 <tr key={x.user_id} className="text-slate-200">
                   <td className="px-4 py-3">{displayName(nameById, x.user_id)}</td>
                   <td className="px-4 py-3 text-slate-400">{x.email || "—"}</td>
+                  <td className="px-4 py-3">
+                    <span className={`rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${cortesia ? "bg-brand-blue/15 text-brand-teal" : "bg-white/5 text-slate-400"}`}>{cortesia ? "cortesia" : "assinatura"}</span>
+                  </td>
                   <td className="px-4 py-3"><span className={`rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${st.cls}`}>{st.label}</span></td>
                   <td className="px-4 py-3 text-slate-400">{fmt(x.current_period_end)}</td>
+                  <td className="px-4 py-3 text-right">
+                    {x.status === "active" && (
+                      <form action={revokeToolAccess} className="inline">
+                        <input type="hidden" name="user_id" value={x.user_id} />
+                        <button className="rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-400 hover:border-red-400/40 hover:text-red-400">Revogar</button>
+                      </form>
+                    )}
+                  </td>
                 </tr>
               );
             })}
