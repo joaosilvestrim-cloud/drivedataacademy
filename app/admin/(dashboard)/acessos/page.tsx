@@ -68,7 +68,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
     <div>
       <div>
         <h1 className="font-display text-2xl font-bold text-white">Acessos</h1>
-        <p className="mt-1 text-sm text-slate-400">{activeCount} acesso(s) full ativo(s).</p>
+        <p className="mt-1 text-sm text-slate-400">Liberar acesso na mão (individual): criar aluno, dar acesso full, liberar treinamentos específicos ou revogar. {activeCount} acesso(s) full ativo(s).</p>
       </div>
 
       {searchParams?.ok && (

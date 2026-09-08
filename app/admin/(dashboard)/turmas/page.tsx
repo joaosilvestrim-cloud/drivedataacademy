@@ -39,8 +39,8 @@ export default async function TurmasPage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Turmas</h1>
-      <p className="mt-1 text-sm text-slate-400">Cada turma reúne os treinamentos, o preço e a liberação de acesso num só lugar. Crie a turma e configure tudo dentro dela.</p>
+      <h1 className="font-display text-2xl font-bold text-white">Turmas / lotes</h1>
+      <p className="mt-1 text-sm text-slate-400">Para liberar acesso a um <b className="text-slate-200">grupo de alunos de uma vez</b> (turmas fechadas, in-company, cortesias em massa). A venda pública ao consumidor é a <b className="text-slate-200">Assinatura</b>.</p>
 
       {/* Nova turma */}
       <form action={createTurma} className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-white/10 p-4">

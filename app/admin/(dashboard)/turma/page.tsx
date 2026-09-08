@@ -16,7 +16,7 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Turma & acesso full</h1>
+        <h1 className="font-display text-2xl font-bold text-white">Assinatura (venda principal)</h1>
         <div className="mt-6"><AdminError message={e instanceof Error ? e.message : "Erro."} /></div>
       </div>
     );
@@ -26,8 +26,8 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Turma & acesso full</h1>
-      <p className="mt-1 text-sm text-slate-400">Configura o lançamento e a página de matrícula pública.</p>
+      <h1 className="font-display text-2xl font-bold text-white">Assinatura (venda principal)</h1>
+      <p className="mt-1 text-sm text-slate-400">O produto público da plataforma: assinatura mensal no cartão, acesso full enquanto ativa. Define preço, textos e liga/desliga a venda.</p>
 
       {searchParams?.ok && (
         <div className="mt-5 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">Salvo! A página de matrícula atualiza em até 1 minuto.</div>
