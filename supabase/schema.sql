@@ -916,3 +916,20 @@ alter table public.channel_messages add column if not exists reply_to uuid refer
 alter table public.channel_messages add column if not exists image_url text;
 alter table public.channel_messages add column if not exists is_solution boolean not null default false;
 alter table public.channel_messages add column if not exists solved boolean not null default false;
+
+
+-- Representação DriveData: funis (venda portal, parceria, mentoria, candidatura, marketplace)
+create table if not exists public.rep_requests (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  type       text not null,               -- portal | parceria | mentoria | candidatura | marketplace
+  payload    jsonb not null default ''{}'',
+  status     text not null default ''novo'',   -- novo | em_andamento | concluido | recusado
+  created_at timestamptz not null default now()
+);
+create index if not exists rep_requests_type_idx on public.rep_requests (type, created_at desc);
+alter table public.rep_requests enable row level security;
+drop policy if exists "rep own read" on public.rep_requests;
+create policy "rep own read" on public.rep_requests for select to authenticated using (user_id = auth.uid());
+drop policy if exists "rep own insert" on public.rep_requests;
+create policy "rep own insert" on public.rep_requests for insert to authenticated with check (user_id = auth.uid());

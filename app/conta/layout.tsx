@@ -9,6 +9,7 @@ const NAV = [
   { label: "Meus cursos", href: "/conta" },
   { label: "Ferramenta", href: "/ferramenta" },
   { label: "Comunidade", href: "/conta/comunidade" },
+  { label: "Representação", href: "/conta/representacao" },
   { label: "Agenda", href: "/conta/agenda" },
   { label: "Ranking", href: "/conta/ranking" },
   { label: "Certificados", href: "/conta/certificados" },

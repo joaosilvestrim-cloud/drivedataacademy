@@ -50,6 +50,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   {
     title: "Marketing",
     items: [
+      { label: "Representação", href: "/admin/representacao", icon: "leads" },
       { label: "Analytics", href: "/admin/leads-analytics", icon: "analytics" },
       { label: "Lista de espera", href: "/admin/waitlist", icon: "waitlist" },
       { label: "Leads empresas", href: "/admin/leads", icon: "leads" },
