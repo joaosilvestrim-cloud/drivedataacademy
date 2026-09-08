@@ -27,7 +27,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
       admin.from("memberships").select("id, user_id, plan, status, source, starts_at, expires_at").order("starts_at", { ascending: false }),
       admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
       admin.from("profiles").select("id, full_name"),
-      admin.from("orders").select("id, email, amount, status, gateway, created_at").order("created_at", { ascending: false }).limit(50),
+      admin.from("orders").select("id, email, amount, status, gateway, created_at, product").order("created_at", { ascending: false }).limit(50),
       admin.from("courses").select("id, title").order("title"),
     ]);
     if (memErr) throw new Error(memErr.message);
@@ -150,6 +150,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
           <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
             <tr>
               <th className="px-4 py-3">E-mail</th>
+              <th className="px-4 py-3">Tipo</th>
               <th className="px-4 py-3">Valor</th>
               <th className="px-4 py-3">Gateway</th>
               <th className="px-4 py-3">Status</th>
@@ -158,11 +159,14 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
           </thead>
           <tbody className="divide-y divide-white/5">
             {orders.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-10 text-center text-slate-500">Nenhum pedido ainda.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-10 text-center text-slate-500">Nenhum pedido ainda.</td></tr>
             )}
-            {orders.map((o) => (
+            {orders.map((o) => {
+              const prod = o.product === "subscription" ? "Assinatura" : o.product === "workshop" ? "Workshop" : o.product === "full_access" ? "Acesso full" : (o.product || "—");
+              return (
               <tr key={o.id} className="text-slate-200">
                 <td className="px-4 py-3">{o.email || "—"}</td>
+                <td className="px-4 py-3"><span className="rounded-full bg-white/5 px-2 py-0.5 text-[0.65rem] font-semibold uppercase text-slate-300">{prod}</span></td>
                 <td className="px-4 py-3">{o.amount != null ? `R$ ${Number(o.amount).toFixed(2)}` : "—"}</td>
                 <td className="px-4 py-3 text-slate-400">{o.gateway || "—"}</td>
                 <td className="px-4 py-3">
@@ -170,7 +174,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
                 </td>
                 <td className="px-4 py-3 text-slate-400">{fmt(o.created_at)}</td>
               </tr>
-            ))}
+            );})}
           </tbody>
         </table>
       </div>

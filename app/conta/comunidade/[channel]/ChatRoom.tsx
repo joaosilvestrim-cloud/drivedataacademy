@@ -35,13 +35,18 @@ const CHANNEL_COLORS: Record<string, [string, string]> = {
 const colorOf = (slug: string): [string, string] => CHANNEL_COLORS[slug] || ["#3b9dff", "#22d3ee"];
 
 const CHANNEL_ICONS: Record<string, string> = {
-  geral: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
-  "power-bi": "M4 20V10M10 20V4M16 20v-8M20 20H2",
-  "inteligencia-artificial": "M9 3h6a2 2 0 012 2v3a4 4 0 01-4 4h-2a4 4 0 01-4-4V5a2 2 0 012-2zM9 21h6M10 21v-3M14 21v-3M12 12v4",
-  ia: "M9 3h6a2 2 0 012 2v3a4 4 0 01-4 4h-2a4 4 0 01-4-4V5a2 2 0 012-2zM9 21h6M10 21v-3M14 21v-3M12 12v4",
-  "html-web": "M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12",
-  "gestao-de-projetos": "M8 4h8a1 1 0 011 1v14a1 1 0 01-1 1H8a1 1 0 01-1-1V5a1 1 0 011-1zM10 9h4M10 13h4",
-  "gestao-projetos": "M8 4h8a1 1 0 011 1v14a1 1 0 01-1 1H8a1 1 0 01-1-1V5a1 1 0 011-1zM10 9h4M10 13h4",
+  // megafone (avisos/conversa)
+  geral: "M3 11v2a1 1 0 001 1h1l4 3.5V6.5L5 10H4a1 1 0 00-1 1zM9 6.5v11M14 9a3.5 3.5 0 010 6M17 6a7 7 0 010 12",
+  // colunas (Power BI)
+  "power-bi": "M4 21V9M10 21V4M16 21v-9M22 21H2",
+  // chip (IA)
+  "inteligencia-artificial": "M8 8h8v8H8zM10 3v2M14 3v2M10 19v2M14 19v2M3 10h2M3 14h2M19 10h2M19 14h2",
+  ia: "M8 8h8v8H8zM10 3v2M14 3v2M10 19v2M14 19v2M3 10h2M3 14h2M19 10h2M19 14h2",
+  // código
+  "html-web": "M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 6l-3 12",
+  // quadro/kanban
+  "gestao-de-projetos": "M4 5h16v14H4zM4 9h16M9 9v10M14 9v10",
+  "gestao-projetos": "M4 5h16v14H4zM4 9h16M9 9v10M14 9v10",
 };
 const iconOf = (slug: string) => CHANNEL_ICONS[slug] || "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z";
 function ChIcon({ slug, size = 15 }: { slug: string; size?: number }) {

@@ -65,7 +65,7 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
   return (
     <div>
       <h1 className="font-display text-2xl font-bold text-white">Ferramenta de Visuais</h1>
-      <p className="mt-1 text-sm text-slate-400">Assinatura mensal separada. Gerencie preço e acompanhe uso e assinantes.</p>
+      <p className="mt-1 text-sm text-slate-400">Já <b className="text-slate-200">incluída na assinatura da Academy</b>. Aqui você gerencia a assinatura <b className="text-slate-200">avulsa</b> (só a ferramenta), preço, vídeo da landing, cortesias e uso.</p>
 
       {searchParams?.ok && <div className="mt-5 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">Salvo!</div>}
 

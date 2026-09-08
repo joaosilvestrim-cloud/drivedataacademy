@@ -23,11 +23,14 @@ function fmt(iso: string) {
 
 export default async function LivesPage({ searchParams }: { searchParams: { ok?: string; error?: string } }) {
   let lives: any[] = [];
+  const soldByEvent: Record<string, number> = {};
   try {
     const admin = createAdminClient();
     const { data, error } = await admin.from("live_events").select("*").order("starts_at", { ascending: false });
     if (error) throw new Error(error.message);
     lives = data ?? [];
+    const { data: wOrders } = await admin.from("orders").select("event_id").eq("product", "workshop").eq("status", "paid");
+    for (const o of wOrders ?? []) if (o.event_id) soldByEvent[o.event_id] = (soldByEvent[o.event_id] || 0) + 1;
   } catch (e) {
     return (
       <div>
@@ -78,7 +81,7 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
                 {l.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>}
                 {l.title}
               </span>
-              <span className="text-xs text-slate-400">{fmt(l.starts_at)}{!l.published && " · rascunho"}</span>
+              <span className="text-xs text-slate-400">{fmt(l.starts_at)}{Number(l.price) > 0 ? ` · R$ ${Number(l.price).toFixed(2)} · ${soldByEvent[l.id] || 0} venda(s)` : ""}{!l.published && " · rascunho"}</span>
             </summary>
             <form action={saveLive} className="mt-4 space-y-3">
               <input type="hidden" name="id" value={l.id} />
