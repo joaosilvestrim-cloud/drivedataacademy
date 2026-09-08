@@ -2,33 +2,51 @@
 
 import { useEffect, useState } from "react";
 
-// Camada de dissuasão anti-cópia (não substitui DRM). Cobre/borra o vídeo quando
-// a aba perde o foco, desativa menu de contexto, seleção e tenta limpar o print.
-export default function ProtectedPlayer({ enabled = true, children }: { enabled?: boolean; children: React.ReactNode }) {
+// Camada leve de dissuasão anti-cópia (não substitui DRM; DRM real é plano Panda).
+// Desativa menu de contexto, seleção e arraste, e tenta limpar o PrintScreen.
+//
+// set/2026: a cobertura ao perder o foco foi DESLIGADA por padrão. Ela escutava
+// `blur` do window, que dispara ao clicar em qualquer outra janela e também ao
+// clicar DENTRO do iframe do player. Pior: o overlay dizia "Reprodução pausada"
+// mas não pausava nada, só borrava — o vídeo seguia correndo por trás e o aluno
+// perdia o trecho. Foi o que a Sumitomo relatou como aula "congelando e cortando
+// conteúdo" e como impedimento de praticar junto com o professor.
+//
+// Para voltar a cobrir quando a aba fica realmente invisível, passe
+// `coverWhenHidden`. O `blur` de janela não volta: ele quebra o uso legítimo.
+export default function ProtectedPlayer({
+  enabled = true,
+  coverWhenHidden = false,
+  children,
+}: {
+  enabled?: boolean;
+  coverWhenHidden?: boolean;
+  children: React.ReactNode;
+}) {
   const [covered, setCovered] = useState(false);
 
   useEffect(() => {
     if (!enabled) return;
-    const onVis = () => setCovered(document.hidden);
-    const onBlur = () => setCovered(true);
-    const onFocus = () => setCovered(false);
+
+    // PrintScreen: tenta limpar a área de transferência (dificulta screenshot)
     const onKey = (e: KeyboardEvent) => {
-      // PrintScreen: tenta limpar a área de transferência (dificulta screenshot)
       if (e.key === "PrintScreen") {
         try { navigator.clipboard?.writeText(""); } catch {}
       }
     };
-    document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("blur", onBlur);
-    window.addEventListener("focus", onFocus);
     window.addEventListener("keyup", onKey);
+
+    let onVis: (() => void) | undefined;
+    if (coverWhenHidden) {
+      onVis = () => setCovered(document.hidden);
+      document.addEventListener("visibilitychange", onVis);
+    }
+
     return () => {
-      document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("blur", onBlur);
-      window.removeEventListener("focus", onFocus);
       window.removeEventListener("keyup", onKey);
+      if (onVis) document.removeEventListener("visibilitychange", onVis);
     };
-  }, [enabled]);
+  }, [enabled, coverWhenHidden]);
 
   if (!enabled) return <>{children}</>;
 
@@ -44,7 +62,7 @@ export default function ProtectedPlayer({ enabled = true, children }: { enabled?
         <div className="absolute inset-0 z-10 grid place-items-center rounded-2xl bg-ink-900/95 px-6 text-center">
           <div>
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="mx-auto text-brand-green"><path d="M12 1l9 4v6c0 5-3.8 9-9 11-5.2-2-9-6-9-11V5l9-4zM9.5 12l1.8 1.8L15 10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <p className="mt-3 text-sm font-medium text-white">Reprodução pausada</p>
+            <p className="mt-3 text-sm font-medium text-white">Aula oculta</p>
             <p className="mt-1 text-xs text-slate-400">Volte para esta aba para continuar assistindo.</p>
           </div>
         </div>
