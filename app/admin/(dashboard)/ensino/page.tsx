@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName, BADGE_LABELS, pointsByUser } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 import AdminError from "../AdminError";
-import { grantBadge } from "./actions";
+import { grantBadge, grantChallengePoints } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -145,6 +145,12 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
                 <option value="top">Top do ranking</option>
               </select>
               <button className="rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-white hover:bg-white/15">Conceder selo</button>
+            </form>
+            <form action={grantChallengePoints} className="mt-3 flex flex-wrap items-center gap-2 border-t border-white/8 pt-4">
+              <input name="email" required placeholder="e-mail do aluno" className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+              <input name="points" type="number" min="1" placeholder="pts" className="w-20 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+              <input name="reason" placeholder="motivo (ex.: desafio 1)" className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+              <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-3 py-2 text-xs font-semibold text-ink-900">+ Pontos (desafio)</button>
             </form>
           </div>
 

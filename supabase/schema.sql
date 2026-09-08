@@ -933,3 +933,7 @@ drop policy if exists "rep own read" on public.rep_requests;
 create policy "rep own read" on public.rep_requests for select to authenticated using (user_id = auth.uid());
 drop policy if exists "rep own insert" on public.rep_requests;
 create policy "rep own insert" on public.rep_requests for insert to authenticated with check (user_id = auth.uid());
+
+
+-- Gamificação: motivo dos pontos (ex.: desafios) para auditoria
+alter table public.point_events add column if not exists meta text;

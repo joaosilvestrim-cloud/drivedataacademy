@@ -58,6 +58,17 @@ export default async function RankingPage() {
         <Link href="/conta/comunidade" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">← Comunidade</Link>
       </div>
 
+      {/* Comunicado do prêmio */}
+      <div className="mt-5 flex items-start gap-3 rounded-2xl border border-amber-300/25 bg-gradient-to-r from-amber-300/[0.10] to-transparent px-5 py-4">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-300/15 text-amber-300">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </span>
+        <div className="text-sm text-slate-300">
+          <p className="font-semibold text-white">O 1º lugar leva prêmio 🏆</p>
+          <p className="mt-0.5">Quem terminar em <b className="text-amber-200">1º no ranking</b> ganha <b className="text-white">assinatura grátis</b> pelo período seguinte e <b className="text-white">10% de desconto</b> na compra de cursos. Suba respondendo dúvidas, participando e concluindo treinamentos.</p>
+        </div>
+      </div>
+
       {/* Pódio */}
       {podium.length > 0 && (
         <div className="mt-8 flex items-end justify-center gap-3 sm:gap-6">
