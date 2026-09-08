@@ -47,6 +47,17 @@ export async function addComment(formData: FormData) {
   redirect(`/aprender/${slug}?l=${lessonId}&c=ok`);
 }
 
+// Avaliação por estrelas do curso (1 a 5). Um por aluno.
+export async function rateCourse(courseId: string, stars: number): Promise<{ ok: boolean }> {
+  const s = Math.max(1, Math.min(5, Math.round(stars)));
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false };
+  const admin = createAdminClient();
+  await admin.from("course_ratings").upsert({ course_id: courseId, user_id: user.id, stars: s }, { onConflict: "course_id,user_id" });
+  return { ok: true };
+}
+
 // NPS do curso (0 a 10 + comentário). Um por aluno por curso.
 export async function submitNps(formData: FormData) {
   const slug = formData.get("slug") as string;

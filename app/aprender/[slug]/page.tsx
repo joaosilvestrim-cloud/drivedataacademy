@@ -8,6 +8,7 @@ import { loadProfiles } from "@/lib/community";
 import { issueCertificate, issueModuleCertificate } from "@/app/certificado/actions";
 import CoursePlayer from "./CoursePlayer";
 import NpsPrompt from "./NpsPrompt";
+import RatingStars from "./RatingStars";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,10 @@ export default async function PlayerPage({
   const { data: quiz } = await admin.from("quizzes").select("id, title").eq("course_id", course.id).eq("published", true).maybeSingle();
   const { data: certs } = await admin.from("certificates").select("code, module_id").eq("user_id", user.id).eq("course_id", course.id);
   const { data: npsRow } = await admin.from("course_nps").select("score").eq("course_id", course.id).eq("user_id", user.id).maybeSingle();
+  const { data: ratings } = await admin.from("course_ratings").select("stars, user_id").eq("course_id", course.id);
+  const rCount = (ratings ?? []).length;
+  const rAvg = rCount ? (ratings!.reduce((s: number, r: any) => s + r.stars, 0) / rCount) : 0;
+  const myRating = (ratings ?? []).find((r: any) => r.user_id === user.id)?.stars || 0;
   const certByModule = new Map<string, string>();
   for (const c of certs ?? []) if (c.module_id) certByModule.set(c.module_id, c.code);
 
@@ -147,6 +152,9 @@ export default async function PlayerPage({
       ) : null)}
 
       <div className="mx-auto max-w-7xl px-6 py-8">
+        <div className="mb-4 max-w-md">
+          <RatingStars courseId={course.id} avg={rAvg} count={rCount} mine={myRating} />
+        </div>
         <CoursePlayer
           slug={course.slug}
           courseId={course.id}
