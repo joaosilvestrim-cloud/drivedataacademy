@@ -20,7 +20,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
 
   const { data: msgsDesc } = await admin
     .from("channel_messages")
-    .select("id, user_id, body, created_at")
+    .select("id, user_id, body, created_at, tag, reply_to, image_url, is_solution, solved")
     .eq("channel_id", channel.id)
     .order("created_at", { ascending: false })
     .limit(80);
@@ -40,9 +40,17 @@ export default async function ChannelChat({ params }: { params: { channel: strin
     }
   }
 
+  // prévia do reply (id -> {name, body})
+  const byId: Record<string, any> = {};
+  for (const m of msgs) byId[m.id] = m;
+
   const initial = msgs.map((m: any) => ({
     id: m.id, user_id: m.user_id, body: m.body, created_at: m.created_at,
     name: displayName(nameById, m.user_id), likes: likeCount[m.id] || 0, liked: myLiked.has(m.id),
+    tag: m.tag || null, image_url: m.image_url || null, is_solution: !!m.is_solution, solved: !!m.solved,
+    reply_to: m.reply_to || null,
+    reply_name: m.reply_to && byId[m.reply_to] ? displayName(nameById, byId[m.reply_to].user_id) : null,
+    reply_body: m.reply_to && byId[m.reply_to] ? (byId[m.reply_to].body || "").slice(0, 120) : null,
   }));
 
   const me = { id: user.id, name: displayName(nameById, user.id) };

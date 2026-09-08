@@ -116,3 +116,35 @@ export async function unmarkSolution(formData: FormData) {
   revalidatePath(`/conta/comunidade/t/${threadId}`);
   redirect(`/conta/comunidade/t/${threadId}`);
 }
+
+// ---------- Chat (novo modelo) ----------
+
+// Autor da dúvida marca a mensagem que resolveu -> pontua o solucionador.
+export async function markChatSolution(replyId: string, parentId: string) {
+  const { user, admin } = await requireCommunityUser();
+  if (!replyId || !parentId) return { ok: false as const };
+  const { data: parent } = await admin.from("channel_messages").select("id, user_id, channel_id").eq("id", parentId).maybeSingle();
+  if (!parent || parent.user_id !== user.id) return { ok: false as const };
+  const { data: reply } = await admin.from("channel_messages").select("id, user_id").eq("id", replyId).maybeSingle();
+  if (!reply) return { ok: false as const };
+
+  await admin.from("channel_messages").update({ is_solution: true }).eq("id", replyId);
+  await admin.from("channel_messages").update({ solved: true }).eq("id", parentId);
+  if (reply.user_id !== user.id) {
+    await admin.from("point_events").insert({ user_id: reply.user_id, kind: "solution", points: SOLUTION_POINTS, ref_id: replyId }).then(() => {}, () => {});
+  }
+  return { ok: true as const };
+}
+
+// URL assinada para o aluno subir uma foto na comunidade (bucket público "community").
+export async function signCommunityImage(ext: string) {
+  const { admin } = await requireCommunityUser();
+  const bucket = "community";
+  await admin.storage.createBucket(bucket, { public: true }).catch(() => {});
+  const clean = (ext || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+  const path = `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${clean}`;
+  const { data, error } = await admin.storage.from(bucket).createSignedUploadUrl(path);
+  if (error || !data) return { ok: false as const, error: error?.message || "falha" };
+  const pub = admin.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+  return { ok: true as const, path: data.path, token: data.token, url: pub };
+}

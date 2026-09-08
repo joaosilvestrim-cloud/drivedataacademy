@@ -908,3 +908,11 @@ drop policy if exists "wv upsert own" on public.workshop_votes;
 create policy "wv upsert own" on public.workshop_votes for insert to authenticated with check (user_id = auth.uid());
 drop policy if exists "wv update own" on public.workshop_votes;
 create policy "wv update own" on public.workshop_votes for update to authenticated using (user_id = auth.uid());
+
+
+-- Comunidade (chat): tags, responder, foto e marcação de solução (dúvidas)
+alter table public.channel_messages add column if not exists tag text;
+alter table public.channel_messages add column if not exists reply_to uuid references public.channel_messages(id) on delete set null;
+alter table public.channel_messages add column if not exists image_url text;
+alter table public.channel_messages add column if not exists is_solution boolean not null default false;
+alter table public.channel_messages add column if not exists solved boolean not null default false;
