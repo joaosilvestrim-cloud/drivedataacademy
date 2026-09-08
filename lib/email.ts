@@ -107,6 +107,18 @@ export async function sendAccountSetupEmail(to: string, name: string, setPasswor
   return sendHtmlEmail(to, "Pagamento confirmado — crie sua senha 🎉", shell("Sua conta está pronta!", body));
 }
 
+// Confirmação de compra de workshop avulso: manda o link/acesso.
+export async function sendWorkshopEmail(to: string, name: string, workshopTitle: string, when: string, link: string | null) {
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const body = `
+    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu pagamento foi confirmado e sua vaga no workshop está garantida. 🎉</p>
+    <p style="margin:0 0 6px;color:#fff;font-size:18px;font-weight:700">${esc(workshopTitle)}</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">${esc(when)}</p>
+    ${link ? `<a href="${link}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Acessar o workshop</a>` : `<p style="margin:0;color:#cbd5e1">Enviaremos o link de acesso perto do horário.</p>`}
+    <p style="margin:24px 0 0;color:#64748b;font-size:12px">Nos vemos lá!</p>`;
+  return sendHtmlEmail(to, `Confirmado: ${workshopTitle}`, shell("Vaga garantida! 🎟️", body));
+}
+
 // Aviso interno de novo pedido/intenção de matrícula (antes do pagamento automático).
 export async function sendOrderNotice(adminTo: string, data: { name: string; email: string; phone?: string | null; amount?: number | null }) {
   const body = `

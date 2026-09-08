@@ -60,8 +60,9 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
           <div className="grid gap-3 sm:grid-cols-3">
             <input name="starts_at" type="datetime-local" required className={field} />
             <input name="duration_min" type="number" placeholder="Duração (min)" className={field} />
-            <input name="cover_url" placeholder="Capa (URL, opcional)" className={field} />
+            <input name="price" inputMode="decimal" placeholder="Preço p/ não-aluno (R$, vazio = incluso)" className={field} />
           </div>
+          <input name="cover_url" placeholder="Capa (URL, opcional)" className={field} />
           <input name="url" placeholder="Link da live (YouTube, Meet...)" className={field} />
           <label className="flex items-center gap-2 text-xs text-slate-300"><input type="checkbox" name="published" defaultChecked className="h-4 w-4 accent-emerald-400" /> Publicada (visível para alunos)</label>
           <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">Salvar live</button>
@@ -92,9 +93,13 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
               <div className="grid gap-3 sm:grid-cols-3">
                 <input name="starts_at" type="datetime-local" defaultValue={toLocalInput(l.starts_at)} className={field} />
                 <input name="duration_min" type="number" defaultValue={l.duration_min ?? ""} className={field} />
-                <input name="cover_url" defaultValue={l.cover_url ?? ""} placeholder="Capa (URL)" className={field} />
+                <input name="price" inputMode="decimal" defaultValue={l.price ?? ""} placeholder="Preço não-aluno (R$)" className={field} />
               </div>
+              <input name="cover_url" defaultValue={l.cover_url ?? ""} placeholder="Capa (URL)" className={field} />
               <input name="url" defaultValue={l.url ?? ""} placeholder="Link da live" className={field} />
+              {Number(l.price) > 0 && (
+                <p className="text-xs text-slate-500">Página de venda: <a href={`/workshop/${l.id}`} target="_blank" className="text-brand-teal hover:underline">/workshop/{l.id}</a> · alunos assinantes entram grátis.</p>
+              )}
               <label className="flex items-center gap-2 text-xs text-slate-300"><input type="checkbox" name="published" defaultChecked={l.published} className="h-4 w-4 accent-emerald-400" /> Publicada</label>
               <div className="flex items-center gap-2">
                 <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900">Salvar</button>

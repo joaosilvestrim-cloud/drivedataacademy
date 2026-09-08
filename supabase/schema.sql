@@ -942,3 +942,24 @@ alter table public.point_events add column if not exists meta text;
 -- Vitrine de alunos: foto de perfil e link de portfólio
 alter table public.profiles add column if not exists avatar_url text;
 alter table public.profiles add column if not exists portfolio_url text;
+
+
+-- Workshops pagos para não-alunos (preço no evento; null/0 = incluso na assinatura)
+alter table public.live_events add column if not exists price numeric;
+alter table public.orders add column if not exists event_id uuid references public.live_events(id) on delete set null;
+
+-- Avaliação por estrelas do curso (1 por aluno)
+create table if not exists public.course_ratings (
+  course_id  uuid not null references public.courses(id) on delete cascade,
+  user_id    uuid not null references auth.users(id) on delete cascade,
+  stars      int not null check (stars between 1 and 5),
+  created_at timestamptz not null default now(),
+  primary key (course_id, user_id)
+);
+alter table public.course_ratings enable row level security;
+drop policy if exists "cr read" on public.course_ratings;
+create policy "cr read" on public.course_ratings for select to authenticated using (true);
+drop policy if exists "cr upsert own" on public.course_ratings;
+create policy "cr upsert own" on public.course_ratings for insert to authenticated with check (user_id = auth.uid());
+drop policy if exists "cr update own" on public.course_ratings;
+create policy "cr update own" on public.course_ratings for update to authenticated using (user_id = auth.uid());

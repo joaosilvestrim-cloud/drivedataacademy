@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendAccessGrantedEmail, sendAccountSetupEmail } from "@/lib/email";
+import { sendAccessGrantedEmail, sendAccountSetupEmail, sendWorkshopEmail } from "@/lib/email";
 import { grantOffer } from "@/lib/offers";
 
 async function findUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string): Promise<string | null> {
@@ -132,7 +132,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, note: "pedido não encontrado" });
   }
 
+  const wasPaid = order.status === "paid";
   await admin.from("orders").update({ status: "paid", gateway_id: payment.id ?? order.gateway_id }).eq("id", order.id);
+
+  // Workshop avulso: manda o link por e-mail, não libera acesso full.
+  if (order.product === "workshop") {
+    if (!wasPaid && order.event_id && order.email) {
+      const { data: ev } = await admin.from("live_events").select("title, starts_at, url").eq("id", order.event_id).maybeSingle();
+      if (ev) {
+        const when = new Intl.DateTimeFormat("pt-BR", { dateStyle: "full", timeStyle: "short", timeZone: "America/Sao_Paulo" }).format(new Date(ev.starts_at));
+        await sendWorkshopEmail(order.email, order.name || "", ev.title, when, ev.url || null);
+      }
+    }
+    return NextResponse.json({ ok: true, workshop: true });
+  }
 
   // Libera o acesso conforme a turma do pedido (Full ou cursos selecionados). Sem turma, cai em Full.
   if (order.user_id && order.status !== "paid") {
