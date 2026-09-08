@@ -888,3 +888,8 @@ create unique index if not exists tool_subscriptions_user_idx on public.tool_sub
 alter table public.tool_subscriptions enable row level security;
 drop policy if exists "tool_sub_own" on public.tool_subscriptions;
 create policy "tool_sub_own" on public.tool_subscriptions for select using (user_id = auth.uid());
+
+
+-- Assinatura da plataforma (matrícula recorrente): guardar dados p/ criar a conta só após o pagamento
+alter table public.orders add column if not exists name text;
+alter table public.orders add column if not exists phone text;

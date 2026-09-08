@@ -1,7 +1,21 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendAccessGrantedEmail } from "@/lib/email";
+import { sendAccessGrantedEmail, sendAccountSetupEmail } from "@/lib/email";
 import { grantOffer } from "@/lib/offers";
+
+async function findUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string): Promise<string | null> {
+  const target = (email || "").toLowerCase();
+  let page = 1;
+  for (let i = 0; i < 5; i++) {
+    const { data } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    const users = data?.users ?? [];
+    const found = users.find((u: any) => (u.email || "").toLowerCase() === target);
+    if (found) return found.id;
+    if (users.length < 1000) break;
+    page++;
+  }
+  return null;
+}
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -46,6 +60,57 @@ export async function POST(req: Request) {
       await admin.from("tool_subscriptions").update({ status: "overdue", updated_at: new Date().toISOString() }).eq("user_id", userId);
     }
     return NextResponse.json({ ok: true, tool: event });
+  }
+
+  // Assinatura da plataforma (matrícula recorrente). externalReference = "sub:<orderId>"
+  if (extRef.startsWith("sub:")) {
+    const orderId = extRef.slice(4);
+    const { data: order } = await admin.from("orders").select("*").eq("id", orderId).maybeSingle();
+    if (!order) return NextResponse.json({ ok: true, note: "pedido não encontrado" });
+
+    if (paidEvents.includes(event)) {
+      await admin.from("orders").update({ status: "paid", gateway_id: payment.id ?? order.gateway_id }).eq("id", order.id);
+
+      // 1) Conta só nasce AGORA (após o pagamento). Cria se ainda não existir.
+      let userId: string | null = order.user_id;
+      let isNew = false;
+      if (!userId) {
+        userId = await findUserIdByEmail(admin, order.email);
+        if (!userId) {
+          const rand = "Dd" + Math.random().toString(36).slice(2, 10) + "!9";
+          const { data: created } = await admin.auth.admin.createUser({ email: order.email, password: rand, email_confirm: true, user_metadata: { full_name: order.name || "" } });
+          userId = created?.user?.id ?? null;
+          isNew = true;
+        }
+        if (userId) await admin.from("orders").update({ user_id: userId }).eq("id", order.id);
+      }
+
+      if (userId) {
+        if (order.name) await admin.from("profiles").upsert({ id: userId, full_name: order.name }, { onConflict: "id" });
+        // 2) Acesso full enquanto a assinatura estiver ativa (renova ~35 dias a cada pagamento)
+        const periodEnd = new Date(Date.now() + 35 * 864e5).toISOString();
+        const { data: existing } = await admin.from("memberships").select("id").eq("user_id", userId).eq("source", "subscription").limit(1).maybeSingle();
+        if (existing) await admin.from("memberships").update({ status: "active", plan: "full", expires_at: periodEnd }).eq("id", existing.id);
+        else await admin.from("memberships").insert({ user_id: userId, plan: "full", status: "active", source: "subscription", expires_at: periodEnd });
+        await admin.from("user_badges").upsert({ user_id: userId, badge: "fundador" }, { onConflict: "user_id,badge" });
+
+        // 3) E-mail: conta nova -> define senha; conta já existente -> acesso liberado
+        if (isNew) {
+          const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email, options: { redirectTo: `${SITE_URL}/redefinir-senha` } } as any);
+          const url = (link as any)?.properties?.action_link || `${SITE_URL}/esqueci-senha`;
+          await sendAccountSetupEmail(order.email, order.name || "", url);
+        } else {
+          await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL);
+        }
+      }
+      return NextResponse.json({ ok: true, sub: "active" });
+    }
+
+    if (event === "PAYMENT_OVERDUE") {
+      if (order.user_id) await admin.from("memberships").update({ status: "canceled" }).eq("user_id", order.user_id).eq("source", "subscription");
+      return NextResponse.json({ ok: true, sub: "overdue" });
+    }
+    return NextResponse.json({ ok: true, ignored: event });
   }
 
   if (!paidEvents.includes(event)) {

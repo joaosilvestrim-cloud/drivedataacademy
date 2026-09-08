@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 const TURMA_KEYS = [
   "full_access_price",
+  "sub_price",
   "turma_nome",
   "turma_data",
   "turma_descricao",
@@ -20,8 +21,10 @@ export async function saveTurma(formData: FormData) {
   if (!user) redirect("/admin/login");
 
   const rawPrice = ((formData.get("full_access_price") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".");
+  const rawSub = ((formData.get("sub_price") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".");
   const values: Record<string, string> = {
     full_access_price: rawPrice ? String(Number(rawPrice) || 0) : "",
+    sub_price: rawSub ? String(Number(rawSub) || 0) : "",
     turma_nome: ((formData.get("turma_nome") as string) || "").trim(),
     turma_data: ((formData.get("turma_data") as string) || "").trim(),
     turma_descricao: ((formData.get("turma_descricao") as string) || "").trim(),

@@ -96,6 +96,17 @@ export async function sendAccessGrantedEmail(to: string, name: string, siteUrl: 
   return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body));
 }
 
+// Conta criada após a confirmação do pagamento: aluno define a senha por este link.
+export async function sendAccountSetupEmail(to: string, name: string, setPasswordUrl: string) {
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const body = `
+    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu pagamento foi confirmado e sua conta na DriveData Academy está pronta. 🎉</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">Para começar, defina a sua senha de acesso:</p>
+    <a href="${setPasswordUrl}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Criar minha senha</a>
+    <p style="margin:24px 0 0;color:#64748b;font-size:12px">O link é pessoal. Se não foi você, ignore este e-mail.</p>`;
+  return sendHtmlEmail(to, "Pagamento confirmado — crie sua senha 🎉", shell("Sua conta está pronta!", body));
+}
+
 // Aviso interno de novo pedido/intenção de matrícula (antes do pagamento automático).
 export async function sendOrderNotice(adminTo: string, data: { name: string; email: string; phone?: string | null; amount?: number | null }) {
   const body = `

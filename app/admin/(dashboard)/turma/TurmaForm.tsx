@@ -20,15 +20,13 @@ export default function TurmaForm({ initial }: { initial: Record<string, string>
           <input id="turma_data" name="turma_data" defaultValue={initial.turma_data || ""} placeholder="15 de setembro" className={field} />
         </div>
         <div className="space-y-1.5">
-          <label className={label} htmlFor="full_access_price">Preço do acesso full (R$)</label>
-          <input id="full_access_price" name="full_access_price" defaultValue={initial.full_access_price || ""} placeholder="1600" inputMode="decimal" className={field} />
+          <label className={label} htmlFor="sub_price">Assinatura mensal (R$/mês)</label>
+          <input id="sub_price" name="sub_price" defaultValue={initial.sub_price || ""} placeholder="129,90" inputMode="decimal" className={field} />
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label className={label} htmlFor="pix_discount_pct">Desconto no Pix à vista (%)</label>
-        <input id="pix_discount_pct" name="pix_discount_pct" defaultValue={initial.pix_discount_pct || "3.99"} placeholder="3.99" inputMode="decimal" className={field} />
-        <p className="text-xs text-slate-500">Quem paga no Pix ganha esse desconto. Sugestão: igual à taxa da plataforma (~3,99%). Cartão é o preço cheio, em até Nx.</p>
+      <div className="rounded-xl border border-brand-blue/25 bg-brand-blue/[0.06] px-4 py-3 text-xs text-slate-300">
+        A matrícula agora é <b className="text-white">assinatura mensal no cartão de crédito</b>. O aluno paga, a conta é criada só após a confirmação, e ele tem acesso full enquanto a assinatura estiver ativa.
       </div>
 
       <div className="space-y-1.5">
