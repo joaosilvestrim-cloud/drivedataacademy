@@ -102,6 +102,10 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
         }]));
         setTimeout(() => { const el = scrollRef.current; if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 200) scrollToBottom(); }, 30);
       })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "channel_messages", filter: `channel_id=eq.${channel.id}` }, (payload: any) => {
+        const r = payload.new;
+        setMessages((prev) => prev.map((m) => (m.id === r.id ? { ...m, is_solution: !!r.is_solution, solved: !!r.solved, tag: r.tag ?? m.tag, body: r.body ?? m.body } : m)));
+      })
       .on("postgres_changes", { event: "*", schema: "public", table: "message_reactions" }, (payload: any) => {
         const row = (payload.new || payload.old) as any;
         if (!row) return;

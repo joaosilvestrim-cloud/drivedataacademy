@@ -30,15 +30,12 @@ export default async function VitrinePage() {
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/conta");
 
-  const [{ data: profs }, totals, { data: badgeRows }, usersRes] = await Promise.all([
-    admin.from("profiles").select("id, full_name, headline, avatar_url, portfolio_url, linkedin_url"),
+  const [{ data: profs }, totals, { data: badgeRows }] = await Promise.all([
+    admin.from("profiles").select("id, full_name, headline, avatar_url, portfolio_url, linkedin_url, created_at"),
     pointsByUser(admin),
     admin.from("user_badges").select("user_id, badge"),
-    admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
   ]);
 
-  const createdById: Record<string, string> = {};
-  for (const u of usersRes.data?.users ?? []) createdById[u.id] = (u as any).created_at;
   const badgesById: Record<string, string[]> = {};
   for (const b of badgeRows ?? []) (badgesById[b.user_id] ||= []).push(b.badge);
 
@@ -48,7 +45,7 @@ export default async function VitrinePage() {
       ...p,
       pts: totals[p.id] || 0,
       badges: badgesById[p.id] || [],
-      since: createdById[p.id],
+      since: p.created_at,
       link: (p.portfolio_url || p.linkedin_url || "").trim(),
     }))
     .sort((a, b) => b.pts - a.pts)

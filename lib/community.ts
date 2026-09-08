@@ -43,6 +43,14 @@ export function displayName(nameById: Record<string, string>, id: string): strin
 
 // Pontos totais por usuário: eventos (solução = 10) + curtidas no chat (2 por curtida de outra pessoa).
 export async function pointsByUser(admin: SupabaseClient): Promise<Record<string, number>> {
+  // Caminho rápido: função agregada no banco (1 chamada). Se ainda não existir, cai no cálculo em JS.
+  const rpc = await admin.rpc("points_by_user");
+  if (!rpc.error && Array.isArray(rpc.data)) {
+    const t: Record<string, number> = {};
+    for (const r of rpc.data as any[]) t[r.user_id] = Number(r.points) || 0;
+    return t;
+  }
+
   const [{ data: events }, { data: reacts }, { data: msgs }] = await Promise.all([
     admin.from("point_events").select("user_id, points"),
     admin.from("message_reactions").select("message_id, user_id"),

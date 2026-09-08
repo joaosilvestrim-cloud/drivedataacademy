@@ -42,6 +42,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     title: "Vendas",
     items: [
       { label: "Assinatura", href: "/admin/turma", icon: "launch" },
+      { label: "Workshops", href: "/admin/workshops", icon: "live" },
       { label: "Acessos", href: "/admin/acessos", icon: "access" },
       { label: "Turmas / lotes", href: "/admin/turmas", icon: "cohort" },
       { label: "Ferramenta", href: "/admin/ferramenta", icon: "courses" },

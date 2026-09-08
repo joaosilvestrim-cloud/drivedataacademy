@@ -963,3 +963,34 @@ drop policy if exists "cr upsert own" on public.course_ratings;
 create policy "cr upsert own" on public.course_ratings for insert to authenticated with check (user_id = auth.uid());
 drop policy if exists "cr update own" on public.course_ratings;
 create policy "cr update own" on public.course_ratings for update to authenticated using (user_id = auth.uid());
+
+
+-- Performance do ranking: soma de pontos por usuário no banco (1 chamada, sem varrer tudo no app)
+create or replace function public.points_by_user()
+returns table(user_id uuid, points bigint)
+language sql stable security definer set search_path = public as $$
+  with pe as (
+    select user_id, sum(coalesce(points,0))::bigint pts from point_events group by user_id
+  ),
+  rx as (
+    select cm.user_id, (count(*)*2)::bigint pts
+    from message_reactions mr join channel_messages cm on cm.id = mr.message_id
+    where mr.user_id <> cm.user_id
+    group by cm.user_id
+  ),
+  msg as (
+    select user_id, sum(least(cnt,5))::bigint pts from (
+      select user_id, (created_at at time zone ''America/Sao_Paulo'')::date d, count(*) cnt
+      from channel_messages group by user_id, (created_at at time zone ''America/Sao_Paulo'')::date
+    ) x group by user_id
+  ),
+  allu as (
+    select user_id from pe union select user_id from rx union select user_id from msg
+  )
+  select a.user_id, (coalesce(pe.pts,0)+coalesce(rx.pts,0)+coalesce(msg.pts,0))::bigint as points
+  from allu a
+  left join pe on pe.user_id=a.user_id
+  left join rx on rx.user_id=a.user_id
+  left join msg on msg.user_id=a.user_id;
+$$;
+grant execute on function public.points_by_user() to authenticated, service_role;
