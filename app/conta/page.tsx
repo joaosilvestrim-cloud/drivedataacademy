@@ -243,9 +243,19 @@ export default async function ContaHome() {
             <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-ink-900">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4zM4 10h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </div>
-            <p className="font-medium text-white">Você ainda não está matriculado.</p>
-            <p className="mt-1 text-sm text-slate-400">Explore o catálogo e comece agora.</p>
-            <Link href="/cursos" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Ver cursos</Link>
+            {full ? (
+              <>
+                <p className="font-medium text-white">Seu acesso está ativo. 🎉</p>
+                <p className="mt-1 text-sm text-slate-400">Os treinamentos liberados aparecem aqui. Enquanto isso, veja o que vem por aí no catálogo abaixo e participe dos encontros ao vivo.</p>
+                <Link href="/conta/agenda" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Ver agenda</Link>
+              </>
+            ) : (
+              <>
+                <p className="font-medium text-white">Você ainda não tem acesso.</p>
+                <p className="mt-1 text-sm text-slate-400">Assine a Academy e libere todos os treinamentos.</p>
+                <Link href="/matricula" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Ver assinatura</Link>
+              </>
+            )}
           </div>
         ) : (
           <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

@@ -7,6 +7,11 @@ import Avatar from "@/components/Avatar";
 
 export const dynamic = "force-dynamic";
 
+const BADGE_ICONS: Record<string, string> = {
+  fundador: "M12 2l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V5l7-3z",
+  top: "M8 21h8M12 17v4M6 4h12v3a6 6 0 01-12 0V4zM6 5H3v1a3 3 0 003 3M18 5h3v1a3 3 0 01-3 3",
+};
+
 function tempo(iso?: string | null) {
   if (!iso) return "novo por aqui";
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 864e5);
@@ -74,7 +79,10 @@ export default async function VitrinePage() {
             {m.badges.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {m.badges.map((b: string) => (
-                  <span key={b} className="rounded-full bg-brand-teal/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">{BADGE_LABELS[b] || b}</span>
+                  <span key={b} className="inline-flex items-center gap-1 rounded-full bg-brand-teal/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d={BADGE_ICONS[b] || "M12 2l3 6 6 .9-4.5 4.2 1 6-5.5-3-5.5 3 1-6L3 8.9 9 8z"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    {BADGE_LABELS[b] || b}
+                  </span>
                 ))}
               </div>
             )}
