@@ -893,3 +893,18 @@ create policy "tool_sub_own" on public.tool_subscriptions for select using (user
 -- Assinatura da plataforma (matrícula recorrente): guardar dados p/ criar a conta só após o pagamento
 alter table public.orders add column if not exists name text;
 alter table public.orders add column if not exists phone text;
+
+
+-- Enquete: escolha do próximo workshop ao vivo (1 voto por aluno, pode trocar)
+create table if not exists public.workshop_votes (
+  user_id    uuid primary key references auth.users(id) on delete cascade,
+  option     text not null,
+  created_at timestamptz not null default now()
+);
+alter table public.workshop_votes enable row level security;
+drop policy if exists "wv read" on public.workshop_votes;
+create policy "wv read" on public.workshop_votes for select to authenticated using (true);
+drop policy if exists "wv upsert own" on public.workshop_votes;
+create policy "wv upsert own" on public.workshop_votes for insert to authenticated with check (user_id = auth.uid());
+drop policy if exists "wv update own" on public.workshop_votes;
+create policy "wv update own" on public.workshop_votes for update to authenticated using (user_id = auth.uid());

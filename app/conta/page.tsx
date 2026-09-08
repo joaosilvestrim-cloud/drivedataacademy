@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFullAccess } from "@/lib/access";
 import Avatar from "@/components/Avatar";
+import WorkshopPoll from "./WorkshopPoll";
+import { WORKSHOP_OPTIONS } from "./workshop";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +61,16 @@ export default async function ContaHome() {
     .limit(3);
   const upcoming = livesData ?? [];
 
+  // Enquete de próximo workshop + catálogo (cursos publicados)
+  const [{ data: votesData }, { data: myVoteRow }, { data: catalogData }] = await Promise.all([
+    admin.from("workshop_votes").select("option"),
+    admin.from("workshop_votes").select("option").eq("user_id", user!.id).maybeSingle(),
+    admin.from("courses").select("id, slug, title, subtitle, cover_url").eq("published", true).order("position"),
+  ]);
+  const voteCounts: Record<string, number> = {};
+  for (const v of votesData ?? []) voteCounts[v.option] = (voteCounts[v.option] || 0) + 1;
+  const myVote = myVoteRow?.option ?? null;
+
   const courseIds = (enrolls ?? []).map((e: any) => e.course_id);
   let courses: any[] = [];
   const lessonTotals: Record<string, number> = {};
@@ -99,6 +111,9 @@ export default async function ContaHome() {
     { label: "Ranking", sub: "Seus pontos", href: "/conta/ranking", d: "M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3", from: "#fbbf24", to: "#f59e0b" },
     { label: "Certificados", sub: "Suas conquistas", href: "/conta/certificados", d: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5", from: "#a78bfa", to: "#3b9dff" },
   ];
+
+  const enrolledSet = new Set(courseIds);
+  const catalogo = (catalogData ?? []).filter((c: any) => !enrolledSet.has(c.id));
 
   return (
     <div>
@@ -194,6 +209,28 @@ export default async function ContaHome() {
         </div>
       )}
 
+      {/* Acesso rápido (subido pra cima) */}
+      <div className="mt-8">
+        <h2 className="font-display text-lg font-bold text-white">Acesso rápido</h2>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {shortcuts.map((s) => (
+            <Link key={s.href} href={s.href} className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
+              <span className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }} />
+              <span className="relative grid h-11 w-11 place-items-center rounded-xl text-ink-900 shadow-lg transition-transform duration-300 group-hover:scale-110" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d={s.d} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </span>
+              <p className="relative mt-3 text-sm font-semibold text-white">{s.label}</p>
+              <p className="relative text-[0.7rem] text-slate-400">{s.sub}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Enquete: próximo workshop */}
+      <div className="mt-8">
+        <WorkshopPoll options={WORKSHOP_OPTIONS} counts={voteCounts} myVote={myVote} />
+      </div>
+
       {/* Meus cursos */}
       <div className="mt-10">
         <div className="flex items-center justify-between">
@@ -255,22 +292,30 @@ export default async function ContaHome() {
         )}
       </div>
 
-      {/* Atalhos */}
-      <div className="mt-10">
-        <h2 className="font-display text-lg font-bold text-white">Acesso rápido</h2>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {shortcuts.map((s) => (
-            <Link key={s.href} href={s.href} className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
-              <span className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }} />
-              <span className="relative grid h-11 w-11 place-items-center rounded-xl text-ink-900 shadow-lg transition-transform duration-300 group-hover:scale-110" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d={s.d} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-              <p className="relative mt-3 text-sm font-semibold text-white">{s.label}</p>
-              <p className="relative text-[0.7rem] text-slate-400">{s.sub}</p>
-            </Link>
-          ))}
+      {/* Catálogo (em breve / disponível) */}
+      {catalogo.length > 0 && (
+        <div className="mt-10">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-bold text-white">{full ? "Catálogo" : "Em breve no catálogo"}</h2>
+            <span className="text-xs text-slate-500">{catalogo.length} treinamento{catalogo.length === 1 ? "" : "s"}</span>
+          </div>
+          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {catalogo.map((c: any) => (
+              <Link key={c.id} href={full ? `/aprender/${c.slug}` : "/cursos"} className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/8 bg-white/[0.02] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-green/30">
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <Cover url={c.cover_url} title={c.title} />
+                  <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[0.65rem] font-bold shadow-lg ${full ? "bg-gradient-to-r from-brand-green to-brand-blue text-ink-900" : "bg-ink-900/80 text-brand-teal backdrop-blur"}`}>{full ? "Disponível" : "Em breve"}</span>
+                </div>
+                <div className="flex flex-1 flex-col p-5">
+                  <h3 className="font-display text-lg font-bold text-white transition-colors group-hover:text-brand-green">{c.title}</h3>
+                  {c.subtitle && <p className="mt-1 line-clamp-2 text-sm text-slate-400">{c.subtitle}</p>}
+                  <div className="mt-auto pt-4 text-xs font-semibold text-brand-green">{full ? "Acessar agora →" : "Liberação em breve"}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
