@@ -34,6 +34,22 @@ const CHANNEL_COLORS: Record<string, [string, string]> = {
 };
 const colorOf = (slug: string): [string, string] => CHANNEL_COLORS[slug] || ["#3b9dff", "#22d3ee"];
 
+const CHANNEL_ICONS: Record<string, string> = {
+  geral: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
+  "power-bi": "M4 20V10M10 20V4M16 20v-8M20 20H2",
+  "inteligencia-artificial": "M9 3h6a2 2 0 012 2v3a4 4 0 01-4 4h-2a4 4 0 01-4-4V5a2 2 0 012-2zM9 21h6M10 21v-3M14 21v-3M12 12v4",
+  ia: "M9 3h6a2 2 0 012 2v3a4 4 0 01-4 4h-2a4 4 0 01-4-4V5a2 2 0 012-2zM9 21h6M10 21v-3M14 21v-3M12 12v4",
+  "html-web": "M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12",
+  "gestao-de-projetos": "M8 4h8a1 1 0 011 1v14a1 1 0 01-1 1H8a1 1 0 01-1-1V5a1 1 0 011-1zM10 9h4M10 13h4",
+  "gestao-projetos": "M8 4h8a1 1 0 011 1v14a1 1 0 01-1 1H8a1 1 0 01-1-1V5a1 1 0 011-1zM10 9h4M10 13h4",
+};
+const iconOf = (slug: string) => CHANNEL_ICONS[slug] || "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z";
+function ChIcon({ slug, size = 15 }: { slug: string; size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"><path d={iconOf(slug)} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  );
+}
+
 function timeStr(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
@@ -180,7 +196,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
             const [from, to] = colorOf(c.slug);
             return (
               <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-all duration-200 ${active ? "bg-white/[0.06] font-medium text-white" : "text-slate-400 hover:translate-x-0.5 hover:bg-white/5 hover:text-slate-100"}`}>
-                <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg text-[0.7rem] font-bold text-ink-900 transition-all ${active ? "shadow-md" : "opacity-70 group-hover:opacity-100"}`} style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}>{c.name.charAt(0).toUpperCase()}</span>
+                <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg text-ink-900 transition-all ${active ? "shadow-md" : "opacity-70 group-hover:opacity-100"}`} style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}><ChIcon slug={c.slug} size={13} /></span>
                 <span className="truncate">{c.name}</span>
               </Link>
             );
@@ -199,7 +215,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
       <div className="relative flex min-w-0 flex-1 flex-col">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-64 opacity-[0.07]" style={{ background: `radial-gradient(60% 100% at 50% 0%, ${cFrom}, transparent)` }} />
         <header className="relative flex items-center gap-2.5 border-b border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent px-4 py-3 sm:px-5 sm:py-3.5">
-          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-xs font-bold text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>{channel.name.charAt(0).toUpperCase()}</span>
+          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}><ChIcon slug={channel.slug} size={15} /></span>
           <span className="font-display font-bold text-white">{channel.name}</span>
           {channel.description && <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 md:block">{channel.description}</span>}
           <span className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[0.7rem] text-slate-300">
@@ -215,7 +231,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
             const [f, t] = colorOf(c.slug);
             return (
               <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`flex shrink-0 items-center gap-1.5 rounded-full py-1 pl-1 pr-3 text-xs ${active ? "bg-white/10 text-white" : "text-slate-400"}`}>
-                <span className="grid h-5 w-5 place-items-center rounded-full text-[0.6rem] font-bold text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${f}, ${t})` }}>{c.name.charAt(0).toUpperCase()}</span>
+                <span className="grid h-5 w-5 place-items-center rounded-full text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${f}, ${t})` }}><ChIcon slug={c.slug} size={11} /></span>
                 {c.name}
               </Link>
             );
@@ -228,7 +244,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
               <div>
                 <div className="relative mx-auto mb-4 grid h-20 w-20 place-items-center">
                   <span className="absolute inset-0 rounded-3xl opacity-40 blur-xl" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }} />
-                  <span className="relative grid h-16 w-16 place-items-center rounded-2xl text-2xl font-bold text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>{channel.name.charAt(0).toUpperCase()}</span>
+                  <span className="relative grid h-16 w-16 place-items-center rounded-2xl text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}><ChIcon slug={channel.slug} size={30} /></span>
                 </div>
                 <p className="font-display text-lg font-bold text-white">Bem-vindo ao #{channel.name}</p>
                 <p className="mt-1 text-sm">Este é o começo do canal. Manda a primeira mensagem!</p>

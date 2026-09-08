@@ -52,10 +52,10 @@ export default async function FerramentaVisuaisLP() {
             Monte cards, velocímetros e dashboards que o Power BI nativo não faz, aponte para as suas medidas e leve a <b className="text-white">medida DAX pronta</b> para colar no seu relatório.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/ferramenta/assinar" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-7 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar por {brl(price)}/mês</Link>
+            <Link href="/matricula" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-7 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar a Academy (inclui a ferramenta)</Link>
             <Link href="/ferramenta" className="rounded-xl border border-white/15 px-7 py-3.5 text-sm font-semibold text-white hover:border-white/30">Já sou aluno</Link>
           </div>
-          <p className="mt-3 text-xs text-slate-500">Assinatura mensal no cartão. Cancele quando quiser.</p>
+          <p className="mt-3 text-xs text-slate-500">A ferramenta está incluída na assinatura da Academy. Ou assine só a ferramenta por {brl(price)}/mês.</p>
         </div>
 
         {/* Vídeo / preview */}
@@ -108,11 +108,10 @@ export default async function FerramentaVisuaisLP() {
 
         {/* Preço / CTA */}
         <div className="mt-16 overflow-hidden rounded-3xl border border-brand-green/25 bg-gradient-to-br from-brand-green/[0.10] via-ink-800 to-brand-blue/[0.10] p-8 text-center">
-          <h2 className="font-display text-2xl font-bold text-white">Assine e comece hoje</h2>
-          <p className="mt-2 text-slate-300">Acesso completo à ferramenta, presets e comunidade.</p>
-          <p className="mt-4 font-display text-4xl font-bold text-white">{brl(price)}<span className="text-lg font-normal text-slate-400">/mês</span></p>
-          <Link href="/ferramenta/assinar" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-8 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar agora</Link>
-          <p className="mt-3 text-xs text-slate-500">Cartão de crédito · cancele quando quiser</p>
+          <h2 className="font-display text-2xl font-bold text-white">Já vem na assinatura da Academy</h2>
+          <p className="mt-2 text-slate-300">Assine a DriveData Academy e use a ferramenta, todos os cursos, a comunidade e as mentorias.</p>
+          <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-8 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar a Academy</Link>
+          <p className="mt-3 text-xs text-slate-500">Prefere só a ferramenta? <Link href="/ferramenta/assinar" className="text-brand-teal hover:underline">assine por {brl(price)}/mês</Link></p>
         </div>
       </main>
 

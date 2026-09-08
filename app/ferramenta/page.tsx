@@ -26,8 +26,9 @@ export default async function FerramentaPage() {
           </div>
           <h1 className="font-display text-2xl font-bold text-white">Ferramenta de Visuais</h1>
           <p className="mt-2 text-slate-300">Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.</p>
-          <p className="mt-3 text-sm text-slate-400">Assinatura mensal de <span className="font-semibold text-white">{price}</span>. Cancele quando quiser.</p>
-          <Link href="/ferramenta/assinar" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar a ferramenta</Link>
+          <p className="mt-3 text-sm text-slate-400"><span className="font-semibold text-brand-green">Incluída na assinatura da Academy.</span> Assine e use a ferramenta e todos os cursos.</p>
+          <Link href="/matricula" className="mt-6 inline-block w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar a Academy</Link>
+          <Link href="/ferramenta/assinar" className="mt-3 block text-sm text-brand-teal hover:underline">ou assinar só a ferramenta ({price}/mês)</Link>
           <Link href="/conta" className="mt-3 block text-sm text-slate-400 hover:text-white">Voltar ao portal</Link>
         </div>
       </main>
