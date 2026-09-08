@@ -937,3 +937,8 @@ create policy "rep own insert" on public.rep_requests for insert to authenticate
 
 -- Gamificação: motivo dos pontos (ex.: desafios) para auditoria
 alter table public.point_events add column if not exists meta text;
+
+
+-- Vitrine de alunos: foto de perfil e link de portfólio
+alter table public.profiles add column if not exists avatar_url text;
+alter table public.profiles add column if not exists portfolio_url text;

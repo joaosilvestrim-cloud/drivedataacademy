@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
+import { signAvatarUpload } from "../actions";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
 const label = "block text-sm font-medium text-slate-300";
 
-type Form = { full_name: string; phone: string; country: string; linkedin_url: string; headline: string; bio: string; skills: string; cv_url: string };
-const EMPTY: Form = { full_name: "", phone: "", country: "", linkedin_url: "", headline: "", bio: "", skills: "", cv_url: "" };
+type Form = { full_name: string; phone: string; country: string; linkedin_url: string; headline: string; bio: string; skills: string; cv_url: string; avatar_url: string; portfolio_url: string };
+const EMPTY: Form = { full_name: "", phone: "", country: "", linkedin_url: "", headline: "", bio: "", skills: "", cv_url: "", avatar_url: "", portfolio_url: "" };
 
 export default function ProfileForm() {
   const [email, setEmail] = useState("");
@@ -23,6 +24,7 @@ export default function ProfileForm() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiMsg, setAiMsg] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  const avatarRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     (async () => {
@@ -30,7 +32,7 @@ export default function ProfileForm() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       setEmail(user.email || ""); setUid(user.id);
-      const { data } = await supabase.from("profiles").select("full_name, phone, country, linkedin_url, headline, bio, skills, cv_url").eq("id", user.id).maybeSingle();
+      const { data } = await supabase.from("profiles").select("full_name, phone, country, linkedin_url, headline, bio, skills, cv_url, avatar_url, portfolio_url").eq("id", user.id).maybeSingle();
       if (data) setForm({ ...EMPTY, ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v ?? ""])) } as Form);
       setLoading(false);
     })();
@@ -74,6 +76,27 @@ export default function ProfileForm() {
     }
   }
 
+  async function onAvatar(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const s = await signAvatarUpload(ext);
+      if (!s.ok) throw new Error();
+      const supabase = createClient();
+      const { error } = await supabase.storage.from("avatars").uploadToSignedUrl(s.path, s.token, file, { contentType: file.type });
+      if (error) throw error;
+      const url = s.url + `?v=${Date.now()}`;
+      setForm((f) => ({ ...f, avatar_url: url }));
+      await persist({ avatar_url: url });
+    } catch {
+      setAiMsg("Não consegui subir a foto. Tente uma imagem menor.");
+    } finally {
+      setUploading(false);
+    }
+  }
+
   async function aiFill() {
     if (aiText.trim().length < 20) { setAiMsg("Cole mais detalhes (seu LinkedIn ou currículo)."); return; }
     setAiLoading(true); setAiMsg("");
@@ -96,11 +119,18 @@ export default function ProfileForm() {
     <>
       {/* Cabeçalho com avatar */}
       <div className="mt-6 flex items-center gap-4 rounded-2xl border border-white/8 bg-gradient-to-r from-brand-green/[0.08] to-brand-blue/[0.05] p-5">
-        <Avatar name={form.full_name || email} size="lg" />
+        <button type="button" onClick={() => avatarRef.current?.click()} className="group relative shrink-0 rounded-full" title="Trocar foto">
+          <Avatar name={form.full_name || email} src={form.avatar_url || null} size="lg" className="ring-2 ring-white/10" />
+          <span className="absolute inset-0 grid place-items-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white"><path d="M4 7h3l2-2h6l2 2h3v12H4zM12 16a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </span>
+        </button>
+        <input ref={avatarRef} type="file" accept="image/*" onChange={onAvatar} className="hidden" />
         <div className="min-w-0">
           <p className="truncate font-display text-lg font-bold text-white">{form.full_name || "Complete seu nome"}</p>
           {form.headline && <p className="truncate text-sm text-brand-teal">{form.headline}</p>}
           <p className="truncate text-sm text-slate-400">{email}</p>
+          <button type="button" onClick={() => avatarRef.current?.click()} disabled={uploading} className="mt-1 text-xs text-brand-teal hover:underline disabled:opacity-60">{uploading ? "enviando..." : "trocar foto"}</button>
         </div>
       </div>
 
@@ -146,9 +176,16 @@ export default function ProfileForm() {
             <input id="country" value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} placeholder="Brasil" className={field} />
           </div>
         </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="linkedin_url">LinkedIn</label>
-          <input id="linkedin_url" value={form.linkedin_url} onChange={(e) => setForm((f) => ({ ...f, linkedin_url: e.target.value }))} placeholder="https://linkedin.com/in/seu-perfil" className={field} />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <label className={label} htmlFor="linkedin_url">LinkedIn</label>
+            <input id="linkedin_url" value={form.linkedin_url} onChange={(e) => setForm((f) => ({ ...f, linkedin_url: e.target.value }))} placeholder="https://linkedin.com/in/seu-perfil" className={field} />
+          </div>
+          <div className="space-y-1.5">
+            <label className={label} htmlFor="portfolio_url">Portfólio</label>
+            <input id="portfolio_url" value={form.portfolio_url} onChange={(e) => setForm((f) => ({ ...f, portfolio_url: e.target.value }))} placeholder="https://seu-portfolio.com" className={field} />
+            <p className="text-xs text-slate-500">Aparece na Vitrine de alunos.</p>
+          </div>
         </div>
 
         {/* CV */}

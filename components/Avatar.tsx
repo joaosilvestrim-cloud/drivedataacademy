@@ -24,7 +24,13 @@ function initials(name: string): string {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-export default function Avatar({ name, size = "sm", className = "" }: { name: string; size?: keyof typeof SIZES; className?: string }) {
+export default function Avatar({ name, size = "sm", className = "", src }: { name: string; size?: keyof typeof SIZES; className?: string; src?: string | null }) {
+  if (src) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={src} alt={name} className={`shrink-0 rounded-full object-cover ${SIZES[size]} ${className}`} />
+    );
+  }
   let hash = 0;
   for (let i = 0; i < (name || "").length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
   const [a, b] = GRADIENTS[hash % GRADIENTS.length];

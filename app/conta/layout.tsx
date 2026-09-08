@@ -12,6 +12,7 @@ const NAV = [
   { label: "Representação", href: "/conta/representacao" },
   { label: "Agenda", href: "/conta/agenda" },
   { label: "Ranking", href: "/conta/ranking" },
+  { label: "Vitrine", href: "/conta/vitrine" },
   { label: "Certificados", href: "/conta/certificados" },
   { label: "Ajuda", href: "/conta/ajuda" },
   { label: "Perfil", href: "/conta/perfil" },
