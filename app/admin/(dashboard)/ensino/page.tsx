@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName, BADGE_LABELS, pointsByUser } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 import AdminError from "../AdminError";
-import { grantBadge, grantChallengePoints } from "./actions";
+import { grantBadge, grantChallengePoints, awardRankingWinner } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -123,7 +123,12 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
           <div className="glass rounded-2xl border border-white/8 p-5">
             <div className="flex items-center justify-between">
               <h2 className="font-display text-lg font-bold text-white">Ranking (top 10)</h2>
-              <Link href="/conta/ranking" target="_blank" className="text-xs text-brand-green hover:underline">Ver ranking ↗</Link>
+              <div className="flex items-center gap-2">
+                <form action={awardRankingWinner}>
+                  <button className="rounded-lg border border-amber-300/40 bg-amber-300/10 px-3 py-1.5 text-xs font-semibold text-amber-200 hover:bg-amber-300/20">🏆 Premiar 1º</button>
+                </form>
+                <Link href="/conta/ranking" target="_blank" className="text-xs text-brand-green hover:underline">Ver ↗</Link>
+              </div>
             </div>
             <div className="mt-4 space-y-2">
               {ranked.length === 0 && <p className="text-sm text-slate-500">Ninguém pontuou ainda.</p>}

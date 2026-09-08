@@ -9,9 +9,15 @@ export async function saveToolPrice(formData: FormData) {
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");
   const price = (((formData.get("tool_price") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".")) || "19.90";
+  const video = ((formData.get("tool_video_url") as string) || "").trim();
   const supabase = createAdminClient();
-  await supabase.from("site_settings").upsert({ key: "tool_price", value: price, updated_at: new Date().toISOString() }, { onConflict: "key" });
+  const now = new Date().toISOString();
+  await supabase.from("site_settings").upsert([
+    { key: "tool_price", value: price, updated_at: now },
+    { key: "tool_video_url", value: video, updated_at: now },
+  ], { onConflict: "key" });
   revalidatePath("/admin/ferramenta");
+  revalidatePath("/ferramenta-visuais");
   redirect("/admin/ferramenta?ok=1");
 }
 

@@ -20,7 +20,7 @@ function fmt(iso: string | null) {
 
 export default async function AdminFerramentaPage({ searchParams }: { searchParams: { ok?: string } }) {
   let subs: any[] = [], nameById: Record<string, string> = {};
-  let visualCount = 0, userCount = 0, activeCount = 0, price = "19.90";
+  let visualCount = 0, userCount = 0, activeCount = 0, price = "19.90", videoUrl = "";
   let students: { id: string; name: string; email: string }[] = [];
   try {
     const admin = createAdminClient();
@@ -28,7 +28,7 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
       admin.from("tool_subscriptions").select("user_id, email, status, current_period_end, created_at, asaas_subscription_id").order("created_at", { ascending: false }).limit(100),
       admin.from("saved_visuals").select("*", { count: "exact", head: true }),
       admin.from("saved_visuals").select("user_id"),
-      admin.from("site_settings").select("value").eq("key", "tool_price").maybeSingle(),
+      admin.from("site_settings").select("key, value").in("key", ["tool_price", "tool_video_url"]),
       admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
       admin.from("profiles").select("id, full_name"),
     ]);
@@ -37,7 +37,9 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
     visualCount = vc ?? 0;
     userCount = new Set((visualsUsers ?? []).map((v: any) => v.user_id)).size;
     activeCount = subs.filter((x) => x.status === "active").length;
-    if (cfg?.value) price = cfg.value;
+    const cfgMap = Object.fromEntries((cfg ?? []).map((r: any) => [r.key, r.value]));
+    if (cfgMap.tool_price) price = cfgMap.tool_price;
+    videoUrl = cfgMap.tool_video_url || "";
     nameById = (await loadProfiles(admin, subs.map((x) => x.user_id))).nameById;
     const pnames: Record<string, string> = {};
     for (const p of profs ?? []) pnames[p.id] = p.full_name || "";
@@ -85,7 +87,11 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
           <label className="block text-sm font-medium text-slate-300">Preço da assinatura (R$/mês)</label>
           <input name="tool_price" defaultValue={price} inputMode="decimal" className={`${field} w-40`} />
         </div>
-        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">Salvar preço</button>
+        <div className="min-w-[240px] flex-1 space-y-1.5">
+          <label className="block text-sm font-medium text-slate-300">Vídeo da landing (URL de embed)</label>
+          <input name="tool_video_url" defaultValue={videoUrl} placeholder="https://www.youtube.com/embed/..." className={field} />
+        </div>
+        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">Salvar</button>
         <p className="w-full text-xs text-slate-500">A ferramenta é um produto à parte. Quem assina usa em /ferramenta, independente de ter comprado o curso. Admin sempre tem acesso.</p>
       </form>
 

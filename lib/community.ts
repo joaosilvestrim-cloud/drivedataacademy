@@ -46,7 +46,7 @@ export async function pointsByUser(admin: SupabaseClient): Promise<Record<string
   const [{ data: events }, { data: reacts }, { data: msgs }] = await Promise.all([
     admin.from("point_events").select("user_id, points"),
     admin.from("message_reactions").select("message_id, user_id"),
-    admin.from("channel_messages").select("id, user_id"),
+    admin.from("channel_messages").select("id, user_id, created_at"),
   ]);
   const totals: Record<string, number> = {};
   for (const e of events ?? []) totals[e.user_id] = (totals[e.user_id] || 0) + (e.points || 0);
@@ -55,6 +55,17 @@ export async function pointsByUser(admin: SupabaseClient): Promise<Record<string
   for (const r of reacts ?? []) {
     const a = author[r.message_id];
     if (a && a !== r.user_id) totals[a] = (totals[a] || 0) + 2;
+  }
+  // Pontos por participar (comentar) na comunidade, com teto diário para evitar spam.
+  const MSG_POINT = 1, MSG_CAP = 5;
+  const perDay: Record<string, number> = {};
+  for (const m of msgs ?? []) {
+    const day = (m.created_at || "").slice(0, 10);
+    perDay[`${m.user_id}|${day}`] = (perDay[`${m.user_id}|${day}`] || 0) + 1;
+  }
+  for (const [key, cnt] of Object.entries(perDay)) {
+    const uid = key.split("|")[0];
+    totals[uid] = (totals[uid] || 0) + Math.min(cnt, MSG_CAP) * MSG_POINT;
   }
   return totals;
 }
