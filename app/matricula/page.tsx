@@ -4,10 +4,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createAdminClient } from "@/lib/supabase/admin";
 import MatriculaForm from "./MatriculaForm";
+import { SUB_INCLUDES, parseIncludes } from "@/lib/subscription";
 
 export const dynamic = "force-dynamic";
 
-const KEYS = ["sub_price", "full_access_price", "turma_nome", "turma_descricao", "sales_open"];
+const KEYS = ["sub_price", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "sub_includes"];
 
 function brl(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -28,12 +29,8 @@ export default async function MatriculaPage() {
   const descricao = cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados enquanto sua assinatura estiver ativa.";
   const price = Number(cfg.sub_price || cfg.full_access_price || "0") || 0;
 
-  const beneficios = [
-    "Todos os cursos da plataforma, sem limite",
-    "Avaliações e certificados de conclusão",
-    "Novos cursos e conteúdos incluídos",
-    "Comunidade, mentorias ao vivo e suporte",
-  ];
+  const picked = parseIncludes(cfg.sub_includes);
+  const beneficios = SUB_INCLUDES.filter((i) => picked.includes(i.key)).map((i) => i.label);
 
   return (
     <div className="relative min-h-screen bg-ink-900">

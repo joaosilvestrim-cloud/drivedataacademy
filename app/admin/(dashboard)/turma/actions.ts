@@ -31,6 +31,19 @@ function fail(msg: string): never {
   redirect("/admin/turma?error=" + encodeURIComponent(msg));
 }
 
+import { SUB_INCLUDES } from "@/lib/subscription";
+
+export async function saveSubIncludes(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+  const picked = SUB_INCLUDES.map((i) => i.key).filter((k) => formData.get(`inc_${k}`) === "on");
+  const supabase = createAdminClient();
+  await supabase.from("site_settings").upsert({ key: "sub_includes", value: picked.join(","), updated_at: new Date().toISOString() }, { onConflict: "key" });
+  revalidatePath("/admin/turma");
+  revalidatePath("/matricula");
+  redirect("/admin/turma?ok=1");
+}
+
 export async function saveTurma(formData: FormData) {
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");

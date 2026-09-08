@@ -2,8 +2,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
 import Flash from "./Flash";
 import TurmaForm from "./TurmaForm";
+import { SUB_INCLUDES, parseIncludes } from "@/lib/subscription";
+import { saveSubIncludes } from "./actions";
 
-const KEYS = ["sub_price", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "checkout_whatsapp"];
+const KEYS = ["sub_price", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "checkout_whatsapp", "sub_includes"];
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +55,7 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
   const asaasOn = !!process.env.ASAAS_API_KEY;
   const open = initial.sales_open === "1";
   const price = Number(initial.sub_price || initial.full_access_price || "0") || 0;
+  const includes = parseIncludes(initial.sub_includes);
 
   return (
     <div>
@@ -98,6 +101,21 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
       <div className="mt-6">
         <TurmaForm initial={initial} asaasOn={asaasOn} currentPrice={price} />
       </div>
+
+      {/* O que a assinatura inclui */}
+      <form action={saveSubIncludes} className="glass mt-6 max-w-2xl rounded-2xl border border-white/8 p-6">
+        <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-500">O que a assinatura inclui</p>
+        <p className="mt-1 text-sm text-slate-400">Marque o que faz parte da assinatura. Aparece como benefícios na página de matrícula.</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {SUB_INCLUDES.map((inc) => (
+            <label key={inc.key} className="flex items-center gap-2.5 rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2.5 text-sm text-slate-200">
+              <input type="checkbox" name={`inc_${inc.key}`} defaultChecked={includes.includes(inc.key)} className="h-4 w-4 accent-emerald-400" />
+              {inc.label}
+            </label>
+          ))}
+        </div>
+        <button className="mt-4 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-2.5 text-sm font-semibold text-ink-900">Salvar o que inclui</button>
+      </form>
     </div>
   );
 }
