@@ -18,11 +18,15 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();
-  const { data: tickets } = await admin
-    .from("support_tickets")
-    .select("id, subject, category, status, updated_at")
-    .eq("user_id", user.id)
-    .order("updated_at", { ascending: false });
+  const [{ data: tickets }, { data: emailCfg }] = await Promise.all([
+    admin
+      .from("support_tickets")
+      .select("id, subject, category, status, updated_at")
+      .eq("user_id", user.id)
+      .order("updated_at", { ascending: false }),
+    admin.from("site_settings").select("value").eq("key", "support_email").maybeSingle(),
+  ]);
+  const supportEmail = (emailCfg?.value || "suporteia@drivedata.com.br").trim();
 
   return (
     <div className="max-w-3xl">
@@ -40,6 +44,17 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
           </div>
         </div>
       </div>
+
+      {/* E-mail de suporte */}
+      <a href={`mailto:${supportEmail}`} className="mt-4 flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4 transition-colors hover:border-brand-teal/40">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-blue/10 text-brand-teal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4zM4 7l8 6 8-6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </span>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-white">Prefere e-mail? Fale com o suporte</p>
+          <p className="truncate text-sm text-brand-teal">{supportEmail}</p>
+        </div>
+      </a>
 
       {/* Meus chamados */}
       <div className="mt-10 flex items-center justify-between">
