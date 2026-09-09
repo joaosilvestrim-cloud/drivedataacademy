@@ -227,7 +227,11 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
           <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}><ChIcon slug={channel.slug} size={15} /></span>
           <span className="font-display font-bold text-white">{channel.name}</span>
           {channel.description && <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 md:block">{channel.description}</span>}
-          <span className="ml-auto flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[0.7rem] text-slate-300">
+          <Link href="/conta/ranking" title="Ganhe pontos ajudando: solução +10, curtida +2, participar +1/dia" className="ml-auto hidden items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-300/10 px-2.5 py-1 text-[0.7rem] font-medium text-amber-200 hover:bg-amber-300/20 sm:flex">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            Pontos
+          </Link>
+          <span className="ml-2 flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[0.7rem] text-slate-300">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-green shadow-[0_0_6px] shadow-brand-green/60" />
             {onlineCount} online
           </span>
@@ -314,7 +318,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
                         </button>
                       )}
                       {canSolve(m) && (
-                        <button onClick={() => solve(m)} className="rounded-full border border-brand-green/30 px-2 py-0.5 text-[0.7rem] font-medium text-brand-green hover:bg-brand-green/10">marcar como solução</button>
+                        <button onClick={() => solve(m)} title="Marca a resposta que resolveu sua dúvida e dá +10 pontos a quem respondeu" className="rounded-full border border-brand-green/30 px-2 py-0.5 text-[0.7rem] font-medium text-brand-green hover:bg-brand-green/10">marcar como solução <span className="text-brand-green/70">+10</span></button>
                       )}
                     </div>
                   </div>
