@@ -84,6 +84,30 @@ export default async function RankingPage() {
         </div>
       </div>
 
+      {/* Como ganhar pontos */}
+      <div className="mt-4 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
+        <h2 className="font-display text-sm font-bold text-white">Como ganhar pontos</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { pts: "+10", t: "Resolver dúvidas", d: "Sua resposta marcada como solução vale 10 pontos.", d2: "M20 6L9 17l-5-5" },
+            { pts: "+2", t: "Curtidas recebidas", d: "Cada curtida de outro aluno na sua mensagem.", d2: "M7 10v11M2 13v6a2 2 0 002 2h13.4a2 2 0 002-1.6l1.4-7A2 2 0 0018.8 10H14V5a2 2 0 00-2-2l-3 7z" },
+            { pts: "+1", t: "Participar", d: "Cada mensagem na comunidade (até 5 por dia).", d2: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" },
+            { pts: "★", t: "Desafios", d: "Pontos extras que a equipe dá pelos desafios.", d2: "M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0z" },
+          ].map((r) => (
+            <div key={r.t} className="rounded-xl border border-white/8 bg-white/[0.02] p-3.5">
+              <div className="flex items-center gap-2">
+                <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-green/10 text-brand-green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d={r.d2} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </span>
+                <span className="font-display text-lg font-bold text-brand-green">{r.pts}</span>
+              </div>
+              <p className="mt-2 text-sm font-semibold text-white">{r.t}</p>
+              <p className="mt-0.5 text-xs text-slate-400">{r.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Pódio */}
       {podium.length > 0 && (
         <div className="mt-8 flex items-end justify-center gap-3 sm:gap-6">
