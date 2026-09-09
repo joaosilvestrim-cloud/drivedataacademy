@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
-import { markChatSolution, signCommunityImage } from "../actions";
+import { markChatSolution, signCommunityImage, chatProfiles } from "../actions";
 
 type Msg = {
-  id: string; user_id: string; body: string; created_at: string; name: string;
+  id: string; user_id: string; body: string; created_at: string; name: string; avatar?: string | null;
   likes: number; liked: boolean;
   tag: string | null; image_url: string | null; is_solution: boolean; solved: boolean;
   reply_to: string | null; reply_name?: string | null; reply_body?: string | null;
@@ -62,7 +62,7 @@ function dayStr(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long" }).format(new Date(iso));
 }
 
-export default function ChatRoom({ channel, channels, me, initial }: { channel: Channel; channels: Channel[]; me: { id: string; name: string }; initial: Msg[] }) {
+export default function ChatRoom({ channel, channels, me, initial }: { channel: Channel; channels: Channel[]; me: { id: string; name: string; avatar?: string | null }; initial: Msg[] }) {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const [input, setInput] = useState("");
   const [tag, setTag] = useState<string | null>(null);
@@ -70,7 +70,9 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [online, setOnline] = useState<Set<string>>(new Set([me.id]));
-  const nameCache = useRef<Record<string, string>>(Object.fromEntries(initial.map((m) => [m.user_id, m.name])));
+  const peopleCache = useRef<Record<string, { name: string; avatar: string | null }>>(
+    Object.fromEntries(initial.map((m) => [m.user_id, { name: m.name, avatar: m.avatar ?? null }]))
+  );
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const supa = useRef(createClient());
@@ -81,12 +83,19 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
   }
   useEffect(() => { scrollToBottom(); }, []);
 
-  async function nameFor(uid: string): Promise<string> {
-    if (nameCache.current[uid]) return nameCache.current[uid];
-    const { data } = await supa.current.from("profiles").select("full_name").eq("id", uid).maybeSingle();
-    const n = (data?.full_name || "Aluno").trim() || "Aluno";
-    nameCache.current[uid] = n;
-    return n;
+  async function personFor(uid: string): Promise<{ name: string; avatar: string | null }> {
+    const cached = peopleCache.current[uid];
+    if (cached) return cached;
+    const fallback = { name: "Aluno", avatar: null };
+    try {
+      const res = await chatProfiles([uid]);
+      const found = res?.people?.find((p) => p.id === uid);
+      const person = found ? { name: found.name, avatar: found.avatar } : fallback;
+      peopleCache.current[uid] = person;
+      return person;
+    } catch {
+      return fallback;
+    }
   }
 
   useEffect(() => {
@@ -95,9 +104,9 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
       .channel(`room:${channel.id}`, { config: { presence: { key: me.id } } })
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "channel_messages", filter: `channel_id=eq.${channel.id}` }, async (payload: any) => {
         const r = payload.new;
-        const name = await nameFor(r.user_id);
+        const person = await personFor(r.user_id);
         setMessages((prev) => (prev.some((m) => m.id === r.id) ? prev : [...prev, {
-          id: r.id, user_id: r.user_id, body: r.body, created_at: r.created_at, name, likes: 0, liked: false,
+          id: r.id, user_id: r.user_id, body: r.body, created_at: r.created_at, name: person.name, avatar: person.avatar, likes: 0, liked: false,
           tag: r.tag || null, image_url: r.image_url || null, is_solution: !!r.is_solution, solved: !!r.solved, reply_to: r.reply_to || null,
         }]));
         setTimeout(() => { const el = scrollRef.current; if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 200) scrollToBottom(); }, 30);
@@ -154,9 +163,9 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
     setInput(""); setTag(null); setReplyTo(null); setPendingImage(null);
     const { data } = await supa.current.from("channel_messages").insert(payload).select("id, created_at").single();
     if (data) {
-      nameCache.current[me.id] = me.name;
+      peopleCache.current[me.id] = { name: me.name, avatar: me.avatar ?? null };
       setMessages((prev) => prev.some((m) => m.id === data.id) ? prev : [...prev, {
-        id: data.id, user_id: me.id, body: text, created_at: data.created_at, name: me.name, likes: 0, liked: false,
+        id: data.id, user_id: me.id, body: text, created_at: data.created_at, name: me.name, avatar: me.avatar ?? null, likes: 0, liked: false,
         tag: payload.tag || null, image_url: payload.image_url || null, is_solution: false, solved: false,
         reply_to: rt?.id || null, reply_name: rt?.name || null, reply_body: rt ? rt.body.slice(0, 120) : null,
       }]);
@@ -213,7 +222,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
         </nav>
         <div className="border-t border-white/[0.06] p-3">
           <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] px-3 py-2">
-            <Avatar name={me.name} size="xs" className="ring-1 ring-white/10" />
+            <Avatar name={me.name} src={me.avatar ?? null} size="xs" className="ring-1 ring-white/10" />
             <span className="truncate text-xs font-medium text-slate-200">{me.name}</span>
             <span className="ml-auto h-2 w-2 rounded-full bg-brand-green shadow-[0_0_8px] shadow-brand-green/60" />
           </div>
@@ -279,7 +288,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
                   </div>
                 )}
                 <div className={`group flex items-start gap-3 rounded-xl px-2.5 transition-colors duration-150 ${grouped ? "py-0.5" : "py-1.5"} ${m.is_solution ? "border border-brand-green/30 bg-brand-green/[0.06]" : "hover:bg-white/[0.04]"}`}>
-                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <Avatar name={m.name} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
+                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <Avatar name={m.name} src={m.avatar ?? null} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex flex-wrap items-baseline gap-2">

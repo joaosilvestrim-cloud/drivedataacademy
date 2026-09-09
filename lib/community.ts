@@ -27,14 +27,18 @@ export async function loadProfiles(admin: SupabaseClient, ids: string[]) {
   const uniq = Array.from(new Set(ids)).filter(Boolean);
   const nameById: Record<string, string> = {};
   const badgeById: Record<string, string[]> = {};
-  if (uniq.length === 0) return { nameById, badgeById };
+  const avatarById: Record<string, string> = {};
+  if (uniq.length === 0) return { nameById, badgeById, avatarById };
   const [{ data: profs }, { data: badges }] = await Promise.all([
-    admin.from("profiles").select("id, full_name").in("id", uniq),
+    admin.from("profiles").select("id, full_name, avatar_url").in("id", uniq),
     admin.from("user_badges").select("user_id, badge").in("user_id", uniq),
   ]);
-  for (const p of profs ?? []) nameById[p.id] = (p.full_name || "").trim();
+  for (const p of profs ?? []) {
+    nameById[p.id] = (p.full_name || "").trim();
+    if (p.avatar_url) avatarById[p.id] = p.avatar_url;
+  }
   for (const b of badges ?? []) (badgeById[b.user_id] ||= []).push(b.badge);
-  return { nameById, badgeById };
+  return { nameById, badgeById, avatarById };
 }
 
 export function displayName(nameById: Record<string, string>, id: string): string {

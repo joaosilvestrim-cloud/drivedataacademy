@@ -27,7 +27,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
   const msgs = (msgsDesc ?? []).slice().reverse(); // oldest -> newest
 
   const ids = msgs.map((m: any) => m.user_id);
-  const { nameById } = await loadProfiles(admin, [...ids, user.id]);
+  const { nameById, avatarById } = await loadProfiles(admin, [...ids, user.id]);
 
   // reações
   const likeCount: Record<string, number> = {};
@@ -46,14 +46,15 @@ export default async function ChannelChat({ params }: { params: { channel: strin
 
   const initial = msgs.map((m: any) => ({
     id: m.id, user_id: m.user_id, body: m.body, created_at: m.created_at,
-    name: displayName(nameById, m.user_id), likes: likeCount[m.id] || 0, liked: myLiked.has(m.id),
+    name: displayName(nameById, m.user_id), avatar: avatarById[m.user_id] || null,
+    likes: likeCount[m.id] || 0, liked: myLiked.has(m.id),
     tag: m.tag || null, image_url: m.image_url || null, is_solution: !!m.is_solution, solved: !!m.solved,
     reply_to: m.reply_to || null,
     reply_name: m.reply_to && byId[m.reply_to] ? displayName(nameById, byId[m.reply_to].user_id) : null,
     reply_body: m.reply_to && byId[m.reply_to] ? (byId[m.reply_to].body || "").slice(0, 120) : null,
   }));
 
-  const me = { id: user.id, name: displayName(nameById, user.id) };
+  const me = { id: user.id, name: displayName(nameById, user.id), avatar: avatarById[user.id] || null };
 
   return <ChatRoom channel={channel} channels={channels ?? []} me={me} initial={initial} />;
 }

@@ -136,6 +136,23 @@ export async function markChatSolution(replyId: string, parentId: string) {
   return { ok: true as const };
 }
 
+// Nome e foto de quem escreve, para o chat em tempo real. A RLS de profiles só
+// libera o próprio perfil, então o navegador não consegue ler o de outro aluno.
+export async function chatProfiles(ids: string[]) {
+  const { admin } = await requireCommunityUser();
+  const uniq = Array.from(new Set(ids)).filter((id) => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 200);
+  if (!uniq.length) return { ok: true as const, people: [] };
+  const { data } = await admin.from("profiles").select("id, full_name, avatar_url").in("id", uniq);
+  return {
+    ok: true as const,
+    people: (data ?? []).map((p) => ({
+      id: p.id as string,
+      name: ((p.full_name as string) || "").trim() || "Aluno",
+      avatar: (p.avatar_url as string) || null,
+    })),
+  };
+}
+
 // URL assinada para o aluno subir uma foto na comunidade (bucket público "community").
 export async function signCommunityImage(ext: string) {
   const { admin } = await requireCommunityUser();
