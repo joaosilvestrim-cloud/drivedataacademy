@@ -106,6 +106,7 @@ export default async function ContaHome() {
   ];
 
   const shortcuts = [
+    { label: "Ferramentas", sub: "Visuais e mais", href: "/conta/ferramentas", d: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4", from: "#34e8a0", to: "#22d3ee" },
     { label: "Comunidade", sub: "Converse e ajude", href: "/conta/comunidade", d: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z", from: "#34e8a0", to: "#2ee6d6" },
     { label: "Agenda", sub: "Lives e roadmap", href: "/conta/agenda", d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z", from: "#3b9dff", to: "#22d3ee" },
     { label: "Ranking", sub: "Seus pontos", href: "/conta/ranking", d: "M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3", from: "#fbbf24", to: "#f59e0b" },
@@ -212,7 +213,7 @@ export default async function ContaHome() {
       {/* Acesso rápido (subido pra cima) */}
       <div className="mt-8">
         <h2 className="font-display text-lg font-bold text-white">Acesso rápido</h2>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {shortcuts.map((s) => (
             <Link key={s.href} href={s.href} className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
               <span className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }} />
