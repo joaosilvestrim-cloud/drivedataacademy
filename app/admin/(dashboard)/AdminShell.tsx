@@ -33,6 +33,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Progresso", href: "/admin/progresso", icon: "analytics" },
       { label: "Cursos", href: "/admin/cursos", icon: "courses" },
       { label: "Knowledge Universe 4D", href: "/admin/universo", icon: "analytics" },
+      { label: "Desafios", href: "/admin/desafios", icon: "courses" },
       { label: "Alunos", href: "/admin/alunos", icon: "students" },
       { label: "Comunidade", href: "/admin/comunidade", icon: "community" },
       { label: "Comentários", href: "/admin/comentarios", icon: "blog" },
