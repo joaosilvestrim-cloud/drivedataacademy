@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 497" width="500" height="497" fill="none">
+  <defs>
+    <linearGradient id="dd" x1="70" y1="20" x2="430" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4ce38a"/>
+      <stop offset="0.5" stop-color="#12b6e0"/>
+      <stop offset="1" stop-color="#2b7bff"/>
+    </linearGradient>
+    <linearGradient id="dd2" x1="30" y1="120" x2="260" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2f6bef"/>
+      <stop offset="1" stop-color="#17b8d8"/>
+    </linearGradient>
+    <linearGradient id="dd3" x1="0" y1="180" x2="200" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4ce38a"/>
+      <stop offset="1" stop-color="#19c0c0"/>
+    </linearGradient>
+  </defs>
+  <!-- corpo (bowl do D): topo em ~90,8, arco grande à direita, desce até o ponto -->
+  <path d="M92 8 H250 A242 242 0 1 1 156 484 L250 250 Z" fill="url(#dd)"/>
+  <!-- chevron superior -->
+  <path d="M40 110 H150 L250 250 L200 330 Z" fill="url(#dd2)"/>
+  <!-- chevron inferior -->
+  <path d="M8 180 H105 L175 315 L128 400 Z" fill="url(#dd3)"/>
+</svg>
