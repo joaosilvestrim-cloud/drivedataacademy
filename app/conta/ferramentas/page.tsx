@@ -30,7 +30,7 @@ export default async function FerramentasHub() {
       key: "knowledge-universe",
       name: "Knowledge Universe 4D",
       tag: "Conhecimento · 4D",
-      desc: "Explore suas competências, acompanhe a evolução no tempo e descubra os próximos caminhos de aprendizagem.",
+      desc: "Suas atividades viram um mapa de competências em 3D. Veja seu domínio registrado, acompanhe a evolução no tempo e descubra o que aprender a seguir.",
       href: "/universo",
       icon: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
       from: "#6be9ce",

@@ -22,6 +22,41 @@ export async function signAvatarUpload(ext: string) {
   return { ok: true as const, path: data.path, token: data.token, url };
 }
 
+// Campos do perfil que o próprio aluno pode editar.
+const PROFILE_FIELDS = [
+  "full_name", "phone", "country", "linkedin_url",
+  "headline", "bio", "skills", "cv_url", "avatar_url", "portfolio_url",
+] as const;
+type ProfileField = (typeof PROFILE_FIELDS)[number];
+
+// Grava o perfil pelo servidor (service role). Evita depender da RLS/sessão do
+// navegador, que fazia o update "passar" sem alterar nenhuma linha.
+export async function saveProfile(patch: Partial<Record<ProfileField, string>>) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false as const, error: "Faça login novamente." };
+
+  const payload: Record<string, string | null> = {};
+  for (const key of PROFILE_FIELDS) {
+    if (!(key in patch)) continue;
+    const v = patch[key];
+    payload[key] = typeof v === "string" && v.trim() ? v.trim() : null;
+  }
+  if (Object.keys(payload).length === 0) return { ok: true as const };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("profiles")
+    .update({ ...payload, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+  if (error) return { ok: false as const, error: error.message };
+
+  revalidatePath("/conta/perfil");
+  revalidatePath("/conta/vitrine");
+  revalidatePath("/conta/comunidade");
+  return { ok: true as const };
+}
+
 export async function voteWorkshop(formData: FormData) {
   const option = ((formData.get("option") as string) || "").trim();
   if (!WORKSHOP_OPTIONS.includes(option)) return;

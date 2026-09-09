@@ -8,6 +8,7 @@ import { DEMO_CATALOG, DEMO_EVENTS, DEMO_START, DEMO_END, DEMO_CHALLENGE, demoCh
 import { achievements, DAY, LABELS, universe, WEIGHTS } from '@/lib/knowledge/engine';
 import type { Dimension, Evidence, Requirement, UniverseData } from '@/lib/knowledge/types';
 import styles from './universe.module.css';
+import UniverseGuide from './UniverseGuide';
 
 const UniverseCanvas = dynamic(() => import('./UniverseCanvas'), { ssr: false, loading: () => <div className={styles.loading}><Orbit size={32} /><span>Organizando as constelações…</span></div> });
 const date = (value: string) => new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(value));
@@ -32,9 +33,16 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
   const [day, setDay] = useState(lastDay); const [playing, setPlaying] = useState(false); const [speed, setSpeed] = useState(1);
   const [view, setView] = useState<'3d' | 'list'>('3d'); const [reduced, setReduced] = useState(false);
   const [reset, setReset] = useState(0); const [zoom, setZoom] = useState(0); const [help, setHelp] = useState(false);
+  const [showIntroduction, setShowIntroduction] = useState(true);
+  const introductionKey = `knowledge-universe-introduction-v1:${isDemo?'demo':'live'}`;
+  const dismissIntroduction = () => {
+    setShowIntroduction(false);
+    try { localStorage.setItem(introductionKey, 'read'); } catch { /* Keep exploring when browser storage is unavailable. */ }
+  };
   const [filters, setFilters] = useState(false); const [answer, setAnswer] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null); const [extra, setExtra] = useState<Evidence[]>([]);
   const helpRef = useRef<HTMLElement>(null);
+  const helpButtonRef = useRef<HTMLButtonElement>(null);
   const [milestone, setMilestone] = useState<string | null>(null);
   const previousDay = useRef(day);
   const asOf = stamp(day); const events = useMemo(() => [...(data?.events??DEMO_EVENTS), ...(isDemo?extra:[])], [data,extra,isDemo]);
@@ -54,6 +62,9 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
   const completed = new Set(score?.evidence.filter(e => e.completed).map(e => e.course));
   const relatedTraining=(data?.training??[]).filter(c=>c.competencies.includes(comp?.id??''));
   useEffect(() => {
+    try { setShowIntroduction(localStorage.getItem(introductionKey) !== 'read'); } catch { setShowIntroduction(true); }
+  }, [introductionKey]);
+  useEffect(() => {
     const previous = previousDay.current; previousDay.current = day;
     if (!playing || day <= previous) return;
     const reached = allAchievements.find(a => a.at > stamp(previous) && a.at <= asOf);
@@ -62,7 +73,10 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
   useEffect(() => { if (!milestone) return; const timer = window.setTimeout(() => setMilestone(null), 2600); return () => window.clearTimeout(timer); }, [milestone]);
   useEffect(() => {
     if (!help) return;
+    setPlaying(false);
     const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const dialog = helpRef.current;
     const close = dialog?.querySelector<HTMLButtonElement>('button'); close?.focus();
     const trap = (event: KeyboardEvent) => {
@@ -74,7 +88,11 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     };
     document.addEventListener('keydown', trap);
-    return () => { document.removeEventListener('keydown', trap); previousFocus?.focus(); };
+    return () => {
+      document.removeEventListener('keydown', trap);
+      document.body.style.overflow = previousOverflow;
+      (previousFocus?.isConnected ? previousFocus : helpButtonRef.current)?.focus();
+    };
   }, [help]);
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)'); const update = () => setReduced(mq.matches);
@@ -108,7 +126,7 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
     <header className={styles.header}>
       <Link href="/conta/ferramentas" className={styles.brand} aria-label="Voltar às ferramentas"><span className={styles.brandIcon}><Orbit size={23} /></span><span>DriveData<span className={styles.academy}>ACADEMY</span></span></Link>
       <span className={styles.headerDivider} /><span className={styles.productName}>Knowledge Universe <b>4D</b></span>
-      <div className={styles.headerRight}><span className={styles.demoBadge}><i /> {isDemo?'DEMONSTRAÇÃO':'MEU CONHECIMENTO'}</span><button className={styles.iconButton} onClick={() => setHelp(true)} aria-label="Como explorar o universo"><Info size={19} /></button><span className={styles.avatar}>DD</span></div>
+      <div className={styles.headerRight}><span className={styles.demoBadge}><i /> {isDemo?'DEMONSTRAÇÃO':'MEU CONHECIMENTO'}</span><button ref={helpButtonRef} className={styles.helpButton} onClick={() => setHelp(true)} aria-haspopup="dialog"><Info size={17} />Como funciona</button><span className={styles.avatar}>DD</span></div>
     </header>
     <div className={styles.workspace}>
       <aside className={`${styles.sidebar} ${filters ? styles.sidebarOpen : ''}`}>
@@ -123,7 +141,8 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
         <Link className={styles.back} href="/conta"><ArrowLeft size={14} /> Voltar ao portal</Link>
       </aside>
       <main className={styles.main}>
-        <div className={styles.titleBar}><div><p className={styles.eyebrow}>APRENDIZADO EM MOVIMENTO</p><h1>Seu universo de conhecimento<span>.</span></h1><p className={styles.subtitle}>Cada descoberta abre uma nova conexão.</p></div><button className={`${styles.iconButton} ${styles.mobileFilter}`} onClick={() => setFilters(v => !v)} aria-label="Abrir navegação e filtros"><SlidersHorizontal size={20} /></button></div>
+        <div className={styles.titleBar}><div><p className={styles.eyebrow}>APRENDIZADO EM MOVIMENTO</p><h1>Seu universo de conhecimento<span>.</span></h1><p className={styles.subtitle}>Veja as competências que você desenvolveu, como se conectam e o que aprender a seguir.</p></div><button className={`${styles.iconButton} ${styles.mobileFilter}`} onClick={() => setFilters(v => !v)} aria-label="Abrir navegação e filtros"><SlidersHorizontal size={20} /></button></div>
+        {showIntroduction && <section className={styles.introduction} aria-labelledby="universe-introduction-title"><div><p className={styles.eyebrow}>CONHEÇA SEU MAPA</p><h2 id="universe-introduction-title">Suas atividades viram evidências de conhecimento.</h2><p>Cada estrela com nome representa uma competência. Explore seu domínio registrado e use a linha do tempo para acompanhar sua evolução — essa é a quarta dimensão.</p><button className={styles.introductionLink} onClick={() => setHelp(true)} aria-haspopup="dialog">Entender meu score e começar <ArrowUpRight size={15}/></button></div><button className={styles.closeIntroduction} onClick={dismissIntroduction} aria-label="Dispensar apresentação; a explicação continua disponível em Como funciona"><X size={18}/></button></section>}
         <div className={styles.stats}><div><strong>{learned.length.toString().padStart(2,'0')}</strong><span>competências em evolução</span></div><div><strong>{advanced.length.toString().padStart(2,'0')}</strong><span>em nível avançado</span></div><div><strong>{catalog.areas.filter(a => learned.some(s => catalog.competencies.find(c => c.id === s.id)?.area === a.id)).length.toString().padStart(2,'0')}</strong><span>áreas exploradas</span></div><span className={styles.dateBadge}><Clock3 size={13} />{date(asOf)}</span></div>
         <div className={styles.surface}>
           {milestone && <div className={styles.milestone} role="status"><Trophy size={20} /><span><small>{isDemo?'MARCO DA EVOLUÇÃO DEMONSTRATIVA':'MARCO DO SEU APRENDIZADO'}</small><strong>{milestone}</strong></span><button aria-label="Fechar marco" onClick={() => setMilestone(null)}><X size={14} /></button></div>}
@@ -163,6 +182,6 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
         <div className={styles.demoNote}><Info size={12} /><span>{isDemo?'Universo demonstrativo · Perfil fictício · Nenhum dado acadêmico é alterado.':'Seus dados acadêmicos · Histórico importado identificado nas evidências · Mudanças de configuração são versionadas.'} Período: {date(start)} a {date(end)}.</span>{extra.length > 0 && <button onClick={() => { setExtra([]); setAnswer(null); setFeedback(null); }}>Reiniciar demonstração</button>}</div>
       </main>
     </div>
-    {help && <div className={styles.modalBackdrop} onClick={() => setHelp(false)}><section ref={helpRef} className={styles.help} role="dialog" aria-modal="true" aria-label="Como explorar" onClick={e => e.stopPropagation()}><button className={styles.closeHelp} onClick={() => setHelp(false)} aria-label="Fechar ajuda"><X size={20} /></button><Orbit size={32} /><h2>Encontre suas próximas conexões.</h2><p>Arraste para girar. Use a roda do mouse para aproximar ou dois dedos no celular. Arraste com o botão direito para mover a câmera.</p><p>Selecione uma competência para ver suas evidências. Para navegar pelo teclado, use o modo Lista.</p><p>O tamanho representa domínio. A atualidade representa recência. Nós vazios são oportunidades.</p><p>{isDemo?'A timeline reproduz um histórico fictício.':'A timeline mostra as evidências registradas e as configurações vigentes em cada período. Os dados importados anteriores à primeira configuração são uma reconstrução identificada.'} O cálculo funciona com regras próprias, sem serviços de IA.</p><label className={styles.check}><input type="checkbox" checked={reduced} onChange={e => setReduced(e.target.checked)} />Reduzir animações</label><button className={styles.primary} onClick={() => setHelp(false)}>Explorar universo <ArrowUpRight size={16} /></button></section></div>}
+    {help && <div className={styles.modalBackdrop} onClick={() => setHelp(false)}><section ref={helpRef} className={styles.help} role="dialog" aria-modal="true" aria-labelledby="universe-help-title" aria-describedby="universe-help-description" onClick={e => e.stopPropagation()}><button className={styles.closeHelp} onClick={() => setHelp(false)} aria-label="Fechar ajuda"><X size={20} /></button><Orbit size={32} /><UniverseGuide isDemo={isDemo}/><label className={styles.check}><input type="checkbox" checked={reduced} onChange={e => setReduced(e.target.checked)} />Reduzir animações</label><button className={styles.primary} onClick={() => {setHelp(false);dismissIntroduction();}}>Entendi, explorar meu universo <ArrowUpRight size={16} /></button></section></div>}
   </div>;
 }

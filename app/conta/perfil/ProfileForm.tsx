@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
-import { signAvatarUpload } from "../actions";
+import { signAvatarUpload, saveProfile } from "../actions";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
@@ -19,6 +19,7 @@ export default function ProfileForm() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveErr, setSaveErr] = useState("");
   const [uploading, setUploading] = useState(false);
   const [aiText, setAiText] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
@@ -39,20 +40,22 @@ export default function ProfileForm() {
   }, []);
 
   async function persist(patch: Partial<Form>) {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const payload: any = {};
-    for (const [k, v] of Object.entries(patch)) payload[k] = (v as string)?.trim?.() || null;
-    await supabase.from("profiles").update(payload).eq("id", user.id);
+    const res = await saveProfile(patch as any);
+    if (!res?.ok) throw new Error(res?.error || "Não consegui salvar.");
   }
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true); setSaved(false);
-    await persist(form);
-    setSaving(false); setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setSaving(true); setSaved(false); setSaveErr("");
+    try {
+      await persist(form);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err: any) {
+      setSaveErr(err?.message || "Não consegui salvar. Tente de novo.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function onCv(e: React.ChangeEvent<HTMLInputElement>) {
@@ -206,6 +209,7 @@ export default function ProfileForm() {
             {saving ? "Salvando..." : "Salvar perfil"}
           </button>
           {saved && <span className="text-sm text-brand-green">Salvo!</span>}
+          {saveErr && <span className="text-sm text-red-300">{saveErr}</span>}
         </div>
       </form>
     </>
