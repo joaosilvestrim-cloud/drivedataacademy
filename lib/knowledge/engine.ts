@@ -12,8 +12,8 @@ export function freshness(at: string | null, asOf: string, halfLife: number): nu
   if (!Number.isFinite(halfLife) || halfLife <= 0) throw new Error('Meia-vida inválida');
   return Math.round(100 * 2 ** (-Math.max(0, Date.parse(asOf) - Date.parse(at)) / DAY / halfLife));
 }
-// Pure, bounded and replayable. Inputs are versioned fixtures in the prototype;
-// production will supply only server-validated evidence through a repository.
+// Pure, bounded and replayable. Live inputs come from server-validated activity
+// records and immutable catalog versions; demo fixtures use the same engine.
 export function calculate(comp: Competency, events: Evidence[], asOf: string, weights = WEIGHTS): Score {
   const time = Date.parse(asOf);
   if (!Number.isFinite(time)) throw new Error('Data inválida');

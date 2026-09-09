@@ -32,7 +32,7 @@ export function projectEvidence(records: ActivityRecord[], versions: CatalogVers
         label:`${r.kind==='progress'?'Progresso registrado':assessment?'Avaliação corrigida':'Conclusão certificada'} · ${String(r.payload.courseTitle??'Treinamento')}`,
         course:String(r.payload.courseTitle??'Treinamento'),courseId:r.course_id??undefined,courseSlug:String(r.payload.courseSlug??''),
         assessmentScore:assessment?ratio*100:undefined,completed:r.payload.completed===true,
-        qualified:assessment&&r.payload.passed===true,advanced:assessment&&m.advanced&&r.payload.passed===true,
+        qualified:assessment&&r.payload.passed===true,advanced:assessment&&m.advanced&&r.payload.passed===true&&ratio>=.8,
         imported:r.precision!=='exact'||!r.catalog_version,invalidatedAt:r.kind==='certificate'?revoked.get(String(r.payload.sourceId)):undefined,
       };
     });

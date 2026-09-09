@@ -126,6 +126,14 @@ test('a certificate and course completion are the same learning group',()=>{
   const events=projectEvidence([raw({payload:{ratio:1}}),raw({id:'cert',kind:'certificate',payload:{ratio:1,completed:true,sourceId:'certificate1'}})],[version]);
   assert.equal(calculate(comp,events,DEMO_END).score,25);
 });
+test('an advanced course assessment must be passed with at least 80 percent',()=>{
+  const d=config();d.mappings[0].advanced=true;
+  for(const [score,passed,expected] of [[79,true,false],[80,true,true],[100,false,false]]) {
+    const events=projectEvidence([raw({kind:'assessment',payload:{score,passed}})],[{...version,document:d}]);
+    assert.equal(events[0].advanced,expected);
+    assert.equal(events[0].assessmentScore,score);
+  }
+});
 test('later catalog mappings do not leak back into historical scores or renew freshness',()=>{
   const d=config();d.mappings[0].credits=200;
   const v2={id:'v2',published_at:'2026-06-01T12:00:00Z',document:d};
