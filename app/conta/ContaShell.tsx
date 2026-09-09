@@ -4,8 +4,26 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
+import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
+
+function WhatsAppGroupLink({ onNavigate }: { onNavigate?: () => void }) {
+  if (!COMMUNITY_WHATSAPP_URL) return null;
+  return (
+    <a
+      href={COMMUNITY_WHATSAPP_URL}
+      target="_blank"
+      rel="noreferrer"
+      onClick={onNavigate}
+      className="flex items-center gap-3 rounded-lg border border-[#25D366]/30 bg-[#25D366]/[0.08] px-3 py-2 text-sm text-white transition-colors hover:border-[#25D366]/50 hover:bg-[#25D366]/[0.14]"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-[#25D366]"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm-3.5 4c-.2 0-.5 0-.7.4-.2.4-.9.9-.9 2.2s.9 2.5 1 2.7c.2.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.1-1.3l-.6-.3s-1.5-.7-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.1-.2 0-.4.1-.5l.4-.5.3-.5c.1-.2 0-.3 0-.5l-.8-1.9c-.2-.4-.4-.4-.6-.4h-.4z"/></svg>
+      <span className="leading-tight">Grupo de avisos<span className="block text-[0.65rem] text-slate-400">no WhatsApp</span></span>
+    </a>
+  );
+}
 
 const ICONS: Record<string, string> = {
+  universe: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
   courses: "M22 10L12 5 2 10l10 5 10-5zM6 12v5c0 1 3 2 6 2s6-1 6-2v-5",
   tool: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4",
   community: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
@@ -25,6 +43,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
       { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
+      { label: "Knowledge Universe 4D", href: "/universo", icon: "universe" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },
     ],
   },
@@ -104,6 +123,9 @@ export default function ContaShell({ email, children }: { email: string; childre
               <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
             </div>
             <NavList onNavigate={() => setOpen(false)} />
+            <div className="mt-6 border-t border-white/10 pt-4">
+              <WhatsAppGroupLink onNavigate={() => setOpen(false)} />
+            </div>
           </div>
         </div>
       )}
@@ -115,6 +137,9 @@ export default function ContaShell({ email, children }: { email: string; childre
         </Link>
         <div className="flex-1 overflow-y-auto">
           <NavList />
+        </div>
+        <div className="mt-4 border-t border-white/10 pt-4">
+          <WhatsAppGroupLink />
         </div>
         <div className="mt-4 border-t border-white/10 pt-4">
           <p className="truncate px-2 text-xs text-slate-500">{email}</p>

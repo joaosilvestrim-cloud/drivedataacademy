@@ -30,7 +30,9 @@ export default function EntrarPage() {
       setError("E-mail ou senha inválidos.");
       return;
     }
-    router.push("/conta");
+    const next=new URLSearchParams(window.location.search).get("next");
+    const safeNext=next&&/^\/(?:universo|conta|aprender|ferramenta)(?:[/?]|$)/.test(next)&&!/[\\\r\n]/.test(next)?next:"/conta";
+    router.push(safeNext);
     router.refresh();
   }
 

@@ -67,6 +67,7 @@ export default async function EditCoursePage({ params, searchParams }: { params:
       <Curriculum courseId={course.id} modules={modules} />
 
       <QuizBuilder courseId={course.id} quiz={quiz} />
+      <div className="mt-6 rounded-xl border border-teal-300/20 bg-teal-950/20 p-5"><h2 className="font-semibold text-teal-100">Knowledge Universe 4D</h2><p className="mt-2 text-sm text-slate-400">Associe competências e pesos deste treinamento no catálogo do Universo.</p><Link href="/admin/universo" className="mt-3 inline-block text-sm text-teal-200">Configurar competências →</Link></div>
 
       <CourseStudents courseId={course.id} totalLessons={(lessons ?? []).length} />
 

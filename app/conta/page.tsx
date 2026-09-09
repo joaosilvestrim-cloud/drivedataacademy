@@ -5,6 +5,7 @@ import { hasFullAccess } from "@/lib/access";
 import Avatar from "@/components/Avatar";
 import WorkshopPoll from "./WorkshopPoll";
 import { WORKSHOP_OPTIONS } from "./workshop";
+import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
 
 export const dynamic = "force-dynamic";
 
@@ -134,6 +135,28 @@ export default async function ContaHome() {
           </div>
         </div>
       </div>
+
+      {/* Grupo de avisos no WhatsApp */}
+      {COMMUNITY_WHATSAPP_URL && (
+        <a
+          href={COMMUNITY_WHATSAPP_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="group mt-6 flex items-center gap-4 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/[0.08] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#25D366]/50 sm:p-5"
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#25D366] text-ink-900 shadow-lg">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm-3.5 4c-.2 0-.5 0-.7.4-.2.4-.9.9-.9 2.2s.9 2.5 1 2.7c.2.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.1-1.3l-.6-.3s-1.5-.7-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.1-.2 0-.4.1-.5l.4-.5.3-.5c.1-.2 0-.3 0-.5l-.8-1.9c-.2-.4-.4-.4-.6-.4h-.4z"/></svg>
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="flex items-center gap-2 font-semibold text-white">
+              Grupo de avisos no WhatsApp
+              <span className="rounded-full bg-[#25D366]/20 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-[#25D366]">Entrar</span>
+            </p>
+            <p className="mt-0.5 truncate text-xs text-slate-400">Receba os links das lives, novidades e comunicados da Academy em primeira mão.</p>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0 text-[#25D366] transition-transform group-hover:translate-x-0.5"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </a>
+      )}
 
       {/* Stats */}
       {courses.length > 0 && (

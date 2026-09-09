@@ -15,6 +15,7 @@ type Tool = {
   from: string;
   to: string;
   available: boolean;
+  demo?: boolean;
 };
 
 export default async function FerramentasHub() {
@@ -25,6 +26,18 @@ export default async function FerramentasHub() {
   const liberado = await hasToolAccess(admin, user.id, user.email);
 
   const tools: Tool[] = [
+    {
+      key: "knowledge-universe",
+      name: "Knowledge Universe 4D",
+      tag: "Conhecimento · 4D",
+      desc: "Explore suas competências, acompanhe a evolução no tempo e descubra os próximos caminhos de aprendizagem.",
+      href: "/universo",
+      icon: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
+      from: "#6be9ce",
+      to: "#9c9cff",
+      available: true,
+      demo: false,
+    },
     {
       key: "visuais",
       name: "Ferramenta de Visuais",
@@ -69,7 +82,7 @@ export default async function FerramentasHub() {
               <p className="mt-1 flex-1 text-sm text-slate-400">{tool.desc}</p>
               {usable ? (
                 <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">
-                  {liberado ? "Abrir" : "Desbloquear"}
+                  {tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               ) : (

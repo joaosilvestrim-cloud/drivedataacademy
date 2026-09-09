@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { BADGE_LABELS, pointsByUser } from "@/lib/community";
 import ProfileForm from "./ProfileForm";
+import ProfilePreview from "@/components/knowledge/ProfilePreview";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,7 @@ export default async function PerfilPage() {
       <p className="mt-1 text-sm text-slate-400">Seus dados de aluno na DriveData Academy.</p>
 
       <ProfileForm />
+      <ProfilePreview userId={user.id} email={user.email} />
 
       {/* Gamificação */}
       <div className="mt-8">

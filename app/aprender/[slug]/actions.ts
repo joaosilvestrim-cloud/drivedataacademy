@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { canCompleteLesson } from "@/lib/learning-access";
+import { safeCourseSlug, validCompletionPercent } from "@/lib/learning-validation";
 
 export async function markComplete(formData: FormData) {
   const slug = formData.get("slug") as string;
@@ -17,16 +19,19 @@ export async function markComplete(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) redirect("/entrar");
 
+  if (!(await canCompleteLesson(user.id,courseId,lessonId,slug))) throw new Error("Não foi possível validar seu acesso a esta aula.");
+
   const admin = createAdminClient();
-  await admin
+  const {error} = await admin
     .from("lesson_progress")
     .upsert(
       { user_id: user.id, lesson_id: lessonId, course_id: courseId, completed: true, updated_at: new Date().toISOString() },
       { onConflict: "user_id,lesson_id" }
     );
+  if(error)throw new Error("Não foi possível salvar o progresso. Tente novamente.");
 
   revalidatePath(`/aprender/${slug}`);
-  redirect(`/aprender/${slug}${nextLesson ? `?l=${nextLesson}` : `?l=${lessonId}`}`);
+  redirect(`/aprender/${slug}?l=${encodeURIComponent(nextLesson||lessonId)}`);
 }
 
 // Comentário de aula (entra como pendente e vai para moderação no admin).
@@ -80,15 +85,19 @@ export async function submitNps(formData: FormData) {
 
 // Marca a aula como concluída sem redirecionar (usado pelo progresso automático do Panda).
 export async function markLessonDone(lessonId: string, courseId: string, slug: string, pct = 100) {
+  if(!safeCourseSlug(slug)||!validCompletionPercent(pct))return {ok:false,error:"Percentual inválido."};
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false };
 
+  if(!(await canCompleteLesson(user.id,courseId,lessonId,slug)))return {ok:false,error:"Aula ou acesso inválido."};
+
   const admin = createAdminClient();
-  await admin.from("lesson_progress").upsert(
+  const {error}=await admin.from("lesson_progress").upsert(
     { user_id: user.id, lesson_id: lessonId, course_id: courseId, completed: true, pct, updated_at: new Date().toISOString() },
     { onConflict: "user_id,lesson_id" }
   );
+  if(error)return {ok:false,error:"Não foi possível salvar o progresso."};
   revalidatePath(`/aprender/${slug}`);
   return { ok: true };
 }

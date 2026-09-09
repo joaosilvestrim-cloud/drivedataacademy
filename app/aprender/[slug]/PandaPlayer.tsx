@@ -30,6 +30,7 @@ export default function PandaPlayer({
   const marked = useRef(false);
   const watched = useRef(0);
   const lastT = useRef<number | null>(null);
+  const frame = useRef<HTMLIFrameElement>(null);
   const src = resolveSrc(videoId, host);
 
   useEffect(() => {
@@ -40,10 +41,12 @@ export default function PandaPlayer({
     function done(pct: number) {
       if (marked.current) return;
       marked.current = true;
-      markLessonDone(lessonId, courseId, slug, Math.min(100, Math.max(0, Math.round(pct))));
+      markLessonDone(lessonId, courseId, slug, Math.min(100, Math.max(0, Math.round(pct)))).then(result=>{if(!result.ok)marked.current=false;}).catch(()=>{marked.current=false;});
     }
 
     function onMessage(e: MessageEvent) {
+      if(!src||e.source!==frame.current?.contentWindow)return;
+      try {if(e.origin!==new URL(src).origin)return;}catch{return;}
       let d: any = e.data;
       if (typeof d === "string") { try { d = JSON.parse(d); } catch { return; } }
       if (!d || typeof d !== "object") return;
@@ -63,7 +66,7 @@ export default function PandaPlayer({
 
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [lessonId, courseId, slug]);
+  }, [lessonId, courseId, slug, src]);
 
   if (!src) {
     return (
@@ -77,6 +80,7 @@ export default function PandaPlayer({
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
       <div className="relative aspect-video">
         <iframe
+          ref={frame}
           className="absolute inset-0 h-full w-full"
           src={src}
           title="Aula"
