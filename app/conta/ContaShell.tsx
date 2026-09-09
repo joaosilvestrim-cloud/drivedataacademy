@@ -24,7 +24,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     title: "Aprender",
     items: [
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
-      { label: "Ferramenta", href: "/ferramenta", icon: "tool" },
+      { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },
     ],
   },
