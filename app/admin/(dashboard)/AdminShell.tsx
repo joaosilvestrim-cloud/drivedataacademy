@@ -71,7 +71,9 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   { title: "Sistema", items: [{ label: "Configurações", href: "/admin/settings", icon: "settings" }] },
 ];
 
-function NavList({ onNavigate }: { onNavigate?: () => void }) {
+type Badges = Record<string, number>;
+
+function NavList({ onNavigate, badges }: { onNavigate?: () => void; badges?: Badges }) {
   const pathname = usePathname();
   const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
 
@@ -98,6 +100,9 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                       <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     {it.label}
+                    {!!badges?.[it.href] && (
+                      <span className="ml-auto grid min-w-5 place-items-center rounded-full bg-brand-green px-1.5 text-[0.65rem] font-bold text-ink-900">{badges[it.href]}</span>
+                    )}
                   </Link>
                 </li>
               );
@@ -109,7 +114,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-export default function AdminShell({ email, children }: { email: string; children: React.ReactNode }) {
+export default function AdminShell({ email, children, badges }: { email: string; children: React.ReactNode; badges?: Badges }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -132,7 +137,7 @@ export default function AdminShell({ email, children }: { email: string; childre
               <span className="font-display text-lg font-bold text-white">Portal <span className="text-gradient">DriveData</span></span>
               <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
             </div>
-            <NavList onNavigate={() => setOpen(false)} />
+            <NavList onNavigate={() => setOpen(false)} badges={badges} />
           </div>
         </div>
       )}
@@ -143,7 +148,7 @@ export default function AdminShell({ email, children }: { email: string; childre
           Portal <span className="text-gradient">DriveData</span>
         </Link>
         <div className="flex-1 overflow-y-auto">
-          <NavList />
+          <NavList badges={badges} />
         </div>
         <div className="mt-4 border-t border-white/10 pt-4">
           <p className="truncate px-2 text-xs text-slate-500">{email}</p>

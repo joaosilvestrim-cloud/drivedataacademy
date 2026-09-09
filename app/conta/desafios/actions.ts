@@ -13,6 +13,22 @@ async function requireStudent() {
   return { user, admin: createAdminClient() };
 }
 
+// URL assinada para o aluno anexar o arquivo da entrega (bucket "entregas").
+export async function signChallengeUpload(ext: string) {
+  try {
+    const { user, admin } = await requireStudent();
+    const bucket = "entregas";
+    await admin.storage.createBucket(bucket, { public: true }).catch(() => {});
+    const clean = (ext || "pdf").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 8) || "pdf";
+    const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${clean}`;
+    const { data, error } = await admin.storage.from(bucket).createSignedUploadUrl(path);
+    if (error || !data) throw new Error(error?.message || "falha");
+    return { ok: true as const, path: data.path, token: data.token, url: admin.storage.from(bucket).getPublicUrl(path).data.publicUrl };
+  } catch (error) {
+    return { ok: false as const, error: error instanceof Error ? error.message : "Não consegui preparar o envio." };
+  }
+}
+
 export async function submitChallenge(challengeId: string, content: string, link: string) {
   try {
     const { user, admin } = await requireStudent();

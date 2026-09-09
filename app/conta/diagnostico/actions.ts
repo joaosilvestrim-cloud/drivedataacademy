@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { knowledgeAccess, catalogVersions } from "@/lib/knowledge/server";
 import { recordPracticalEvidence } from "@/app/admin/(dashboard)/universo/actions";
+import { syncKnowledgeMilestones } from "@/lib/knowledge/milestones";
 
 const GROUP = "diagnostico";
 
@@ -60,7 +61,10 @@ export async function submitDiagnostic(answers: Record<string, number>) {
     const { error } = await admin.from("ku_diagnostic_attempts").insert({ user_id: user.id, answers, results });
     if (error) throw new Error(error.message);
 
+    await syncKnowledgeMilestones(user.id);
+
     revalidatePath("/conta/diagnostico");
+    revalidatePath("/conta/ranking");
     revalidatePath("/universo");
     return { ok: true as const, results };
   } catch (error) {

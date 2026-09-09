@@ -96,6 +96,39 @@ export async function sendAccessGrantedEmail(to: string, name: string, siteUrl: 
   return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body));
 }
 
+// Correção de um desafio do Knowledge Universe: aprovado ou devolvido.
+export async function sendChallengeReviewEmail(
+  to: string, name: string, challengeTitle: string,
+  approved: boolean, feedback: string, siteUrl: string, qualityPercent?: number | null
+) {
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const body = approved
+    ? `
+    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Sua entrega foi aprovada. 🎉</p>
+    <p style="margin:0 0 6px;color:#fff;font-size:17px;font-weight:700">${esc(challengeTitle)}</p>
+    ${qualityPercent != null ? `<p style="margin:0 0 16px;color:#15c47e;font-size:14px">Qualidade avaliada: ${qualityPercent}%</p>` : ""}
+    <div style="margin:0 0 20px;padding:14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+      <p style="margin:0 0 6px;color:#94a3b8;font-size:12px;font-weight:700">RETORNO DA EQUIPE</p>
+      <p style="margin:0;color:#cbd5e1;font-size:14px;line-height:1.6">${esc(feedback)}</p>
+    </div>
+    <p style="margin:0 0 20px;color:#cbd5e1">A evidência já entrou no seu universo de conhecimento.</p>
+    <a href="${siteUrl}/universo" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Ver meu universo</a>`
+    : `
+    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Demos uma olhada na sua entrega e ela precisa de ajustes antes de ser aprovada.</p>
+    <p style="margin:0 0 6px;color:#fff;font-size:17px;font-weight:700">${esc(challengeTitle)}</p>
+    <div style="margin:14px 0 20px;padding:14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+      <p style="margin:0 0 6px;color:#94a3b8;font-size:12px;font-weight:700">O QUE AJUSTAR</p>
+      <p style="margin:0;color:#cbd5e1;font-size:14px;line-height:1.6">${esc(feedback)}</p>
+    </div>
+    <p style="margin:0 0 20px;color:#cbd5e1">Você pode reenviar quantas vezes precisar. Faz parte do processo.</p>
+    <a href="${siteUrl}/conta/desafios" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Reenviar minha entrega</a>`;
+  return sendHtmlEmail(
+    to,
+    approved ? `Desafio aprovado: ${challengeTitle} 🎉` : `Sua entrega precisa de ajustes: ${challengeTitle}`,
+    shell(approved ? "Entrega aprovada!" : "Quase lá", body)
+  );
+}
+
 // Conta criada após a confirmação do pagamento: aluno define a senha por este link.
 export async function sendAccountSetupEmail(to: string, name: string, setPasswordUrl: string) {
   const firstName = esc((name || "").split(" ")[0] || "");

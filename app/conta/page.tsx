@@ -6,6 +6,7 @@ import Avatar from "@/components/Avatar";
 import WorkshopPoll from "./WorkshopPoll";
 import { WORKSHOP_OPTIONS } from "./workshop";
 import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
+import { knowledgeSummary } from "@/lib/knowledge/summary";
 
 export const dynamic = "force-dynamic";
 
@@ -116,6 +117,9 @@ export default async function ContaHome() {
 
   const enrolledSet = new Set(courseIds);
   const catalogo = (catalogData ?? []).filter((c: any) => !enrolledSet.has(c.id));
+
+  // Competências cujo Freshness caiu: o motor já calculava isso e ninguém via.
+  const { cooling } = await knowledgeSummary(user!.id, user!.email);
 
   return (
     <div>
@@ -249,6 +253,36 @@ export default async function ContaHome() {
           ))}
         </div>
       </div>
+
+      {/* Competências esfriando (Freshness em queda) */}
+      {cooling.length > 0 && (
+        <div className="mt-8 overflow-hidden rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-400/[0.07] via-transparent to-transparent p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-ink-900 shadow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2M12 21a9 9 0 100-18 9 9 0 000 18z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </span>
+              <div>
+                <h2 className="font-display text-lg font-bold text-white">Hora de revisar</h2>
+                <p className="text-xs text-slate-400">Faz um tempo que você não pratica isto. O conhecimento continua seu, mas esfria.</p>
+              </div>
+            </div>
+            <Link href="/conta/desafios" className="text-sm font-medium text-amber-300 hover:underline">Ver desafios →</Link>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {cooling.map((c) => (
+              <div key={c.id} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
+                <p className="truncate font-semibold text-white">{c.name}</p>
+                <p className="mt-0.5 text-xs text-slate-400">{c.days} dias sem atividade</p>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: `${Math.max(4, c.freshness)}%` }} />
+                </div>
+                <p className="mt-1.5 text-[0.7rem] text-slate-500">{c.score} pontos · frescor {c.freshness}%</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Enquete: próximo workshop */}
       <div className="mt-8">

@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { catalogVersions } from "@/lib/knowledge/server";
+import { syncKnowledgeMilestones } from "@/lib/knowledge/milestones";
+import { sendChallengeReviewEmail } from "@/lib/email";
 import { recordPracticalEvidence } from "../universo/actions";
+
+const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
 async function authorized() {
   const user = await getAdminUser();
@@ -40,6 +44,35 @@ export async function saveChallenge(input: {
       : await db.from("ku_challenges").insert({ ...row, created_by: user.id });
     if (error) throw new Error(error.message);
 
+    revalidatePath("/admin/desafios");
+    revalidatePath("/conta/desafios");
+    return { ok: true as const };
+  } catch (error) { return fail(error); }
+}
+
+export async function toggleChallengePublished(id: string, published: boolean) {
+  try {
+    const { db } = await authorized();
+    if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Desafio inválido.");
+    const { error } = await db.from("ku_challenges").update({ published }).eq("id", id);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin/desafios");
+    revalidatePath("/conta/desafios");
+    return { ok: true as const };
+  } catch (error) { return fail(error); }
+}
+
+export async function deleteChallenge(id: string) {
+  try {
+    const { db } = await authorized();
+    if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Desafio inválido.");
+    // Entrega já aprovada virou evidência, que é imutável. Apagar o desafio
+    // deixaria essa evidência órfã, então bloqueamos e sugerimos despublicar.
+    const { count } = await db.from("ku_challenge_submissions")
+      .select("*", { count: "exact", head: true }).eq("challenge_id", id).eq("status", "approved");
+    if (count) throw new Error("Este desafio já tem entrega aprovada. Despublique em vez de excluir.");
+    const { error } = await db.from("ku_challenges").delete().eq("id", id);
+    if (error) throw new Error(error.message);
     revalidatePath("/admin/desafios");
     revalidatePath("/conta/desafios");
     return { ok: true as const };
@@ -136,9 +169,27 @@ export async function reviewSubmission(submissionId: string, decision: "approved
     }).eq("id", submissionId);
     if (error) throw new Error(error.message);
 
+    // A partir daqui nada pode derrubar a correção, que já está gravada.
+    let milestones = 0;
+    if (decision === "approved") milestones = await syncKnowledgeMilestones(sub.user_id);
+
+    try {
+      const { data: account } = await db.auth.admin.getUserById(sub.user_id);
+      const to = account?.user?.email;
+      if (to) {
+        const { data: profile } = await db.from("profiles").select("full_name").eq("id", sub.user_id).maybeSingle();
+        await sendChallengeReviewEmail(
+          to, profile?.full_name || "", challenge.title,
+          decision === "approved", nota, SITE_URL,
+          quality === null ? null : Math.round(quality * 100)
+        );
+      }
+    } catch { /* o aviso é um extra: a correção continua valendo */ }
+
     revalidatePath("/admin/desafios");
     revalidatePath("/conta/desafios");
+    revalidatePath("/conta/ranking");
     revalidatePath("/universo");
-    return { ok: true as const };
+    return { ok: true as const, milestones };
   } catch (error) { return fail(error); }
 }

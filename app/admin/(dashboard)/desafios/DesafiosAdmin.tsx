@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { saveChallenge, reviewSubmission, saveDiagnosticQuestion, deleteDiagnosticQuestion } from "./actions";
+import { useRouter } from "next/navigation";
+import { saveChallenge, reviewSubmission, saveDiagnosticQuestion, deleteDiagnosticQuestion, toggleChallengePublished, deleteChallenge } from "./actions";
 
 type Competency = { id: string; name: string };
 type Challenge = {
@@ -260,9 +261,19 @@ function Review({ sub }: { sub: Submission }) {
 }
 
 export default function DesafiosAdmin({ competencies, challenges, submissions, diagnostic }: { competencies: Competency[]; challenges: Challenge[]; submissions: Submission[]; diagnostic: Question[] }) {
+  const router = useRouter();
   const [editing, setEditing] = useState<Challenge | null>(null);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [tab, setTab] = useState<"correcao" | "catalogo" | "diagnostico">("correcao");
+  const [actErr, setActErr] = useState("");
+
+  async function act(promise: Promise<{ ok: boolean; error?: string }>) {
+    setActErr("");
+    const res = await promise;
+    if (!res.ok) { setActErr(res.error || "Não consegui aplicar."); return; }
+    router.refresh();
+  }
+
   const pending = submissions.filter((s) => s.status === "pending");
   const reviewed = submissions.filter((s) => s.status !== "pending");
 
@@ -299,7 +310,7 @@ export default function DesafiosAdmin({ competencies, challenges, submissions, d
                 <div className="flex items-center gap-3">
                   <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold ${q.published ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{q.published ? "Publicada" : "Rascunho"}</span>
                   <button onClick={() => setEditingQuestion(q)} className="text-xs text-brand-teal hover:underline">editar</button>
-                  <button onClick={() => deleteDiagnosticQuestion(q.id)} className="text-xs text-slate-500 hover:text-red-300">excluir</button>
+                  <button onClick={() => { if (confirm("Excluir esta pergunta?")) act(deleteDiagnosticQuestion(q.id)); }} className="text-xs text-slate-500 hover:text-red-300">excluir</button>
                 </div>
               </div>
             ))}
@@ -325,14 +336,17 @@ export default function DesafiosAdmin({ competencies, challenges, submissions, d
               <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-white">{c.title}</p>
-                  <p className="text-xs text-slate-500">{competencies.find((x) => x.id === c.competency)?.name ?? c.competency} · {c.credits} créditos · grupo {c.group_key}</p>
+                  <p className="text-xs text-slate-500">{competencies.find((x) => x.id === c.competency)?.name ?? c.competency} · {c.credits} créditos · grupo {c.group_key}{c.advanced ? " · avançado" : ""}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold ${c.published ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{c.published ? "Publicado" : "Rascunho"}</span>
                   <button onClick={() => setEditing(c)} className="text-xs text-brand-teal hover:underline">editar</button>
+                  <button onClick={() => act(toggleChallengePublished(c.id, !c.published))} className="text-xs text-slate-400 hover:text-white">{c.published ? "despublicar" : "publicar"}</button>
+                  <button onClick={() => { if (confirm(`Excluir "${c.title}"?`)) act(deleteChallenge(c.id)); }} className="text-xs text-slate-500 hover:text-red-300">excluir</button>
                 </div>
               </div>
             ))}
+            {actErr && <p className="text-sm text-red-300">{actErr}</p>}
             {challenges.length === 0 && <p className="text-sm text-slate-500">Nenhum desafio criado ainda.</p>}
           </div>
         </div>

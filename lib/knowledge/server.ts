@@ -33,7 +33,14 @@ export async function loadUniverse(userId:string): Promise<UniverseData> {
   if(version) {
     // The SQL function imports each historical source only once per published
     // version and stores mutable progress at import time, never at a guessed date.
-    const imported=await admin.rpc('ku_import_history',{p_user:userId,p_version:version.id}); failure(imported.error);
+    // A snapshot for this version only exists after that import already ran, so
+    // its presence lets us skip three full history scans on every page view.
+    // New activity after the import arrives through the capture triggers.
+    const {data:imprinted}=await admin.from('ku_score_snapshots').select('id')
+      .eq('user_id',userId).eq('catalog_version',version.id).limit(1).maybeSingle();
+    if(!imprinted) {
+      const imported=await admin.rpc('ku_import_history',{p_user:userId,p_version:version.id}); failure(imported.error);
+    }
   }
   const records:ActivityRecord[]=[];
   let cursor=0;

@@ -5,6 +5,9 @@ import { grantOffer } from "@/lib/offers";
 
 async function findUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string): Promise<string | null> {
   const target = (email || "").toLowerCase();
+  // Busca direta no banco; se a função ainda não existir, cai no modo antigo.
+  const lookup = await admin.rpc("user_id_by_email", { p_email: target });
+  if (!lookup.error) return (lookup.data as string | null) ?? null;
   let page = 1;
   for (let i = 0; i < 5; i++) {
     const { data } = await admin.auth.admin.listUsers({ page, perPage: 1000 });

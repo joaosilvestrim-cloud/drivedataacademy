@@ -30,8 +30,12 @@ export async function publishKnowledgeDraft(revision:number) {
 export async function grantKnowledgeAccess(email:string,expiresAt:string|null) {
   try { const {db,user}=await authorized(); const normalized=email.trim().toLowerCase(); if(!normalized.includes('@')) throw new Error('Informe um e-mail válido.');
     if(expiresAt && (!Number.isFinite(Date.parse(expiresAt))||Date.parse(expiresAt)<=Date.now())) throw new Error('Escolha uma validade futura.');
+    // Busca direta no banco. O fallback paginado cobre a janela entre publicar
+    // esta versão e rodar a migração que cria a função.
     let target:string|undefined;
-    for(let page=1;page<=100;page++) {const {data,error}=await db.auth.admin.listUsers({page,perPage:1000});if(error) throw new Error(error.message);target=data.users.find(u=>u.email?.toLowerCase()===normalized)?.id;if(target||data.users.length<1000)break;}
+    const lookup=await db.rpc('user_id_by_email',{p_email:normalized});
+    if(!lookup.error) target=(lookup.data as string|null)??undefined;
+    else for(let page=1;page<=100;page++) {const {data,error}=await db.auth.admin.listUsers({page,perPage:1000});if(error) throw new Error(error.message);target=data.users.find(u=>u.email?.toLowerCase()===normalized)?.id;if(target||data.users.length<1000)break;}
     if(!target) throw new Error('Aluno não encontrado. Crie a conta pelo painel de alunos.');
     const {error}=await db.from('ku_entitlements').upsert({user_id:target,expires_at:expiresAt,granted_by:user.id});if(error)throw new Error(error.message);
     return {ok:true as const};

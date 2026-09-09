@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { submitChallenge } from "./actions";
+import { useRef, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { submitChallenge, signChallengeUpload } from "./actions";
+
+const MAX_MB = 20;
 
 type Submission = {
   content: string; link: string | null; status: "pending" | "approved" | "rejected";
@@ -30,6 +33,28 @@ function Card({ item }: { item: Item }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [done, setDone] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > MAX_MB * 1024 * 1024) { setErr(`Arquivo acima de ${MAX_MB} MB.`); return; }
+    setUploading(true); setErr("");
+    try {
+      const ext = file.name.split(".").pop() || "pdf";
+      const s = await signChallengeUpload(ext);
+      if (!s.ok) throw new Error(s.error);
+      const { error } = await createClient().storage.from("entregas")
+        .uploadToSignedUrl(s.path, s.token, file, { contentType: file.type || "application/octet-stream" });
+      if (error) throw error;
+      setLink(s.url);
+    } catch (e2: any) {
+      setErr(e2?.message || "Não consegui enviar o arquivo.");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function send() {
     setBusy(true); setErr("");
@@ -88,6 +113,14 @@ function Card({ item }: { item: Item }) {
             placeholder="Link do arquivo, repositório ou publicação (opcional)"
             className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
           />
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+              className="rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-slate-200 hover:border-brand-green/50 hover:text-brand-green disabled:opacity-60">
+              {uploading ? "Enviando arquivo..." : "Anexar arquivo"}
+            </button>
+            <input ref={fileRef} type="file" onChange={onFile} className="hidden" />
+            <span className="text-xs text-slate-500">.pbix, PDF, imagem, planilha. Até {MAX_MB} MB.</span>
+          </div>
           <div className="flex flex-wrap items-center gap-3">
             <button onClick={send} disabled={busy} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-60">
               {busy ? "Enviando..." : "Enviar entrega"}
