@@ -42,9 +42,10 @@ export default async function DesafiosAdminPage() {
     );
   }
 
-  const [{ data: challenges }, { data: subs }] = await Promise.all([
+  const [{ data: challenges }, { data: subs }, { data: diagnostic }] = await Promise.all([
     db.from("ku_challenges").select("id, competency, dimension, title, brief, group_key, credits, advanced, published").order("created_at", { ascending: false }),
     db.from("ku_challenge_submissions").select("id, challenge_id, user_id, content, link, status, quality, feedback, created_at").order("created_at", { ascending: false }).limit(200),
+    db.from("ku_diagnostic_questions").select("id, competency, prompt, options, answer, credits, position, published").order("position"),
   ]);
 
   const ids = Array.from(new Set((subs ?? []).map((s: any) => s.user_id)));
@@ -61,6 +62,11 @@ export default async function DesafiosAdminPage() {
     <DesafiosAdmin
       competencies={competencies}
       challenges={(challenges ?? []).map((c: any) => ({ ...c, credits: Number(c.credits) }))}
+      diagnostic={(diagnostic ?? []).map((q: any) => ({
+        ...q,
+        credits: Number(q.credits),
+        options: Array.isArray(q.options) ? q.options.map(String) : [],
+      }))}
       submissions={(subs ?? []).map((s: any) => ({
         ...s,
         quality: s.quality === null ? null : Number(s.quality),

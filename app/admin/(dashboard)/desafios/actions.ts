@@ -46,6 +46,51 @@ export async function saveChallenge(input: {
   } catch (error) { return fail(error); }
 }
 
+export async function saveDiagnosticQuestion(input: {
+  id?: string; competency: string; prompt: string; options: string[];
+  answer: number; credits: number; position: number; published: boolean;
+}) {
+  try {
+    const { db } = await authorized();
+    const version = (await catalogVersions()).at(-1);
+    if (!version) throw new Error("Publique um catálogo antes de montar o diagnóstico.");
+    if (!version.document.competencies.some((c) => c.id === input.competency)) throw new Error("Competência inexistente no catálogo publicado.");
+    if (!input.prompt.trim() || input.prompt.length > 500) throw new Error("Escreva a pergunta (até 500 caracteres).");
+    const options = input.options.map((o) => (o || "").trim()).filter(Boolean);
+    if (options.length < 2 || options.length > 6) throw new Error("Informe de 2 a 6 alternativas.");
+    if (options.some((o) => o.length > 300)) throw new Error("Alternativa muito longa.");
+    if (!Number.isInteger(input.answer) || input.answer < 0 || input.answer >= options.length) throw new Error("Escolha a alternativa correta.");
+    if (!Number.isFinite(input.credits) || input.credits <= 0 || input.credits > 1000) throw new Error("Créditos fora do intervalo.");
+
+    const row = {
+      competency: input.competency, prompt: input.prompt.trim(), options,
+      answer: input.answer, credits: input.credits,
+      position: Number.isFinite(input.position) ? Math.trunc(input.position) : 0,
+      published: input.published,
+    };
+    const { error } = input.id
+      ? await db.from("ku_diagnostic_questions").update(row).eq("id", input.id)
+      : await db.from("ku_diagnostic_questions").insert(row);
+    if (error) throw new Error(error.message);
+
+    revalidatePath("/admin/desafios");
+    revalidatePath("/conta/diagnostico");
+    return { ok: true as const };
+  } catch (error) { return fail(error); }
+}
+
+export async function deleteDiagnosticQuestion(id: string) {
+  try {
+    const { db } = await authorized();
+    if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Pergunta inválida.");
+    const { error } = await db.from("ku_diagnostic_questions").delete().eq("id", id);
+    if (error) throw new Error(error.message);
+    revalidatePath("/admin/desafios");
+    revalidatePath("/conta/diagnostico");
+    return { ok: true as const };
+  } catch (error) { return fail(error); }
+}
+
 // Aprovar gera a evidência pela Server Action original do Knowledge Universe.
 // A chave practical:<id da entrega> torna a operação idempotente no banco.
 export async function reviewSubmission(submissionId: string, decision: "approved" | "rejected", qualityPercent: number, feedback: string) {
