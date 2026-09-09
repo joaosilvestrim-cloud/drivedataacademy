@@ -44,12 +44,15 @@ export async function saveProfile(patch: Partial<Record<ProfileField, string>>) 
   }
   if (Object.keys(payload).length === 0) return { ok: true as const };
 
+  // upsert, não update: contas criadas sem o trigger de perfil não têm linha em
+  // profiles, e um update nessas contas afeta 0 linhas sem retornar erro nenhum.
   const admin = createAdminClient();
-  const { error } = await admin
+  const { data, error } = await admin
     .from("profiles")
-    .update({ ...payload, updated_at: new Date().toISOString() })
-    .eq("id", user.id);
+    .upsert({ id: user.id, ...payload, updated_at: new Date().toISOString() }, { onConflict: "id" })
+    .select("id");
   if (error) return { ok: false as const, error: error.message };
+  if (!data?.length) return { ok: false as const, error: "Não foi possível gravar o perfil." };
 
   revalidatePath("/conta/perfil");
   revalidatePath("/conta/vitrine");
