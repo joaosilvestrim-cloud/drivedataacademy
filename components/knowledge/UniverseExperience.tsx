@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Component, useEffect, useMemo, useRef, useState, type ReactNode, type CSSProperties } from 'react';
 import { ArrowLeft, ArrowUpRight, Orbit, Search, Play, Pause, RotateCcw, Plus, Minus, X, ChevronRight, Sparkles, Route, Target, Trophy, Network, List, SlidersHorizontal, Clock3, Check, LockKeyhole, Info, CheckCircle2 } from 'lucide-react';
 import { DEMO_CATALOG, DEMO_EVENTS, DEMO_START, DEMO_END, DEMO_CHALLENGE, demoChallengeEvidence } from '@/lib/knowledge/demo';
@@ -124,7 +125,7 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
 
   return <div className={styles.app}>
     <header className={styles.header}>
-      <Link href="/conta/ferramentas" className={styles.brand} aria-label="Voltar às ferramentas"><span className={styles.brandIcon}><Orbit size={23} /></span><span>DriveData<span className={styles.academy}>ACADEMY</span></span></Link>
+      <Link href="/conta/ferramentas" className={styles.brand} aria-label="DriveData Academy — voltar às ferramentas"><Image className={styles.brandLogo} src="/drivedata-symbol.png" alt="" width={40} height={40} priority/><span>DriveData<span className={styles.academy}>ACADEMY</span></span></Link>
       <span className={styles.headerDivider} /><span className={styles.productName}>Knowledge Universe <b>4D</b></span>
       <div className={styles.headerRight}><span className={styles.demoBadge}><i /> {isDemo?'DEMONSTRAÇÃO':'MEU CONHECIMENTO'}</span><button ref={helpButtonRef} className={styles.helpButton} onClick={() => setHelp(true)} aria-haspopup="dialog"><Info size={17} />Como funciona</button><span className={styles.avatar}>DD</span></div>
     </header>

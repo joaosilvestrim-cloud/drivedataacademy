@@ -28,6 +28,18 @@ export default async function FerramentasHub() {
 
   const tools: Tool[] = [
     {
+      key: "decision-lab",
+      name: "Decision Lab",
+      tag: "Simulador de negócios",
+      desc: "Assuma uma empresa interativa em 3D. Decida preços, estoque e equipe, simule 30 dias e aprenda com os resultados da sua estratégia.",
+      href: "/decision-lab",
+      sameTab: true,
+      icon: "M3 21h18M5 21V7l8-4v18M19 21V11l-6-3",
+      from: "#edb98f",
+      to: "#8fc8b6",
+      available: true,
+    },
+    {
       key: "knowledge-universe",
       name: "Knowledge Universe 4D",
       tag: "Conhecimento · 4D",
@@ -84,7 +96,7 @@ export default async function FerramentasHub() {
               <p className="mt-1 flex-1 text-sm text-slate-400">{tool.desc}</p>
               {usable ? (
                 <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">
-                  {tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
+                  {tool.key === "decision-lab" ? "Assumir minha empresa" : tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               ) : (

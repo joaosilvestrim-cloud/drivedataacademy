@@ -8,7 +8,8 @@
     "start": "next start -p 3008",
     "lint": "next lint",
     "test:knowledge": "node scripts/test-knowledge.cjs",
-    "test:knowledge-db": "node scripts/test-knowledge-db.cjs"
+    "test:knowledge-db": "node scripts/test-knowledge-db.cjs",
+    "test:decision-lab": "node scripts/test-decision-lab.cjs"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",
