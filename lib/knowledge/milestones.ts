@@ -8,8 +8,8 @@ import { achievements } from './engine';
 const POINTS: Record<number, number> = { 50: 5, 80: 15, 100: 30 };
 
 // ref_id de point_events é uuid, então derivamos um id estável do trio
-// aluno + competência + marco. O índice único (kind, ref_id) faz o resto:
-// rodar de novo não concede pontos repetidos.
+// aluno + competência + marco. O índice único parcial no banco é a rede de
+// segurança contra concessão dupla.
 function milestoneId(userId: string, competency: string, threshold: number): string {
   const h = createHash('sha1').update(`ku:${userId}:${competency}:${threshold}`).digest('hex');
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-5${h.slice(13, 16)}-8${h.slice(17, 20)}-${h.slice(20, 32)}`;
@@ -35,13 +35,25 @@ export async function syncKnowledgeMilestones(userId: string): Promise<number> {
     });
     if (!rows.length) return 0;
 
-    // ignoreDuplicates deixa passar os marcos que já valeram ponto antes.
     const admin = createAdminClient();
-    const { data: inserted } = await admin
-      .from('point_events')
-      .upsert(rows, { onConflict: 'kind,ref_id', ignoreDuplicates: true })
-      .select('id');
-    return inserted?.length ?? 0;
+
+    // upsert com onConflict não serve aqui: o índice único é parcial
+    // (where kind = 'ku_milestone') e o ON CONFLICT do PostgREST não repete
+    // esse predicado, então o banco recusa. Lemos o que já foi concedido e
+    // inserimos só o que falta.
+    const { data: already } = await admin
+      .from('point_events').select('ref_id')
+      .eq('user_id', userId).eq('kind', 'ku_milestone')
+      .in('ref_id', rows.map((r) => r.ref_id));
+    const concedidos = new Set((already ?? []).map((r) => r.ref_id as string));
+
+    const novos = rows.filter((r) => !concedidos.has(r.ref_id));
+    if (!novos.length) return 0;
+
+    const { error } = await admin.from('point_events').insert(novos);
+    // 23505 = corrida com outra requisição; o índice já garantiu o que importa.
+    if (error && error.code !== '23505') return 0;
+    return error ? 0 : novos.length;
   } catch {
     // Pontuação é um bônus: nunca deve derrubar a correção de um desafio.
     return 0;
