@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test:knowledge": "node scripts/test-knowledge.cjs",
     "test:knowledge-db": "node scripts/test-knowledge-db.cjs",
-    "test:decision-lab": "node scripts/test-decision-lab.cjs"
+    "test:decision-lab": "node scripts/test-decision-lab.cjs",
+    "test:dataflow": "node scripts/test-dataflow.cjs"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",
@@ -22,6 +23,7 @@
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sql.js": "1.13.0",
     "three": "0.170.0",
     "zustand": "^5.0.15"
   },

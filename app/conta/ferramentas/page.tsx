@@ -28,6 +28,18 @@ export default async function FerramentasHub() {
 
   const tools: Tool[] = [
     {
+      key: "dataflow-lab",
+      name: "DataFlow Lab",
+      tag: "Dados · 4D",
+      desc: "Importe CSVs, trate dados e execute SQL. Explore as transformações em 3D, reproduza cada etapa e compare resultados.",
+      href: "/dataflow-lab",
+      sameTab: true,
+      icon: "M4 6h5v5H4zM15 13h5v5h-5zM9 8h8v5M6 11v6h9",
+      from: "#6ce6c7",
+      to: "#70a9ef",
+      available: true,
+    },
+    {
       key: "decision-lab",
       name: "Decision Lab",
       tag: "Simulador de negócios",
@@ -79,7 +91,7 @@ export default async function FerramentasHub() {
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Ferramentas</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-white">Escolha uma ferramenta</h1>
-      <p className="mt-2 max-w-2xl text-sm text-slate-400">Abre em uma nova aba, sem sair do portal.</p>
+      <p className="mt-2 max-w-2xl text-sm text-slate-400">Escolha uma experiência e comece a praticar.</p>
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {tools.map((tool) => {
@@ -96,7 +108,7 @@ export default async function FerramentasHub() {
               <p className="mt-1 flex-1 text-sm text-slate-400">{tool.desc}</p>
               {usable ? (
                 <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">
-                  {tool.key === "decision-lab" ? "Assumir minha empresa" : tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
+                  {tool.key === "dataflow-lab" ? "Explorar meus dados" : tool.key === "decision-lab" ? "Assumir minha empresa" : tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               ) : (
