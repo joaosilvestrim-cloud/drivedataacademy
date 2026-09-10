@@ -18,7 +18,8 @@ export default async function DiagnosticoPage() {
   if (!liberado) {
     return (
       <div className="max-w-xl">
-        <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Diagnóstico</p>
+        <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">&larr; Knowledge Universe</Link>
+      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">Diagnóstico</p>
         <h1 className="mt-1 font-display text-3xl font-bold text-white">Diagnóstico de entrada</h1>
         <p className="mt-3 text-sm text-slate-400">Faz parte do Knowledge Universe, incluído na assinatura ativa.</p>
         <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Conhecer a assinatura</Link>
@@ -48,7 +49,8 @@ export default async function DiagnosticoPage() {
 
   const header = (
     <>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Diagnóstico</p>
+      <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">&larr; Knowledge Universe</Link>
+      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">Diagnóstico</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-white">Diagnóstico de entrada</h1>
     </>
   );

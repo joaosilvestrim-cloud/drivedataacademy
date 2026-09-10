@@ -15,6 +15,7 @@ type Tool = {
   from: string;
   to: string;
   available: boolean;
+  sameTab?: boolean;
   demo?: boolean;
 };
 
@@ -30,8 +31,9 @@ export default async function FerramentasHub() {
       key: "knowledge-universe",
       name: "Knowledge Universe 4D",
       tag: "Conhecimento · 4D",
-      desc: "Suas atividades viram um mapa de competências em 3D. Veja seu domínio registrado, acompanhe a evolução no tempo e descubra o que aprender a seguir.",
-      href: "/universo",
+      desc: "Suas atividades viram um mapa de competências em 3D. Comece pelo diagnóstico, abra seu universo e evolua entregando desafios.",
+      href: "/conta/universo",
+      sameTab: true,
       icon: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
       from: "#6be9ce",
       to: "#9c9cff",
@@ -93,7 +95,7 @@ export default async function FerramentasHub() {
 
           const base = "group flex flex-col rounded-3xl border border-white/8 bg-white/[0.02] p-6 transition-all duration-300";
           return usable ? (
-            <a key={tool.key} href={tool.href} target="_blank" rel="noreferrer" className={`${base} hover:-translate-y-1 hover:border-brand-green/30 hover:shadow-[0_24px_60px_-24px_rgba(52,232,160,0.45)]`}>
+            <a key={tool.key} href={tool.href} {...(tool.sameTab ? {} : { target: "_blank", rel: "noreferrer" })} className={`${base} hover:-translate-y-1 hover:border-brand-green/30 hover:shadow-[0_24px_60px_-24px_rgba(52,232,160,0.45)]`}>
               {CardInner}
             </a>
           ) : (

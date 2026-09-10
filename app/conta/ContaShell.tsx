@@ -45,9 +45,6 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
       { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
-      { label: "Knowledge Universe 4D", href: "/universo", icon: "universe" },
-      { label: "Desafios", href: "/conta/desafios", icon: "challenge" },
-      { label: "Diagnóstico", href: "/conta/diagnostico", icon: "diagnostic" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },
     ],
   },
