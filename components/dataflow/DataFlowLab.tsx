@@ -3,8 +3,9 @@ import {Component,useCallback,useEffect,useMemo,useRef,useState,type ReactNode} 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import {ArrowLeft,Play,Pause,RotateCcw,Download,Upload,Database,GitMerge,Braces,Layers,CheckCircle2,HelpCircle} from 'lucide-react';
+import {ArrowLeft,Play,Pause,RotateCcw,Download,Upload,Database,GitMerge,Braces,Layers,CheckCircle2,HelpCircle,Save,FolderOpen,Plus,Trash2} from 'lucide-react';
 import {DEFAULT_CONFIG,DEFAULT_SQL,parseCSV,pipeline,quality,sample,toCSV,type Table,type Stage,type Config} from '@/lib/dataflow/engine';
+import {MAX_PROJECTS,newProject,readSave,recipeSummary,type Project,type Save as ProjectSave} from '@/lib/dataflow/storage';
 import s from './dataflow.module.css';
 const Scene=dynamic(()=>import('./FlowScene'),{ssr:false,loading:()=> <div className={s.loading}>Preparando o laboratório 3D…</div>});
 const titles=['Fontes','Limpeza','Filtro','Junção','SQL'];
@@ -24,10 +25,21 @@ function Chart({table}:{table:Table}) {
   const max=Math.max(1,...table.rows.slice(0,12).map(r=>Math.abs(Number(r[metric])||0)));
   return <div className={s.chart}><div className={s.eyebrow}>{table.columns[metric]} · primeiras 12 linhas</div>{table.rows.slice(0,12).map((r,i)=><div className={s.barRow} key={i}><span>{String(r[label]??'NULL')}</span><div><i style={{width:`${Math.abs(Number(r[metric])||0)/max*100}%`}}/></div><b>{Number(r[metric]||0).toLocaleString('pt-BR')}</b></div>)}</div>;
 }
-export default function DataFlowLab({demo=false}:{demo?:boolean}) {
+export default function DataFlowLab({userId='',demo=false}:{userId?:string;demo?:boolean}) {
   const [data,setData]=useState(sample),[config,setConfig]=useState<Config>(DEFAULT_CONFIG),[sql,setSql]=useState(DEFAULT_SQL),[name,setName]=useState('Caso Aurora · vendas'),[run,setRun]=useState<Run|null>(null),[previous,setPrevious]=useState<Run|null>(null);
   const [busy,setBusy]=useState(false),[error,setError]=useState(''),[dirty,setDirty]=useState(false),[selected,setSelected]=useState(0),[time,setTime]=useState(0),[playing,setPlaying]=useState(false),[speed,setSpeed]=useState(1),[view,setView]=useState<'3d'|'2d'>('3d'),[reset,setReset]=useState(0),[help,setHelp]=useState(false),[reduced,setReduced]=useState(false),[hidden,setHidden]=useState(false);
   const worker=useRef<Worker|null>(null),timer=useRef<ReturnType<typeof setTimeout>>(),runRef=useRef<Run|null>(null),helpRef=useRef<HTMLDialogElement>(null);
+  const [projects,setProjects]=useState<Project[]>([]),[activeId,setActiveId]=useState(''),[saveMsg,setSaveMsg]=useState('');
+  const projectFile=useRef<HTMLInputElement>(null);
+  const storeKey=`dataflow-lab:v1:${demo?'demo':userId||'anon'}`;
+  const active=projects.find(p=>p.id===activeId)||null;
+  // Persistimos a receita, nunca os dados: o CSV do aluno nao sai do navegador.
+  const persist=useCallback((list:Project[],current:string)=>{
+    setProjects(list);setActiveId(current);
+    try{localStorage.setItem(storeKey,JSON.stringify({version:1,activeId:current,projects:list} satisfies ProjectSave));}
+    catch{setSaveMsg('O navegador nao permitiu salvar. Use Exportar projetos.');}
+  },[storeKey]);
+
   const execute=useCallback((input:typeof data,c:Config,query:string,label:string)=>{
     worker.current?.terminate();clearTimeout(timer.current);setBusy(true);setError('');setPlaying(false);
     try {
@@ -43,6 +55,60 @@ export default function DataFlowLab({demo=false}:{demo?:boolean}) {
   useEffect(()=>{const media=matchMedia('(prefers-reduced-motion: reduce)');const update=()=>setReduced(media.matches);const visibility=()=>{setHidden(document.hidden);if(document.hidden)setPlaying(false);};update();media.addEventListener('change',update);document.addEventListener('visibilitychange',visibility);return()=>{media.removeEventListener('change',update);document.removeEventListener('visibilitychange',visibility);};},[]);
   useEffect(()=>{if(!playing)return;const id=setInterval(()=>setTime(t=>{const next=Math.min(100,t+speed);if(next===100)setPlaying(false);setSelected(Math.min(4,Math.floor(next/25)));return next;}),120);return()=>clearInterval(id);},[playing,speed]);
   useEffect(()=>{if(help)helpRef.current?.showModal();else helpRef.current?.close();},[help]);
+  // Carrega os projetos salvos. Se o arquivo estiver corrompido nao sobrescrevemos.
+  useEffect(()=>{
+    let raw:string|null=null;
+    try{raw=localStorage.getItem(storeKey);}catch{return;}
+    if(raw){
+      try{const save=readSave(raw);setProjects(save.projects);setActiveId(save.activeId);
+        const p=save.projects.find(x=>x.id===save.activeId);
+        if(p){setConfig({...p.config});setSql(p.sql);setName(p.name);setDirty(true);}
+      }catch{setSaveMsg('Nao consegui ler os projetos salvos. Eles nao serao sobrescritos ate voce salvar um novo.');}
+      return;
+    }
+    const first=newProject('Caso Aurora · vendas',DEFAULT_CONFIG,DEFAULT_SQL);
+    persist([first],first.id);
+  },[storeKey,persist]);
+
+  // Toda execucao bem sucedida grava a receita do projeto ativo.
+  useEffect(()=>{
+    if(!run||!activeId)return;
+    persist(projects.map(p=>p.id===activeId?{...p,config:{...run.config},sql:run.sql,updatedAt:new Date().toISOString()}:p),activeId);
+    setSaveMsg(`Receita salva as ${new Date().toLocaleTimeString('pt-BR')}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[run]);
+
+  function openProject(id:string){
+    const p=projects.find(x=>x.id===id);if(!p)return;
+    setActiveId(id);setConfig({...p.config});setSql(p.sql);setName(p.name);setDirty(true);setError('');
+    setSaveMsg('Receita aplicada. Os dados nao sao salvos: importe seu CSV ou use o caso de exemplo.');
+    persist(projects,id);
+  }
+  function createProject(){
+    if(projects.length>=MAX_PROJECTS){setSaveMsg(`Limite de ${MAX_PROJECTS} projetos. Exclua um antes de criar outro.`);return;}
+    const p=newProject(`Fluxo ${projects.length+1}`,config,sql);
+    persist([...projects,p],p.id);setName(p.name);setSaveMsg('Projeto criado.');
+  }
+  function renameProject(value:string){
+    if(!active)return;const nome=value.slice(0,80);setName(nome);
+    persist(projects.map(p=>p.id===active.id?{...p,name:nome.trim()||p.name,updatedAt:new Date().toISOString()}:p),active.id);
+  }
+  function removeProject(){
+    if(!active||projects.length<2){setSaveMsg('Mantenha ao menos um projeto.');return;}
+    const rest=projects.filter(p=>p.id!==active.id);persist(rest,rest[0].id);
+    setConfig({...rest[0].config});setSql(rest[0].sql);setName(rest[0].name);setDirty(true);setSaveMsg('Projeto excluido.');
+  }
+  async function importProjects(file:File|undefined){
+    if(!file)return;
+    try{
+      if(file.size>200000)throw new Error('Arquivo muito grande. O limite e 200 KB.');
+      const save=readSave(await file.text());
+      persist(save.projects,save.activeId);
+      const p=save.projects.find(x=>x.id===save.activeId)!;
+      setConfig({...p.config});setSql(p.sql);setName(p.name);setDirty(true);setSaveMsg('Projetos importados.');
+    }catch(e){setSaveMsg(e instanceof Error?e.message:'Arquivo de projetos invalido.');}
+  }
+
   const change=(patch:Partial<Config>)=>{setConfig(c=>({...c,...patch}));setDirty(true);};
   const select=(i:number)=>{setSelected(i);setTime(i*25);setPlaying(false);};
   async function importFile(file:File|undefined,target:'orders'|'customers') {
@@ -58,6 +124,23 @@ export default function DataFlowLab({demo=false}:{demo?:boolean}) {
     {error&&<div role="alert" className={s.error}>{error} {run&&'A execução anterior continua disponível abaixo.'}</div>}
     <div className={s.workspace}>
       <aside className={s.sidebar}><div className={s.sideTitle}><Layers size={17}/><h2>Seu pipeline</h2><span>01—05</span></div>
+        <section className={s.configSection}><h3><FolderOpen size={16}/>Meus projetos</h3>
+          <p className={s.hint}>Guardamos a receita do fluxo, nunca os seus dados. Ao abrir um projeto, reimporte o CSV ou carregue o caso de exemplo.</p>
+          <label className={s.field}>Projeto aberto<select value={activeId} onChange={e=>openProject(e.target.value)} disabled={busy||!projects.length}>{projects.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
+          <label className={s.field}>Nome<input value={name} maxLength={80} onChange={e=>renameProject(e.target.value)} disabled={busy||!active}/></label>
+          {active&&<p className={s.hint}>{recipeSummary(active)}</p>}
+          <div className={s.fields}>
+            <button type="button" onClick={createProject} disabled={busy}><Plus size={14}/>Novo</button>
+            <button type="button" onClick={removeProject} disabled={busy||projects.length<2}><Trash2 size={14}/>Excluir</button>
+          </div>
+          <div className={s.fields}>
+            <button type="button" onClick={()=>download('projetos-dataflow.json',JSON.stringify({version:1,activeId,projects},null,2),'application/json')} disabled={!projects.length}><Save size={14}/>Exportar</button>
+            <button type="button" onClick={()=>projectFile.current?.click()} disabled={busy}><Upload size={14}/>Importar</button>
+          </div>
+          <input ref={projectFile} type="file" accept="application/json,.json" hidden aria-label="Importar projetos" onChange={e=>{void importProjects(e.target.files?.[0]);e.target.value='';}}/>
+          {saveMsg&&<p className={s.hint} role="status">{saveMsg}</p>}
+          <p className={s.hint}>Ate {MAX_PROJECTS} projetos ficam neste navegador, separados por conta. Limpar os dados do navegador remove o salvamento local.</p>
+        </section>
         <fieldset disabled={busy}><section className={s.configSection}><h3><Database size={16}/>01 · Fontes de dados</h3><p className={s.hint}>CSV até 1 MB · 5.000 linhas · 40 colunas. Processado neste navegador.</p>{(['orders','customers'] as const).map((target,i)=><label className={s.upload} key={target}><span><strong>{i===0?'Pedidos':'Clientes'}</strong><small>{data[target].rows.length} linhas · {data[target].columns.length} colunas</small></span><Upload size={16}/><input type="file" accept=".csv,text/csv" aria-label={`Importar CSV de ${i===0?'pedidos':'clientes'}`} onChange={e=>{void importFile(e.target.files?.[0],target);e.target.value='';}}/></label>)}<p className={s.hint}>Clientes: {q.duplicates} linhas idênticas repetidas · {q.empty} células vazias.</p></section>
         <section className={s.configSection}><h3>02 · Limpeza de clientes</h3><label className={s.toggle}><input type="checkbox" checked={config.dedup} onChange={e=>change({dedup:e.target.checked})}/>Remover repetições pela chave</label><label className={s.field}>Chave única<select value={config.dedupKey} onChange={e=>change({dedupKey:e.target.value})}>{data.customers.columns.map(c=><option key={c}>{c}</option>)}</select></label></section>
         <section className={s.configSection}><h3>03 · Filtro de pedidos</h3><label className={s.toggle}><input type="checkbox" checked={config.filter} onChange={e=>change({filter:e.target.checked})}/>Manter somente registros iguais a</label><div className={s.fields}><select aria-label="Coluna do filtro" value={config.filterKey} onChange={e=>change({filterKey:e.target.value})}>{data.orders.columns.map(c=><option key={c}>{c}</option>)}</select><input aria-label="Valor do filtro" value={config.filterValue} onChange={e=>change({filterValue:e.target.value})}/></div></section>
@@ -72,8 +155,8 @@ export default function DataFlowLab({demo=false}:{demo?:boolean}) {
       <section className={s.inspector}><div className={s.inspectorTitle}><div><p className={s.eyebrow}>INSPEÇÃO / {selected+1} DE 5</p><h2>{stage?.title||'Carregando dados'}</h2></div>{stage&&<button onClick={()=>download(`dataflow-${stage.title.toLowerCase()}.csv`,toCSV(stage.table),'text/csv;charset=utf-8')}><Download size={15}/>CSV da etapa</button>}</div><p className={s.note}>{stage?.note}</p>{stage&&<>{selected===1?<p className={s.hint}>Entrada: {stages?.[0].note} A limpeza atua somente na tabela de clientes.</p>:null}{before&&<details><summary>Ver entrada desta etapa ({before.rows.length} linhas)</summary><DataTable table={before} label="Antes da transformação"/></details>}<DataTable table={stage.table} label={selected===0?'Pedidos de origem':'Saída da etapa'}/>{selected===4&&<Chart table={stage.table}/>}</>}
       </section></div>
       <aside className={s.sqlPanel}><h2><Braces size={19}/>SQL Workbench</h2><p className={s.hint}>SQLite · consultas SELECT e WITH. A tabela <code>fluxo</code> recebe a saída da junção.</p><label htmlFor="flow-sql" className={s.eyebrow}>CONSULTA DO RESULTADO</label><textarea id="flow-sql" value={sql} disabled={busy} spellCheck={false} onChange={e=>{setSql(e.target.value);setDirty(true);}}/><button className={s.primary} disabled={busy} onClick={()=>execute(data,config,sql,name)}><Play size={15}/>{busy?'Executando…':'Executar fluxo + SQL'}</button><button onClick={()=>download('consulta-dataflow.sql',sql)}>Baixar SQL</button><div className={s.schema}><h3>Tabelas disponíveis</h3>{[{label:'pedidos',table:data.orders},{label:'clientes',table:data.customers},{label:'fluxo',table:stages?.[3].table}].map(({label,table})=><details key={label} open={label==='fluxo'}><summary><Database size={13}/>{label}</summary><p>{table?.columns.join(' · ')||'Execute o fluxo para ver as colunas.'}</p></details>)}<p className={s.hint}>clientes = após limpeza · pedidos = fonte original. O esquema de fluxo corresponde à última execução.</p></div>
-      <section className={s.compare}><p className={s.eyebrow}>ANTES × AGORA</p><h3>Compare as execuções</h3>{previous&&run?<><p>{previous.at} → {run.at}</p><div><span>Linhas na junção</span><b>{previous.stages[3].table.rows.length} → {run.stages[3].table.rows.length}</b></div><div><span>Linhas no SQL</span><b>{previous.stages[4].table.rows.length} → {run.stages[4].table.rows.length}</b></div><details><summary>Ver SQL e resultado anteriores</summary><pre>{previous.sql}</pre><DataTable table={previous.stages[4].table} label={`${previous.name} · ${previous.at}`}/></details></>:<p>Execute uma mudança para comparar com o resultado anterior.</p>}</section><p className={s.hint}>Sessão temporária: baixe os resultados antes de sair. Nenhum arquivo é enviado ao servidor. Exportação CSV neutraliza fórmulas de planilha.</p></aside>
+      <section className={s.compare}><p className={s.eyebrow}>ANTES × AGORA</p><h3>Compare as execuções</h3>{previous&&run?<><p>{previous.at} → {run.at}</p><div><span>Linhas na junção</span><b>{previous.stages[3].table.rows.length} → {run.stages[3].table.rows.length}</b></div><div><span>Linhas no SQL</span><b>{previous.stages[4].table.rows.length} → {run.stages[4].table.rows.length}</b></div><details><summary>Ver SQL e resultado anteriores</summary><pre>{previous.sql}</pre><DataTable table={previous.stages[4].table} label={`${previous.name} · ${previous.at}`}/></details></>:<p>Execute uma mudança para comparar com o resultado anterior.</p>}</section><p className={s.hint}>A receita do fluxo fica salva no seu projeto; os dados, não. Baixe os resultados antes de sair. Nenhum arquivo é enviado ao servidor. Exportação CSV neutraliza fórmulas de planilha.</p></aside>
     </div>
-    <dialog ref={helpRef} className={s.help} onCancel={()=>setHelp(false)} onClose={()=>setHelp(false)}><h2>Seu laboratório de dados em 4D</h2><p>As estações representam transformações reais. O tempo permite reproduzir uma execução concluída, pausar e investigar suas etapas; não representa a duração real de processamento.</p><ol><li>Explore o caso Aurora ou importe CSVs de pedidos e clientes.</li><li>Escolha as chaves, ative a limpeza e configure o filtro.</li><li>Escreva SQL sobre <code>fluxo</code> e execute.</li><li>Reproduza o caminho e inspecione tabelas antes e depois.</li><li>Compare com a execução anterior e baixe os resultados.</li></ol><p>A limpeza mantém o primeiro cliente de cada chave. Confira conflitos antes de usar essa regra em dados reais. CSV aceita vírgula ou ponto e vírgula; números decimais usam ponto. Valores como 001 ficam como texto.</p><p>Limites: 5.000 linhas por fonte, 10.000 na junção e 1.000 no resultado SQL. Consultas têm limite de 8 segundos. Dados e resultados ficam somente na memória desta aba.</p><button className={s.primary} onClick={()=>setHelp(false)}>Vamos explorar</button></dialog>
+    <dialog ref={helpRef} className={s.help} onCancel={()=>setHelp(false)} onClose={()=>setHelp(false)}><h2>Seu laboratório de dados em 4D</h2><p>As estações representam transformações reais. O tempo permite reproduzir uma execução concluída, pausar e investigar suas etapas; não representa a duração real de processamento.</p><ol><li>Explore o caso Aurora ou importe CSVs de pedidos e clientes.</li><li>Escolha as chaves, ative a limpeza e configure o filtro.</li><li>Escreva SQL sobre <code>fluxo</code> e execute.</li><li>Reproduza o caminho e inspecione tabelas antes e depois.</li><li>Compare com a execução anterior e baixe os resultados.</li></ol><p>A limpeza mantém o primeiro cliente de cada chave. Confira conflitos antes de usar essa regra em dados reais. CSV aceita vírgula ou ponto e vírgula; números decimais usam ponto. Valores como 001 ficam como texto.</p><p>Limites: 5.000 linhas por fonte, 10.000 na junção e 1.000 no resultado SQL. Consultas têm limite de 8 segundos. Dados e resultados ficam somente na memória desta aba; o que persiste é a receita do projeto, guardada neste navegador.</p><button className={s.primary} onClick={()=>setHelp(false)}>Vamos explorar</button></dialog>
   </main>;
 }

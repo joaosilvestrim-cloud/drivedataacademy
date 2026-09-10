@@ -45,8 +45,6 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
       { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
-      { label: "DataFlow Lab", href: "/dataflow-lab", icon: "tool" },
-      { label: "Decision Lab", href: "/decision-lab", icon: "rep" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },
     ],
   },
