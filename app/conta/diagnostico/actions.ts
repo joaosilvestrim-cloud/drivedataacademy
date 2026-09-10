@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { knowledgeAccess, catalogVersions } from "@/lib/knowledge/server";
-import { recordPracticalEvidence } from "@/app/admin/(dashboard)/universo/actions";
+import { appendPracticalEvidence } from "@/lib/knowledge/practical";
 import { syncKnowledgeMilestones } from "@/lib/knowledge/milestones";
 
 const GROUP = "diagnostico";
@@ -45,7 +45,7 @@ export async function submitDiagnostic(answers: Record<string, number>) {
       results[competency] = { acertos: b.acertos, total: b.total, quality };
       // Sem acerto não há evidência. Não se registra desconhecimento.
       if (!valida.has(competency) || quality <= 0) continue;
-      await recordPracticalEvidence({
+      const gravou = await appendPracticalEvidence({
         userId: user.id,
         competency,
         dimension: "exercise",
@@ -56,6 +56,8 @@ export async function submitDiagnostic(answers: Record<string, number>) {
         label: "Diagnóstico de entrada",
         requestId: randomUUID(),
       });
+      // Falha aqui nao pode passar em silencio: era exatamente o bug anterior.
+      if (!gravou.ok) throw new Error(gravou.error || "Nao consegui registrar seu resultado.");
     }
 
     const { error } = await admin.from("ku_diagnostic_attempts").insert({ user_id: user.id, answers, results });

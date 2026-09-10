@@ -4,3 +4,30 @@
 @media(max-width:760px){.header{padding:0 16px;height:68px;gap:10px}.header img{width:30px;height:30px}.headerRight{gap:6px}.headerRight .badge{display:none}.headerRight button span{display:none}.brand{font-size:20px}.brand small{font-size:6px}.intro{padding:22px 16px;align-items:flex-start;flex-direction:column;gap:16px}.intro h1{font-size:28px}.workspace{padding:0 16px 25px;grid-template-columns:minmax(0,1fr);gap:14px}.mainColumn{grid-row:1}.sidebar{grid-row:2;display:grid;grid-template-columns:1fr 1fr;gap:15px}.sideTitle{grid-column:1/-1;margin:0}.sidebar fieldset{grid-column:1}.mission{align-self:start}.sqlPanel{grid-column:1;display:flex;flex-direction:column}.sqlPanel>*{width:100%}.scene{height:310px}.sceneToolbar{padding:13px}.sceneToolbar strong{font-size:10px}.timeline{gap:9px;padding:12px}.inspector{padding:14px}.error{margin:0 16px 16px}.sceneCaption{font-size:8px;left:14px}.flatFlow{gap:12px;padding:18px 10px 60px}.flatFlow button{min-width:73px;padding:9px;gap:7px;font-size:10px}.steps{gap:4px;padding:0 9px 10px}.steps button{font-size:9px}}
 @media(max-width:420px){.sidebar{display:block}.sideTitle{margin-bottom:12px}.intro h1{font-size:25px}.brand{font-size:18px}.header{gap:8px}.back{padding-right:9px}.scene{height:290px}.sceneToolbar{gap:5px}.segment button{padding:6px}.inspectorTitle h2{font-size:18px}.tableHead{font-size:9px;flex-wrap:wrap}.barRow{grid-template-columns:65px 1fr 60px;gap:8px}.steps button{font-size:8px}.timeline label{font-size:7px}.flatFlow button{min-width:68px}}
 @media(prefers-reduced-motion:reduce){.app *{transition:none!important}}
+
+/* Rastreamento de um registro pelas etapas. */
+.rowPickable{cursor:pointer}
+.rowPickable:hover td{background:rgba(107,233,206,.09)}
+.rowPicked td{background:rgba(107,233,206,.16);box-shadow:inset 0 0 0 1px rgba(107,233,206,.35)}
+.trace{margin-top:14px;border:1px solid rgba(107,233,206,.28);border-radius:12px;padding:14px;background:rgba(107,233,206,.05)}
+.traceHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.traceHead button{font-size:11px;color:#9fb6c9;text-decoration:underline}
+.traceStep{display:grid;grid-template-columns:96px auto;gap:2px 12px;padding:9px 0;border-top:1px solid rgba(255,255,255,.07)}
+.traceStep:first-of-type{border-top:0}
+.traceStep b{font-size:12px;color:#eaf6f3}
+.traceStep span{font-size:11px;font-weight:700;justify-self:start;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:#c9dbe6}
+.traceStep p{grid-column:1/-1;font-size:12px;line-height:1.65;color:#93a8b8}
+.traceStep[data-status="removed"] span{background:rgba(255,138,138,.16);color:#ffb4b4}
+.traceStep[data-status="multiplied"] span{background:rgba(255,196,106,.18);color:#ffcf88}
+.traceStep[data-status="ok"] span{background:rgba(107,233,206,.18);color:#8ef0d8}
+
+/* Guia de primeiro acesso. Fica no fluxo da pagina, sem cobrir a cena 3D. */
+.firstRun{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between;margin:0 0 18px;padding:18px 20px;border:1px solid rgba(107,233,206,.3);border-radius:14px;background:linear-gradient(120deg,rgba(107,233,206,.09),rgba(107,233,206,0))}
+.firstRun h2{font-size:19px;color:#eaf6f3;margin:4px 0 6px}
+.firstRun p{font-size:13px;color:#9fb6c9;line-height:1.6}
+.firstRun ol{margin:10px 0 0;padding-left:18px;display:grid;gap:5px}
+.firstRun li{font-size:12.5px;color:#b7cbd8;line-height:1.6}
+.firstRun b{color:#eaf6f3}
+.firstRunActions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.firstRunActions button:last-child{font-size:12px;color:#9fb6c9;text-decoration:underline}
+.help h3{margin:18px 0 6px;font-size:14px;color:#8ef0d8}
