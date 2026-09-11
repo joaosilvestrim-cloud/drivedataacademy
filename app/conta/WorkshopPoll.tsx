@@ -1,5 +1,7 @@
 import { voteWorkshop } from "./actions";
 
+// Mesma função de antes: um form por opção, voto trocável, Server Action
+// inalterada. Só a linguagem visual mudou.
 export default function WorkshopPoll({
   options,
   counts,
@@ -12,18 +14,20 @@ export default function WorkshopPoll({
   const total = Object.values(counts).reduce((s, v) => s + v, 0);
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-white/8 bg-gradient-to-br from-brand-blue/[0.06] via-transparent to-brand-green/[0.05] p-6">
-      <div className="flex items-center gap-2.5">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-blue to-brand-cyan text-ink-900 shadow">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    <div>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
+        <h2 className="font-display text-section font-semibold text-ds-text">
+          Escolha o próximo workshop
+        </h2>
+        <span className="font-mono text-meta uppercase text-ds-text-3">
+          {total} {total === 1 ? "voto" : "votos"}
         </span>
-        <div>
-          <h2 className="font-display text-lg font-bold text-white">Escolha o próximo workshop ao vivo</h2>
-          <p className="text-xs text-slate-400">Seu voto ajuda a definir o tema do próximo encontro. {total} voto{total === 1 ? "" : "s"}.</p>
-        </div>
       </div>
+      <p className="mt-3 text-body-sm text-ds-text-2">
+        Seu voto define o tema do próximo encontro ao vivo. Dá para trocar quando quiser.
+      </p>
 
-      <div className="mt-4 space-y-2">
+      <div className="mt-4 flex flex-col gap-1.5">
         {options.map((opt) => {
           const n = counts[opt] || 0;
           const pct = total ? Math.round((n / total) * 100) : 0;
@@ -31,21 +35,33 @@ export default function WorkshopPoll({
           return (
             <form key={opt} action={voteWorkshop}>
               <input type="hidden" name="option" value={opt} />
-              <button className={`group relative block w-full overflow-hidden rounded-xl border px-4 py-3 text-left transition-colors ${mine ? "border-brand-green/50" : "border-white/10 hover:border-white/25"}`}>
-                <span className="absolute inset-0 bg-gradient-to-r from-brand-green/15 to-brand-blue/10 transition-all" style={{ width: `${pct}%` }} />
+              <button
+                aria-pressed={mine}
+                className={`relative block w-full overflow-hidden rounded-ctl border px-3.5 py-2.5 text-left transition-colors duration-fast ease-ds ${
+                  mine
+                    ? "border-ds-accent/45 bg-ds-accent/[0.06]"
+                    : "border-ds-line hover:border-ds-text-3"
+                }`}
+              >
+                {/* Proporção fica no fundo, discreta, sem gradiente. */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-y-0 left-0 bg-ds-line-soft"
+                  style={{ width: `${pct}%` }}
+                />
                 <span className="relative flex items-center justify-between gap-3">
-                  <span className={`flex items-center gap-2 text-sm ${mine ? "font-semibold text-white" : "text-slate-200"}`}>
-                    {mine && <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="text-brand-green"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                  <span className={`text-body-sm ${mine ? "font-medium text-ds-text" : "text-ds-text-2"}`}>
+                    {mine && <span className="mr-1.5 text-ds-accent" aria-hidden="true">✓</span>}
                     {opt}
+                    {mine && <span className="sr-only"> (seu voto)</span>}
                   </span>
-                  <span className="relative shrink-0 text-xs font-semibold text-slate-400">{pct}%</span>
+                  <span className="shrink-0 font-mono text-meta tabular-nums text-ds-text-3">{pct}%</span>
                 </span>
               </button>
             </form>
           );
         })}
       </div>
-      <p className="mt-3 text-[0.7rem] text-slate-500">Clique para votar. Dá pra trocar o voto quando quiser.</p>
     </div>
   );
 }

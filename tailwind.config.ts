@@ -8,6 +8,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // ---- Design System: cor com semântica ----
+        ds: {
+          bg: "var(--ds-bg)",
+          surface: "var(--ds-surface)",
+          raised: "var(--ds-raised)",
+          line: "var(--ds-line)",
+          "line-soft": "var(--ds-line-soft)",
+          text: "var(--ds-text)",
+          "text-2": "var(--ds-text-2)",
+          "text-3": "var(--ds-text-3)",
+          accent: "var(--ds-accent)",
+          "accent-ink": "var(--ds-accent-ink)",
+          info: "var(--ds-info)",
+          attention: "var(--ds-attention)",
+          danger: "var(--ds-danger)",
+        },
         ink: {
           900: "#04070f",
           800: "#070b16",
@@ -32,6 +48,32 @@ const config: Config = {
         foreground: "#0f172a",
         background: "#f8fafc",
       },
+      // ---- Design System: escala tipográfica oficial ----------------
+      // Nomes por PAPEL, não por tamanho. Aditivo: text-sm e text-xs
+      // continuam existindo para as páginas ainda não migradas.
+      fontSize: {
+        display:   ["clamp(2.125rem, 4.2vw, 2.75rem)", { lineHeight: "1.06", letterSpacing: "-0.028em" }],
+        title:     ["1.75rem",    { lineHeight: "1.14", letterSpacing: "-0.022em" }],
+        section:   ["1.1875rem",  { lineHeight: "1.32", letterSpacing: "-0.012em" }],
+        component: ["1rem",       { lineHeight: "1.4",  letterSpacing: "-0.006em" }],
+        body:      ["0.9375rem",  { lineHeight: "1.62" }],
+        "body-sm": ["0.875rem",   { lineHeight: "1.55" }],
+        label:     ["0.8125rem",  { lineHeight: "1.35" }],
+        caption:   ["0.75rem",    { lineHeight: "1.5" }],
+        meta:      ["0.75rem",    { lineHeight: "1.4",  letterSpacing: "0.07em" }],
+        data:      ["1.5rem",     { lineHeight: "1.08", letterSpacing: "-0.02em" }],
+        "data-lg": ["2.25rem",    { lineHeight: "1.02", letterSpacing: "-0.03em" }],
+      },
+      borderRadius: {
+        ctl: "4px",   // controles: botão, campo, badge
+        srf: "10px",  // superfícies: painel, imagem, bloco
+      },
+      boxShadow: {
+        overlay: "0 24px 60px -24px rgba(0,0,0,0.72)", // só sobreposição real
+      },
+      transitionDuration: { fast: "140ms", base: "200ms", slow: "320ms" },
+      transitionTimingFunction: { ds: "cubic-bezier(0.2,0.6,0.3,1)" },
+      screens: { tablet: "768px" },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "system-ui", "sans-serif"],

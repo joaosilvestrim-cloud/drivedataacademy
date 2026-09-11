@@ -3,11 +3,61 @@
 @tailwind utilities;
 
 :root {
-  --bg: #04070f;
-  --font-sans: "Segoe UI", "Inter", system-ui, -apple-system, "Helvetica Neue",
-    Arial, sans-serif;
-  --font-display: "Segoe UI", "Sora", "Inter", system-ui, -apple-system,
-    sans-serif;
+  /* ------------------------------------------------------------------
+     Design tokens — Academy. Camada oficial. Poucos, com função clara.
+     A escala Tailwind antiga continua valendo: nada aqui quebra as 76
+     páginas que ainda não migraram.
+     ------------------------------------------------------------------ */
+
+  /* Superfícies. Três níveis, não cinco. */
+  --ds-bg: #05080f;          /* fundo da aplicação */
+  --ds-surface: #0a0f18;     /* superfície de conteúdo */
+  --ds-raised: #111925;      /* único nível elevado */
+
+  /* Traço. Régua antes de sombra. */
+  --ds-line: #1e2733;        /* divisor e contorno */
+  --ds-line-soft: #151c27;   /* divisor interno */
+
+  /* Texto. Três níveis, nunca mais. */
+  --ds-text: #f0f5fa;
+  --ds-text-2: #97a6b8;
+  --ds-text-3: #64748b;
+
+  /* Cor com semântica. Cada uma tem um papel e só ele. */
+  --ds-accent: #34e8a0;      /* aprendizagem, evidência, ação principal */
+  --ds-accent-ink: #04140d;  /* texto sobre o acento */
+  --ds-info: #5aa9ff;        /* navegação e informação */
+  --ds-attention: #e0a44a;   /* decaimento, pendência, revisão */
+  --ds-danger: #f08a8a;      /* erro, e só erro */
+
+  /* Dimensões da evidência. Usadas na Barra de Evidência. */
+  --ds-dim-learning: #34e8a0;
+  --ds-dim-assessment: #2ed3c4;
+  --ds-dim-exercise: #5aa9ff;
+  --ds-dim-challenge: #8b93f7;
+  --ds-dim-retention: #e0a44a;
+
+  /* Foco. Um anel, um token. */
+  --ds-focus: #6be9ce;
+
+  /* Movimento. Três durações e uma curva. */
+  --ds-dur-fast: 140ms;
+  --ds-dur: 200ms;
+  --ds-dur-slow: 320ms;
+  --ds-ease: cubic-bezier(0.2, 0.6, 0.3, 1);
+
+  /* Camadas. Acaba com z-index improvisado. */
+  --ds-z-base: 0;
+  --ds-z-sticky: 20;
+  --ds-z-nav: 30;
+  --ds-z-overlay: 50;
+  --ds-z-toast: 60;
+
+  /* Tipografia: as variáveis --font-* são definidas pelo next/font no <html>.
+     Não redeclaramos aqui para não disputar a cascata com ele. */
+
+  /* Compatibilidade com o que já existe */
+  --bg: var(--ds-bg);
 }
 
 * {
@@ -112,11 +162,48 @@ body {
   mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
 }
 
+/* ------------------------------------------------------------------
+   Foco de teclado. O produto tinha 2 focus-visible em 77 páginas.
+   Usamos outline com offset, nunca box-shadow: box-shadow some dentro
+   de qualquer contêiner com overflow hidden.
+   ------------------------------------------------------------------ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus {
+  outline: none;
+}
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--ds-focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+/* Dentro de superfícies claras o anel precisa de outro tom. */
+.ds-on-light :focus-visible {
+  outline-color: #0e7490;
+}
+
+/* Pular para o conteúdo, para quem navega por teclado. */
+.ds-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: var(--ds-z-toast);
+}
+.ds-skip:focus {
+  left: 0.75rem;
+  top: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: var(--ds-raised);
+  color: var(--ds-text);
+  border: 1px solid var(--ds-line);
+  border-radius: 10px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -2,50 +2,56 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFullAccess } from "@/lib/access";
-import Avatar from "@/components/Avatar";
+import { knowledgeSummary } from "@/lib/knowledge/summary";
+import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
+import { Button, Badge } from "@/components/ui/primitives";
+import { SectionHeader, EmptyState } from "@/components/ui/layout";
+import { DataRule, EvidenceBar, FreshnessRing } from "@/components/ui/signature";
 import WorkshopPoll from "./WorkshopPoll";
 import { WORKSHOP_OPTIONS } from "./workshop";
-import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
-import { knowledgeSummary } from "@/lib/knowledge/summary";
 
 export const dynamic = "force-dynamic";
 
-function Cover({ url, title }: { url: string | null; title: string }) {
-  if (url) {
-    return (
-      <>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={url} alt={title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-transparent to-transparent" />
-      </>
-    );
-  }
-  return (
-    <div className="absolute inset-0 overflow-hidden bg-gradient-to-br from-brand-green/25 via-ink-700 to-brand-blue/25">
-      <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,.6) 1px, transparent 0)", backgroundSize: "22px 22px" }} />
-      <span className="absolute -bottom-6 right-3 font-display text-[7rem] font-black leading-none text-white/10">{title.charAt(0).toUpperCase()}</span>
-    </div>
-  );
-}
-
-function evtWhen(iso: string) {
-  return new Intl.DateTimeFormat("pt-BR", { weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
-}
-function evtCountdown(iso: string) {
+const TZ = "America/Sao_Paulo";
+const hoje = (iso: string) => {
+  const d = new Intl.DateTimeFormat("pt-BR", { weekday: "long", day: "2-digit", month: "long", timeZone: TZ }).format(new Date(iso));
+  // Só a primeira letra. A classe capitalize do Tailwind deixava
+  // "Quinta-Feira, 11 De Setembro".
+  return d.charAt(0).toUpperCase() + d.slice(1);
+};
+const quando = (iso: string) =>
+  new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: TZ }).format(new Date(iso));
+const emQuanto = (iso: string) => {
   const diff = new Date(iso).getTime() - Date.now();
-  if (diff <= 0) return "ao vivo";
-  const days = Math.floor(diff / 864e5);
-  if (days >= 1) return `em ${days}d`;
+  if (diff <= 0) return "agora";
+  const d = Math.floor(diff / 864e5);
+  if (d >= 1) return `em ${d}d`;
   const h = Math.floor(diff / 36e5);
-  if (h >= 1) return `em ${h}h`;
-  return `em ${Math.max(1, Math.floor(diff / 6e4))}min`;
+  return h >= 1 ? `em ${h}h` : `em ${Math.max(1, Math.floor(diff / 6e4))}min`;
+};
+
+// Capa em faixa estreita. A imagem é conteúdo real do curso, então continua,
+// mas para de ocupar meia tela em grade de cards.
+function Thumb({ url, title }: { url: string | null; title: string }) {
+  return (
+    <span className="relative hidden h-14 w-24 shrink-0 overflow-hidden rounded-ctl border border-ds-line tablet:block">
+      {url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={url} alt="" className="h-full w-full object-cover" />
+      ) : (
+        <span className="grid h-full w-full place-items-center bg-ds-raised font-display text-section text-ds-text-3">
+          {title.charAt(0).toUpperCase()}
+        </span>
+      )}
+    </span>
+  );
 }
 
 export default async function ContaHome() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-
   const admin = createAdminClient();
+
   const [{ data: profile }, { data: enrolls }, full, { count: certCount }] = await Promise.all([
     admin.from("profiles").select("full_name").eq("id", user!.id).maybeSingle(),
     admin.from("enrollments").select("course_id").eq("user_id", user!.id),
@@ -53,7 +59,6 @@ export default async function ContaHome() {
     admin.from("certificates").select("*", { count: "exact", head: true }).eq("user_id", user!.id),
   ]);
 
-  // Próximos eventos ao vivo / mentorias da turma (inclui os que já começaram há < 2h)
   const { data: livesData } = await admin
     .from("live_events")
     .select("id, title, starts_at, kind")
@@ -63,7 +68,6 @@ export default async function ContaHome() {
     .limit(3);
   const upcoming = livesData ?? [];
 
-  // Enquete de próximo workshop + catálogo (cursos publicados)
   const [{ data: votesData }, { data: myVoteRow }, { data: catalogData }] = await Promise.all([
     admin.from("workshop_votes").select("option"),
     admin.from("workshop_votes").select("option").eq("user_id", user!.id).maybeSingle(),
@@ -89,6 +93,19 @@ export default async function ContaHome() {
     for (const p of pr ?? []) doneCounts[p.course_id] = (doneCounts[p.course_id] || 0) + 1;
   }
 
+  // Estado do Knowledge Universe: competências, composição da evidência e o
+  // que anda esfriando. Lê o snapshot, não recalcula o universo inteiro.
+  const resumo = await knowledgeSummary(user!.id, user!.email);
+
+  // Sinais do percurso prático. Consultas rasas, com contagem apenas.
+  const [{ data: diag }, { data: entregas }, { count: desafiosAbertos }] = await Promise.all([
+    admin.from("ku_diagnostic_attempts").select("user_id").eq("user_id", user!.id).maybeSingle(),
+    admin.from("ku_challenge_submissions").select("status, reviewed_at").eq("user_id", user!.id),
+    admin.from("ku_challenges").select("*", { count: "exact", head: true }).eq("published", true),
+  ]);
+  const aprovadas = (entregas ?? []).filter((e: any) => e.status === "approved");
+  const emCorrecao = (entregas ?? []).filter((e: any) => e.status === "pending").length;
+
   const fullName = profile?.full_name || "";
   const firstName = fullName.split(" ")[0];
   const withPct = courses.map((c) => {
@@ -96,293 +113,277 @@ export default async function ContaHome() {
     const done = doneCounts[c.id] || 0;
     return { ...c, total, done, pct: total ? Math.round((done / total) * 100) : 0 };
   });
-  const completedCount = withPct.filter((c) => c.total > 0 && c.pct === 100).length;
-  const inProgress = withPct.filter((c) => c.pct > 0 && c.pct < 100);
-  const resume = inProgress[0] || withPct.find((c) => c.pct === 0) || null;
-
-  const stats = [
-    { label: "Cursos", value: courses.length, d: "M4 6h16v12H4zM4 10h16", from: "#34e8a0", to: "#2ee6d6" },
-    { label: "Em andamento", value: inProgress.length, d: "M12 7v5l3 2M12 21a9 9 0 100-18 9 9 0 000 18z", from: "#3b9dff", to: "#22d3ee" },
-    { label: "Concluídos", value: completedCount, d: "M20 6L9 17l-5-5", from: "#34e8a0", to: "#3b9dff" },
-    { label: "Certificados", value: certCount ?? 0, d: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5", from: "#a78bfa", to: "#3b9dff" },
-  ];
-
-  const shortcuts = [
-    { label: "Ferramentas", sub: "Visuais e mais", href: "/conta/ferramentas", d: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4", from: "#34e8a0", to: "#22d3ee" },
-    { label: "Comunidade", sub: "Converse e ajude", href: "/conta/comunidade", d: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z", from: "#34e8a0", to: "#2ee6d6" },
-    { label: "Agenda", sub: "Lives e roadmap", href: "/conta/agenda", d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z", from: "#3b9dff", to: "#22d3ee" },
-    { label: "Ranking", sub: "Seus pontos", href: "/conta/ranking", d: "M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3", from: "#fbbf24", to: "#f59e0b" },
-    { label: "Certificados", sub: "Suas conquistas", href: "/conta/certificados", d: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5", from: "#a78bfa", to: "#3b9dff" },
-  ];
-
+  const concluidos = withPct.filter((c) => c.total > 0 && c.pct === 100).length;
+  const emAndamento = withPct.filter((c) => c.pct > 0 && c.pct < 100);
+  const retomar = emAndamento[0] || withPct.find((c) => c.pct === 0) || null;
   const enrolledSet = new Set(courseIds);
   const catalogo = (catalogData ?? []).filter((c: any) => !enrolledSet.has(c.id));
 
-  // Competências cujo Freshness caiu: o motor já calculava isso e ninguém via.
-  const { cooling } = await knowledgeSummary(user!.id, user!.email);
+  // ------------------------------------------------------------------
+  // Próximo passo. Uma ação principal, decidida pelo estado real do aluno.
+  // É o que responde "o que eu preciso fazer" em menos de cinco segundos.
+  // ------------------------------------------------------------------
+  const passo = !full
+    ? { rotulo: "Liberar meu acesso", titulo: "Sua assinatura não está ativa", apoio: "Assine para abrir os treinamentos, a comunidade e as ferramentas.", href: "/matricula", curso: null as any }
+    : resumo.available && !diag
+    ? { rotulo: "Começar o diagnóstico", titulo: "Dê o ponto de partida do seu mapa", apoio: "São 25 perguntas rápidas. Você responde uma vez só.", href: "/conta/diagnostico", curso: null as any }
+    : retomar
+    ? { rotulo: retomar.pct > 0 ? "Continuar" : "Começar", titulo: retomar.title, apoio: `${retomar.done} de ${retomar.total} aulas concluídas.`, href: `/aprender/${retomar.slug}`, curso: retomar }
+    : resumo.cooling.length
+    ? { rotulo: "Ver desafios", titulo: `Revisar ${resumo.cooling[0].name}`, apoio: `São ${resumo.cooling[0].days} dias sem atividade nessa competência.`, href: "/conta/desafios", curso: null as any }
+    : desafiosAbertos
+    ? { rotulo: "Ver desafios", titulo: "Prove na prática o que você aprendeu", apoio: `${desafiosAbertos} desafios abertos esperando sua entrega.`, href: "/conta/desafios", curso: null as any }
+    : { rotulo: "Abrir o catálogo", titulo: "Escolha por onde começar", apoio: "Seus treinamentos aparecem aqui assim que você iniciar um.", href: "/cursos", curso: null as any };
+
+  // Uma frase que diz como o aluno está, em vez de só empilhar números.
+  const leitura = !full
+    ? "Seu acesso está inativo no momento."
+    : resumo.developed > 0
+    ? `${resumo.developed} ${resumo.developed === 1 ? "competência tem" : "competências têm"} evidência registrada${resumo.advanced ? `, ${resumo.advanced} em nível avançado` : ""}.${resumo.cooling.length ? ` ${resumo.cooling.length} ${resumo.cooling.length === 1 ? "está esfriando" : "estão esfriando"}.` : ""}`
+    : courses.length
+    ? "Suas primeiras evidências aparecem conforme você avança nas aulas."
+    : "Tudo pronto para começar.";
+
+  const temEvidencia = Object.values(resumo.parts).some((v) => v > 0);
 
   return (
-    <div>
-      {/* Hero */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/8">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-green/15 via-brand-blue/10 to-brand-teal/15 bg-[length:200%_200%] animate-gradient-x" />
-        <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-brand-green/20 blur-3xl animate-pulse-glow" />
-        <div className="pointer-events-none absolute -bottom-20 left-10 h-40 w-40 rounded-full bg-brand-blue/20 blur-3xl" />
-        <div className="relative flex items-center gap-4 p-6">
-          <Avatar name={fullName || "Aluno"} size="lg" className="ring-2 ring-white/20" />
-          <div>
-            <h1 className="font-display text-3xl font-bold text-white">Olá{firstName ? ", " : ""}<span className="text-gradient">{firstName}</span></h1>
-            <div className="mt-1 flex flex-wrap items-center gap-2">
-              <p className="text-sm text-slate-300">Bem-vindo à sua jornada de dados.</p>
-              {full && <span className="rounded-full border border-brand-green/40 bg-brand-green/15 px-2.5 py-0.5 text-[0.7rem] font-semibold text-brand-green">Acesso Full</span>}
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-col gap-12 pb-4 tablet:gap-14">
 
-      {/* Grupo de avisos no WhatsApp */}
-      {COMMUNITY_WHATSAPP_URL && (
-        <a
-          href={COMMUNITY_WHATSAPP_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="group mt-6 flex items-center gap-4 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/[0.08] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#25D366]/50 sm:p-5"
-        >
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#25D366] text-ink-900 shadow-lg">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm-3.5 4c-.2 0-.5 0-.7.4-.2.4-.9.9-.9 2.2s.9 2.5 1 2.7c.2.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.1-1.3l-.6-.3s-1.5-.7-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.1-.2 0-.4.1-.5l.4-.5.3-.5c.1-.2 0-.3 0-.5l-.8-1.9c-.2-.4-.4-.4-.6-.4h-.4z"/></svg>
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-2 font-semibold text-white">
-              Grupo de avisos no WhatsApp
-              <span className="rounded-full bg-[#25D366]/20 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-[#25D366]">Entrar</span>
-            </p>
-            <p className="mt-0.5 truncate text-xs text-slate-400">Receba os links das lives, novidades e comunicados da Academy em primeira mão.</p>
-          </div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="shrink-0 text-[#25D366] transition-transform group-hover:translate-x-0.5"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </a>
-      )}
+      {/* ─── Leitura. Nível 1 e 2, sem card. ─────────────────────────── */}
+      <header>
+        <p className="font-mono text-meta uppercase text-ds-text-3">
+          {hoje(new Date().toISOString())}
+          {full && <> · <span className="text-ds-accent">assinatura ativa</span></>}
+        </p>
+        <h1 className="mt-3 text-balance font-display text-display font-semibold text-ds-text">
+          Olá{firstName ? `, ${firstName}` : ""}
+        </h1>
+        <p className="mt-2 max-w-xl text-body text-ds-text-2">{leitura}</p>
+      </header>
 
-      {/* Stats */}
-      {courses.length > 0 && (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="card-hover glass rounded-2xl border border-white/8 p-4">
-              <div className="grid h-9 w-9 place-items-center rounded-xl text-ink-900 shadow" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d={s.d} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div>
-              <p className="mt-3 font-display text-2xl font-bold text-white">{s.value}</p>
-              <p className="text-xs text-slate-400">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Continuar de onde parou */}
-      {resume && (
-        <Link href={`/aprender/${resume.slug}`} className="group mt-8 block overflow-hidden rounded-3xl border border-white/8">
-          <div className="relative min-h-[220px] p-6 sm:p-8">
-            <Cover url={resume.cover_url} title={resume.title} />
-            <div className="relative flex h-full min-h-[172px] flex-col justify-end">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-green">{resume.pct > 0 ? "Continuar de onde parou" : "Comece agora"}</p>
-              <h2 className="mt-1 max-w-lg font-display text-2xl font-bold text-white sm:text-3xl">{resume.title}</h2>
-              {resume.subtitle && <p className="mt-1 max-w-lg text-sm text-slate-300">{resume.subtitle}</p>}
-              <div className="mt-4 flex items-center gap-4">
-                <span className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform group-hover:scale-[1.02]">
-                  {resume.pct > 0 ? "Continuar" : "Começar"}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      {/* ─── Próximo passo. A única ação principal da tela. ───────────── */}
+      <section aria-labelledby="passo" className="border-l-2 border-ds-accent pl-5 tablet:pl-6">
+        <p id="passo" className="font-mono text-meta uppercase text-ds-text-3">Próximo passo</p>
+        <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+          <div className="min-w-0 max-w-lg">
+            <h2 className="text-balance font-display text-section font-semibold text-ds-text">{passo.titulo}</h2>
+            <p className="mt-1 text-body-sm text-ds-text-2">{passo.apoio}</p>
+            {passo.curso && (
+              <div className="mt-3 flex items-center gap-3">
+                <span className="h-0.5 w-full max-w-[14rem] bg-ds-line" aria-hidden="true">
+                  <span className="block h-0.5 bg-ds-accent" style={{ width: `${Math.max(2, passo.curso.pct)}%` }} />
                 </span>
-                <div className="hidden flex-1 sm:block">
-                  <div className="h-2 overflow-hidden rounded-full bg-white/15">
-                    <div className="h-full bg-gradient-to-r from-brand-green to-brand-blue" style={{ width: `${resume.pct}%` }} />
-                  </div>
-                  <p className="mt-1 text-xs text-slate-300">{resume.done}/{resume.total} aulas · {resume.pct}%</p>
-                </div>
+                <span className="font-mono text-meta tabular-nums text-ds-text-3">{passo.curso.pct}%</span>
               </div>
-            </div>
-          </div>
-        </Link>
-      )}
-
-      {/* Próximos ao vivo / mentorias da turma */}
-      {upcoming.length > 0 && (full || courses.length > 0) && (
-        <div className="mt-8 overflow-hidden rounded-3xl border border-white/8 bg-gradient-to-br from-brand-blue/[0.07] via-transparent to-brand-teal/[0.05] p-5 sm:p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-blue to-brand-cyan text-ink-900 shadow">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-              <div>
-                <h2 className="font-display text-lg font-bold text-white">Próximos ao vivo</h2>
-                <p className="text-xs text-slate-400">Encontros e mentorias da sua turma</p>
-              </div>
-            </div>
-            <Link href="/conta/agenda" className="text-sm font-medium text-brand-teal hover:underline">Ver agenda →</Link>
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            {upcoming.map((l: any) => (
-              <Link key={l.id} href="/conta/agenda" className="group rounded-2xl border border-white/8 bg-white/[0.03] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-teal/30">
-                <div className="flex items-center gap-2">
-                  {l.kind === "mentoria" ? (
-                    <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>
-                  ) : (
-                    <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">Live</span>
-                  )}
-                  <span className="text-xs font-semibold text-brand-teal">{evtCountdown(l.starts_at)}</span>
-                </div>
-                <p className="mt-2 font-semibold text-white transition-colors group-hover:text-brand-teal">{l.title}</p>
-                <p className="mt-1 text-xs capitalize text-slate-400">{evtWhen(l.starts_at)}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Acesso rápido (subido pra cima) */}
-      <div className="mt-8">
-        <h2 className="font-display text-lg font-bold text-white">Acesso rápido</h2>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {shortcuts.map((s) => (
-            <Link key={s.href} href={s.href} className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-white/20">
-              <span className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-20 blur-2xl transition-opacity duration-300 group-hover:opacity-40" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }} />
-              <span className="relative grid h-11 w-11 place-items-center rounded-xl text-ink-900 shadow-lg transition-transform duration-300 group-hover:scale-110" style={{ backgroundImage: `linear-gradient(135deg, ${s.from}, ${s.to})` }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d={s.d} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-              <p className="relative mt-3 text-sm font-semibold text-white">{s.label}</p>
-              <p className="relative text-[0.7rem] text-slate-400">{s.sub}</p>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Competências esfriando (Freshness em queda) */}
-      {cooling.length > 0 && (
-        <div className="mt-8 overflow-hidden rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-400/[0.07] via-transparent to-transparent p-5 sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-ink-900 shadow">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2M12 21a9 9 0 100-18 9 9 0 000 18z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
-              <div>
-                <h2 className="font-display text-lg font-bold text-white">Hora de revisar</h2>
-                <p className="text-xs text-slate-400">Faz um tempo que você não pratica isto. O conhecimento continua seu, mas esfria.</p>
-              </div>
-            </div>
-            <Link href="/conta/desafios" className="text-sm font-medium text-amber-300 hover:underline">Ver desafios →</Link>
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {cooling.map((c) => (
-              <div key={c.id} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
-                <p className="truncate font-semibold text-white">{c.name}</p>
-                <p className="mt-0.5 text-xs text-slate-400">{c.days} dias sem atividade</p>
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500" style={{ width: `${Math.max(4, c.freshness)}%` }} />
-                </div>
-                <p className="mt-1.5 text-[0.7rem] text-slate-500">{c.score} pontos · frescor {c.freshness}%</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Enquete: próximo workshop */}
-      <div className="mt-8">
-        <WorkshopPoll options={WORKSHOP_OPTIONS} counts={voteCounts} myVote={myVote} />
-      </div>
-
-      {/* Meus cursos */}
-      <div className="mt-10">
-        <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold text-white">Meus cursos</h2>
-          <Link href="/cursos" className="text-sm font-medium text-brand-green hover:underline">Ver catálogo →</Link>
-        </div>
-
-        {courses.length === 0 ? (
-          <div className="mt-4 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center">
-            <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-ink-900">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4zM4 10h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </div>
-            {full ? (
-              <>
-                <p className="font-medium text-white">Seu acesso está ativo. 🎉</p>
-                <p className="mt-1 text-sm text-slate-400">Os treinamentos liberados aparecem aqui. Enquanto isso, veja o que vem por aí no catálogo abaixo e participe dos encontros ao vivo.</p>
-                <Link href="/conta/agenda" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Ver agenda</Link>
-              </>
-            ) : (
-              <>
-                <p className="font-medium text-white">Você ainda não tem acesso.</p>
-                <p className="mt-1 text-sm text-slate-400">Assine a Academy e libere todos os treinamentos.</p>
-                <Link href="/matricula" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Ver assinatura</Link>
-              </>
             )}
           </div>
-        ) : (
-          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {withPct.map((c) => {
-              const complete = c.total > 0 && c.pct === 100;
-              return (
-                <Link key={c.id} href={`/aprender/${c.slug}`} className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/8 bg-white/[0.02] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-green/30 hover:shadow-[0_24px_60px_-24px_rgba(52,232,160,0.45)]">
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <Cover url={c.cover_url} title={c.title} />
-                    {/* Play no hover */}
-                    <span className="absolute inset-0 grid place-items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <span className="grid h-14 w-14 place-items-center rounded-full bg-white/15 backdrop-blur-sm ring-1 ring-white/30">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z" /></svg>
-                      </span>
-                    </span>
-                    {complete ? (
-                      <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-brand-green px-2.5 py-1 text-[0.65rem] font-bold text-ink-900 shadow-lg"><svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>Concluído</span>
-                    ) : c.pct > 0 ? (
-                      <span className="absolute right-3 top-3 rounded-full bg-ink-900/80 px-2.5 py-1 text-[0.65rem] font-bold text-brand-teal shadow-lg backdrop-blur">{c.pct}%</span>
-                    ) : (
-                      <span className="absolute right-3 top-3 rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-2.5 py-1 text-[0.65rem] font-bold text-ink-900 shadow-lg">Novo</span>
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="font-display text-lg font-bold text-white transition-colors group-hover:text-brand-green">{c.title}</h3>
-                    <div className="mt-auto pt-4">
-                      <div className="mb-1.5 flex items-center justify-between text-xs">
-                        <span className="text-slate-400">{c.done}/{c.total} aulas</span>
-                        <span className="font-bold text-brand-green">{c.pct}%</span>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                        <div className="h-full rounded-full bg-gradient-to-r from-brand-green via-brand-teal to-brand-blue bg-[length:200%_auto] animate-gradient-x transition-all duration-500" style={{ width: `${Math.max(complete ? 100 : c.pct, 4)}%` }} />
-                      </div>
-                      <div className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900 opacity-90 transition-all duration-300 group-hover:opacity-100 group-hover:shadow-md">
-                        {complete ? "Rever curso" : c.pct > 0 ? "Continuar" : "Começar agora"}
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
+          <Button href={passo.href} size="lg" className="w-full tablet:w-auto">{passo.rotulo}</Button>
+        </div>
+      </section>
 
-      {/* Catálogo (em breve / disponível) */}
-      {catalogo.length > 0 && (
-        <div className="mt-10">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-bold text-white">{full ? "Catálogo" : "Em breve no catálogo"}</h2>
-            <span className="text-xs text-slate-500">{catalogo.length} treinamento{catalogo.length === 1 ? "" : "s"}</span>
-          </div>
-          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {catalogo.map((c: any) => (
-              <Link key={c.id} href={full ? `/aprender/${c.slug}` : "/cursos"} className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/8 bg-white/[0.02] transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-green/30">
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <Cover url={c.cover_url} title={c.title} />
-                  <span className={`absolute right-3 top-3 rounded-full px-2.5 py-1 text-[0.65rem] font-bold shadow-lg ${full ? "bg-gradient-to-r from-brand-green to-brand-blue text-ink-900" : "bg-ink-900/80 text-brand-teal backdrop-blur"}`}>{full ? "Disponível" : "Em breve"}</span>
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <h3 className="font-display text-lg font-bold text-white transition-colors group-hover:text-brand-green">{c.title}</h3>
-                  {c.subtitle && <p className="mt-1 line-clamp-2 text-sm text-slate-400">{c.subtitle}</p>}
-                  <div className="mt-auto pt-4 text-xs font-semibold text-brand-green">{full ? "Acessar agora →" : "Liberação em breve"}</div>
-                </div>
-              </Link>
+      {/* ─── Régua de Dados. Substitui os quatro KPI cards. ───────────── */}
+      <DataRule
+        items={[
+          { label: "Treinamentos", value: courses.length },
+          { label: "Em andamento", value: emAndamento.length },
+          { label: "Concluídos", value: concluidos },
+          { label: "Certificados", value: certCount ?? 0 },
+          { label: "Competências", value: resumo.developed, hint: resumo.advanced ? `${resumo.advanced} avançadas` : undefined },
+        ]}
+      />
+
+      {/* ─── Barra de Evidência. Dado que o motor já calculava. ───────── */}
+      {temEvidencia && (
+        <section aria-labelledby="evidencia">
+          <SectionHeader
+            title="De onde vem o seu conhecimento"
+            meta={resumo.best ? `melhor competência ${resumo.best}/100` : undefined}
+          />
+          <p className="mt-3 max-w-xl text-body-sm text-ds-text-2">
+            Cada competência soma cinco tipos de evidência. Esta é a sua composição mais forte hoje.
+          </p>
+          <EvidenceBar parts={resumo.parts} className="mt-4 max-w-2xl" />
+        </section>
+      )}
+
+      {/* ─── Halo de Frescor. Só aparece quando há decaimento real. ───── */}
+      {resumo.cooling.length > 0 && (
+        <section aria-labelledby="frescor">
+          <SectionHeader
+            title="Hora de revisar"
+            meta="frescor em queda"
+            action={<Link href="/conta/desafios" className="text-label text-ds-accent hover:underline">Ver desafios</Link>}
+          />
+          <p className="mt-3 max-w-xl text-body-sm text-ds-text-2">
+            O conhecimento continua seu. O que caiu foi o frescor, por falta de prática recente.
+          </p>
+          <div className="mt-5 grid gap-6 tablet:grid-cols-2 lg:grid-cols-4">
+            {resumo.cooling.map((c) => (
+              <FreshnessRing key={c.id} value={c.freshness} name={c.name} days={c.days} />
             ))}
           </div>
-        </div>
+        </section>
+      )}
+
+      {/* ─── Percurso prático. Só renderiza com fato real. ────────────── */}
+      {(aprovadas.length > 0 || emCorrecao > 0) && (
+        <section aria-labelledby="pratica">
+          <SectionHeader title="Sua prática" meta={`${aprovadas.length} ${aprovadas.length === 1 ? "aprovada" : "aprovadas"}`} />
+          <ul className="mt-4 flex flex-col">
+            {emCorrecao > 0 && (
+              <li className="flex items-baseline justify-between gap-4 border-b border-ds-line-soft py-2.5">
+                <span className="text-body-sm text-ds-text-2">
+                  {emCorrecao} {emCorrecao === 1 ? "entrega aguardando correção" : "entregas aguardando correção"}
+                </span>
+                <Badge tone="attention">em correção</Badge>
+              </li>
+            )}
+            {aprovadas.slice(0, 3).map((e: any, i: number) => (
+              <li key={i} className="flex items-baseline justify-between gap-4 border-b border-ds-line-soft py-2.5">
+                <span className="text-body-sm text-ds-text-2">Desafio aprovado, evidência registrada no seu universo</span>
+                <span className="shrink-0 font-mono text-meta uppercase text-ds-text-3">
+                  {e.reviewed_at ? quando(e.reviewed_at) : "—"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* ─── Em curso. Lista editorial, não grade de cards. ───────────── */}
+      <section aria-labelledby="cursos">
+        <SectionHeader
+          title="Em curso"
+          meta={courses.length ? `${courses.length} ${courses.length === 1 ? "treinamento" : "treinamentos"}` : undefined}
+          action={<Link href="/cursos" className="text-label text-ds-text-2 hover:text-ds-text">Catálogo</Link>}
+        />
+        {withPct.length === 0 ? (
+          <EmptyState
+            title={full ? "Nenhum treinamento iniciado ainda" : "Você ainda não tem acesso"}
+            description={
+              full
+                ? "Seu acesso está ativo. Escolha um treinamento no catálogo e ele aparece aqui."
+                : "Assine a Academy para liberar todos os treinamentos, a comunidade e as ferramentas."
+            }
+            action={<Button href={full ? "/cursos" : "/matricula"} variant={full ? "secondary" : "primary"}>{full ? "Abrir catálogo" : "Ver assinatura"}</Button>}
+          />
+        ) : (
+          <ul className="mt-2 flex flex-col">
+            {withPct.map((c) => {
+              const completo = c.total > 0 && c.pct === 100;
+              return (
+                <li key={c.id}>
+                  <Link
+                    href={`/aprender/${c.slug}`}
+                    className="group flex items-center gap-4 border-b border-ds-line-soft py-4 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                  >
+                    <Thumb url={c.cover_url} title={c.title} />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <span className="truncate font-display text-component font-medium text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
+                          {c.title}
+                        </span>
+                        {completo && <Badge tone="accent">concluído</Badge>}
+                      </span>
+                      <span className="mt-2 flex items-center gap-3">
+                        <span className="h-0.5 w-full max-w-[16rem] bg-ds-line" aria-hidden="true">
+                          <span
+                            className={`block h-0.5 ${completo ? "bg-ds-accent" : "bg-ds-text-3"}`}
+                            style={{ width: `${Math.max(2, c.pct)}%` }}
+                          />
+                        </span>
+                        <span className="shrink-0 font-mono text-meta tabular-nums text-ds-text-3">
+                          {c.done}/{c.total}
+                        </span>
+                      </span>
+                    </span>
+                    <span className="shrink-0 font-mono text-data tabular-nums text-ds-text-2">{c.pct}<span className="text-meta text-ds-text-3">%</span></span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      {/* ─── Agenda. Datas em mono, sem card. ─────────────────────────── */}
+      {upcoming.length > 0 && (full || courses.length > 0) && (
+        <section aria-labelledby="agenda">
+          <SectionHeader
+            title="Próximos ao vivo"
+            action={<Link href="/conta/agenda" className="text-label text-ds-text-2 hover:text-ds-text">Agenda</Link>}
+          />
+          <ul className="mt-2 flex flex-col">
+            {upcoming.map((l: any) => (
+              <li key={l.id}>
+                <Link
+                  href="/conta/agenda"
+                  className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-ds-line-soft py-3 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                >
+                  <span className="flex min-w-0 items-baseline gap-3">
+                    <span className="shrink-0 font-mono text-meta uppercase text-ds-text-3">{quando(l.starts_at)}</span>
+                    <span className="truncate text-body-sm text-ds-text">{l.title}</span>
+                  </span>
+                  <span className="flex shrink-0 items-baseline gap-3">
+                    <span className="text-caption text-ds-text-3">{l.kind === "mentoria" ? "Mentoria" : "Live"}</span>
+                    <span className="font-mono text-meta text-ds-accent">{emQuanto(l.starts_at)}</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* ─── Enquete. Função preservada, linguagem nova. ──────────────── */}
+      <section aria-labelledby="enquete">
+        <WorkshopPoll options={WORKSHOP_OPTIONS} counts={voteCounts} myVote={myVote} />
+      </section>
+
+      {/* ─── Catálogo. Secundário de propósito. ───────────────────────── */}
+      {catalogo.length > 0 && (
+        <section aria-labelledby="catalogo">
+          <SectionHeader
+            title={full ? "Também disponível" : "Em breve no catálogo"}
+            meta={`${catalogo.length} ${catalogo.length === 1 ? "treinamento" : "treinamentos"}`}
+          />
+          <ul className="mt-2 flex flex-col">
+            {catalogo.slice(0, 6).map((c: any) => (
+              <li key={c.id}>
+                <Link
+                  href={full ? `/aprender/${c.slug}` : "/cursos"}
+                  className="group flex items-baseline justify-between gap-4 border-b border-ds-line-soft py-3 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-body-sm text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
+                      {c.title}
+                    </span>
+                    {c.subtitle && <span className="block truncate text-caption text-ds-text-3">{c.subtitle}</span>}
+                  </span>
+                  <span className="shrink-0 font-mono text-meta uppercase text-ds-text-3">
+                    {full ? "acessar" : "em breve"}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* ─── Rodapé útil. Era um banner verde; virou uma linha. ───────── */}
+      {COMMUNITY_WHATSAPP_URL && (
+        <p className="border-t border-ds-line pt-5 text-body-sm text-ds-text-3">
+          Avisos das lives e novidades saem primeiro no{" "}
+          <a
+            href={COMMUNITY_WHATSAPP_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="text-ds-text-2 underline decoration-ds-line underline-offset-4 transition-colors duration-fast ease-ds hover:text-ds-accent hover:decoration-ds-accent"
+          >
+            grupo do WhatsApp
+          </a>
+          .
+        </p>
       )}
     </div>
   );
