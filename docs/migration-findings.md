@@ -27,6 +27,10 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-014 | BUG | `/admin/cursos` | `saveCourse` descarta o resultado do Supabase no update e no insert. Erro de banco não interrompe nada: a action segue para o redirect como se tivesse gravado. No insert que falha, o redirect vai para `/admin/cursos/` com id vazio. | Alto. O administrador edita um curso, é levado de volta à página do curso e acredita ter salvo. É a mesma classe de M-003 e M-006, agora sobre a gravação inteira e não só sobre o upload. | aberto | Onda 1, lote D4 |
 | M-015 | BUG | `/admin/cursos` | `buildOptions` descarta alternativa em branco, inclusive quando é a marcada como correta. A pergunta é gravada sem nenhuma opção correta e nada avisa. Na correção, `opts[picked]?.correct` nunca é verdadeiro para ela. | Alto. Uma pergunta assim é impossível de acertar e trava a nota máxima abaixo do mínimo de aprovação. Com três perguntas e uma quebrada, o teto é 67% contra um mínimo padrão de 70%: ninguém passa e ninguém emite certificado. | aberto | Onda 1, lote D5 |
 | M-016 | RISCO | `/admin/cursos` | Excluir avaliação e excluir pergunta não pedem confirmação. Excluir a avaliação leva junto todas as perguntas. | Médio. Um clique apaga o banco de perguntas do curso sem volta. | aberto | Onda 1, lote D5 |
+| M-017 | BUG | `/admin/cursos` | Excluir módulo ou aula não pede confirmação e o banco apaga em cascata: módulo leva as aulas, e aula leva `lesson_progress` e `lesson_comments`. | Crítico. Um clique destrói progresso e comentários de aluno, não só conteúdo do administrador, e não há como desfazer. | aberto | Pré-auditoria do D6 |
+| M-018 | BUG | `/admin/cursos` | `ku_activity_events` não tem chave estrangeira para `lessons`. Apagar uma aula remove o progresso mas mantém a evidência já registrada no Knowledge Universe. | Alto. O aluno fica com evidência de uma aula que não existe mais, e o score continua contando por ela. Anda junto com M-017. | aberto | Pré-auditoria do D6 |
+| M-019 | RISCO | `/admin/cursos` | `moveItem` recebe `table` e `filter_col` por campo oculto e os usa direto em `from(table).eq(filterCol, ...)`, sem lista de valores permitidos, com cliente de service role. | Alto. Exige sessão de administrador, então não escala privilégio, mas é entrada do formulário chegando crua na consulta. Alcança qualquer tabela que tenha uma coluna `position`. | aberto | Pré-auditoria do D6 |
+| M-020 | DÍVIDA | `/admin/cursos` | Das oito actions do Curriculum, só `saveLesson` dá retorno, por redirect com `?ok`. As outras sete não avisam nada, e nenhuma confere o resultado do banco. | Médio. O administrador renomeia, libera, cria ou apaga e não recebe confirmação nem erro. Mesma raiz de M-014. | aberto | Pré-auditoria do D6 |
 
 ## Observações
 
@@ -78,4 +82,18 @@ em outras telas. Se um dia forem tratados, vale tratar os três de uma vez.
 
 **M-014** vale também para `quizActions.ts`: as seis actions do quiz descartam o
 resultado do Supabase do mesmo jeito que `saveCourse`.
+
+**M-017 e M-018** são o par mais sério do produto até agora e devem ser tratados
+juntos: um destrói dado de aluno sem avisar, o outro deixa resíduo no histórico
+quando isso acontece.
+
+**M-019** ficou deliberadamente fora do D6: ordenação não pertence à família de
+formulários e nenhum arquivo dela foi tocado.
+
+**M-020** soma-se a M-014: a ausência de retorno e a ausência de verificação do
+resultado do banco aparecem nas mesmas telas, por motivos diferentes.
+
+O required assimétrico de aula, obrigatório na criação e opcional na edição,
+é o mesmo defeito de M-001 em lives. Não abri item novo: quando M-001 for
+tratado, vale conferir `/admin/cursos` junto.
 

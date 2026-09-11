@@ -1,3 +1,6 @@
+import { CalendarDays } from "lucide-react";
+import { Button, ICON } from "@/components/ui/primitives";
+import { Field, SelectField } from "@/components/ui/form";
 import {
   addModule,
   renameModule,
@@ -83,11 +86,20 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
             {/* Cabeçalho do módulo */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/5 font-display text-sm font-bold text-brand-green">{mi + 1}</span>
+              {/* Renomear é edição no lugar, dentro do cabeçalho do módulo. O rótulo
+                  existe e é lido, mas fica oculto: torná-lo visível empurraria a
+                  linha para baixo e redesenharia a árvore, que está fora do lote. */}
               <form action={renameModule} className="flex flex-1 items-center gap-2">
                 <input type="hidden" name="id" value={m.id} />
                 <input type="hidden" name="course_id" value={courseId} />
-                <input name="title" defaultValue={m.title} className={`${field} font-semibold`} />
-                <button className={smallBtn}>Renomear</button>
+                <label htmlFor={`modulo-${m.id}-title`} className="sr-only">Nome do módulo {mi + 1}</label>
+                <input
+                  id={`modulo-${m.id}-title`}
+                  name="title"
+                  defaultValue={m.title}
+                  className="h-10 w-full rounded-ctl border border-ds-line bg-ds-surface px-3 text-body font-medium text-ds-text transition-colors duration-fast ease-ds hover:border-ds-text-3"
+                />
+                <Button type="submit" variant="secondary" size="sm">Renomear</Button>
               </form>
               <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-400">{m.lessons.length} aula(s)</span>
               <MoveButtons table="course_modules" col="course_id" val={courseId} id={m.id} courseId={courseId} />
@@ -99,14 +111,20 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
             </div>
 
             {/* Drip: liberar em */}
-            <form action={setModuleRelease} className="mt-3 flex flex-wrap items-center gap-2 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-xs text-slate-400">
+            <form action={setModuleRelease} className="mt-3 flex flex-wrap items-center gap-2.5 rounded-srf border border-ds-line-soft px-3 py-2">
               <input type="hidden" name="module_id" value={m.id} />
               <input type="hidden" name="course_id" value={courseId} />
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-slate-500"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              <span>Liberar módulo em:</span>
-              <input type="datetime-local" name="available_at" defaultValue={toLocalInput(m.available_at ?? null)} className="rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-white outline-none focus:border-brand-green/60" />
-              <button className={smallBtn}>Salvar</button>
-              <span className="text-slate-600">vazio = liberado agora</span>
+              <CalendarDays size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className="shrink-0 text-ds-text-3" />
+              <label htmlFor={`liberacao-${m.id}-available_at`} className="text-label text-ds-text-2">Liberar módulo em</label>
+              <input
+                id={`liberacao-${m.id}-available_at`}
+                type="datetime-local"
+                name="available_at"
+                defaultValue={toLocalInput(m.available_at ?? null)}
+                className="h-9 rounded-ctl border border-ds-line bg-ds-surface px-2.5 text-body-sm text-ds-text transition-colors duration-fast ease-ds hover:border-ds-text-3"
+              />
+              <Button type="submit" variant="secondary" size="sm">Salvar</Button>
+              <span className="text-caption text-ds-text-3">Em branco, o módulo fica liberado agora.</span>
             </form>
 
             {/* Aulas */}
@@ -193,17 +211,23 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
             </div>
 
             {/* Nova aula */}
-            <form action={addLesson} className="mt-3 rounded-xl border border-dashed border-white/10 p-3">
+            <form action={addLesson} className="mt-4 flex flex-col gap-3 border-t border-ds-line-soft pt-4">
               <input type="hidden" name="module_id" value={m.id} />
               <input type="hidden" name="course_id" value={courseId} />
-              <p className="mb-2 text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500">Nova aula</p>
-              <div className="flex flex-wrap items-center gap-2">
-                <input name="title" required placeholder="Título da aula" className={`${field} min-w-[180px] flex-1`} />
-                <select name="type" defaultValue="video" className={`${field} w-auto [&>option]:bg-ink-900`}>
+              <p className="text-meta uppercase text-ds-text-3">Nova aula</p>
+              <div className="flex flex-wrap items-end gap-3">
+                <Field
+                  scope={`aula-nova-${m.id}`}
+                  name="title"
+                  label="Título da aula"
+                  required
+                  className="min-w-[14rem] flex-1"
+                />
+                <SelectField scope={`aula-nova-${m.id}`} name="type" label="Tipo" defaultValue="video" className="w-auto">
                   <option value="video">Vídeo</option>
                   <option value="text">Texto</option>
-                </select>
-                <button className="rounded-lg bg-white/10 px-4 py-2 text-xs font-semibold text-white hover:bg-white/15">+ Adicionar</button>
+                </SelectField>
+                <Button type="submit" variant="secondary">Adicionar aula</Button>
               </div>
             </form>
           </div>
@@ -211,10 +235,17 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
       </div>
 
       {/* Novo módulo */}
-      <form action={addModule} className="mt-5 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-white/10 p-4">
+      <form action={addModule} className="mt-8 flex flex-wrap items-end gap-3 border-t border-ds-line pt-6">
         <input type="hidden" name="course_id" value={courseId} />
-        <input name="title" required placeholder="Novo módulo (ex.: Introdução)" className={`${field} flex-1`} />
-        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">+ Módulo</button>
+        <Field
+          scope="modulo-novo"
+          name="title"
+          label="Novo módulo"
+          required
+          placeholder="Introdução"
+          className="min-w-[16rem] flex-1"
+        />
+        <Button type="submit">Criar módulo</Button>
       </form>
     </div>
   );
