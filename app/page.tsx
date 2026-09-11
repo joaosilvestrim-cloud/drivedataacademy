@@ -3,6 +3,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import LaunchBanner from "@/components/LaunchBanner";
+import ProximasMentorias from "@/components/mentorias/ProximasMentorias";
 import CoursesSection from "@/components/CoursesSection";
 import VideoSection from "@/components/VideoSection";
 import MethodSection from "@/components/MethodSection";
@@ -24,6 +25,7 @@ export default function Home() {
       <main>
         <Hero />
         <LaunchBanner />
+        <ProximasMentorias cta={{ label: "Entrar para participar", href: "/entrar" }} />
         <CoursesSection />
         <VideoSection />
         <MethodSection />

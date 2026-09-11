@@ -5,9 +5,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFullAccess } from "@/lib/access";
 import { knowledgeSummary } from "@/lib/knowledge/summary";
 import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
-import { Button, Badge, ICON } from "@/components/ui/primitives";
+import { Button, Badge, Status, ICON } from "@/components/ui/primitives";
 import { SectionHeader, EmptyState } from "@/components/ui/layout";
 import { DataRule, EvidenceBar, FreshnessRing } from "@/components/ui/signature";
+import ProximasMentorias from "@/components/mentorias/ProximasMentorias";
 import WorkshopPoll from "./WorkshopPoll";
 import { WORKSHOP_OPTIONS } from "./workshop";
 
@@ -78,12 +79,12 @@ export default async function ContaHome() {
     .gte("starts_at", new Date(Date.now() - 2 * 3600e3).toISOString())
     .order("starts_at")
     .limit(3);
-  const upcoming = livesData ?? [];
+  const upcoming = (livesData ?? []).filter((l: any) => l.kind !== "mentoria");
 
   const [{ data: votesData }, { data: myVoteRow }, { data: catalogData }] = await Promise.all([
     admin.from("workshop_votes").select("option"),
     admin.from("workshop_votes").select("option").eq("user_id", user!.id).maybeSingle(),
-    admin.from("courses").select("id, slug, title, subtitle, cover_url").eq("published", true).order("position"),
+    admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon").eq("published", true).order("position"),
   ]);
   const voteCounts: Record<string, number> = {};
   for (const v of votesData ?? []) voteCounts[v.option] = (voteCounts[v.option] || 0) + 1;
@@ -322,6 +323,8 @@ export default async function ContaHome() {
         )}
       </section>
 
+      <ProximasMentorias className="" />
+
       {upcoming.length > 0 && (full || courses.length > 0) && (
         <section aria-labelledby="agenda">
           <SectionHeader
@@ -363,12 +366,15 @@ export default async function ContaHome() {
             {catalogo.slice(0, 6).map((c: any) => (
               <li key={c.id}>
                 <Link
-                  href={full ? `/aprender/${c.slug}` : "/cursos"}
+                  href={c.coming_soon || !full ? `/cursos/${c.slug}` : `/aprender/${c.slug}`}
                   className="group flex items-center justify-between gap-4 border-b border-ds-line-soft py-3 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
                 >
                   <span className="min-w-0">
-                    <span className="block truncate text-body-sm text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
-                      {c.title}
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-body-sm text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
+                        {c.title}
+                      </span>
+                      {c.coming_soon && <Status tone="attention">Em breve</Status>}
                     </span>
                     {c.subtitle && <span className="block truncate text-caption text-ds-text-3">{c.subtitle}</span>}
                   </span>
