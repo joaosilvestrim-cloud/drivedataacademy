@@ -93,6 +93,12 @@ das linhas de tabela e o realce do cartão selecionado não apareciam por isso.
 Regra: cor nova entra sempre como `--ds-x-c` em canais, mais o `--ds-x` pronto
 para quem escreve CSS na mão. Nunca só o hexadecimal.
 
+**Guardrail automatizável (ainda não implementado).** A falha foi silenciosa
+porque nada compara o que o código pede com o que o CSS entrega. A verificação
+é simples e cabe em um passo de build: varrer as fontes atrás de classes
+`*-ds-*` com barra, e conferir se cada uma aparece no CSS compilado. Divergência
+falha o build. Fica registrado como trabalho futuro, não feito agora.
+
 ---
 
 ## Escala tipográfica
@@ -141,3 +147,31 @@ Pagination, Search, Filter, Breadcrumb. Ainda não existe padrão real
 consolidado para eles no produto, e inventar a forma antes do uso produz
 abstração especulativa. O segundo piloto no admin é quem vai revelar a forma
 certa de tabela, filtro, busca e paginação.
+
+---
+
+## Dívidas registradas
+
+Encontradas durante a regressão da fundação. Nenhuma foi corrigida ali, de
+propósito: regressão não é hora de refinar.
+
+**Nomenclatura de rotas — DÍVIDA TÉCNICA / DX.** `/admin/turma` no singular é a
+configuração da assinatura mensal, que grava em `site_settings`. `/admin/turmas`
+no plural é gestão de turmas, que grava em `turmas` e `memberships`. São
+produtos diferentes com nomes quase iguais, e as duas pastas têm um arquivo
+`TurmaForm.tsx`. Renomear muda rota e URL, então é decisão de produto.
+
+**`TableWrap`, `Th` e `Td` não têm consumidor.** Nasceram antes de `DataTable`
+em `data.tsx`, que é o que as páginas usam. Atenção para quem for usá-las:
+`TableWrap` já renderiza a própria `<table>`, e aninhar outra dentro quebra a
+hidratação.
+
+**`--ds-text-3` fica em 4,21:1 sobre o fundo.** Abaixo de 4,5:1, que é o alvo de
+texto normal. Vale para descrição de campo, dica e metadado, em toda a
+plataforma. É anterior ao Design System e não foi criado pela correção dos
+tokens. Mexer nisso é mexer na paleta.
+
+**Selecionado se distingue por 2,78:1 em escala de cinza.** É a diferença entre
+a borda do cartão marcado e a do não marcado. Perceptível, porém abaixo de 3:1.
+A semântica não depende disso: o controle leva `aria-checked` e rótulo.
+
