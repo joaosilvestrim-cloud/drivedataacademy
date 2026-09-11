@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {Component,useEffect,useMemo,useRef,useState,type ReactNode} from 'react';
 import {ArrowLeft,ArrowUpRight,ArrowRight,Building2,ChartNoAxesCombined,Check,Clock3,Download,Info,Package,Pause,Plus,Minus,RotateCcw,Save as SaveIcon,ShoppingBag,Upload,Users,Wallet,X,Award} from 'lucide-react';
-import {advance,DEFAULT_DECISION,EVENTS,goals,initial,LEVELS,quote,reference,replay,type Area,type Decision,type Difficulty,type State} from '@/lib/decision-lab/engine';
+import {advance,DEFAULT_DECISION,eventFor,goals,initial,LEVELS,quote,reference,replay,type Area,type Decision,type Difficulty,type State} from '@/lib/decision-lab/engine';
 import {registerSimulation} from '@/app/(decision)/decision-lab/actions';
 import {newAttempt,readSave,type Save} from '@/lib/decision-lab/storage';
 import styles from './lab.module.css';
@@ -55,15 +55,15 @@ export default function DecisionLab({userId,demo=false}:{userId:string;demo?:boo
   useEffect(()=>{if(!ready||!save||!persist)return;try{localStorage.setItem(key,JSON.stringify(save));setSaveStatus('Salvo neste navegador');}catch{setPersist(false);setSaveStatus('Não foi possível salvar');setError('O navegador não permitiu salvar. Use Exportar partida para guardar seu progresso.');}},[save,ready,persist,key]);
   useEffect(()=>{const mq=window.matchMedia('(prefers-reduced-motion: reduce)');const update=()=>setReduced(mq.matches);update();mq.addEventListener('change',update);return()=>mq.removeEventListener('change',update);},[]);
   const active=save?.attempts.find(a=>a.id===save.activeId);
-  const current=useMemo(()=>active?replay(active.difficulty,active.decisions):initial('guided'),[active]);
-  const state=useMemo(()=>viewRound===null||tab!=='company'?current:replay(current.difficulty,active?.decisions.slice(0,viewRound)??[]),[viewRound,current,active,tab]);
+  const current=useMemo(()=>active?replay(active.difficulty,active.decisions,active.seed):initial('guided'),[active]);
+  const state=useMemo(()=>viewRound===null||tab!=='company'?current:replay(current.difficulty,active?.decisions.slice(0,viewRound)??[],active?.seed),[viewRound,current,active,tab]);
   const finished=current.day===30||current.cash<3250;
   const [regMsg,setRegMsg]=useState(''),[regBusy,setRegBusy]=useState(false),[regDone,setRegDone]=useState(false);
   const [firstRun,setFirstRun]=useState(false);
   const historical=tab==='company'&&viewRound!==null&&viewRound<current.history.length;
   const budget=quote(current,decision),affordable=budget.upfront<=current.cash;
-  const event=EVENTS[Math.min(5,current.history.length)],last=state.history.at(-1);
-  const comparison=useMemo(()=>{const other=save?.attempts.find(a=>a.id===compareId);return other?replay(other.difficulty,other.decisions):reference(current.difficulty,current.history.length);},[save,compareId,current]);
+  const event=eventFor(current),last=state.history.at(-1);
+  const comparison=useMemo(()=>{const other=save?.attempts.find(a=>a.id===compareId);return other?replay(other.difficulty,other.decisions,other.seed):reference(current.difficulty,current.history.length);},[save,compareId,current]);
   const canEdit=ready&&!historical&&!finished;
   const setField=<K extends keyof Decision>(k:K,v:Decision[K])=>setDecision(d=>({...d,[k]:v}));
   function apply() {

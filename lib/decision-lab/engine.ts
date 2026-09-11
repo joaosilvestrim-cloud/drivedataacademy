@@ -11,13 +11,28 @@ export interface Round {
 export interface State {
   difficulty:Difficulty; day:number; cash:number; stock:number; inventoryValue:number;
   satisfaction:number; profit:number; revenue:number; sold:number; demand:number;
-  deliveries:Delivery[]; history:Round[];
+  deliveries:Delivery[]; history:Round[]; seed?:number;
 }
-export const LEVELS:Record<Difficulty,{label:string;cash:number;target:number;description:string}> = {
-  guided:{label:'Explorador',cash:36000,target:16000,description:'Mais reserva de caixa para experimentar.'},
-  standard:{label:'Gestor',cash:26000,target:22000,description:'Equilibre crescimento, caixa e atendimento.'},
-  expert:{label:'Estrategista',cash:19000,target:26000,description:'Menos caixa e maior meta de resultado.'},
+// cash e o caixa inicial; cashTarget e a meta de caixa ao final. Eram o mesmo
+// numero, o que invertia a dificuldade: quem comecava com mais caixa precisava
+// terminar com mais. Valores calibrados por varredura de estrategias.
+export const LEVELS:Record<Difficulty,{label:string;cash:number;target:number;cashTarget:number;satisfaction:number;description:string}> = {
+  guided:{label:'Explorador',cash:36000,target:12000,cashTarget:24000,satisfaction:58,description:'Mais reserva de caixa e metas mais suaves para experimentar.'},
+  standard:{label:'Gestor',cash:26000,target:28000,cashTarget:31000,satisfaction:66,description:'Equilibre crescimento, caixa e atendimento.'},
+  expert:{label:'Estrategista',cash:19000,target:43000,cashTarget:39000,satisfaction:73,description:'Menos caixa e metas exigentes nas tres frentes.'},
 };
+
+// Ordem dos eventos por partida. Sem semente mantemos a ordem original, entao
+// partidas salvas antes desta mudanca reproduzem exatamente igual. O primeiro
+// e o ultimo evento sao fixos porque o texto deles depende da posicao.
+export function eventOrder(seed?:number):number[] {
+  if(seed===undefined||!Number.isFinite(seed))return [0,1,2,3,4,5];
+  const meio=[1,2,3,4];let x=(Math.trunc(seed)>>>0)||1;
+  const next=()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x;};
+  for(let i=meio.length-1;i>0;i--){const j=next()%(i+1);[meio[i],meio[j]]=[meio[j],meio[i]];}
+  return [0,...meio,5];
+}
+export function eventFor(state:State) {return EVENTS[eventOrder(state.seed)[Math.min(5,state.history.length)]];}
 export const DEFAULT_DECISION:Decision={price:55,marketing:600,order:450,express:false,team:1};
 export const EVENTS = [
   {name:'Uma nova gestão',headline:'A demanda está estável. Seu desafio é vender com margem e preservar o atendimento.',demand:1,cost:34},
@@ -29,9 +44,9 @@ export const EVENTS = [
 ] as const;
 const money=(value:number)=>Math.round((value+Number.EPSILON)*100)/100;
 const clamp=(value:number,min:number,max:number)=>Math.max(min,Math.min(max,value));
-export function initial(difficulty:Difficulty):State {
+export function initial(difficulty:Difficulty,seed?:number):State {
   if(!Object.hasOwn(LEVELS,difficulty))throw new Error('Nível inválido.');
-  return {difficulty,day:0,cash:LEVELS[difficulty].cash,stock:500,inventoryValue:17000,satisfaction:75,profit:0,revenue:0,sold:0,demand:0,deliveries:[],history:[]};
+  return {difficulty,day:0,cash:LEVELS[difficulty].cash,stock:500,inventoryValue:17000,satisfaction:75,profit:0,revenue:0,sold:0,demand:0,deliveries:[],history:[],seed};
 }
 export function validateDecision(input:unknown):Decision {
   if(!input||typeof input!=='object'||Array.isArray(input))throw new Error('Decisão inválida.');
@@ -43,7 +58,7 @@ export function validateDecision(input:unknown):Decision {
   return {price:d.price,marketing:d.marketing,order:d.order,express:d.express,team:d.team};
 }
 export function quote(state:State,decision:Decision) {
-  const d=validateDecision(decision),event=EVENTS[Math.min(5,state.history.length)];
+  const d=validateDecision(decision),event=eventFor(state);
   const unitCost=money(event.cost*(d.express?1.15:1));
   const purchase=money(d.order*unitCost);
   const overhead=3250+d.marketing+d.team*750;
@@ -51,7 +66,7 @@ export function quote(state:State,decision:Decision) {
 }
 export function advance(state:State,input:unknown):State {
   if(state.day>=30)throw new Error('Esta missão já foi concluída. Comece uma nova estratégia.');
-  const decision=validateDecision(input),round=state.history.length,event=EVENTS[round];
+  const decision=validateDecision(input),round=state.history.length,event=eventFor(state);
   const budget=quote(state,decision);
   if(budget.upfront>state.cash)throw new Error('O caixa não cobre compras e custos deste ciclo. Reduza a compra, divulgação ou equipe.');
   const next:State={...state,deliveries:state.deliveries.map(d=>({...d})),history:[...state.history]};
@@ -84,7 +99,7 @@ export function advance(state:State,input:unknown):State {
   next.history.push({round:round+1,day:next.day,decision,event:event.name,demand,sold,lost,revenue,costOfGoods,overhead:budget.overhead,profit,cash:next.cash,stock:next.stock,satisfaction:next.satisfaction,service:money(service*100),receipts,purchase:budget.purchase,notes});
   return next;
 }
-export function replay(difficulty:Difficulty,decisions:Decision[]) {return decisions.reduce((state,d)=>advance(state,d),initial(difficulty));}
+export function replay(difficulty:Difficulty,decisions:Decision[],seed?:number) {return decisions.reduce((state,d)=>advance(state,d),initial(difficulty,seed));}
 export function reference(difficulty:Difficulty,rounds=6):State {
   let state=initial(difficulty);
   for(let i=0;i<Math.min(6,rounds);i++) {
@@ -98,7 +113,8 @@ export function reference(difficulty:Difficulty,rounds=6):State {
 }
 export function goals(state:State) {
   const level=LEVELS[state.difficulty];
+  const caixa=level.cashTarget??level.cash,satisfacao=level.satisfaction??70;
   return [{name:'Resultado acumulado',value:state.profit,target:level.target,unit:'money',met:state.profit>=level.target},
-    {name:'Caixa preservado',value:state.cash,target:level.cash,unit:'money',met:state.cash>=level.cash},
-    {name:'Satisfação dos clientes',value:state.satisfaction,target:70,unit:'points',met:state.satisfaction>=70}];
+    {name:'Caixa ao final',value:state.cash,target:caixa,unit:'money',met:state.cash>=caixa},
+    {name:'Satisfação dos clientes',value:state.satisfaction,target:satisfacao,unit:'points',met:state.satisfaction>=satisfacao}];
 }
