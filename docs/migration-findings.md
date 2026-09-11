@@ -24,6 +24,7 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-011 | DÍVIDA | `/admin/universo` | A tela aceita construir configuração inválida e só avisa ao salvar: soma de pesos diferente de 100, pré-requisito de uma competência para ela mesma, relação de uma competência para ela mesma. O servidor rejeita nas três. | O administrador pode montar várias regras erradas e descobrir tudo de uma vez, numa única mensagem. | aberto | Onda 1, lote D2 |
 | M-012 | BUG | `/admin/universo` | `revokeKnowledgeAccess` roda um update sem conferir quantas linhas mudaram. Aluno sem concessão individual gera zero linhas afetadas e a tela responde "A concessão individual foi encerrada". | Alto. O administrador acredita ter encerrado um acesso que nunca existiu, ou que existe por outro caminho, e não percebe. O seletor lista todos os alunos, não só os que têm concessão. | aberto | Onda 1, lote D3 |
 | M-013 | DÍVIDA | `/admin/universo` | `grantKnowledgeAccess` faz upsert na chave primária de `ku_entitlements`. Conceder de novo sobrescreve validade e `granted_by`, sem histórico. Encerrar só carimba `expires_at` e não registra quem encerrou. | Alto para rastreabilidade. Não há como reconstruir quem concedeu o quê, por quanto tempo, nem quem encerrou. Contrasta com a evidência prática, que é append-only e auditável. | aberto | Onda 1, lote D3 |
+| M-014 | BUG | `/admin/cursos` | `saveCourse` descarta o resultado do Supabase no update e no insert. Erro de banco não interrompe nada: a action segue para o redirect como se tivesse gravado. No insert que falha, o redirect vai para `/admin/cursos/` com id vazio. | Alto. O administrador edita um curso, é levado de volta à página do curso e acredita ter salvo. É a mesma classe de M-003 e M-006, agora sobre a gravação inteira e não só sobre o upload. | aberto | Onda 1, lote D4 |
 
 ## Observações
 
@@ -58,4 +59,9 @@ produto: `update` sem linha afetada não é erro no PostgREST.
 **M-013** é decisão de modelagem, não descuido: `ku_entitlements` tem `user_id`
 como chave primária, então uma linha por aluno é o desenho. Registrar histórico
 significaria outra tabela.
+
+**M-014** tem um detalhe extra: `saveCourse` lê o título com
+`(formData.get("title") as string).trim()`, sem proteção contra ausência. Hoje o
+campo é obrigatório no navegador, então na prática não acontece, mas uma
+requisição fora do formulário derruba a action.
 
