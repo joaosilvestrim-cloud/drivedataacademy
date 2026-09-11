@@ -5,11 +5,10 @@ import { loadProfiles, displayName } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 import { grantBatch, revokeFromTurma } from "../actions";
 import TurmaForm from "../TurmaForm";
+import { Button } from "@/components/ui/primitives";
+import { TextareaField, FormActions } from "@/components/ui/form";
 
 export const dynamic = "force-dynamic";
-
-const field =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
 
 export default async function TurmaDetail({ params, searchParams }: { params: { id: string }; searchParams: { ok?: string; granted?: string; existed?: string; missing?: string } }) {
   const admin = createAdminClient();
@@ -71,10 +70,19 @@ export default async function TurmaDetail({ params, searchParams }: { params: { 
           </div>
         )}
 
-        <form action={grantBatch} className="mt-4 space-y-3">
+        <form action={grantBatch} className="mt-4 flex flex-col gap-5">
           <input type="hidden" name="turma_id" value={turma.id} />
-          <textarea name="emails" rows={5} required placeholder={"aluno1@email.com\naluno2@email.com\naluno3@email.com"} className={`${field} resize-y font-mono`} />
-          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Dar acesso a estes alunos</button>
+          <TextareaField
+            scope={`turma-${turma.id}`}
+            name="emails"
+            label="E-mails dos alunos"
+            required
+            rows={5}
+            placeholder={"aluno1@email.com\naluno2@email.com\naluno3@email.com"}
+          />
+          <FormActions>
+            <Button type="submit">Dar acesso a estes alunos</Button>
+          </FormActions>
         </form>
       </div>
 

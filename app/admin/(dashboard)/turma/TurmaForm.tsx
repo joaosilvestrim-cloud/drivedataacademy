@@ -2,13 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { Check as CheckMark, Circle, Loader2 } from "lucide-react";
+import { Button, ICON } from "@/components/ui/primitives";
+import { Field, TextareaField, FormSection } from "@/components/ui/form";
+import { Alert } from "@/components/ui/layout";
 import { saveTurma } from "./actions";
-
-const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
-const label = "block text-sm font-medium text-slate-300";
-const hint = "text-xs text-slate-500";
-const section = "text-[0.7rem] font-semibold uppercase tracking-wider text-slate-500";
 
 const DESC_MAX = 400;
 const NOME_FALLBACK = "DriveData Academy";
@@ -39,45 +37,42 @@ function fmtPhone(d: string) {
   return `+${cc} (${ddd}) ${rest.slice(0, rest.length - 4)}-${rest.slice(-4)}`;
 }
 
+// Item da checklist. O ícone tem função aqui: separa pronto de pendente sem
+// depender só da cor, que é a regra do Design System para estado.
 function Check({ ok, children, warn }: { ok: boolean; warn?: boolean; children: React.ReactNode }) {
-  const tone = ok ? "text-brand-green" : warn ? "text-amber-300" : "text-slate-500";
+  const Icone = ok ? CheckMark : Circle;
+  const tone = ok ? "text-ds-accent" : warn ? "text-ds-attention" : "text-ds-text-3";
   return (
-    <li className="flex items-start gap-2.5 text-xs">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className={`mt-px shrink-0 ${tone}`}>
-        {ok ? (
-          <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-        ) : (
-          <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" />
-        )}
-      </svg>
-      <span className={ok ? "text-slate-300" : warn ? "text-amber-200" : "text-slate-400"}>{children}</span>
+    <li className="flex items-start gap-2.5 text-caption">
+      <Icone size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className={`mt-0.5 shrink-0 ${tone}`} />
+      <span className={ok ? "text-ds-text-2" : warn ? "text-ds-attention" : "text-ds-text-3"}>{children}</span>
+      <span className="sr-only">{ok ? "pronto" : "pendente"}</span>
     </li>
   );
 }
 
+// Barra de ação fixa. Não é card: é régua no topo e o fundo da própria página,
+// para o botão não sumir num formulário longo.
 function SaveBar({ dirty, blocked }: { dirty: boolean; blocked: string | null }) {
   const { pending } = useFormStatus();
   return (
-    <div className="sticky bottom-0 -mx-6 -mb-6 mt-2 flex flex-wrap items-center gap-3 rounded-b-2xl border-t border-white/10 bg-ink-900/95 px-6 py-4 backdrop-blur-md">
-      <button
-        disabled={pending || !!blocked || !dirty}
-        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-7 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
-      >
-        {pending && (
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="animate-spin">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
-            <path d="M21 12a9 9 0 00-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-          </svg>
+    <div className="sticky bottom-0 z-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-ds-line bg-ds-bg py-4">
+      {/* O texto ao lado explica por que o botão está desligado. Vai por
+          aria-describedby, e não por role="status": assim é lido quando a
+          pessoa chega ao botão, sem anunciar a cada tecla digitada. */}
+      <Button type="submit" disabled={pending || !!blocked || !dirty} aria-describedby="salvar-estado">
+        {pending && <Loader2 size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className="animate-spin" />}
+        {pending ? "Salvando" : "Salvar alterações"}
+      </Button>
+      <span id="salvar-estado" className="text-caption text-ds-text-3">
+        {blocked ? (
+          <span className="text-ds-attention">{blocked}</span>
+        ) : dirty ? (
+          <span className="text-ds-text-2">Você tem alterações não salvas.</span>
+        ) : (
+          "Tudo salvo."
         )}
-        {pending ? "Salvando…" : "Salvar alterações"}
-      </button>
-      {blocked ? (
-        <span className="text-xs text-amber-300">{blocked}</span>
-      ) : dirty ? (
-        <span className="text-xs text-slate-400">Você tem alterações não salvas.</span>
-      ) : (
-        <span className="text-xs text-slate-500">Tudo salvo.</span>
-      )}
+      </span>
     </div>
   );
 }
@@ -116,20 +111,23 @@ export default function TurmaForm({
 
   const previewNome = nome.trim() || NOME_FALLBACK;
   const previewDesc = desc.trim() || DESC_FALLBACK;
+  const restantes = DESC_MAX - desc.length;
 
   return (
-    <form action={saveTurma} className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="glass space-y-7 rounded-2xl border border-white/8 p-6">
-        {/* Interruptor da venda */}
+    <form action={saveTurma} className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="flex min-w-0 flex-col gap-8">
+        {/* Interruptor da venda. Controle especializado de propósito: é o estado
+            que governa a página pública inteira, então não vira mais uma caixa
+            de seleção no meio da lista de campos. */}
         <div
-          className={`rounded-xl border p-4 transition-colors ${
-            open ? "border-brand-green/40 bg-brand-green/[0.07]" : "border-white/10 bg-white/[0.02]"
+          className={`rounded-srf border p-4 transition-colors duration-fast ease-ds ${
+            open ? "border-ds-accent bg-ds-raised" : "border-ds-line"
           }`}
         >
           <label className="flex cursor-pointer items-start justify-between gap-4">
             <span>
-              <span className="block text-sm font-semibold text-white">Vendas abertas</span>
-              <span className="mt-0.5 block text-xs leading-relaxed text-slate-400">
+              <span className="block text-body-sm font-medium text-ds-text">Vendas abertas</span>
+              <span className="mt-0.5 block text-caption leading-relaxed text-ds-text-3">
                 {open
                   ? "A página /matricula está no ar aceitando novas assinaturas."
                   : "O visitante vê “inscrições fechadas” e o convite para a lista de espera."}
@@ -143,170 +141,143 @@ export default function TurmaForm({
                 onChange={(e) => setOpen(e.target.checked)}
                 className="peer sr-only"
               />
-              <span className="block h-6 w-11 rounded-full bg-white/15 transition-colors peer-checked:bg-brand-green peer-focus-visible:ring-2 peer-focus-visible:ring-brand-green/50" />
-              <span className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform peer-checked:translate-x-5" />
+              <span className="block h-6 w-11 rounded-full bg-ds-line transition-colors duration-fast ease-ds peer-checked:bg-ds-accent peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[color:var(--ds-focus)]" />
+              <span className="pointer-events-none absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-ds-text transition-transform duration-fast ease-ds peer-checked:translate-x-5 peer-checked:bg-ds-accent-ink" />
             </span>
           </label>
 
           {open && !hasPrice && (
-            <p className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
-              Sem valor mensal o checkout falha e o aluno vê “a assinatura ainda não foi configurada”. Preencha o valor abaixo.
-            </p>
+            <div className="mt-3">
+              <Alert tone="attention" title="Falta o valor mensal">
+                Sem valor mensal o checkout falha e o aluno vê “a assinatura ainda não foi configurada”.
+                Preencha o valor abaixo.
+              </Alert>
+            </div>
           )}
         </div>
 
-        {/* Oferta */}
-        <div className="space-y-4">
-          <p className={section}>Oferta</p>
-
-          <div className="grid gap-4 sm:grid-cols-[1fr_180px]">
-            <div className="space-y-1.5">
-              <label className={label} htmlFor="turma_nome">Nome do plano</label>
-              <input
-                id="turma_nome"
-                name="turma_nome"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                placeholder={NOME_FALLBACK}
-                maxLength={80}
-                className={field}
-              />
-              <p className={hint}>Título grande da página de assinatura.</p>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className={label} htmlFor="sub_price">Valor mensal</label>
-              <div className="relative">
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500">R$</span>
-                <input
-                  id="sub_price"
-                  name="sub_price"
-                  value={cents ? centsToBRL(cents) : ""}
-                  onChange={(e) => setCents(Number(onlyDigits(e.target.value, 9)) || 0)}
-                  placeholder="0,00"
-                  inputMode="numeric"
-                  className={`${field} pl-10 tabular-nums`}
-                />
-              </div>
-              <p className={hint}>Cobrado todo mês no cartão.</p>
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="flex items-baseline justify-between">
-              <label className={label} htmlFor="turma_descricao">Descrição curta</label>
-              <span className={`text-xs tabular-nums ${desc.length > DESC_MAX ? "text-red-300" : "text-slate-500"}`}>
-                {desc.length}/{DESC_MAX}
-              </span>
-            </div>
-            <textarea
-              id="turma_descricao"
-              name="turma_descricao"
-              rows={3}
-              value={desc}
-              onChange={(e) => setDesc(e.target.value.slice(0, DESC_MAX))}
-              placeholder={DESC_FALLBACK}
-              className={`${field} resize-y`}
+        <FormSection title="Oferta">
+          <div className="grid gap-4 tablet:grid-cols-[1fr_11rem]">
+            <Field
+              scope="assinatura"
+              name="turma_nome"
+              label="Nome do plano"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder={NOME_FALLBACK}
+              maxLength={80}
+              description="Título grande da página de assinatura."
             />
-            <p className={hint}>Aparece embaixo do título. Vazio, usamos o texto padrão.</p>
-          </div>
-        </div>
-
-        {/* Pagamento */}
-        <div className="space-y-4 border-t border-white/8 pt-6">
-          <p className={section}>Pagamento</p>
-
-          <div
-            className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-xs leading-relaxed ${
-              asaasOn ? "border-brand-green/25 bg-brand-green/[0.06] text-slate-300" : "border-amber-400/30 bg-amber-400/10 text-amber-100"
-            }`}
-          >
-            <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${asaasOn ? "bg-brand-green" : "bg-amber-400"}`} />
-            <span>
-              <span className="block font-semibold text-white">
-                {asaasOn ? "Cobrança automática ligada (Asaas)" : "Cobrança automática desligada"}
-              </span>
-              {asaasOn
-                ? "A matrícula gera a assinatura no cartão e o acesso é liberado sozinho quando o pagamento confirma."
-                : "A matrícula só registra o pedido e manda o aluno para o WhatsApp. Você libera o acesso na aba Acessos depois de confirmar o pagamento."}
-            </span>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className={label} htmlFor="checkout_whatsapp">WhatsApp de contato</label>
-            <input
-              id="checkout_whatsapp"
-              name="checkout_whatsapp"
-              value={fmtPhone(zap)}
-              onChange={(e) => setZap(onlyDigits(e.target.value, 13))}
-              placeholder="+55 (35) 99999-9999"
+            <Field
+              scope="assinatura"
+              name="sub_price"
+              label="Valor mensal"
+              value={cents ? centsToBRL(cents) : ""}
+              onChange={(e) => setCents(Number(onlyDigits(e.target.value, 9)) || 0)}
+              placeholder="0,00"
               inputMode="numeric"
-              className={`${field} ${zapOk ? "" : "border-red-400/50"}`}
+              description="Em reais, cobrado todo mês no cartão."
             />
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <p className={hint}>
-                {asaasOn ? "Plano B: usado se a cobrança automática cair." : "Obrigatório: é para cá que o aluno é enviado."}
-              </p>
-              {!zapOk && <span className="text-xs text-red-300">Faltam dígitos (DDD + número).</span>}
-              {zapOk && zap.length >= 10 && (
-                <a
-                  href={`https://wa.me/${zap}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs text-brand-teal hover:underline"
-                >
-                  testar conversa
-                </a>
-              )}
-            </div>
           </div>
-        </div>
+
+          <TextareaField
+            scope="assinatura"
+            name="turma_descricao"
+            label="Descrição curta"
+            rows={3}
+            value={desc}
+            onChange={(e) => setDesc(e.target.value.slice(0, DESC_MAX))}
+            placeholder={DESC_FALLBACK}
+            description={`Aparece embaixo do título. Em branco, usamos o texto padrão. Restam ${restantes} de ${DESC_MAX} caracteres.`}
+          />
+        </FormSection>
+
+        <FormSection title="Pagamento">
+          <Alert
+            tone={asaasOn ? "accent" : "attention"}
+            title={asaasOn ? "Cobrança automática ligada (Asaas)" : "Cobrança automática desligada"}
+          >
+            {asaasOn
+              ? "A matrícula gera a assinatura no cartão e o acesso é liberado sozinho quando o pagamento confirma."
+              : "A matrícula só registra o pedido e manda o aluno para o WhatsApp. Você libera o acesso na aba Acessos depois de confirmar o pagamento."}
+          </Alert>
+
+          <Field
+            scope="assinatura"
+            name="checkout_whatsapp"
+            label="WhatsApp de contato"
+            value={fmtPhone(zap)}
+            onChange={(e) => setZap(onlyDigits(e.target.value, 13))}
+            placeholder="+55 (35) 99999-9999"
+            inputMode="numeric"
+            error={zapOk ? undefined : "Faltam dígitos. Informe DDD e número."}
+            description={asaasOn ? "Plano B: usado se a cobrança automática cair." : "Obrigatório: é para cá que o aluno é enviado."}
+          />
+          {zapOk && zap.length >= 10 && (
+            <p className="text-caption">
+              <a
+                href={`https://wa.me/${zap}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-ds-info underline decoration-ds-line underline-offset-4 hover:decoration-ds-info"
+              >
+                testar conversa no WhatsApp
+              </a>
+            </p>
+          )}
+        </FormSection>
 
         <SaveBar dirty={dirty} blocked={blocked} />
       </div>
 
-      {/* Coluna lateral: prévia + checklist */}
-      <aside className="space-y-4 lg:sticky lg:top-6">
-        <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-          <p className={`${section} mb-3`}>Como o aluno vê</p>
+      {/* Coluna lateral: prévia e checklist. A prévia reproduz o topo de
+          /matricula, que ainda é página legada, então ela imita o que está no ar
+          e não o Design System. */}
+      <aside className="flex flex-col gap-8 lg:sticky lg:top-6">
+        <section className="flex flex-col gap-3">
+          <h2 className="border-b border-ds-line pb-2 font-display text-component font-semibold text-ds-text">
+            Como o aluno vê
+          </h2>
 
           {open ? (
-            <div className="rounded-xl border border-white/10 bg-ink-900/60 p-4">
-              <p className="text-[0.65rem] font-medium uppercase tracking-wide text-brand-green">Assinatura</p>
-              <p className="mt-1 font-display text-lg font-bold leading-tight text-white">{previewNome}</p>
-              <p className="mt-2 text-xs leading-relaxed text-slate-400">{previewDesc}</p>
-              <div className="mt-4 rounded-lg border border-white/10 bg-gradient-to-r from-brand-green/[0.10] to-transparent px-3 py-2.5">
-                <span className="block text-[0.65rem] uppercase tracking-wide text-slate-400">Assinatura mensal</span>
+            <div className="rounded-srf border border-ds-line bg-ds-surface p-4">
+              <p className="font-mono text-meta uppercase text-ds-accent">Assinatura</p>
+              <p className="mt-1 font-display text-title font-semibold leading-tight text-ds-text">{previewNome}</p>
+              <p className="mt-2 text-caption leading-relaxed text-ds-text-3">{previewDesc}</p>
+              <div className="mt-4 border-l-2 border-ds-accent py-1.5 pl-3">
+                <span className="block text-meta uppercase text-ds-text-3">Assinatura mensal</span>
                 {hasPrice ? (
-                  <span className="font-display text-xl font-bold text-white">
+                  <span className="block font-display text-data font-semibold tabular-nums text-ds-text">
                     R$ {centsToBRL(cents)}
-                    <span className="text-xs font-normal text-slate-400">/mês</span>
+                    <span className="text-caption font-normal text-ds-text-3">/mês</span>
                   </span>
                 ) : (
-                  <span className="text-xs text-amber-300">preço não definido, o bloco some da página</span>
+                  <span className="block text-caption text-ds-attention">preço não definido, o bloco some da página</span>
                 )}
-                <span className="mt-0.5 block text-[0.65rem] text-brand-teal">no cartão · cancele quando quiser</span>
+                <span className="mt-0.5 block text-meta text-ds-text-3">no cartão · cancele quando quiser</span>
               </div>
             </div>
           ) : (
-            <div className="rounded-xl border border-white/10 bg-ink-900/60 px-4 py-8 text-center">
-              <p className="text-[0.65rem] font-medium uppercase tracking-wide text-brand-green">Matrículas</p>
-              <p className="mt-1 font-display text-base font-bold text-white">Inscrições fechadas no momento</p>
-              <p className="mt-2 text-xs text-slate-400">Entre na lista de espera e avisamos assim que abrir.</p>
+            <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-8 text-center">
+              <p className="font-mono text-meta uppercase text-ds-accent">Matrículas</p>
+              <p className="mt-1 font-display text-component font-semibold text-ds-text">Inscrições fechadas no momento</p>
+              <p className="mt-2 text-caption text-ds-text-3">Entre na lista de espera e avisamos assim que abrir.</p>
             </div>
           )}
-          <p className="mt-3 text-[0.7rem] text-slate-500">Prévia do topo de /matricula. Atualiza enquanto você digita.</p>
-        </div>
+          <p className="text-caption text-ds-text-3">Prévia do topo de /matricula. Atualiza enquanto você digita.</p>
+        </section>
 
-        <div className="rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-          <p className={`${section} mb-3`}>Pronto para vender</p>
-          <ul className="space-y-2">
+        <section className="flex flex-col gap-3">
+          <h2 className="border-b border-ds-line pb-2 font-display text-component font-semibold text-ds-text">
+            Pronto para vender
+          </h2>
+          <ul className="flex flex-col gap-2">
             <Check ok={hasPrice}>Valor mensal definido</Check>
             <Check ok={asaasOn} warn={!asaasOn}>Cobrança automática (Asaas) ativa</Check>
             <Check ok={zap.length >= 10 && zapOk} warn={!asaasOn && zap.length < 10}>WhatsApp de contato</Check>
             <Check ok={open}>Vendas abertas</Check>
           </ul>
-        </div>
+        </section>
       </aside>
     </form>
   );

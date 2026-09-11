@@ -1,86 +1,164 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/primitives";
+import { Field, SelectField, CheckboxField, FormSection, FormActions } from "@/components/ui/form";
 import { updateTurma } from "./actions";
-
-const field =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
-const flabel = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500";
 
 type Course = { id: string; title: string };
 type Turma = any;
 
 function toDate(d: string | null) { return d ? d.slice(0, 10) : ""; }
 
+const INCLUDES = [
+  { k: "full", label: "Todos os treinamentos", desc: "Acesso full, inclusive cursos futuros." },
+  { k: "selected", label: "Escolher treinamentos", desc: "Só os cursos que você marcar." },
+];
+
 export default function TurmaForm({ turma, courses }: { turma: Turma; courses: Course[] }) {
   const [includes, setIncludes] = useState(turma.includes || "full");
+  // Uma turma por página, mas o scope segue a convenção: id previsível e único.
+  const scope = `turma-${turma.id}`;
   const selected = new Set((turma.course_ids || "").split(",").map((s: string) => s.trim()).filter(Boolean));
   const methods = new Set((turma.methods || "pix,card").split(","));
 
   return (
-    <form action={updateTurma} className="space-y-6">
+    <form action={updateTurma} className="flex flex-col gap-8">
       <input type="hidden" name="id" value={turma.id} />
 
-      {/* Básico */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1.5 sm:col-span-2"><label className={flabel}>Nome da turma</label><input name="name" defaultValue={turma.name} className={field} /></div>
-        <div className="space-y-1.5 sm:col-span-2"><label className={flabel}>Descrição (aparece na matrícula)</label><input name="description" defaultValue={turma.description ?? ""} className={field} /></div>
-        <div className="space-y-1.5"><label className={flabel}>Início</label><input name="starts_at" type="date" defaultValue={toDate(turma.starts_at)} className={field} /></div>
-        <div className="space-y-1.5"><label className={flabel}>Status</label>
-          <select name="status" defaultValue={turma.status} className={`${field} [&>option]:bg-ink-900`}><option value="open">Aberta</option><option value="closed">Fechada</option></select>
+      <FormSection title="Dados da turma">
+        <Field
+          scope={scope}
+          name="name"
+          label="Nome da turma"
+          defaultValue={turma.name}
+          description="Uso interno e, quando a venda online está ligada, na página de matrícula."
+        />
+        <Field
+          scope={scope}
+          name="description"
+          label="Descrição"
+          defaultValue={turma.description ?? ""}
+          description="Aparece na matrícula."
+        />
+        <div className="grid gap-4 tablet:grid-cols-2">
+          <Field
+            scope={scope}
+            name="starts_at"
+            label="Início"
+            type="date"
+            defaultValue={toDate(turma.starts_at)}
+          />
+          <SelectField scope={scope} name="status" label="Status" defaultValue={turma.status}>
+            <option value="open">Aberta</option>
+            <option value="closed">Fechada</option>
+          </SelectField>
         </div>
-      </div>
+      </FormSection>
 
-      {/* O que inclui */}
-      <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
-        <p className="mb-3 text-sm font-semibold text-white">Quais treinamentos esta turma libera</p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <button type="button" onClick={() => setIncludes("full")} className={`rounded-xl border p-3 text-left transition-colors ${includes === "full" ? "border-brand-green/50 bg-brand-green/10" : "border-white/10 hover:border-white/25"}`}>
-            <p className={`text-sm font-semibold ${includes === "full" ? "text-brand-green" : "text-white"}`}>Todos os treinamentos</p>
-            <p className="mt-0.5 text-[0.7rem] text-slate-400">Acesso full (inclusive cursos futuros).</p>
-          </button>
-          <button type="button" onClick={() => setIncludes("selected")} className={`rounded-xl border p-3 text-left transition-colors ${includes === "selected" ? "border-brand-green/50 bg-brand-green/10" : "border-white/10 hover:border-white/25"}`}>
-            <p className={`text-sm font-semibold ${includes === "selected" ? "text-brand-green" : "text-white"}`}>Escolher treinamentos</p>
-            <p className="mt-0.5 text-[0.7rem] text-slate-400">Só os cursos que você marcar.</p>
-          </button>
+      <FormSection title="Quais treinamentos esta turma libera">
+        {/* Mesmo controle especializado de /admin/cobranca: o valor vai por campo
+            oculto, não por radio nativo. Comportamento preservado; o que se
+            acrescenta é a semântica de grupo, que faltava. */}
+        <div role="radiogroup" aria-label="O que a turma libera" className="grid gap-2 tablet:grid-cols-2">
+          {INCLUDES.map((o) => {
+            const ativo = includes === o.k;
+            return (
+              <button
+                type="button"
+                key={o.k}
+                role="radio"
+                aria-checked={ativo}
+                onClick={() => setIncludes(o.k)}
+                className={`rounded-srf border p-3 text-left transition-colors duration-fast ease-ds ${
+                  ativo ? "border-ds-accent/50 bg-ds-accent/[0.07]" : "border-ds-line hover:border-ds-text-3"
+                }`}
+              >
+                <span className={`block text-label font-medium ${ativo ? "text-ds-accent" : "text-ds-text"}`}>{o.label}</span>
+                <span className="mt-0.5 block text-caption leading-snug text-ds-text-3">{o.desc}</span>
+              </button>
+            );
+          })}
         </div>
         <input type="hidden" name="includes" value={includes} />
 
         {includes === "selected" && (
-          <div className="mt-3 grid gap-1.5 rounded-xl border border-white/8 bg-white/[0.02] p-3 sm:grid-cols-2">
-            {courses.length === 0 && <p className="text-xs text-slate-500">Nenhum curso cadastrado.</p>}
-            {courses.map((c) => (
-              <label key={c.id} className="flex items-center gap-2 text-sm text-slate-200">
-                <input type="checkbox" name="course_ids" value={c.id} defaultChecked={selected.has(c.id)} className="h-4 w-4 accent-emerald-400" /> {c.title}
-              </label>
-            ))}
-          </div>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-1.5 text-label font-medium text-ds-text-2">Treinamentos incluídos</legend>
+            {courses.length === 0 ? (
+              <p className="text-caption text-ds-text-3">Nenhum curso cadastrado.</p>
+            ) : (
+              <div className="grid gap-2 tablet:grid-cols-2">
+                {courses.map((c) => (
+                  <CheckboxField
+                    key={c.id}
+                    scope={`${scope}-curso-${c.id}`}
+                    name="course_ids"
+                    label={c.title}
+                    value={c.id}
+                    defaultChecked={selected.has(c.id)}
+                  />
+                ))}
+              </div>
+            )}
+          </fieldset>
         )}
-      </div>
+      </FormSection>
 
-      {/* Cobrança */}
-      <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
-        <p className="mb-3 text-sm font-semibold text-white">Cobrança da turma</p>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="space-y-1.5"><label className={flabel}>Preço (R$)</label><input name="price" defaultValue={turma.price ?? ""} placeholder="1600" className={field} /></div>
-          <div className="space-y-1.5"><label className={flabel}>Dias de acesso</label><input name="access_days" type="number" defaultValue={turma.access_days ?? ""} placeholder="365 (vazio = sem expirar)" className={field} /></div>
-          <div className="space-y-1.5"><label className={flabel}>Máx. parcelas (cartão)</label><input name="max_installments" type="number" defaultValue={turma.max_installments ?? 12} className={field} /></div>
+      <FormSection title="Cobrança da turma">
+        <div className="grid gap-4 tablet:grid-cols-3">
+          <Field
+            scope={scope}
+            name="price"
+            label="Preço"
+            inputMode="decimal"
+            defaultValue={turma.price ?? ""}
+            placeholder="1600"
+            description="Em reais."
+          />
+          <Field
+            scope={scope}
+            name="access_days"
+            label="Dias de acesso"
+            type="number"
+            inputMode="numeric"
+            defaultValue={turma.access_days ?? ""}
+            placeholder="365"
+            description="Em branco não expira."
+          />
+          <Field
+            scope={scope}
+            name="max_installments"
+            label="Máximo de parcelas"
+            type="number"
+            inputMode="numeric"
+            defaultValue={turma.max_installments ?? 12}
+            description="Somente no cartão."
+          />
         </div>
-        <div className="mt-3 space-y-1.5">
-          <label className={flabel}>Formas de pagamento</label>
-          <div className="flex flex-wrap gap-4 text-sm text-slate-300">
-            <label className="flex items-center gap-1.5"><input type="checkbox" name="m_pix" defaultChecked={methods.has("pix")} className="h-4 w-4 accent-emerald-400" /> PIX (à vista, com desconto)</label>
-            <label className="flex items-center gap-1.5"><input type="checkbox" name="m_card" defaultChecked={methods.has("card")} className="h-4 w-4 accent-emerald-400" /> Cartão (até Nx)</label>
+
+        <fieldset className="flex flex-col gap-2">
+          <legend className="mb-1.5 text-label font-medium text-ds-text-2">Formas de pagamento</legend>
+          <div className="flex flex-col gap-3 tablet:flex-row tablet:gap-x-8">
+            <CheckboxField scope={scope} name="m_pix" label="PIX" description="À vista, com desconto." defaultChecked={methods.has("pix")} />
+            <CheckboxField scope={scope} name="m_card" label="Cartão" description="Parcelado até o limite acima." defaultChecked={methods.has("card")} />
           </div>
-          <p className="text-xs text-slate-500">Boleto está desativado. O desconto do Pix é configurado em Matrícula.</p>
-        </div>
-        <label className="mt-3 flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.02] px-3 py-2.5 text-sm text-slate-200">
-          <input type="checkbox" name="online_sale" defaultChecked={turma.online_sale} className="h-4 w-4 accent-emerald-400" />
-          Vender esta turma na página pública de matrícula
-        </label>
-      </div>
+          <p className="text-caption text-ds-text-3">
+            Boleto está desativado. O desconto do PIX é configurado em Matrícula.
+          </p>
+        </fieldset>
 
-      <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-6 py-2.5 text-sm font-semibold text-ink-900">Salvar turma</button>
+        <CheckboxField
+          scope={scope}
+          name="online_sale"
+          label="Vender esta turma na página pública de matrícula"
+          defaultChecked={turma.online_sale}
+        />
+      </FormSection>
+
+      <FormActions>
+        <Button type="submit">Salvar turma</Button>
+      </FormActions>
     </form>
   );
 }

@@ -9,20 +9,23 @@ const config: Config = {
     extend: {
       colors: {
         // ---- Design System: cor com semântica ----
+        // Canais + <alpha-value>: é o que permite bg-ds-raised/50 e
+        // border-ds-accent/35 existirem. Com "var(--ds-x)" cru o Tailwind
+        // descarta a classe com barra em silêncio.
         ds: {
-          bg: "var(--ds-bg)",
-          surface: "var(--ds-surface)",
-          raised: "var(--ds-raised)",
-          line: "var(--ds-line)",
-          "line-soft": "var(--ds-line-soft)",
-          text: "var(--ds-text)",
-          "text-2": "var(--ds-text-2)",
-          "text-3": "var(--ds-text-3)",
-          accent: "var(--ds-accent)",
-          "accent-ink": "var(--ds-accent-ink)",
-          info: "var(--ds-info)",
-          attention: "var(--ds-attention)",
-          danger: "var(--ds-danger)",
+          bg: "rgb(var(--ds-bg-c) / <alpha-value>)",
+          surface: "rgb(var(--ds-surface-c) / <alpha-value>)",
+          raised: "rgb(var(--ds-raised-c) / <alpha-value>)",
+          line: "rgb(var(--ds-line-c) / <alpha-value>)",
+          "line-soft": "rgb(var(--ds-line-soft-c) / <alpha-value>)",
+          text: "rgb(var(--ds-text-c) / <alpha-value>)",
+          "text-2": "rgb(var(--ds-text-2-c) / <alpha-value>)",
+          "text-3": "rgb(var(--ds-text-3-c) / <alpha-value>)",
+          accent: "rgb(var(--ds-accent-c) / <alpha-value>)",
+          "accent-ink": "rgb(var(--ds-accent-ink-c) / <alpha-value>)",
+          info: "rgb(var(--ds-info-c) / <alpha-value>)",
+          attention: "rgb(var(--ds-attention-c) / <alpha-value>)",
+          danger: "rgb(var(--ds-danger-c) / <alpha-value>)",
         },
         ink: {
           900: "#04070f",

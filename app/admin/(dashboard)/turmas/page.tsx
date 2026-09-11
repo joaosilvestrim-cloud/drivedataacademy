@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
+import { Button } from "@/components/ui/primitives";
+import { Field } from "@/components/ui/form";
 import { createTurma } from "./actions";
 
 export const dynamic = "force-dynamic";
-
-const field =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
 
 function fmt(d: string | null) {
   if (!d) return "—";
@@ -43,9 +42,16 @@ export default async function TurmasPage() {
       <p className="mt-1 text-sm text-slate-400">Para liberar acesso a um <b className="text-slate-200">grupo de alunos de uma vez</b> (turmas fechadas, in-company, cortesias em massa). A venda pública ao consumidor é a <b className="text-slate-200">Assinatura</b>.</p>
 
       {/* Nova turma */}
-      <form action={createTurma} className="mt-6 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-white/10 p-4">
-        <input name="name" required placeholder="Nome da nova turma (ex.: Setembro 2026)" className={`${field} flex-1`} />
-        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">+ Criar turma</button>
+      <form action={createTurma} className="mt-6 flex flex-wrap items-end gap-3 border-y border-ds-line py-5">
+        <Field
+          scope="turma-nova"
+          name="name"
+          label="Nome da nova turma"
+          required
+          placeholder="Setembro 2026"
+          className="min-w-[16rem] flex-1"
+        />
+        <Button type="submit">Criar turma</Button>
       </form>
 
       <div className="mt-6 space-y-3">

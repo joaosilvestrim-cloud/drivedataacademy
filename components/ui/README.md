@@ -79,6 +79,20 @@ Raio: `rounded-ctl` (4px, controles) e `rounded-srf` (10px, superfícies).
 
 Sombra: só `shadow-overlay`, e só em sobreposição real. Superfície usa traço.
 
+### Cor em canais, não em hexadecimal
+
+Cada cor vive em duas variáveis: `--ds-accent-c: 52 232 160` (os canais) e
+`--ds-accent: rgb(var(--ds-accent-c))` (a cor pronta). O Tailwind aponta para a
+primeira, como `rgb(var(--ds-accent-c) / <alpha-value>)`.
+
+Isso não é enfeite. Enquanto o token era hexadecimal, **toda classe com barra era
+descartada em silêncio**: `bg-ds-raised/50`, `border-ds-accent/35` e outras onze
+simplesmente não existiam no CSS gerado, sem erro de build e sem aviso. O hover
+das linhas de tabela e o realce do cartão selecionado não apareciam por isso.
+
+Regra: cor nova entra sempre como `--ds-x-c` em canais, mais o `--ds-x` pronto
+para quem escreve CSS na mão. Nunca só o hexadecimal.
+
 ---
 
 ## Escala tipográfica

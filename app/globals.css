@@ -9,26 +9,47 @@
      páginas que ainda não migraram.
      ------------------------------------------------------------------ */
 
+  /* Cada cor é declarada em canais (R G B) e não em hexadecimal.
+     Motivo: o Tailwind só consegue aplicar transparência (bg-ds-raised/50)
+     quando a variável entra como `rgb(... / <alpha-value>)`. Com hexadecimal
+     a classe com barra não era gerada e a regra sumia sem erro nenhum.
+     O par `--ds-x-c` (canais) e `--ds-x` (cor pronta) mantém uma única fonte
+     de verdade: quem escreve CSS na mão continua usando var(--ds-x). */
+
   /* Superfícies. Três níveis, não cinco. */
-  --ds-bg: #05080f;          /* fundo da aplicação */
-  --ds-surface: #0a0f18;     /* superfície de conteúdo */
-  --ds-raised: #111925;      /* único nível elevado */
+  --ds-bg-c: 5 8 15;              /* fundo da aplicação */
+  --ds-surface-c: 10 15 24;       /* superfície de conteúdo */
+  --ds-raised-c: 17 25 37;        /* único nível elevado */
 
   /* Traço. Régua antes de sombra. */
-  --ds-line: #1e2733;        /* divisor e contorno */
-  --ds-line-soft: #151c27;   /* divisor interno */
+  --ds-line-c: 30 39 51;          /* divisor e contorno */
+  --ds-line-soft-c: 21 28 39;     /* divisor interno */
 
   /* Texto. Três níveis, nunca mais. */
-  --ds-text: #f0f5fa;
-  --ds-text-2: #97a6b8;
-  --ds-text-3: #64748b;
+  --ds-text-c: 240 245 250;
+  --ds-text-2-c: 151 166 184;
+  --ds-text-3-c: 100 116 139;
 
   /* Cor com semântica. Cada uma tem um papel e só ele. */
-  --ds-accent: #34e8a0;      /* aprendizagem, evidência, ação principal */
-  --ds-accent-ink: #04140d;  /* texto sobre o acento */
-  --ds-info: #5aa9ff;        /* navegação e informação */
-  --ds-attention: #e0a44a;   /* decaimento, pendência, revisão */
-  --ds-danger: #f08a8a;      /* erro, e só erro */
+  --ds-accent-c: 52 232 160;      /* aprendizagem, evidência, ação principal */
+  --ds-accent-ink-c: 4 20 13;     /* texto sobre o acento */
+  --ds-info-c: 90 169 255;        /* navegação e informação */
+  --ds-attention-c: 224 164 74;   /* decaimento, pendência, revisão */
+  --ds-danger-c: 240 138 138;     /* erro, e só erro */
+
+  --ds-bg: rgb(var(--ds-bg-c));
+  --ds-surface: rgb(var(--ds-surface-c));
+  --ds-raised: rgb(var(--ds-raised-c));
+  --ds-line: rgb(var(--ds-line-c));
+  --ds-line-soft: rgb(var(--ds-line-soft-c));
+  --ds-text: rgb(var(--ds-text-c));
+  --ds-text-2: rgb(var(--ds-text-2-c));
+  --ds-text-3: rgb(var(--ds-text-3-c));
+  --ds-accent: rgb(var(--ds-accent-c));
+  --ds-accent-ink: rgb(var(--ds-accent-ink-c));
+  --ds-info: rgb(var(--ds-info-c));
+  --ds-attention: rgb(var(--ds-attention-c));
+  --ds-danger: rgb(var(--ds-danger-c));
 
   /* Dimensões da evidência. Usadas na Barra de Evidência. */
   --ds-dim-learning: #34e8a0;
