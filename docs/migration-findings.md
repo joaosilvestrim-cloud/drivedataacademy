@@ -33,6 +33,7 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-020 | DÍVIDA | `/admin/cursos` | Das oito actions do Curriculum, só `saveLesson` dá retorno, por redirect com `?ok`. As outras sete não avisam nada, e nenhuma confere o resultado do banco. | Médio. O administrador renomeia, libera, cria ou apaga e não recebe confirmação nem erro. Mesma raiz de M-014. | aberto | Pré-auditoria do D6 |
 | M-021 | DÍVIDA | `/admin/acessos` | A lista de pedidos traz `.limit(50)` e não existe paginação nem busca. Pedidos mais antigos não têm como ser alcançados por esta tela. | Médio. O administrador não consegue auditar um pagamento antigo. A tela migrada passou a dizer isso em palavras, mas dizer não resolve. | aberto | Onda 2, lote T1 |
 | M-022 | DÍVIDA | `/admin/acessos` | A lista de acessos não tem limite: carrega todas as linhas de `memberships` e ainda pede `listUsers` com 1000 por página, em toda visita. | Médio hoje, alto com crescimento. A página não degrada aos poucos, ela para de abrir. Nenhuma busca ou filtro existe para reduzir o conjunto. | aberto | Onda 2, lote T1 |
+| M-023 | DÍVIDA | `/admin/suporte` | `?status=abc` devolve lista vazia, não marca nenhuma opção como atual e mantém a URL inválida. Não há correção nem redirecionamento. | Baixo. O administrador pode chegar por um link torto e concluir que não há chamados. O texto de vazio agora diz o total existente, o que reduz a confusão sem mudar o comportamento. | aberto | Onda 2, lote T2 |
 
 ## Observações
 
@@ -103,4 +104,15 @@ tratado, vale conferir `/admin/cursos` junto.
 registros e a outra carrega todos. As duas precisam da mesma decisão de produto,
 que é onde entra busca, filtro e paginação de servidor. O lote T1 não podia
 criar nenhum dos três, porque acrescentar função não era o escopo.
+
+**M-022 vale também para `/admin/suporte`**, medido no lote T2: a consulta de
+chamados não tem limite e ainda carrega o perfil de todos os autores em toda
+visita. As contagens por situação dependem de ter a lista inteira em memória,
+então limitar a consulta exige decidir antes como contar.
+
+**M-023** foi encontrado ao migrar, não corrigido. A mensagem de vazio antiga
+imprimia a palavra `undefined` nesse caso, porque montava o texto a partir de
+uma opção que não existe. A reescrita do texto fez esse efeito colateral
+desaparecer, mas o comportamento do filtro continua o mesmo: lista vazia, URL
+inválida preservada.
 

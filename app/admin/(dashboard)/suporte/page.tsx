@@ -1,13 +1,50 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import { CATEGORIES, TICKET_STATUS } from "@/lib/support";
+import { Status, ICON } from "@/components/ui/primitives";
+import { DataTable, SortTh, Tr, Cell } from "@/components/ui/data";
+import { EmptyState } from "@/components/ui/layout";
 import AdminError from "../AdminError";
 
 export const dynamic = "force-dynamic";
 
 function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
+}
+
+const TOM: Record<string, "attention" | "accent" | "neutral"> = {
+  open: "attention",
+  answered: "accent",
+  resolved: "neutral",
+};
+
+/* Filtro governado pela URL. É link, não select: cada opção é um endereço que
+   pode ser copiado, aberto em outra aba e alcançado por voltar e avançar. O
+   FilterSelect do Design System resolve o outro caso, o de estado local em
+   /admin/alunos, e não este. */
+function FiltroStatus({ ativo, counts }: { ativo: string; counts: Record<string, number> }) {
+  return (
+    <nav aria-label="Filtrar chamados por situação" className="flex flex-wrap gap-2">
+      {FILTERS.map((f) => {
+        const atual = ativo === f.key;
+        return (
+          <Link
+            key={f.key}
+            href={`/admin/suporte?status=${f.key}`}
+            aria-current={atual ? "page" : undefined}
+            className={`inline-flex items-baseline gap-2 rounded-ctl border px-3 py-1.5 text-label font-medium transition-colors duration-fast ease-ds ${
+              atual ? "border-ds-accent/50 bg-ds-accent/[0.07] text-ds-accent" : "border-ds-line text-ds-text-2 hover:border-ds-text-3 hover:text-ds-text"
+            }`}
+          >
+            {f.label}
+            <span className="font-mono text-caption tabular-nums">{counts[f.key] ?? 0}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
 }
 
 const FILTERS = [
@@ -48,54 +85,102 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
       <h1 className="font-display text-2xl font-bold text-white">Suporte</h1>
       <p className="mt-1 text-sm text-slate-400">Chamados dos alunos. Quando a IA não resolver, cai aqui para o time.</p>
 
-      {/* Filtros */}
-      <div className="mt-6 flex flex-wrap gap-2">
-        {FILTERS.map((f) => (
-          <Link
-            key={f.key}
-            href={`/admin/suporte?status=${f.key}`}
-            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${active === f.key ? "border-brand-green/50 bg-brand-green/10 text-brand-green" : "border-white/10 text-slate-300 hover:border-white/30"}`}
-          >
-            {f.label} <span className="ml-1 text-xs opacity-70">{counts[f.key] ?? 0}</span>
-          </Link>
-        ))}
+      <div className="mt-6">
+        <FiltroStatus ativo={active} counts={counts} />
       </div>
 
-      <div className="mt-5 overflow-x-auto rounded-2xl border border-white/8">
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
-            <tr>
-              <th className="px-4 py-3">Assunto</th>
-              <th className="px-4 py-3">Categoria</th>
-              <th className="px-4 py-3">Aluno</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Atualizado</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {tickets.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-12 text-center text-slate-500">Nenhum chamado {active !== "all" ? `“${FILTERS.find((f) => f.key === active)?.label.toLowerCase()}”` : ""}.</td></tr>
-            )}
+      <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
+        <h2 className="font-display text-section font-semibold text-ds-text">
+          {FILTERS.find((f) => f.key === active)?.label ?? "Chamados"}
+        </h2>
+        <span className="text-meta uppercase text-ds-text-3">
+          {tickets.length} {tickets.length === 1 ? "chamado" : "chamados"}
+        </span>
+      </div>
+
+      {tickets.length === 0 ? (
+        counts.all === 0 ? (
+          <EmptyState
+            title="Nenhum chamado ainda"
+            description="Quando um aluno abrir um chamado que a IA não resolver, ele aparece aqui."
+          />
+        ) : (
+          <EmptyState
+            title={`Nenhum chamado em ${(FILTERS.find((f) => f.key === active)?.label ?? active).toLowerCase()}`}
+            description={`Existem ${counts.all} ${counts.all === 1 ? "chamado" : "chamados"} no total. Troque a situação acima para vê-los.`}
+          />
+        )
+      ) : (
+        <>
+          {/* Tabela no tablet e no desktop. No celular vira lista: rolagem
+              lateral não é leitura. */}
+          <div className="mt-4 hidden tablet:block">
+            <DataTable caption="Chamados de suporte, com categoria, aluno, situação e última atualização">
+              <thead>
+                <tr>
+                  <SortTh className="w-full">Assunto</SortTh>
+                  <SortTh className="hidden lg:table-cell">Categoria</SortTh>
+                  <SortTh>Aluno</SortTh>
+                  <SortTh>Situação</SortTh>
+                  <SortTh>Atualizado</SortTh>
+                </tr>
+              </thead>
+              <tbody>
+                {tickets.map((t) => {
+                  const st = TICKET_STATUS[t.status] || TICKET_STATUS.open;
+                  return (
+                    <Tr key={t.id}>
+                      <Cell className="max-w-0">
+                        <Link
+                          href={`/admin/suporte/${t.id}`}
+                          className="block truncate font-medium text-ds-text underline decoration-transparent underline-offset-4 transition-colors duration-fast ease-ds hover:decoration-ds-line"
+                        >
+                          {t.subject}
+                        </Link>
+                      </Cell>
+                      <Cell muted className="hidden whitespace-nowrap lg:table-cell">{CATEGORIES[t.category] || t.category}</Cell>
+                      <Cell className="max-w-[13rem]">
+                        <span className="block truncate text-ds-text-2">{displayName(nameById, t.user_id)}</span>
+                        <span className="block truncate text-caption text-ds-text-3">{t.email}</span>
+                      </Cell>
+                      <Cell className="whitespace-nowrap">
+                        <Status tone={TOM[t.status] ?? "neutral"}>{st.label}</Status>
+                      </Cell>
+                      <Cell muted className="whitespace-nowrap">{fmt(t.updated_at)}</Cell>
+                    </Tr>
+                  );
+                })}
+              </tbody>
+            </DataTable>
+          </div>
+
+          <ul className="mt-2 flex flex-col tablet:hidden">
             {tickets.map((t) => {
               const st = TICKET_STATUS[t.status] || TICKET_STATUS.open;
               return (
-                <tr key={t.id} className="text-slate-200 hover:bg-white/[0.02]">
-                  <td className="px-4 py-3">
-                    <Link href={`/admin/suporte/${t.id}`} className="font-medium text-white hover:text-brand-green">{t.subject}</Link>
-                  </td>
-                  <td className="px-4 py-3 text-slate-400">{CATEGORIES[t.category] || t.category}</td>
-                  <td className="px-4 py-3">
-                    <div className="text-slate-200">{displayName(nameById, t.user_id)}</div>
-                    <div className="text-xs text-slate-500">{t.email}</div>
-                  </td>
-                  <td className="px-4 py-3"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${st.cls}`}>{st.label}</span></td>
-                  <td className="px-4 py-3 whitespace-nowrap text-slate-400">{fmt(t.updated_at)}</td>
-                </tr>
+                <li key={t.id}>
+                  <Link
+                    href={`/admin/suporte/${t.id}`}
+                    className="flex items-center gap-3 border-b border-ds-line-soft py-3.5 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                      <span className="truncate text-body-sm font-medium text-ds-text">{t.subject}</span>
+                      <span className="truncate text-caption text-ds-text-3">
+                        {displayName(nameById, t.user_id)} · {CATEGORIES[t.category] || t.category}
+                      </span>
+                      <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <Status tone={TOM[t.status] ?? "neutral"}>{st.label}</Status>
+                        <span className="text-caption text-ds-text-3">{fmt(t.updated_at)}</span>
+                      </span>
+                    </span>
+                    <ChevronRight size={ICON.md} strokeWidth={ICON.stroke} aria-hidden="true" className="shrink-0 text-ds-text-3" />
+                  </Link>
+                </li>
               );
             })}
-          </tbody>
-        </table>
-      </div>
+          </ul>
+        </>
+      )}
     </div>
   );
 }
