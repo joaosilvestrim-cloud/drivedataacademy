@@ -25,6 +25,8 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-012 | BUG | `/admin/universo` | `revokeKnowledgeAccess` roda um update sem conferir quantas linhas mudaram. Aluno sem concessão individual gera zero linhas afetadas e a tela responde "A concessão individual foi encerrada". | Alto. O administrador acredita ter encerrado um acesso que nunca existiu, ou que existe por outro caminho, e não percebe. O seletor lista todos os alunos, não só os que têm concessão. | aberto | Onda 1, lote D3 |
 | M-013 | DÍVIDA | `/admin/universo` | `grantKnowledgeAccess` faz upsert na chave primária de `ku_entitlements`. Conceder de novo sobrescreve validade e `granted_by`, sem histórico. Encerrar só carimba `expires_at` e não registra quem encerrou. | Alto para rastreabilidade. Não há como reconstruir quem concedeu o quê, por quanto tempo, nem quem encerrou. Contrasta com a evidência prática, que é append-only e auditável. | aberto | Onda 1, lote D3 |
 | M-014 | BUG | `/admin/cursos` | `saveCourse` descarta o resultado do Supabase no update e no insert. Erro de banco não interrompe nada: a action segue para o redirect como se tivesse gravado. No insert que falha, o redirect vai para `/admin/cursos/` com id vazio. | Alto. O administrador edita um curso, é levado de volta à página do curso e acredita ter salvo. É a mesma classe de M-003 e M-006, agora sobre a gravação inteira e não só sobre o upload. | aberto | Onda 1, lote D4 |
+| M-015 | BUG | `/admin/cursos` | `buildOptions` descarta alternativa em branco, inclusive quando é a marcada como correta. A pergunta é gravada sem nenhuma opção correta e nada avisa. Na correção, `opts[picked]?.correct` nunca é verdadeiro para ela. | Alto. Uma pergunta assim é impossível de acertar e trava a nota máxima abaixo do mínimo de aprovação. Com três perguntas e uma quebrada, o teto é 67% contra um mínimo padrão de 70%: ninguém passa e ninguém emite certificado. | aberto | Onda 1, lote D5 |
+| M-016 | RISCO | `/admin/cursos` | Excluir avaliação e excluir pergunta não pedem confirmação. Excluir a avaliação leva junto todas as perguntas. | Médio. Um clique apaga o banco de perguntas do curso sem volta. | aberto | Onda 1, lote D5 |
 
 ## Observações
 
@@ -64,4 +66,16 @@ significaria outra tabela.
 `(formData.get("title") as string).trim()`, sem proteção contra ausência. Hoje o
 campo é obrigatório no navegador, então na prática não acontece, mas uma
 requisição fora do formulário derruba a action.
+
+**M-015** é o achado mais sério desta onda até agora, porque falha em silêncio e
+o sintoma aparece longe da causa: o administrador vê a pergunta salva, e o aluno
+descobre que não consegue passar. A interface migrada já diz em palavras que
+alternativa em branco é descartada mesmo quando marcada como correta, mas dizer
+não impede.
+
+**M-016** vale junto com M-002 e M-004, que são a mesma ausência de confirmação
+em outras telas. Se um dia forem tratados, vale tratar os três de uma vez.
+
+**M-014** vale também para `quizActions.ts`: as seis actions do quiz descartam o
+resultado do Supabase do mesmo jeito que `saveCourse`.
 
