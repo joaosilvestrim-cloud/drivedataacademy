@@ -1,4 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { Button, Status, Badge } from "@/components/ui/primitives";
+import { DataTable, SortTh, Tr, Cell } from "@/components/ui/data";
+import { EmptyState } from "@/components/ui/layout";
 import AdminError from "../AdminError";
 import Avatar from "@/components/Avatar";
 import GrantForm from "./GrantForm";
@@ -15,6 +18,28 @@ function fmt(d: string | null) {
   } catch {
     return "—";
   }
+}
+
+// Uma ação por linha, então botão direto. Dropdown continua adiado e não há
+// evidência que justifique criar um aqui.
+function MembershipAction({ id, status, nome }: { id: string; status: string; nome: string }) {
+  const revogar = status === "active";
+  return (
+    <form action={revogar ? revokeMembership : reactivateMembership} className="inline-block">
+      <input type="hidden" name="id" value={id} />
+      <Button type="submit" variant={revogar ? "danger" : "secondary"} size="sm">
+        {revogar ? "Revogar" : "Reativar"}
+        <span className="sr-only"> o acesso de {nome}</span>
+      </Button>
+    </form>
+  );
+}
+
+function produto(p: string | null) {
+  if (p === "subscription") return "assinatura";
+  if (p === "workshop") return "workshop";
+  if (p === "full_access") return "acesso full";
+  return p || "—";
 }
 
 export default async function AcessosPage({ searchParams }: { searchParams: { ok?: string; error?: string } }) {
@@ -84,100 +109,162 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
         <GrantCoursesForm courses={courses} />
       </div>
 
-      {/* Memberships */}
-      <h2 className="mt-10 font-display text-lg font-bold text-white">Alunos com acesso</h2>
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
-            <tr>
-              <th className="px-4 py-3">Aluno</th>
-              <th className="px-4 py-3">Origem</th>
-              <th className="px-4 py-3">Desde</th>
-              <th className="px-4 py-3">Expira</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Ação</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {members.length === 0 && (
-              <tr><td colSpan={6} className="px-4 py-10 text-center text-slate-500">Nenhum acesso ainda. Libere o primeiro acima.</td></tr>
-            )}
-            {members.map((m) => (
-              <tr key={m.id} className="text-slate-200">
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2.5">
-                    <Avatar name={m.name || m.email} size="xs" />
-                    <div>
-                      <div className="font-medium text-white">{m.name || m.email}</div>
-                      {m.name && <div className="text-xs text-slate-500">{m.email}</div>}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-slate-400">{m.source || "—"}</td>
-                <td className="px-4 py-3 text-slate-400">{fmt(m.starts_at)}</td>
-                <td className="px-4 py-3 text-slate-400">{fmt(m.expires_at)}</td>
-                <td className="px-4 py-3">
-                  {m.active ? (
-                    <span className="rounded-full bg-brand-green/15 px-2.5 py-1 text-xs font-semibold text-brand-green">ativo</span>
-                  ) : (
-                    <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-semibold text-slate-400">{m.status === "active" ? "expirado" : m.status}</span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-right">
-                  {m.status === "active" ? (
-                    <form action={revokeMembership} className="inline">
-                      <input type="hidden" name="id" value={m.id} />
-                      <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Revogar</button>
-                    </form>
-                  ) : (
-                    <form action={reactivateMembership} className="inline">
-                      <input type="hidden" name="id" value={m.id} />
-                      <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/40 hover:text-brand-green">Reativar</button>
-                    </form>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* Alunos com acesso. A tabela some no celular e vira lista estruturada:
+          rolagem lateral não é leitura, é adiamento do problema. */}
+      <section className="mt-12">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
+          <h2 className="font-display text-section font-semibold text-ds-text">Alunos com acesso</h2>
+          <span className="text-meta uppercase text-ds-text-3">
+            {members.length} {members.length === 1 ? "registro" : "registros"}
+            {members.length > 0 && ` · ${activeCount} ${activeCount === 1 ? "ativo" : "ativos"}`}
+          </span>
+        </div>
 
-      {/* Pedidos */}
-      <h2 className="mt-10 font-display text-lg font-bold text-white">Pedidos</h2>
-      <p className="mt-1 text-sm text-slate-400">Preenchido automaticamente quando o checkout do Asaas estiver ativo.</p>
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
-        <table className="w-full min-w-[640px] text-left text-sm">
-          <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
-            <tr>
-              <th className="px-4 py-3">E-mail</th>
-              <th className="px-4 py-3">Tipo</th>
-              <th className="px-4 py-3">Valor</th>
-              <th className="px-4 py-3">Gateway</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Data</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {orders.length === 0 && (
-              <tr><td colSpan={6} className="px-4 py-10 text-center text-slate-500">Nenhum pedido ainda.</td></tr>
-            )}
-            {orders.map((o) => {
-              const prod = o.product === "subscription" ? "Assinatura" : o.product === "workshop" ? "Workshop" : o.product === "full_access" ? "Acesso full" : (o.product || "—");
-              return (
-              <tr key={o.id} className="text-slate-200">
-                <td className="px-4 py-3">{o.email || "—"}</td>
-                <td className="px-4 py-3"><span className="rounded-full bg-white/5 px-2 py-0.5 text-[0.65rem] font-semibold uppercase text-slate-300">{prod}</span></td>
-                <td className="px-4 py-3">{o.amount != null ? `R$ ${Number(o.amount).toFixed(2)}` : "—"}</td>
-                <td className="px-4 py-3 text-slate-400">{o.gateway || "—"}</td>
-                <td className="px-4 py-3">
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${o.status === "paid" ? "bg-brand-green/15 text-brand-green" : "bg-white/10 text-slate-400"}`}>{o.status}</span>
-                </td>
-                <td className="px-4 py-3 text-slate-400">{fmt(o.created_at)}</td>
-              </tr>
-            );})}
-          </tbody>
-        </table>
-      </div>
+        {members.length === 0 ? (
+          <EmptyState
+            title="Nenhum acesso liberado ainda"
+            description="Use um dos três formulários acima para liberar o primeiro."
+          />
+        ) : (
+          <>
+            <div className="mt-4 hidden tablet:block">
+              <DataTable caption="Alunos com acesso, origem, vigência e situação">
+                <thead>
+                  <tr>
+                    <SortTh className="w-full">Aluno</SortTh>
+                    <SortTh className="hidden lg:table-cell">Origem</SortTh>
+                    <SortTh>Desde</SortTh>
+                    <SortTh>Expira</SortTh>
+                    <SortTh>Situação</SortTh>
+                    <SortTh className="text-right">Ação</SortTh>
+                  </tr>
+                </thead>
+                <tbody>
+                  {members.map((m) => (
+                    <Tr key={m.id}>
+                      <Cell className="max-w-0">
+                        <span className="flex min-w-0 items-center gap-2.5">
+                          <Avatar name={m.name || m.email} size="xs" />
+                          <span className="min-w-0">
+                            <span className="block truncate font-medium text-ds-text">{m.name || m.email}</span>
+                            {m.name && <span className="block truncate text-caption text-ds-text-3">{m.email}</span>}
+                          </span>
+                        </span>
+                      </Cell>
+                      <Cell muted className="hidden whitespace-nowrap lg:table-cell">{m.source || "—"}</Cell>
+                      <Cell muted className="whitespace-nowrap">{fmt(m.starts_at)}</Cell>
+                      <Cell muted className="whitespace-nowrap">{fmt(m.expires_at)}</Cell>
+                      <Cell className="whitespace-nowrap">
+                        <Status tone={m.active ? "accent" : "attention"}>
+                          {m.active ? "Ativo" : m.status === "active" ? "Expirado" : m.status}
+                        </Status>
+                      </Cell>
+                      <Cell className="text-right">
+                        <MembershipAction id={m.id} status={m.status} nome={m.name || m.email} />
+                      </Cell>
+                    </Tr>
+                  ))}
+                </tbody>
+              </DataTable>
+            </div>
+
+            <ul className="mt-2 flex flex-col tablet:hidden">
+              {members.map((m) => (
+                <li key={m.id} className="flex flex-col gap-2 border-b border-ds-line-soft py-3.5">
+                  <span className="flex min-w-0 items-center gap-2.5">
+                    <Avatar name={m.name || m.email} size="xs" />
+                    <span className="min-w-0">
+                      <span className="block truncate text-body-sm font-medium text-ds-text">{m.name || m.email}</span>
+                      {m.name && <span className="block truncate text-caption text-ds-text-3">{m.email}</span>}
+                    </span>
+                  </span>
+                  <span className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+                    <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <Status tone={m.active ? "accent" : "attention"}>
+                        {m.active ? "Ativo" : m.status === "active" ? "Expirado" : m.status}
+                      </Status>
+                      <span className="text-caption text-ds-text-3">
+                        desde {fmt(m.starts_at)} · expira {fmt(m.expires_at)}
+                      </span>
+                    </span>
+                    <MembershipAction id={m.id} status={m.status} nome={m.name || m.email} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
+
+      {/* Pedidos. Só leitura, sem ação de linha. */}
+      <section className="mt-12">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
+          <h2 className="font-display text-section font-semibold text-ds-text">Pedidos</h2>
+          <span className="text-meta uppercase text-ds-text-3">
+            {orders.length} {orders.length === 1 ? "registro" : "registros"}
+          </span>
+        </div>
+        <p className="mt-2 text-body-sm text-ds-text-3">
+          Preenchido automaticamente quando o checkout do Asaas estiver ativo. A tela mostra os 50 pedidos
+          mais recentes; não há paginação, então pedidos mais antigos não aparecem aqui.
+        </p>
+
+        {orders.length === 0 ? (
+          <EmptyState
+            title="Nenhum pedido registrado"
+            description="Os pedidos aparecem sozinhos assim que o checkout começar a rodar."
+          />
+        ) : (
+          <>
+            <div className="mt-4 hidden tablet:block">
+              <DataTable caption="Pedidos recentes, com tipo, valor e situação de pagamento">
+                <thead>
+                  <tr>
+                    <SortTh className="w-full">E-mail</SortTh>
+                    <SortTh>Tipo</SortTh>
+                    <SortTh numeric>Valor</SortTh>
+                    <SortTh className="hidden lg:table-cell">Gateway</SortTh>
+                    <SortTh>Situação</SortTh>
+                    <SortTh>Data</SortTh>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map((o) => (
+                    <Tr key={o.id}>
+                      <Cell className="max-w-0"><span className="block truncate text-ds-text">{o.email || "—"}</span></Cell>
+                      <Cell className="whitespace-nowrap"><Badge>{produto(o.product)}</Badge></Cell>
+                      <Cell numeric className="whitespace-nowrap">{o.amount != null ? `R$ ${Number(o.amount).toFixed(2)}` : "—"}</Cell>
+                      <Cell muted className="hidden whitespace-nowrap lg:table-cell">{o.gateway || "—"}</Cell>
+                      <Cell className="whitespace-nowrap">
+                        <Status tone={o.status === "paid" ? "accent" : "attention"}>{o.status === "paid" ? "Pago" : o.status}</Status>
+                      </Cell>
+                      <Cell muted className="whitespace-nowrap">{fmt(o.created_at)}</Cell>
+                    </Tr>
+                  ))}
+                </tbody>
+              </DataTable>
+            </div>
+
+            <ul className="mt-2 flex flex-col tablet:hidden">
+              {orders.map((o) => (
+                <li key={o.id} className="flex flex-col gap-2 border-b border-ds-line-soft py-3.5">
+                  <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                    <span className="min-w-0 flex-1 truncate text-body-sm text-ds-text">{o.email || "—"}</span>
+                    <span className="font-mono text-body-sm tabular-nums text-ds-text">
+                      {o.amount != null ? `R$ ${Number(o.amount).toFixed(2)}` : "—"}
+                    </span>
+                  </span>
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <Status tone={o.status === "paid" ? "accent" : "attention"}>{o.status === "paid" ? "Pago" : o.status}</Status>
+                    <Badge>{produto(o.product)}</Badge>
+                    <span className="text-caption text-ds-text-3">{fmt(o.created_at)}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
     </div>
   );
 }

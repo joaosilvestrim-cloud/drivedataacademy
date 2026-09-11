@@ -31,6 +31,8 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-018 | BUG | `/admin/cursos` | `ku_activity_events` não tem chave estrangeira para `lessons`. Apagar uma aula remove o progresso mas mantém a evidência já registrada no Knowledge Universe. | Alto. O aluno fica com evidência de uma aula que não existe mais, e o score continua contando por ela. Anda junto com M-017. | aberto | Pré-auditoria do D6 |
 | M-019 | RISCO | `/admin/cursos` | `moveItem` recebe `table` e `filter_col` por campo oculto e os usa direto em `from(table).eq(filterCol, ...)`, sem lista de valores permitidos, com cliente de service role. | Alto. Exige sessão de administrador, então não escala privilégio, mas é entrada do formulário chegando crua na consulta. Alcança qualquer tabela que tenha uma coluna `position`. | aberto | Pré-auditoria do D6 |
 | M-020 | DÍVIDA | `/admin/cursos` | Das oito actions do Curriculum, só `saveLesson` dá retorno, por redirect com `?ok`. As outras sete não avisam nada, e nenhuma confere o resultado do banco. | Médio. O administrador renomeia, libera, cria ou apaga e não recebe confirmação nem erro. Mesma raiz de M-014. | aberto | Pré-auditoria do D6 |
+| M-021 | DÍVIDA | `/admin/acessos` | A lista de pedidos traz `.limit(50)` e não existe paginação nem busca. Pedidos mais antigos não têm como ser alcançados por esta tela. | Médio. O administrador não consegue auditar um pagamento antigo. A tela migrada passou a dizer isso em palavras, mas dizer não resolve. | aberto | Onda 2, lote T1 |
+| M-022 | DÍVIDA | `/admin/acessos` | A lista de acessos não tem limite: carrega todas as linhas de `memberships` e ainda pede `listUsers` com 1000 por página, em toda visita. | Médio hoje, alto com crescimento. A página não degrada aos poucos, ela para de abrir. Nenhuma busca ou filtro existe para reduzir o conjunto. | aberto | Onda 2, lote T1 |
 
 ## Observações
 
@@ -96,4 +98,9 @@ resultado do banco aparecem nas mesmas telas, por motivos diferentes.
 O required assimétrico de aula, obrigatório na criação e opcional na edição,
 é o mesmo defeito de M-001 em lives. Não abri item novo: quando M-001 for
 tratado, vale conferir `/admin/cursos` junto.
+
+**M-021 e M-022** são o mesmo assunto visto dos dois lados: uma tabela esconde
+registros e a outra carrega todos. As duas precisam da mesma decisão de produto,
+que é onde entra busca, filtro e paginação de servidor. O lote T1 não podia
+criar nenhum dos três, porque acrescentar função não era o escopo.
 
