@@ -1,7 +1,11 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import Avatar from "@/components/Avatar";
+import { Status, ICON } from "@/components/ui/primitives";
+import { DataTable, SortTh, Tr, Cell } from "@/components/ui/data";
+import { EmptyState } from "@/components/ui/layout";
 import AdminError from "../AdminError";
 
 export const dynamic = "force-dynamic";
@@ -10,14 +14,24 @@ function fmt(iso: string | null) {
   if (!iso) return "—";
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
 }
-function Bar({ pct }: { pct: number }) {
+/* Barra de progresso local. Continua sendo a mesma leitura de antes; o que
+   ganhou foi nome, valor e limites anunciáveis. O número ao lado nunca sai,
+   então a informação não depende da barra nem da cor. */
+function Bar({ pct, nome }: { pct: number; nome: string }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="h-1.5 w-28 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full bg-gradient-to-r from-brand-green to-brand-blue" style={{ width: `${pct}%` }} />
-      </div>
-      <span className="text-xs text-slate-400">{pct}%</span>
-    </div>
+    <span className="flex items-center gap-2">
+      <span
+        role="progressbar"
+        aria-valuenow={pct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={nome}
+        className="block h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-ds-line"
+      >
+        <span className="block h-full rounded-full bg-ds-accent" style={{ width: `${pct}%` }} />
+      </span>
+      <span className="font-mono text-caption tabular-nums text-ds-text-2">{pct}%</span>
+    </span>
   );
 }
 
@@ -110,74 +124,174 @@ export default async function ProgressoPage({ searchParams }: { searchParams: { 
           ))}
         </div>
 
-        {/* Por curso */}
-        <h2 className="mt-8 font-display text-lg font-bold text-white">Por treinamento</h2>
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
-          <table className="w-full min-w-[820px] text-left text-sm">
-            <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
-              <tr>
-                <th className="px-4 py-3">Treinamento</th>
-                <th className="px-4 py-3 text-center">Aulas</th>
-                <th className="px-4 py-3 text-center">Começaram</th>
-                <th className="px-4 py-3 text-center">Em andamento</th>
-                <th className="px-4 py-3 text-center">Concluíram</th>
-                <th className="px-4 py-3">Progresso médio</th>
-                <th className="px-4 py-3">Última atividade</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {rows.length === 0 && <tr><td colSpan={7} className="px-4 py-12 text-center text-slate-500">Nenhum curso ainda.</td></tr>}
-              {rows.map((r) => (
-                <tr key={r.id} className={`text-slate-200 ${selected && selected.id === r.id ? "bg-white/[0.04]" : ""}`}>
-                  <td className="px-4 py-3">
-                    <Link href={`/admin/progresso?c=${r.id}`} className="font-medium text-white hover:text-brand-green">{r.title}</Link>
-                    {!r.published && <span className="ml-2 rounded-full bg-white/5 px-2 py-0.5 text-[0.6rem] uppercase text-slate-400">rascunho</span>}
-                  </td>
-                  <td className="px-4 py-3 text-center text-slate-400">{r.total}</td>
-                  <td className="px-4 py-3 text-center text-slate-300">{r.started}</td>
-                  <td className="px-4 py-3 text-center text-amber-300/90">{r.inProgress}</td>
-                  <td className="px-4 py-3 text-center text-brand-green">{r.completed} <span className="text-xs text-slate-500">({r.rate}%)</span></td>
-                  <td className="px-4 py-3"><Bar pct={r.avg} /></td>
-                  <td className="px-4 py-3 whitespace-nowrap text-slate-400">{fmt(r.last)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* Relatório por treinamento. Comparar cursos é o trabalho aqui, então
+            a tabela fica no tablet e no desktop, e o celular vira lista. */}
+        <section className="mt-10">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
+            <h2 className="font-display text-section font-semibold text-ds-text">Por treinamento</h2>
+            <span className="text-meta uppercase text-ds-text-3">
+              {rows.length} {rows.length === 1 ? "treinamento" : "treinamentos"}
+            </span>
+          </div>
 
-        {/* Drilldown por aluno */}
-        {selected && (
-          <>
-            <div className="mt-8 flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold text-white">Alunos em “{selected.title}”</h2>
-              <Link href="/admin/progresso" className="text-xs text-slate-400 hover:text-white">Limpar seleção</Link>
-            </div>
-            <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
-              <table className="w-full min-w-[640px] text-left text-sm">
-                <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
-                  <tr><th className="px-4 py-3">Aluno</th><th className="px-4 py-3">Progresso</th><th className="px-4 py-3 text-center">Aulas</th><th className="px-4 py-3">Última atividade</th><th className="px-4 py-3 text-right">Ação</th></tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {studentRows.length === 0 && <tr><td colSpan={5} className="px-4 py-10 text-center text-slate-500">Ninguém começou este treinamento ainda.</td></tr>}
-                  {studentRows.map((s) => (
-                    <tr key={s.uid} className="text-slate-200">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2.5">
-                          <Avatar name={displayName(nameById, s.uid)} size="xs" />
-                          <span className="font-medium text-white">{displayName(nameById, s.uid)}</span>
-                          {s.complete && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">concluiu</span>}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3"><Bar pct={s.pct} /></td>
-                      <td className="px-4 py-3 text-center text-slate-400">{s.d}/{s.total}</td>
-                      <td className="px-4 py-3 whitespace-nowrap text-slate-400">{fmt(s.last)}</td>
-                      <td className="px-4 py-3 text-right"><Link href={`/admin/alunos/${s.uid}`} className="text-xs text-brand-green hover:underline">Ver aluno</Link></td>
+          {rows.length === 0 ? (
+            <EmptyState
+              title="Nenhum curso ainda"
+              description="Crie um treinamento para começar a acompanhar o progresso dos alunos."
+            />
+          ) : (
+            <>
+              <div className="mt-4 hidden tablet:block">
+                <DataTable caption="Progresso por treinamento: aulas, alunos que começaram, em andamento, concluíram e progresso médio">
+                  <thead>
+                    <tr>
+                      <SortTh className="w-full">Treinamento</SortTh>
+                      <SortTh numeric>Aulas</SortTh>
+                      <SortTh numeric>Começaram</SortTh>
+                      <SortTh numeric className="hidden lg:table-cell">Em andamento</SortTh>
+                      <SortTh numeric>Concluíram</SortTh>
+                      <SortTh>Progresso médio</SortTh>
+                      <SortTh>Última atividade</SortTh>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {rows.map((r) => (
+                      <Tr key={r.id} className={selected && selected.id === r.id ? "bg-ds-raised/60" : undefined}>
+                        <Cell className="max-w-0">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <Link
+                              href={`/admin/progresso?c=${r.id}`}
+                              aria-current={selected && selected.id === r.id ? "true" : undefined}
+                              className="min-w-0 truncate font-medium text-ds-text underline decoration-transparent underline-offset-4 transition-colors duration-fast ease-ds hover:decoration-ds-line"
+                            >
+                              {r.title}
+                            </Link>
+                            {!r.published && <Status>Rascunho</Status>}
+                          </span>
+                        </Cell>
+                        <Cell numeric muted>{r.total}</Cell>
+                        <Cell numeric>{r.started}</Cell>
+                        <Cell numeric muted className="hidden lg:table-cell">{r.inProgress}</Cell>
+                        <Cell numeric className="whitespace-nowrap">
+                          {r.completed} <span className="text-caption text-ds-text-3">({r.rate}%)</span>
+                        </Cell>
+                        <Cell><Bar pct={r.avg} nome={`Progresso médio em ${r.title}`} /></Cell>
+                        <Cell muted className="whitespace-nowrap">{fmt(r.last)}</Cell>
+                      </Tr>
+                    ))}
+                  </tbody>
+                </DataTable>
+              </div>
+
+              <ul className="mt-2 flex flex-col tablet:hidden">
+                {rows.map((r) => (
+                  <li key={r.id}>
+                    <Link
+                      href={`/admin/progresso?c=${r.id}`}
+                      className="flex items-center gap-3 border-b border-ds-line-soft py-3.5 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                    >
+                      <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className="truncate text-body-sm font-medium text-ds-text">{r.title}</span>
+                          {!r.published && <Status>Rascunho</Status>}
+                        </span>
+                        <Bar pct={r.avg} nome={`Progresso médio em ${r.title}`} />
+                        <span className="text-caption text-ds-text-3">
+                          <span className="font-mono tabular-nums">{r.total}</span> aulas ·{" "}
+                          <span className="font-mono tabular-nums">{r.started}</span> começaram ·{" "}
+                          <span className="font-mono tabular-nums">{r.inProgress}</span> em andamento ·{" "}
+                          <span className="font-mono tabular-nums">{r.completed}</span> concluíram ({r.rate}%)
+                        </span>
+                        <span className="text-caption text-ds-text-3">Última atividade: {fmt(r.last)}</span>
+                      </span>
+                      <ChevronRight size={ICON.md} strokeWidth={ICON.stroke} aria-hidden="true" className="shrink-0 text-ds-text-3" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+
+        {/* Recorte por aluno do treinamento escolhido. O parâmetro c não
+            filtra a tabela acima: ele abre esta segunda leitura. */}
+        {selected && (
+          <section className="mt-10">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
+              <h2 className="font-display text-section font-semibold text-ds-text">Alunos em “{selected.title}”</h2>
+              <Link href="/admin/progresso" className="text-label text-ds-text-3 underline decoration-ds-line underline-offset-4 transition-colors duration-fast ease-ds hover:text-ds-text-2">
+                Limpar seleção
+              </Link>
             </div>
-          </>
+
+            {studentRows.length === 0 ? (
+              <EmptyState
+                title="Ninguém começou este treinamento ainda"
+                description="A lista aparece assim que o primeiro aluno concluir uma aula."
+              />
+            ) : (
+              <>
+                <div className="mt-4 hidden tablet:block">
+                  <DataTable caption={`Alunos em ${selected.title}, com progresso, aulas concluídas e última atividade`}>
+                    <thead>
+                      <tr>
+                        <SortTh className="w-full">Aluno</SortTh>
+                        <SortTh>Progresso</SortTh>
+                        <SortTh numeric>Aulas</SortTh>
+                        <SortTh>Última atividade</SortTh>
+                        <SortTh className="text-right">Ação</SortTh>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {studentRows.map((st) => (
+                        <Tr key={st.uid}>
+                          <Cell className="max-w-0">
+                            <span className="flex min-w-0 items-center gap-2.5">
+                              <Avatar name={displayName(nameById, st.uid)} size="xs" />
+                              <span className="min-w-0 truncate font-medium text-ds-text">{displayName(nameById, st.uid)}</span>
+                              {st.complete && <Status tone="accent">Concluiu</Status>}
+                            </span>
+                          </Cell>
+                          <Cell><Bar pct={st.pct} nome={`Progresso de ${displayName(nameById, st.uid)}`} /></Cell>
+                          <Cell numeric muted className="whitespace-nowrap">{st.d}/{st.total}</Cell>
+                          <Cell muted className="whitespace-nowrap">{fmt(st.last)}</Cell>
+                          <Cell className="whitespace-nowrap text-right">
+                            <Link href={`/admin/alunos/${st.uid}`} className="text-caption text-ds-info underline decoration-ds-line underline-offset-4 hover:decoration-ds-info">
+                              Ver aluno<span className="sr-only"> {displayName(nameById, st.uid)}</span>
+                            </Link>
+                          </Cell>
+                        </Tr>
+                      ))}
+                    </tbody>
+                  </DataTable>
+                </div>
+
+                <ul className="mt-2 flex flex-col tablet:hidden">
+                  {studentRows.map((st) => (
+                    <li key={st.uid}>
+                      <Link
+                        href={`/admin/alunos/${st.uid}`}
+                        className="flex items-center gap-3 border-b border-ds-line-soft py-3.5 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                      >
+                        <Avatar name={displayName(nameById, st.uid)} size="xs" />
+                        <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                          <span className="flex min-w-0 items-center gap-2">
+                            <span className="truncate text-body-sm font-medium text-ds-text">{displayName(nameById, st.uid)}</span>
+                            {st.complete && <Status tone="accent">Concluiu</Status>}
+                          </span>
+                          <Bar pct={st.pct} nome={`Progresso de ${displayName(nameById, st.uid)}`} />
+                          <span className="text-caption text-ds-text-3">
+                            <span className="font-mono tabular-nums">{st.d}/{st.total}</span> aulas · {fmt(st.last)}
+                          </span>
+                        </span>
+                        <ChevronRight size={ICON.md} strokeWidth={ICON.stroke} aria-hidden="true" className="shrink-0 text-ds-text-3" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
         )}
 
         <div className="mt-6 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-xs text-slate-400">

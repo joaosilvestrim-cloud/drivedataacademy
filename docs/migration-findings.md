@@ -34,6 +34,8 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-021 | DÍVIDA | `/admin/acessos` | A lista de pedidos traz `.limit(50)` e não existe paginação nem busca. Pedidos mais antigos não têm como ser alcançados por esta tela. | Médio. O administrador não consegue auditar um pagamento antigo. A tela migrada passou a dizer isso em palavras, mas dizer não resolve. | aberto | Onda 2, lote T1 |
 | M-022 | DÍVIDA | `/admin/acessos` | A lista de acessos não tem limite: carrega todas as linhas de `memberships` e ainda pede `listUsers` com 1000 por página, em toda visita. | Médio hoje, alto com crescimento. A página não degrada aos poucos, ela para de abrir. Nenhuma busca ou filtro existe para reduzir o conjunto. | aberto | Onda 2, lote T1 |
 | M-023 | DÍVIDA | `/admin/suporte` | `?status=abc` devolve lista vazia, não marca nenhuma opção como atual e mantém a URL inválida. Não há correção nem redirecionamento. | Baixo. O administrador pode chegar por um link torto e concluir que não há chamados. O texto de vazio agora diz o total existente, o que reduz a confusão sem mudar o comportamento. | aberto | Onda 2, lote T2 |
+| M-024 | DÍVIDA | `/admin/progresso` | Nenhuma das três consultas tem limite. A página carrega `courses` inteiro, `lessons` inteiro e `lesson_progress` inteiro em toda visita, e calcula todas as métricas em memória no caminho da requisição. | Alto com crescimento. `lesson_progress` cresce por aluno vezes aula concluída, então é a tabela que estoura primeiro. Limitar a consulta não é possível sem antes decidir como calcular as métricas, porque elas dependem do conjunto completo. | aberto | Onda 2, lote T4 |
+| M-025 | DÍVIDA | `/admin/progresso` | `?c=` com id inexistente não abre o recorte por aluno e não avisa nada. O resultado é idêntico ao de não passar o parâmetro. | Baixo. Mesma raiz de M-023: parâmetro de URL inválido é tratado como ausente, sem correção nem redirecionamento. | aberto | Onda 2, lote T4 |
 
 ## Observações
 
@@ -124,3 +126,22 @@ uma opção que não existe. A reescrita do texto fez esse efeito colateral
 desaparecer, mas o comportamento do filtro continua o mesmo: lista vazia, URL
 inválida preservada.
 
+**M-024 é a versão mais pesada de M-022.** Em `/admin/acessos` e `/admin/suporte`
+a consulta sem limite carrega uma lista que o administrador vai ler. Em
+`/admin/progresso` ela carrega uma tabela de eventos que ninguém lê linha a
+linha: ela existe só para virar seis números e duas tabelas agregadas. É o caso
+mais claro de cálculo que deveria estar no banco, e o único das quatro páginas
+da Onda 2 em que limitar a consulta mudaria o resultado mostrado, não só o
+tamanho da lista.
+
+**M-025 confirma o padrão de M-023.** Duas páginas, dois parâmetros diferentes,
+o mesmo tratamento: valor inválido cai no caminho do valor ausente. Vale decidir
+isso uma vez para toda a camada, não página a página.
+
+**Observação sobre `Badge` e a regra do Mono.** O `Badge` da fundação usa
+`font-mono`, e a regra escrita no README diz que Mono é só para medida. Em
+`/admin/progresso` os dois rótulos candidatos a chip eram estados, "rascunho" e
+"concluiu", então o lote usou `Status`, que não é Mono, e a tensão não precisou
+ser resolvida aqui. Ela continua de pé para quem usar `Badge` com palavra, como
+já acontece em `/admin/acessos` com o tipo do pedido. Registrado como assunto de
+fundação, não corrigido durante migração visual.
