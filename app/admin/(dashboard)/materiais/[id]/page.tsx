@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { PageHeader } from "@/components/ui/layout";
 import MaterialForm from "../MaterialForm";
 import CampaignLink from "../CampaignLink";
 
@@ -16,17 +17,16 @@ export default async function EditMaterialPage({ params }: { params: { id: strin
   if (!material) notFound();
 
   return (
-    <div>
-      <h1 className="font-display text-2xl font-bold text-white">Editar material</h1>
-      <p className="mt-1 text-sm text-slate-400">{material.title}</p>
-
-      <div className="mt-6 max-w-3xl">
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        context="Materiais"
+        title="Editar material"
+        lede={material.title}
+      />
+      <div className="max-w-3xl">
         <CampaignLink slug={material.slug} published={material.published} />
       </div>
-
-      <div className="mt-6">
-        <MaterialForm material={material} />
-      </div>
+      <MaterialForm material={material} />
     </div>
   );
 }

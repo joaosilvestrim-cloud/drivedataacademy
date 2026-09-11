@@ -165,6 +165,117 @@ export function CheckboxField({
   );
 }
 
+/* --------------------------------- FileField ------------------------------
+   Nasceu em /admin/materiais. Mantém o input nativo de propósito: ele já é
+   operável por teclado, já mostra o nome do arquivo escolhido e já respeita
+   `accept`. Um dropzone customizado trocaria tudo isso por aparência.
+
+   Não inventa recurso que o produto não tem: sem arrastar e soltar, sem
+   progresso percentual, sem remover. O que ele acrescenta é o que faltava:
+   nome acessível, arquivo atual visível e a regra de substituição dita em
+   palavras, em vez de implícita.
+   ------------------------------------------------------------------------- */
+export function FileField({
+  scope, name, label, description, error, required, disabled, className,
+  current, preview, accept, ...rest
+}: Base & {
+  /** Arquivo já salvo, na edição. */
+  current?: { url: string; label?: string } | null;
+  /** Miniatura, só quando o arquivo é imagem. */
+  preview?: string | null;
+  accept?: string;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "name" | "id" | "type" | "required" | "disabled" | "className" | "accept">) {
+  const id = `${slug(scope)}-${slug(name)}`;
+  const descId = `${id}-desc`;
+  const temAtual = !!current?.url;
+
+  return (
+    <div className={cx("flex flex-col gap-2", className)}>
+      <label htmlFor={id} className="flex flex-wrap items-baseline gap-x-2 text-label font-medium text-ds-text-2">
+        {label}
+        {required && <span className="text-meta uppercase text-ds-text-3">obrigatório</span>}
+      </label>
+
+      {preview && (
+        <span className="block w-full max-w-[16rem] overflow-hidden rounded-srf border border-ds-line">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={preview} alt="" loading="lazy" decoding="async" className="aspect-[16/9] w-full object-cover" />
+        </span>
+      )}
+
+      {temAtual && (
+        <p className="flex flex-wrap items-baseline gap-x-2 text-caption text-ds-text-3">
+          <span>Arquivo atual:</span>
+          <a
+            href={current!.url}
+            target="_blank"
+            rel="noreferrer"
+            className="min-w-0 break-all text-ds-info underline decoration-ds-line underline-offset-4 hover:decoration-ds-info"
+          >
+            {current!.label || "abrir"}
+          </a>
+        </p>
+      )}
+
+      <input
+        id={id}
+        name={name}
+        type="file"
+        accept={accept}
+        required={required}
+        disabled={disabled}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? `${id}-error` : `${descId}`}
+        className="block w-full text-body-sm text-ds-text-2 file:mr-3 file:rounded-ctl file:border file:border-ds-line file:bg-ds-raised file:px-3 file:py-2 file:text-label file:font-medium file:text-ds-text file:transition-colors hover:file:border-ds-text-3 disabled:opacity-50"
+        {...rest}
+      />
+
+      {error ? (
+        <p id={`${id}-error`} className="flex items-start gap-1.5 text-caption text-ds-danger">
+          <AlertCircle size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className="mt-0.5 shrink-0" />
+          <span>{error}</span>
+        </p>
+      ) : (
+        <p id={descId} className="text-caption text-ds-text-3">
+          {description}
+          {description && temAtual ? " " : ""}
+          {temAtual && "Escolher um arquivo substitui o atual. Deixar em branco mantém o que já está salvo."}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* -------------------------------- FormSection -----------------------------
+   Agrupamento semântico. Nasceu em /admin/materiais, que tem 15 campos em 5
+   assuntos distintos, cada um já com título e explicação próprios no código
+   original. Sem agrupamento a tela vira uma lista longa e indiferenciada.
+
+   Não é card: é título, régua e respiro. Cinco cards empilhados eram parte do
+   problema que originou o Design System.
+   ------------------------------------------------------------------------- */
+export function FormSection({
+  title,
+  description,
+  children,
+  className,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className={cx("flex flex-col gap-4", className)}>
+      <div className="border-b border-ds-line pb-2">
+        <h2 className="font-display text-component font-semibold text-ds-text">{title}</h2>
+        {description && <p className="mt-1 max-w-xl text-caption text-ds-text-3">{description}</p>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
 /* -------------------------------- FormActions ----------------------------- */
 // Área de ações. Uma primária, as demais recuadas, destrutiva à direita e com
 // tratamento próprio. Evita dois botões com o mesmo peso visual.

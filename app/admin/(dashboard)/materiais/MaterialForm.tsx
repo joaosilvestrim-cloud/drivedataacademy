@@ -1,4 +1,7 @@
-import Link from "next/link";
+import { Button } from "@/components/ui/primitives";
+import {
+  Field, TextareaField, CheckboxField, FileField, FormSection, FormActions,
+} from "@/components/ui/form";
 import { saveMaterial } from "./actions";
 
 type Material = {
@@ -18,119 +21,145 @@ type Material = {
   published: boolean;
 } | null;
 
-const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
-const label = "block text-sm font-medium text-slate-300";
-const card = "glass rounded-2xl border border-white/8 p-6 space-y-5";
-
 export default function MaterialForm({ material }: { material?: Material }) {
+  const editando = !!material;
+  // Um formulário por página aqui, mas o scope segue a mesma convenção do
+  // primeiro piloto: id previsível e único, sem depender de useId.
+  const scope = editando ? `material-${material!.id}` : "material-novo";
+
   return (
-    <form action={saveMaterial} className="max-w-3xl space-y-6">
-      {material && <input type="hidden" name="id" value={material.id} />}
+    <form action={saveMaterial} className="flex max-w-3xl flex-col gap-10">
+      {editando && <input type="hidden" name="id" value={material!.id} />}
 
-      <div className={card}>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="title">Título do material</label>
-          <input id="title" name="title" required defaultValue={material?.title ?? ""} className={field} />
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="slug">Slug (URL pública)</label>
-          <input id="slug" name="slug" placeholder="gerado do título se vazio" defaultValue={material?.slug ?? ""} className={field} />
-          <p className="text-xs text-slate-500">Página: <span className="text-slate-400">/materiais/&lt;slug&gt;</span></p>
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="subtitle">Subtítulo</label>
-          <input id="subtitle" name="subtitle" defaultValue={material?.subtitle ?? ""} className={field} />
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="description">Descrição (texto da página)</label>
-          <textarea id="description" name="description" rows={5} defaultValue={material?.description ?? ""} className={`${field} resize-y`} />
-        </div>
-      </div>
+      <FormSection title="Identificação">
+        <Field
+          scope={scope}
+          name="title"
+          label="Título do material"
+          required
+          defaultValue={material?.title ?? ""}
+          description="Aparece como título da página pública."
+        />
+        <Field
+          scope={scope}
+          name="slug"
+          label="Endereço da página"
+          defaultValue={material?.slug ?? ""}
+          description="A página fica em /materiais/ mais este trecho. Em branco, geramos a partir do título."
+        />
+        <Field
+          scope={scope}
+          name="subtitle"
+          label="Subtítulo"
+          defaultValue={material?.subtitle ?? ""}
+          description="Uma linha de apoio, logo abaixo do título."
+        />
+        <TextareaField
+          scope={scope}
+          name="description"
+          label="Descrição"
+          rows={5}
+          defaultValue={material?.description ?? ""}
+          description="O texto da página. Explique o que a pessoa vai receber."
+        />
+      </FormSection>
 
-      <div className={card}>
-        <div>
-          <p className="text-sm font-semibold text-white">Conteúdo entregue</p>
-          <p className="text-xs text-slate-400">O arquivo que o lead recebe por e-mail (anexo + link) e download na página. Ex.: PDF, e-book, planilha.</p>
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="content_file">Arquivo (PDF, etc.) — enviado por e-mail / download</label>
-          <input id="content_file" name="content_file" type="file" className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-white hover:file:bg-white/15" />
-          {material?.file_url && <p className="text-xs text-slate-500">Atual: <a href={material.file_url} target="_blank" rel="noreferrer" className="text-brand-teal hover:underline">ver arquivo</a></p>}
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="file_url">Ou um link externo</label>
-          <input id="file_url" name="file_url" placeholder="https://..." defaultValue={material?.file_url ?? ""} className={field} />
-        </div>
-      </div>
+      <FormSection
+        title="Conteúdo entregue"
+        description="É o que o lead recebe por e-mail, anexado e com link, e também baixa na página."
+      >
+        <FileField
+          scope={scope}
+          name="content_file"
+          label="Arquivo"
+          current={material?.file_url ? { url: material.file_url, label: "ver arquivo" } : null}
+          description="PDF, e-book, planilha ou outro."
+        />
+        <Field
+          scope={scope}
+          name="file_url"
+          label="Ou um link externo"
+          type="url"
+          placeholder="https://"
+          defaultValue={material?.file_url ?? ""}
+          description="Use quando o arquivo já estiver hospedado em outro lugar."
+        />
+      </FormSection>
 
-      <div className={card}>
-        <div>
-          <p className="text-sm font-semibold text-white">Imagem de capa</p>
-          <p className="text-xs text-slate-400">Aparece na página do material (opcional).</p>
-        </div>
-        {material?.cover_url && (
-          <div className="aspect-[16/9] w-full max-w-xs overflow-hidden rounded-xl border border-white/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={material.cover_url} alt="" className="h-full w-full object-cover" />
-          </div>
-        )}
-        <input id="cover_file" name="cover_file" type="file" accept="image/*" className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-white hover:file:bg-white/15" />
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="cover_url">Ou uma URL de imagem</label>
-          <input id="cover_url" name="cover_url" placeholder="https://..." defaultValue={material?.cover_url ?? ""} className={field} />
-        </div>
-      </div>
+      <FormSection title="Imagem de capa" description="Opcional. Aparece no topo da página do material.">
+        {/* cover_file era o único campo do formulário sem nome acessível. */}
+        <FileField
+          scope={scope}
+          name="cover_file"
+          label="Enviar uma imagem"
+          accept="image/*"
+          preview={material?.cover_url ?? null}
+          description="Proporção 16:9 fica melhor."
+        />
+        <Field
+          scope={scope}
+          name="cover_url"
+          label="Ou uma URL de imagem"
+          type="url"
+          placeholder="https://"
+          defaultValue={material?.cover_url ?? ""}
+        />
+      </FormSection>
 
-      <div className={card}>
-        <div>
-          <p className="text-sm font-semibold text-white">Campos do formulário</p>
-          <p className="text-xs text-slate-400">Nome e e-mail são sempre pedidos. Marque os campos extras que quiser exigir.</p>
+      <FormSection
+        title="Formulário de captura"
+        description="Nome e e-mail são sempre pedidos. Marque os campos extras que quiser exigir."
+      >
+        <Field
+          scope={scope}
+          name="cta_text"
+          label="Texto do botão"
+          placeholder="Quero receber"
+          defaultValue={material?.cta_text ?? ""}
+          className="max-w-xs"
+        />
+        <div className="flex flex-col gap-3 tablet:flex-row tablet:flex-wrap tablet:gap-x-8">
+          <CheckboxField scope={scope} name="ask_phone" label="Pedir telefone" defaultChecked={material?.ask_phone ?? true} />
+          <CheckboxField scope={scope} name="ask_company" label="Pedir empresa" defaultChecked={material?.ask_company ?? true} />
+          <CheckboxField scope={scope} name="ask_role" label="Pedir cargo" defaultChecked={material?.ask_role ?? false} />
         </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="cta_text">Texto do botão</label>
-          <input id="cta_text" name="cta_text" placeholder="Quero receber" defaultValue={material?.cta_text ?? ""} className={`${field} max-w-xs`} />
-        </div>
-        <div className="flex flex-wrap gap-5 pt-1 text-sm text-slate-300">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="ask_phone" defaultChecked={material?.ask_phone ?? true} className="h-4 w-4 accent-emerald-400" /> Pedir telefone
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="ask_company" defaultChecked={material?.ask_company ?? true} className="h-4 w-4 accent-emerald-400" /> Pedir empresa
-          </label>
-          <label className="flex items-center gap-2">
-            <input type="checkbox" name="ask_role" defaultChecked={material?.ask_role ?? false} className="h-4 w-4 accent-emerald-400" /> Pedir cargo
-          </label>
-        </div>
-      </div>
+      </FormSection>
 
-      <div className={card}>
-        <div>
-          <p className="text-sm font-semibold text-white">E-mail de entrega</p>
-          <p className="text-xs text-slate-400">Personalize o e-mail automático (opcional). O conteúdo já vai anexado e com link.</p>
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="email_subject">Assunto (opcional)</label>
-          <input id="email_subject" name="email_subject" placeholder="Seu material: ..." defaultValue={material?.email_subject ?? ""} className={field} />
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="email_message">Mensagem extra (opcional)</label>
-          <textarea id="email_message" name="email_message" rows={3} defaultValue={material?.email_message ?? ""} className={`${field} resize-y`} />
-        </div>
-      </div>
+      <FormSection
+        title="E-mail de entrega"
+        description="Opcional. O conteúdo já vai anexado e com link, mesmo sem personalizar."
+      >
+        <Field
+          scope={scope}
+          name="email_subject"
+          label="Assunto"
+          placeholder="Seu material chegou"
+          defaultValue={material?.email_subject ?? ""}
+        />
+        <TextareaField
+          scope={scope}
+          name="email_message"
+          label="Mensagem extra"
+          rows={3}
+          defaultValue={material?.email_message ?? ""}
+          description="Um recado curto antes do link do material."
+        />
+      </FormSection>
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <label className="flex items-center gap-3 text-sm text-slate-300">
-          <input type="checkbox" name="published" defaultChecked={material?.published ?? false} className="h-4 w-4 accent-emerald-400" />
-          Publicar (página acessível)
-        </label>
-        <div className="flex items-center gap-3">
-          <Link href="/admin/materiais" className="text-sm text-slate-400 hover:text-white">Cancelar</Link>
-          <button type="submit" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-            Salvar
-          </button>
-        </div>
-      </div>
+      <FormSection title="Publicação">
+        <CheckboxField
+          scope={scope}
+          name="published"
+          label="Página publicada"
+          defaultChecked={material?.published ?? false}
+          description="Enquanto desmarcada, o endereço não abre para o público."
+        />
+      </FormSection>
+
+      <FormActions>
+        <Button type="submit" size="lg">{editando ? "Salvar alterações" : "Criar material"}</Button>
+        <Button href="/admin/materiais" variant="ghost">Cancelar</Button>
+      </FormActions>
     </form>
   );
 }
