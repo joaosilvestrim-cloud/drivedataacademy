@@ -9,6 +9,31 @@ funcionando com a escala Tailwind antiga.
 
 ---
 
+## Fundação congelada
+
+A partir do Lote C da Onda 1, a fundação está fechada. Não se altera, no curso
+de uma migração: token de cor, tipografia, escala, raio, sombra, espaçamento,
+regra de movimento, semântica de estado, nem convenção de acessibilidade já
+aprovada.
+
+Página que parece pedir mudança global para "ficar melhor" se resolve primeiro
+por **composição local**, com o que o Design System já oferece.
+
+A fundação só reabre por um destes três motivos, e o motivo precisa ser
+demonstrado, não alegado:
+
+1. bug comprovado;
+2. falha de acessibilidade;
+3. incompatibilidade estrutural que impeça representar corretamente uma
+   interação real do produto.
+
+Preferência estética não reabre a fundação. As duas reaberturas que já
+aconteceram se enquadram: as classes com transparência que não eram geradas
+foram bug comprovado, e o contraste do `--ds-text-3` foi falha de
+acessibilidade.
+
+---
+
 ## Regra da tipografia Mono
 
 `IBM Plex Mono` é assinatura, não fonte de interface. Se virar padrão para todo
