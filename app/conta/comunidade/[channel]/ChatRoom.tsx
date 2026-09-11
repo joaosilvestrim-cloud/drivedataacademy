@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import Avatar from "@/components/Avatar";
+import MedalAvatar from "@/components/ranking/MedalAvatar";
+import {useChatMedals} from "@/components/ranking/useChatMedals";
 import { markChatSolution, signCommunityImage, chatProfiles } from "../actions";
 
 type Msg = {
@@ -62,8 +63,9 @@ function dayStr(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long" }).format(new Date(iso));
 }
 
-export default function ChatRoom({ channel, channels, me, initial }: { channel: Channel; channels: Channel[]; me: { id: string; name: string; avatar?: string | null }; initial: Msg[] }) {
+export default function ChatRoom({ channel, channels, me, initial, initialRanks }: { initialRanks: Record<string,number|null>; channel: Channel; channels: Channel[]; me: { id: string; name: string; avatar?: string | null }; initial: Msg[] }) {
   const [messages, setMessages] = useState<Msg[]>(initial);
+  const medalRanks=useChatMedals([me.id,...messages.map(m=>m.user_id)],initialRanks);
   const [input, setInput] = useState("");
   const [tag, setTag] = useState<string | null>(null);
   const [replyTo, setReplyTo] = useState<Msg | null>(null);
@@ -222,7 +224,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
         </nav>
         <div className="border-t border-white/[0.06] p-3">
           <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] px-3 py-2">
-            <Avatar name={me.name} src={me.avatar ?? null} size="xs" className="ring-1 ring-white/10" />
+            <MedalAvatar rank={medalRanks[me.id]} name={me.name} src={me.avatar ?? null} size="xs" className="ring-1 ring-white/10" />
             <span className="truncate text-xs font-medium text-slate-200">{me.name}</span>
             <span className="ml-auto h-2 w-2 rounded-full bg-brand-green shadow-[0_0_8px] shadow-brand-green/60" />
           </div>
@@ -288,7 +290,7 @@ export default function ChatRoom({ channel, channels, me, initial }: { channel: 
                   </div>
                 )}
                 <div className={`group flex items-start gap-3 rounded-xl px-2.5 transition-colors duration-150 ${grouped ? "py-0.5" : "py-1.5"} ${m.is_solution ? "border border-brand-green/30 bg-brand-green/[0.06]" : "hover:bg-white/[0.04]"}`}>
-                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <Avatar name={m.name} src={m.avatar ?? null} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
+                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <MedalAvatar rank={medalRanks[m.user_id]} name={m.name} src={m.avatar ?? null} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex flex-wrap items-baseline gap-2">

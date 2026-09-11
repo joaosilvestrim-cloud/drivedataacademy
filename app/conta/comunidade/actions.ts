@@ -6,6 +6,16 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 
+import {loadCommunityRanking} from "@/lib/community-ranking";
+import {ranksForUsers,validMedalIds} from "@/lib/ranking";
+
+export async function chatMedals(ids: string[]) {
+  await requireCommunityUser();
+  const uniq=validMedalIds(ids);
+  if(!uniq.length)return {ranks:{} as Record<string,number|null>};
+  return {ranks:ranksForUsers(await loadCommunityRanking(),uniq)};
+}
+
 const SOLUTION_POINTS = 10;
 
 async function requireCommunityUser() {

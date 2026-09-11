@@ -10,7 +10,8 @@
     "test:knowledge": "node scripts/test-knowledge.cjs",
     "test:knowledge-db": "node scripts/test-knowledge-db.cjs",
     "test:decision-lab": "node scripts/test-decision-lab.cjs",
-    "test:dataflow": "node scripts/test-dataflow.cjs"
+    "test:dataflow": "node scripts/test-dataflow.cjs",
+    "test:community-medals": "node scripts/test-community-medals.cjs"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",

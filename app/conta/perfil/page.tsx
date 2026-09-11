@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { BADGE_LABELS, pointsByUser } from "@/lib/community";
+import { BADGE_LABELS } from "@/lib/community";
+import {loadCommunityRanking} from "@/lib/community-ranking";
 import ProfileForm from "./ProfileForm";
 import ProfilePreview from "@/components/knowledge/ProfilePreview";
 
@@ -14,15 +15,14 @@ export default async function PerfilPage() {
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();
-  const [totals, { data: myEvents }, { data: badges }] = await Promise.all([
-    pointsByUser(admin),
+  const [ranked, { data: myEvents }, { data: badges }] = await Promise.all([
+    loadCommunityRanking(),
     admin.from("point_events").select("kind, points").eq("user_id", user.id),
     admin.from("user_badges").select("badge").eq("user_id", user.id),
   ]);
 
-  const ranked = Object.entries(totals).sort((a, b) => b[1] - a[1]);
-  const myPoints = totals[user.id] || 0;
-  const myRank = ranked.findIndex(([id]) => id === user.id);
+  const myPoints = ranked.find(r=>r.id===user.id)?.pts || 0;
+  const myRank = ranked.findIndex(r => r.id === user.id);
   const solutions = (myEvents ?? []).filter((e: any) => e.kind === "solution").length;
   const myBadges = (badges ?? []).map((b: any) => b.badge);
 

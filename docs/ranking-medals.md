@@ -18,3 +18,16 @@
 ## Próxima dimensão temporal
 
 Uma experiência 4D real precisaria de períodos definidos e snapshots de posição/pontuação para reproduzir a evolução. Essa entrega é 3D interativa com efeitos animados, sem inventar histórico. Fechamento de temporadas, desempate e regras de entrega dos prêmios devem ser definidos separadamente antes de conceder medalhas permanentes.
+
+
+## Catálogo e avatares da comunidade
+
+O ranking mostra as cinco categorias e suas faixas, destaca a categoria do aluno e apresenta exemplos de avatar. O catálogo e as medalhas compartilham `lib/ranking.ts`; não existe tabela extra de conquistas nem concessão de pontos.
+
+O chat usa `MedalAvatar` tanto nas mensagens quanto no avatar do próprio aluno. O componente mantém a foto/iniciais, adiciona aro giratório, brilho e posição, com nome da medalha e posição no texto acessível. Sem classificação não há efeito. Movimento reduzido desativa animações. Acima de 99 a miniatura usa estrela; a posição completa permanece no texto acessível e no tooltip.
+
+A página carrega posições dos autores no servidor, após verificar o acesso à comunidade. `chatMedals` repete a autorização a cada consulta, valida UUIDs, aceita no máximo 200 participantes por lote e devolve somente as posições solicitadas. Nenhum cliente informa a própria medalha. O hook agrupa autores, consulta novamente a cada 30 segundos com a aba visível e ao retornar à aba; novos autores disparam atualização. Em erro conserva a última resposta confirmada e tenta novamente. Não envia mensagens para atualizar medalhas.
+
+Ranking, perfil e chat usam a mesma classificação agregada em cache curto (15 segundos, com revalidação em segundo plano), mantendo a ordenação anterior de empates. As mudanças podem levar cerca de um minuto para aparecer no chat. Fotos, permissões e pontuação não mudam. Nenhuma migração de banco é necessária.
+
+Validação: `npm run test:community-medals` cobre as faixas, preservação da ordenação, retirada do selo para não classificados, limites de entrada, autorização, respostas para espectadores diferentes e renderização com foto/iniciais. A demonstração `/ranking/medalhas` reutiliza o catálogo e os avatares com dados fictícios para conferência visual, sem enviar mensagens reais.

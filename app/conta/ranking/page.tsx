@@ -2,10 +2,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS, pointsByUser } from "@/lib/community";
+import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 import RankingPodium from "@/components/ranking/RankingPodium";
 import RankMedal from "@/components/ranking/RankMedal";
+import MedalCatalog from "@/components/ranking/MedalCatalog";
+import {loadCommunityRanking} from "@/lib/community-ranking";
 
 export const dynamic = "force-dynamic";
 
@@ -34,13 +36,11 @@ export default async function RankingPage() {
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/conta");
 
-  const totals = await pointsByUser(admin);
-
-  const ranked = Object.entries(totals).map(([id, pts]) => ({ id, pts })).sort((a, b) => b.pts - a.pts);
+  const ranked = await loadCommunityRanking();
   const top = ranked.slice(0, 50);
   const { nameById, badgeById } = await loadProfiles(admin, [...top.map((r) => r.id), user.id]);
 
-  const myPts = totals[user.id] || 0;
+  const myPts = ranked.find(r=>r.id===user.id)?.pts || 0;
   const myRank = ranked.findIndex((r) => r.id === user.id);
 
   const podium = top.slice(0, 3);
@@ -91,6 +91,8 @@ export default async function RankingPage() {
           ))}
         </div>
       </div>
+
+      <MedalCatalog myRank={myRank>=0?myRank+1:null}/>
 
       <RankingPodium participants={podium.map(r => ({id:r.id, name:displayName(nameById,r.id), pts:r.pts}))}/>
 

@@ -2,6 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, displayName } from "@/lib/community";
+import {loadCommunityRanking} from "@/lib/community-ranking";
+import {ranksForUsers} from "@/lib/ranking";
 import ChatRoom from "./ChatRoom";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +29,8 @@ export default async function ChannelChat({ params }: { params: { channel: strin
   const msgs = (msgsDesc ?? []).slice().reverse(); // oldest -> newest
 
   const ids = msgs.map((m: any) => m.user_id);
-  const { nameById, avatarById } = await loadProfiles(admin, [...ids, user.id]);
+  const [{ nameById, avatarById }, ranked] = await Promise.all([loadProfiles(admin, [...ids, user.id]),loadCommunityRanking()]);
+  const initialRanks=ranksForUsers(ranked,[...ids,user.id]);
 
   // reações
   const likeCount: Record<string, number> = {};
@@ -56,5 +59,5 @@ export default async function ChannelChat({ params }: { params: { channel: strin
 
   const me = { id: user.id, name: displayName(nameById, user.id), avatar: avatarById[user.id] || null };
 
-  return <ChatRoom channel={channel} channels={channels ?? []} me={me} initial={initial} />;
+  return <ChatRoom key={channel.id} initialRanks={initialRanks} channel={channel} channels={channels ?? []} me={me} initial={initial} />;
 }

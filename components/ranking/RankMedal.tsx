@@ -5,13 +5,7 @@ import Image from 'next/image';
 import {RotateCcw,RotateCw,X} from 'lucide-react';
 import s from './medals.module.css';
 
-export function medalTier(rank:number){
-  if(rank===1)return {key:'gold',name:'Ouro',caption:'Liderança da comunidade'};
-  if(rank===2)return {key:'silver',name:'Prata',caption:'Conhecimento que inspira'};
-  if(rank===3)return {key:'bronze',name:'Bronze',caption:'Contribuição que transforma'};
-  if(rank<=10)return {key:'emerald',name:'Esmeralda',caption:'Entre os 10 primeiros'};
-  return {key:'sapphire',name:'Safira',caption:'Construindo conhecimento'};
-}
+import {medalTier} from "@/lib/ranking";
 
 function Engraving({rank}:{rank:number}){
   const id=useId().replace(/:/g,'');
@@ -33,6 +27,7 @@ function Engraving({rank}:{rank:number}){
 
 function Coin({rank,rotation}:{rank:number;rotation?:{x:number;y:number}}){
   const tier=medalTier(rank);
+  if(!tier)return null;
   return <div className={`${s.coin} ${s[tier.key]} ${rotation?s.controlled:s.idle}`} style={rotation?{transform:`rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`}:undefined} aria-hidden="true">
     {Array.from({length:11},(_,i)=><div key={i} className={s.edge} style={{transform:`translateZ(${i*1.4-7}px)`}}/>)}
     <div className={s.front}><div className={s.face}><Engraving rank={rank}/><div className={s.sheen}/></div></div>
@@ -48,7 +43,7 @@ export default function RankMedal({rank,name,points,compact=false}:{rank:number;
   useEffect(()=>{if(open)dialog.current?.showModal();else dialog.current?.close();},[open]);
   const close=()=>{setOpen(false);trigger.current?.focus();};
   const move=(e:PointerEvent<HTMLDivElement>)=>{if(!drag.current)return;setRotation({x:Math.max(-60,Math.min(60,drag.current.rx-(e.clientY-drag.current.y)*.45)),y:drag.current.ry+(e.clientX-drag.current.x)*.65});};
-  if(!Number.isSafeInteger(rank)||rank<1)return null;
+  if(!tier)return null;
   return <>
     <button ref={trigger} type="button" className={`${s.medalButton} ${s[tier.key]} ${compact?s.compact:''}`} aria-label={`Explorar medalha ${tier.name} de ${rank}º lugar${name?` de ${name}`:''}`} onClick={()=>{setRotation({x:-10,y:-18});setOpen(true);}}>
       {!compact&&<><div className={s.ribbon} aria-hidden="true"/><div className={s.halo} aria-hidden="true"/></>}
