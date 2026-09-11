@@ -21,6 +21,7 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-008 | DÍVIDA | `/admin/turma` e `/admin/turmas` | Singular é a assinatura mensal, plural é gestão de turmas. As duas pastas têm um arquivo `TurmaForm.tsx`. | Erro de navegação e de edição. Renomear muda rota e URL. | aberto | Onda 1, lote B |
 | M-009 | DÍVIDA | `/admin/cursos` | `Curriculum.tsx` importa `setModuleRelease` de `/admin/lives`. | Acoplamento entre áreas que dificulta migrar qualquer uma das duas. | aberto | Pré-auditoria do lote D |
 | M-010 | DÍVIDA | Design System | O fundo do estado desabilitado (`disabled:bg-ds-raised`) não prevalece sobre o fundo normal do controle. O estado continua inequívoco por opacidade, cursor e foco. | Cosmético. Medido em desenvolvimento, falta confirmar em produção. | aberto | Onda 1, lote D1 |
+| M-011 | DÍVIDA | `/admin/universo` | A tela aceita construir configuração inválida e só avisa ao salvar: soma de pesos diferente de 100, pré-requisito de uma competência para ela mesma, relação de uma competência para ela mesma. O servidor rejeita nas três. | O administrador pode montar várias regras erradas e descobrir tudo de uma vez, numa única mensagem. | aberto | Onda 1, lote D2 |
 
 ## Observações
 
@@ -34,4 +35,13 @@ M-007.
 
 **M-010** nasceu de uma medição no lote D1 e é o único item que toca a fundação,
 que está congelada. Não reabre nada sozinho: é cosmético e o estado já é
-perceptível por três outros sinais.
+perceptível por três outros sinais. Reapareceu no lote D2, nos mesmos termos e
+sem impacto novo: mesmo consumidor, o `fieldset` do universo, agora cobrindo
+também os cinco campos de peso e os seis de relação. Continua sem justificar
+reabrir a fundação.
+
+**M-011** é comportamento desenhado, não defeito: o cliente deixa montar e o
+servidor valida em `validateDocument`, que checa a soma dos pesos e roda
+detecção de ciclo nos pré-requisitos. O que se registra é o momento do retorno,
+não a regra. Mexer nisso seria acrescentar validação que o código não tem, e o
+D2 tinha instrução explícita de não fazer isso.
