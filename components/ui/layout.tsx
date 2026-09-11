@@ -26,7 +26,7 @@ export function PageHeader({
   return (
     <header className={cx("flex flex-wrap items-end justify-between gap-x-8 gap-y-4", className)}>
       <div className="min-w-0 max-w-2xl">
-        {context && <p className="font-mono text-meta uppercase text-ds-text-3">{context}</p>}
+        {context && <p className="text-meta uppercase text-ds-text-3">{context}</p>}
         <h1 className="mt-2 text-balance font-display text-title font-semibold text-ds-text">{title}</h1>
         {lede && <p className="mt-2 text-body text-ds-text-2">{lede}</p>}
       </div>
@@ -53,7 +53,7 @@ export function SectionHeader({
     <div className={cx("flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5", className)}>
       <h2 className="font-display text-section font-semibold text-ds-text">{title}</h2>
       <div className="flex items-baseline gap-4">
-        {meta && <span className="font-mono text-meta uppercase text-ds-text-3">{meta}</span>}
+        {meta && <span className="text-meta uppercase text-ds-text-3">{meta}</span>}
         {action}
       </div>
     </div>
@@ -147,7 +147,7 @@ export function Th({ children, className, numeric }: { children?: ReactNode; cla
     <th
       scope="col"
       className={cx(
-        "border-b border-ds-line pb-2 pr-4 text-left font-mono text-meta font-normal uppercase text-ds-text-3",
+        "border-b border-ds-line pb-2 pr-4 text-left text-meta font-medium uppercase text-ds-text-3",
         numeric && "text-right",
         className
       )}

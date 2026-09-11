@@ -6,9 +6,13 @@ import type { Score } from './types';
 
 export type Cooling = { id: string; name: string; score: number; freshness: number; days: number };
 export type Parts = Record<string, number>;
-export type Summary = { available: boolean; developed: number; advanced: number; cooling: Cooling[]; parts: Parts; best: number };
+// A competência mais forte, com a composição QUE PERTENCE A ELA. Antes
+// devolvíamos o máximo de cada dimensão somado de competências diferentes, o
+// que produzia uma composição que não existia em lugar nenhum.
+export type Top = { id: string; name: string; score: number; parts: Parts };
+export type Summary = { available: boolean; developed: number; advanced: number; cooling: Cooling[]; top: Top | null };
 
-const EMPTY: Summary = { available: false, developed: 0, advanced: 0, cooling: [], parts: {}, best: 0 };
+const EMPTY: Summary = { available: false, developed: 0, advanced: 0, cooling: [], top: null };
 
 // Resumo barato do universo, para telas que só precisam de números.
 //
@@ -70,21 +74,24 @@ function summarize(scores: Record<string, Score>, competencies: { id: string; na
   }
   cooling.sort((a, b) => a.freshness - b.freshness);
 
-  // Composição agregada da evidência. O motor já calcula parts por competência
-  // e isso nunca apareceu na interface. Somamos a competência mais forte de
-  // cada dimensão para representar de onde o conhecimento do aluno vem.
-  const parts: Parts = {};
-  for (const s of values) {
-    for (const [dim, v] of Object.entries(s.parts ?? {})) {
-      if (typeof v === 'number' && Number.isFinite(v)) parts[dim] = Math.max(parts[dim] ?? 0, v);
-    }
-  }
+  // A competência de maior score, com a composição dela. Nada é misturado.
+  const forte = values.reduce<Score | null>((m, s) => (s.score > (m?.score ?? 0) ? s : m), null);
+  const top: Top | null =
+    forte && forte.score > 0
+      ? {
+          id: forte.id,
+          name: byId.get(forte.id)?.name ?? forte.id,
+          score: forte.score,
+          parts: Object.fromEntries(
+            Object.entries(forte.parts ?? {}).filter(([, v]) => typeof v === 'number' && Number.isFinite(v))
+          ) as Parts,
+        }
+      : null;
 
   return {
     developed: values.filter((s) => s.score > 0).length,
     advanced: values.filter((s) => s.raw >= 80).length,
     cooling: cooling.slice(0, 4),
-    parts,
-    best: values.reduce((m, s) => Math.max(m, s.score), 0),
+    top,
   };
 }

@@ -19,7 +19,7 @@ export default function WorkshopPoll({
         <h2 className="font-display text-section font-semibold text-ds-text">
           Escolha o próximo workshop
         </h2>
-        <span className="font-mono text-meta uppercase text-ds-text-3">
+        <span className="text-meta uppercase text-ds-text-3">
           {total} {total === 1 ? "voto" : "votos"}
         </span>
       </div>
