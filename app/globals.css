@@ -28,7 +28,12 @@
   /* Texto. Três níveis, nunca mais. */
   --ds-text-c: 240 245 250;
   --ds-text-2-c: 151 166 184;
-  --ds-text-3-c: 100 116 139;
+  /* Subiu de 100 116 139 (#64748b) para 116 132 155 (#74849b): o valor
+     anterior entregava 4,21:1 sobre o fundo e 3,71:1 sobre o elevado, abaixo
+     do mínimo de 4,5:1 para texto normal. Mesma matiz e mesma saturação, só a
+     luminosidade mudou, e é o menor passo que passa em todas as superfícies
+     oficiais. A escada text > text-2 > text-3 continua de pé. */
+  --ds-text-3-c: 116 132 155;
 
   /* Cor com semântica. Cada uma tem um papel e só ele. */
   --ds-accent-c: 52 232 160;      /* aprendizagem, evidência, ação principal */

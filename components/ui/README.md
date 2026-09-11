@@ -93,11 +93,30 @@ das linhas de tabela e o realce do cartão selecionado não apareciam por isso.
 Regra: cor nova entra sempre como `--ds-x-c` em canais, mais o `--ds-x` pronto
 para quem escreve CSS na mão. Nunca só o hexadecimal.
 
+### Token de texto se aprova contra todas as superfícies
+
+Um token destinado a texto não está aprovado só porque passa no fundo padrão.
+Ele precisa atingir 4,5:1 em **todas** as superfícies oficiais onde pode
+aparecer: fundo, superfície, elevado, selecionado, accent suave, linha em
+hover, danger suave, warning suave e info suave. A superfície mais clara é que
+manda, e no nosso caso é o elevado.
+
+O limite de 3:1 de texto grande só vale quando o texto é realmente grande.
+Rótulo de 13px, legenda de 12px e metadado não são texto grande.
+
+Foi assim que `--ds-text-3` foi corrigido: passava a impressão de estar bem
+porque ninguém mediu o elevado, onde entregava 3,71:1.
+
 **Guardrail automatizável (ainda não implementado).** A falha foi silenciosa
 porque nada compara o que o código pede com o que o CSS entrega. A verificação
 é simples e cabe em um passo de build: varrer as fontes atrás de classes
 `*-ds-*` com barra, e conferir se cada uma aparece no CSS compilado. Divergência
-falha o build. Fica registrado como trabalho futuro, não feito agora.
+falha o build.
+
+O segundo guardrail é a **matriz de contraste**: cada token textual contra cada
+superfície oficial, falhando abaixo de 4,5:1. As duas verificações são de
+build, não de runtime. Ficam registradas como trabalho futuro, não feitas
+agora.
 
 ---
 
@@ -166,10 +185,10 @@ em `data.tsx`, que é o que as páginas usam. Atenção para quem for usá-las:
 `TableWrap` já renderiza a própria `<table>`, e aninhar outra dentro quebra a
 hidratação.
 
-**`--ds-text-3` fica em 4,21:1 sobre o fundo.** Abaixo de 4,5:1, que é o alvo de
-texto normal. Vale para descrição de campo, dica e metadado, em toda a
-plataforma. É anterior ao Design System e não foi criado pela correção dos
-tokens. Mexer nisso é mexer na paleta.
+**`--ds-text-3` foi corrigido e saiu desta lista.** Ficava em 4,21:1 sobre o
+fundo e 3,71:1 sobre o elevado. Subiu de `#64748b` para `#74849b`, mesma matiz
+e mesma saturação, só a luminosidade. Agora o pior caso é 4,64:1. Nenhum
+consumidor foi tocado: 87 usos em 17 arquivos herdaram a mudança do token.
 
 **Selecionado se distingue por 2,78:1 em escala de cinza.** É a diferença entre
 a borda do cartão marcado e a do não marcado. Perceptível, porém abaixo de 3:1.
