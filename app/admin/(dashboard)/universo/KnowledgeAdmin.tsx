@@ -7,6 +7,10 @@ import { DEMO_CATALOG } from '@/lib/knowledge/demo';
 import { LABELS, WEIGHTS } from '@/lib/knowledge/engine';
 import { positionFor, requirements } from '@/lib/knowledge/catalog';
 import type { Dimension, KnowledgeDocument, Vec3 } from '@/lib/knowledge/types';
+import { Button } from '@/components/ui/primitives';
+// O arquivo já tem um Field local, usado pelas abas ainda não migradas.
+// O do Design System entra com apelido até as outras abas migrarem.
+import { Field as DsField, TextareaField, SelectField, FormSection, FormActions } from '@/components/ui/form';
 import { grantKnowledgeAccess, publishKnowledgeDraft, recordPracticalEvidence, retractPracticalEvidence, revokeKnowledgeAccess, saveKnowledgeDraft, simulateKnowledgeDraft } from './actions';
 
 const input='mt-1 w-full rounded-lg border border-white/15 bg-slate-900 px-3 py-2 text-sm text-white';
@@ -14,6 +18,20 @@ const button='rounded-lg bg-teal-200 px-4 py-2 text-sm font-semibold text-slate-
 const secondary='rounded-lg border border-white/15 px-3 py-2 text-sm text-slate-300 hover:border-teal-300/40 disabled:opacity-40';
 const panel='rounded-xl border border-white/10 bg-white/[.02] p-5';
 function Field({title,children}:{title:string;children:ReactNode}) {return <label className="block text-xs text-slate-400">{title}{children}</label>;}
+// Seletor de cor: continua nativo e continua local. Virar campo de texto
+// tiraria o seletor do sistema operacional e a operação por teclado que o
+// input color já entrega de graça. O que muda é só a moldura, que passa a ser
+// a mesma dos outros controles.
+function ColorField({scope,name,label,defaultValue}:{scope:string;name:string;label:string;defaultValue:string}) {
+  const id=`${scope}-${name}`;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-label font-medium text-ds-text-2">{label}</label>
+      <input id={id} name={name} type="color" defaultValue={defaultValue}
+        className="h-10 w-full cursor-pointer rounded-ctl border border-ds-line bg-ds-surface p-1 transition-colors duration-fast ease-ds hover:border-ds-text-3 disabled:cursor-not-allowed disabled:opacity-50"/>
+    </div>
+  );
+}
 function str(f:FormData,key:string){return String(f.get(key)??'').trim();}
 function num(f:FormData,key:string){return Number(f.get(key));}
 export default function KnowledgeAdmin({initial,revision:initialRevision,courses,versions,students=[],practical=[]}:{initial:KnowledgeDocument;revision:number;courses:{id:string;title:string;slug:string}[];versions:{id:string;published_at:string}[];students?:{id:string;full_name:string|null}[];practical?:{id:string;userId:string;label:string;at:string}[]}) {
@@ -35,8 +53,44 @@ export default function KnowledgeAdmin({initial,revision:initialRevision,courses
     <fieldset disabled={busy} className="space-y-6">
     {tab==='catalogo'&&<>
       {!doc.areas.length&&<div className={panel}><h2 className="text-lg font-medium">Comece pelo catálogo</h2><p className="mt-2 text-sm text-slate-400">Cadastre suas próprias áreas ou use Dados, Gestão e IA como ponto de partida. O modelo não contém scores nem atividades de alunos.</p><button className={`${secondary} mt-4`} onClick={()=>mutate(d=>{d.areas=structuredClone(DEMO_CATALOG.areas);d.competencies=structuredClone(DEMO_CATALOG.competencies);d.relations=structuredClone(DEMO_CATALOG.relations);d.unlocks=structuredClone(DEMO_CATALOG.unlocks);d.path=[...DEMO_CATALOG.path];})}>Usar catálogo inicial</button></div>}
-      <form className={panel} onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);mutate(d=>{const i=d.areas.length;const angle=i*2.4;const position:Vec3=[Math.cos(angle)*4,Math.sin(angle)*3,0];d.areas.push({id:crypto.randomUUID(),name:str(f,'name'),color:str(f,'color'),position});});e.currentTarget.reset();}}><h2 className="mb-4 text-lg font-medium">Nova macroárea</h2><div className="grid gap-4 sm:grid-cols-[1fr_120px_auto]"><Field title="Nome"><input name="name" required maxLength={160} className={input}/></Field><Field title="Cor"><input name="color" type="color" defaultValue="#56e7cf" className={`${input} h-10`}/></Field><button className={`${button} self-end`}>Adicionar área</button></div><div className="mt-4 flex flex-wrap gap-2">{doc.areas.map(a=><span key={a.id} className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs"><i className="h-2 w-2 rounded-full" style={{background:a.color}}/>{a.name}<button type="button" aria-label={`Remover área ${a.name}`} onClick={()=>{if(doc.competencies.some(c=>c.area===a.id)){setNotice('Mova ou remova as competências desta área antes de removê-la.');return;}mutate(d=>{d.areas=d.areas.filter(x=>x.id!==a.id);});}}>×</button></span>)}</div></form>
-      <form key={editing||'new'} className={panel} onSubmit={competency}><h2 className="mb-4 text-lg font-medium">{selected?'Editar competência':'Nova competência'}</h2><div className="grid gap-4 sm:grid-cols-2"><Field title="Nome"><input name="name" defaultValue={selected?.name} required maxLength={160} className={input}/></Field><Field title="Macroárea"><select name="area" defaultValue={selected?.area} required className={input}>{doc.areas.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}</select></Field><Field title="Competência pai (opcional)"><select name="parent" defaultValue={selected?.parent??''} className={input}><option value="">Sem competência pai</option>{doc.competencies.filter(c=>c.id!==editing).map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></Field><Field title="Meia-vida da atualidade (dias)"><input type="number" name="freshness" min="1" max="3650" required defaultValue={selected?.halfLifeDays??180} className={input}/></Field></div><Field title="Descrição"><textarea name="description" maxLength={2000} defaultValue={selected?.description} className={input}/></Field><p className="my-4 text-xs text-slate-400">Unidades necessárias para completar cada dimensão da competência.</p><div className="grid gap-3 sm:grid-cols-5">{(Object.keys(WEIGHTS) as Dimension[]).map(k=><Field key={k} title={LABELS[k]}><input name={k} type="number" min="1" max="10000" required defaultValue={selected?.targets[k]??100} className={input}/></Field>)}</div><div className="mt-5 flex gap-3"><button disabled={!doc.areas.length} className={button}>{selected?'Atualizar competência':'Adicionar competência'}</button>{selected&&<button type="button" className={secondary} onClick={()=>setEditing('')}>Cancelar edição</button>}</div></form>
+      <form className="flex flex-col gap-5" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);mutate(d=>{const i=d.areas.length;const angle=i*2.4;const position:Vec3=[Math.cos(angle)*4,Math.sin(angle)*3,0];d.areas.push({id:crypto.randomUUID(),name:str(f,'name'),color:str(f,'color'),position});});e.currentTarget.reset();}}>
+        <FormSection title="Nova macroárea">
+          <div className="grid items-end gap-4 tablet:grid-cols-[1fr_8rem_auto]">
+            <DsField scope="area" name="name" label="Nome" required maxLength={160}/>
+            <ColorField scope="area" name="color" label="Cor" defaultValue="#56e7cf"/>
+            <Button type="submit">Adicionar área</Button>
+          </div>
+          {/* Lista das áreas já criadas: outra família, markup preservado. */}
+          <div className="mt-4 flex flex-wrap gap-2">{doc.areas.map(a=><span key={a.id} className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs"><i className="h-2 w-2 rounded-full" style={{background:a.color}}/>{a.name}<button type="button" aria-label={`Remover área ${a.name}`} onClick={()=>{if(doc.competencies.some(c=>c.area===a.id)){setNotice('Mova ou remova as competências desta área antes de removê-la.');return;}mutate(d=>{d.areas=d.areas.filter(x=>x.id!==a.id);});}}>×</button></span>)}</div>
+        </FormSection>
+      </form>
+      <form key={editing||'new'} className="flex flex-col gap-5" onSubmit={competency}>
+        <FormSection title={selected?'Editar competência':'Nova competência'}>
+          <div className="grid gap-4 tablet:grid-cols-2">
+            <DsField scope="competencia" name="name" label="Nome" required maxLength={160} defaultValue={selected?.name}/>
+            <SelectField scope="competencia" name="area" label="Macroárea" required defaultValue={selected?.area}>
+              {doc.areas.map(a=><option key={a.id} value={a.id}>{a.name}</option>)}
+            </SelectField>
+            <SelectField scope="competencia" name="parent" label="Competência pai" defaultValue={selected?.parent??''} description="Opcional. Use para aninhar uma competência dentro de outra.">
+              <option value="">Sem competência pai</option>
+              {doc.competencies.filter(c=>c.id!==editing).map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
+            </SelectField>
+            <DsField scope="competencia" name="freshness" label="Meia-vida da atualidade" type="number" min="1" max="3650" required defaultValue={selected?.halfLifeDays??180} description="Em dias."/>
+          </div>
+          <TextareaField scope="competencia" name="description" label="Descrição" maxLength={2000} defaultValue={selected?.description}/>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="text-label font-medium text-ds-text-2">Alvos por dimensão</legend>
+            <p className="text-caption text-ds-text-3">Unidades necessárias para completar cada dimensão da competência.</p>
+            <div className="mt-1 grid gap-4 tablet:grid-cols-3 lg:grid-cols-5">
+              {(Object.keys(WEIGHTS) as Dimension[]).map(k=><DsField key={k} scope="competencia" name={k} label={LABELS[k]} type="number" min="1" max="10000" required defaultValue={selected?.targets[k]??100}/>)}
+            </div>
+          </fieldset>
+        </FormSection>
+        <FormActions>
+          <Button type="submit" disabled={!doc.areas.length}>{selected?'Atualizar competência':'Adicionar competência'}</Button>
+          {selected&&<Button type="button" variant="ghost" onClick={()=>setEditing('')}>Cancelar edição</Button>}
+        </FormActions>
+      </form>
       <div className="grid gap-3 sm:grid-cols-2">{doc.competencies.map(c=><div key={c.id} className={`${panel} flex items-center justify-between gap-3`}><div><h3>{c.name}</h3><p className="mt-1 text-xs text-slate-500">{doc.areas.find(a=>a.id===c.area)?.name}</p></div><button className={secondary} onClick={()=>setEditing(c.id)}>Editar</button><button aria-label={`Remover ${c.name} do rascunho`} className="text-xs text-red-300" onClick={()=>mutate(d=>{d.competencies=d.competencies.filter(x=>x.id!==c.id);d.relations=d.relations.filter(r=>r.source!==c.id&&r.target!==c.id);d.mappings=d.mappings.filter(m=>m.competency!==c.id);d.path=d.path.filter(id=>id!==c.id);d.unlocks=d.unlocks.filter(u=>u.target!==c.id&&!requirements(u.rule).some(r=>r.competency===c.id));d.competencies.forEach(x=>{if(x.parent===c.id)delete x.parent;});})}>Remover</button></div>)}</div>
     </>}
     {tab==='cursos'&&<div className={panel}><h2 className="text-lg font-medium">Competências de cada treinamento</h2><p className="mt-2 text-sm text-slate-400">Os pesos do curso devem somar 100%. Créditos são unidades pedagógicas, e grupos equivalentes evitam somar novamente o mesmo conhecimento.</p><Field title="Treinamento"><select className={input} value={courseId} onChange={e=>setCourseId(e.target.value)}>{courses.map(c=><option key={c.id} value={c.id}>{c.title}</option>)}</select></Field><form key={courseId} className="mt-5 grid gap-4 sm:grid-cols-2" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);const competency=str(f,'competency');mutate(d=>{d.mappings=d.mappings.filter(m=>!(m.courseId===courseId&&m.competency===competency));d.mappings.push({courseId,competency,weight:num(f,'weight')/100,credits:num(f,'credits'),group:str(f,'group'),advanced:f.get('advanced')==='on'});});}}><Field title="Competência"><select required name="competency" className={input}>{options}</select></Field><Field title="Peso (%)"><input name="weight" type="number" min=".01" max="100" step=".01" defaultValue="100" required className={input}/></Field><Field title="Créditos do curso"><input name="credits" type="number" min="1" max="10000" defaultValue="100" required className={input}/></Field><Field title="Grupo de conhecimento (mesmo nome = conteúdos equivalentes)"><input name="group" defaultValue="fundamentos" required maxLength={80} className={input}/></Field><label className="flex items-center gap-2 text-sm text-slate-300"><input name="advanced" type="checkbox"/>Avaliação de nível avançado</label><button disabled={!courseId||!doc.competencies.length} className={button}>Associar / atualizar</button></form><div className="mt-6 space-y-3">{doc.mappings.filter(m=>m.courseId===courseId).map(m=><div key={m.competency} className="flex items-center justify-between border-t border-white/10 py-3 text-sm"><span>{doc.competencies.find(c=>c.id===m.competency)?.name} · {(m.weight*100).toFixed(1)}% · {m.credits} créditos · {m.group}</span><button className="text-red-300" onClick={()=>mutate(d=>{d.mappings=d.mappings.filter(x=>x!==d.mappings.find(x=>x.courseId===m.courseId&&x.competency===m.competency));})}>Remover</button></div>)}</div><p className="mt-4 text-sm text-teal-200">Total: {(doc.mappings.filter(m=>m.courseId===courseId).reduce((sum,m)=>sum+m.weight,0)*100).toFixed(2)}%</p>{courseId&&<Link className="mt-4 inline-block text-xs text-slate-400" href={`/admin/cursos/${courseId}`}>Abrir cadastro do treinamento →</Link>}</div>}
