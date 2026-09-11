@@ -110,6 +110,14 @@ chamados não tem limite e ainda carrega o perfil de todos os autores em toda
 visita. As contagens por situação dependem de ter a lista inteira em memória,
 então limitar a consulta exige decidir antes como contar.
 
+**M-021 vale também para `/admin/comentarios`**, medido no lote T3: a fila de
+moderação para em 300 comentários, sem paginação e sem busca. As contagens por
+situação são calculadas sobre esses 300, então elas próprias ficam truncadas
+quando a fila passa disso.
+
+**M-016 vale também para `/admin/comentarios`**: excluir comentário não pede
+confirmação, e ali o dado apagado é conteúdo de aluno.
+
 **M-023** foi encontrado ao migrar, não corrigido. A mensagem de vazio antiga
 imprimia a palavra `undefined` nesse caso, porque montava o texto a partir de
 uma opção que não existe. A reescrita do texto fez esse efeito colateral
