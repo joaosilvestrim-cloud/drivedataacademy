@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, X } from "lucide-react";
+import { Button, ICON } from "@/components/ui/primitives";
+import { Field, TextareaField, SelectField, CheckboxField, FormActions } from "@/components/ui/form";
+import { Alert } from "@/components/ui/layout";
 import { saveChallenge, reviewSubmission, saveDiagnosticQuestion, deleteDiagnosticQuestion, toggleChallengePublished, deleteChallenge } from "./actions";
 
 type Competency = { id: string; name: string };
@@ -20,8 +24,14 @@ type Question = {
   answer: number; credits: number; position: number; published: boolean;
 };
 
-const field = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
-const label = "block text-xs font-medium text-slate-300";
+// Esta tela não envia FormData: os campos são controlados e o payload vai como
+// objeto para a Server Action. Os componentes do Design System funcionam assim
+// porque `value` e `onChange` passam direto para o controle nativo. O `name`
+// continua sendo o que dá id previsível ao par rótulo e campo.
+
+// Botão de ação de linha. Mesmo desenho do gerenciador de vídeos em settings.
+const acaoLinha =
+  "grid h-10 w-10 shrink-0 place-items-center rounded-ctl border border-ds-line text-ds-text-2 transition-colors duration-fast ease-ds hover:border-ds-text-3 hover:text-ds-text";
 
 function QuestionEditor({ competencies, editing, onDone }: { competencies: Competency[]; editing: Question | null; onDone: () => void }) {
   const [competency, setCompetency] = useState(editing?.competency ?? competencies[0]?.id ?? "");
@@ -33,6 +43,7 @@ function QuestionEditor({ competencies, editing, onDone }: { competencies: Compe
   const [published, setPublished] = useState(editing?.published ?? true);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const scope = editing ? `pergunta-${editing.id}` : "pergunta-nova";
 
   async function save() {
     setBusy(true); setErr("");
@@ -47,67 +58,109 @@ function QuestionEditor({ competencies, editing, onDone }: { competencies: Compe
   }
 
   return (
-    <div className="glass space-y-4 rounded-2xl border border-white/8 p-5">
-      <p className="text-sm font-semibold text-white">{editing ? "Editar pergunta" : "Nova pergunta"}</p>
+    <section className="flex flex-col gap-5">
+      <h3 className="border-b border-ds-line pb-2 font-display text-component font-semibold text-ds-text">
+        {editing ? "Editar pergunta" : "Nova pergunta"}
+      </h3>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <label className={label}>Competência avaliada</label>
-          <select value={competency} onChange={(e) => setCompetency(e.target.value)} className={field}>
-            {competencies.map((c) => <option key={c.id} value={c.id} className="bg-ink-900">{c.name}</option>)}
-          </select>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1.5">
-            <label className={label}>Créditos</label>
-            <input value={credits} onChange={(e) => setCredits(e.target.value.replace(/[^\d.]/g, ""))} inputMode="decimal" className={field} />
-          </div>
-          <div className="space-y-1.5">
-            <label className={label}>Ordem</label>
-            <input value={position} onChange={(e) => setPosition(e.target.value.replace(/[^\d]/g, ""))} inputMode="numeric" className={field} />
-          </div>
+      <div className="grid gap-4 tablet:grid-cols-2">
+        <SelectField scope={scope} name="competency" label="Competência avaliada" value={competency} onChange={(e) => setCompetency(e.target.value)}>
+          {competencies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </SelectField>
+        <div className="grid grid-cols-2 gap-4">
+          <Field scope={scope} name="credits" label="Créditos" value={credits} onChange={(e) => setCredits(e.target.value.replace(/[^\d.]/g, ""))} inputMode="decimal" />
+          <Field scope={scope} name="position" label="Ordem" value={position} onChange={(e) => setPosition(e.target.value.replace(/[^\d]/g, ""))} inputMode="numeric" />
         </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label className={label}>Pergunta</label>
-        <textarea value={prompt} onChange={(e) => setPrompt(e.target.value.slice(0, 500))} rows={2} className={`${field} resize-y`} />
-      </div>
+      <TextareaField
+        scope={scope}
+        name="prompt"
+        label="Pergunta"
+        rows={2}
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value.slice(0, 500))}
+        description={`Até 500 caracteres. Restam ${500 - prompt.length}.`}
+      />
 
-      <div className="space-y-2">
-        <label className={label}>Alternativas (marque a correta)</label>
-        {options.map((opt, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <input type="radio" checked={answer === i} onChange={() => setAnswer(i)} className="h-4 w-4 shrink-0 accent-emerald-400" />
-            <input
-              value={opt}
-              onChange={(e) => setOptions((o) => o.map((v, j) => (j === i ? e.target.value : v)))}
-              placeholder={`Alternativa ${i + 1}`}
-              className={field}
-            />
-            {options.length > 2 && (
-              <button onClick={() => { setOptions((o) => o.filter((_, j) => j !== i)); if (answer >= i && answer > 0) setAnswer(answer - 1); }} className="shrink-0 text-xs text-slate-500 hover:text-red-300">remover</button>
-            )}
+      {/* Lista dinâmica com uma alternativa correta. É controle próprio, não um
+          Field solto: cada linha tem rótulo e o rádio à esquerda diz qual vale.
+          O `name` compartilhado é o que faz o navegador tratar as opções como um
+          grupo de verdade, com navegação por setas. */}
+      <fieldset className="flex flex-col gap-2">
+        <legend className="mb-1.5 text-label font-medium text-ds-text-2">Alternativas</legend>
+        <p className="text-caption text-ds-text-3">O círculo à esquerda marca qual é a alternativa correta.</p>
+        <ul className="mt-1 flex flex-col gap-3">
+          {options.map((opt, i) => {
+            const id = `${scope}-alt-${i}`;
+            return (
+              <li key={i} className="flex flex-col gap-1.5">
+                <label htmlFor={id} className="text-label font-medium text-ds-text-2">Alternativa {i + 1}</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name={`${scope}-correta`}
+                    checked={answer === i}
+                    onChange={() => setAnswer(i)}
+                    aria-label={`Alternativa ${i + 1} é a correta`}
+                    className="h-4 w-4 shrink-0 accent-[color:var(--ds-accent)]"
+                  />
+                  <input
+                    id={id}
+                    value={opt}
+                    onChange={(e) => setOptions((o) => o.map((v, j) => (j === i ? e.target.value : v)))}
+                    className="h-10 w-full rounded-ctl border border-ds-line bg-ds-surface px-3 text-body text-ds-text placeholder:text-ds-text-3 transition-colors duration-fast ease-ds hover:border-ds-text-3"
+                  />
+                  {options.length > 2 && (
+                    <button
+                      type="button"
+                      onClick={() => { setOptions((o) => o.filter((_, j) => j !== i)); if (answer >= i && answer > 0) setAnswer(answer - 1); }}
+                      aria-label={`Remover alternativa ${i + 1}`}
+                      className={`${acaoLinha} hover:border-ds-danger/50 hover:text-ds-danger`}
+                    >
+                      <X size={ICON.md} strokeWidth={ICON.stroke} aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        {options.length < 6 && (
+          <div className="mt-1">
+            <Button type="button" variant="secondary" size="sm" onClick={() => setOptions((o) => [...o, ""])}>
+              <Plus size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" />
+              Adicionar alternativa
+            </Button>
           </div>
-        ))}
-        {options.length < 6 && <button onClick={() => setOptions((o) => [...o, ""])} className="text-xs text-brand-teal hover:underline">adicionar alternativa</button>}
-      </div>
+        )}
+      </fieldset>
 
-      <label className="flex items-center gap-2 text-sm text-slate-300">
-        <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4 accent-emerald-400" />
-        Publicada no diagnóstico
-      </label>
+      <CheckboxField
+        scope={scope}
+        name="published"
+        label="Publicada no diagnóstico"
+        checked={published}
+        onChange={(e) => setPublished(e.target.checked)}
+      />
 
-      <div className="flex flex-wrap items-center gap-3">
-        <button onClick={save} disabled={busy} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-60">
-          {busy ? "Salvando..." : editing ? "Salvar alterações" : "Adicionar pergunta"}
-        </button>
-        {editing && <button onClick={onDone} className="text-sm text-slate-400 hover:text-white">Cancelar</button>}
-        {err && <span className="text-sm text-red-300">{err}</span>}
-      </div>
-    </div>
+      {err && <Alert tone="danger" title="Não foi possível salvar">{err}</Alert>}
+
+      <FormActions>
+        <Button type="button" onClick={save} disabled={busy}>
+          {busy ? "Salvando" : editing ? "Salvar alterações" : "Adicionar pergunta"}
+        </Button>
+        {editing && <Button type="button" variant="ghost" onClick={onDone}>Cancelar</Button>}
+      </FormActions>
+    </section>
   );
 }
+
+const TIPOS = [
+  { value: "challenge", label: "Desafio" },
+  { value: "exercise", label: "Exercício" },
+  { value: "retention", label: "Revisão" },
+];
 
 function NewChallenge({ competencies, editing, onDone }: { competencies: Competency[]; editing: Challenge | null; onDone: () => void }) {
   const [competency, setCompetency] = useState(editing?.competency ?? competencies[0]?.id ?? "");
@@ -120,6 +173,7 @@ function NewChallenge({ competencies, editing, onDone }: { competencies: Compete
   const [published, setPublished] = useState(editing?.published ?? true);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const scope = editing ? `desafio-${editing.id}` : "desafio-novo";
 
   async function save() {
     setBusy(true); setErr("");
@@ -133,69 +187,93 @@ function NewChallenge({ competencies, editing, onDone }: { competencies: Compete
   }
 
   return (
-    <div className="glass space-y-4 rounded-2xl border border-white/8 p-5">
-      <p className="text-sm font-semibold text-white">{editing ? "Editar desafio" : "Novo desafio"}</p>
+    <section className="flex flex-col gap-5">
+      <h3 className="border-b border-ds-line pb-2 font-display text-component font-semibold text-ds-text">
+        {editing ? "Editar desafio" : "Novo desafio"}
+      </h3>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <label className={label}>Competência</label>
-          <select value={competency} onChange={(e) => setCompetency(e.target.value)} className={field}>
-            {competencies.map((c) => <option key={c.id} value={c.id} className="bg-ink-900">{c.name}</option>)}
-          </select>
-        </div>
-        <div className="space-y-1.5">
-          <label className={label}>Tipo</label>
-          <select value={dimension} onChange={(e) => setDimension(e.target.value)} className={field}>
-            <option value="challenge" className="bg-ink-900">Desafio</option>
-            <option value="exercise" className="bg-ink-900">Exercício</option>
-            <option value="retention" className="bg-ink-900">Revisão</option>
-          </select>
-        </div>
+      <div className="grid gap-4 tablet:grid-cols-2">
+        <SelectField scope={scope} name="competency" label="Competência" value={competency} onChange={(e) => setCompetency(e.target.value)}>
+          {competencies.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </SelectField>
+        <SelectField scope={scope} name="dimension" label="Tipo" value={dimension} onChange={(e) => setDimension(e.target.value)}>
+          {TIPOS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+        </SelectField>
       </div>
 
-      <div className="space-y-1.5">
-        <label className={label}>Título</label>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={160} className={field} placeholder="Ex.: Construir um dashboard de vendas com DAX" />
+      <Field
+        scope={scope}
+        name="title"
+        label="Título"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        maxLength={160}
+        placeholder="Construir um dashboard de vendas com DAX"
+      />
+
+      <TextareaField
+        scope={scope}
+        name="brief"
+        label="Enunciado"
+        rows={4}
+        value={brief}
+        onChange={(e) => setBrief(e.target.value.slice(0, 4000))}
+        placeholder="O que o aluno deve entregar e como será avaliado."
+        description={`Até 4000 caracteres. Restam ${4000 - brief.length}.`}
+      />
+
+      <div className="grid gap-4 tablet:grid-cols-2">
+        <Field
+          scope={scope}
+          name="group_key"
+          label="Grupo de equivalência"
+          value={group}
+          onChange={(e) => setGroup(e.target.value)}
+          maxLength={80}
+          placeholder="dax-pratica"
+          description="Desafios que medem a mesma evidência usam o mesmo grupo. Só o melhor conta."
+        />
+        <Field
+          scope={scope}
+          name="credits"
+          label="Créditos"
+          value={credits}
+          onChange={(e) => setCredits(e.target.value.replace(/[^\d.]/g, ""))}
+          inputMode="decimal"
+          description="Comparado ao alvo da competência nessa dimensão."
+        />
       </div>
 
-      <div className="space-y-1.5">
-        <label className={label}>Enunciado</label>
-        <textarea value={brief} onChange={(e) => setBrief(e.target.value.slice(0, 4000))} rows={4} className={`${field} resize-y`} placeholder="O que o aluno deve entregar e como será avaliado." />
+      <div className="flex flex-col gap-3 tablet:flex-row tablet:gap-x-8">
+        <CheckboxField
+          scope={scope}
+          name="advanced"
+          label="Conta como avançado"
+          checked={advanced}
+          onChange={(e) => setAdvanced(e.target.checked)}
+        />
+        <CheckboxField
+          scope={scope}
+          name="published"
+          label="Publicado para os alunos"
+          checked={published}
+          onChange={(e) => setPublished(e.target.checked)}
+        />
       </div>
+      <p className="text-caption text-ds-text-3">
+        Avançado só destrava acima de 79 pontos junto com uma avaliação avançada aprovada, e exige
+        qualidade a partir de 80%.
+      </p>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <label className={label}>Grupo de equivalência</label>
-          <input value={group} onChange={(e) => setGroup(e.target.value)} maxLength={80} className={field} placeholder="ex.: dax-pratica" />
-          <p className="text-[0.7rem] text-slate-500">Desafios que medem a mesma evidência usam o mesmo grupo. Só o melhor conta.</p>
-        </div>
-        <div className="space-y-1.5">
-          <label className={label}>Créditos</label>
-          <input value={credits} onChange={(e) => setCredits(e.target.value.replace(/[^\d.]/g, ""))} inputMode="decimal" className={field} />
-          <p className="text-[0.7rem] text-slate-500">Comparado ao alvo da competência nessa dimensão.</p>
-        </div>
-      </div>
+      {err && <Alert tone="danger" title="Não foi possível salvar">{err}</Alert>}
 
-      <div className="flex flex-wrap gap-5">
-        <label className="flex items-center gap-2 text-sm text-slate-300">
-          <input type="checkbox" checked={advanced} onChange={(e) => setAdvanced(e.target.checked)} className="h-4 w-4 accent-emerald-400" />
-          Conta como avançado
-        </label>
-        <label className="flex items-center gap-2 text-sm text-slate-300">
-          <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} className="h-4 w-4 accent-emerald-400" />
-          Publicado para os alunos
-        </label>
-      </div>
-      <p className="text-[0.7rem] text-slate-500">Avançado só destrava acima de 79 pontos junto com uma avaliação avançada aprovada, e exige qualidade a partir de 80%.</p>
-
-      <div className="flex flex-wrap items-center gap-3">
-        <button onClick={save} disabled={busy} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-60">
-          {busy ? "Salvando..." : editing ? "Salvar alterações" : "Criar desafio"}
-        </button>
-        {editing && <button onClick={onDone} className="text-sm text-slate-400 hover:text-white">Cancelar</button>}
-        {err && <span className="text-sm text-red-300">{err}</span>}
-      </div>
-    </div>
+      <FormActions>
+        <Button type="button" onClick={save} disabled={busy}>
+          {busy ? "Salvando" : editing ? "Salvar alterações" : "Criar desafio"}
+        </Button>
+        {editing && <Button type="button" variant="ghost" onClick={onDone}>Cancelar</Button>}
+      </FormActions>
+    </section>
   );
 }
 
@@ -205,6 +283,7 @@ function Review({ sub }: { sub: Submission }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [status, setStatus] = useState(sub.status);
+  const scope = `entrega-${sub.id}`;
 
   async function decide(decision: "approved" | "rejected") {
     setBusy(true); setErr("");
@@ -232,24 +311,37 @@ function Review({ sub }: { sub: Submission }) {
       {sub.link && <a href={sub.link} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm text-brand-teal hover:underline">Abrir entrega ↗</a>}
 
       {status === "pending" ? (
-        <div className="mt-4 space-y-3">
-          <div className="flex flex-wrap items-end gap-3">
-            <div className="space-y-1.5">
-              <label className={label}>Qualidade (%)</label>
-              <input value={quality} onChange={(e) => setQuality(e.target.value.replace(/\D/g, "").slice(0, 3))} inputMode="numeric" className={`${field} w-28 tabular-nums`} />
-            </div>
-            <p className="pb-2 text-[0.7rem] text-slate-500">A partir de 70% a evidência conta como qualificada.</p>
-          </div>
-          <textarea value={feedback} onChange={(e) => setFeedback(e.target.value.slice(0, 2000))} rows={3} className={`${field} resize-y`} placeholder="Retorno para o aluno." />
-          <div className="flex flex-wrap items-center gap-3">
-            <button onClick={() => decide("approved")} disabled={busy} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-60">
-              {busy ? "Processando..." : "Aprovar e registrar evidência"}
-            </button>
-            <button onClick={() => decide("rejected")} disabled={busy} className="rounded-xl border border-white/12 px-4 py-2.5 text-sm text-slate-200 hover:border-red-400/50 hover:text-red-200 disabled:opacity-60">
+        <div className="mt-5 flex flex-col gap-4">
+          <Field
+            scope={scope}
+            name="quality"
+            label="Qualidade"
+            value={quality}
+            onChange={(e) => setQuality(e.target.value.replace(/\D/g, "").slice(0, 3))}
+            inputMode="numeric"
+            className="max-w-[12rem]"
+            description="Em porcentagem. A partir de 70% a evidência conta como qualificada."
+          />
+          <TextareaField
+            scope={scope}
+            name="feedback"
+            label="Retorno para o aluno"
+            rows={3}
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value.slice(0, 2000))}
+            description="O aluno recebe este texto por e-mail."
+          />
+
+          {err && <Alert tone="danger" title="Não foi possível registrar">{err}</Alert>}
+
+          <FormActions>
+            <Button type="button" onClick={() => decide("approved")} disabled={busy}>
+              {busy ? "Processando" : "Aprovar e registrar evidência"}
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => decide("rejected")} disabled={busy}>
               Pedir revisão
-            </button>
-            {err && <span className="text-sm text-red-300">{err}</span>}
-          </div>
+            </Button>
+          </FormActions>
         </div>
       ) : (
         <p className="mt-3 text-sm font-medium text-slate-300">

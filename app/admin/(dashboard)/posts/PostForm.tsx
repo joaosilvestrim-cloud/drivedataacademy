@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { Button } from "@/components/ui/primitives";
+import { Field, TextareaField, CheckboxField, FormSection, FormActions } from "@/components/ui/form";
 import { savePost } from "./actions";
 import CoverField from "./CoverField";
 
@@ -20,92 +21,123 @@ type Post = {
   category_es?: string | null;
 } | null;
 
-const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
-const label = "block text-sm font-medium text-slate-300";
+// Um idioma por bloco. Os seis campos de tradução não tinham rótulo nenhum,
+// só placeholder, que some assim que a pessoa digita.
+const IDIOMAS = [
+  { sufixo: "en", nome: "Inglês" },
+  { sufixo: "es", nome: "Espanhol" },
+] as const;
 
 export default function PostForm({ post }: { post?: Post }) {
+  const editando = !!post;
+  const scope = editando ? `post-${post!.id}` : "post-novo";
+  const t = (k: keyof NonNullable<Post>) => (post?.[k] as string | null) ?? "";
+
   return (
-    <form action={savePost} className="max-w-3xl space-y-6">
-      {post && <input type="hidden" name="id" value={post.id} />}
+    <form action={savePost} className="flex max-w-3xl flex-col gap-10">
+      {editando && <input type="hidden" name="id" value={post!.id} />}
 
-      <div className="glass rounded-2xl border border-white/8 p-6 space-y-5">
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="title">Título</label>
-          <input id="title" name="title" required defaultValue={post?.title ?? ""} className={field} />
+      <FormSection title="Identificação">
+        <Field
+          scope={scope}
+          name="title"
+          label="Título"
+          required
+          defaultValue={post?.title ?? ""}
+          description="Aparece como título do artigo no blog."
+        />
+        <div className="grid gap-4 tablet:grid-cols-2">
+          <Field
+            scope={scope}
+            name="slug"
+            label="Endereço da página"
+            defaultValue={post?.slug ?? ""}
+            description="Em branco, geramos a partir do título."
+          />
+          <Field
+            scope={scope}
+            name="category"
+            label="Categoria"
+            placeholder="Power BI"
+            defaultValue={post?.category ?? ""}
+          />
         </div>
+        <TextareaField
+          scope={scope}
+          name="excerpt"
+          label="Resumo"
+          rows={2}
+          defaultValue={post?.excerpt ?? ""}
+          description="É o texto que aparece no card da listagem do blog."
+        />
+      </FormSection>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <label className={label} htmlFor="slug">Slug (URL)</label>
-            <input id="slug" name="slug" placeholder="gerado do título se vazio" defaultValue={post?.slug ?? ""} className={field} />
+      <FormSection
+        title="Traduções"
+        description="Opcional. Preencha para o card aparecer traduzido. Em branco, o site usa o português."
+      >
+        {IDIOMAS.map((i) => (
+          <div key={i.sufixo} className="flex flex-col gap-4 border-l-2 border-ds-line pl-4">
+            <p className="text-meta uppercase text-ds-text-3">{i.nome}</p>
+            <Field
+              scope={scope}
+              name={`title_${i.sufixo}`}
+              label={`Título em ${i.nome.toLowerCase()}`}
+              defaultValue={t(`title_${i.sufixo}` as keyof NonNullable<Post>)}
+            />
+            <TextareaField
+              scope={scope}
+              name={`excerpt_${i.sufixo}`}
+              label={`Resumo em ${i.nome.toLowerCase()}`}
+              rows={2}
+              defaultValue={t(`excerpt_${i.sufixo}` as keyof NonNullable<Post>)}
+            />
+            <Field
+              scope={scope}
+              name={`category_${i.sufixo}`}
+              label={`Categoria em ${i.nome.toLowerCase()}`}
+              defaultValue={t(`category_${i.sufixo}` as keyof NonNullable<Post>)}
+              className="max-w-xs"
+            />
           </div>
-          <div className="space-y-1.5">
-            <label className={label} htmlFor="category">Categoria</label>
-            <input id="category" name="category" placeholder="Ex.: Power BI" defaultValue={post?.category ?? ""} className={field} />
-          </div>
-        </div>
+        ))}
+      </FormSection>
 
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="excerpt">Resumo (aparece no card)</label>
-          <textarea id="excerpt" name="excerpt" rows={2} defaultValue={post?.excerpt ?? ""} className={`${field} resize-none`} />
-        </div>
-      </div>
+      <FormSection title="Imagem de capa">
+        <CoverField scope={scope} defaultUrl={post?.cover_url} />
+      </FormSection>
 
-      <div className="glass rounded-2xl border border-white/8 p-6 space-y-5">
-        <div>
-          <p className="text-sm font-semibold text-white">Traduções (opcional)</p>
-          <p className="text-xs text-slate-400">Preencha para o card aparecer traduzido. Em branco, o site usa o português.</p>
-        </div>
+      <FormSection title="Conteúdo">
+        <TextareaField
+          scope={scope}
+          name="content"
+          label="Texto do artigo"
+          rows={12}
+          defaultValue={post?.content ?? ""}
+        />
+        <Field
+          scope={scope}
+          name="author"
+          label="Autor"
+          defaultValue={post?.author ?? "DriveData Academy"}
+          className="max-w-xs"
+        />
+      </FormSection>
 
-        <div className="space-y-3 rounded-xl border border-white/8 bg-white/[0.02] p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">🇺🇸 Inglês</p>
-          <input name="title_en" placeholder="Título (EN)" defaultValue={post?.title_en ?? ""} className={field} />
-          <textarea name="excerpt_en" rows={2} placeholder="Resumo (EN)" defaultValue={post?.excerpt_en ?? ""} className={`${field} resize-none`} />
-          <input name="category_en" placeholder="Categoria (EN)" defaultValue={post?.category_en ?? ""} className={`${field} max-w-xs`} />
-        </div>
+      <FormSection title="Publicação">
+        <CheckboxField
+          scope={scope}
+          name="published"
+          label="Post publicado"
+          defaultChecked={post?.published ?? false}
+          description="Enquanto desmarcado, o artigo não aparece no blog."
+        />
+      </FormSection>
 
-        <div className="space-y-3 rounded-xl border border-white/8 bg-white/[0.02] p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">🇪🇸 Espanhol</p>
-          <input name="title_es" placeholder="Título (ES)" defaultValue={post?.title_es ?? ""} className={field} />
-          <textarea name="excerpt_es" rows={2} placeholder="Resumo (ES)" defaultValue={post?.excerpt_es ?? ""} className={`${field} resize-none`} />
-          <input name="category_es" placeholder="Categoria (ES)" defaultValue={post?.category_es ?? ""} className={`${field} max-w-xs`} />
-        </div>
-      </div>
-
-      <div className="glass rounded-2xl border border-white/8 p-6">
-        <CoverField defaultUrl={post?.cover_url} />
-      </div>
-
-      <div className="glass rounded-2xl border border-white/8 p-6 space-y-5">
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="content">Conteúdo</label>
-          <textarea id="content" name="content" rows={12} defaultValue={post?.content ?? ""} className={`${field} resize-y`} />
-        </div>
-        <div className="space-y-1.5">
-          <label className={label} htmlFor="author">Autor</label>
-          <input id="author" name="author" defaultValue={post?.author ?? "DriveData Academy"} className={`${field} max-w-xs`} />
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <label className="flex items-center gap-3 text-sm text-slate-300">
-          <input type="checkbox" name="published" defaultChecked={post?.published ?? false} className="h-4 w-4 accent-emerald-400" />
-          Publicar (visível no site)
-        </label>
-
-        <div className="flex items-center gap-3">
-          <Link href="/admin/posts" className="text-sm text-slate-400 hover:text-white">
-            Cancelar
-          </Link>
-          <button
-            type="submit"
-            className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
-          >
-            Salvar
-          </button>
-        </div>
-      </div>
+      <FormActions>
+        <Button type="submit" size="lg">{editando ? "Salvar alterações" : "Criar post"}</Button>
+        <Button href="/admin/posts" variant="ghost">Cancelar</Button>
+      </FormActions>
     </form>
   );
 }
