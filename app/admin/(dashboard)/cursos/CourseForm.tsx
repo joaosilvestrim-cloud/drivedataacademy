@@ -16,6 +16,7 @@ type Course = {
   workload: string | null;
   certificate_enabled?: boolean;
   published: boolean;
+  coming_soon?: boolean;
 } | null;
 
 export default function CourseForm({ course }: { course?: Course }) {
@@ -124,6 +125,15 @@ export default function CourseForm({ course }: { course?: Course }) {
           label="Curso publicado no catálogo"
           defaultChecked={course?.published ?? false}
           description="Enquanto desmarcado, o curso não aparece no catálogo público nem nas respostas do assistente."
+        />
+        {/* Estado do meio: o aluno vê o curso e a capa, mas não entra nem se
+            matricula. Só faz efeito com o curso publicado. */}
+        <CheckboxField
+          scope={scope}
+          name="coming_soon"
+          label="Marcar como “Em breve”"
+          defaultChecked={course?.coming_soon ?? false}
+          description="O curso aparece no catálogo com a etiqueta Em breve, sem matrícula e sem acesso às aulas. Desmarque quando o conteúdo estiver pronto."
         />
       </FormSection>
 

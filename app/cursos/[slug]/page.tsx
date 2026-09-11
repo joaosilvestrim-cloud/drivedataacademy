@@ -15,7 +15,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const pub = createPublicClient();
   const { data: course } = await pub
     .from("courses")
-    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled")
+    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon")
     .eq("slug", params.slug)
     .eq("published", true)
     .maybeSingle();
@@ -37,6 +37,10 @@ export default async function CoursePage({ params }: { params: { slug: string } 
     enrolled = await canAccessCourse(createAdminClient(), user.id, course.id);
   }
   const isPaid = Number(course.price) > 0;
+  // "Em breve" vence os outros estados do card de matrícula. Quem já estiver
+  // matriculado continua entrando por /aprender: marcar um curso como Em breve
+  // não é motivo para tirar acesso de quem já tinha.
+  const emBreve = course.coming_soon === true;
 
   return (
     <>
@@ -45,6 +49,9 @@ export default async function CoursePage({ params }: { params: { slug: string } 
       <main className="mx-auto max-w-5xl px-6 pb-24 pt-36 sm:pt-44">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
           <div>
+            {emBreve && (
+              <p className="mb-3 inline-block rounded-full bg-amber-400/90 px-3 py-1 text-[0.7rem] font-semibold text-ink-900">Em breve</p>
+            )}
             {course.level && <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{course.level}</p>}
             <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">{course.title}</h1>
             {course.subtitle && <p className="mt-3 text-lg text-slate-300/90">{course.subtitle}</p>}
@@ -98,7 +105,11 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                 </p>
 
                 <div className="mt-5">
-                  {enrolled ? (
+                  {emBreve ? (
+                    <button disabled className="w-full cursor-not-allowed rounded-xl border border-amber-400/30 bg-amber-400/10 px-6 py-3.5 text-sm font-semibold text-amber-300">
+                      Em breve
+                    </button>
+                  ) : enrolled ? (
                     <Link href={`/aprender/${course.slug}`} className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
                       Continuar curso
                     </Link>
@@ -119,7 +130,9 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                     </form>
                   )}
                 </div>
-                <p className="mt-3 text-center text-xs text-slate-500">Acesso imediato após a matrícula.</p>
+                <p className="mt-3 text-center text-xs text-slate-500">
+                  {emBreve ? "Estamos preparando as aulas. Avisamos assim que abrir." : "Acesso imediato após a matrícula."}
+                </p>
 
                 {/* O que você recebe */}
                 <div className="mt-6 space-y-2.5 border-t border-white/10 pt-5">

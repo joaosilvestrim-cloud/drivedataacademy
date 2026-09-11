@@ -72,6 +72,7 @@ export async function saveCourse(formData: FormData) {
     workload: ((formData.get("workload") as string) || "").trim() || null,
     certificate_enabled: formData.get("certificate_enabled") === "on",
     published: formData.get("published") === "on",
+    coming_soon: formData.get("coming_soon") === "on",
   };
 
   if (id) {

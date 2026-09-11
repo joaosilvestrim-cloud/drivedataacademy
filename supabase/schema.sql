@@ -630,6 +630,10 @@ alter table public.course_modules add column if not exists available_at timestam
 -- Certificado: liga/desliga por curso (default ligado)
 alter table public.courses add column if not exists certificate_enabled boolean not null default true;
 
+-- "Em breve": curso publicado e visível no catálogo, mas ainda sem aulas e sem
+-- matrícula. É o estado do meio entre rascunho e publicado.
+alter table public.courses add column if not exists coming_soon boolean not null default false;
+
 -- ============================================================
 -- Suporte / Central de Ajuda (chamados) — base para IA de triagem
 -- ============================================================

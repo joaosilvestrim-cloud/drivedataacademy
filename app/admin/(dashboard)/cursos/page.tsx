@@ -12,7 +12,7 @@ export default async function CoursesAdminPage() {
   try {
     const supabase = createAdminClient();
     const [{ data: cs }, { data: ls }, { data: es }] = await Promise.all([
-      supabase.from("courses").select("id, title, slug, published, price, updated_at").order("updated_at", { ascending: false }),
+      supabase.from("courses").select("id, title, slug, published, price, updated_at, coming_soon").order("updated_at", { ascending: false }),
       supabase.from("lessons").select("course_id"),
       supabase.from("enrollments").select("course_id"),
     ]);
@@ -49,6 +49,11 @@ export default async function CoursesAdminPage() {
                 <span className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide ${c.published ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>
                   {c.published ? "Publicado" : "Rascunho"}
                 </span>
+                {c.coming_soon && (
+                  <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-amber-300">
+                    Em breve
+                  </span>
+                )}
                 <span className="text-xs text-slate-500">{Number(c.price) > 0 ? `R$ ${Number(c.price).toFixed(2)}` : "Gratuito"}</span>
               </div>
               <Link href={`/admin/cursos/${c.id}`} className="mt-1 block truncate font-medium text-white hover:text-brand-green">{c.title}</Link>
