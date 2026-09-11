@@ -33,9 +33,11 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-020 | DÍVIDA | `/admin/cursos` | Das oito actions do Curriculum, só `saveLesson` dá retorno, por redirect com `?ok`. As outras sete não avisam nada, e nenhuma confere o resultado do banco. | Médio. O administrador renomeia, libera, cria ou apaga e não recebe confirmação nem erro. Mesma raiz de M-014. | aberto | Pré-auditoria do D6 |
 | M-021 | DÍVIDA | `/admin/acessos` | A lista de pedidos traz `.limit(50)` e não existe paginação nem busca. Pedidos mais antigos não têm como ser alcançados por esta tela. | Médio. O administrador não consegue auditar um pagamento antigo. A tela migrada passou a dizer isso em palavras, mas dizer não resolve. | aberto | Onda 2, lote T1 |
 | M-022 | DÍVIDA | `/admin/acessos` | A lista de acessos não tem limite: carrega todas as linhas de `memberships` e ainda pede `listUsers` com 1000 por página, em toda visita. | Médio hoje, alto com crescimento. A página não degrada aos poucos, ela para de abrir. Nenhuma busca ou filtro existe para reduzir o conjunto. | aberto | Onda 2, lote T1 |
-| M-023 | DÍVIDA | `/admin/suporte` | `?status=abc` devolve lista vazia, não marca nenhuma opção como atual e mantém a URL inválida. Não há correção nem redirecionamento. | Baixo. O administrador pode chegar por um link torto e concluir que não há chamados. O texto de vazio agora diz o total existente, o que reduz a confusão sem mudar o comportamento. | aberto | Onda 2, lote T2 |
+| M-023 | DÍVIDA | `/admin/suporte`, `/admin/comentarios`, `/admin/representacao` | Parâmetro de filtro com valor fora do enum devolve lista vazia, não marca nenhuma opção como atual e mantém a URL inválida. Não há correção nem redirecionamento. Confirmado nas três páginas: `?status=abc`, `?f=abc`, `?f=xyz`. O título da seção ecoa o valor inválido, escapado pelo React. | Baixo em cada página, médio como classe. O administrador chega por um link torto e conclui que a fila está vazia. O texto de vazio diz o total existente, o que reduz a confusão sem mudar o comportamento. Vale decidir uma vez para toda a camada. | aberto | Onda 2, lotes T2, T3 e T5 |
 | M-024 | DÍVIDA | `/admin/progresso` | Nenhuma das três consultas tem limite. A página carrega `courses` inteiro, `lessons` inteiro e `lesson_progress` inteiro em toda visita, e calcula todas as métricas em memória no caminho da requisição. | Alto com crescimento. `lesson_progress` cresce por aluno vezes aula concluída, então é a tabela que estoura primeiro. Limitar a consulta não é possível sem antes decidir como calcular as métricas, porque elas dependem do conjunto completo. | aberto | Onda 2, lote T4 |
 | M-025 | DÍVIDA | `/admin/progresso` | `?c=` com id inexistente não abre o recorte por aluno e não avisa nada. O resultado é idêntico ao de não passar o parâmetro. | Baixo. Mesma raiz de M-023: parâmetro de URL inválido é tratado como ausente, sem correção nem redirecionamento. | aberto | Onda 2, lote T4 |
+| M-026 | DÍVIDA | `/admin/representacao` | O rótulo de cada campo da solicitação sai de `k.replace(/_/g, " ")` sobre as chaves do `payload` jsonb. O aluno preencheu "Tipo de projeto" e o admin lê "tipo projeto"; "observacao" aparece sem acento. Os rótulos bons existem só em `app/conta/representacao/RepClient.tsx`. | Baixo. Legível, mas é a chave técnica no lugar da pergunta que o aluno respondeu. Corrigir exige duplicar o dicionário de campos ou movê-lo para um módulo comum, o que é mudança de conteúdo e ficou fora da migração visual. | aberto | Onda 2, lote T5 |
+| M-027 | DÍVIDA | `/admin/representacao` | A consulta traz `.limit(300)` sem paginação e sem busca. As contagens por tipo são calculadas sobre essas 300 linhas, então elas próprias truncam junto com a lista. | Médio. Mesma forma de M-021 em `/admin/comentarios`: o número no chip deixa de ser o total real assim que a fila passa de 300, e nada na tela avisa. | aberto | Onda 2, lote T5 |
 
 ## Observações
 
@@ -145,3 +147,20 @@ isso uma vez para toda a camada, não página a página.
 ser resolvida aqui. Ela continua de pé para quem usar `Badge` com palavra, como
 já acontece em `/admin/acessos` com o tipo do pedido. Registrado como assunto de
 fundação, não corrigido durante migração visual.
+
+**A tensão entre `Badge` e a regra do Mono reapareceu em `/admin/representacao`,
+agora com evidência mais forte.** No T4 os dois candidatos a chip eram estados, e
+`Status` resolveu. No T5 o chip é o tipo da solicitação, uma categoria, e o texto
+é frase inteira: "Parceria em projeto", "Venda Portal BI". `Badge` renderizaria
+isso em monoespaçada. Como a regra do lote era Mono só para medida, e mexer em
+`Badge` não estava autorizado, o tipo virou um chip local de geometria idêntica
+à do `Badge` e sem `font-mono`. São agora três consumidores em conflito com a
+regra escrita: `/admin/acessos` usa `Badge` com o tipo do pedido, `/admin/progresso`
+desviou para `Status`, `/admin/representacao` desviou para um chip local. A
+decisão de fundação está madura e continua não tomada.
+
+**Onde o `href` do filtro descarta outros parâmetros.** Medido no T5 com um
+segundo parâmetro injetado só para o teste: clicar em um tipo vai para
+`?f=<tipo>` e o outro parâmetro some. Hoje isso não perde nada, porque nenhuma
+das três páginas com filtro tem um segundo parâmetro de URL. É a restrição que
+define a API do componente futuro, não um defeito das telas atuais.
