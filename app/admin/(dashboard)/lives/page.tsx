@@ -1,11 +1,10 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import AdminError from "../AdminError";
+import { Button, Badge } from "@/components/ui/primitives";
+import { PageHeader, ErrorState, EmptyState, Alert } from "@/components/ui/layout";
+import { Field, TextareaField, SelectField, CheckboxField, FormActions } from "@/components/ui/form";
 import { saveLive, deleteLive } from "./actions";
 
 export const dynamic = "force-dynamic";
-
-const field =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
 
 // ISO -> "YYYY-MM-DDTHH:mm" no fuso do Brasil, para o input datetime-local.
 function toLocalInput(iso: string): string {
@@ -21,6 +20,135 @@ function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
 }
 
+const KIND = [
+  { value: "live", label: "Live ou aula" },
+  { value: "mentoria", label: "Mentoria" },
+];
+
+// Um formulário por live, mais o de criação. O `scope` garante ids únicos em
+// todos eles, que é o que permite associar rótulo e controle nesta tela.
+function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?: number }) {
+  const editando = !!live;
+  const pago = Number(live?.price) > 0;
+
+  return (
+    <form action={saveLive} className="flex flex-col gap-5">
+      {editando && <input type="hidden" name="id" value={live.id} />}
+
+      <div className="grid gap-4 tablet:grid-cols-[11rem_1fr]">
+        <SelectField scope={scope} name="kind" label="Tipo" defaultValue={live?.kind || "live"}>
+          {KIND.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+        </SelectField>
+        <Field
+          scope={scope}
+          name="title"
+          label="Título"
+          // required só na criação, igual ao comportamento de hoje. A assimetria
+          // com o formulário de edição está registrada como achado funcional.
+          required={!editando}
+          defaultValue={live?.title}
+          description="É o que o aluno vê na agenda."
+        />
+      </div>
+
+      <TextareaField
+        scope={scope}
+        name="description"
+        label="Descrição"
+        rows={2}
+        defaultValue={live?.description ?? ""}
+        description="Opcional. Um resumo curto do que será abordado."
+      />
+
+      <div className="grid gap-4 tablet:grid-cols-3">
+        <Field
+          scope={scope}
+          name="starts_at"
+          label="Data e hora"
+          type="datetime-local"
+          required={!editando}
+          defaultValue={editando ? toLocalInput(live.starts_at) : undefined}
+          description="Horário de Brasília."
+        />
+        <Field
+          scope={scope}
+          name="duration_min"
+          label="Duração"
+          type="number"
+          inputMode="numeric"
+          defaultValue={live?.duration_min ?? ""}
+          description="Em minutos."
+        />
+        <Field
+          scope={scope}
+          name="price"
+          label="Preço avulso"
+          inputMode="decimal"
+          defaultValue={live?.price ?? ""}
+          description="Em reais. Vazio significa incluso na assinatura."
+        />
+      </div>
+
+      <div className="grid gap-4 tablet:grid-cols-2">
+        <Field
+          scope={scope}
+          name="url"
+          label="Link da transmissão"
+          type="url"
+          defaultValue={live?.url ?? ""}
+          description="YouTube, Meet ou outro."
+        />
+        <Field
+          scope={scope}
+          name="cover_url"
+          label="Capa"
+          type="url"
+          defaultValue={live?.cover_url ?? ""}
+          description="Endereço de uma imagem. Opcional."
+        />
+      </div>
+
+      <CheckboxField
+        scope={scope}
+        name="published"
+        label="Publicada"
+        defaultChecked={editando ? live.published : true}
+        description="Enquanto desmarcada, fica como rascunho e o aluno não vê."
+      />
+
+      {editando && pago && (
+        <p className="text-body-sm text-ds-text-3">
+          Página de venda:{" "}
+          <a
+            href={`/workshop/${live.id}`}
+            target="_blank"
+            rel="noreferrer"
+            className="text-ds-info underline decoration-ds-line underline-offset-4 hover:decoration-ds-info"
+          >
+            /workshop/{live.id}
+          </a>
+          . Assinantes entram sem pagar.
+        </p>
+      )}
+
+      <FormActions
+        destructive={
+          editando ? <Button formAction={deleteLive} variant="danger" size="sm">Excluir</Button> : undefined
+        }
+      >
+        <Button type="submit" size={editando ? "sm" : "md"}>
+          {editando ? "Salvar alterações" : "Criar live"}
+        </Button>
+        {editando && sold > 0 && (
+          <span className="text-caption text-ds-text-3">
+            <span className="font-mono tabular-nums">{sold}</span> {sold === 1 ? "venda registrada" : "vendas registradas"}
+          </span>
+        )}
+      </FormActions>
+    </form>
+  );
+}
+
 export default async function LivesPage({ searchParams }: { searchParams: { ok?: string; error?: string } }) {
   let lives: any[] = [];
   const soldByEvent: Record<string, number> = {};
@@ -33,86 +161,86 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
     for (const o of wOrders ?? []) if (o.event_id) soldByEvent[o.event_id] = (soldByEvent[o.event_id] || 0) + 1;
   } catch (e) {
     return (
-      <div>
-        <h1 className="font-display text-2xl font-bold text-white">Lives</h1>
-        <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL das lives no Supabase."} /></div>
+      <div className="flex flex-col gap-8">
+        <PageHeader context="Administração" title="Lives e roadmap" />
+        <ErrorState
+          title="Não foi possível carregar as lives"
+          description={(e instanceof Error ? e.message : "Erro desconhecido.") + " Se a tabela ainda não existe, rode o SQL das lives no Supabase."}
+        />
       </div>
     );
   }
 
+  const publicadas = lives.filter((l) => l.published).length;
+
   return (
-    <div>
-      <h1 className="font-display text-2xl font-bold text-white">Lives & roadmap</h1>
-      <p className="mt-1 text-sm text-slate-400">Agenda de lives que aparece como roadmap para os alunos.</p>
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        context="Administração"
+        title="Lives e roadmap"
+        lede="A agenda publicada aqui vira o roadmap que o aluno vê no portal."
+      />
 
-      {searchParams?.ok && <div className="mt-5 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">Salvo!</div>}
-      {searchParams?.error && <div className="mt-5 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{searchParams.error}</div>}
+      {searchParams?.ok && <Alert tone="accent" title="Salvo">As alterações já estão valendo na agenda do aluno.</Alert>}
+      {searchParams?.error && <Alert tone="danger" title="Não foi possível salvar">{searchParams.error}</Alert>}
 
-      {/* Nova live */}
-      <details className="mt-6 glass rounded-2xl border border-white/8 p-5" open={lives.length === 0}>
-        <summary className="cursor-pointer text-sm font-semibold text-white">+ Nova live</summary>
-        <form action={saveLive} className="mt-4 space-y-3">
-          <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
-            <select name="kind" defaultValue="live" className={field}>
-              <option value="live">Live / Aula</option>
-              <option value="mentoria">Mentoria</option>
-            </select>
-            <input name="title" required placeholder="Título" className={field} />
+      {/* Criar. Aberto por padrão quando ainda não há nenhuma live. */}
+      <section aria-labelledby="nova">
+        <details open={lives.length === 0} className="group">
+          <summary className="flex cursor-pointer items-center justify-between gap-4 border-b border-ds-line pb-2.5">
+            <h2 id="nova" className="font-display text-section font-semibold text-ds-text">Nova live</h2>
+            <span className="text-label text-ds-text-3 group-open:hidden">abrir</span>
+            <span className="hidden text-label text-ds-text-3 group-open:inline">fechar</span>
+          </summary>
+          <div className="pt-5">
+            <LiveForm scope="nova" />
           </div>
-          <textarea name="description" rows={2} placeholder="Descrição (opcional)" className={`${field} resize-y`} />
-          <div className="grid gap-3 sm:grid-cols-3">
-            <input name="starts_at" type="datetime-local" required className={field} />
-            <input name="duration_min" type="number" placeholder="Duração (min)" className={field} />
-            <input name="price" inputMode="decimal" placeholder="Preço p/ não-aluno (R$, vazio = incluso)" className={field} />
-          </div>
-          <input name="cover_url" placeholder="Capa (URL, opcional)" className={field} />
-          <input name="url" placeholder="Link da live (YouTube, Meet...)" className={field} />
-          <label className="flex items-center gap-2 text-xs text-slate-300"><input type="checkbox" name="published" defaultChecked className="h-4 w-4 accent-emerald-400" /> Publicada (visível para alunos)</label>
-          <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">Salvar live</button>
-        </form>
-      </details>
+        </details>
+      </section>
 
-      {/* Lista */}
-      <div className="mt-6 space-y-3">
-        {lives.map((l) => (
-          <details key={l.id} className="glass rounded-2xl border border-white/8 p-5">
-            <summary className="flex cursor-pointer items-center justify-between gap-3">
-              <span className="flex items-center gap-2 font-medium text-white">
-                {l.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>}
-                {l.title}
-              </span>
-              <span className="text-xs text-slate-400">{fmt(l.starts_at)}{Number(l.price) > 0 ? ` · R$ ${Number(l.price).toFixed(2)} · ${soldByEvent[l.id] || 0} venda(s)` : ""}{!l.published && " · rascunho"}</span>
-            </summary>
-            <form action={saveLive} className="mt-4 space-y-3">
-              <input type="hidden" name="id" value={l.id} />
-              <div className="grid gap-3 sm:grid-cols-[160px_1fr]">
-                <select name="kind" defaultValue={l.kind || "live"} className={field}>
-                  <option value="live">Live / Aula</option>
-                  <option value="mentoria">Mentoria</option>
-                </select>
-                <input name="title" defaultValue={l.title} className={field} />
-              </div>
-              <textarea name="description" rows={2} defaultValue={l.description ?? ""} className={`${field} resize-y`} />
-              <div className="grid gap-3 sm:grid-cols-3">
-                <input name="starts_at" type="datetime-local" defaultValue={toLocalInput(l.starts_at)} className={field} />
-                <input name="duration_min" type="number" defaultValue={l.duration_min ?? ""} className={field} />
-                <input name="price" inputMode="decimal" defaultValue={l.price ?? ""} placeholder="Preço não-aluno (R$)" className={field} />
-              </div>
-              <input name="cover_url" defaultValue={l.cover_url ?? ""} placeholder="Capa (URL)" className={field} />
-              <input name="url" defaultValue={l.url ?? ""} placeholder="Link da live" className={field} />
-              {Number(l.price) > 0 && (
-                <p className="text-xs text-slate-500">Página de venda: <a href={`/workshop/${l.id}`} target="_blank" className="text-brand-teal hover:underline">/workshop/{l.id}</a> · alunos assinantes entram grátis.</p>
-              )}
-              <label className="flex items-center gap-2 text-xs text-slate-300"><input type="checkbox" name="published" defaultChecked={l.published} className="h-4 w-4 accent-emerald-400" /> Publicada</label>
-              <div className="flex items-center gap-2">
-                <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900">Salvar</button>
-                <button formAction={deleteLive} className="rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir</button>
-              </div>
-            </form>
-          </details>
-        ))}
-        {lives.length === 0 && <p className="rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-slate-500">Nenhuma live agendada ainda.</p>}
-      </div>
+      {/* Agenda */}
+      <section aria-labelledby="agenda">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
+          <h2 id="agenda" className="font-display text-section font-semibold text-ds-text">Agenda</h2>
+          <span className="text-meta uppercase text-ds-text-3">
+            {lives.length} {lives.length === 1 ? "evento" : "eventos"}
+            {lives.length > 0 && ` · ${publicadas} ${publicadas === 1 ? "publicado" : "publicados"}`}
+          </span>
+        </div>
+
+        {lives.length === 0 ? (
+          <EmptyState
+            title="Nenhuma live agendada"
+            description="Crie a primeira acima. Assim que publicar, ela aparece no roadmap dos alunos."
+          />
+        ) : (
+          <div className="flex flex-col">
+            {lives.map((l) => {
+              const pago = Number(l.price) > 0;
+              return (
+                <details key={l.id} className="group border-b border-ds-line-soft">
+                  <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3.5 transition-colors duration-fast ease-ds hover:bg-ds-raised/50">
+                    <span className="flex min-w-0 items-center gap-2.5">
+                      <span className="truncate text-body-sm font-medium text-ds-text">{l.title || "Sem título"}</span>
+                      {l.kind === "mentoria" && <Badge tone="info">mentoria</Badge>}
+                      {!l.published && <Badge tone="attention">rascunho</Badge>}
+                    </span>
+                    <span className="flex shrink-0 items-baseline gap-3 text-caption text-ds-text-3">
+                      <span className="tabular-nums">{fmt(l.starts_at)}</span>
+                      {pago && (
+                        <span className="font-mono tabular-nums text-ds-text-2">R$ {Number(l.price).toFixed(2)}</span>
+                      )}
+                    </span>
+                  </summary>
+                  <div className="pb-6 pt-4">
+                    <LiveForm scope={`live-${l.id}`} live={l} sold={soldByEvent[l.id] || 0} />
+                  </div>
+                </details>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
