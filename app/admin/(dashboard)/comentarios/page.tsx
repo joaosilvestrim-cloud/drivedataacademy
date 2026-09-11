@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import Avatar from "@/components/Avatar";
 import { Button, Status } from "@/components/ui/primitives";
+import { LinkFilter } from "@/components/ui/filter";
 import { EmptyState } from "@/components/ui/layout";
 import AdminError from "../AdminError";
 import { setCommentStatus, deleteComment, replyComment } from "./actions";
@@ -25,33 +25,7 @@ const TOM: Record<string, "attention" | "accent" | "danger"> = {
   rejected: "danger",
 };
 
-/* Mesmo desenho do filtro de /admin/suporte, e de novo local. São dois
-   consumidores com a mesma forma, o que já justifica avaliar promoção, mas a
-   promoção precisa de aprovação antes de tocar em components/ui. */
-function FiltroStatus({ ativo, counts }: { ativo: string; counts: Record<string, number> }) {
-  return (
-    <nav aria-label="Filtrar comentários por situação" className="flex flex-wrap gap-2">
-      {FILTERS.map((o) => {
-        const atual = ativo === o.k;
-        return (
-          <Link
-            key={o.k}
-            href={`/admin/comentarios?f=${o.k}`}
-            aria-current={atual ? "page" : undefined}
-            className={`inline-flex items-baseline gap-2 rounded-ctl border px-3 py-1.5 text-label font-medium transition-colors duration-fast ease-ds ${
-              atual ? "border-ds-accent/50 bg-ds-accent/[0.07] text-ds-accent" : "border-ds-line text-ds-text-2 hover:border-ds-text-3 hover:text-ds-text"
-            }`}
-          >
-            {o.l}
-            <span className="font-mono text-caption tabular-nums">{counts[o.k] ?? 0}</span>
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
-
-const FILTERS = [{ k: "pending", l: "Pendentes" }, { k: "approved", l: "Aprovados" }, { k: "rejected", l: "Recusados" }, { k: "all", l: "Todos" }];
+const FILTERS = [{ key: "pending", label: "Pendentes" }, { key: "approved", label: "Aprovados" }, { key: "rejected", label: "Recusados" }, { key: "all", label: "Todos" }];
 
 export default async function ComentariosPage({ searchParams }: { searchParams: { f?: string } }) {
   const f = searchParams?.f || "pending";
@@ -89,12 +63,19 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
       <p className="mt-1 text-sm text-slate-400">Aprove ou recuse os comentários dos alunos antes de aparecerem na aula.</p>
 
       <div className="mt-6">
-        <FiltroStatus ativo={f} counts={counts} />
+        <LinkFilter
+          label="Filtrar comentários por situação"
+          basePath="/admin/comentarios"
+          param="f"
+          options={FILTERS}
+          active={f}
+          counts={counts}
+        />
       </div>
 
       <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
         <h2 className="font-display text-section font-semibold text-ds-text">
-          {FILTERS.find((o) => o.k === f)?.l ?? "Comentários"}
+          {FILTERS.find((o) => o.key === f)?.label ?? "Comentários"}
         </h2>
         <span className="text-meta uppercase text-ds-text-3">
           {comments.length} {comments.length === 1 ? "comentário" : "comentários"}
@@ -109,7 +90,7 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
           />
         ) : (
           <EmptyState
-            title={`Nenhum comentário em ${(FILTERS.find((o) => o.k === f)?.l ?? f).toLowerCase()}`}
+            title={`Nenhum comentário em ${(FILTERS.find((o) => o.key === f)?.label ?? f).toLowerCase()}`}
             description={`Existem ${counts.all} ${counts.all === 1 ? "comentário" : "comentários"} na fila. Troque a situação acima para vê-los.`}
           />
         )

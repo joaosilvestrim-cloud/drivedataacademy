@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import { Status, Button } from "@/components/ui/primitives";
+import { LinkFilter } from "@/components/ui/filter";
 import { SelectField } from "@/components/ui/form";
 import { EmptyState } from "@/components/ui/layout";
 import AdminError from "../AdminError";
@@ -21,13 +21,8 @@ const STATUS: Record<string, { label: string; tone: "accent" | "attention" | "in
   concluido: { label: "Concluído", tone: "info" },
   recusado: { label: "Recusado", tone: "neutral" },
 };
-const FILTERS = [{ k: "all", l: "Todos" }, { k: "portal", l: "Portal BI" }, { k: "parceria", l: "Parcerias" }, { k: "mentoria", l: "Mentorias" }, { k: "candidatura", l: "Candidaturas" }, { k: "marketplace", l: "Marketplace" }];
+const FILTERS = [{ key: "all", label: "Todos" }, { key: "portal", label: "Portal BI" }, { key: "parceria", label: "Parcerias" }, { key: "mentoria", label: "Mentorias" }, { key: "candidatura", label: "Candidaturas" }, { key: "marketplace", label: "Marketplace" }];
 
-/* Terceira ocorrência do mesmo filtro governado por URL, depois de
-   /admin/suporte e /admin/comentarios. Continua local. A promoção para
-   components/ui não está autorizada neste lote, e a cópia serve justamente para
-   medir o que as três têm em comum de verdade. Aqui o recorte é por tipo, não
-   por situação, e o padrão é "all" em vez de uma situação específica. */
 /* Não é o Badge da fundação de propósito. O Badge usa font-mono, e aqui o
    conteúdo é uma frase de categoria, "Parceria em projeto". A regra do Mono
    vale para medida, então o chip é local até a fundação decidir o que fazer com
@@ -37,29 +32,6 @@ function TipoChip({ children }: { children: ReactNode }) {
     <span className="inline-flex items-center rounded-ctl border border-ds-line px-2 py-0.5 text-meta uppercase text-ds-text-2">
       {children}
     </span>
-  );
-}
-
-function FiltroTipo({ ativo, counts }: { ativo: string; counts: Record<string, number> }) {
-  return (
-    <nav aria-label="Filtrar solicitações por tipo" className="flex flex-wrap gap-2">
-      {FILTERS.map((o) => {
-        const atual = ativo === o.k;
-        return (
-          <Link
-            key={o.k}
-            href={`/admin/representacao?f=${o.k}`}
-            aria-current={atual ? "page" : undefined}
-            className={`inline-flex items-baseline gap-2 rounded-ctl border px-3 py-1.5 text-label font-medium transition-colors duration-fast ease-ds ${
-              atual ? "border-ds-accent/50 bg-ds-accent/[0.07] text-ds-accent" : "border-ds-line text-ds-text-2 hover:border-ds-text-3 hover:text-ds-text"
-            }`}
-          >
-            {o.l}
-            <span className="font-mono text-caption tabular-nums">{counts[o.k] ?? 0}</span>
-          </Link>
-        );
-      })}
-    </nav>
   );
 }
 
@@ -94,12 +66,19 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
       <p className="mt-1 text-sm text-slate-400">Solicitações dos alunos: revenda do Portal, parcerias, mentorias, candidaturas e marketplace.</p>
 
       <div className="mt-6">
-        <FiltroTipo ativo={f} counts={counts} />
+        <LinkFilter
+          label="Filtrar solicitações por tipo"
+          basePath="/admin/representacao"
+          param="f"
+          options={FILTERS}
+          active={f}
+          counts={counts}
+        />
       </div>
 
       <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
         <h2 className="font-display text-section font-semibold text-ds-text">
-          {FILTERS.find((o) => o.k === f)?.l ?? "Solicitações"}
+          {FILTERS.find((o) => o.key === f)?.label ?? "Solicitações"}
         </h2>
         <span className="text-meta uppercase text-ds-text-3">
           {rows.length} {rows.length === 1 ? "solicitação" : "solicitações"}
@@ -114,7 +93,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
           />
         ) : (
           <EmptyState
-            title={`Nenhuma solicitação em ${(FILTERS.find((o) => o.k === f)?.l ?? f).toLowerCase()}`}
+            title={`Nenhuma solicitação em ${(FILTERS.find((o) => o.key === f)?.label ?? f).toLowerCase()}`}
             description={`Existem ${counts.all} ${counts.all === 1 ? "solicitação" : "solicitações"} na fila. Troque o tipo acima para vê-las.`}
           />
         )

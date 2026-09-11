@@ -182,15 +182,74 @@ bloco é uma unidade real de informação ou algo clicável. `raised` é exceç�
 
 **Prontos:** Button · Surface · Divider · Badge · Status · Skeleton · Field ·
 Input · Textarea · Select · Checkbox · Toggle · PageHeader · SectionHeader ·
-EmptyState · ErrorState · Alert · TableWrap/Th/Td.
+EmptyState · ErrorState · Alert · TableWrap/Th/Td · DataTable/SortTh/Tr/Cell ·
+Search · FilterSelect · FilterSummary · LinkFilter.
 
 **Assinatura:** DataRule · EvidenceBar · FreshnessRing.
 
 **Adiados de propósito:** Modal, Drawer, Tooltip, Dropdown, Tabs, Toast,
-Pagination, Search, Filter, Breadcrumb. Ainda não existe padrão real
-consolidado para eles no produto, e inventar a forma antes do uso produz
-abstração especulativa. O segundo piloto no admin é quem vai revelar a forma
-certa de tabela, filtro, busca e paginação.
+Pagination, Breadcrumb. Ainda não existe padrão real consolidado para eles no
+produto, e inventar a forma antes do uso produz abstração especulativa.
+
+**Saíram da lista de adiados:** `LinkFilter`, promovido na Onda 2 depois de três
+consumidores independentes.
+
+---
+
+## LinkFilter
+
+Filtro governado pela URL. Vive em `filter.tsx`, fora de `data.tsx`, porque
+`data.tsx` é `"use client"` por causa de `Search`, `FilterSelect` e
+`FilterSummary`. `LinkFilter` não usa estado React nem router, então continua
+renderizando no servidor.
+
+```tsx
+<LinkFilter
+  label="Filtrar chamados por situação"
+  basePath="/admin/suporte"
+  param="status"
+  options={FILTERS}
+  active={active}
+  counts={counts}
+/>
+```
+
+**Use quando:** o filtro vive na URL; as opções são discretas e conhecidas; o
+link representa corretamente a navegação; o estado precisa sobreviver a reload,
+voltar e avançar.
+
+**Não use quando:** o filtro é local; é seletor de contexto; é multi-select;
+existe dependência entre filtros.
+
+**A escolha entre os três:**
+
+| situação | componente |
+| --- | --- |
+| estado local, sem URL | `FilterSelect` |
+| filtro server-driven, estado na URL | `LinkFilter` |
+| seletor de contexto | nenhum dos dois automaticamente |
+
+`/admin/progresso` é o exemplo do terceiro caso. O parâmetro `c` não restringe a
+tabela principal, ele abre uma segunda leitura abaixo. Usar `LinkFilter` ali
+seria chamar de filtro uma coisa que não filtra.
+
+**O que ele é:** navegação por links, com o ativo marcado por
+`aria-current="page"` e o grupo nomeado por `label`. Recebe o valor ativo já
+resolvido e as contagens já calculadas.
+
+**O que ele não é:** não consulta dados, não calcula contagem, não decide
+padrão, não filtra registro, não guarda estado, não usa router, não preserva
+outros parâmetros de URL, não desenha título de seção, não desenha vazio e não
+controla paginação. Tudo isso continua sendo da página.
+
+**Contagens.** `counts` é opcional. Quando existe, o número aparece ao lado do
+rótulo, em Mono, e a ordem das opções é a que chegou. Quando não existe, a opção
+mostra só o rótulo, com o mesmo padding e a mesma altura, sem espaço sobrando.
+
+**URL.** A versão 1 monta `basePath + ?param=key`. Nenhum dos três consumidores
+tem um segundo parâmetro de URL, então preservar outros seria resolver problema
+inexistente. Isso pode evoluir quando aparecer o primeiro consumidor real que
+precise, e a evolução é aditiva.
 
 ---
 

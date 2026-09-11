@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import { CATEGORIES, TICKET_STATUS } from "@/lib/support";
 import { Status, ICON } from "@/components/ui/primitives";
+import { LinkFilter } from "@/components/ui/filter";
 import { DataTable, SortTh, Tr, Cell } from "@/components/ui/data";
 import { EmptyState } from "@/components/ui/layout";
 import AdminError from "../AdminError";
@@ -19,33 +20,6 @@ const TOM: Record<string, "attention" | "accent" | "neutral"> = {
   answered: "accent",
   resolved: "neutral",
 };
-
-/* Filtro governado pela URL. É link, não select: cada opção é um endereço que
-   pode ser copiado, aberto em outra aba e alcançado por voltar e avançar. O
-   FilterSelect do Design System resolve o outro caso, o de estado local em
-   /admin/alunos, e não este. */
-function FiltroStatus({ ativo, counts }: { ativo: string; counts: Record<string, number> }) {
-  return (
-    <nav aria-label="Filtrar chamados por situação" className="flex flex-wrap gap-2">
-      {FILTERS.map((f) => {
-        const atual = ativo === f.key;
-        return (
-          <Link
-            key={f.key}
-            href={`/admin/suporte?status=${f.key}`}
-            aria-current={atual ? "page" : undefined}
-            className={`inline-flex items-baseline gap-2 rounded-ctl border px-3 py-1.5 text-label font-medium transition-colors duration-fast ease-ds ${
-              atual ? "border-ds-accent/50 bg-ds-accent/[0.07] text-ds-accent" : "border-ds-line text-ds-text-2 hover:border-ds-text-3 hover:text-ds-text"
-            }`}
-          >
-            {f.label}
-            <span className="font-mono text-caption tabular-nums">{counts[f.key] ?? 0}</span>
-          </Link>
-        );
-      })}
-    </nav>
-  );
-}
 
 const FILTERS = [
   { key: "open", label: "Abertos" },
@@ -86,7 +60,14 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
       <p className="mt-1 text-sm text-slate-400">Chamados dos alunos. Quando a IA não resolver, cai aqui para o time.</p>
 
       <div className="mt-6">
-        <FiltroStatus ativo={active} counts={counts} />
+        <LinkFilter
+          label="Filtrar chamados por situação"
+          basePath="/admin/suporte"
+          param="status"
+          options={FILTERS}
+          active={active}
+          counts={counts}
+        />
       </div>
 
       <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
