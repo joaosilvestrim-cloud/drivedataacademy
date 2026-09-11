@@ -22,6 +22,8 @@ Status: `aberto` · `autorizado` · `corrigido` · `descartado`.
 | M-009 | DÍVIDA | `/admin/cursos` | `Curriculum.tsx` importa `setModuleRelease` de `/admin/lives`. | Acoplamento entre áreas que dificulta migrar qualquer uma das duas. | aberto | Pré-auditoria do lote D |
 | M-010 | DÍVIDA | Design System | O fundo do estado desabilitado (`disabled:bg-ds-raised`) não prevalece sobre o fundo normal do controle. O estado continua inequívoco por opacidade, cursor e foco. | Cosmético. Medido em desenvolvimento, falta confirmar em produção. | aberto | Onda 1, lote D1 |
 | M-011 | DÍVIDA | `/admin/universo` | A tela aceita construir configuração inválida e só avisa ao salvar: soma de pesos diferente de 100, pré-requisito de uma competência para ela mesma, relação de uma competência para ela mesma. O servidor rejeita nas três. | O administrador pode montar várias regras erradas e descobrir tudo de uma vez, numa única mensagem. | aberto | Onda 1, lote D2 |
+| M-012 | BUG | `/admin/universo` | `revokeKnowledgeAccess` roda um update sem conferir quantas linhas mudaram. Aluno sem concessão individual gera zero linhas afetadas e a tela responde "A concessão individual foi encerrada". | Alto. O administrador acredita ter encerrado um acesso que nunca existiu, ou que existe por outro caminho, e não percebe. O seletor lista todos os alunos, não só os que têm concessão. | aberto | Onda 1, lote D3 |
+| M-013 | DÍVIDA | `/admin/universo` | `grantKnowledgeAccess` faz upsert na chave primária de `ku_entitlements`. Conceder de novo sobrescreve validade e `granted_by`, sem histórico. Encerrar só carimba `expires_at` e não registra quem encerrou. | Alto para rastreabilidade. Não há como reconstruir quem concedeu o quê, por quanto tempo, nem quem encerrou. Contrasta com a evidência prática, que é append-only e auditável. | aberto | Onda 1, lote D3 |
 
 ## Observações
 
@@ -45,3 +47,15 @@ servidor valida em `validateDocument`, que checa a soma dos pesos e roda
 detecção de ciclo nos pré-requisitos. O que se registra é o momento do retorno,
 não a regra. Mexer nisso seria acrescentar validação que o código não tem, e o
 D2 tinha instrução explícita de não fazer isso.
+
+**M-012 e M-013** saíram da auditoria das actions no lote D3 e são de prioridade
+alta porque tocam acesso e vigência. Nenhum dos dois foi corrigido: o D3 era
+migração de apresentação, e corrigir exige autorização própria.
+
+**M-012** tem a mesma forma do bug de perfil já resolvido em outro ponto do
+produto: `update` sem linha afetada não é erro no PostgREST.
+
+**M-013** é decisão de modelagem, não descuido: `ku_entitlements` tem `user_id`
+como chave primária, então uma linha por aluno é o desenho. Registrar histórico
+significaria outra tabela.
+
