@@ -174,7 +174,7 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
 
                     {/* Vídeo e prévia continuam no VideoField, que é controle
                         especializado e fica para o sublote D6E. */}
-                    <VideoField defaultProvider={l.video_provider ?? "youtube"} defaultValue={l.video_id ?? ""} />
+                    <VideoField scope={`aula-${l.id}`} defaultProvider={l.video_provider ?? "youtube"} defaultValue={l.video_id ?? ""} />
 
                     <TextareaField
                       scope={`aula-${l.id}`}
