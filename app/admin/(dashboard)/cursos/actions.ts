@@ -73,6 +73,7 @@ export async function saveCourse(formData: FormData) {
     certificate_enabled: formData.get("certificate_enabled") === "on",
     published: formData.get("published") === "on",
     coming_soon: formData.get("coming_soon") === "on",
+    members_only: formData.get("members_only") === "on",
   };
 
   if (id) {

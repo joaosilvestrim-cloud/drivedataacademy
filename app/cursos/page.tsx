@@ -13,7 +13,7 @@ export default async function CatalogPage() {
       const supabase = createPublicClient();
       const { data } = await supabase
         .from("courses")
-        .select("id, slug, title, subtitle, cover_url, level, price, certificate_enabled, coming_soon")
+        .select("id, slug, title, subtitle, cover_url, level, price, certificate_enabled, coming_soon, members_only")
         .eq("published", true)
         .order("position");
       courses = data ?? [];
@@ -50,8 +50,10 @@ export default async function CatalogPage() {
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
                   )}
+                  {/* Curso da assinatura não tem preço próprio e não é
+                      gratuito: o selo diz de quem ele é. */}
                   <span className="absolute left-4 top-4 rounded-full bg-ink-900/80 px-3 py-1 text-[0.7rem] font-semibold text-brand-teal backdrop-blur">
-                    {Number(c.price) > 0 ? `R$ ${Number(c.price).toFixed(2)}` : "Gratuito"}
+                    {c.members_only ? "Assinantes" : Number(c.price) > 0 ? `R$ ${Number(c.price).toFixed(2)}` : "Gratuito"}
                   </span>
                   {c.coming_soon && (
                     <span className="absolute right-4 top-4 rounded-full bg-amber-400/90 px-3 py-1 text-[0.7rem] font-semibold text-ink-900 backdrop-blur">

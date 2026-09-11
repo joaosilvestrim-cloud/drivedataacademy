@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { hasFullAccess } from "@/lib/access";
 
 export async function enrollFree(formData: FormData) {
   const slug = formData.get("slug") as string;
@@ -16,13 +17,16 @@ export async function enrollFree(formData: FormData) {
   const admin = createAdminClient();
   const { data: course } = await admin
     .from("courses")
-    .select("id, price, published, coming_soon")
+    .select("id, price, published, coming_soon, members_only")
     .eq("slug", slug)
     .maybeSingle();
 
   if (!course || !course.published) redirect("/cursos");
   // Bloquear só no botão não basta: um POST montado à mão chegaria aqui.
   if (course.coming_soon) redirect(`/cursos/${slug}`);
+  // Curso da assinatura: sem assinatura ativa, não entra. Vale o mesmo motivo
+  // do coming_soon, um POST montado à mão passaria pelo botão.
+  if (course.members_only && !(await hasFullAccess(admin, user.id))) redirect("/matricula");
   // Cursos pagos ainda não têm checkout — matrícula automática só nos gratuitos.
   if (Number(course.price) > 0) redirect(`/cursos/${slug}`);
 

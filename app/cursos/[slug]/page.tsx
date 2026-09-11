@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canAccessCourse } from "@/lib/access";
+import { canAccessCourse, hasFullAccess } from "@/lib/access";
 import { enrollFree } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +15,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const pub = createPublicClient();
   const { data: course } = await pub
     .from("courses")
-    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon")
+    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon, members_only")
     .eq("slug", params.slug)
     .eq("published", true)
     .maybeSingle();
@@ -41,6 +41,10 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   // matriculado continua entrando por /aprender: marcar um curso como Em breve
   // não é motivo para tirar acesso de quem já tinha.
   const emBreve = course.coming_soon === true;
+  // Curso da assinatura: quem não tem assinatura ativa não se matricula. Quem
+  // tem já cai no ramo de "enrolled", porque acesso full libera tudo.
+  const soAssinantes = course.members_only === true;
+  const assinaturaAtiva = user ? await hasFullAccess(createAdminClient(), user.id) : false;
 
   return (
     <>
@@ -101,7 +105,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                   </div>
                 )}
                 <p className="font-display text-2xl font-bold text-white">
-                  {isPaid ? `R$ ${Number(course.price).toFixed(2)}` : "Gratuito"}
+                  {soAssinantes ? "Incluído na assinatura" : isPaid ? `R$ ${Number(course.price).toFixed(2)}` : "Gratuito"}
                 </p>
 
                 <div className="mt-5">
@@ -117,6 +121,10 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                     <Link href="/entrar" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
                       Entre para começar
                     </Link>
+                  ) : soAssinantes && !assinaturaAtiva ? (
+                    <Link href="/matricula" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                      Assine para acessar
+                    </Link>
                   ) : isPaid ? (
                     <button disabled className="w-full cursor-not-allowed rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-semibold text-slate-400">
                       Compra em breve
@@ -131,7 +139,11 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                   )}
                 </div>
                 <p className="mt-3 text-center text-xs text-slate-500">
-                  {emBreve ? "Estamos preparando as aulas. Avisamos assim que abrir." : "Acesso imediato após a matrícula."}
+                  {emBreve
+                    ? "Estamos preparando as aulas. Avisamos assim que abrir."
+                    : soAssinantes && !assinaturaAtiva
+                    ? "Este treinamento faz parte da assinatura da Academy."
+                    : "Acesso imediato após a matrícula."}
                 </p>
 
                 {/* O que você recebe */}

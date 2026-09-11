@@ -634,6 +634,9 @@ alter table public.courses add column if not exists certificate_enabled boolean 
 -- matrícula. É o estado do meio entre rascunho e publicado.
 alter table public.courses add column if not exists coming_soon boolean not null default false;
 
+-- Curso exclusivo da assinatura: não é gratuito e não é vendido avulso.
+alter table public.courses add column if not exists members_only boolean not null default false;
+
 -- ============================================================
 -- Suporte / Central de Ajuda (chamados) — base para IA de triagem
 -- ============================================================

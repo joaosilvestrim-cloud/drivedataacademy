@@ -17,6 +17,7 @@ type Course = {
   certificate_enabled?: boolean;
   published: boolean;
   coming_soon?: boolean;
+  members_only?: boolean;
 } | null;
 
 export default function CourseForm({ course }: { course?: Course }) {
@@ -79,7 +80,7 @@ export default function CourseForm({ course }: { course?: Course }) {
             min="0"
             step="0.01"
             defaultValue={course?.price ?? 0}
-            description="Em reais. Zero deixa o curso gratuito."
+            description="Em reais. Só vale para curso vendido avulso. Ignorado quando o curso é da assinatura."
           />
         </div>
         {/* Envio de capa: tem upload assinado e estado próprio, não é o FileField
@@ -128,6 +129,15 @@ export default function CourseForm({ course }: { course?: Course }) {
         />
         {/* Estado do meio: o aluno vê o curso e a capa, mas não entra nem se
             matricula. Só faz efeito com o curso publicado. */}
+        {/* Sem isto, preço zero era anunciado como "Gratuito" e qualquer pessoa
+            logada conseguia se matricular. */}
+        <CheckboxField
+          scope={scope}
+          name="members_only"
+          label="Exclusivo para assinantes"
+          defaultChecked={course?.members_only ?? false}
+          description="O catálogo mostra “Assinantes” no lugar do preço, e quem não tem assinatura ativa não consegue se matricular."
+        />
         <CheckboxField
           scope={scope}
           name="coming_soon"
