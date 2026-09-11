@@ -36,6 +36,8 @@ const ICONS: Record<string, string> = {
   cert: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5",
   help: "M9.1 9a3 3 0 015.8 1c0 2-3 3-3 3M12 17h.01M12 22a10 10 0 100-20 10 10 0 000 20z",
   profile: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM3 21v-2a6 6 0 016-6h6a6 6 0 016 6v2",
+  mentoria: "M12 14l9-5-9-5-9 5 9 5zM12 14v7M5 11v4c0 1 3 2 7 2s7-1 7-2v-4",
+  marketplace: "M3 3h18v4H3zM5 7v13h14V7M9 11h6",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string; exact?: boolean }[] }[] = [
@@ -54,6 +56,8 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Comunidade", href: "/conta/comunidade", icon: "community" },
       { label: "Ranking", href: "/conta/ranking", icon: "ranking" },
       { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine" },
+      { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria" },
+      { label: "Marketplace", href: "/conta/marketplace", icon: "marketplace" },
       { label: "Representação", href: "/conta/representacao", icon: "rep" },
     ],
   },

@@ -17,7 +17,7 @@ export default async function RepresentacaoPage() {
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Representação DriveData</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-white">Cresça com a gente</h1>
-      <p className="mt-2 max-w-2xl text-sm text-slate-400">Revenda o Portal BI, traga projetos, marque mentorias, candidate-se ao time ou venda no marketplace. Escolha um caminho e registre seu interesse.</p>
+      <p className="mt-2 max-w-2xl text-sm text-slate-400">Revenda o Portal BI, traga projetos ou candidate-se ao time. Escolha um caminho e registre seu interesse. Mentoria e Marketplace agora têm item próprio no menu.</p>
 
       <div className="mt-8">
         <RepClient />
