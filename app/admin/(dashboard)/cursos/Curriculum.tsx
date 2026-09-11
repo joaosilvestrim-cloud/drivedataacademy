@@ -1,6 +1,6 @@
 import { CalendarDays } from "lucide-react";
 import { Button, ICON } from "@/components/ui/primitives";
-import { Field, SelectField } from "@/components/ui/form";
+import { Field, SelectField, TextareaField, CheckboxField, FormActions } from "@/components/ui/form";
 import {
   addModule,
   renameModule,
@@ -37,9 +37,6 @@ type Lesson = {
 };
 type Module = { id: string; title: string; available_at?: string | null; lessons: Lesson[] };
 
-const field =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
-const flabel = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-500";
 const smallBtn =
   "rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white";
 
@@ -149,59 +146,68 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                     </span>
                   </summary>
 
-                  <form action={saveLesson} className="space-y-4 border-t border-white/8 p-4">
+                  <form action={saveLesson} className="flex flex-col gap-4 border-t border-ds-line-soft p-4">
                     <input type="hidden" name="id" value={l.id} />
                     <input type="hidden" name="course_id" value={courseId} />
 
-                    <div className="space-y-1.5">
-                      <label className={flabel}>Título</label>
-                      <input name="title" defaultValue={l.title} placeholder="Título da aula" className={field} />
+                    <Field
+                      scope={`aula-${l.id}`}
+                      name="title"
+                      label="Título"
+                      defaultValue={l.title}
+                    />
+
+                    <div className="grid gap-4 tablet:grid-cols-2">
+                      <SelectField scope={`aula-${l.id}`} name="type" label="Tipo" defaultValue={l.type}>
+                        <option value="video">Vídeo</option>
+                        <option value="text">Texto</option>
+                      </SelectField>
+                      <Field
+                        scope={`aula-${l.id}`}
+                        name="duration"
+                        label="Duração"
+                        defaultValue={l.duration ?? ""}
+                        placeholder="12 min"
+                        description="Texto livre, como aparece para o aluno."
+                      />
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="space-y-1.5">
-                        <label className={flabel}>Tipo</label>
-                        <select name="type" defaultValue={l.type} className={`${field} [&>option]:bg-ink-900`}>
-                          <option value="video">Vídeo</option>
-                          <option value="text">Texto</option>
-                        </select>
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className={flabel}>Duração</label>
-                        <input name="duration" defaultValue={l.duration ?? ""} placeholder="Ex.: 12 min" className={field} />
-                      </div>
-                    </div>
-
-                    {/* Vídeo + preview */}
+                    {/* Vídeo e prévia continuam no VideoField, que é controle
+                        especializado e fica para o sublote D6E. */}
                     <VideoField defaultProvider={l.video_provider ?? "youtube"} defaultValue={l.video_id ?? ""} />
 
-                    {/* Texto */}
-                    <div className="space-y-1.5">
-                      <label className={flabel}>Conteúdo em texto (para aulas do tipo Texto)</label>
-                      <textarea name="content" defaultValue={l.content ?? ""} rows={3} placeholder="Escreva o conteúdo da aula..." className={`${field} resize-y`} />
-                    </div>
+                    <TextareaField
+                      scope={`aula-${l.id}`}
+                      name="content"
+                      label="Conteúdo em texto"
+                      rows={3}
+                      defaultValue={l.content ?? ""}
+                      description="Usado nas aulas do tipo Texto."
+                    />
 
-                    {/* Materiais */}
-                    <div className="space-y-1.5">
-                      <label className={flabel}>Materiais de apoio</label>
-                      <textarea
-                        name="materials"
-                        rows={2}
-                        defaultValue={(l.materials ?? []).map((mm) => `${mm.title} | ${mm.url}`).join("\n")}
-                        placeholder="Apostila PDF | https://..."
-                        className={`${field} resize-y`}
-                      />
-                      <p className="text-[0.7rem] text-slate-500">Um por linha, no formato <span className="text-slate-400">Título | URL</span>.</p>
-                    </div>
+                    <TextareaField
+                      scope={`aula-${l.id}`}
+                      name="materials"
+                      label="Materiais de apoio"
+                      rows={2}
+                      defaultValue={(l.materials ?? []).map((mm) => `${mm.title} | ${mm.url}`).join("\n")}
+                      placeholder="Apostila PDF | https://..."
+                      description="Um por linha, no formato Título | URL. Linha sem barra vira um material chamado Material."
+                    />
 
-                    <label className="flex items-center gap-2 text-xs text-slate-300">
-                      <input type="checkbox" name="is_preview" defaultChecked={l.is_preview} className="h-4 w-4 accent-emerald-400" /> Aula de preview (aberta sem matrícula)
-                    </label>
+                    <CheckboxField
+                      scope={`aula-${l.id}`}
+                      name="is_preview"
+                      label="Aula de preview"
+                      defaultChecked={l.is_preview}
+                      description="Aberta sem matrícula."
+                    />
 
-                    <div className="flex items-center gap-2 border-t border-white/8 pt-3">
-                      <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900">Salvar aula</button>
-                      <button formAction={deleteLesson} className="rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir</button>
-                    </div>
+                    <FormActions
+                      destructive={<Button formAction={deleteLesson} variant="danger" size="sm">Excluir aula</Button>}
+                    >
+                      <Button type="submit" size="sm">Salvar aula</Button>
+                    </FormActions>
                   </form>
                 </details>
               ))}
