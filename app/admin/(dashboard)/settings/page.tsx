@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import AdminError from "../AdminError";
+import { PageHeader, ErrorState, Alert } from "@/components/ui/layout";
 import VideoManager from "./VideoManager";
 import CertSignatureForm from "./CertSignatureForm";
 
@@ -39,43 +39,32 @@ export default async function SettingsPage({
     }
   } catch (e) {
     return (
-      <div>
-        <h1 className="font-display text-2xl font-bold text-white">Configurações</h1>
-        <div className="mt-6">
-          <AdminError
-            message={
-              (e instanceof Error ? e.message : "Erro desconhecido.") +
-              " — verifique se a tabela site_settings foi criada (rode o SQL no Supabase)."
-            }
-          />
-        </div>
+      <div className="flex flex-col gap-8">
+        <PageHeader context="Administração" title="Configurações" />
+        <ErrorState
+          title="Não foi possível carregar as configurações"
+          description={
+            (e instanceof Error ? e.message : "Erro desconhecido.") +
+            " Se a tabela site_settings ainda não existe, rode o SQL no Supabase."
+          }
+        />
       </div>
     );
   }
 
   return (
-    <div>
-      <h1 className="font-display text-2xl font-bold text-white">Configurações</h1>
-      <p className="mt-1 text-sm text-slate-400">Vídeos da seção “Conheça a Academy”.</p>
+    <div className="flex flex-col gap-8">
+      <PageHeader
+        context="Administração"
+        title="Configurações"
+        lede="Vídeos da home e assinatura dos certificados."
+      />
 
-      {searchParams?.ok && (
-        <div className="mt-6 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">
-          Salvo! O site atualiza em até 1 minuto.
-        </div>
-      )}
-      {searchParams?.error && (
-        <div className="mt-6 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">
-          Não foi possível salvar: {searchParams.error}
-        </div>
-      )}
+      {searchParams?.ok && <Alert tone="accent" title="Salvo">O site atualiza em até um minuto.</Alert>}
+      {searchParams?.error && <Alert tone="danger" title="Não foi possível salvar">{searchParams.error}</Alert>}
 
-      <div className="mt-6">
-        <VideoManager initial={videos} />
-      </div>
-
-      <div className="mt-10">
-        <CertSignatureForm initial={cert} />
-      </div>
+      <VideoManager initial={videos} />
+      <CertSignatureForm initial={cert} />
     </div>
   );
 }

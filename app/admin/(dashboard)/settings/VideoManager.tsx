@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowDown, ArrowUp, Plus, X } from "lucide-react";
+import { Button, ICON } from "@/components/ui/primitives";
+import { FormSection, FormActions } from "@/components/ui/form";
 import { saveVideos } from "./actions";
 
+// Lista dinâmica: adicionar, remover e reordenar. É um controle próprio, não um
+// Field solto, então preservamos o comportamento e usamos os tokens oficiais.
+// Cada linha tem rótulo próprio porque "Vídeo 1" e "Vídeo 2" são campos
+// distintos; um rótulo único não serviria para os dois.
 export default function VideoManager({ initial }: { initial: string[] }) {
   const [videos, setVideos] = useState<string[]>(initial.length ? initial : [""]);
 
@@ -20,83 +27,64 @@ export default function VideoManager({ initial }: { initial: string[] }) {
     });
 
   const cleaned = videos.map((s) => s.trim()).filter(Boolean);
+  const acao =
+    "grid h-10 w-10 shrink-0 place-items-center rounded-ctl border border-ds-line text-ds-text-2 transition-colors duration-fast ease-ds hover:border-ds-text-3 hover:text-ds-text disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-ds-line";
 
   return (
-    <form action={saveVideos} className="max-w-2xl">
+    <form action={saveVideos} className="flex max-w-2xl flex-col gap-6">
       <input type="hidden" name="videos_json" value={JSON.stringify(cleaned)} />
 
-      <div className="glass rounded-2xl border border-white/8 p-6">
-        <p className="text-sm font-medium text-slate-300">
-          Vídeos do YouTube (seção “Conheça a Academy”)
-        </p>
-        <p className="mt-1 text-xs text-slate-500">
-          A ordem abaixo é a ordem do carrossel no site. Use ↑ ↓ para reordenar.
-        </p>
+      <FormSection
+        title="Vídeos da seção Conheça a Academy"
+        description="A ordem aqui é a ordem do carrossel no site."
+      >
+        <ul className="flex flex-col gap-3">
+          {videos.map((url, i) => {
+            const id = `video-${i}`;
+            return (
+              <li key={i} className="flex flex-col gap-1.5">
+                <label htmlFor={id} className="text-label font-medium text-ds-text-2">
+                  Vídeo {i + 1}
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id={id}
+                    value={url}
+                    onChange={(e) => update(i, e.target.value)}
+                    placeholder="https://youtu.be/"
+                    className="h-10 w-full rounded-ctl border border-ds-line bg-ds-surface px-3 text-body text-ds-text placeholder:text-ds-text-3 transition-colors duration-fast ease-ds hover:border-ds-text-3"
+                  />
+                  <button type="button" onClick={() => move(i, -1)} disabled={i === 0} aria-label={`Mover vídeo ${i + 1} para cima`} className={acao}>
+                    <ArrowUp size={ICON.md} strokeWidth={ICON.stroke} aria-hidden="true" />
+                  </button>
+                  <button type="button" onClick={() => move(i, 1)} disabled={i === videos.length - 1} aria-label={`Mover vídeo ${i + 1} para baixo`} className={acao}>
+                    <ArrowDown size={ICON.md} strokeWidth={ICON.stroke} aria-hidden="true" />
+                  </button>
+                  <button type="button" onClick={() => remove(i)} aria-label={`Remover vídeo ${i + 1}`} className={`${acao} hover:border-ds-danger/50 hover:text-ds-danger`}>
+                    <X size={ICON.md} strokeWidth={ICON.stroke} aria-hidden="true" />
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
 
-        <div className="mt-4 space-y-2.5">
-          {videos.map((url, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 bg-white/5 text-xs font-semibold text-slate-400">
-                {i + 1}
-              </span>
-              <input
-                value={url}
-                onChange={(e) => update(i, e.target.value)}
-                placeholder="https://youtu.be/XXXXXXXXXXX"
-                className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
-              />
-              <button
-                type="button"
-                onClick={() => move(i, -1)}
-                disabled={i === 0}
-                aria-label="Subir"
-                className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 text-slate-300 transition-colors hover:border-white/30 hover:text-white disabled:opacity-30"
-              >
-                ↑
-              </button>
-              <button
-                type="button"
-                onClick={() => move(i, 1)}
-                disabled={i === videos.length - 1}
-                aria-label="Descer"
-                className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 text-slate-300 transition-colors hover:border-white/30 hover:text-white disabled:opacity-30"
-              >
-                ↓
-              </button>
-              <button
-                type="button"
-                onClick={() => remove(i)}
-                aria-label="Remover"
-                className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-white/10 text-slate-300 transition-colors hover:border-red-400/40 hover:text-red-400"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
+        <div>
+          <Button type="button" variant="secondary" size="sm" onClick={add}>
+            <Plus size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" />
+            Adicionar vídeo
+          </Button>
         </div>
 
-        <button
-          type="button"
-          onClick={add}
-          className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green"
-        >
-          + Adicionar vídeo
-        </button>
-
-        <p className="mt-4 text-xs text-slate-500">
-          Pode ser link “não listado”. Deixe a lista vazia para esconder a seção. Os vídeos
-          tocam automaticamente, sem som (exigência dos navegadores).
+        <p className="text-caption text-ds-text-3">
+          Pode ser link não listado. Lista vazia esconde a seção. Os vídeos tocam sozinhos e
+          sem som, que é exigência dos navegadores.
         </p>
-      </div>
+      </FormSection>
 
-      <div className="mt-5">
-        <button
-          type="submit"
-          className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
-        >
-          Salvar
-        </button>
-      </div>
+      <FormActions>
+        <Button type="submit">Salvar vídeos</Button>
+      </FormActions>
     </form>
   );
 }
