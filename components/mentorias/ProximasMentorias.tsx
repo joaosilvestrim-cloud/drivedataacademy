@@ -18,6 +18,7 @@ type Mentoria = {
   title: string;
   description: string | null;
   starts_at: string;
+  cover_url: string | null;
 };
 
 const FUSO = "America/Sao_Paulo";
@@ -61,7 +62,7 @@ export default async function ProximasMentorias({
     const admin = createAdminClient();
     const { data } = await admin
       .from("live_events")
-      .select("id, title, description, starts_at")
+      .select("id, title, description, starts_at, cover_url")
       .eq("published", true)
       .eq("kind", "mentoria")
       // Tolerância de duas horas: a mentoria que começou agora continua na
@@ -103,7 +104,7 @@ export default async function ProximasMentorias({
               return (
                 <li
                   key={m.id}
-                  className={`relative pl-5 ${s.card}`}
+                  className={`group/card relative pl-5 ${s.card}`}
                   style={{ "--i": i } as React.CSSProperties}
                 >
                   <span
@@ -111,6 +112,21 @@ export default async function ProximasMentorias({
                     className={`absolute left-0 top-1 h-[calc(100%-0.25rem)] w-px bg-gradient-to-b from-brand-cyan/70 via-brand-cyan/25 to-transparent ${s.regua}`}
                     style={{ "--i": i } as React.CSSProperties}
                   />
+                  {/* A arte do evento, quando existe. Quem ainda não tem arte
+                      recebe um degradê do mesmo tamanho, senão a grade fica
+                      dentada com cards de alturas diferentes. */}
+                  <span className="mb-3.5 block overflow-hidden rounded-lg border border-white/10">
+                    <span className="relative block aspect-[16/9]">
+                      {m.cover_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={m.cover_url} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.04]" />
+                      ) : (
+                        <span className="absolute inset-0 bg-[linear-gradient(135deg,#0d2b3f,#071019_60%,#0a1f2e)]" />
+                      )}
+                      <span className="absolute inset-0 bg-gradient-to-t from-ink-900/70 to-transparent" />
+                    </span>
+                  </span>
+
                   <p className={`inline-flex items-center gap-2 rounded-md border px-2.5 py-1 ${i === 0 ? "border-brand-cyan/40 bg-brand-cyan/10" : "border-white/10 bg-white/[0.03]"}`}>
                     <Radio size={12} strokeWidth={2} aria-hidden className={i === 0 ? `text-brand-cyan ${s.proxima}` : "text-brand-cyan/70"} />
                     <time dateTime={m.starts_at} className={`text-[0.7rem] font-medium tabular-nums ${i === 0 ? "text-brand-cyan" : "text-slate-300"}`}>
