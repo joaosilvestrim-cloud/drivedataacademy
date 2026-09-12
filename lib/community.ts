@@ -8,11 +8,28 @@ export function isAdminEmail(email?: string | null): boolean {
   return allow.includes(email.toLowerCase());
 }
 
-// Pode usar a comunidade quem é admin, tem acesso full, ou está matriculado em algum curso.
+/* Quem pode usar a comunidade e o resto do conteúdo da plataforma.
+
+   A regra é uma só: assinatura ativa. Antes qualquer matrícula abria a porta,
+   e isso vinha da época em que existia curso gratuito com matrícula aberta.
+   Com todo o conteúdo dentro da assinatura, essa porta virou um furo.
+
+   Sobram duas exceções, as duas deliberadas:
+   - e-mail de administrador, que precisa entrar para operar;
+   - matrícula de origem deliberada: cortesia do time, compra avulsa ou turma.
+
+   A regra é por exclusão e não por lista: só a origem "free" deixou de valer,
+   que era a do cadastro aberto. Assim uma origem nova amanhã não nasce
+   bloqueada sem ninguém perceber. */
 export async function canUseCommunity(admin: SupabaseClient, userId: string, email?: string | null): Promise<boolean> {
   if (isAdminEmail(email)) return true;
   if (await hasFullAccess(admin, userId)) return true;
-  const { data } = await admin.from("enrollments").select("id").eq("user_id", userId).limit(1);
+  const { data } = await admin
+    .from("enrollments")
+    .select("id")
+    .eq("user_id", userId)
+    .neq("source", "free")
+    .limit(1);
   return !!data?.length;
 }
 

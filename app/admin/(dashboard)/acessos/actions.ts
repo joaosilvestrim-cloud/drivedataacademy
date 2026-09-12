@@ -105,7 +105,10 @@ export async function grantCourses(formData: FormData) {
 
   const { data: existing } = await admin.from("enrollments").select("course_id").eq("user_id", target!.id).in("course_id", ids);
   const have = new Set((existing ?? []).map((e: any) => e.course_id));
-  const toAdd = ids.filter((c) => !have.has(c)).map((course_id) => ({ user_id: target!.id, course_id }));
+  // A origem precisa ser explícita: o default da tabela é "free", e "free" é
+  // exatamente o que deixou de abrir conteúdo. Sem isto, a cortesia do time
+  // nasceria já bloqueada.
+  const toAdd = ids.filter((c) => !have.has(c)).map((course_id) => ({ user_id: target!.id, course_id, source: "admin" }));
   if (toAdd.length) {
     const { error } = await admin.from("enrollments").insert(toAdd);
     if (error) redirect("/admin/acessos?error=" + encodeURIComponent(error.message));

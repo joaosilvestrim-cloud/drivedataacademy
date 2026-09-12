@@ -30,6 +30,8 @@ export async function grantOffer(admin: SupabaseClient, userId: string, offer: O
   if (!ids.length) return;
   const { data: existing } = await admin.from("enrollments").select("course_id").eq("user_id", userId).in("course_id", ids);
   const have = new Set((existing ?? []).map((e: any) => e.course_id));
-  const toAdd = ids.filter((c) => !have.has(c)).map((course_id) => ({ user_id: userId, course_id }));
+  // Origem explícita: o default da tabela é "free", e "free" não abre mais
+  // conteúdo. Sem isto a compra do aluno nasceria sem acesso.
+  const toAdd = ids.filter((c) => !have.has(c)).map((course_id) => ({ user_id: userId, course_id, source: "compra" }));
   if (toAdd.length) await admin.from("enrollments").insert(toAdd);
 }
