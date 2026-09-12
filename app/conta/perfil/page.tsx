@@ -9,7 +9,7 @@ import ProfilePreview from "@/components/knowledge/ProfilePreview";
 
 export const dynamic = "force-dynamic";
 
-export default async function PerfilPage() {
+export default async function PerfilPage({ searchParams }: { searchParams: { falta?: string } }) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/entrar");
@@ -40,6 +40,20 @@ export default async function PerfilPage() {
     <div className="max-w-2xl">
       <h1 className="font-display text-3xl font-bold text-white">Meu perfil</h1>
       <p className="mt-1 text-sm text-slate-400">Seus dados de aluno na DriveData Academy.</p>
+
+      {/* Chega aqui quem tentou emitir certificado sem nome no cadastro. O nome
+          é o que fica impresso, então a emissão para em vez de imprimir e-mail. */}
+      {searchParams?.falta === "nome" && (
+        <div className="mt-5 flex gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/[0.07] p-4">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-amber-300">
+            <path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div>
+            <p className="text-sm font-semibold text-amber-200">Preencha seu nome completo para emitir o certificado</p>
+            <p className="mt-1 text-sm text-slate-300">É o nome que fica impresso no documento e no seu LinkedIn. Salve abaixo e volte ao curso para emitir.</p>
+          </div>
+        </div>
+      )}
 
       <ProfileForm />
       <ProfilePreview userId={user.id} email={user.email} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import LangSwitcher from "./LangSwitcher";
 import AccountNav from "./AccountNav";
@@ -8,8 +9,18 @@ import AccountNav from "./AccountNav";
 // Âncoras fixas; os rótulos vêm do dicionário (nav.links), na mesma ordem.
 export const NAV_HREFS = ["/cursos", "#marketplace", "#metodo", "#empresas", "#blog", "#instrutora"];
 
+/* As âncoras só existem na home. Em /cursos, /matricula e nas outras páginas
+   que montam o mesmo cabeçalho, clicar em "#metodo" não fazia nada, porque a
+   seção não está naquele documento. Fora da home o link passa a apontar para a
+   home mais a âncora, e o navegador rola sozinho ao chegar. */
+export function resolverAncora(href: string, pathname: string | null) {
+  if (!href.startsWith("#")) return href;
+  return pathname === "/" ? href : `/${href}`;
+}
+
 export default function Navbar() {
   const t = useT();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -20,7 +31,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = NAV_HREFS.map((href, i) => ({ href, label: t.nav.links[i] }));
+  const links = NAV_HREFS.map((href, i) => ({ href: resolverAncora(href, pathname), label: t.nav.links[i] }));
 
   return (
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
@@ -29,7 +40,7 @@ export default function Navbar() {
           scrolled ? "shadow-[0_8px_40px_-12px_rgba(52,232,160,0.25)]" : ""
         }`}
       >
-        <a href="#inicio" className="transition-transform hover:scale-[1.03]">
+        <a href={resolverAncora("#inicio", pathname)} className="transition-transform hover:scale-[1.03]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Drive Data Academy" className="h-12 w-auto sm:h-14" />
         </a>
@@ -51,7 +62,7 @@ export default function Navbar() {
           <AccountNav />
           <LangSwitcher className="hidden sm:flex" />
           <a
-            href="#lista"
+            href={resolverAncora("#lista", pathname)}
             className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-[0_0_24px_-4px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.03]"
           >
             {t.nav.cta}

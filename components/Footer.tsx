@@ -1,7 +1,8 @@
 "use client";
 
 import { useT } from "@/lib/i18n/LanguageProvider";
-import { NAV_HREFS } from "./Navbar";
+import { usePathname } from "next/navigation";
+import { NAV_HREFS, resolverAncora } from "./Navbar";
 
 const SOCIALS = [
   {
@@ -39,7 +40,8 @@ function SocialIcon({ type }: { type: string }) {
 
 export default function Footer() {
   const t = useT();
-  const academyLinks = NAV_HREFS.map((href, i) => ({ href, label: t.nav.links[i] }));
+  const pathname = usePathname();
+  const academyLinks = NAV_HREFS.map((href, i) => ({ href: resolverAncora(href, pathname), label: t.nav.links[i] }));
 
   return (
     <footer className="relative mt-12 border-t border-white/8">

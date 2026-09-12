@@ -80,10 +80,11 @@ export default async function ProximasMentorias({
 
   return (
     <section aria-labelledby="proximas-mentorias" className={className}>
-      <div className="relative overflow-hidden rounded-[1.75rem] border border-brand-cyan/15 bg-ink-900">
+      <div className={`relative overflow-hidden rounded-[1.75rem] bg-ink-900 ${s.moldura}`}>
         {/* Fundo: um degradê fixo e um brilho que atravessa devagar. */}
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_140%_at_18%_0%,#0d2b3f_0%,#071019_58%,#04070f_100%)]" />
-        <div aria-hidden className={`pointer-events-none absolute -inset-x-1/4 -top-1/2 h-[200%] ${s.brilho} bg-[radial-gradient(42%_38%_at_50%_50%,rgba(34,211,238,0.10)_0%,transparent_70%)]`} />
+        <div aria-hidden className={`pointer-events-none absolute inset-0 ${s.grade}`} />
+        <div aria-hidden className={`pointer-events-none absolute -inset-x-1/4 -top-1/2 h-[200%] ${s.brilho} bg-[radial-gradient(42%_38%_at_50%_50%,rgba(34,211,238,0.12)_0%,transparent_70%)]`} />
 
         <div className="relative px-6 py-8 sm:px-10 sm:py-10">
           <div className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${s.titulo}`}>
@@ -110,11 +111,13 @@ export default async function ProximasMentorias({
                     className={`absolute left-0 top-1 h-[calc(100%-0.25rem)] w-px bg-gradient-to-b from-brand-cyan/70 via-brand-cyan/25 to-transparent ${s.regua}`}
                     style={{ "--i": i } as React.CSSProperties}
                   />
-                  <p className="inline-flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-2.5 py-1">
-                    <Radio size={12} strokeWidth={2} aria-hidden className="text-brand-cyan/70" />
-                    <time dateTime={m.starts_at} className="text-[0.7rem] font-medium tabular-nums text-slate-300">
+                  <p className={`inline-flex items-center gap-2 rounded-md border px-2.5 py-1 ${i === 0 ? "border-brand-cyan/40 bg-brand-cyan/10" : "border-white/10 bg-white/[0.03]"}`}>
+                    <Radio size={12} strokeWidth={2} aria-hidden className={i === 0 ? `text-brand-cyan ${s.proxima}` : "text-brand-cyan/70"} />
+                    <time dateTime={m.starts_at} className={`text-[0.7rem] font-medium tabular-nums ${i === 0 ? "text-brand-cyan" : "text-slate-300"}`}>
                       {dataCurta(m.starts_at)} · {hora(m.starts_at)}
                     </time>
+                    {/* A mais próxima é a que interessa agora. */}
+                    {i === 0 && <span className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-cyan/80">Próxima</span>}
                   </p>
                   <h3 className="mt-3 font-display text-lg font-semibold leading-snug text-brand-cyan">{m.title}</h3>
                   {chamada && <p className="mt-2 text-[0.8rem] font-medium leading-snug text-slate-200">{chamada}</p>}

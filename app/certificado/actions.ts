@@ -46,17 +46,33 @@ export async function issueCertificate(formData: FormData) {
     admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
   ]);
 
+  const nome = nomeDoAluno(profile, user);
+  if (!nome) redirect("/conta/perfil?falta=nome");
+
   const code = "DDA-" + randomBytes(4).toString("hex").toUpperCase();
   await admin.from("certificates").insert({
     user_id: user.id,
     course_id: courseId,
     code,
-    student_name: profile?.full_name || (user.user_metadata as any)?.full_name || user.email,
+    student_name: nome,
     course_title: course?.title || "",
     workload: course?.workload || null,
   });
 
   redirect(`/certificado/${code}`);
+}
+
+/* O nome do aluno é o que fica impresso e vai para o LinkedIn. Cair no e-mail
+   como último recurso produzia certificado com "fulano@empresa.com" no lugar do
+   nome, que é pior do que não emitir. Agora, sem nome no perfil, a emissão para
+   e manda a pessoa completar o cadastro. */
+function nomeDoAluno(profile: any, user: any): string | null {
+  const candidatos = [profile?.full_name, user?.user_metadata?.full_name];
+  for (const c of candidatos) {
+    const nome = String(c || "").trim();
+    if (nome && !nome.includes("@")) return nome;
+  }
+  return null;
 }
 
 // Certificado de conclusão de um módulo específico.
@@ -101,13 +117,16 @@ export async function issueModuleCertificate(formData: FormData) {
     admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
   ]);
 
+  const nome = nomeDoAluno(profile, user);
+  if (!nome) redirect("/conta/perfil?falta=nome");
+
   const code = "DDA-" + randomBytes(4).toString("hex").toUpperCase();
   await admin.from("certificates").insert({
     user_id: user.id,
     course_id: courseId,
     module_id: moduleId,
     code,
-    student_name: profile?.full_name || (user.user_metadata as any)?.full_name || user.email,
+    student_name: nome,
     course_title: `${course?.title || ""} — ${mod.title}`.trim(),
     workload: null,
   });

@@ -45,11 +45,13 @@ export default function CertificateView({
       <Rings className="pointer-events-none absolute -bottom-28 -left-24" />
 
       {/* Conteúdo */}
-      <div className="relative flex h-full flex-col items-center px-[7%] py-[3.5%] text-center">
+      <div className="relative flex h-full flex-col items-center px-[7%] py-[5%] text-center">
+        {/* A marca precisa de ar em volta: encostada no título ela some dentro do
+            bloco e o "ACADEMY" parece colado na linha de baixo. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cert-logo.png" alt="DriveData Academy" className="h-[15%] w-auto" />
-        <p className="mt-[1.2%] text-[2.1cqw] font-bold uppercase tracking-[0.25em] text-brand-teal">Certificado de Conclusão</p>
-        <p className="mt-[1.6%] text-[1.9cqw] text-slate-400">Certificamos que</p>
+        <img src="/cert-logo.png" alt="DriveData Academy" className="h-[13%] w-auto" />
+        <p className="mt-[3.4%] text-[2.1cqw] font-bold uppercase tracking-[0.25em] text-brand-teal">Certificado de Conclusão</p>
+        <p className="mt-[2.4%] text-[1.9cqw] text-slate-400">Certificamos que</p>
 
         <div className="mt-[1%] flex min-h-[9%] w-full items-center justify-center rounded-2xl border-2 border-brand-green/40 bg-brand-green/[0.06] px-4">
           <p className="font-display text-[5cqw] font-extrabold leading-tight text-slate-900">{studentName}</p>
