@@ -40,9 +40,9 @@ export default async function FerramentaPage() {
       {/* Barra superior (52px = 3.25rem, alinha com o h-[calc(100vh-3.25rem)] do editor) */}
       <header className="flex h-[3.25rem] shrink-0 items-center justify-between border-b border-border bg-surface px-4">
         <div className="flex items-center gap-3">
-          <Link href="/conta" className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted hover:text-foreground">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            Portal
+          <Link href="/conta/ferramentas" className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted hover:text-foreground">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            Voltar ao sistema
           </Link>
           <span className="font-display text-sm font-bold text-foreground">Ferramenta de <span className="text-viz-dark">Visuais</span></span>
         </div>

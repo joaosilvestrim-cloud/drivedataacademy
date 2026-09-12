@@ -22,6 +22,8 @@ const ICONS: Record<string, string> = {
   cohort: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75",
   analytics: "M3 3v18h18M7 14l4-4 3 3 5-6",
   billing: "M2 7h20v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7zM2 10h20M6 15h4",
+  tool: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4",
+  universe: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string }[] }[] = [
@@ -32,12 +34,18 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Painel", href: "/admin/ensino", icon: "overview" },
       { label: "Progresso", href: "/admin/progresso", icon: "analytics" },
       { label: "Cursos", href: "/admin/cursos", icon: "courses" },
-      { label: "Knowledge Universe 4D", href: "/admin/universo", icon: "analytics" },
       { label: "Desafios", href: "/admin/desafios", icon: "courses" },
       { label: "Alunos", href: "/admin/alunos", icon: "students" },
       { label: "Comunidade", href: "/admin/comunidade", icon: "community" },
       { label: "Comentários", href: "/admin/comentarios", icon: "blog" },
       { label: "Lives", href: "/admin/lives", icon: "live" },
+    ],
+  },
+  {
+    title: "Ferramentas",
+    items: [
+      { label: "Knowledge Universe 4D", href: "/admin/universo", icon: "universe" },
+      { label: "Ferramenta de visuais", href: "/admin/ferramenta", icon: "tool" },
     ],
   },
   {
@@ -47,7 +55,6 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Workshops", href: "/admin/workshops", icon: "live" },
       { label: "Acessos", href: "/admin/acessos", icon: "access" },
       { label: "Turmas / lotes", href: "/admin/turmas", icon: "cohort" },
-      { label: "Ferramenta", href: "/admin/ferramenta", icon: "courses" },
     ],
   },
   {

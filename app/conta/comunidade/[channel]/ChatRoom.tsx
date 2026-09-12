@@ -72,6 +72,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [online, setOnline] = useState<Set<string>>(new Set([me.id]));
+  const [busca, setBusca] = useState("");
   const peopleCache = useRef<Record<string, { name: string; avatar: string | null }>>(
     Object.fromEntries(initial.map((m) => [m.user_id, { name: m.name, avatar: m.avatar ?? null }]))
   );
@@ -192,6 +193,15 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   }
 
   const parentOf = (m: Msg) => (m.reply_to ? messages.find((x) => x.id === m.reply_to) : null);
+
+  /* Busca dentro do canal. Filtra o que já está carregado, que é a mesma
+     conversa que a pessoa está vendo. Acento não atrapalha: quem digita
+     "duvida" acha "dúvida". */
+  const semAcento = (t: string) => t.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+  const q = semAcento(busca.trim());
+  const visiveis = q
+    ? messages.filter((m) => semAcento(`${m.body || ""} ${m.name || ""}`).includes(q))
+    : messages;
   const canSolve = (m: Msg) => {
     if (!m.reply_to || m.is_solution) return false;
     const p = parentOf(m);
@@ -206,7 +216,8 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
       {/* Canais */}
       <aside className="hidden w-60 shrink-0 flex-col border-r border-white/[0.06] bg-gradient-to-b from-white/[0.04] to-transparent sm:flex">
         <div className="flex items-center gap-2.5 border-b border-white/[0.06] px-4 py-4">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand-green to-brand-blue text-sm font-bold text-ink-900 shadow-lg shadow-brand-green/20">D</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/drivedata-symbol.png" alt="" aria-hidden="true" className="h-8 w-8 shrink-0 object-contain" />
           <span className="font-display text-sm font-bold text-white">Comunidade</span>
         </div>
         <nav className="flex-1 space-y-1 overflow-y-auto p-2.5">
@@ -242,7 +253,22 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Pontos
           </Link>
-          <span className="ml-2 flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[0.7rem] text-slate-300">
+          <div className="relative ml-auto sm:ml-2">
+            <label htmlFor="busca-canal" className="sr-only">Buscar nesta conversa</label>
+            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500">
+              <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <input
+              id="busca-canal"
+              type="search"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
+              placeholder="Buscar"
+              className="w-28 rounded-full border border-white/10 bg-white/5 py-1 pl-7 pr-2.5 text-[0.7rem] text-white placeholder:text-slate-500 outline-none transition-all focus:w-44 focus:border-brand-green/50 sm:w-32 sm:focus:w-56"
+            />
+          </div>
+          <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[0.7rem] text-slate-300">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-green shadow-[0_0_6px] shadow-brand-green/60" />
             {onlineCount} online
           </span>
@@ -263,6 +289,16 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
         </div>
 
         <div ref={scrollRef} className="relative flex-1 space-y-0.5 overflow-y-auto px-4 py-4">
+          {q && visiveis.length === 0 && messages.length > 0 && (
+            <div className="grid h-full place-items-center px-6 text-center text-slate-500">
+              <div>
+                <p className="text-sm">Nenhuma mensagem com “{busca.trim()}” neste canal.</p>
+                <button type="button" onClick={() => setBusca("")} className="mt-3 rounded-xl border border-white/10 px-4 py-1.5 text-xs text-slate-300 hover:border-white/30 hover:text-white">
+                  Limpar busca
+                </button>
+              </div>
+            </div>
+          )}
           {messages.length === 0 && (
             <div className="grid h-full place-items-center text-center text-slate-500">
               <div>
@@ -275,8 +311,8 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               </div>
             </div>
           )}
-          {messages.map((m, i) => {
-            const prev = messages[i - 1];
+          {visiveis.map((m, i) => {
+            const prev = visiveis[i - 1];
             const newDay = !prev || dayStr(prev.created_at) !== dayStr(m.created_at);
             const grouped = prev && !newDay && prev.user_id === m.user_id && !m.tag && !m.reply_to && !m.image_url && Math.abs(new Date(m.created_at).getTime() - new Date(prev.created_at).getTime()) < 5 * 60000;
             const parent = parentOf(m);
