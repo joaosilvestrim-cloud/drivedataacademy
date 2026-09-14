@@ -4,8 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import ProximasMentorias from "@/components/mentorias/ProximasMentorias";
-import BeneficioVisual from "@/components/assinatura/BeneficioVisual";
-import type { Modelo } from "@/components/assinatura/BeneficioCena";
+import MenuImersivo from "@/components/assinatura/MenuImersivo";
 
 export const revalidate = 60;
 
@@ -27,95 +26,12 @@ const PASSE = [
   "Certificados das suas competências",
 ];
 
-type Beneficio = { titulo: string; texto: string; icon: string; modelo: Modelo; destaque?: boolean; tag?: string };
-
-const BENEFICIOS: Beneficio[] = [
-  {
-    modelo: "agenda",
-    titulo: "Agenda ao vivo",
-    texto: "Lives, workshops e mentorias com quem faz dados de verdade no mercado. Você acompanha a próxima pelo cronômetro e entra com um clique.",
-    icon: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z",
-    destaque: true,
-    tag: "Toda semana",
-  },
-  {
-    modelo: "gravacoes",
-    titulo: "Gravações",
-    texto: "Perdeu o horário? Cada encontro fica gravado na sua agenda para assistir quando puder.",
-    icon: "M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zM10 9l5 3-5 3V9z",
-  },
-  {
-    modelo: "ferramentas",
-    titulo: "Ferramentas",
-    texto: "Knowledge Universe 4D, DataFlow Lab, Decision Lab e a ferramenta de visuais. Recursos para aplicar o que aprendeu no seu trabalho.",
-    icon: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4",
-  },
-  {
-    modelo: "treinamentos",
-    titulo: "Treinamentos com preço de assinante",
-    texto: "Os treinamentos completos saem por um valor especial, pago uma vez só. O curso fica com você, com aulas, materiais e avaliação.",
-    icon: "M22 10L12 5 2 10l10 5 10-5zM6 12v5c0 1 3 2 6 2s6-1 6-2v-5",
-    destaque: true,
-    tag: "Exclusivo",
-  },
-  {
-    modelo: "materiais",
-    titulo: "Materiais prontos",
-    texto: "Cases reais, arquivos de Power BI e aceleradores para baixar dentro dos treinamentos e adaptar ao seu projeto.",
-    icon: "M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2",
-  },
-  {
-    modelo: "certificados",
-    titulo: "Certificados",
-    texto: "Comprovação das competências que você desenvolveu, com carga horária e o seu nome.",
-    icon: "M12 2l9 5-9 5-9-5 9-5zM7 10v5c0 1 2.2 2 5 2s5-1 5-2v-5",
-  },
-  {
-    modelo: "comunidade",
-    titulo: "Comunidade",
-    texto: "Troca de experiências e dúvidas com outros profissionais, em canais por assunto.",
-    icon: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
-  },
-  {
-    modelo: "ranking",
-    titulo: "Ranking e prêmios",
-    texto: "Sua participação vira pontos. Quem mais contribui aparece no topo e o primeiro lugar leva prêmio.",
-    icon: "M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3",
-  },
-  {
-    modelo: "vitrine",
-    titulo: "Vitrine de talentos",
-    texto: "Seu perfil, suas skills e seus projetos à mostra para a rede DriveData.",
-    icon: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z",
-  },
-  {
-    modelo: "mentoria",
-    titulo: "Mentoria com especialistas",
-    texto: "Agende uma conversa com o time para destravar um desafio do seu dia a dia.",
-    icon: "M12 14l9-5-9-5-9 5 9 5zM12 14v7M5 11v4c0 1 3 2 7 2s7-1 7-2v-4",
-  },
-  {
-    modelo: "parcerias",
-    titulo: "Parcerias e negócios",
-    texto: "Oportunidades de participar do ecossistema B2B da DriveData: revenda, projetos e time.",
-    icon: "M3 21h18M5 21V7l8-4v18M19 21V11l-6-3",
-  },
-];
-
 // A ordem aqui é real: é o caminho de quem assina.
 const PASSOS = [
   { titulo: "Escolha o plano", texto: "Mensal no cartão, ou anual à vista no Pix ou no cartão." },
   { titulo: "Crie sua senha", texto: "Assim que o pagamento confirma, chega um email para você criar o acesso." },
   { titulo: "Entre e aproveite", texto: "Agenda, comunidade, ferramentas e o cardápio de treinamentos já esperam por você." },
 ];
-
-function Icone({ d }: { d: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d={d} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 const btnPrimario =
   "inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-7 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]";
@@ -186,49 +102,15 @@ export default function AssinaturaPage() {
           </div>
         </section>
 
-        {/* O que está incluso: dois benefícios em destaque ocupam mais espaço. */}
-        <section className="relative mx-auto max-w-7xl px-6 py-20">
+        {/* O que está incluso: menu imersivo com uma cena 3D por benefício. */}
+        <section className="relative mx-auto max-w-7xl px-6 py-20" aria-labelledby="beneficios">
           <Reveal>
             <div className="mx-auto max-w-2xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">O que você ganha</p>
-              <h2 className="mt-3 font-display text-3xl font-bold sm:text-5xl">
-                Tudo para evoluir, <span className="text-gradient">do dado à decisão</span>
-              </h2>
-              <p className="mt-4 text-slate-300/90">Aprender, praticar, ser visto e crescer junto com quem já está no mercado.</p>
-              <p className="mt-2 text-xs text-slate-500">Passe o mouse ou toque nos objetos.</p>
+              <p id="beneficios" className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">O que você ganha</p>
             </div>
           </Reveal>
-
-          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {BENEFICIOS.map((b, i) => (
-              <Reveal key={b.titulo} delay={(i % 4) * 0.06} className={b.destaque ? "sm:col-span-2" : ""}>
-                <article
-                  className={`card-hover relative flex h-full rounded-3xl border p-6 ${
-                    b.destaque ? "glass-strong flex-col gap-4 border-brand-green/30 sm:flex-row sm:items-center" : "glass flex-col border-white/8"
-                  }`}
-                >
-                  {b.destaque ? (
-                    <>
-                      <div className="min-w-0 flex-1">
-                        {b.tag && <span className="inline-block rounded-full border border-brand-green/30 bg-brand-green/10 px-3 py-1 text-[0.7rem] font-semibold text-brand-green">{b.tag}</span>}
-                        <h3 className="mt-3 font-display text-2xl font-bold text-white">{b.titulo}</h3>
-                        <p className="mt-2 text-sm text-slate-300/90">{b.texto}</p>
-                      </div>
-                      <BeneficioVisual modelo={b.modelo} fallback={<Icone d={b.icon} />} className="h-44 w-full shrink-0 sm:h-48 sm:w-48" />
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-start justify-between gap-3">
-                        <BeneficioVisual modelo={b.modelo} fallback={<Icone d={b.icon} />} className="-ml-2 -mt-2 h-28 w-28" />
-                        {b.tag && <span className="rounded-full border border-brand-green/30 bg-brand-green/10 px-3 py-1 text-[0.7rem] font-semibold text-brand-green">{b.tag}</span>}
-                      </div>
-                      <h3 className="mt-3 font-display text-lg font-bold text-white">{b.titulo}</h3>
-                      <p className="mt-2 text-sm text-slate-300/90">{b.texto}</p>
-                    </>
-                  )}
-                </article>
-              </Reveal>
-            ))}
+          <div className="mt-8">
+            <MenuImersivo />
           </div>
         </section>
 
