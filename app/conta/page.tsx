@@ -72,14 +72,7 @@ export default async function ContaHome() {
     admin.from("certificates").select("*", { count: "exact", head: true }).eq("user_id", user!.id),
   ]);
 
-  const { data: livesData } = await admin
-    .from("live_events")
-    .select("id, title, starts_at, kind")
-    .eq("published", true)
-    .gte("starts_at", new Date(Date.now() - 2 * 3600e3).toISOString())
-    .order("starts_at")
-    .limit(3);
-  const upcoming = (livesData ?? []).filter((l: any) => l.kind !== "mentoria");
+  // As próximas lives e mentorias aparecem na faixa ProximasMentorias.
 
   const [{ data: votesData }, { data: myVoteRow }, { data: catalogData }] = await Promise.all([
     admin.from("workshop_votes").select("option"),
@@ -325,35 +318,6 @@ export default async function ContaHome() {
 
       <ProximasMentorias className="" />
 
-      {upcoming.length > 0 && (full || courses.length > 0) && (
-        <section aria-labelledby="agenda">
-          <SectionHeader
-            title="Próximos ao vivo"
-            action={<Link href="/conta/agenda" className="text-label text-ds-text-2 hover:text-ds-text">Agenda</Link>}
-          />
-          <ul className="mt-2 flex flex-col">
-            {upcoming.map((l: any) => (
-              <li key={l.id}>
-                <Link
-                  href="/conta/agenda"
-                  className="group flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-ds-line-soft py-3 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
-                >
-                  <span className="flex min-w-0 items-baseline gap-3">
-                    {/* Horário de agenda é navegação, não medição: Plex Sans. */}
-                    <span className="shrink-0 text-caption tabular-nums text-ds-text-3">{quando(l.starts_at)}</span>
-                    <span className="truncate text-body-sm text-ds-text">{l.title}</span>
-                    {l.kind === "mentoria" && <Badge>mentoria</Badge>}
-                  </span>
-                  <span className="flex shrink-0 items-baseline gap-3">
-                    <span className="text-caption text-ds-accent">{emQuanto(l.starts_at)}</span>
-                    <RowArrow />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       <section aria-labelledby="enquete">
         <WorkshopPoll options={WORKSHOP_OPTIONS} counts={voteCounts} myVote={myVote} />

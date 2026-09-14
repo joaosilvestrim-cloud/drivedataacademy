@@ -20,7 +20,7 @@ type Course = {
   members_only?: boolean;
 } | null;
 
-export default function CourseForm({ course }: { course?: Course }) {
+export default function CourseForm({ course, cargaCalculada }: { course?: Course; cargaCalculada?: string | null }) {
   const editando = !!course;
   const scope = editando ? `curso-${course!.id}` : "curso-novo";
 
@@ -104,7 +104,7 @@ export default function CourseForm({ course }: { course?: Course }) {
           label="Carga horária"
           placeholder="8 horas"
           defaultValue={course?.workload ?? ""}
-          description="Aparece impressa no certificado."
+          description={cargaCalculada ? `Aparece impressa no certificado. Em branco, usamos a soma das aulas: ${cargaCalculada}.` : "Aparece impressa no certificado. Em branco, usamos a soma da duração das aulas."}
           className="max-w-xs"
         />
         <p className="text-body-sm">

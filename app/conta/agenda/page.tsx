@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
+import Cronometro from "@/components/Cronometro";
 
 export const dynamic = "force-dynamic";
 
@@ -73,11 +74,16 @@ export default async function AgendaPage() {
             </div>
             <h2 className="mt-3 font-display text-2xl font-bold text-white">{next.title}</h2>
             <p className="mt-1 text-sm text-brand-teal">{fmt(next.starts_at)}{next.duration_min ? ` · ${next.duration_min} min` : ""}</p>
+            <div className="mt-4"><Cronometro inicio={next.starts_at} duracaoMin={next.duration_min} agoraInicial={now} /></div>
             {next.description && <p className="mt-3 max-w-2xl text-sm text-slate-300">{next.description}</p>}
             {next.url && (isLiveNow(next) ? (
               <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Entrar na live →</a>
             ) : (
-              <span className="mt-5 inline-block rounded-xl border border-white/10 px-6 py-3 text-sm font-medium text-slate-400">O link libera no horário</span>
+              /youtu/.test(next.url) ? (
+                <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500">Abrir no YouTube ↗</a>
+              ) : (
+                <span className="mt-5 inline-block rounded-xl border border-white/10 px-6 py-3 text-sm font-medium text-slate-400">O link libera no horário</span>
+              )
             ))}
           </div>
         </div>
@@ -106,6 +112,12 @@ export default async function AgendaPage() {
                   </div>
                   <p className="mt-1 text-sm text-brand-teal">{fmt(l.starts_at)}{l.duration_min ? ` · ${l.duration_min} min` : ""} <span className="text-slate-500">· {countdown(l.starts_at)}</span></p>
                   {l.description && <p className="mt-2 text-sm text-slate-300">{l.description}</p>}
+                  <div className="mt-3 flex flex-wrap items-center gap-3">
+                    <Cronometro inicio={l.starts_at} duracaoMin={l.duration_min} compacto agoraInicial={now} />
+                    {l.url && /youtu/.test(l.url) && (
+                      <a href={l.url} target="_blank" rel="noreferrer" className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-200 hover:bg-red-500/20">Abrir no YouTube ↗</a>
+                    )}
+                  </div>
                 </div>
               </li>
             ))}

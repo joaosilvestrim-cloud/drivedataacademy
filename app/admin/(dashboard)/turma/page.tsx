@@ -7,7 +7,7 @@ import { CheckboxField, FormSection, FormActions } from "@/components/ui/form";
 import { SUB_INCLUDES, parseIncludes } from "@/lib/subscription";
 import { saveSubIncludes } from "./actions";
 
-const KEYS = ["sub_price", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "checkout_whatsapp", "sub_includes"];
+const KEYS = ["sub_price", "sub_price_annual", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "checkout_whatsapp", "sub_includes"];
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +33,7 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
 
     const [cfg, subs, paid, pend] = await Promise.all([
       admin.from("site_settings").select("key, value").in("key", KEYS),
-      admin.from("memberships").select("id", { count: "exact", head: true }).eq("source", "subscription").eq("status", "active"),
+      admin.from("memberships").select("id", { count: "exact", head: true }).in("source", ["subscription", "annual"]).eq("status", "active"),
       orders().eq("status", "paid"),
       orders().eq("status", "pending"),
     ]);

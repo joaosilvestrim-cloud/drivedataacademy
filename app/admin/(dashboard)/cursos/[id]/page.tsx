@@ -5,7 +5,8 @@ import CourseForm from "../CourseForm";
 import Curriculum from "../Curriculum";
 import CourseStudents from "../CourseStudents";
 import QuizBuilder from "../QuizBuilder";
-import { deleteCourse } from "../actions";
+import { deleteCourse, recalcularDuracoes } from "../actions";
+import { cargaHoraria, minutosDoTexto, textoDosMinutos } from "@/lib/duracao";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +29,9 @@ export default async function EditCoursePage({ params, searchParams }: { params:
     ...m,
     lessons: (lessons ?? []).filter((l: any) => l.module_id === m.id),
   }));
+
+  const minutos = (lessons ?? []).reduce((t: number, l: any) => t + minutosDoTexto(l.duration), 0);
+  const semDuracao = (lessons ?? []).filter((l: any) => !(l.duration || "").trim() && l.video_id).length;
 
   const { data: quizRow } = await supabase.from("quizzes").select("id, title, pass_score, max_attempts, cooldown_hours").eq("course_id", course.id).maybeSingle();
   let quiz: any = null;
@@ -61,7 +65,17 @@ export default async function EditCoursePage({ params, searchParams }: { params:
       )}
 
       <div className="mt-6">
-        <CourseForm course={course} />
+        {/* Carga horária calculada das aulas. O botão some quando todas já têm duração. */}
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm">
+          <span className="text-slate-300">Conteúdo somado das aulas: <strong className="text-white">{minutos ? textoDosMinutos(minutos) : "sem duração"}</strong>{minutos ? ` · no certificado: ${course.workload || cargaHoraria(minutos)}` : ""}</span>
+          {semDuracao > 0 && (
+            <form action={recalcularDuracoes}>
+              <input type="hidden" name="course_id" value={course.id} />
+              <button className="rounded-lg border border-brand-green/40 px-3 py-1.5 text-xs font-semibold text-brand-green hover:bg-brand-green/10">Buscar duração de {semDuracao} aula(s) no YouTube e Panda</button>
+            </form>
+          )}
+        </div>
+        <CourseForm course={course} cargaCalculada={cargaHoraria(minutos)} />
       </div>
 
       <Curriculum courseId={course.id} modules={modules} />

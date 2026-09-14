@@ -8,7 +8,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 // Só estas chaves pertencem a esta tela.
 // pix_discount_pct (banner da home), full_access_price e turma_data são de outras
 // telas: gravar a lista inteira aqui zerava a configuração delas a cada save.
-const OWNED_KEYS = ["turma_nome", "sub_price", "turma_descricao", "sales_open", "checkout_whatsapp"] as const;
+const OWNED_KEYS = ["turma_nome", "sub_price", "sub_price_annual", "turma_descricao", "sales_open", "checkout_whatsapp"] as const;
 
 // Aceita "129,90", "129.90", "1.234,56" e "R$ 1.234,56".
 function parseBRL(raw: string): number | null {
@@ -54,6 +54,8 @@ export async function saveTurma(formData: FormData) {
   const whatsapp = ((formData.get("checkout_whatsapp") as string) || "").replace(/\D/g, "");
   const rawPrice = (formData.get("sub_price") as string) || "";
   const price = parseBRL(rawPrice);
+  const rawAnnual = (formData.get("sub_price_annual") as string) || "";
+  const annual = parseBRL(rawAnnual);
 
   if (rawPrice.trim() && price === null) fail("Valor mensal inválido. Use algo como 129,90.");
   if (price !== null && price < 0) fail("O valor mensal não pode ser negativo.");
@@ -64,10 +66,15 @@ export async function saveTurma(formData: FormData) {
     fail("WhatsApp inválido. Use DDD + número, ex.: 5535999999999.");
   }
   if (descricao.length > 400) fail("A descrição curta passou de 400 caracteres.");
+  if (rawAnnual.trim() && annual === null) fail("Valor anual inválido. Use algo como 499,00.");
+  // Anual que custa o mesmo ou mais que doze mensalidades não é oferta: a
+  // página mostraria desconto zero ou negativo.
+  if (annual && price && annual >= price * 12) fail("O plano anual precisa custar menos que 12 mensalidades.");
 
   const values: Record<(typeof OWNED_KEYS)[number], string> = {
     turma_nome: nome,
     sub_price: price === null ? "" : String(price),
+    sub_price_annual: annual === null ? "" : String(annual),
     turma_descricao: descricao,
     sales_open: salesOpen ? "1" : "0",
     checkout_whatsapp: whatsapp,

@@ -65,6 +65,52 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, tool: event });
   }
 
+  // Plano anual à vista. externalReference = "anual:<orderId>". Cobrança única:
+  // pagou, ganha 12 meses. Se já tinha anual ativo, os 12 meses somam ao que resta.
+  if (extRef.startsWith("anual:")) {
+    const orderId = extRef.slice(6);
+    const { data: order } = await admin.from("orders").select("*").eq("id", orderId).maybeSingle();
+    if (!order) return NextResponse.json({ ok: true, note: "pedido não encontrado" });
+    if (!paidEvents.includes(event)) return NextResponse.json({ ok: true, ignored: event });
+    if (order.status === "paid") return NextResponse.json({ ok: true, note: "já processado" });
+
+    await admin.from("orders").update({ status: "paid", gateway_id: payment.id ?? order.gateway_id }).eq("id", order.id);
+
+    // A conta só nasce agora, depois do pagamento, igual à mensal.
+    let userId: string | null = order.user_id;
+    let isNew = false;
+    if (!userId) {
+      userId = await findUserIdByEmail(admin, order.email);
+      if (!userId) {
+        const rand = "Dd" + Math.random().toString(36).slice(2, 10) + "!9";
+        const { data: created } = await admin.auth.admin.createUser({ email: order.email, password: rand, email_confirm: true, user_metadata: { full_name: order.name || "" } });
+        userId = created?.user?.id ?? null;
+        isNew = true;
+      }
+      if (userId) await admin.from("orders").update({ user_id: userId }).eq("id", order.id);
+    }
+
+    if (userId) {
+      if (order.name) await admin.from("profiles").upsert({ id: userId, full_name: order.name }, { onConflict: "id" });
+      const ANO = 365 * 864e5;
+      const { data: existing } = await admin.from("memberships").select("id, expires_at").eq("user_id", userId).eq("source", "annual").limit(1).maybeSingle();
+      const base = existing?.expires_at && Date.parse(existing.expires_at) > Date.now() ? Date.parse(existing.expires_at) : Date.now();
+      const expires = new Date(base + ANO).toISOString();
+      if (existing) await admin.from("memberships").update({ status: "active", plan: "full", expires_at: expires }).eq("id", existing.id);
+      else await admin.from("memberships").insert({ user_id: userId, plan: "full", status: "active", source: "annual", expires_at: expires });
+      await admin.from("user_badges").upsert({ user_id: userId, badge: "fundador" }, { onConflict: "user_id,badge" });
+
+      if (isNew) {
+        const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email, options: { redirectTo: `${SITE_URL}/redefinir-senha` } } as any);
+        const url = (link as any)?.properties?.action_link || `${SITE_URL}/esqueci-senha`;
+        await sendAccountSetupEmail(order.email, order.name || "", url);
+      } else {
+        await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL);
+      }
+    }
+    return NextResponse.json({ ok: true, anual: "active" });
+  }
+
   // Assinatura da plataforma (matrícula recorrente). externalReference = "sub:<orderId>"
   if (extRef.startsWith("sub:")) {
     const orderId = extRef.slice(4);

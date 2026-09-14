@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canAccessCourse, hasFullAccess } from "@/lib/access";
 import { enrollFree } from "./actions";
+import { cargaHoraria, minutosDoTexto } from "@/lib/duracao";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   const pub = createPublicClient();
   const { data: course } = await pub
     .from("courses")
-    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon, members_only")
+    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon, members_only, workload")
     .eq("slug", params.slug)
     .eq("published", true)
     .maybeSingle();
@@ -28,6 +29,8 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   ]);
   const modules = (mods ?? []).map((m: any) => ({ ...m, lessons: (lessons ?? []).filter((l: any) => l.module_id === m.id) }));
   const lessonCount = (lessons ?? []).length;
+  // Carga digitada no admin vence. Sem ela, soma a duração das aulas.
+  const carga = course.workload || cargaHoraria((lessons ?? []).reduce((t: number, l: any) => t + minutosDoTexto(l.duration), 0));
 
   // Estado do usuário / matrícula
   const supabase = createClient();
@@ -150,7 +153,7 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                 <div className="mt-6 space-y-2.5 border-t border-white/10 pt-5">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Este curso inclui</p>
                   {[
-                    { icon: "🎬", label: `${lessonCount} aula(s) em vídeo` },
+                    { icon: "🎬", label: carga ? `${lessonCount} aula(s) · ${carga} de conteúdo` : `${lessonCount} aula(s) em vídeo` },
                     { icon: "♾️", label: "Acesso vitalício ao conteúdo" },
                     ...(course.certificate_enabled !== false ? [{ icon: "🎓", label: "Certificado de conclusão" }] : []),
                     { icon: "💬", label: "Comunidade de alunos" },

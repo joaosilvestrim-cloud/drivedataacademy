@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { duracaoNoProvedor } from "@/lib/duracao";
 
 function slugify(s: string) {
   return s
@@ -180,6 +181,11 @@ export async function addLesson(formData: FormData) {
   const module_id = formData.get("module_id") as string;
   const course_id = formData.get("course_id") as string;
   const { count } = await supabase.from("lessons").select("*", { count: "exact", head: true }).eq("module_id", module_id);
+  const tipo = (formData.get("type") as string) || "video";
+  const provedor = (formData.get("video_provider") as string) || "youtube";
+  const video = ((formData.get("video_id") as string) || "").trim() || null;
+  // Em branco, a duração vem do próprio YouTube ou Panda. Digitada à mão, vale o que foi digitado.
+  const duracao = ((formData.get("duration") as string) || "").trim() || (tipo === "video" ? await duracaoNoProvedor(provedor, video) : null);
   await supabase.from("lessons").insert({
     module_id,
     course_id,
@@ -187,7 +193,7 @@ export async function addLesson(formData: FormData) {
     type: (formData.get("type") as string) || "video",
     video_provider: (formData.get("video_provider") as string) || "youtube",
     video_id: ((formData.get("video_id") as string) || "").trim() || null,
-    duration: ((formData.get("duration") as string) || "").trim() || null,
+    duration: duracao,
     is_preview: formData.get("is_preview") === "on",
     materials: parseMaterials(formData.get("materials") as string),
     position: count ?? 0,
@@ -197,13 +203,18 @@ export async function addLesson(formData: FormData) {
 
 export async function saveLesson(formData: FormData) {
   const supabase = await admin();
+  const tipo = (formData.get("type") as string) || "video";
+  const provedor = (formData.get("video_provider") as string) || "youtube";
+  const video = ((formData.get("video_id") as string) || "").trim() || null;
+  // Em branco, a duração vem do próprio YouTube ou Panda. Digitada à mão, vale o que foi digitado.
+  const duracao = ((formData.get("duration") as string) || "").trim() || (tipo === "video" ? await duracaoNoProvedor(provedor, video) : null);
   await supabase.from("lessons").update({
     title: (formData.get("title") as string).trim(),
     type: (formData.get("type") as string) || "video",
     video_provider: (formData.get("video_provider") as string) || "youtube",
     video_id: ((formData.get("video_id") as string) || "").trim() || null,
     content: ((formData.get("content") as string) || "").trim() || null,
-    duration: ((formData.get("duration") as string) || "").trim() || null,
+    duration: duracao,
     is_preview: formData.get("is_preview") === "on",
     materials: parseMaterials(formData.get("materials") as string),
   }).eq("id", formData.get("id") as string);
@@ -238,4 +249,30 @@ export async function moveItem(formData: FormData) {
   await supabase.from(table).update({ position: b.position }).eq("id", a.id);
   await supabase.from(table).update({ position: a.position }).eq("id", b.id);
   refresh(course_id);
+}
+
+/* Preenche a duração das aulas que estão em branco, buscando no YouTube ou no
+   Panda. Não sobrescreve duração digitada à mão. Serve para os cursos que já
+   existiam antes da busca automática. */
+export async function recalcularDuracoes(formData: FormData) {
+  const supabase = await admin();
+  const courseId = formData.get("course_id") as string;
+  const { data: aulas } = await supabase.from("lessons").select("id, video_provider, video_id, duration").eq("course_id", courseId);
+  let preenchidas = 0;
+  let semLeitura = 0;
+  for (const a of aulas ?? []) {
+    if ((a.duration || "").trim() || !a.video_id) continue;
+    const d = await duracaoNoProvedor(a.video_provider, a.video_id);
+    if (d) {
+      await supabase.from("lessons").update({ duration: d }).eq("id", a.id);
+      preenchidas++;
+    } else {
+      semLeitura++;
+    }
+  }
+  refresh(courseId);
+  const msg = semLeitura
+    ? `${preenchidas} aula(s) ganharam duração. ${semLeitura} não puderam ser lidas no provedor e seguem em branco.`
+    : `${preenchidas} aula(s) ganharam duração.`;
+  redirect(`/admin/cursos/${courseId}?ok=${encodeURIComponent(msg)}`);
 }

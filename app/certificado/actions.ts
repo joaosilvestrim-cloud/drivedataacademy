@@ -4,6 +4,7 @@ import { randomBytes } from "crypto";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { cargaHoraria, minutosDoCurso } from "@/lib/duracao";
 import { canAccessCourse } from "@/lib/access";
 
 export async function issueCertificate(formData: FormData) {
@@ -56,7 +57,7 @@ export async function issueCertificate(formData: FormData) {
     code,
     student_name: nome,
     course_title: course?.title || "",
-    workload: course?.workload || null,
+    workload: course?.workload || cargaHoraria(await minutosDoCurso(admin, courseId)),
   });
 
   redirect(`/certificado/${code}`);

@@ -17,6 +17,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   const email = ((formData.get("email") as string) || "").trim().toLowerCase();
   const phone = ((formData.get("phone") as string) || "").replace(/\D/g, "");
   const cpf = ((formData.get("cpf") as string) || "").replace(/\D/g, "");
+  const plano = formData.get("plano") === "anual" ? "anual" : "mensal";
 
   const address = {
     postalCode: ((formData.get("cep") as string) || "").replace(/\D/g, ""),
@@ -33,17 +34,22 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   const { data: cfg } = await admin
     .from("site_settings")
     .select("key, value")
-    .in("key", ["sub_price", "full_access_price", "sales_open", "checkout_whatsapp"]);
+    .in("key", ["sub_price", "sub_price_annual", "full_access_price", "sales_open", "checkout_whatsapp"]);
   const map = Object.fromEntries((cfg ?? []).map((r: any) => [r.key, r.value]));
 
   if (map.sales_open !== "1") return { ok: false, error: "As matrículas estão fechadas no momento." };
 
-  const price = Number(map.sub_price || map.full_access_price || "0") || 0;
+  const mensal = Number(map.sub_price || map.full_access_price || "0") || 0;
+  const anual = Number(map.sub_price_annual || "0") || 0;
+  // O preço sai sempre do banco, nunca do navegador. Anual sem preço
+  // configurado vira mensal em vez de gerar cobrança de zero.
+  const ehAnual = plano === "anual" && anual > 0;
+  const price = ehAnual ? anual : mensal;
   if (process.env.ASAAS_API_KEY && price <= 0) return { ok: false, error: "A assinatura ainda não foi configurada. Fale com o suporte." };
 
   const { data: order, error } = await admin
     .from("orders")
-    .insert({ email, name, phone: phone || null, product: "subscription", amount: price, status: "pending", gateway: process.env.ASAAS_API_KEY ? "asaas" : "manual" })
+    .insert({ email, name, phone: phone || null, product: ehAnual ? "subscription_annual" : "subscription", amount: price, status: "pending", gateway: process.env.ASAAS_API_KEY ? "asaas" : "manual" })
     .select("id")
     .single();
   if (error) return { ok: false, error: "Não foi possível registrar agora. Tente de novo." };
@@ -52,7 +58,9 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   if (adminEmail) await sendOrderNotice(adminEmail, { name, email, phone, amount: price });
 
   if (process.env.ASAAS_API_KEY) {
-    const url = await createAsaasSubscription(admin, { orderId: order.id, name, email, phone, cpf, price, address });
+    const url = ehAnual
+      ? await createAsaasAnnualPayment(admin, { orderId: order.id, name, email, phone, cpf, price, address })
+      : await createAsaasSubscription(admin, { orderId: order.id, name, email, phone, cpf, price, address });
     if (url) return { ok: true, mode: "asaas", url };
   }
   return { ok: true, mode: "manual", whatsapp: map.checkout_whatsapp || null };
@@ -106,6 +114,54 @@ async function createAsaasSubscription(
     const payRes = await fetch(`${ASAAS_BASE}/subscriptions/${sub.id}/payments`, { headers });
     const pays = await payRes.json();
     return (pays?.data?.[0]?.invoiceUrl as string) || null;
+  } catch {
+    return null;
+  }
+}
+
+/* Plano anual: cobrança única, sem recorrência. O aluno escolhe Pix, cartão ou
+   boleto na própria fatura do Asaas. A referência "anual:" faz o webhook liberar
+   12 meses de acesso quando o pagamento confirmar. */
+async function createAsaasAnnualPayment(
+  admin: ReturnType<typeof createAdminClient>,
+  { orderId, name, email, phone, cpf, price, address }: { orderId: string; name: string; email: string; phone: string; cpf: string; price: number; address: Address }
+): Promise<string | null> {
+  const key = process.env.ASAAS_API_KEY!;
+  const headers = { access_token: key, "Content-Type": "application/json" };
+  try {
+    const validPhone = /^\d{10,11}$/.test(phone) && !/^(\d)\1+$/.test(phone) ? phone : undefined;
+    const custRes = await fetch(`${ASAAS_BASE}/customers`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        name, email, cpfCnpj: cpf, mobilePhone: validPhone, externalReference: email,
+        postalCode: address.postalCode || undefined,
+        address: address.address || undefined,
+        addressNumber: address.addressNumber || undefined,
+        province: address.province || undefined,
+      }),
+    });
+    const cust = await custRes.json();
+    if (!custRes.ok || !cust?.id) return null;
+
+    const due = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
+    const payRes = await fetch(`${ASAAS_BASE}/payments`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        customer: cust.id,
+        billingType: "UNDEFINED",
+        value: price,
+        dueDate: due,
+        description: "DriveData Academy · plano anual (12 meses)",
+        externalReference: `anual:${orderId}`,
+      }),
+    });
+    const pay = await payRes.json();
+    if (!payRes.ok || !pay?.id) return null;
+
+    await admin.from("orders").update({ gateway_id: pay.id, external_reference: `anual:${orderId}` }).eq("id", orderId);
+    return (pay.invoiceUrl as string) || null;
   } catch {
     return null;
   }

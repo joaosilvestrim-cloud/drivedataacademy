@@ -15,3 +15,13 @@ export function parseIncludes(csv?: string | null): string[] {
   if (!raw) return SUB_INCLUDES.map((i) => i.key); // padrão: inclui tudo
   return raw.split(",").map((s) => s.trim()).filter(Boolean);
 }
+
+/* Desconto do plano anual à vista sobre doze mensalidades, em pontos
+   percentuais. Arredonda para baixo: a página nunca promete mais desconto do
+   que o preço entrega. Zero quando falta um dos preços ou não há desconto. */
+export function descontoAnual(mensal: number, anual: number): number {
+  if (!(mensal > 0) || !(anual > 0)) return 0;
+  const cheio = mensal * 12;
+  if (anual >= cheio) return 0;
+  return Math.floor((1 - anual / cheio) * 100);
+}

@@ -4,11 +4,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createAdminClient } from "@/lib/supabase/admin";
 import MatriculaForm from "./MatriculaForm";
-import { SUB_INCLUDES, parseIncludes } from "@/lib/subscription";
+import { SUB_INCLUDES, parseIncludes, descontoAnual } from "@/lib/subscription";
 
 export const dynamic = "force-dynamic";
 
-const KEYS = ["sub_price", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "sub_includes"];
+const KEYS = ["sub_price", "sub_price_annual", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "sub_includes"];
 
 function brl(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -28,6 +28,10 @@ export default async function MatriculaPage() {
   const nome = cfg.turma_nome || "DriveData Academy";
   const descricao = cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados enquanto sua assinatura estiver ativa.";
   const price = Number(cfg.sub_price || cfg.full_access_price || "0") || 0;
+  const anual = Number(cfg.sub_price_annual || "0") || 0;
+  // Calculado dos dois preços configurados no admin, nunca digitado à mão.
+  const desconto = descontoAnual(price, anual);
+  const temAnual = anual > 0 && desconto > 0;
 
   const picked = parseIncludes(cfg.sub_includes);
   const beneficios = SUB_INCLUDES.filter((i) => picked.includes(i.key)).map((i) => i.label);
@@ -72,6 +76,19 @@ export default async function MatriculaPage() {
                   <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Acesso full</span>
                 </div>
               )}
+
+              {temAnual && (
+                <div className="relative mt-3 flex flex-wrap items-center gap-4 overflow-hidden rounded-2xl border border-brand-teal/30 bg-gradient-to-r from-brand-blue/[0.12] to-transparent px-5 py-4">
+                  <div>
+                    <span className="block text-xs uppercase tracking-wide text-slate-400">Plano anual · pagamento único</span>
+                    <span className="font-display text-3xl font-bold text-white">{brl(anual)}</span>
+                    <span className="mt-0.5 block text-xs text-brand-teal">
+                      equivale a {brl(anual / 12)}/mês · economia de {brl(price * 12 - anual)} no ano
+                    </span>
+                  </div>
+                  <span className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1 text-xs font-bold text-ink-900">{desconto}% OFF</span>
+                </div>
+              )}
             </div>
 
             {/* Form */}
@@ -80,7 +97,7 @@ export default async function MatriculaPage() {
                 <h2 className="font-display text-xl font-bold text-white">Assine agora</h2>
                 <p className="mt-1 text-sm text-slate-400">Preencha, pague no cartão e sua conta é criada na hora da confirmação.</p>
                 <div className="mt-6">
-                  <MatriculaForm turmaNome={nome} />
+                  <MatriculaForm turmaNome={nome} mensal={price} anual={temAnual ? anual : 0} desconto={desconto} />
                 </div>
               </div>
             </div>

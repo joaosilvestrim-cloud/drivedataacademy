@@ -7,6 +7,7 @@ import { Button, ICON } from "@/components/ui/primitives";
 import { Field, TextareaField, FormSection } from "@/components/ui/form";
 import { Alert } from "@/components/ui/layout";
 import { saveTurma } from "./actions";
+import { descontoAnual } from "@/lib/subscription";
 
 const DESC_MAX = 400;
 const NOME_FALLBACK = "DriveData Academy";
@@ -93,6 +94,7 @@ export default function TurmaForm({
       cents: toCents(initial.sub_price || String(currentPrice || "")),
       desc: initial.turma_descricao || "",
       zap: onlyDigits(initial.checkout_whatsapp || "", 13),
+      anualCents: toCents(initial.sub_price_annual || ""),
     }),
     [initial, currentPrice]
   );
@@ -102,12 +104,17 @@ export default function TurmaForm({
   const [cents, setCents] = useState(base.cents);
   const [desc, setDesc] = useState(base.desc);
   const [zap, setZap] = useState(base.zap);
+  const [anualCents, setAnualCents] = useState(base.anualCents);
 
-  const dirty = open !== base.open || nome !== base.nome || cents !== base.cents || desc !== base.desc || zap !== base.zap;
+  const dirty = open !== base.open || nome !== base.nome || cents !== base.cents || desc !== base.desc || zap !== base.zap || anualCents !== base.anualCents;
+  // Desconto calculado sozinho a partir dos dois preços. É o mesmo cálculo que
+  // a página pública usa, então o número daqui é o número que o aluno vê.
+  const desconto = descontoAnual(cents / 100, anualCents / 100);
+  const anualCaro = anualCents > 0 && cents > 0 && anualCents >= cents * 12;
   const zapOk = zap.length === 0 || (zap.length >= 10 && zap.length <= 13);
   const hasPrice = cents > 0;
 
-  const blocked = !hasPrice && open ? "Defina o valor mensal para abrir as vendas." : !zapOk ? "WhatsApp incompleto." : null;
+  const blocked = !hasPrice && open ? "Defina o valor mensal para abrir as vendas." : anualCaro ? "O anual precisa custar menos que 12 mensalidades." : !zapOk ? "WhatsApp incompleto." : null;
 
   const previewNome = nome.trim() || NOME_FALLBACK;
   const previewDesc = desc.trim() || DESC_FALLBACK;
@@ -177,6 +184,34 @@ export default function TurmaForm({
               placeholder="0,00"
               inputMode="numeric"
               description="Em reais, cobrado todo mês no cartão."
+            />
+          </div>
+
+          <div className="grid gap-4 tablet:grid-cols-[1fr_11rem]">
+            <div className="flex flex-col justify-end gap-1 pb-1">
+              <span className="text-label font-medium text-ds-text-2">Plano anual à vista</span>
+              {anualCents > 0 && cents > 0 ? (
+                anualCaro ? (
+                  <span className="text-caption text-ds-attention">Custa o mesmo ou mais que 12 mensalidades. Sem desconto não é oferta.</span>
+                ) : (
+                  <span className="text-caption text-ds-text-2">
+                    <span className="font-semibold text-ds-accent">{desconto}% de desconto</span> sobre 12 mensalidades de R$ {centsToBRL(cents * 12)}.
+                    Equivale a R$ {centsToBRL(Math.round(anualCents / 12))} por mês.
+                  </span>
+                )
+              ) : (
+                <span className="text-caption text-ds-text-3">Opcional. Em branco, a página mostra só o mensal. Preenchido, o desconto é calculado sozinho.</span>
+              )}
+            </div>
+            <Field
+              scope="assinatura"
+              name="sub_price_annual"
+              label="Valor anual"
+              value={anualCents ? centsToBRL(anualCents) : ""}
+              onChange={(e) => setAnualCents(Number(onlyDigits(e.target.value, 9)) || 0)}
+              placeholder="0,00"
+              inputMode="numeric"
+              description="Pago uma vez só."
             />
           </div>
 
@@ -256,6 +291,13 @@ export default function TurmaForm({
                 )}
                 <span className="mt-0.5 block text-meta text-ds-text-3">no cartão · cancele quando quiser</span>
               </div>
+              {anualCents > 0 && !anualCaro && (
+                <div className="mt-3 border-l-2 border-ds-info py-1.5 pl-3">
+                  <span className="block text-meta uppercase text-ds-text-3">Anual à vista{desconto > 0 ? ` · ${desconto}% off` : ""}</span>
+                  <span className="block font-display text-data font-semibold tabular-nums text-ds-text">R$ {centsToBRL(anualCents)}</span>
+                  <span className="mt-0.5 block text-meta text-ds-text-3">pagamento único · 12 meses de acesso</span>
+                </div>
+              )}
             </div>
           ) : (
             <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-8 text-center">
