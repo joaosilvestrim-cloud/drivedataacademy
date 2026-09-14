@@ -14,9 +14,10 @@ const esc = (s: string) =>
 
 // Resolve um remetente válido. Se RESEND_FROM estiver vazio/malformado
 // (ex.: "Nome <onboarding@>"), cai no domínio de teste do Resend.
-function resolveFrom(): string {
+function resolveFrom(preferencia?: string): string {
   const fallback = "DriveData Academy <onboarding@resend.dev>";
-  const raw = (process.env.RESEND_FROM || "").trim();
+  // Uma variável específica vence a geral quando está preenchida e válida.
+  const raw = ((preferencia && process.env[preferencia]) || process.env.RESEND_FROM || "").trim();
   if (!raw) return fallback;
   const m = raw.match(/<([^>]+)>/);
   const addr = (m ? m[1] : raw).trim();
@@ -54,14 +55,14 @@ async function buildAttachment(title: string, url: string | null) {
 }
 
 // Envio genérico via Resend. Sem chave configurada, retorna { sent: false }.
-export async function sendHtmlEmail(to: string, subject: string, html: string): Promise<{ sent: boolean; reason?: string }> {
+export async function sendHtmlEmail(to: string, subject: string, html: string, remetente?: string): Promise<{ sent: boolean; reason?: string }> {
   const key = process.env.RESEND_API_KEY;
   if (!key) return { sent: false, reason: "not-configured" };
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: resolveFrom(), to, subject, html }),
+      body: JSON.stringify({ from: resolveFrom(remetente), to, subject, html }),
     });
     if (!res.ok) return { sent: false, reason: `resend-${res.status}` };
     return { sent: true };
@@ -93,7 +94,7 @@ export async function sendAccessGrantedEmail(to: string, name: string, siteUrl: 
     <p style="margin:0 0 20px;color:#cbd5e1">Agora você tem acesso a <b style="color:#fff">todos os cursos</b>, avaliações e certificados.</p>
     <a href="${siteUrl}/conta" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Entrar na plataforma</a>
     <p style="margin:24px 0 0;color:#64748b;font-size:12px">Bons estudos!</p>`;
-  return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body));
+  return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body), "RESEND_FROM_CONTA");
 }
 
 // Correção de um desafio do Knowledge Universe: aprovado ou devolvido.
@@ -130,14 +131,24 @@ export async function sendChallengeReviewEmail(
 }
 
 // Conta criada após a confirmação do pagamento: aluno define a senha por este link.
+// Sai pelo remetente de conta (RESEND_FROM_CONTA), separado do remetente de
+// materiais de marketing. Sem essa variável, usa RESEND_FROM como antes.
 export async function sendAccountSetupEmail(to: string, name: string, setPasswordUrl: string) {
   const firstName = esc((name || "").split(" ")[0] || "");
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
   const body = `
-    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu pagamento foi confirmado e sua conta na DriveData Academy está pronta. 🎉</p>
-    <p style="margin:0 0 20px;color:#cbd5e1">Para começar, defina a sua senha de acesso:</p>
+    <p style="margin:0 0 14px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu pagamento foi confirmado e sua conta na DriveData Academy já está criada. 🎉</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">Falta só um passo: criar a senha que você vai usar para entrar.</p>
     <a href="${setPasswordUrl}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Criar minha senha</a>
-    <p style="margin:24px 0 0;color:#64748b;font-size:12px">O link é pessoal. Se não foi você, ignore este e-mail.</p>`;
-  return sendHtmlEmail(to, "Pagamento confirmado — crie sua senha 🎉", shell("Sua conta está pronta!", body));
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px">
+      <tr><td style="padding:14px 16px">
+        <p style="margin:0 0 4px;color:#94a3b8;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Seu login</p>
+        <p style="margin:0;color:#fff;font-size:15px">${esc(to)}</p>
+      </td></tr>
+    </table>
+    <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">O botão vale por tempo limitado. Se ele expirar, peça um novo link em <a href="${site}/esqueci-senha" style="color:#15c47e">Esqueci minha senha</a> usando este mesmo e-mail.</p>
+    <p style="margin:12px 0 0;color:#64748b;font-size:12px">Se você não fez essa compra, ignore este e-mail.</p>`;
+  return sendHtmlEmail(to, "Pagamento confirmado: crie sua senha de acesso", shell("Sua conta está pronta", body), "RESEND_FROM_CONTA");
 }
 
 // Confirmação de compra de workshop avulso: manda o link/acesso.

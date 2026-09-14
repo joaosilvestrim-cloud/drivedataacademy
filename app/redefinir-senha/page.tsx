@@ -27,7 +27,7 @@ export default function RedefinirSenhaPage() {
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (error) {
-      setError("Não foi possível redefinir. Peça um novo link em 'Esqueci minha senha'.");
+      setError("Não foi possível salvar. O link pode ter expirado.");
       return;
     }
     router.push("/conta");
@@ -44,13 +44,17 @@ export default function RedefinirSenhaPage() {
             <img src="/logo.png" alt="Drive Data Academy" className="h-10 w-auto" />
           </Link>
           <div className="glass-strong rounded-3xl border border-white/10 p-8">
-            <h1 className="font-display text-2xl font-bold text-white">Nova senha</h1>
-            <p className="mt-1 text-sm text-slate-400">Defina sua nova senha de acesso.</p>
+            <h1 className="font-display text-2xl font-bold text-white">Defina sua senha</h1>
+            <p className="mt-1 text-sm text-slate-400">Primeiro acesso ou troca de senha: escolha a senha que você vai usar para entrar.</p>
             <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-              <input required type="password" placeholder="Nova senha (mín. 6 caracteres)" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
-              {error && <p className="text-xs text-red-400">{error}</p>}
+              <input required type="password" placeholder="Senha (mínimo 6 caracteres)" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+              {error && (
+                <p className="text-xs text-red-400">
+                  {error} <Link href="/esqueci-senha" className="font-medium underline underline-offset-2">Pedir um novo link</Link>
+                </p>
+              )}
               <button type="submit" disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
-                {loading ? "Salvando..." : "Salvar nova senha"}
+                {loading ? "Salvando..." : "Salvar e entrar"}
               </button>
             </form>
           </div>
