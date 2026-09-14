@@ -14,6 +14,37 @@ function brl(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
+// O caminho real de quem assina, na ordem em que acontece.
+const PASSOS = [
+  { titulo: "Escolha o plano", texto: "Anual à vista no Pix ou cartão, ou mensal no cartão." },
+  { titulo: "Pague com segurança", texto: "Você vai para a página do Asaas, nosso parceiro de pagamentos. O Pix confirma na hora." },
+  { titulo: "Receba o código", texto: "Assim que o pagamento confirma, enviamos um código de acesso para o seu e-mail." },
+  { titulo: "Crie sua senha e entre", texto: "Digite o código, escolha a senha e a área do aluno já abre para você." },
+];
+
+const PERGUNTAS = [
+  {
+    p: "Quando recebo o acesso?",
+    r: "No Pix, em poucos minutos depois de pagar. No cartão, assim que a operadora aprova. Não precisa criar conta antes: ela nasce com o pagamento.",
+  },
+  {
+    p: "O e-mail não chegou. E agora?",
+    r: "Ele sai de acessos@drivedata.com.br. Confira o lixo eletrônico e a aba Promoções. Se não estiver lá, peça um código novo em Esqueci minha senha, com o mesmo e-mail da compra.",
+  },
+  {
+    p: "Os treinamentos estão inclusos?",
+    r: "A assinatura dá agenda ao vivo, gravações, comunidade, ferramentas e certificados. Os treinamentos completos são comprados à parte, com preço exclusivo de assinante, e ficam com você.",
+  },
+  {
+    p: "Posso cancelar?",
+    r: "O mensal pode ser cancelado quando quiser, sem multa. O anual é um pagamento único que vale por 12 meses.",
+  },
+  {
+    p: "Por que pedem CPF?",
+    r: "O Asaas exige CPF para emitir a cobrança. Telefone e endereço são opcionais.",
+  },
+];
+
 export default async function MatriculaPage() {
   let cfg: Record<string, string> = {};
   try {
@@ -26,7 +57,9 @@ export default async function MatriculaPage() {
 
   const open = cfg.sales_open === "1";
   const nome = cfg.turma_nome || "DriveData Academy";
-  const descricao = cfg.turma_descricao || "Acesso a todos os cursos, avaliações e certificados enquanto sua assinatura estiver ativa.";
+  const descricao =
+    cfg.turma_descricao ||
+    "Agenda ao vivo, gravações, comunidade, ferramentas e certificados. E os treinamentos completos com preço de assinante.";
   const price = Number(cfg.sub_price || cfg.full_access_price || "0") || 0;
   const anual = Number(cfg.sub_price_annual || "0") || 0;
   // Calculado dos dois preços configurados no admin, nunca digitado à mão.
@@ -50,58 +83,95 @@ export default async function MatriculaPage() {
             <Link href="/#lista" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Entrar na lista de espera</Link>
           </div>
         ) : (
-          <div className="grid items-start gap-10 lg:grid-cols-2">
-            {/* Oferta */}
-            <div>
-              <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Assinatura</p>
-              <h1 className="mt-2 font-display text-4xl font-bold text-white">{nome}</h1>
-              <p className="mt-4 text-lg text-slate-300">{descricao}</p>
-
-              <ul className="mt-8 space-y-3">
-                {beneficios.map((b) => (
-                  <li key={b} className="flex items-start gap-3 text-slate-200">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="mt-0.5 shrink-0 text-brand-green"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    {b}
+          <>
+            {/* Como funciona: vem antes do formulário para ninguém pagar sem saber o que acontece depois. */}
+            <section aria-labelledby="como-funciona" className="mb-10">
+              <h2 id="como-funciona" className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">Como funciona</h2>
+              <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {PASSOS.map((s, i) => (
+                  <li key={s.titulo} className="relative rounded-2xl border border-white/8 bg-white/[0.03] p-4">
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue font-display text-sm font-bold text-ink-900">{i + 1}</span>
+                    <p className="mt-3 font-semibold text-white">{s.titulo}</p>
+                    <p className="mt-1 text-sm text-slate-400">{s.texto}</p>
                   </li>
                 ))}
-              </ul>
+              </ol>
+            </section>
 
-              {price > 0 && (
-                <div className="mt-8 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
-                  <div>
-                    <span className="block text-xs uppercase tracking-wide text-slate-400">Assinatura mensal</span>
-                    <span className="font-display text-3xl font-bold text-white">{brl(price)}<span className="text-base font-normal text-slate-400">/mês</span></span>
-                    <span className="mt-0.5 block text-xs text-brand-teal">no cartão de crédito · cancele quando quiser</span>
+            <div className="grid items-start gap-10 lg:grid-cols-2">
+              {/* Oferta */}
+              <div>
+                <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Assinatura</p>
+                <h1 className="mt-2 font-display text-4xl font-bold text-white">Assine a DriveData Academy</h1>
+                <p className="mt-4 text-lg text-slate-300">{descricao}</p>
+
+                <p className="mt-8 text-xs font-semibold uppercase tracking-wide text-slate-400">O que a assinatura inclui</p>
+                <ul className="mt-3 space-y-3">
+                  {beneficios.map((b) => (
+                    <li key={b} className="flex items-start gap-3 text-slate-200">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-brand-green"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+
+                {price > 0 && (
+                  <div className="mt-8 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
+                    <div>
+                      <span className="block text-xs uppercase tracking-wide text-slate-400">Assinatura mensal</span>
+                      <span className="font-display text-3xl font-bold text-white">{brl(price)}<span className="text-base font-normal text-slate-400">/mês</span></span>
+                      <span className="mt-0.5 block text-xs text-brand-teal">no cartão de crédito · cancele quando quiser</span>
+                    </div>
                   </div>
-                  <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Acesso full</span>
-                </div>
-              )}
+                )}
 
-              {temAnual && (
-                <div className="relative mt-3 flex flex-wrap items-center gap-4 overflow-hidden rounded-2xl border border-brand-teal/30 bg-gradient-to-r from-brand-blue/[0.12] to-transparent px-5 py-4">
-                  <div>
-                    <span className="block text-xs uppercase tracking-wide text-slate-400">Plano anual · Pix ou cartão, pagamento único</span>
-                    <span className="font-display text-3xl font-bold text-white">{brl(anual)}</span>
-                    <span className="mt-0.5 block text-xs text-brand-teal">
-                      equivale a {brl(anual / 12)}/mês · economia de {brl(price * 12 - anual)} no ano
-                    </span>
+                {temAnual && (
+                  <div className="relative mt-3 flex flex-wrap items-center gap-4 overflow-hidden rounded-2xl border border-brand-teal/30 bg-gradient-to-r from-brand-blue/[0.12] to-transparent px-5 py-4">
+                    <div>
+                      <span className="block text-xs uppercase tracking-wide text-slate-400">Plano anual · Pix ou cartão, pagamento único</span>
+                      <span className="font-display text-3xl font-bold text-white">{brl(anual)}</span>
+                      <span className="mt-0.5 block text-xs text-brand-teal">
+                        equivale a {brl(anual / 12)}/mês · economia de {brl(price * 12 - anual)} no ano
+                      </span>
+                    </div>
+                    <span className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1 text-xs font-bold text-ink-900">{desconto}% OFF</span>
                   </div>
-                  <span className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1 text-xs font-bold text-ink-900">{desconto}% OFF</span>
-                </div>
-              )}
-            </div>
+                )}
 
-            {/* Form */}
-            <div className="glow-border rounded-2xl">
-              <div className="glass rounded-2xl p-6 sm:p-8">
-                <h2 className="font-display text-xl font-bold text-white">Assine agora</h2>
-                <p className="mt-1 text-sm text-slate-400">Preencha, pague no cartão e sua conta é criada na hora da confirmação.</p>
-                <div className="mt-6">
-                  <MatriculaForm turmaNome={nome} mensal={price} anual={temAnual ? anual : 0} desconto={desconto} />
+                <div className="mt-6 flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm text-slate-400">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-brand-teal"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
+                  <span>Pagamento processado pelo Asaas. Não guardamos dados do seu cartão.</span>
+                </div>
+              </div>
+
+              {/* Form */}
+              <div className="glow-border rounded-2xl" id="assinar">
+                <div className="glass rounded-2xl p-6 sm:p-8">
+                  <h2 className="font-display text-xl font-bold text-white">Assine agora</h2>
+                  <p className="mt-1 text-sm text-slate-400">Leva um minuto. Sua conta é criada quando o pagamento confirma.</p>
+                  <div className="mt-6">
+                    <MatriculaForm turmaNome={nome} mensal={price} anual={temAnual ? anual : 0} desconto={desconto} />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
+            {/* Dúvidas comuns */}
+            <section aria-labelledby="duvidas" className="mt-16">
+              <h2 id="duvidas" className="font-display text-2xl font-bold text-white">Dúvidas comuns</h2>
+              <div className="mt-5 divide-y divide-white/5 rounded-2xl border border-white/8 bg-white/[0.02]">
+                {PERGUNTAS.map((q) => (
+                  <details key={q.p} className="group px-5 py-4">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium text-white">
+                      {q.p}
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-slate-400 transition-transform group-open:rotate-180"><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </summary>
+                    <p className="mt-2 text-sm text-slate-400">{q.r}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          </>
         )}
       </main>
 

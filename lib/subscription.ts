@@ -1,10 +1,10 @@
 // O que a assinatura pode incluir. Usado no admin (seleção), na página de matrícula
 // (bullets) e no controle de acesso da ferramenta.
 export const SUB_INCLUDES: { key: string; label: string }[] = [
-  { key: "cursos", label: "Todos os cursos e trilhas" },
+  { key: "cursos", label: "Treinamentos com preço de assinante" },
   { key: "ferramenta", label: "Ferramenta de Visuais (Power BI)" },
   { key: "comunidade", label: "Comunidade e networking" },
-  { key: "lives", label: "Lives e mentorias ao vivo" },
+  { key: "lives", label: "Lives, workshops e gravações" },
   { key: "certificados", label: "Certificados de conclusão" },
 ];
 
