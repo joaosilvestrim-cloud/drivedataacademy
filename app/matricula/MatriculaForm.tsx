@@ -24,6 +24,8 @@ export default function MatriculaForm({
   const [result, setResult] = useState<MatriculaResult | null>(null);
   // Sem anual configurado a escolha nem aparece e tudo segue como mensal.
   const [plano, setPlano] = useState<"mensal" | "anual">(anual > 0 ? "anual" : "mensal");
+  // Anual aceita só Pix ou cartão. Boleto ficou de fora de propósito.
+  const [forma, setForma] = useState<"pix" | "cartao">("pix");
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -52,6 +54,7 @@ export default function MatriculaForm({
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <input type="hidden" name="plano" value={plano} />
+      <input type="hidden" name="forma" value={forma} />
       {anual > 0 && (
         <fieldset className="grid grid-cols-2 gap-3">
           <legend className="sr-only">Escolha o plano</legend>
@@ -72,6 +75,26 @@ export default function MatriculaForm({
                 <span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">{p.titulo}</span>
                 <span className="block font-display text-lg font-bold text-white">{p.valor}</span>
                 <span className="block text-[0.7rem] text-brand-teal">{p.nota}</span>
+              </label>
+            );
+          })}
+        </fieldset>
+      )}
+      {plano === "anual" && (
+        <fieldset className="flex flex-wrap items-center gap-2">
+          <legend className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-400">Forma de pagamento</legend>
+          {([
+            { k: "pix" as const, rotulo: "Pix", nota: "confirma na hora" },
+            { k: "cartao" as const, rotulo: "Cartão de crédito", nota: "à vista" },
+          ]).map((f) => {
+            const ativo = forma === f.k;
+            return (
+              <label
+                key={f.k}
+                className={`cursor-pointer rounded-xl border px-4 py-2 text-sm transition-colors ${ativo ? "border-brand-green/60 bg-brand-green/10 text-white" : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/25"}`}
+              >
+                <input type="radio" name="forma_ui" value={f.k} checked={ativo} onChange={() => setForma(f.k)} className="sr-only" />
+                <span className="font-semibold">{f.rotulo}</span> <span className="text-xs text-slate-400">· {f.nota}</span>
               </label>
             );
           })}
@@ -102,7 +125,7 @@ export default function MatriculaForm({
       </button>
       <p className="text-center text-xs text-slate-500">
         {plano === "anual"
-          ? "Pagamento único no Pix, cartão ou boleto, com 12 meses de acesso. Sua conta é criada após a confirmação do pagamento."
+          ? `Pagamento único no ${forma === "pix" ? "Pix" : "cartão de crédito"}, com 12 meses de acesso. Sua conta é criada após a confirmação do pagamento.`
           : "Assinatura mensal no cartão de crédito. Sua conta é criada após a confirmação do pagamento. Cancele quando quiser."}
       </p>
     </form>

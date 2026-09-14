@@ -80,7 +80,7 @@ export default async function MatriculaPage() {
               {temAnual && (
                 <div className="relative mt-3 flex flex-wrap items-center gap-4 overflow-hidden rounded-2xl border border-brand-teal/30 bg-gradient-to-r from-brand-blue/[0.12] to-transparent px-5 py-4">
                   <div>
-                    <span className="block text-xs uppercase tracking-wide text-slate-400">Plano anual · pagamento único</span>
+                    <span className="block text-xs uppercase tracking-wide text-slate-400">Plano anual · Pix ou cartão, pagamento único</span>
                     <span className="font-display text-3xl font-bold text-white">{brl(anual)}</span>
                     <span className="mt-0.5 block text-xs text-brand-teal">
                       equivale a {brl(anual / 12)}/mês · economia de {brl(price * 12 - anual)} no ano

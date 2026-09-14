@@ -18,6 +18,8 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   const phone = ((formData.get("phone") as string) || "").replace(/\D/g, "");
   const cpf = ((formData.get("cpf") as string) || "").replace(/\D/g, "");
   const plano = formData.get("plano") === "anual" ? "anual" : "mensal";
+  // Anual só em Pix ou cartão. Qualquer outro valor vindo do navegador vira Pix.
+  const forma = formData.get("forma") === "cartao" ? "cartao" : "pix";
 
   const address = {
     postalCode: ((formData.get("cep") as string) || "").replace(/\D/g, ""),
@@ -59,7 +61,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
 
   if (process.env.ASAAS_API_KEY) {
     const url = ehAnual
-      ? await createAsaasAnnualPayment(admin, { orderId: order.id, name, email, phone, cpf, price, address })
+      ? await createAsaasAnnualPayment(admin, { orderId: order.id, name, email, phone, cpf, price, address, forma })
       : await createAsaasSubscription(admin, { orderId: order.id, name, email, phone, cpf, price, address });
     if (url) return { ok: true, mode: "asaas", url };
   }
@@ -119,12 +121,13 @@ async function createAsaasSubscription(
   }
 }
 
-/* Plano anual: cobrança única, sem recorrência. O aluno escolhe Pix, cartão ou
-   boleto na própria fatura do Asaas. A referência "anual:" faz o webhook liberar
+/* Plano anual: cobrança única, sem recorrência, só em Pix ou cartão de crédito.
+   A forma vem do formulário porque o Asaas não tem uma cobrança que aceite só
+   essas duas: ou é uma forma, ou são todas, e todas inclui boleto. A referência "anual:" faz o webhook liberar
    12 meses de acesso quando o pagamento confirmar. */
 async function createAsaasAnnualPayment(
   admin: ReturnType<typeof createAdminClient>,
-  { orderId, name, email, phone, cpf, price, address }: { orderId: string; name: string; email: string; phone: string; cpf: string; price: number; address: Address }
+  { orderId, name, email, phone, cpf, price, address, forma }: { orderId: string; name: string; email: string; phone: string; cpf: string; price: number; address: Address; forma: "pix" | "cartao" }
 ): Promise<string | null> {
   const key = process.env.ASAAS_API_KEY!;
   const headers = { access_token: key, "Content-Type": "application/json" };
@@ -150,7 +153,7 @@ async function createAsaasAnnualPayment(
       headers,
       body: JSON.stringify({
         customer: cust.id,
-        billingType: "UNDEFINED",
+        billingType: forma === "cartao" ? "CREDIT_CARD" : "PIX",
         value: price,
         dueDate: due,
         description: "DriveData Academy · plano anual (12 meses)",
