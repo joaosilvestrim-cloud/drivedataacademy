@@ -14,16 +14,27 @@ const esc = (s: string) =>
 
 // Resolve um remetente válido. Se RESEND_FROM estiver vazio/malformado
 // (ex.: "Nome <onboarding@>"), cai no domínio de teste do Resend.
+/* Normaliza um remetente vindo da Vercel. Aceita "email", "Nome <email>" e
+   também "Nome email", com ou sem aspas em volta. Devolve null se não achar um
+   email válido. Antes, "Nome email" sem os sinais < > caía no remetente de
+   teste do Resend, que só entrega para o dono da conta. */
+function remetenteValido(valor: string | undefined): string | null {
+  const raw = (valor || "").trim().replace(/^["']|["']$/g, "").trim();
+  if (!raw) return null;
+  const email = raw.match(/[^\s<>"']+@[^\s<>"']+\.[^\s<>"']+/)?.[0];
+  if (!email) return null;
+  const nome = raw.replace(email, "").replace(/[<>"']/g, "").trim();
+  return nome ? `${nome} <${email}>` : email;
+}
+
 function resolveFrom(preferencia?: string): string {
-  const fallback = "DriveData Academy <onboarding@resend.dev>";
-  // Uma variável específica vence a geral quando está preenchida e válida.
-  const raw = ((preferencia && process.env[preferencia]) || process.env.RESEND_FROM || "").trim();
-  if (!raw) return fallback;
-  const m = raw.match(/<([^>]+)>/);
-  const addr = (m ? m[1] : raw).trim();
-  // exige algo@dominio.tld
-  if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(addr)) return raw;
-  return fallback;
+  // A variável específica vence a geral. Se ela estiver inválida, tenta a geral
+  // antes de cair no remetente de teste.
+  return (
+    (preferencia ? remetenteValido(process.env[preferencia]) : null) ||
+    remetenteValido(process.env.RESEND_FROM) ||
+    "DriveData Academy <onboarding@resend.dev>"
+  );
 }
 
 // Nome amigável do anexo a partir do título + extensão da URL.
