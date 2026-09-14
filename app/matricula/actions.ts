@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendOrderNotice } from "@/lib/email";
+import { aplicarCupom, type Plano } from "@/lib/cupons";
 
 export type MatriculaResult =
   | { ok: true; mode: "asaas"; url: string }
@@ -9,6 +10,24 @@ export type MatriculaResult =
   | { ok: false; error: string };
 
 const ASAAS_BASE = process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3";
+
+export type PreviaCupom =
+  | { ok: true; codigo: string; original: number; desconto: number; final: number; recorrente: boolean; rotulo: string }
+  | { ok: false; erro: string };
+
+/* Prévia do cupom para o botão Aplicar. Lê os preços do banco, igual à
+   cobrança, e devolve o valor final. Na hora de pagar a validação roda de novo. */
+export async function previewCupom(codigo: string, plano: Plano, email: string): Promise<PreviaCupom> {
+  const admin = createAdminClient();
+  const { data: cfg } = await admin.from("site_settings").select("key, value").in("key", ["sub_price", "sub_price_annual", "full_access_price"]);
+  const map = Object.fromEntries((cfg ?? []).map((r: any) => [r.key, r.value]));
+  const mensal = Number(map.sub_price || map.full_access_price || "0") || 0;
+  const anual = Number(map.sub_price_annual || "0") || 0;
+  const preco = plano === "anual" && anual > 0 ? anual : mensal;
+  if (preco <= 0) return { ok: false, erro: "A assinatura ainda não foi configurada." };
+  const r = await aplicarCupom(admin, codigo, plano === "anual" && anual > 0 ? "anual" : "mensal", email, preco);
+  return r.ok ? r : { ok: false, erro: r.erro };
+}
 
 // Matrícula = ASSINATURA mensal (acesso full enquanto pagar), só cartão de crédito.
 // A conta do aluno só é criada DEPOIS que o pagamento é confirmado (no webhook).
@@ -20,6 +39,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   const plano = formData.get("plano") === "anual" ? "anual" : "mensal";
   // Anual só em Pix ou cartão. Qualquer outro valor vindo do navegador vira Pix.
   const forma = formData.get("forma") === "cartao" ? "cartao" : "pix";
+  const cupomDigitado = ((formData.get("cupom") as string) || "").trim();
 
   const address = {
     postalCode: ((formData.get("cep") as string) || "").replace(/\D/g, ""),
@@ -46,12 +66,25 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   // O preço sai sempre do banco, nunca do navegador. Anual sem preço
   // configurado vira mensal em vez de gerar cobrança de zero.
   const ehAnual = plano === "anual" && anual > 0;
-  const price = ehAnual ? anual : mensal;
-  if (process.env.ASAAS_API_KEY && price <= 0) return { ok: false, error: "A assinatura ainda não foi configurada. Fale com o suporte." };
+  const cheio = ehAnual ? anual : mensal;
+  if (process.env.ASAAS_API_KEY && cheio <= 0) return { ok: false, error: "A assinatura ainda não foi configurada. Fale com o suporte." };
+
+  // Cupom validado de novo aqui, com o e-mail e o plano reais do pedido.
+  let cupom: Awaited<ReturnType<typeof aplicarCupom>> | null = null;
+  if (cupomDigitado) {
+    cupom = await aplicarCupom(admin, cupomDigitado, ehAnual ? "anual" : "mensal", email, cheio);
+    if (!cupom.ok) return { ok: false, error: cupom.erro };
+  }
+  const comCupom = cupom && cupom.ok ? cupom : null;
+  // Anual: paga o valor com desconto. Mensal: a primeira cobrança sai com
+  // desconto; as seguintes também, só se o cupom valer para todas.
+  const price = comCupom ? comCupom.final : cheio;
+  const valorAssinatura = comCupom && comCupom.recorrente ? comCupom.final : cheio;
+  const primeiraCobranca = comCupom && !comCupom.recorrente && !ehAnual ? comCupom.final : undefined;
 
   const { data: order, error } = await admin
     .from("orders")
-    .insert({ email, name, phone: phone || null, product: ehAnual ? "subscription_annual" : "subscription", amount: price, status: "pending", gateway: process.env.ASAAS_API_KEY ? "asaas" : "manual" })
+    .insert({ email, name, phone: phone || null, product: ehAnual ? "subscription_annual" : "subscription", amount: price, original_amount: comCupom ? cheio : null, discount_amount: comCupom ? comCupom.desconto : null, coupon_code: comCupom ? comCupom.codigo : null, status: "pending", gateway: process.env.ASAAS_API_KEY ? "asaas" : "manual" })
     .select("id")
     .single();
   if (error) return { ok: false, error: "Não foi possível registrar agora. Tente de novo." };
@@ -62,7 +95,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   if (process.env.ASAAS_API_KEY) {
     const url = ehAnual
       ? await createAsaasAnnualPayment(admin, { orderId: order.id, name, email, phone, cpf, price, address, forma })
-      : await createAsaasSubscription(admin, { orderId: order.id, name, email, phone, cpf, price, address });
+      : await createAsaasSubscription(admin, { orderId: order.id, name, email, phone, cpf, price: valorAssinatura, address, primeiraCobranca });
     if (url) return { ok: true, mode: "asaas", url };
   }
   return { ok: true, mode: "manual", whatsapp: map.checkout_whatsapp || null };
@@ -73,7 +106,7 @@ type Address = { postalCode: string; address: string; addressNumber: string; pro
 // Cria cliente + ASSINATURA mensal no cartão e devolve o link de pagamento da 1ª cobrança.
 async function createAsaasSubscription(
   admin: ReturnType<typeof createAdminClient>,
-  { orderId, name, email, phone, cpf, price, address }: { orderId: string; name: string; email: string; phone: string; cpf: string; price: number; address: Address }
+  { orderId, name, email, phone, cpf, price, address, primeiraCobranca }: { orderId: string; name: string; email: string; phone: string; cpf: string; price: number; address: Address; primeiraCobranca?: number }
 ): Promise<string | null> {
   const key = process.env.ASAAS_API_KEY!;
   const headers = { access_token: key, "Content-Type": "application/json" };
@@ -115,6 +148,12 @@ async function createAsaasSubscription(
 
     const payRes = await fetch(`${ASAAS_BASE}/subscriptions/${sub.id}/payments`, { headers });
     const pays = await payRes.json();
+    // Cupom só da primeira mensalidade: a assinatura segue no valor cheio e só a
+    // primeira cobrança recebe o desconto.
+    const primeira = pays?.data?.[0];
+    if (primeiraCobranca && primeira?.id) {
+      await fetch(`${ASAAS_BASE}/payments/${primeira.id}`, { method: "POST", headers, body: JSON.stringify({ value: primeiraCobranca }) });
+    }
     return (pays?.data?.[0]?.invoiceUrl as string) || null;
   } catch {
     return null;

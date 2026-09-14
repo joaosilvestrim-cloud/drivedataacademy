@@ -55,6 +55,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Assinatura", href: "/admin/turma", icon: "launch" },
       { label: "Workshops", href: "/admin/workshops", icon: "live" },
       { label: "Acessos", href: "/admin/acessos", icon: "access" },
+      { label: "Cupons", href: "/admin/cupons", icon: "billing" },
       { label: "Turmas / lotes", href: "/admin/turmas", icon: "cohort" },
     ],
   },

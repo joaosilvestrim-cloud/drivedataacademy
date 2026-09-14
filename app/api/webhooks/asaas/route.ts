@@ -28,6 +28,17 @@ export const dynamic = "force-dynamic";
 // Webhook do Asaas: confirma pagamento -> marca pedido pago -> libera acesso full.
 // Configure no Asaas a URL: https://academy.drivedata.com.br/api/webhooks/asaas
 // e o "Token de autenticação" igual ao env ASAAS_WEBHOOK_TOKEN.
+/* Registra o uso do cupom quando o pagamento confirma. Um registro por pedido:
+   as renovações mensais passam por aqui de novo e não contam outro uso. */
+async function registrarCupom(admin: ReturnType<typeof createAdminClient>, order: any) {
+  if (!order?.coupon_code) return;
+  const { data: c } = await admin.from("coupons").select("id").eq("code", order.coupon_code).maybeSingle();
+  if (!c) return;
+  await admin
+    .from("coupon_redemptions")
+    .upsert({ coupon_id: c.id, order_id: order.id, email: order.email, discount_amount: order.discount_amount }, { onConflict: "order_id", ignoreDuplicates: true });
+}
+
 export async function POST(req: Request) {
   const token = process.env.ASAAS_WEBHOOK_TOKEN;
   if (token) {
@@ -75,6 +86,7 @@ export async function POST(req: Request) {
     if (order.status === "paid") return NextResponse.json({ ok: true, note: "já processado" });
 
     await admin.from("orders").update({ status: "paid", gateway_id: payment.id ?? order.gateway_id }).eq("id", order.id);
+    await registrarCupom(admin, order);
 
     // A conta só nasce agora, depois do pagamento, igual à mensal.
     let userId: string | null = order.user_id;
@@ -119,6 +131,7 @@ export async function POST(req: Request) {
 
     if (paidEvents.includes(event)) {
       await admin.from("orders").update({ status: "paid", gateway_id: payment.id ?? order.gateway_id }).eq("id", order.id);
+      await registrarCupom(admin, order);
 
       // 1) Conta só nasce AGORA (após o pagamento). Cria se ainda não existir.
       let userId: string | null = order.user_id;
