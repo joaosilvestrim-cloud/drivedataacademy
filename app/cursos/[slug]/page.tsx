@@ -181,7 +181,9 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                 </div>
                 <p className="mt-3 text-center text-xs text-slate-500">
                   {emBreve
-                    ? "Estamos preparando as aulas. Avisamos assim que abrir."
+                    ? aVenda
+                      ? `Estamos preparando as aulas. Quando abrir, assinantes compram por ${brl(precoAss!)}.`
+                      : "Estamos preparando as aulas. Avisamos assim que abrir."
                     : enrolled
                     ? "Você já tem este treinamento."
                     : !assinaturaAtiva

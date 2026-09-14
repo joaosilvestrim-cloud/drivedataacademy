@@ -3,6 +3,7 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFullAccess } from "@/lib/access";
+import { brl } from "@/lib/precoCurso";
 import { knowledgeSummary } from "@/lib/knowledge/summary";
 import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
 import { Button, Badge, Status, ICON } from "@/components/ui/primitives";
@@ -77,7 +78,7 @@ export default async function ContaHome() {
   const [{ data: votesData }, { data: myVoteRow }, { data: catalogData }] = await Promise.all([
     admin.from("workshop_votes").select("option"),
     admin.from("workshop_votes").select("option").eq("user_id", user!.id).maybeSingle(),
-    admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon").eq("published", true).order("position"),
+    admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon, subscriber_price").eq("published", true).order("position"),
   ]);
   const voteCounts: Record<string, number> = {};
   for (const v of votesData ?? []) voteCounts[v.option] = (voteCounts[v.option] || 0) + 1;
@@ -325,12 +326,17 @@ export default async function ContaHome() {
 
       {catalogo.length > 0 && (
         <section aria-labelledby="catalogo">
-          <SectionHeader title={full ? "Também disponível" : "Em breve no catálogo"} />
+          <SectionHeader title={full ? "Treinamentos com preço de assinante" : "Treinamentos da Academy"} />
+          <p className="mt-1 text-caption text-ds-text-3">
+            {full
+              ? "Sua assinatura dá desconto: cada treinamento sai pelo preço de assinante, pago uma vez só."
+              : "Treinamentos são vendidos só para assinantes, com preço especial."}
+          </p>
           <ul className="mt-2 flex flex-col">
             {catalogo.slice(0, 6).map((c: any) => (
               <li key={c.id}>
                 <Link
-                  href={c.coming_soon || !full ? `/cursos/${c.slug}` : `/aprender/${c.slug}`}
+                  href={`/cursos/${c.slug}`}
                   className="group flex items-center justify-between gap-4 border-b border-ds-line-soft py-3 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
                 >
                   <span className="min-w-0">
@@ -342,7 +348,14 @@ export default async function ContaHome() {
                     </span>
                     {c.subtitle && <span className="block truncate text-caption text-ds-text-3">{c.subtitle}</span>}
                   </span>
-                  <RowArrow />
+                  <span className="flex shrink-0 items-center gap-2">
+                    {c.subscriber_price != null && (
+                      <span className="font-mono text-caption tabular-nums text-ds-accent">
+                        {Number(c.subscriber_price) === 0 ? "Incluso" : brl(Number(c.subscriber_price))}
+                      </span>
+                    )}
+                    <RowArrow />
+                  </span>
                 </Link>
               </li>
             ))}
