@@ -155,22 +155,52 @@ export async function sendChallengeReviewEmail(
 // Conta criada após a confirmação do pagamento: aluno define a senha por este link.
 // Sai pelo remetente de conta (RESEND_FROM_CONTA), separado do remetente de
 // materiais de marketing. Sem essa variável, usa RESEND_FROM como antes.
-export async function sendAccountSetupEmail(to: string, name: string, setPasswordUrl: string) {
+// Bloco do código de acesso, igual nos dois e-mails que o usam.
+function blocoCodigo(codigo: string): string {
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;width:100%;background:rgba(21,196,126,.08);border:1px solid rgba(21,196,126,.35);border-radius:14px">
+      <tr><td style="padding:18px 16px;text-align:center">
+        <p style="margin:0 0 6px;color:#94a3b8;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Seu código de acesso</p>
+        <p style="margin:0;color:#fff;font-size:30px;font-weight:700;letter-spacing:.28em;font-family:'Courier New',monospace">${esc(codigo)}</p>
+      </td></tr>
+    </table>`;
+}
+
+/* Conta criada depois do pagamento. Manda um código, não um link de uso único:
+   filtros como o do Outlook abrem links antes da pessoa e gastam o token. O
+   botão só leva para a tela onde o código é digitado, então pode ser aberto
+   por qualquer robô sem estragar nada. */
+export async function sendAccountSetupEmail(to: string, name: string, codigo: string) {
   const firstName = esc((name || "").split(" ")[0] || "");
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const tela = `${site}/redefinir-senha?email=${encodeURIComponent(to)}`;
   const body = `
     <p style="margin:0 0 14px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu pagamento foi confirmado e sua conta na DriveData Academy já está criada. 🎉</p>
-    <p style="margin:0 0 20px;color:#cbd5e1">Falta só um passo: criar a senha que você vai usar para entrar.</p>
-    <a href="${setPasswordUrl}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Criar minha senha</a>
+    <p style="margin:0 0 20px;color:#cbd5e1">Falta só um passo: criar a senha que você vai usar para entrar. Use o código abaixo.</p>
+    ${codigo ? blocoCodigo(codigo) : ""}
+    <a href="${tela}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Criar minha senha</a>
     <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px">
       <tr><td style="padding:14px 16px">
         <p style="margin:0 0 4px;color:#94a3b8;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Seu login</p>
         <p style="margin:0;color:#fff;font-size:15px">${esc(to)}</p>
       </td></tr>
     </table>
-    <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">O botão vale por tempo limitado. Se ele expirar, peça um novo link em <a href="${site}/esqueci-senha" style="color:#15c47e">Esqueci minha senha</a> usando este mesmo e-mail.</p>
+    <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">O código vale por tempo limitado. Se expirar, peça outro em <a href="${site}/esqueci-senha" style="color:#15c47e">Criar ou trocar senha</a> usando este mesmo e-mail.</p>
     <p style="margin:12px 0 0;color:#64748b;font-size:12px">Se você não fez essa compra, ignore este e-mail.</p>`;
   return sendHtmlEmail(to, "Pagamento confirmado: crie sua senha de acesso", shell("Sua conta está pronta", body), "RESEND_FROM_CONTA");
+}
+
+// Código para criar ou trocar a senha, pedido em /esqueci-senha.
+export async function sendAccessCodeEmail(to: string, codigo: string) {
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const tela = `${site}/redefinir-senha?email=${encodeURIComponent(to)}`;
+  const body = `
+    <p style="margin:0 0 20px;color:#cbd5e1">Recebemos um pedido para criar ou trocar a senha da sua conta. Digite este código na tela de senha.</p>
+    ${blocoCodigo(codigo)}
+    <a href="${tela}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Digitar o código</a>
+    <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">O código vale por tempo limitado e só o último pedido funciona.</p>
+    <p style="margin:12px 0 0;color:#64748b;font-size:12px">Se não foi você, ignore este e-mail. Sua senha continua a mesma.</p>`;
+  return sendHtmlEmail(to, `Seu código de acesso: ${codigo}`, shell("Código de acesso", body), "RESEND_FROM_CONTA");
 }
 
 // Confirmação de compra de workshop avulso: manda o link/acesso.

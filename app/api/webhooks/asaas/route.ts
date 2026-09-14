@@ -113,9 +113,9 @@ export async function POST(req: Request) {
       await admin.from("user_badges").upsert({ user_id: userId, badge: "fundador" }, { onConflict: "user_id,badge" });
 
       if (isNew) {
-        const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email, options: { redirectTo: `${SITE_URL}/redefinir-senha` } } as any);
-        const url = (link as any)?.properties?.action_link || `${SITE_URL}/esqueci-senha`;
-        await sendAccountSetupEmail(order.email, order.name || "", url);
+        const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email } as any);
+        const codigo = ((link as any)?.properties?.email_otp as string) || "";
+        await sendAccountSetupEmail(order.email, order.name || "", codigo);
       } else {
         await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL);
       }
@@ -178,9 +178,9 @@ export async function POST(req: Request) {
 
         // 3) E-mail: conta nova -> define senha; conta já existente -> acesso liberado
         if (isNew) {
-          const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email, options: { redirectTo: `${SITE_URL}/redefinir-senha` } } as any);
-          const url = (link as any)?.properties?.action_link || `${SITE_URL}/esqueci-senha`;
-          await sendAccountSetupEmail(order.email, order.name || "", url);
+          const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email } as any);
+          const codigo = ((link as any)?.properties?.email_otp as string) || "";
+          await sendAccountSetupEmail(order.email, order.name || "", codigo);
         } else {
           await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL);
         }

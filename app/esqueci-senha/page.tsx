@@ -2,26 +2,31 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Background from "@/components/Background";
-import { createClient } from "@/lib/supabase/client";
+import { enviarCodigoAcesso } from "./actions";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
 
 export default function EsqueciSenhaPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const supabase = createClient();
-    await supabase.auth.resetPasswordForEmail(email.trim().toLowerCase(), {
-      redirectTo: `${window.location.origin}/redefinir-senha`,
-    });
+    setError(null);
+    const limpo = email.trim().toLowerCase();
+    const res = await enviarCodigoAcesso(limpo);
     setLoading(false);
-    setSent(true);
+    if (!res.ok) {
+      setError(res.error || "Não foi possível enviar agora.");
+      return;
+    }
+    router.push(`/redefinir-senha?email=${encodeURIComponent(limpo)}&enviado=1`);
   }
 
   return (
@@ -34,29 +39,22 @@ export default function EsqueciSenhaPage() {
             <img src="/logo.png" alt="Drive Data Academy" className="h-10 w-auto" />
           </Link>
           <div className="glass-strong rounded-3xl border border-white/10 p-8">
-            {sent ? (
-              <div className="text-center">
-                <h1 className="font-display text-2xl font-bold text-white">Verifique seu e-mail</h1>
-                <p className="mt-2 text-sm text-slate-300">
-                  Se existir uma conta com <strong>{email}</strong>, enviamos um link para redefinir a senha.
-                </p>
-                <Link href="/entrar" className="mt-6 inline-block text-sm font-medium text-brand-green hover:underline">Voltar ao login</Link>
-              </div>
-            ) : (
-              <>
-                <h1 className="font-display text-2xl font-bold text-white">Esqueci minha senha</h1>
-                <p className="mt-1 text-sm text-slate-400">Enviamos um link para você criar uma nova.</p>
-                <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-                  <input required type="email" placeholder="Seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
-                  <button type="submit" disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
-                    {loading ? "Enviando..." : "Enviar link"}
-                  </button>
-                </form>
-                <p className="mt-5 text-center text-sm text-slate-400">
-                  <Link href="/entrar" className="font-medium text-brand-green hover:underline">Voltar ao login</Link>
-                </p>
-              </>
-            )}
+            <h1 className="font-display text-2xl font-bold text-white">Criar ou trocar senha</h1>
+            <p className="mt-1 text-sm text-slate-400">Enviamos um código para o seu e-mail. Com ele você cria uma senha nova.</p>
+            <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+              <label htmlFor="esqueci-email" className="sr-only">Seu e-mail</label>
+              <input id="esqueci-email" required type="email" autoComplete="email" placeholder="Seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
+              {error && <p role="alert" className="text-xs text-red-400">{error}</p>}
+              <button type="submit" disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
+                {loading ? "Enviando..." : "Enviar código"}
+              </button>
+            </form>
+            <p className="mt-5 text-center text-sm text-slate-400">
+              Já tem um código? <Link href="/redefinir-senha" className="font-medium text-brand-green hover:underline">Digitar código</Link>
+            </p>
+            <p className="mt-2 text-center text-sm text-slate-400">
+              <Link href="/entrar" className="font-medium text-brand-green hover:underline">Voltar ao login</Link>
+            </p>
           </div>
         </div>
       </main>
