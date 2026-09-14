@@ -4,7 +4,7 @@ import { useState } from "react";
 import FunilForm from "../_funis/FunilForm";
 import { FUNIS_REPRESENTACAO } from "../_funis/definicoes";
 
-/* Menu dos funis que continuam aqui. Mentoria e Marketplace saíram para rota e
+/* Menu dos funis que continuam aqui. Mentoria saiu para rota e
    item de menu próprios, porque o aluno procurava os dois pelo menu e não por
    dentro de Representação. As definições e o formulário vivem em _funis. */
 

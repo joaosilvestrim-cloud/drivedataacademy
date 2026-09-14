@@ -6,8 +6,10 @@ import Avatar from "@/components/Avatar";
 import PandaPlayer from "./PandaPlayer";
 import ProtectedPlayer from "./ProtectedPlayer";
 import { markLessonDone, addComment } from "./actions";
+import { tamanhoLegivel, extensao } from "@/lib/materiais";
 
-type Lesson = { id: string; title: string; duration: string | null; type: string; video_provider: string | null; video_id: string | null; yt: string | null; content: string | null; materials: { title: string; url: string }[] };
+type Lesson = { id: string; title: string; duration: string | null; type: string; video_provider: string | null; video_id: string | null; yt: string | null; content: string | null; materials: { title: string; url: string }[]; arquivos: Arquivo[] };
+type Arquivo = { id: string; title: string; description: string | null; file_name: string | null; file_size: number | null; external_url: string | null };
 type SideLesson = { id: string; title: string; duration: string | null };
 type Module = { id: string; title: string; locked: boolean; releaseLabel: string | null; lessons: SideLesson[] };
 type Comment = { id: string; user_id: string; body: string; status: string; admin_reply: string | null };
@@ -133,7 +135,11 @@ export default function CoursePlayer({
           <div className="rounded-2xl border border-dashed border-white/10 px-6 py-20 text-center text-slate-400">Este curso ainda não tem aulas publicadas.</div>
         ) : (
           <>
-            {current.video_provider === "panda" && current.video_id ? (
+            {current.type === "materiais" ? (
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-ink-900">
+                <img src="/banners/cases-reais-prontos.png" alt="Cases reais prontos, disponíveis para download" className="block aspect-video w-full object-cover" />
+              </div>
+            ) : current.video_provider === "panda" && current.video_id ? (
               <ProtectedPlayer>
                 <PandaPlayer key={current.id} videoId={current.video_id} host={pandaHost} lessonId={current.id} courseId={courseId} slug={slug} />
               </ProtectedPlayer>
@@ -155,6 +161,42 @@ export default function CoursePlayer({
 
             <p className="mt-5 text-xs font-medium uppercase tracking-wide text-brand-green">Aula {idx + 1} de {flatIds.length}</p>
             <h1 className="mt-1 font-display text-2xl font-bold text-white">{current.title}</h1>
+
+            {current.type === "materiais" && (
+              <div className="mt-5">
+                {current.content && <p className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-300">{current.content}</p>}
+                {(current.arquivos || []).length === 0 ? (
+                  <p className="mt-4 rounded-2xl border border-dashed border-white/10 px-5 py-8 text-center text-sm text-slate-500">Os arquivos desta aula estão sendo preparados.</p>
+                ) : (
+                  <ul className="mt-4 divide-y divide-white/5 rounded-2xl border border-white/8 bg-white/[0.02]">
+                    {current.arquivos.map((a) => {
+                      const ext = a.file_name ? extensao(a.file_name) : "LINK";
+                      return (
+                        <li key={a.id}>
+                          <a
+                            href={`/aprender/${slug}/material/${a.id}`}
+                            target={a.file_name ? undefined : "_blank"}
+                            rel="noreferrer"
+                            className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-white/[0.04]"
+                          >
+                            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-green/10 font-mono text-[0.65rem] font-bold text-brand-green">{ext || "ARQ"}</span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-sm font-semibold text-white">{a.title}</span>
+                              {a.description && <span className="mt-0.5 line-clamp-2 block text-xs text-slate-400">{a.description}</span>}
+                            </span>
+                            {a.file_size ? <span className="hidden shrink-0 font-mono text-xs tabular-nums text-slate-500 sm:block">{tamanhoLegivel(a.file_size)}</span> : null}
+                            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-200 group-hover:border-brand-green/50 group-hover:text-brand-green">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                              {a.file_name ? "Baixar" : "Abrir"}
+                            </span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            )}
 
             {materials.length > 0 && (
               <div className="mt-5 rounded-2xl border border-white/8 bg-white/[0.02] p-5">

@@ -297,7 +297,7 @@ create table if not exists public.lessons (
   module_id  uuid not null references public.course_modules(id) on delete cascade,
   course_id  uuid not null references public.courses(id) on delete cascade,
   title      text not null,
-  type       text not null default 'video',   -- video | text
+  type       text not null default 'video',   -- video | text | materiais
   video_id   text,
   content    text,
   duration   text,
@@ -1028,6 +1028,9 @@ create table if not exists public.ready_materials (
   position     int not null default 0
 );
 create index if not exists ready_materials_pub_idx on public.ready_materials (published, position);
+-- Aula do tipo "materiais": os arquivos pertencem a uma aula (substituiu o menu Materiais prontos).
+alter table public.ready_materials add column if not exists lesson_id uuid references public.lessons(id) on delete cascade;
+create index if not exists ready_materials_lesson_idx on public.ready_materials (lesson_id, position);
 alter table public.ready_materials enable row level security;
 -- Sem policy de propósito: só o servidor, com a chave de serviço, lê e grava.
 

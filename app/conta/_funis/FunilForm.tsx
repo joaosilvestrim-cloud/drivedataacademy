@@ -6,11 +6,13 @@ import type { Form } from "./definicoes";
 
 /* Um funil, um formulário.
 
-   Saiu de dentro do RepClient quando Mentoria e Marketplace ganharam rota
+   Saiu de dentro do RepClient quando Mentoria ganhou rota
    própria. O markup é o mesmo de antes, incluindo o simulador do Portal, que
    continua aparecendo só no funil "portal". */
 
 const field = "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+
+const OUTRO = /^outr[oa]$/i;
 
 function brl(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -73,6 +75,19 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
                   </select>
                 ) : (
                   <input id={id} type={f.type} inputMode={f.type === "number" ? "numeric" : undefined} value={values[f.name] || ""} onChange={(e) => set(f.name, e.target.value)} placeholder={f.ph} className={field} />
+                )}
+                {/* "Outro" abre um campo livre para o que não está na lista. */}
+                {f.type === "select" && OUTRO.test(values[f.name] || "") && (
+                  <input
+                    id={`${id}-outro`}
+                    aria-label={`${f.label}: qual?`}
+                    value={values[`${f.name}_outro`] || ""}
+                    onChange={(e) => set(`${f.name}_outro`, e.target.value)}
+                    required
+                    autoFocus
+                    placeholder="Escreva qual"
+                    className={`${field} mt-2`}
+                  />
                 )}
               </div>
             );

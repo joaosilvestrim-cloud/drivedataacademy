@@ -25,9 +25,17 @@ export default async function EditCoursePage({ params, searchParams }: { params:
     supabase.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, is_preview, materials").eq("course_id", course.id).order("position"),
   ]);
 
+  // Arquivos das aulas do tipo "materiais", agrupados por aula.
+  const idsMateriais = (lessons ?? []).filter((l: any) => l.type === "materiais").map((l: any) => l.id);
+  const { data: arquivos } = idsMateriais.length
+    ? await supabase.from("ready_materials").select("id, lesson_id, title, description, file_name, file_size, external_url").in("lesson_id", idsMateriais).order("position")
+    : { data: [] as any[] };
+  const arquivosPorAula: Record<string, any[]> = {};
+  for (const a of arquivos ?? []) (arquivosPorAula[a.lesson_id] ||= []).push(a);
+
   const modules = (mods ?? []).map((m: any) => ({
     ...m,
-    lessons: (lessons ?? []).filter((l: any) => l.module_id === m.id),
+    lessons: (lessons ?? []).filter((l: any) => l.module_id === m.id).map((l: any) => ({ ...l, arquivos: arquivosPorAula[l.id] ?? [] })),
   }));
 
   const minutos = (lessons ?? []).reduce((t: number, l: any) => t + minutosDoTexto(l.duration), 0);

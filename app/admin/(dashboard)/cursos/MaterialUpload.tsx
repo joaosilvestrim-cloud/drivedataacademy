@@ -7,19 +7,15 @@ import { ICON } from "@/components/ui/primitives";
 import { BUCKET_MATERIAIS, tamanhoLegivel } from "@/lib/materiais";
 import { assinarUploadMaterial } from "./actions";
 
-/* Envio do arquivo direto do navegador para o bucket privado, por URL assinada.
-   O formulário recebe só o caminho, o nome e o tamanho em campos ocultos. */
+/* Envio de arquivo de uma aula de materiais. O arquivo sobe direto do navegador
+   para o bucket privado, por URL assinada, e o formulário recebe só o caminho,
+   o nome e o tamanho em campos ocultos. Um .pbix passa fácil de dezenas de MB,
+   o que estouraria o limite de corpo da Vercel se passasse pelo servidor. */
 
-export default function ArquivoUpload({
-  scope,
-  inicial,
-}: {
-  scope: string;
-  inicial?: { path: string | null; name: string | null; size: number | null };
-}) {
-  const [path, setPath] = useState(inicial?.path || "");
-  const [name, setName] = useState(inicial?.name || "");
-  const [size, setSize] = useState<number>(inicial?.size || 0);
+export default function MaterialUpload({ scope }: { scope: string }) {
+  const [path, setPath] = useState("");
+  const [name, setName] = useState("");
+  const [size, setSize] = useState(0);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
   const id = `${scope}-arquivo`;
@@ -87,9 +83,6 @@ export default function ArquivoUpload({
         </p>
       )}
       {erro && <p className="text-caption text-ds-danger" role="alert">{erro}</p>}
-      <p className="text-caption text-ds-text-3">
-        .pbix, .pbit, .zip, .xlsx, .pdf e outros. Sobe direto do navegador para um espaço privado: só assinante baixa.
-      </p>
     </div>
   );
 }

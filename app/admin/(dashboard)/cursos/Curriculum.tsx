@@ -12,6 +12,7 @@ import {
 } from "./actions";
 import { setModuleRelease } from "../lives/actions";
 import VideoField from "./VideoField";
+import MateriaisDaAula, { type MaterialDaAula } from "./MateriaisDaAula";
 
 // ISO -> "YYYY-MM-DDTHH:mm" no fuso do Brasil (para datetime-local).
 function toLocalInput(iso: string | null): string {
@@ -34,6 +35,7 @@ type Lesson = {
   duration: string | null;
   is_preview: boolean;
   materials: { title: string; url: string }[] | null;
+  arquivos?: MaterialDaAula[];
 };
 type Module = { id: string; title: string; available_at?: string | null; lessons: Lesson[] };
 
@@ -60,6 +62,9 @@ function MoveButtons({ table, col, val, id, courseId }: { table: string; col: st
 
 const VideoIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M5 5h11a1 1 0 011 1v3l4-2v10l-4-2v3a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+);
+const DownloadIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
 );
 const TextIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
@@ -131,11 +136,14 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                   <summary className="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm text-slate-200">
                     <span className="flex min-w-0 items-center gap-2.5">
                       <span className="text-slate-600">{li + 1}.</span>
-                      <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-md ${l.type === "text" ? "bg-brand-blue/15 text-brand-blue" : "bg-brand-green/15 text-brand-green"}`}>
-                        {l.type === "text" ? <TextIcon /> : <VideoIcon />}
+                      <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-md ${l.type === "text" ? "bg-brand-blue/15 text-brand-blue" : l.type === "materiais" ? "bg-amber-400/15 text-amber-300" : "bg-brand-green/15 text-brand-green"}`}>
+                        {l.type === "text" ? <TextIcon /> : l.type === "materiais" ? <DownloadIcon /> : <VideoIcon />}
                       </span>
                       <span className="truncate font-medium text-white">{l.title}</span>
-                      {l.type !== "text" && l.video_id && (
+                      {l.type === "materiais" && (
+                        <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-slate-400">{(l.arquivos ?? []).length} arquivo(s)</span>
+                      )}
+                      {l.type === "video" && l.video_id && (
                         <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-slate-400">{l.video_provider === "panda" ? "Panda" : "YouTube"}</span>
                       )}
                       {l.is_preview && <span className="shrink-0 rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">preview</span>}
@@ -161,6 +169,7 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       <SelectField scope={`aula-${l.id}`} name="type" label="Tipo" defaultValue={l.type}>
                         <option value="video">Vídeo</option>
                         <option value="text">Texto</option>
+                        <option value="materiais">Materiais para download</option>
                       </SelectField>
                       <Field
                         scope={`aula-${l.id}`}
@@ -182,7 +191,7 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       label="Conteúdo em texto"
                       rows={3}
                       defaultValue={l.content ?? ""}
-                      description="Usado nas aulas do tipo Texto."
+                      description="Usado nas aulas do tipo Texto. Na aula de materiais, vira o texto de abertura acima da lista."
                     />
 
                     <TextareaField
@@ -209,6 +218,10 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       <Button type="submit" size="sm">Salvar aula</Button>
                     </FormActions>
                   </form>
+
+                  {l.type === "materiais" && (
+                    <MateriaisDaAula lessonId={l.id} courseId={courseId} itens={l.arquivos ?? []} />
+                  )}
                 </details>
               ))}
               {m.lessons.length === 0 && (
@@ -232,6 +245,7 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                 <SelectField scope={`aula-nova-${m.id}`} name="type" label="Tipo" defaultValue="video" className="w-auto">
                   <option value="video">Vídeo</option>
                   <option value="text">Texto</option>
+                  <option value="materiais">Materiais para download</option>
                 </SelectField>
                 <Button type="submit" variant="secondary">Adicionar aula</Button>
               </div>

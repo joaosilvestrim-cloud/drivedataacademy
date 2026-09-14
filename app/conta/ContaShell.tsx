@@ -48,7 +48,6 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
       { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
-      { label: "Materiais prontos", href: "/conta/materiais", icon: "materiais" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },
     ],
   },
@@ -59,7 +58,6 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Ranking", href: "/conta/ranking", icon: "ranking" },
       { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine" },
       { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria" },
-      { label: "Marketplace", href: "/conta/marketplace", icon: "marketplace" },
       { label: "Representação", href: "/conta/representacao", icon: "rep" },
     ],
   },

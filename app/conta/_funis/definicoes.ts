@@ -1,7 +1,7 @@
 /* Definições dos funis de Representação.
 
-   Antes viviam dentro do RepClient. Saíram porque Mentoria e Marketplace
-   ganharam rota e item de menu próprios, e as três telas precisam da mesma
+   Antes viviam dentro do RepClient. Saíram porque Mentoria ganhou rota e
+   item de menu próprios, e as três telas precisam da mesma
    fonte. O `key` continua sendo o `type` gravado em rep_requests, então nada
    muda para o admin. */
 
@@ -36,7 +36,7 @@ const FORMS: Form[] = [
     desc: "Marque uma mentoria 1:1 com o time. Escolha o assunto.",
     cta: "Solicitar mentoria",
     fields: [
-      { name: "assunto", label: "Assunto", type: "select", options: ["Engenharia de Dados", "DAX", "Modelagem", "Automações", "IA", "Design"] },
+      { name: "assunto", label: "Assunto", type: "select", options: ["Engenharia de Dados", "DAX", "Modelagem", "Automações", "IA", "Design", "Outro"] },
       { name: "descricao", label: "O que você quer resolver?", type: "textarea", ph: "Contexto da sua dúvida ou desafio" },
       { name: "horario", label: "Preferência de horário", type: "text", ph: "Ex.: manhãs, ou uma data" },
     ],
@@ -52,24 +52,12 @@ const FORMS: Form[] = [
       { name: "sobre", label: "Fale sobre você", type: "textarea", ph: "Experiência, tecnologias, o que te move" },
     ],
   },
-  {
-    key: "marketplace", icon: "M3 3h18v4H3zM5 7v13h14V7M9 11h6", title: "Marketplace DriveData",
-    desc: "Suba um projeto (dashboard, automação, template) para vender na plataforma.",
-    cta: "Enviar para o marketplace",
-    fields: [
-      { name: "titulo", label: "Título do produto", type: "text", ph: "Ex.: Dashboard de Vendas em HTML" },
-      { name: "tipo", label: "Tipo", type: "select", options: ["Dashboard", "Automação", "Template", "Modelo de dados", "Outro"] },
-      { name: "descricao", label: "Descrição", type: "textarea", ph: "O que faz, o que entrega" },
-      { name: "preco", label: "Preço sugerido (R$)", type: "text", ph: "Ex.: 199" },
-      { name: "link", label: "Link do material / demonstração", type: "text", ph: "https://..." },
-    ],
-  },
 ];
 
 
 export const FUNIL = Object.fromEntries(FORMS.map((f) => [f.key, f])) as Record<string, Form>;
 
-// Os que continuam em /conta/representacao. Mentoria e Marketplace saíram.
+// Os que continuam em /conta/representacao. Mentoria saiu para rota própria.
 export const FUNIS_REPRESENTACAO = FORMS.filter((f) => f.key === "portal" || f.key === "parceria" || f.key === "candidatura");
 
 export { FORMS };

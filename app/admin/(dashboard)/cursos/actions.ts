@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { duracaoNoProvedor } from "@/lib/duracao";
+import { BUCKET_MATERIAIS } from "@/lib/materiais";
 
 function slugify(s: string) {
   return s
@@ -275,4 +276,68 @@ export async function recalcularDuracoes(formData: FormData) {
     ? `${preenchidas} aula(s) ganharam duração. ${semLeitura} não puderam ser lidas no provedor e seguem em branco.`
     : `${preenchidas} aula(s) ganharam duração.`;
   redirect(`/admin/cursos/${courseId}?ok=${encodeURIComponent(msg)}`);
+}
+
+// ---------- Aula de materiais para download ----------
+function nomeSeguro(nome: string) {
+  return (nome || "arquivo")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(-80);
+}
+
+/* URL de envio assinada. O navegador sobe o arquivo direto no Storage, sem
+   passar pelo servidor: um .pbix passa fácil de dezenas de MB e estouraria o
+   limite de corpo da Vercel. O bucket é privado e nasce aqui se não existir. */
+export async function assinarUploadMaterial(nomeArquivo: string) {
+  const supabase = await admin();
+  await supabase.storage.createBucket(BUCKET_MATERIAIS, { public: false }).catch(() => {});
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${nomeSeguro(nomeArquivo)}`;
+  const { data, error } = await supabase.storage.from(BUCKET_MATERIAIS).createSignedUploadUrl(path);
+  if (error || !data) return { ok: false as const, error: error?.message || "Não consegui preparar o envio." };
+  return { ok: true as const, path: data.path, token: data.token };
+}
+
+export async function salvarMaterialDaAula(formData: FormData) {
+  const supabase = await admin();
+  const lesson_id = formData.get("lesson_id") as string;
+  const courseId = formData.get("course_id") as string;
+  const title = ((formData.get("title") as string) || "").trim();
+  const file_path = ((formData.get("file_path") as string) || "").trim() || null;
+  const external_url = ((formData.get("external_url") as string) || "").trim() || null;
+  const volta = (msg: string, erro = false) =>
+    redirect(`/admin/cursos/${courseId}?${erro ? "error" : "ok"}=${encodeURIComponent(msg)}`);
+
+  if (!title) volta("Informe o nome do material.", true);
+  if (!file_path && !external_url) volta("Envie um arquivo ou informe um link.", true);
+
+  const { count } = await supabase.from("ready_materials").select("*", { count: "exact", head: true }).eq("lesson_id", lesson_id);
+  const { error } = await supabase.from("ready_materials").insert({
+    lesson_id,
+    title,
+    description: ((formData.get("description") as string) || "").trim() || null,
+    category: "outro",
+    file_path,
+    file_name: ((formData.get("file_name") as string) || "").trim() || null,
+    file_size: Number(formData.get("file_size") || 0) || null,
+    external_url,
+    published: true,
+    position: count ?? 0,
+  });
+  if (error) volta(error.message, true);
+  refresh(courseId);
+  volta("Material adicionado à aula.");
+}
+
+export async function excluirMaterialDaAula(formData: FormData) {
+  const supabase = await admin();
+  const id = formData.get("id") as string;
+  const courseId = formData.get("course_id") as string;
+  const { data: m } = await supabase.from("ready_materials").select("file_path").eq("id", id).maybeSingle();
+  await supabase.from("ready_materials").delete().eq("id", id);
+  if (m?.file_path) await supabase.storage.from(BUCKET_MATERIAIS).remove([m.file_path]);
+  refresh(courseId);
+  redirect(`/admin/cursos/${courseId}?ok=Material+removido`);
 }
