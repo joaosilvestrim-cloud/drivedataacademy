@@ -136,7 +136,7 @@ export default async function ContaHome() {
     ? { rotulo: "Ver desafios", titulo: `Revisar ${resumo.cooling[0].name}`, apoio: `${resumo.cooling[0].days} dias sem prática nessa competência.`, href: "/conta/desafios", curso: null as any }
     : desafiosAbertos
     ? { rotulo: "Ver desafios", titulo: "Prove na prática o que aprendeu", apoio: `${desafiosAbertos} desafios abertos esperando entrega.`, href: "/conta/desafios", curso: null as any }
-    : { rotulo: "Abrir o catálogo", titulo: "Escolha por onde começar", apoio: "Seus treinamentos aparecem aqui assim que você iniciar um.", href: "/cursos", curso: null as any };
+    : { rotulo: "Abrir o catálogo", titulo: "Escolha por onde começar", apoio: "Seus treinamentos aparecem aqui assim que você iniciar um.", href: "/conta/cursos", curso: null as any };
 
   const leitura = !full
     ? "Sua assinatura não está ativa no momento."
@@ -264,17 +264,17 @@ export default async function ContaHome() {
       <section aria-labelledby="cursos">
         <SectionHeader
           title="Em curso"
-          action={<Link href="/cursos" className="text-label text-ds-text-2 hover:text-ds-text">Catálogo</Link>}
+          action={<Link href="/conta/cursos" className="text-label text-ds-text-2 hover:text-ds-text">Cardápio</Link>}
         />
         {withPct.length === 0 ? (
           <EmptyState
             title={full ? "Nenhum treinamento iniciado" : "Você ainda não tem acesso"}
             description={
               full
-                ? "Escolha um treinamento no catálogo e ele passa a aparecer aqui."
-                : "Assine a Academy para liberar os treinamentos, a comunidade e as ferramentas."
+                ? "Escolha um treinamento no cardápio e ele passa a aparecer aqui."
+                : "Assine a Academy para entrar na comunidade, usar as ferramentas e comprar treinamentos com preço de assinante."
             }
-            action={<Button href={full ? "/cursos" : "/matricula"} variant={full ? "secondary" : "primary"}>{full ? "Abrir catálogo" : "Ver assinatura"}</Button>}
+            action={<Button href={full ? "/conta/cursos" : "/matricula"} variant={full ? "secondary" : "primary"}>{full ? "Abrir cardápio" : "Ver assinatura"}</Button>}
           />
         ) : (
           <ul className="mt-2 flex flex-col">

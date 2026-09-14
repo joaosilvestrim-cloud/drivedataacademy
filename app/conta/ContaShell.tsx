@@ -25,6 +25,7 @@ function WhatsAppGroupLink({ onNavigate }: { onNavigate?: () => void }) {
 const ICONS: Record<string, string> = {
   universe: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
   courses: "M22 10L12 5 2 10l10 5 10-5zM6 12v5c0 1 3 2 6 2s6-1 6-2v-5",
+  cardapio: "M4 4h16v16H4zM8 8h8M8 12h8M8 16h5",
   tool: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4",
   community: "M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z",
   rep: "M3 21h18M5 21V7l8-4v18M19 21V11l-6-3",
@@ -46,6 +47,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   {
     title: "Aprender",
     items: [
+      { label: "Cursos", href: "/conta/cursos", icon: "cardapio" },
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
       { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },

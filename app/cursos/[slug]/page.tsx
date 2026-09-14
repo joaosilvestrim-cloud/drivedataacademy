@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Background from "@/components/Background";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,6 +14,11 @@ import { cargaHoraria, minutosDoTexto } from "@/lib/duracao";
 export const dynamic = "force-dynamic";
 
 export default async function CoursePage({ params, searchParams }: { params: { slug: string }; searchParams: { erro?: string } }) {
+  // Os treinamentos saíram da área pública: o cardápio mora dentro da conta.
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/cursos");
+
   const pub = createPublicClient();
   const { data: course } = await pub
     .from("courses")
@@ -33,13 +38,8 @@ export default async function CoursePage({ params, searchParams }: { params: { s
   // Carga digitada no admin vence. Sem ela, soma a duração das aulas.
   const carga = course.workload || cargaHoraria((lessons ?? []).reduce((t: number, l: any) => t + minutosDoTexto(l.duration), 0));
 
-  // Estado do usuário / matrícula
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  let enrolled = false;
-  if (user) {
-    enrolled = await canAccessCourse(createAdminClient(), user.id, course.id);
-  }
+  // Estado da matrícula
+  const enrolled = await canAccessCourse(createAdminClient(), user.id, course.id);
   // "Em breve" vence os outros estados do card. Quem já estiver matriculado
   // continua entrando por /aprender.
   const emBreve = course.coming_soon === true;
