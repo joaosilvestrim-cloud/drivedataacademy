@@ -7,16 +7,17 @@ import { createPublicClient } from "@/lib/supabase/public";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canAccessCourse, hasFullAccess } from "@/lib/access";
-import { enrollFree } from "./actions";
+import { enrollFree, comprarCurso } from "./actions";
+import { VALOR_MINIMO_CURSO, brl, descontoCurso } from "@/lib/precoCurso";
 import { cargaHoraria, minutosDoTexto } from "@/lib/duracao";
 
 export const dynamic = "force-dynamic";
 
-export default async function CoursePage({ params }: { params: { slug: string } }) {
+export default async function CoursePage({ params, searchParams }: { params: { slug: string }; searchParams: { erro?: string } }) {
   const pub = createPublicClient();
   const { data: course } = await pub
     .from("courses")
-    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon, members_only, workload")
+    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon, subscriber_price, workload")
     .eq("slug", params.slug)
     .eq("published", true)
     .maybeSingle();
@@ -39,15 +40,16 @@ export default async function CoursePage({ params }: { params: { slug: string } 
   if (user) {
     enrolled = await canAccessCourse(createAdminClient(), user.id, course.id);
   }
-  const isPaid = Number(course.price) > 0;
-  // "Em breve" vence os outros estados do card de matrícula. Quem já estiver
-  // matriculado continua entrando por /aprender: marcar um curso como Em breve
-  // não é motivo para tirar acesso de quem já tinha.
+  // "Em breve" vence os outros estados do card. Quem já estiver matriculado
+  // continua entrando por /aprender.
   const emBreve = course.coming_soon === true;
-  // Curso da assinatura: quem não tem assinatura ativa não se matricula. Quem
-  // tem já cai no ramo de "enrolled", porque acesso full libera tudo.
-  const soAssinantes = course.members_only === true;
+  // Só assinante compra. A assinatura não abre o curso sozinha: dá o preço de assinante.
   const assinaturaAtiva = user ? await hasFullAccess(createAdminClient(), user.id) : false;
+  const precoCheio = Number(course.price) || 0;
+  const precoAss = course.subscriber_price == null ? null : Number(course.subscriber_price);
+  const incluso = precoAss === 0;
+  const aVenda = precoAss != null && precoAss >= VALOR_MINIMO_CURSO;
+  const desconto = descontoCurso(precoCheio, precoAss);
 
   return (
     <>
@@ -107,11 +109,27 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                     <img src={course.cover_url} alt={course.title} className="h-full w-full object-cover" />
                   </div>
                 )}
-                <p className="font-display text-2xl font-bold text-white">
-                  {soAssinantes ? "Incluído na assinatura" : isPaid ? `R$ ${Number(course.price).toFixed(2)}` : "Gratuito"}
-                </p>
+                {/* Preço: o do assinante em destaque, o cheio riscado ao lado. */}
+                {incluso ? (
+                  <p className="font-display text-2xl font-bold text-white">Incluído na assinatura</p>
+                ) : aVenda ? (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Preço para assinantes</p>
+                    <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                      <span className="font-display text-3xl font-bold text-white">{brl(precoAss!)}</span>
+                      {desconto > 0 && <span className="text-sm text-slate-500 line-through">{brl(precoCheio)}</span>}
+                      {desconto > 0 && <span className="rounded-full bg-brand-green/15 px-2.5 py-0.5 text-xs font-semibold text-brand-green">{desconto}% OFF</span>}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="font-display text-2xl font-bold text-white">Exclusivo para assinantes</p>
+                )}
 
-                <div className="mt-5">
+                {searchParams?.erro && (
+                  <p role="alert" className="mt-4 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{searchParams.erro}</p>
+                )}
+
+                <div className="mt-5" id="comprar">
                   {emBreve ? (
                     <button disabled className="w-full cursor-not-allowed rounded-xl border border-amber-400/30 bg-amber-400/10 px-6 py-3.5 text-sm font-semibold text-amber-300">
                       Em breve
@@ -122,31 +140,55 @@ export default async function CoursePage({ params }: { params: { slug: string } 
                     </Link>
                   ) : !user ? (
                     <Link href="/entrar" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                      Entre para começar
+                      Entre para comprar
                     </Link>
-                  ) : soAssinantes && !assinaturaAtiva ? (
+                  ) : !assinaturaAtiva ? (
                     <Link href="/matricula" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                      Assine para acessar
+                      Assine para comprar com desconto
                     </Link>
-                  ) : isPaid ? (
-                    <button disabled className="w-full cursor-not-allowed rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-semibold text-slate-400">
-                      Compra em breve
-                    </button>
-                  ) : (
+                  ) : incluso ? (
                     <form action={enrollFree}>
                       <input type="hidden" name="slug" value={course.slug} />
                       <button className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                        Matricular gratuitamente
+                        Liberar no meu acesso
                       </button>
                     </form>
+                  ) : aVenda ? (
+                    <form action={comprarCurso} className="space-y-3">
+                      <input type="hidden" name="slug" value={course.slug} />
+                      <div className="space-y-1.5">
+                        <label htmlFor="compra-cpf" className="block text-sm font-medium text-slate-300">CPF para a cobrança</label>
+                        <input id="compra-cpf" name="cpf" required inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+                      </div>
+                      <fieldset className="grid grid-cols-2 gap-2">
+                        <legend className="mb-1.5 text-sm font-medium text-slate-300">Forma de pagamento</legend>
+                        {[{ v: "pix", l: "Pix" }, { v: "cartao", l: "Cartão de crédito" }].map((f) => (
+                          <label key={f.v} className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-200 has-[:checked]:border-brand-green/60 has-[:checked]:bg-brand-green/10">
+                            <input type="radio" name="forma" value={f.v} defaultChecked={f.v === "pix"} className="accent-brand-green" />
+                            {f.l}
+                          </label>
+                        ))}
+                      </fieldset>
+                      <button className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                        Comprar por {brl(precoAss!)}
+                      </button>
+                    </form>
+                  ) : (
+                    <button disabled className="w-full cursor-not-allowed rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-semibold text-slate-400">
+                      Venda em breve
+                    </button>
                   )}
                 </div>
                 <p className="mt-3 text-center text-xs text-slate-500">
                   {emBreve
                     ? "Estamos preparando as aulas. Avisamos assim que abrir."
-                    : soAssinantes && !assinaturaAtiva
-                    ? "Este treinamento faz parte da assinatura da Academy."
-                    : "Acesso imediato após a matrícula."}
+                    : enrolled
+                    ? "Você já tem este treinamento."
+                    : !assinaturaAtiva
+                    ? "Treinamentos são vendidos só para assinantes, com preço especial."
+                    : aVenda
+                    ? "Você vai para a página segura do Asaas. O acesso libera assim que o pagamento confirmar."
+                    : "Acesso imediato."}
                 </p>
 
                 {/* O que você recebe */}

@@ -1,7 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-// Tem acesso full ativo (uma compra libera todos os cursos)?
+// Tem assinatura ativa? Dá comunidade, lives, gravações e o preço de assinante nos treinamentos.
 export async function hasFullAccess(admin: SupabaseClient, userId: string): Promise<boolean> {
   const { data } = await admin
     .from("memberships")
@@ -15,12 +15,10 @@ export async function hasFullAccess(admin: SupabaseClient, userId: string): Prom
 
 /* Pode abrir as aulas deste curso?
 
-   Assinatura ativa libera tudo. Fora dela, vale a matrícula de origem
-   deliberada: cortesia do time, compra avulsa ou turma. Só a origem "free", do
-   tempo do cadastro aberto, deixou de abrir alguma coisa, porque hoje todo o
-   conteúdo está dentro da assinatura. */
+   Só a matrícula abre treinamento: compra do assinante, curso incluso na
+   assinatura, cortesia do time ou turma. A assinatura sozinha não abre curso.
+   A origem "free", do tempo do cadastro aberto, continua sem abrir nada. */
 export async function canAccessCourse(admin: SupabaseClient, userId: string, courseId: string): Promise<boolean> {
-  if (await hasFullAccess(admin, userId)) return true;
   const { data: enr } = await admin
     .from("enrollments")
     .select("id")

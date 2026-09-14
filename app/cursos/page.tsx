@@ -3,6 +3,7 @@ import Background from "@/components/Background";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createPublicClient } from "@/lib/supabase/public";
+import { brl } from "@/lib/precoCurso";
 
 export const revalidate = 60;
 
@@ -13,7 +14,7 @@ export default async function CatalogPage() {
       const supabase = createPublicClient();
       const { data } = await supabase
         .from("courses")
-        .select("id, slug, title, subtitle, cover_url, level, price, certificate_enabled, coming_soon, members_only")
+        .select("id, slug, title, subtitle, cover_url, level, price, certificate_enabled, coming_soon, subscriber_price")
         .eq("published", true)
         .order("position");
       courses = data ?? [];
@@ -50,10 +51,9 @@ export default async function CatalogPage() {
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
                   )}
-                  {/* Curso da assinatura não tem preço próprio e não é
-                      gratuito: o selo diz de quem ele é. */}
+                  {/* Só assinante compra: o selo mostra o preço de assinante. */}
                   <span className="absolute left-4 top-4 rounded-full bg-ink-900/80 px-3 py-1 text-[0.7rem] font-semibold text-brand-teal backdrop-blur">
-                    {c.members_only ? "Assinantes" : Number(c.price) > 0 ? `R$ ${Number(c.price).toFixed(2)}` : "Gratuito"}
+                    {c.subscriber_price == null ? "Assinantes" : Number(c.subscriber_price) === 0 ? "Incluso na assinatura" : `Assinantes · ${brl(Number(c.subscriber_price))}`}
                   </span>
                   {c.coming_soon && (
                     <span className="absolute right-4 top-4 rounded-full bg-amber-400/90 px-3 py-1 text-[0.7rem] font-semibold text-ink-900 backdrop-blur">

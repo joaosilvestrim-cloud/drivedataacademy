@@ -91,10 +91,21 @@ export async function sendAccessGrantedEmail(to: string, name: string, siteUrl: 
   const firstName = esc((name || "").split(" ")[0] || "");
   const body = `
     <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu acesso à DriveData Academy foi liberado. 🎉</p>
-    <p style="margin:0 0 20px;color:#cbd5e1">Agora você tem acesso a <b style="color:#fff">todos os cursos</b>, avaliações e certificados.</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">Agora você tem acesso à <b style="color:#fff">comunidade, às lives e às gravações</b>, às ferramentas e ao preço de assinante nos treinamentos.</p>
     <a href="${siteUrl}/conta" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Entrar na plataforma</a>
     <p style="margin:24px 0 0;color:#64748b;font-size:12px">Bons estudos!</p>`;
   return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body), "RESEND_FROM_CONTA");
+}
+
+// Treinamento comprado pelo assinante: pagamento confirmado, curso liberado.
+export async function sendCoursePurchasedEmail(to: string, name: string, courseTitle: string, courseUrl: string) {
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const body = `
+    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu pagamento foi confirmado.</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">O treinamento <b style="color:#fff">${esc(courseTitle)}</b> já está liberado na sua conta.</p>
+    <a href="${courseUrl}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Começar agora</a>
+    <p style="margin:24px 0 0;color:#64748b;font-size:12px">Bons estudos!</p>`;
+  return sendHtmlEmail(to, `Treinamento liberado: ${courseTitle}`, shell("Treinamento liberado", body), "RESEND_FROM_CONTA");
 }
 
 // Correção de um desafio do Knowledge Universe: aprovado ou devolvido.

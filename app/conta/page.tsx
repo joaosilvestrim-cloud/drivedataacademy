@@ -126,7 +126,7 @@ export default async function ContaHome() {
 
   // Uma ação principal, decidida em cascata pelo estado real do aluno.
   const passo = !full
-    ? { rotulo: "Ver a assinatura", titulo: "Seu acesso está inativo", apoio: "Assine para abrir os treinamentos, a comunidade e as ferramentas.", href: "/matricula", curso: null as any }
+    ? { rotulo: "Ver a assinatura", titulo: "Seu acesso está inativo", apoio: "Assine para entrar na comunidade, assistir às gravações e comprar os treinamentos com desconto.", href: "/matricula", curso: null as any }
     : resumo.available && !diag
     ? { rotulo: "Fazer o diagnóstico", titulo: "Comece pelo diagnóstico", apoio: "São 25 perguntas rápidas e você responde uma vez só.", href: "/conta/diagnostico", curso: null as any }
     : retomar

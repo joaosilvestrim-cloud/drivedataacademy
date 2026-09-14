@@ -30,6 +30,7 @@ export async function saveLive(formData: FormData) {
     starts_at: starts,
     duration_min: Number((formData.get("duration_min") as string) || "0") || null,
     url: ((formData.get("url") as string) || "").trim() || null,
+    recording_url: ((formData.get("recording_url") as string) || "").trim() || null,
     cover_url: ((formData.get("cover_url") as string) || "").trim() || null,
     kind: (formData.get("kind") as string) === "mentoria" ? "mentoria" : "live",
     price: Number(((formData.get("price") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".")) || null,

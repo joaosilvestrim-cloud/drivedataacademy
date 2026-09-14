@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/primitives";
 import { Field, TextareaField, CheckboxField, FormSection, FormActions } from "@/components/ui/form";
 import { saveCourse } from "./actions";
 import CoverUpload from "./CoverUpload";
+import { descontoCurso } from "@/lib/precoCurso";
 
 type Course = {
   id: string;
@@ -13,6 +14,7 @@ type Course = {
   level: string | null;
   instructor_name: string | null;
   price: number;
+  subscriber_price?: number | null;
   workload: string | null;
   certificate_enabled?: boolean;
   published: boolean;
@@ -65,27 +67,48 @@ export default function CourseForm({ course, cargaCalculada }: { course?: Course
           rows={4}
           defaultValue={course?.description ?? ""}
         />
+        <Field
+          scope={scope}
+          name="instructor_name"
+          label="Instrutor"
+          defaultValue={course?.instructor_name ?? "DriveData Academy"}
+        />
+        {/* Envio de capa: tem upload assinado e estado próprio, não é o FileField
+            do Design System. Fica para um sublote específico, markup preservado. */}
+        <CoverUpload initialUrl={course?.cover_url} />
+      </FormSection>
+
+      <FormSection
+        title="Venda"
+        description="Só assinantes compram treinamentos. A assinatura não abre o curso sozinha: o assinante paga o preço dele, com o desconto sobre o preço cheio."
+      >
         <div className="grid gap-4 tablet:grid-cols-2">
           <Field
             scope={scope}
-            name="instructor_name"
-            label="Instrutor"
-            defaultValue={course?.instructor_name ?? "DriveData Academy"}
-          />
-          <Field
-            scope={scope}
             name="price"
-            label="Preço"
+            label="Preço cheio"
             type="number"
             min="0"
             step="0.01"
             defaultValue={course?.price ?? 0}
-            description="Em reais. Só vale para curso vendido avulso. Ignorado quando o curso é da assinatura."
+            description="Em reais. Aparece riscado ao lado do preço de assinante."
+          />
+          <Field
+            scope={scope}
+            name="subscriber_price"
+            label="Preço para assinante"
+            type="number"
+            min="0"
+            step="0.01"
+            defaultValue={course?.subscriber_price ?? ""}
+            description="Vazio: ainda não está à venda. 0: incluso na assinatura. Para cobrar, mínimo de R$ 5."
           />
         </div>
-        {/* Envio de capa: tem upload assinado e estado próprio, não é o FileField
-            do Design System. Fica para um sublote específico, markup preservado. */}
-        <CoverUpload initialUrl={course?.cover_url} />
+        {course && descontoCurso(Number(course.price) || 0, course.subscriber_price ?? null) > 0 && (
+          <p className="text-body-sm text-ds-text-2">
+            O assinante vê <strong className="text-ds-accent">{descontoCurso(Number(course.price) || 0, course.subscriber_price ?? null)}% OFF</strong> na página do curso.
+          </p>
+        )}
       </FormSection>
 
       <FormSection
@@ -129,15 +152,6 @@ export default function CourseForm({ course, cargaCalculada }: { course?: Course
         />
         {/* Estado do meio: o aluno vê o curso e a capa, mas não entra nem se
             matricula. Só faz efeito com o curso publicado. */}
-        {/* Sem isto, preço zero era anunciado como "Gratuito" e qualquer pessoa
-            logada conseguia se matricular. */}
-        <CheckboxField
-          scope={scope}
-          name="members_only"
-          label="Exclusivo para assinantes"
-          defaultChecked={course?.members_only ?? false}
-          description="O catálogo mostra “Assinantes” no lugar do preço, e quem não tem assinatura ativa não consegue se matricular."
-        />
         <CheckboxField
           scope={scope}
           name="coming_soon"

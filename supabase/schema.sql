@@ -637,6 +637,13 @@ alter table public.courses add column if not exists coming_soon boolean not null
 -- Curso exclusivo da assinatura: não é gratuito e não é vendido avulso.
 alter table public.courses add column if not exists members_only boolean not null default false;
 
+-- Treinamentos vendidos só para assinantes. vazio = fora de venda; 0 = incluso; >= 5 = preço do assinante.
+alter table public.courses add column if not exists subscriber_price numeric;
+-- Gravação de lives, workshops e mentorias, assistida pelo assinante na Agenda.
+alter table public.live_events add column if not exists recording_url text;
+-- Pedido de compra de treinamento avulso.
+alter table public.orders add column if not exists course_id uuid references public.courses(id) on delete set null;
+
 -- ============================================================
 -- Suporte / Central de Ajuda (chamados) — base para IA de triagem
 -- ============================================================

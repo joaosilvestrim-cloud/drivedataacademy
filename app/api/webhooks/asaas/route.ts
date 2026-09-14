@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendAccessGrantedEmail, sendAccountSetupEmail, sendWorkshopEmail } from "@/lib/email";
+import { sendAccessGrantedEmail, sendAccountSetupEmail, sendCoursePurchasedEmail, sendWorkshopEmail } from "@/lib/email";
 import { grantOffer } from "@/lib/offers";
 
 async function findUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string): Promise<string | null> {
@@ -124,6 +124,26 @@ export async function POST(req: Request) {
   }
 
   // Assinatura da plataforma (matrícula recorrente). externalReference = "sub:<orderId>"
+  // Treinamento comprado por assinante. externalReference = "curso:<orderId>".
+  // Pagou, nasce a matrícula de origem "compra". A conta já existe: só assinante compra.
+  if (extRef.startsWith("curso:")) {
+    const orderId = extRef.slice(6);
+    const { data: order } = await admin.from("orders").select("*").eq("id", orderId).maybeSingle();
+    if (!order) return NextResponse.json({ ok: true, note: "pedido não encontrado" });
+    if (!paidEvents.includes(event)) return NextResponse.json({ ok: true, ignored: event });
+    if (order.status === "paid") return NextResponse.json({ ok: true, note: "já processado" });
+
+    await admin.from("orders").update({ status: "paid", gateway_id: payment.id ?? order.gateway_id }).eq("id", order.id);
+    if (order.user_id && order.course_id) {
+      await admin
+        .from("enrollments")
+        .upsert({ user_id: order.user_id, course_id: order.course_id, source: "compra" }, { onConflict: "user_id,course_id" });
+      const { data: curso } = await admin.from("courses").select("title, slug").eq("id", order.course_id).maybeSingle();
+      if (curso && order.email) await sendCoursePurchasedEmail(order.email, order.name || "", curso.title, `${SITE_URL}/aprender/${curso.slug}`);
+    }
+    return NextResponse.json({ ok: true, curso: "enrolled" });
+  }
+
   if (extRef.startsWith("sub:")) {
     const orderId = extRef.slice(4);
     const { data: order } = await admin.from("orders").select("*").eq("id", orderId).maybeSingle();

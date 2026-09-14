@@ -62,6 +62,13 @@ export async function saveCourse(formData: FormData) {
   const slugInput = (formData.get("slug") as string).trim();
   const slug = slugInput ? slugify(slugInput) : slugify(title);
 
+  // Vazio: fora de venda. 0: incluso na assinatura. Acima de zero, mínimo do Asaas.
+  const subRaw = ((formData.get("subscriber_price") as string) || "").trim().replace(",", ".");
+  const subscriber_price = subRaw === "" ? null : Number(subRaw);
+  if (subscriber_price != null && (isNaN(subscriber_price) || subscriber_price < 0 || (subscriber_price > 0 && subscriber_price < 5))) {
+    redirect(`/admin/cursos${id ? `/${id}` : ""}?error=${encodeURIComponent("Preço para assinante: deixe vazio, use 0 para incluso ou um valor a partir de R$ 5.")}`);
+  }
+
   const payload = {
     title,
     slug,
@@ -71,11 +78,11 @@ export async function saveCourse(formData: FormData) {
     level: ((formData.get("level") as string) || "").trim() || null,
     instructor_name: ((formData.get("instructor_name") as string) || "").trim() || null,
     price: Number((formData.get("price") as string) || "0") || 0,
+    subscriber_price,
     workload: ((formData.get("workload") as string) || "").trim() || null,
     certificate_enabled: formData.get("certificate_enabled") === "on",
     published: formData.get("published") === "on",
     coming_soon: formData.get("coming_soon") === "on",
-    members_only: formData.get("members_only") === "on",
   };
 
   if (id) {

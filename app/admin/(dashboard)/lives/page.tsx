@@ -108,6 +108,15 @@ function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?:
         />
       </div>
 
+      <Field
+        scope={scope}
+        name="recording_url"
+        label="Gravação"
+        type="url"
+        defaultValue={live?.recording_url ?? ""}
+        description="YouTube (pode ser não listado) ou embed do Panda. Depois do encontro, assinantes assistem pela Agenda."
+      />
+
       <CheckboxField
         scope={scope}
         name="published"

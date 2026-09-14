@@ -141,7 +141,11 @@ export default async function AgendaPage() {
                     <p className="text-xs text-slate-500">{fmt(l.starts_at)}</p>
                   </div>
                 </div>
-                {l.url && <a href={l.url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-4 py-2 text-sm text-brand-teal transition-colors hover:border-brand-teal/50">Ver gravação ↗</a>}
+                {l.recording_url ? (
+                  <Link href={`/conta/gravacoes/${l.id}`} className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assistir gravação</Link>
+                ) : (
+                  <span className="text-xs text-slate-500">Gravação em breve</span>
+                )}
               </div>
             ))}
           </div>
