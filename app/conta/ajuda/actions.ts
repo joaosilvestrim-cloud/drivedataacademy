@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendHtmlEmail } from "@/lib/email";
 import { CATEGORIES } from "@/lib/support";
 import { askSupportAI } from "@/lib/ai";
+import { avisarTime } from "@/lib/notificacoes";
 import { contextoPlataforma } from "@/lib/assistente-contexto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -47,14 +48,14 @@ export async function createTicket(formData: FormData) {
 
   if (ticket) {
     await admin.from("support_messages").insert({ ticket_id: ticket.id, author: "user", body: message });
-    const adminEmail = (process.env.ADMIN_EMAILS || "").split(",")[0]?.trim();
-    if (adminEmail) {
-      await sendHtmlEmail(
-        adminEmail,
+    // Aviso ao time: liga, desliga e destinatários em Admin > Sistema > Notificações.
+    await avisarTime("chamado_ajuda", (para) =>
+      sendHtmlEmail(
+        para,
         `Novo chamado: ${subject}`,
         `<p style="font-family:Arial">Novo chamado de <b>${user.email}</b>.</p><p style="font-family:Arial">Assunto: ${subject}</p><p style="font-family:Arial;color:#475569">${message.replace(/</g, "&lt;")}</p><p><a href="${SITE_URL}/admin/suporte">Abrir no painel</a></p>`
-      );
-    }
+      )
+    );
     // IA tenta a primeira resposta (triagem). O time continua vendo tudo no painel.
     await aiRespond(admin, ticket.id, `${subject}\n\n${message}`);
   }

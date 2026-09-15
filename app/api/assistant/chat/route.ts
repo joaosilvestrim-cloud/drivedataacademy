@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { chatSupportAI } from "@/lib/ai";
 import { sendHtmlEmail } from "@/lib/email";
 import { contextoAluno, contextoPlataforma } from "@/lib/assistente-contexto";
+import { avisarTime } from "@/lib/notificacoes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,14 +28,14 @@ async function ticketFromChat(admin: ReturnType<typeof createAdminClient>, user:
   ];
   await admin.from("support_messages").insert(rows);
 
-  const adminEmail = (process.env.ADMIN_EMAILS || "").split(",")[0]?.trim();
-  if (adminEmail) {
-    await sendHtmlEmail(
-      adminEmail,
+  // Aviso ao time: liga, desliga e destinatários em Admin > Sistema > Notificações.
+  await avisarTime("chamado_ia", (para) =>
+    sendHtmlEmail(
+      para,
       `Chamado do assistente: ${subject}`,
       `<p style="font-family:Arial">O assistente encaminhou uma conversa de <b>${user.email}</b> para o time.</p><p style="font-family:Arial">Assunto: ${subject}</p><p><a href="${SITE_URL}/admin/suporte">Abrir no painel</a></p>`
-    );
-  }
+    )
+  );
   return ticket.id as string;
 }
 

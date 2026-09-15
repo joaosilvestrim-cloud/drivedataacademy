@@ -2,6 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendOrderNotice } from "@/lib/email";
+import { avisarTime } from "@/lib/notificacoes";
 import { aplicarCupom, type Plano } from "@/lib/cupons";
 
 export type MatriculaResult =
@@ -89,8 +90,8 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
     .single();
   if (error) return { ok: false, error: "Não foi possível registrar agora. Tente de novo." };
 
-  const adminEmail = (process.env.ADMIN_EMAILS || "").split(",")[0]?.trim();
-  if (adminEmail) await sendOrderNotice(adminEmail, { name, email, phone, amount: price });
+  // Aviso ao time: liga, desliga e destinatários em Admin > Sistema > Notificações.
+  await avisarTime("pedido", (para) => sendOrderNotice(para, { name, email, phone, amount: price }));
 
   if (process.env.ASAAS_API_KEY) {
     const url = ehAnual

@@ -82,6 +82,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Visão do sistema", href: "/admin/sistema", icon: "system" },
       { label: "Pagamentos e e-mails", href: "/admin/operacao", icon: "billing" },
       { label: "Assistente IA", href: "/admin/ia", icon: "community" },
+      { label: "Notificações", href: "/admin/notificacoes", icon: "support" },
       { label: "Configurações", href: "/admin/settings", icon: "settings" },
     ],
   },

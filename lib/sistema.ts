@@ -77,7 +77,7 @@ export async function checarIntegracoes(): Promise<Check[]> {
 
   checks.push({ nome: "Panda (vídeos)", ok: process.env.PANDA_API_KEY ? true : null, detalhe: process.env.PANDA_API_KEY ? "Chave configurada: a duração das aulas é lida automaticamente." : "Sem chave: a duração das aulas do Panda fica em branco." });
   checks.push({ nome: "Supabase (banco e login)", ok: !!process.env.SUPABASE_SERVICE_ROLE_KEY && !!process.env.NEXT_PUBLIC_SUPABASE_URL, detalhe: process.env.NEXT_PUBLIC_SUPABASE_URL ? `${process.env.NEXT_PUBLIC_SUPABASE_URL.replace(/^https?:\/\//, "")}` : "URL ausente." });
-  checks.push({ nome: "Administradores", ok: !!process.env.ADMIN_EMAILS, detalhe: process.env.ADMIN_EMAILS ? `${process.env.ADMIN_EMAILS.split(",").filter(Boolean).length} e-mail(s) com acesso ao admin. Avisos de pedido e chamado vão para o primeiro.` : "ADMIN_EMAILS ausente." });
+  checks.push({ nome: "Administradores", ok: !!process.env.ADMIN_EMAILS, detalhe: process.env.ADMIN_EMAILS ? `${process.env.ADMIN_EMAILS.split(",").filter(Boolean).length} e-mail(s) com acesso ao admin. Quem recebe os avisos do time se define em Sistema > Notificações.` : "ADMIN_EMAILS ausente." });
 
   return checks;
 }
