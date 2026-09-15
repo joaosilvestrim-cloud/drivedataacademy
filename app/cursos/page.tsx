@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import ProximasMentorias from "@/components/mentorias/ProximasMentorias";
 import MenuImersivo from "@/components/assinatura/MenuImersivo";
+import PasseTicket from "@/components/assinatura/PasseTicket";
 
 export const revalidate = 60;
 
@@ -16,15 +17,6 @@ export const metadata = {
 /* Página pública da assinatura. Os treinamentos não aparecem aqui nem com
    preço: o catálogo mora dentro da área do aluno. Aqui o trabalho é mostrar
    o que a pessoa ganha ao entrar. */
-
-const PASSE = [
-  "Lives e workshops ao vivo",
-  "Gravações para rever quando quiser",
-  "Comunidade de profissionais de dados",
-  "Ferramentas para aplicar na prática",
-  "Preço de assinante nos treinamentos",
-  "Certificados das suas competências",
-];
 
 // A ordem aqui é real: é o caminho de quem assina.
 const PASSOS = [
@@ -53,52 +45,25 @@ export default function AssinaturaPage() {
         {/* Como funciona */}
         <section className="relative mx-auto max-w-5xl px-6 py-20">
           <Reveal>
-            <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Como começar</h2>
-            <p className="mx-auto mt-3 max-w-md text-center text-slate-300/90">Três passos e o passe de assinante é seu.</p>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">Como começar</h2>
+            <p className="mt-3 max-w-md text-slate-400">Três passos entre você e o seu ingresso.</p>
           </Reveal>
-          <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
-          <ol className="grid gap-5">
+          <div className="mt-10 grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:items-center">
+          <ol className="border-t border-white/10">
             {PASSOS.map((p, i) => (
               <Reveal key={p.titulo} delay={i * 0.08}>
-                <li className="glass relative h-full rounded-3xl border border-white/8 p-6">
-                  <span className="font-display text-5xl font-bold text-gradient">{i + 1}</span>
-                  <h3 className="mt-3 font-display text-lg font-bold text-white">{p.titulo}</h3>
-                  <p className="mt-2 text-sm text-slate-300/90">{p.texto}</p>
+                <li className="grid grid-cols-[3rem_1fr] gap-x-5 border-b border-white/10 py-7">
+                  <span className="font-mono text-sm tabular-nums text-brand-teal">0{i + 1}</span>
+                  <div>
+                    <h3 className="font-display text-xl font-semibold text-white sm:text-2xl">{p.titulo}</h3>
+                    <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-400">{p.texto}</p>
+                  </div>
                 </li>
               </Reveal>
             ))}
           </ol>
           <Reveal delay={0.1}>
-          <div className="relative mx-auto max-w-md">
-            <div className="pointer-events-none absolute -inset-10 rounded-full bg-brand-green/20 blur-[90px] animate-pulse-glow" />
-            <div className="glow-border relative rotate-[-2deg] rounded-[2rem] transition-transform duration-500 hover:rotate-0">
-              <div className="glass-strong relative overflow-hidden rounded-[2rem] p-7">
-                <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-gradient-to-br from-brand-green/30 to-brand-blue/30 blur-2xl" />
-                <div className="relative flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-slate-400">Passe de assinante</p>
-                    <p className="mt-1 font-display text-2xl font-bold text-white">Acesso ao ecossistema</p>
-                  </div>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/drivedata-symbol.png" alt="" className="h-10 w-10 shrink-0" />
-                </div>
-                <ul className="relative mt-6 space-y-3">
-                  {PASSE.map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm text-slate-200">
-                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green/15 text-brand-green">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                      </span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <div className="relative mt-7 flex items-center justify-between border-t border-dashed border-white/15 pt-5">
-                  <span className="font-mono text-xs tracking-widest text-slate-500">DDA · MEMBRO</span>
-                  <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Ativo após o pagamento</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            <PasseTicket />
           </Reveal>
           </div>
         </section>

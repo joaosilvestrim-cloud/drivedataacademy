@@ -292,7 +292,6 @@ export default function MenuImersivo() {
       <main>
         <div className="dd-intro">
           <div className="dd-hero">
-            <p className="dd-eyebrow"><span />Assinatura DriveData Academy</p>
             <h1 className="dd-h1">Conhecimento em<br /><em>outra dimensão.</em></h1>
             <p className="dd-lead">Uma assinatura abre a agenda ao vivo, as gravações, a comunidade e as ferramentas. E coloca os treinamentos completos ao seu alcance, com preço de assinante.</p>
             <div className="dd-ctas">
