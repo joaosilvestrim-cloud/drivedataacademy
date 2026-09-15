@@ -1,87 +1,89 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Paperclip } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Loader2, UploadCloud } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { ICON } from "@/components/ui/primitives";
 import { BUCKET_MATERIAIS, tamanhoLegivel } from "@/lib/materiais";
-import { assinarUploadMaterial } from "./actions";
+import { assinarUploadMaterial, registrarArquivoDaAula } from "./actions";
 
-/* Envio de arquivo de uma aula de materiais. O arquivo sobe direto do navegador
-   para o bucket privado, por URL assinada, e o formulário recebe só o caminho,
-   o nome e o tamanho em campos ocultos. Um .pbix passa fácil de dezenas de MB,
-   o que estouraria o limite de corpo da Vercel se passasse pelo servidor. */
+/* Envio de arquivos de uma aula de materiais. Cada arquivo sobe direto do
+   navegador para o bucket privado, por URL assinada, e já entra na aula assim
+   que termina. Um .pbix passa fácil de dezenas de MB, o que estouraria o limite
+   de corpo da Vercel se passasse pelo servidor. */
 
-export default function MaterialUpload({ scope }: { scope: string }) {
-  const [path, setPath] = useState("");
-  const [name, setName] = useState("");
-  const [size, setSize] = useState(0);
-  const [enviando, setEnviando] = useState(false);
+export default function MaterialUpload({ scope, lessonId, courseId }: { scope: string; lessonId: string; courseId: string }) {
+  const router = useRouter();
+  const [enviando, setEnviando] = useState("");
   const [erro, setErro] = useState("");
+  const [ok, setOk] = useState("");
   const id = `${scope}-arquivo`;
 
-  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setEnviando(true);
+  async function onFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (!files.length) return;
     setErro("");
-    try {
-      const assinado = await assinarUploadMaterial(file.name);
-      if (!assinado.ok) throw new Error(assinado.error);
-      const supabase = createClient();
-      const { error } = await supabase.storage
-        .from(BUCKET_MATERIAIS)
-        .uploadToSignedUrl(assinado.path, assinado.token, file, { contentType: file.type || "application/octet-stream" });
-      if (error) throw error;
-      setPath(assinado.path);
-      setName(file.name);
-      setSize(file.size);
-    } catch (err: any) {
-      const msg = String(err?.message || err?.error || "falha desconhecida");
-      setErro(
-        /exceeded|too large|payload/i.test(msg)
-          ? `O arquivo passou do limite de tamanho do Storage (${tamanhoLegivel(file.size)}). Aumente o limite no Supabase ou use um link.`
-          : `Não consegui enviar: ${msg}`
-      );
-    } finally {
-      setEnviando(false);
-      e.target.value = "";
+    setOk("");
+    const falhas: string[] = [];
+    let enviados = 0;
+    for (const file of files) {
+      setEnviando(`Enviando ${file.name} (${tamanhoLegivel(file.size)}). Arquivos grandes de Power BI podem levar um minuto.`);
+      try {
+        const assinado = await assinarUploadMaterial(file.name);
+        if (!assinado.ok) throw new Error(assinado.error);
+        const { error } = await createClient()
+          .storage.from(BUCKET_MATERIAIS)
+          .uploadToSignedUrl(assinado.path, assinado.token, file, { contentType: file.type || "application/octet-stream" });
+        if (error) throw error;
+        const salvo = await registrarArquivoDaAula(lessonId, courseId, { path: assinado.path, name: file.name, size: file.size });
+        if (!salvo.ok) throw new Error(salvo.error);
+        enviados++;
+      } catch (err: any) {
+        const msg = String(err?.message || err?.error || "falha desconhecida");
+        falhas.push(
+          /exceeded|too large|payload/i.test(msg)
+            ? `${file.name} passou do limite de tamanho do Storage. Aumente o limite no Supabase ou use um link.`
+            : `${file.name}: ${msg}`
+        );
+      }
     }
+    setEnviando("");
+    if (enviados) {
+      setOk(enviados === 1 ? "Arquivo adicionado à aula." : `${enviados} arquivos adicionados à aula.`);
+      router.refresh();
+    }
+    if (falhas.length) setErro(`Não consegui enviar: ${falhas.join(" · ")}`);
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-label font-medium text-ds-text-2">Arquivo</label>
-      <input type="hidden" name="file_path" value={path} />
-      <input type="hidden" name="file_name" value={name} />
-      <input type="hidden" name="file_size" value={size || ""} />
-
-      <div className="flex flex-wrap items-center gap-3 rounded-ctl border border-ds-line bg-ds-surface px-3 py-2.5">
-        {name ? (
-          <span className="inline-flex min-w-0 items-center gap-2 text-body-sm text-ds-text">
-            <Paperclip size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className="shrink-0 text-ds-accent" />
-            <span className="truncate">{name}</span>
-            {size > 0 && <span className="shrink-0 font-mono text-caption tabular-nums text-ds-text-3">{tamanhoLegivel(size)}</span>}
-          </span>
-        ) : (
-          <span className="text-body-sm text-ds-text-3">Nenhum arquivo enviado.</span>
-        )}
-        <input
-          id={id}
-          type="file"
-          onChange={onFile}
-          disabled={enviando}
-          accept=".pbix,.pbit,.pbip,.zip,.xlsx,.xls,.csv,.pdf,.json,.pptx,.fig"
-          className="ml-auto block text-caption text-ds-text-2 file:mr-2 file:rounded-ctl file:border-0 file:bg-ds-raised file:px-3 file:py-1.5 file:text-caption file:font-medium file:text-ds-text hover:file:bg-ds-line disabled:opacity-50"
-        />
-      </div>
+    <div className="flex flex-col gap-2">
+      <label
+        htmlFor={id}
+        className={`flex cursor-pointer flex-col items-center gap-2 rounded-srf border border-dashed border-ds-line bg-ds-surface px-4 py-6 text-center transition-colors hover:border-ds-accent ${enviando ? "pointer-events-none opacity-60" : ""}`}
+      >
+        <UploadCloud size={ICON.lg} strokeWidth={ICON.stroke} aria-hidden="true" className="text-ds-accent" />
+        <span className="text-body-sm font-medium text-ds-text">Escolher arquivos para esta aula</span>
+        <span className="text-caption text-ds-text-3">.pbix, .pbit, .zip, .xlsx, .csv, .pdf e outros. Pode escolher vários. Cada um entra na aula assim que termina de subir.</span>
+      </label>
+      <input
+        id={id}
+        type="file"
+        multiple
+        onChange={onFiles}
+        disabled={!!enviando}
+        accept=".pbix,.pbit,.pbip,.zip,.xlsx,.xls,.csv,.pdf,.json,.pptx,.fig"
+        className="sr-only"
+      />
 
       {enviando && (
         <p className="inline-flex items-center gap-1.5 text-caption text-ds-info" role="status">
           <Loader2 size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className="animate-spin" />
-          Enviando arquivo. Arquivos grandes de Power BI podem levar um minuto.
+          {enviando}
         </p>
       )}
+      {ok && !enviando && <p className="text-caption text-ds-accent" role="status">{ok}</p>}
       {erro && <p className="text-caption text-ds-danger" role="alert">{erro}</p>}
     </div>
   );

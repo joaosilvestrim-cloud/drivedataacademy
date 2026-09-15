@@ -50,21 +50,24 @@ export default function MateriaisDaAula({
           ))}
         </ul>
       ) : (
-        <p className="text-caption text-ds-text-3">Nenhum arquivo ainda. Adicione o primeiro abaixo.</p>
+        <p className="text-caption text-ds-text-3">Nenhum arquivo ainda.</p>
       )}
 
-      <form action={salvarMaterialDaAula} className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
-        <input type="hidden" name="lesson_id" value={lessonId} />
-        <input type="hidden" name="course_id" value={courseId} />
-        <p className="text-label font-medium text-ds-text">Adicionar arquivo</p>
-        <Field scope={scope} name="title" label="Nome do material" required placeholder="Dashboard de Vendas - arquivo .pbix" />
-        <TextareaField scope={scope} name="description" label="Descrição" rows={2} description="O que tem dentro e para que serve. Opcional." />
-        <MaterialUpload scope={scope} />
-        <Field scope={scope} name="external_url" label="Ou um link" type="url" description="Drive, GitHub ou outro. Usado quando não há arquivo." />
-        <div>
-          <Button type="submit" size="sm">Adicionar à aula</Button>
-        </div>
-      </form>
+      <MaterialUpload scope={scope} lessonId={lessonId} courseId={courseId} />
+
+      <details className="rounded-srf border border-ds-line">
+        <summary className="cursor-pointer px-4 py-3 text-label font-medium text-ds-text-2">Adicionar um link em vez de arquivo</summary>
+        <form action={salvarMaterialDaAula} className="flex flex-col gap-4 border-t border-ds-line-soft p-4">
+          <input type="hidden" name="lesson_id" value={lessonId} />
+          <input type="hidden" name="course_id" value={courseId} />
+          <Field scope={scope} name="title" label="Nome do material" required placeholder="Dashboard de Vendas no Drive" />
+          <TextareaField scope={scope} name="description" label="Descrição" rows={2} description="O que tem dentro e para que serve. Opcional." />
+          <Field scope={scope} name="external_url" label="Link" type="url" required description="Drive, GitHub ou outro." />
+          <div>
+            <Button type="submit" size="sm">Adicionar link à aula</Button>
+          </div>
+        </form>
+      </details>
     </div>
   );
 }

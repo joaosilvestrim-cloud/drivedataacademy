@@ -307,6 +307,29 @@ export async function assinarUploadMaterial(nomeArquivo: string) {
   return { ok: true as const, path: data.path, token: data.token };
 }
 
+/* Chamada pelo MaterialUpload assim que o arquivo termina de subir: o arquivo já
+   entra na aula, sem um segundo passo de formulário. O nome vem do arquivo. */
+export async function registrarArquivoDaAula(lessonId: string, courseId: string, arquivo: { path: string; name: string; size: number }) {
+  const supabase = await admin();
+  const title = arquivo.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim() || arquivo.name;
+  const { count } = await supabase.from("ready_materials").select("*", { count: "exact", head: true }).eq("lesson_id", lessonId);
+  const { error } = await supabase.from("ready_materials").insert({
+    lesson_id: lessonId,
+    title,
+    description: null,
+    category: "outro",
+    file_path: arquivo.path,
+    file_name: arquivo.name,
+    file_size: arquivo.size || null,
+    external_url: null,
+    published: true,
+    position: count ?? 0,
+  });
+  if (error) return { ok: false as const, error: error.message };
+  refresh(courseId);
+  return { ok: true as const };
+}
+
 export async function salvarMaterialDaAula(formData: FormData) {
   const supabase = await admin();
   const lesson_id = formData.get("lesson_id") as string;
