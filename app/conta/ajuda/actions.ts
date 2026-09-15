@@ -7,13 +7,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendHtmlEmail } from "@/lib/email";
 import { CATEGORIES } from "@/lib/support";
 import { askSupportAI } from "@/lib/ai";
+import { contextoPlataforma } from "@/lib/assistente-contexto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
+// Chamado: a IA recebe os dados atuais da plataforma, lidos do banco agora.
 async function courseContext(admin: SupabaseClient): Promise<string> {
-  const { data } = await admin.from("courses").select("title, subtitle").eq("published", true).order("position");
-  return (data ?? []).map((c: any) => `- ${c.title}${c.subtitle ? `: ${c.subtitle}` : ""}`).join("\n");
+  return contextoPlataforma(admin);
 }
 
 // Faz a IA responder o chamado (se a Groq estiver configurada) e marca o status.
