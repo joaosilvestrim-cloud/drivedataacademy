@@ -54,6 +54,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Assinatura", href: "/admin/turma", icon: "launch" },
       { label: "Workshops", href: "/admin/workshops", icon: "live" },
       { label: "Acessos", href: "/admin/acessos", icon: "access" },
+      { label: "Pagamentos e e-mails", href: "/admin/operacao", icon: "billing" },
       { label: "Cupons", href: "/admin/cupons", icon: "billing" },
       { label: "Turmas / lotes", href: "/admin/turmas", icon: "cohort" },
     ],
@@ -76,7 +77,10 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Assistente IA", href: "/admin/ia", icon: "community" },
     ],
   },
-  { title: "Sistema", items: [{ label: "Configurações", href: "/admin/settings", icon: "settings" }] },
+  { title: "Sistema", items: [
+    { label: "Integrações", href: "/admin/operacao#integracoes", icon: "settings" },
+    { label: "Configurações", href: "/admin/settings", icon: "settings" },
+  ] },
 ];
 
 type Badges = Record<string, number>;

@@ -66,18 +66,40 @@ async function buildAttachment(title: string, url: string | null) {
 }
 
 // Envio genérico via Resend. Sem chave configurada, retorna { sent: false }.
-export async function sendHtmlEmail(to: string, subject: string, html: string, remetente?: string): Promise<{ sent: boolean; reason?: string }> {
+export type EmailMeta = { kind?: string; orderId?: string | null };
+
+/* Cada envio fica em email_log, enviado ou não. É o que o painel de operação
+   usa para conferir se quem pagou recebeu o código. O registro nunca derruba
+   o envio: se a tabela não existir ainda, o erro é engolido. */
+async function registrarEmail(to: string, subject: string, meta: EmailMeta | undefined, status: "sent" | "failed", reason?: string, providerId?: string) {
+  try {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    await createAdminClient().from("email_log").insert({
+      to_email: to, subject, kind: meta?.kind || "outro", status, reason: reason || null, provider_id: providerId || null, order_id: meta?.orderId || null,
+    });
+  } catch { /* sem registro, sem drama */ }
+}
+
+export async function sendHtmlEmail(to: string, subject: string, html: string, remetente?: string, meta?: EmailMeta): Promise<{ sent: boolean; reason?: string }> {
   const key = process.env.RESEND_API_KEY;
-  if (!key) return { sent: false, reason: "not-configured" };
+  if (!key) { await registrarEmail(to, subject, meta, "failed", "not-configured"); return { sent: false, reason: "not-configured" }; }
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ from: resolveFrom(remetente), to, subject, html }),
     });
-    if (!res.ok) return { sent: false, reason: `resend-${res.status}` };
+    if (!res.ok) {
+      const corpo = (await res.text().catch(() => "")).slice(0, 300);
+      const reason = `resend-${res.status}${corpo ? ": " + corpo : ""}`;
+      await registrarEmail(to, subject, meta, "failed", reason);
+      return { sent: false, reason: `resend-${res.status}` };
+    }
+    const json = await res.json().catch(() => ({}));
+    await registrarEmail(to, subject, meta, "sent", undefined, json?.id);
     return { sent: true };
   } catch {
+    await registrarEmail(to, subject, meta, "failed", "network");
     return { sent: false, reason: "network" };
   }
 }
@@ -98,14 +120,14 @@ function shell(title: string, bodyHtml: string): string {
 }
 
 // Boas-vindas quando o aluno ganha acesso full.
-export async function sendAccessGrantedEmail(to: string, name: string, siteUrl: string) {
+export async function sendAccessGrantedEmail(to: string, name: string, siteUrl: string, orderId?: string | null) {
   const firstName = esc((name || "").split(" ")[0] || "");
   const body = `
     <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Seu acesso à DriveData Academy foi liberado. 🎉</p>
     <p style="margin:0 0 20px;color:#cbd5e1">Agora você tem acesso à <b style="color:#fff">comunidade, às lives e às gravações</b>, às ferramentas e ao preço de assinante nos treinamentos.</p>
     <a href="${siteUrl}/conta" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Entrar na plataforma</a>
     <p style="margin:24px 0 0;color:#64748b;font-size:12px">Bons estudos!</p>`;
-  return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body), "RESEND_FROM_CONTA");
+  return sendHtmlEmail(to, "Seu acesso foi liberado 🎉", shell("Bem-vindo(a)!", body), "RESEND_FROM_CONTA", { kind: "acesso", orderId });
 }
 
 // Treinamento comprado pelo assinante: pagamento confirmado, curso liberado.
@@ -116,7 +138,7 @@ export async function sendCoursePurchasedEmail(to: string, name: string, courseT
     <p style="margin:0 0 20px;color:#cbd5e1">O treinamento <b style="color:#fff">${esc(courseTitle)}</b> já está liberado na sua conta.</p>
     <a href="${courseUrl}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Começar agora</a>
     <p style="margin:24px 0 0;color:#64748b;font-size:12px">Bons estudos!</p>`;
-  return sendHtmlEmail(to, `Treinamento liberado: ${courseTitle}`, shell("Treinamento liberado", body), "RESEND_FROM_CONTA");
+  return sendHtmlEmail(to, `Treinamento liberado: ${courseTitle}`, shell("Treinamento liberado", body), "RESEND_FROM_CONTA", { kind: "curso" });
 }
 
 // Correção de um desafio do Knowledge Universe: aprovado ou devolvido.
@@ -170,7 +192,7 @@ function blocoCodigo(codigo: string): string {
    filtros como o do Outlook abrem links antes da pessoa e gastam o token. O
    botão só leva para a tela onde o código é digitado, então pode ser aberto
    por qualquer robô sem estragar nada. */
-export async function sendAccountSetupEmail(to: string, name: string, codigo: string) {
+export async function sendAccountSetupEmail(to: string, name: string, codigo: string, orderId?: string | null) {
   const firstName = esc((name || "").split(" ")[0] || "");
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
   const tela = `${site}/redefinir-senha?email=${encodeURIComponent(to)}`;
@@ -187,7 +209,7 @@ export async function sendAccountSetupEmail(to: string, name: string, codigo: st
     </table>
     <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">O código vale por tempo limitado. Se expirar, peça outro em <a href="${site}/esqueci-senha" style="color:#15c47e">Criar ou trocar senha</a> usando este mesmo e-mail.</p>
     <p style="margin:12px 0 0;color:#64748b;font-size:12px">Se você não fez essa compra, ignore este e-mail.</p>`;
-  return sendHtmlEmail(to, "Pagamento confirmado: crie sua senha de acesso", shell("Sua conta está pronta", body), "RESEND_FROM_CONTA");
+  return sendHtmlEmail(to, "Pagamento confirmado: crie sua senha de acesso", shell("Sua conta está pronta", body), "RESEND_FROM_CONTA", { kind: "conta", orderId });
 }
 
 // Código para criar ou trocar a senha, pedido em /esqueci-senha.
@@ -200,7 +222,7 @@ export async function sendAccessCodeEmail(to: string, codigo: string) {
     <a href="${tela}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Digitar o código</a>
     <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">O código vale por tempo limitado e só o último pedido funciona.</p>
     <p style="margin:12px 0 0;color:#64748b;font-size:12px">Se não foi você, ignore este e-mail. Sua senha continua a mesma.</p>`;
-  return sendHtmlEmail(to, `Seu código de acesso: ${codigo}`, shell("Código de acesso", body), "RESEND_FROM_CONTA");
+  return sendHtmlEmail(to, `Seu código de acesso: ${codigo}`, shell("Código de acesso", body), "RESEND_FROM_CONTA", { kind: "codigo" });
 }
 
 // Confirmação de compra de workshop avulso: manda o link/acesso.

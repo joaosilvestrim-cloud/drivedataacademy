@@ -1,0 +1,20 @@
+/* Tipografia do corpo dos artigos. O HTML vem do markdown, então as tags são
+   estilizadas aqui em vez de por classe. */
+.artigo { color: #cbd5e1; font-size: 1.0625rem; line-height: 1.8; }
+.artigo > * + * { margin-top: 1.25em; }
+.artigo h2 { margin-top: 2.4em; font-family: var(--font-display), system-ui, sans-serif; font-size: 1.75rem; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: #fff; text-wrap: balance; }
+.artigo h3 { margin-top: 1.8em; font-family: var(--font-display), system-ui, sans-serif; font-size: 1.25rem; font-weight: 700; color: #fff; }
+.artigo h4 { margin-top: 1.5em; font-weight: 600; color: #fff; }
+.artigo p { margin-top: 1.1em; }
+.artigo strong { color: #fff; font-weight: 600; }
+.artigo a { color: #2ee6d6; text-decoration: underline; text-decoration-color: rgba(46, 230, 214, 0.35); text-underline-offset: 4px; }
+.artigo a:hover { text-decoration-color: #2ee6d6; }
+.artigo ul, .artigo ol { padding-left: 1.4em; }
+.artigo li { margin-top: 0.5em; padding-left: 0.25em; }
+.artigo ul li::marker { color: #34e8a0; }
+.artigo ol li::marker { color: #34e8a0; font-weight: 600; }
+.artigo blockquote { margin-top: 1.6em; border-left: 3px solid #34e8a0; padding: 0.25em 0 0.25em 1.25em; color: #e2e8f0; font-size: 1.15rem; line-height: 1.6; }
+.artigo blockquote p { margin: 0; }
+.artigo code { font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.9em; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 0.1em 0.4em; color: #e2e8f0; }
+.artigo hr { margin: 2.5em 0; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+@media (max-width: 640px) { .artigo { font-size: 1rem; } .artigo h2 { font-size: 1.5rem; } }

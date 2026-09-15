@@ -115,9 +115,9 @@ export async function POST(req: Request) {
       if (isNew) {
         const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email } as any);
         const codigo = ((link as any)?.properties?.email_otp as string) || "";
-        await sendAccountSetupEmail(order.email, order.name || "", codigo);
+        await sendAccountSetupEmail(order.email, order.name || "", codigo, order.id);
       } else {
-        await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL);
+        await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL, order.id);
       }
     }
     return NextResponse.json({ ok: true, anual: "active" });
@@ -180,9 +180,9 @@ export async function POST(req: Request) {
         if (isNew) {
           const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email: order.email } as any);
           const codigo = ((link as any)?.properties?.email_otp as string) || "";
-          await sendAccountSetupEmail(order.email, order.name || "", codigo);
+          await sendAccountSetupEmail(order.email, order.name || "", codigo, order.id);
         } else {
-          await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL);
+          await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL, order.id);
         }
       }
       return NextResponse.json({ ok: true, sub: "active" });

@@ -53,7 +53,7 @@ export default function BlogSectionView({ posts }: { posts: Post[] }) {
             </h2>
           </div>
           <a
-            href="#lista"
+            href="/blog"
             className="rounded-full border border-white/10 px-5 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
           >
             {t.blog.seeAll}
@@ -68,7 +68,7 @@ export default function BlogSectionView({ posts }: { posts: Post[] }) {
           const category = pick(p.category, p.category_en, p.category_es);
           return (
           <Reveal key={p.id} delay={i * 0.08}>
-            <article className="card-hover glass group flex h-full flex-col overflow-hidden rounded-3xl border border-white/8">
+            <a href={`/blog/${p.slug}`} className="card-hover glass group flex h-full flex-col overflow-hidden rounded-3xl border border-white/8">
               <div className="relative aspect-[16/9] overflow-hidden">
                 {p.cover_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -92,7 +92,7 @@ export default function BlogSectionView({ posts }: { posts: Post[] }) {
                 <p className="mt-2 flex-1 text-sm text-slate-400">{excerpt}</p>
                 <p className="mt-5 text-xs text-slate-500">{formatDate(p.published_at)}</p>
               </div>
-            </article>
+            </a>
           </Reveal>
           );
         })}
