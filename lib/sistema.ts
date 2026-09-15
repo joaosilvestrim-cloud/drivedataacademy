@@ -8,10 +8,15 @@ export type Check = { nome: string; ok: boolean | null; detalhe: string };
 
 const ASAAS_BASE = process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3";
 
+/* Nunca devolve o valor bruto quando ele é inválido: se alguém colar uma chave
+   no lugar do remetente, a tela não pode exibir a chave. */
 function remetente(valor: string | undefined): string {
   const raw = (valor || "").trim().replace(/^["']|["']$/g, "");
   const email = raw.match(/[^\s<>"']+@[^\s<>"']+\.[^\s<>"']+/)?.[0];
-  return email ? raw : raw ? `inválido: "${raw}"` : "não definido";
+  if (email) return raw;
+  if (!raw) return "não definido";
+  if (/^re_[A-Za-z0-9_]{10,}$/.test(raw)) return "inválido: contém uma chave de API do Resend, não um endereço de e-mail (valor oculto)";
+  return `inválido: não é um endereço de e-mail (valor oculto, ${raw.length} caracteres)`;
 }
 
 async function comTempo<T>(fn: (sinal: AbortSignal) => Promise<T>, ms = 6000): Promise<T> {
