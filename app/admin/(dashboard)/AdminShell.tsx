@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
@@ -99,21 +99,31 @@ function NavList({ onNavigate, badges }: { onNavigate?: () => void; badges?: Bad
           <ul className="space-y-0.5">
             {group.items.map((it) => {
               const active = isActive(it.href);
+              const qtd = badges?.[it.href] ?? 0;
+              const pend = qtd > 0;
               return (
                 <li key={it.href}>
                   <Link
                     href={it.href}
                     onClick={onNavigate}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                      active ? "bg-white/10 font-medium text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"
+                    className={`relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2 text-sm transition-colors ${
+                      active ? "bg-white/10 font-medium text-white" : pend ? "font-medium text-amber-100 hover:bg-white/5" : "text-slate-300 hover:bg-white/5 hover:text-white"
                     }`}
                   >
+                    {/* Pendência: o fundo pulsa até alguém atuar. */}
+                    {pend && !active && <span aria-hidden="true" className="pointer-events-none absolute inset-0 animate-pulse rounded-lg bg-amber-400/15 ring-1 ring-inset ring-amber-400/40" />}
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={active ? "text-brand-green" : "text-slate-500"}>
                       <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                     {it.label}
-                    {!!badges?.[it.href] && (
-                      <span className="ml-auto grid min-w-5 place-items-center rounded-full bg-brand-green px-1.5 text-[0.65rem] font-bold text-ink-900">{badges[it.href]}</span>
+                    {pend && (
+                      <span className="relative ml-auto flex">
+                        <span aria-hidden="true" className="absolute inset-0 animate-ping rounded-full bg-amber-400 opacity-60" />
+                        <span className="relative grid min-w-5 place-items-center rounded-full bg-amber-400 px-1.5 text-[0.65rem] font-bold text-ink-900">
+                          {qtd}
+                          <span className="sr-only"> pendente{qtd === 1 ? "" : "s"}</span>
+                        </span>
+                      </span>
                     )}
                   </Link>
                 </li>
@@ -126,15 +136,53 @@ function NavList({ onNavigate, badges }: { onNavigate?: () => void; badges?: Bad
   );
 }
 
-export default function AdminShell({ email, children, badges }: { email: string; children: React.ReactNode; badges?: Badges }) {
+// A cada 45 s o menu pergunta ao servidor o que está pendente. Também
+// atualiza ao trocar de tela, para o badge sumir logo depois de atuar.
+const INTERVALO_MS = 45_000;
+
+export default function AdminShell({ email, children, badges: inicial }: { email: string; children: React.ReactNode; badges?: Badges }) {
   const [open, setOpen] = useState(false);
+  const [badges, setBadges] = useState<Badges>(inicial ?? {});
+  const pathname = usePathname();
+
+  useEffect(() => { setBadges(inicial ?? {}); }, [inicial]);
+
+  useEffect(() => {
+    let vivo = true;
+    async function atualizar() {
+      if (document.hidden) return;
+      try {
+        const r = await fetch("/api/admin/pendencias", { cache: "no-store" });
+        if (r.ok && vivo) setBadges(await r.json());
+      } catch { /* sem rede: mantém o último valor */ }
+    }
+    atualizar();
+    const id = setInterval(atualizar, INTERVALO_MS);
+    const aoVoltar = () => { if (!document.hidden) atualizar(); };
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => { vivo = false; clearInterval(id); document.removeEventListener("visibilitychange", aoVoltar); };
+  }, [pathname]);
+
+  const total = Object.values(badges).reduce((t, n) => t + (n || 0), 0);
+
+  // Total no título da aba: dá para ver de outra aba que chegou algo.
+  useEffect(() => {
+    const limpo = document.title.replace(/^\(\d+\) /, "");
+    document.title = total > 0 ? `(${total}) ${limpo}` : limpo;
+  }, [total, pathname]);
 
   return (
     <div className="min-h-screen">
       {/* Barra superior (mobile) */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur lg:hidden">
-        <button onClick={() => setOpen(true)} aria-label="Menu" className="grid h-9 w-9 place-items-center rounded-lg border border-white/10">
+        <button onClick={() => setOpen(true)} aria-label={total > 0 ? `Menu, ${total} pendência${total === 1 ? "" : "s"}` : "Menu"} className="relative grid h-9 w-9 place-items-center rounded-lg border border-white/10">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" /></svg>
+          {total > 0 && (
+            <span aria-hidden="true" className="absolute -right-1 -top-1 flex h-3 w-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-amber-400" />
+            </span>
+          )}
         </button>
         <span className="font-display text-sm font-bold text-white">Portal <span className="text-gradient">DriveData</span></span>
         <SignOutButton />
