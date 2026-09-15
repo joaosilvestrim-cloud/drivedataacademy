@@ -87,7 +87,7 @@ export async function contextoAluno(admin: SupabaseClient, user: { id: string; e
   linhas.push(`- Primeiro nome: ${(perfil?.full_name || "").split(" ")[0] || "não informado"}`);
   linhas.push(
     ativa
-      ? `- Assinatura: ATIVA${ativa.expires_at ? `, válida até ${data(ativa.expires_at)}` : ", sem data de fim"} (${ativa.source === "annual" ? "plano anual" : ativa.source === "admin" ? "liberada pelo time" : "assinatura"}).`
+      ? `- Assinatura: ATIVA${ativa.expires_at ? `, válida até ${data(ativa.expires_at)}` : ", sem data de fim"} (${ativa.source === "annual" ? "plano anual" : ativa.source === "admin" ? "liberada pelo time" : "assinatura"}). Essa data não aparece em nenhuma tela da plataforma: informe a data e não indique onde conferir.`
       : vencida
       ? `- Assinatura: VENCIDA em ${data(vencida.expires_at)}. Pode renovar em /matricula.`
       : "- Assinatura: não tem assinatura ativa."
