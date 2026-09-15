@@ -5,9 +5,9 @@ import TurmaForm from "./TurmaForm";
 import { Button } from "@/components/ui/primitives";
 import { CheckboxField, FormSection, FormActions } from "@/components/ui/form";
 import { SUB_INCLUDES, parseIncludes } from "@/lib/subscription";
-import { saveSubIncludes } from "./actions";
+import { saveSubIncludes, salvarMenuAssinatura } from "./actions";
 
-const KEYS = ["sub_price", "sub_price_annual", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "checkout_whatsapp", "sub_includes"];
+const KEYS = ["sub_price", "sub_price_annual", "full_access_price", "turma_nome", "turma_descricao", "sales_open", "checkout_whatsapp", "sub_includes", "menu_assinatura_aberta"];
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +103,25 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
       <div className="mt-6">
         <TurmaForm initial={initial} asaasOn={asaasOn} currentPrice={price} />
       </div>
+
+      {/* Item Assinatura no menu público: "em breve" até ser liberado. */}
+      <form action={salvarMenuAssinatura} className="mt-10 flex max-w-2xl flex-col gap-6">
+        <FormSection
+          title="Assinatura no menu do site"
+          description="Desligado, o item Assinatura aparece como “em breve” no cabeçalho e no rodapé, sem link. As páginas /cursos e /matricula continuam abertas para quem tiver o endereço."
+        >
+          <CheckboxField
+            scope="menu"
+            name="menu_assinatura_aberta"
+            label="Liberar Assinatura no menu"
+            description="Ao salvar, o site passa a mostrar o link em até 1 minuto."
+            defaultChecked={(initial as Record<string, string>).menu_assinatura_aberta === "1"}
+          />
+        </FormSection>
+        <FormActions>
+          <Button type="submit" size="sm">Salvar menu</Button>
+        </FormActions>
+      </form>
 
       {/* O que a assinatura inclui */}
       <form action={saveSubIncludes} className="mt-10 flex max-w-2xl flex-col gap-6">

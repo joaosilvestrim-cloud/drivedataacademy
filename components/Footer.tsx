@@ -3,6 +3,9 @@
 import { useT } from "@/lib/i18n/LanguageProvider";
 import { usePathname } from "next/navigation";
 import { NAV_HREFS, resolverAncora } from "./Navbar";
+import { useAssinaturaAberta } from "./useMenuPublico";
+
+const EM_BREVE: Record<string, string> = { Assinatura: "em breve", Membership: "soon", "Membresía": "pronto" };
 
 const SOCIALS = [
   {
@@ -41,6 +44,7 @@ function SocialIcon({ type }: { type: string }) {
 export default function Footer() {
   const t = useT();
   const pathname = usePathname();
+  const assinaturaAberta = useAssinaturaAberta();
   const academyLinks = NAV_HREFS.map((href, i) => ({ href: resolverAncora(href, pathname), label: t.nav.links[i] }));
 
   return (
@@ -84,9 +88,15 @@ export default function Footer() {
             <ul className="mt-4 space-y-2.5">
               {academyLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className="text-sm text-slate-400 transition-colors hover:text-brand-green">
-                    {l.label}
-                  </a>
+                  {l.href === "/cursos" && !assinaturaAberta ? (
+                    <span aria-disabled="true" className="text-sm text-slate-500">
+                      {l.label} <span className="text-xs">({EM_BREVE[l.label] || "em breve"})</span>
+                    </span>
+                  ) : (
+                    <a href={l.href} className="text-sm text-slate-400 transition-colors hover:text-brand-green">
+                      {l.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

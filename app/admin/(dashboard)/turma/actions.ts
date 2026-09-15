@@ -90,3 +90,17 @@ export async function saveTurma(formData: FormData) {
   revalidatePath("/matricula");
   redirect("/admin/turma?ok=1");
 }
+
+/* Libera ou volta para "em breve" o item Assinatura do menu público. */
+export async function salvarMenuAssinatura(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+  const aberto = formData.get("menu_assinatura_aberta") === "on";
+  const { error } = await createAdminClient()
+    .from("site_settings")
+    .upsert({ key: "menu_assinatura_aberta", value: aberto ? "1" : "0", updated_at: new Date().toISOString() }, { onConflict: "key" });
+  if (error) fail(error.message);
+  revalidatePath("/api/menu");
+  revalidatePath("/admin/turma");
+  redirect("/admin/turma?ok=" + encodeURIComponent(aberto ? "Assinatura liberada no menu do site." : "Assinatura voltou a aparecer como em breve no menu do site."));
+}

@@ -5,12 +5,15 @@ import { usePathname } from "next/navigation";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import LangSwitcher from "./LangSwitcher";
 import AccountNav from "./AccountNav";
+import { useAssinaturaAberta } from "./useMenuPublico";
 
 // Âncoras fixas; os rótulos vêm do dicionário (nav.links), na mesma ordem.
 export const NAV_HREFS = ["/cursos", "#metodo", "#empresas", "#blog", "#instrutora"];
 
-// Item do menu que ganha destaque visual: a página da assinatura.
+// Item do menu que ganha destaque visual: a página da assinatura. Enquanto não
+// for liberado em Admin > Vendas > Assinatura, aparece sem link, como "em breve".
 const DESTAQUE = "/cursos";
+const EM_BREVE: Record<string, string> = { Assinatura: "em breve", Membership: "soon", "Membresía": "pronto" };
 
 /* As âncoras só existem na home. Em /cursos, /matricula e nas outras páginas
    que montam o mesmo cabeçalho, clicar em "#metodo" não fazia nada, porque a
@@ -24,6 +27,7 @@ export function resolverAncora(href: string, pathname: string | null) {
 export default function Navbar() {
   const t = useT();
   const pathname = usePathname();
+  const assinaturaAberta = useAssinaturaAberta();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -53,10 +57,15 @@ export default function Navbar() {
             <li key={l.href}>
               {l.href === DESTAQUE ? (
                 <a
-                  href={l.href}
-                  className="relative whitespace-nowrap px-3 py-2 text-sm font-semibold text-white transition-colors after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-brand-green hover:text-brand-green"
+                  href={assinaturaAberta ? l.href : undefined}
+                  aria-disabled={assinaturaAberta ? undefined : true}
+                  title={assinaturaAberta ? undefined : "Liberamos nos próximos dias"}
+                  className={`relative inline-flex items-baseline gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-semibold transition-colors after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full ${
+                    assinaturaAberta ? "text-white after:bg-brand-green hover:text-brand-green" : "cursor-default text-white/80 after:bg-brand-green/40"
+                  }`}
                 >
                   {l.label}
+                  {!assinaturaAberta && <span className="text-[0.7rem] font-normal text-slate-400">{EM_BREVE[l.label] || "em breve"}</span>}
                 </a>
               ) : (
                 <a
@@ -96,7 +105,8 @@ export default function Navbar() {
           {links.map((l) => (
             <a
               key={l.href}
-              href={l.href}
+              href={l.href === DESTAQUE && !assinaturaAberta ? undefined : l.href}
+              aria-disabled={l.href === DESTAQUE && !assinaturaAberta ? true : undefined}
               onClick={() => setOpen(false)}
               className={
                 l.href === DESTAQUE
@@ -104,7 +114,14 @@ export default function Navbar() {
                   : "block rounded-xl px-4 py-3 text-slate-200 hover:bg-white/5"
               }
             >
-              {l.href === DESTAQUE ? <span className="border-b-2 border-brand-green pb-0.5">{l.label}</span> : l.label}
+              {l.href === DESTAQUE ? (
+                <>
+                  <span className={`border-b-2 pb-0.5 ${assinaturaAberta ? "border-brand-green" : "border-brand-green/40"}`}>{l.label}</span>
+                  {!assinaturaAberta && <span className="ml-2 text-xs font-normal text-slate-400">{EM_BREVE[l.label] || "em breve"}</span>}
+                </>
+              ) : (
+                l.label
+              )}
             </a>
           ))}
           <div className="mt-2 border-t border-white/10 px-2 pt-3 sm:hidden">
