@@ -6,13 +6,15 @@
    muda para o admin. */
 
 export type Field = { name: string; label: string; type: "text" | "textarea" | "number" | "select"; options?: string[]; ph?: string };
-export type Form = { key: string; icon: string; title: string; desc: string; cta: string; fields: Field[] };
+// saibaMais: link opcional para conhecer o produto antes de preencher o funil.
+export type Form = { key: string; icon: string; title: string; desc: string; cta: string; saibaMais?: { label: string; href: string }; fields: Field[] };
 
 const FORMS: Form[] = [
   {
     key: "portal", icon: "M3 3v18h18M7 14l3-3 3 3 5-6", title: "Venda autorizada Portal BI",
     desc: "Revenda o Portal BI da DriveData e ganhe recorrência com a gente. Simule abaixo e registre seu interesse.",
     cta: "Quero revender",
+    saibaMais: { label: "Conheça o Portal Fabric", href: "https://www.drivedata.com.br/portal-fabric" },
     fields: [
       { name: "clientes", label: "Quantos clientes você pretende levar?", type: "number", ph: "10" },
       { name: "mensalidade", label: "Mensalidade estimada por cliente (R$)", type: "number", ph: "300" },

@@ -7,7 +7,10 @@ import LangSwitcher from "./LangSwitcher";
 import AccountNav from "./AccountNav";
 
 // Âncoras fixas; os rótulos vêm do dicionário (nav.links), na mesma ordem.
-export const NAV_HREFS = ["/cursos", "#marketplace", "#metodo", "#empresas", "#blog", "#instrutora"];
+export const NAV_HREFS = ["/cursos", "#metodo", "#empresas", "#blog", "#instrutora"];
+
+// Item do menu que ganha destaque visual: a página da assinatura.
+const DESTAQUE = "/cursos";
 
 /* As âncoras só existem na home. Em /cursos, /matricula e nas outras páginas
    que montam o mesmo cabeçalho, clicar em "#metodo" não fazia nada, porque a
@@ -48,12 +51,25 @@ export default function Navbar() {
         <ul className="hidden items-center gap-0.5 lg:flex">
           {links.map((l) => (
             <li key={l.href}>
-              <a
-                href={l.href}
-                className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-brand-green"
-              >
-                {l.label}
-              </a>
+              {l.href === DESTAQUE ? (
+                <a
+                  href={l.href}
+                  className="relative mr-1 inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-brand-green/50 bg-brand-green/10 px-3.5 py-1.5 text-sm font-semibold text-brand-green shadow-[0_0_20px_-6px_rgba(52,232,160,0.7)] transition-colors hover:border-brand-green hover:bg-brand-green/20"
+                >
+                  <span aria-hidden="true" className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green opacity-70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-green" />
+                  </span>
+                  {l.label}
+                </a>
+              ) : (
+                <a
+                  href={l.href}
+                  className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-brand-green"
+                >
+                  {l.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
@@ -86,8 +102,13 @@ export default function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block rounded-xl px-4 py-3 text-slate-200 hover:bg-white/5"
+              className={
+                l.href === DESTAQUE
+                  ? "mb-1 flex items-center gap-2 rounded-xl border border-brand-green/40 bg-brand-green/10 px-4 py-3 font-semibold text-brand-green"
+                  : "block rounded-xl px-4 py-3 text-slate-200 hover:bg-white/5"
+              }
             >
+              {l.href === DESTAQUE && <span aria-hidden="true" className="h-2 w-2 rounded-full bg-brand-green" />}
               {l.label}
             </a>
           ))}

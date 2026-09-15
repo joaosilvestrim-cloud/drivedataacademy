@@ -60,7 +60,8 @@ export default async function AgendaPage() {
       {/* Próxima live em destaque */}
       {next ? (
         <div className="mt-6 glow-border overflow-hidden rounded-3xl">
-          <div className="glass relative p-6 sm:p-8">
+          <div className={`glass relative p-6 sm:p-8 ${next.cover_url ? "grid gap-6 lg:grid-cols-[1fr_24rem] lg:items-center" : ""}`}>
+            <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               {isLiveNow(next) ? (
                 <span className="inline-flex items-center gap-2 rounded-full bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-300">
@@ -85,6 +86,11 @@ export default async function AgendaPage() {
                 <span className="mt-5 inline-block rounded-xl border border-white/10 px-6 py-3 text-sm font-medium text-slate-400">O link libera no horário</span>
               )
             ))}
+            </div>
+            {next.cover_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={next.cover_url} alt={`Banner: ${next.title}`} className="order-first aspect-[16/9] w-full rounded-2xl border border-white/10 object-cover lg:order-last" />
+            )}
           </div>
         </div>
       ) : (
@@ -105,7 +111,12 @@ export default async function AgendaPage() {
             {rest.map((l: any) => (
               <li key={l.id} className="relative">
                 <span className="absolute -left-[31px] top-4 grid h-6 w-6 place-items-center rounded-full border border-white/10 bg-ink-800 text-[0.6rem] font-bold text-brand-green">{shortDate(l.starts_at).split(" ")[0]}</span>
-                <div className="glass rounded-2xl border border-white/8 p-5">
+                <div className="glass flex flex-col gap-4 rounded-2xl border border-white/8 p-5 sm:flex-row sm:items-start">
+                  {l.cover_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={l.cover_url} alt={`Banner: ${l.title}`} className="aspect-[16/9] w-full shrink-0 rounded-xl border border-white/10 object-cover sm:w-56" />
+                  )}
+                  <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-display text-lg font-bold text-white">{l.title}</h3>
                     {l.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>}
@@ -117,6 +128,7 @@ export default async function AgendaPage() {
                     {l.url && /youtu/.test(l.url) && (
                       <a href={l.url} target="_blank" rel="noreferrer" className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-200 hover:bg-red-500/20">Abrir no YouTube ↗</a>
                     )}
+                  </div>
                   </div>
                 </div>
               </li>
@@ -133,9 +145,14 @@ export default async function AgendaPage() {
             {past.map((l: any) => (
               <div key={l.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4">
                 <div className="flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-slate-300">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zM10 9l5 3-5 3V9z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  </span>
+                  {l.cover_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={l.cover_url} alt="" className="aspect-[16/9] w-24 shrink-0 rounded-lg border border-white/10 object-cover sm:w-32" />
+                  ) : (
+                    <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-slate-300">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zM10 9l5 3-5 3V9z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </span>
+                  )}
                   <div>
                     <p className="font-medium text-white">{l.title}</p>
                     <p className="text-xs text-slate-500">{fmt(l.starts_at)}</p>

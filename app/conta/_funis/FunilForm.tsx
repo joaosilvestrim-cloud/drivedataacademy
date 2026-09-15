@@ -47,6 +47,24 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
         <>
           <h2 className="font-display text-xl font-bold text-white">{form.title}</h2>
           <p className="mt-1 text-sm text-slate-400">{form.desc}</p>
+          {form.saibaMais && (
+            <a
+              href={form.saibaMais.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group mt-4 flex items-center justify-between gap-4 rounded-2xl border border-brand-blue/30 bg-brand-blue/[0.07] px-4 py-3 transition-colors hover:border-brand-blue/60 hover:bg-brand-blue/[0.12]"
+            >
+              <span>
+                <span className="block text-sm font-semibold text-white">{form.saibaMais.label}</span>
+                <span className="block text-xs text-slate-400">Veja o produto, os casos de uso e a calculadora de retorno antes de registrar seu interesse.</span>
+              </span>
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900">
+                Conheça mais
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="transition-transform group-hover:translate-x-0.5"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <span className="sr-only"> (abre em nova aba)</span>
+              </span>
+            </a>
+          )}
         </>
       )}
 
