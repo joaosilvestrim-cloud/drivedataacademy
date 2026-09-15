@@ -135,14 +135,16 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                 )}
 
                 <div className="mt-5" id="comprar">
-                  {emBreve ? (
-                    <button disabled className="w-full cursor-not-allowed rounded-xl border border-amber-400/30 bg-amber-400/10 px-6 py-3.5 text-sm font-semibold text-amber-300">
-                      Em breve
-                    </button>
-                  ) : enrolled ? (
+                  {/* Matrícula vem antes do Em breve: marcar um curso como Em breve fecha a
+                      venda, mas não tira o acesso de quem já estava matriculado. */}
+                  {enrolled ? (
                     <Link href={`/aprender/${course.slug}`} className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
                       Continuar curso
                     </Link>
+                  ) : emBreve ? (
+                    <button disabled className="w-full cursor-not-allowed rounded-xl border border-amber-400/30 bg-amber-400/10 px-6 py-3.5 text-sm font-semibold text-amber-300">
+                      Em breve
+                    </button>
                   ) : !user ? (
                     <Link href="/entrar" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
                       Entre para comprar
@@ -187,12 +189,12 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                   )}
                 </div>
                 <p className="mt-3 text-center text-xs text-slate-500">
-                  {emBreve
+                  {enrolled
+                    ? "Você já tem este treinamento."
+                    : emBreve
                     ? aVenda
                       ? `Estamos preparando as aulas. Quando abrir, assinantes compram por ${brl(precoAss!)}.`
                       : "Estamos preparando as aulas. Avisamos assim que abrir."
-                    : enrolled
-                    ? "Você já tem este treinamento."
                     : !assinaturaAtiva
                     ? "Treinamentos são vendidos só para assinantes, com preço especial."
                     : aVenda

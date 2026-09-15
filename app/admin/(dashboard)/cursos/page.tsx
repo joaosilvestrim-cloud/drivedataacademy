@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminError from "../AdminError";
 import { togglePublishCourse } from "./actions";
+import { brl } from "@/lib/precoCurso";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function CoursesAdminPage() {
   try {
     const supabase = createAdminClient();
     const [{ data: cs }, { data: ls }, { data: es }] = await Promise.all([
-      supabase.from("courses").select("id, title, slug, published, price, updated_at, coming_soon, members_only").order("updated_at", { ascending: false }),
+      supabase.from("courses").select("id, title, slug, published, price, subscriber_price, updated_at, coming_soon").order("updated_at", { ascending: false }),
       supabase.from("lessons").select("course_id"),
       supabase.from("enrollments").select("course_id"),
     ]);
@@ -54,12 +55,14 @@ export default async function CoursesAdminPage() {
                     Em breve
                   </span>
                 )}
-                {c.members_only && (
-                  <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-brand-blue">
-                    Assinantes
-                  </span>
-                )}
-                <span className="text-xs text-slate-500">{Number(c.price) > 0 ? `R$ ${Number(c.price).toFixed(2)}` : "Gratuito"}</span>
+                {/* Preço que vale hoje: o de assinante. O campo price é só o preço cheio de referência. */}
+                <span className="text-xs text-slate-400">
+                  {c.subscriber_price == null
+                    ? "Fora de venda"
+                    : Number(c.subscriber_price) === 0
+                    ? "Incluso na assinatura"
+                    : `${brl(Number(c.subscriber_price))} para assinantes`}
+                </span>
               </div>
               <Link href={`/admin/cursos/${c.id}`} className="mt-1 block truncate font-medium text-white hover:text-brand-green">{c.title}</Link>
               <p className="mt-0.5 text-xs text-slate-500">{lessonCounts[c.id] || 0} aula(s) · {enrollCounts[c.id] || 0} matrícula(s)</p>
