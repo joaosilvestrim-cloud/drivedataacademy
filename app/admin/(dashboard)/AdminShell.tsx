@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
+import FeedbackSalvamento from "./FeedbackSalvamento";
 
 const ICONS: Record<string, string> = {
   overview: "M3 11l9-8 9 8M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10",
@@ -227,6 +228,9 @@ export default function AdminShell({ email, children, badges: inicial }: { email
       <main className="lg:pl-60">
         <div className="mx-auto max-w-6xl px-6 py-8">{children}</div>
       </main>
+
+      {/* Retorno de salvamento de todos os formulários do admin. */}
+      <FeedbackSalvamento />
     </div>
   );
 }

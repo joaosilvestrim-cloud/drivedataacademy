@@ -1,0 +1,86 @@
+/* Retorno visual dos formulários do admin (FeedbackSalvamento.tsx). */
+
+@keyframes fs-gira { to { transform: rotate(360deg); } }
+@keyframes fs-entra { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fs-brilho { 0% { box-shadow: 0 0 0 0 rgba(52, 232, 160, 0.55); } 100% { box-shadow: 0 0 0 10px rgba(52, 232, 160, 0); } }
+
+/* Botão que disparou o envio: gira e trava. */
+[data-salvando] {
+  cursor: progress !important;
+  pointer-events: none;
+  opacity: 0.85;
+}
+[data-salvando]::after {
+  content: "";
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: 0.55em;
+  vertical-align: -0.1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 999px;
+  animation: fs-gira 0.7s linear infinite;
+}
+
+/* Botão depois de salvar: um pulso verde curto e o visto. */
+[data-salvo] { animation: fs-brilho 0.9s ease-out; }
+[data-salvo]::after { content: "✓"; margin-left: 0.5em; font-weight: 700; }
+
+/* Aviso no canto da tela. */
+.fs-area {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 80;
+  pointer-events: none;
+}
+.fs-toast {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 13rem;
+  max-width: min(26rem, calc(100vw - 2.5rem));
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0b1220;
+  color: #e6edf5;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  box-shadow: 0 12px 36px -12px rgba(0, 0, 0, 0.7);
+  animation: fs-entra 0.22s ease-out;
+}
+.fs-icone {
+  display: grid;
+  place-items: center;
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.fs-giro {
+  width: 0.95rem;
+  height: 0.95rem;
+  border: 2px solid #34e8a0;
+  border-right-color: transparent;
+  border-radius: 999px;
+  animation: fs-gira 0.7s linear infinite;
+}
+.fs-rodando { border-color: rgba(52, 232, 160, 0.3); }
+.fs-ok { border-color: rgba(52, 232, 160, 0.5); }
+.fs-ok .fs-icone { background: #34e8a0; color: #04140d; }
+.fs-erro { border-color: rgba(248, 113, 113, 0.55); }
+.fs-erro .fs-icone { background: #f87171; color: #1f0606; }
+.fs-texto { overflow-wrap: anywhere; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-salvando]::after, .fs-giro { animation-duration: 2s; }
+  [data-salvo], .fs-toast { animation: none; }
+}
+@media (max-width: 640px) {
+  .fs-area { left: 1rem; right: 1rem; bottom: 1rem; }
+  .fs-toast { max-width: none; }
+}
