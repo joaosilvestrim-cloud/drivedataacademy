@@ -3,15 +3,14 @@ import ScrollProgress from "@/components/ScrollProgress";
 import AncoraNaChegada from "@/components/AncoraNaChegada";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import LancamentoHoje from "@/components/LancamentoHoje";
 import LaunchBanner from "@/components/LaunchBanner";
-import ProximasMentorias from "@/components/mentorias/ProximasMentorias";
 import CoursesSection from "@/components/CoursesSection";
 import VideoSection from "@/components/VideoSection";
 import MethodSection from "@/components/MethodSection";
 import EnterpriseSection from "@/components/EnterpriseSection";
 import InstructorSection from "@/components/InstructorSection";
 import BlogSection from "@/components/BlogSection";
-import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 
 // Revalida a home periodicamente para refletir novos posts do blog.
@@ -25,8 +24,9 @@ export default function Home() {
       <AncoraNaChegada />
       <Navbar />
       <main>
+        {/* Estreia e grade de lives no topo. A lista de espera saiu da home. */}
+        <LancamentoHoje />
         <Hero />
-        <ProximasMentorias cta={{ label: "Entrar para participar", href: "/entrar" }} />
         <LaunchBanner />
         <CoursesSection />
         <VideoSection />
@@ -34,7 +34,6 @@ export default function Home() {
         <EnterpriseSection />
         <InstructorSection />
         <BlogSection />
-        <CTASection />
       </main>
       <Footer />
     </>

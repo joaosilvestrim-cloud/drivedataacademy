@@ -11,7 +11,7 @@ export const LANG_LABEL: Record<Lang, string> = {
 const pt = {
   nav: {
     links: ["Assinatura", "Método", "Para Empresas", "Blog", "Creators"],
-    cta: "Entrar na lista",
+    cta: "Assistir às lives",
     login: "Entrar",
     account: "Minha conta",
   },
@@ -197,7 +197,7 @@ type Dictionary = typeof pt;
 const en: Dictionary = {
   nav: {
     links: ["Membership", "Method", "For Business", "Blog", "Creators"],
-    cta: "Join the list",
+    cta: "Watch live",
     login: "Log in",
     account: "My account",
   },
@@ -381,7 +381,7 @@ const en: Dictionary = {
 const es: Dictionary = {
   nav: {
     links: ["Membresía", "Método", "Para Empresas", "Blog", "Creators"],
-    cta: "Unirme a la lista",
+    cta: "Ver en vivo",
     login: "Entrar",
     account: "Mi cuenta",
   },

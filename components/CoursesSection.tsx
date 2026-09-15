@@ -5,8 +5,8 @@ import { useT } from "@/lib/i18n/LanguageProvider";
 
 // Layout fixo por card (link/destaque); textos vêm do dicionário (courses.cards).
 const CARD_META = [
-  { href: "#lista", featured: false },
-  { href: "#lista", featured: true },
+  { href: "#ao-vivo", featured: false },
+  { href: "#ao-vivo", featured: true },
   { href: "#empresas", featured: false },
 ];
 

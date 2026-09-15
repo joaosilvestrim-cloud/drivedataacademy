@@ -79,8 +79,8 @@ export default async function MatriculaPage() {
           <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-16 text-center">
             <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Matrículas</p>
             <h1 className="mt-2 font-display text-3xl font-bold text-white">Inscrições fechadas no momento</h1>
-            <p className="mt-3 text-slate-300">Entre na lista de espera e avisamos assim que abrir.</p>
-            <Link href="/#lista" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Entrar na lista de espera</Link>
+            <p className="mt-3 text-slate-300">Enquanto isso, acompanhe as aulas abertas ao vivo.</p>
+            <Link href="/#ao-vivo" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Ver as próximas lives</Link>
           </div>
         ) : (
           <>

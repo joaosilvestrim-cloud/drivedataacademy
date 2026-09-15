@@ -83,7 +83,7 @@ export default function Navbar() {
           <AccountNav />
           <LangSwitcher className="hidden sm:flex" />
           <a
-            href={resolverAncora("#lista", pathname)}
+            href={resolverAncora("#ao-vivo", pathname)}
             className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-[0_0_24px_-4px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.03]"
           >
             {t.nav.cta}

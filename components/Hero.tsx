@@ -1,14 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import WaitlistForm from "./WaitlistForm";
 import { useT } from "@/lib/i18n/LanguageProvider";
 
 export default function Hero() {
   const t = useT();
   return (
-    <section id="inicio" className="relative mx-auto max-w-7xl px-6 pb-16 pt-36 sm:pt-44">
-      <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+    <section id="sobre" className="relative mx-auto max-w-7xl scroll-mt-28 px-6 py-16">
+      <div className="max-w-3xl">
         {/* Left — copy + CTA */}
         <div>
           <motion.h1
@@ -84,29 +83,6 @@ export default function Hero() {
           </motion.p>
         </div>
 
-        {/* Right — waitlist card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.15 }}
-          className="relative"
-        >
-          <div className="pointer-events-none absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-brand-green/20 via-transparent to-brand-blue/20 blur-2xl" />
-          <div id="lista" className="glow-border relative overflow-hidden rounded-[2rem] scroll-mt-28">
-            <div className="glass-strong relative rounded-[2rem] p-7 sm:p-9">
-              <div className="mb-5">
-                <p className="text-sm font-semibold text-brand-green">{t.hero.waitlistEyebrow}</p>
-                <h2 className="mt-2 font-display text-2xl font-bold leading-snug">
-                  {t.hero.waitlistTitle}
-                </h2>
-                <p className="mt-2 text-sm text-slate-400">
-                  {t.hero.waitlistText}
-                </p>
-              </div>
-              <WaitlistForm />
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
