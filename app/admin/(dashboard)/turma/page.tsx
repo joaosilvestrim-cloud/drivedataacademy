@@ -114,7 +114,7 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
             scope="menu"
             name="menu_assinatura_aberta"
             label="Liberar Assinatura no menu"
-            description="Ao salvar, o site passa a mostrar o link em até 1 minuto."
+            description="Ao salvar, o site passa a mostrar o link em até 30 segundos."
             defaultChecked={(initial as Record<string, string>).menu_assinatura_aberta === "1"}
           />
         </FormSection>
