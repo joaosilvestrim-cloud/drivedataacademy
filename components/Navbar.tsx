@@ -54,12 +54,8 @@ export default function Navbar() {
               {l.href === DESTAQUE ? (
                 <a
                   href={l.href}
-                  className="relative mr-1 inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-brand-green/50 bg-brand-green/10 px-3.5 py-1.5 text-sm font-semibold text-brand-green shadow-[0_0_20px_-6px_rgba(52,232,160,0.7)] transition-colors hover:border-brand-green hover:bg-brand-green/20"
+                  className="relative whitespace-nowrap px-3 py-2 text-sm font-semibold text-white transition-colors after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full after:bg-brand-green hover:text-brand-green"
                 >
-                  <span aria-hidden="true" className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green opacity-70" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-green" />
-                  </span>
                   {l.label}
                 </a>
               ) : (
@@ -104,12 +100,11 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={
                 l.href === DESTAQUE
-                  ? "mb-1 flex items-center gap-2 rounded-xl border border-brand-green/40 bg-brand-green/10 px-4 py-3 font-semibold text-brand-green"
+                  ? "block rounded-xl px-4 py-3 font-semibold text-white hover:bg-white/5"
                   : "block rounded-xl px-4 py-3 text-slate-200 hover:bg-white/5"
               }
             >
-              {l.href === DESTAQUE && <span aria-hidden="true" className="h-2 w-2 rounded-full bg-brand-green" />}
-              {l.label}
+              {l.href === DESTAQUE ? <span className="border-b-2 border-brand-green pb-0.5">{l.label}</span> : l.label}
             </a>
           ))}
           <div className="mt-2 border-t border-white/10 px-2 pt-3 sm:hidden">
