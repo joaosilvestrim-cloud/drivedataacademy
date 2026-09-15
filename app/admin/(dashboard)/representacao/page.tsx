@@ -54,7 +54,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Representação</h1>
+        <h1 className="font-display text-2xl font-bold text-white">Parceria & Negócios</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL de rep_requests no Supabase."} /></div>
       </div>
     );
@@ -62,7 +62,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Representação DriveData</h1>
+      <h1 className="font-display text-2xl font-bold text-white">Parceria & Negócios</h1>
       <p className="mt-1 text-sm text-slate-400">Solicitações dos alunos: revenda do Portal, parcerias, mentorias, candidaturas e marketplace.</p>
 
       <div className="mt-6">
@@ -89,7 +89,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
         counts.all === 0 ? (
           <EmptyState
             title="Nenhuma solicitação ainda"
-            description="Quando um aluno enviar um pedido pela página de Representação, ele chega aqui."
+            description="Quando um aluno enviar um pedido pela página de Parceria & Negócios, ele chega aqui."
           />
         ) : (
           <EmptyState

@@ -7,7 +7,8 @@
 
 export type Field = { name: string; label: string; type: "text" | "textarea" | "number" | "select"; options?: string[]; ph?: string };
 // saibaMais: link opcional para conhecer o produto antes de preencher o funil.
-export type Form = { key: string; icon: string; title: string; desc: string; cta: string; saibaMais?: { label: string; href: string }; fields: Field[] };
+export type Beneficio = { titulo: string; texto: string; icone: string };
+export type Form = { key: string; icon: string; title: string; desc: string; cta: string; saibaMais?: { label: string; href: string }; beneficios?: Beneficio[]; fields: Field[] };
 
 const FORMS: Form[] = [
   {
@@ -15,6 +16,11 @@ const FORMS: Form[] = [
     desc: "Revenda o Portal BI da DriveData e ganhe recorrência com a gente. Simule abaixo e registre seu interesse.",
     cta: "Quero revender",
     saibaMais: { label: "Conheça o Portal Fabric", href: "https://www.drivedata.com.br/portal-fabric" },
+    beneficios: [
+      { titulo: "Comissão recorrente", texto: "Ganhe comissão na instalação e também mensalmente sobre o faturamento de cada cliente ativo que você trouxer para a plataforma.", icone: "M12 3v18M16.5 7H10a3 3 0 000 6h4a3 3 0 010 6H7" },
+      { titulo: "Painel de acompanhamento", texto: "Dashboard exclusivo para monitorar seus clientes, indicações e comissões em tempo real.", icone: "M4 20V10M10 20V4M16 20v-7M22 20H2" },
+      { titulo: "Suporte técnico dedicado", texto: "Time especializado para dar suporte a você e aos seus clientes durante toda a jornada.", icone: "M4 14v-2a8 8 0 0116 0v2M4 14a2 2 0 002 2h1v-5H6a2 2 0 00-2 2zm16 0a2 2 0 01-2 2h-1v-5h1a2 2 0 012 2zM17 16v1a3 3 0 01-3 3h-2" },
+    ],
     fields: [
       { name: "clientes", label: "Quantos clientes você pretende levar?", type: "number", ph: "10" },
       { name: "mensalidade", label: "Mensalidade estimada por cliente (R$)", type: "number", ph: "300" },

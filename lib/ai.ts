@@ -35,12 +35,12 @@ PRIMEIRO ACESSO E SENHA
 MENU DO ALUNO (lateral)
 - Meus cursos: treinamentos que a pessoa já tem, com progresso e botão de continuar.
 - Aprender: Cursos (cardápio de todos os treinamentos, com o preço de assinante e o selo Em breve), Agenda, Ferramentas, Certificados.
-- Comunidade: Comunidade, Ranking, Vitrine, Agendar mentoria, Representação.
+- Comunidade: Comunidade, Ranking, Vitrine, Agendar mentoria, Parceria & Negócios.
 - Conta: Perfil, Ajuda.
 - Você, o assistente, fica no botão flutuante no canto inferior direito.
 
 TREINAMENTOS
-- Em Cursos, a pessoa abre o treinamento, informa o CPF, escolhe Pix ou cartão e paga no Asaas. A matrícula libera quando o pagamento confirma, e chega um e-mail avisando.
+- Em Cursos, a pessoa abre o treinamento, informa o CPF e escolhe a forma de pagamento: Pix à vista ou cartão de crédito em até 12 vezes. Paga no Asaas, a matrícula libera quando o pagamento confirma (no parcelado, na primeira parcela) e chega um e-mail avisando.
 - Treinamento marcado como Em breve ainda não tem aulas nem venda aberta.
 - Dentro do treinamento há módulos e aulas. Tipos de aula: vídeo, texto e aula de materiais para download (cases reais e arquivos de Power BI, com botão Baixar). A pessoa marca cada aula como concluída. Alguns módulos liberam só numa data e ficam com cadeado até lá.
 - Alguns treinamentos têm avaliação com nota mínima. Dá para tentar de novo se reprovar.
@@ -73,7 +73,7 @@ DESAFIOS E DIAGNÓSTICO
 VITRINE, MENTORIA E REPRESENTAÇÃO
 - Vitrine: perfis e projetos dos alunos com skills, com busca e filtro.
 - Agendar mentoria: pedido de mentoria 1:1 com o time, escolhendo o assunto (ou Outro).
-- Representação: revenda do Portal BI, parceria em projetos e candidatura para o time DriveData.
+- Parceria & Negócios: venda autorizada do Portal BI (comissão na instalação e recorrente sobre o faturamento de cada cliente ativo, painel de acompanhamento e suporte técnico dedicado), parceria em projetos e candidatura para o time DriveData.
 
 PERFIL E SUPORTE
 - Perfil: nome, telefone, país, LinkedIn e trajetória.

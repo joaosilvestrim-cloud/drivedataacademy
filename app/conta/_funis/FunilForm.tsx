@@ -65,6 +65,22 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
               </span>
             </a>
           )}
+          {form.beneficios && form.beneficios.length > 0 && (
+            <div className="mt-6 border-y border-white/10 py-5">
+              <p className="text-sm font-semibold text-white">O que você ganha como parceiro</p>
+              <ul className="mt-4 grid gap-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-white/10">
+                {form.beneficios.map((b, i) => (
+                  <li key={b.titulo} className={`flex flex-col gap-2 ${i === 0 ? "sm:pr-5" : i === form.beneficios!.length - 1 ? "sm:pl-5" : "sm:px-5"}`}>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-brand-green">
+                      <path d={b.icone} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span className="font-display text-base font-semibold leading-snug text-white">{b.titulo}</span>
+                    <span className="text-sm leading-relaxed text-slate-400">{b.texto}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </>
       )}
 

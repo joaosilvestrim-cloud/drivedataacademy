@@ -7,6 +7,12 @@
 
 export const VALOR_MINIMO_CURSO = 5;
 
+// Cartão parcela em até 12x, sem parcela abaixo do mínimo do Asaas.
+export const MAX_PARCELAS = 12;
+export function parcelasPossiveis(preco: number): number {
+  return Math.max(1, Math.min(MAX_PARCELAS, Math.floor(preco / VALOR_MINIMO_CURSO)));
+}
+
 export function descontoCurso(cheio: number, assinante: number | null): number {
   if (!(cheio > 0) || assinante == null || !(assinante >= 0) || assinante >= cheio) return 0;
   return Math.floor((1 - assinante / cheio) * 100);

@@ -85,7 +85,7 @@ export default async function CursosCardapio() {
                 ) : (
                   <span className="flex items-baseline gap-1.5">
                     <span className="font-display text-xl font-bold text-white">{brl(preco)}</span>
-                    <span className="text-xs text-slate-500">pagamento único</span>
+                    <span className="text-xs text-slate-500">Pix ou até 12x</span>
                   </span>
                 );
               const acao = c.coming_soon ? "Em breve" : preco != null && assinante ? (preco === 0 ? "Liberar" : "Ver e comprar") : "Ver detalhes";

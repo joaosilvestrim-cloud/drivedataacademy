@@ -60,7 +60,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Ranking", href: "/conta/ranking", icon: "ranking" },
       { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine" },
       { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria" },
-      { label: "Representação", href: "/conta/representacao", icon: "rep" },
+      { label: "Parceria & Negócios", href: "/conta/representacao", icon: "rep" },
     ],
   },
   {

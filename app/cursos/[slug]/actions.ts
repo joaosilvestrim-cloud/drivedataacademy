@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canAccessCourse, hasFullAccess } from "@/lib/access";
-import { VALOR_MINIMO_CURSO } from "@/lib/precoCurso";
+import { VALOR_MINIMO_CURSO, parcelasPossiveis } from "@/lib/precoCurso";
 
 const ASAAS_BASE = process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3";
 
@@ -48,11 +48,14 @@ export async function enrollFree(formData: FormData) {
   redirect(`/aprender/${slug}`);
 }
 
-/* Compra do treinamento pelo assinante. Cobrança única no Asaas, Pix ou cartão.
+/* Compra do treinamento pelo assinante. Pix à vista ou cartão em até 12x no Asaas.
    A matrícula só nasce no webhook, quando o pagamento confirma. */
 export async function comprarCurso(formData: FormData) {
   const slug = formData.get("slug") as string;
-  const forma = formData.get("forma") === "cartao" ? "cartao" : "pix";
+  // "pix" ou "cartao-N", com N de 1 a 12 parcelas.
+  const escolha = String(formData.get("pagamento") || "pix");
+  const forma = escolha.startsWith("cartao") ? "cartao" : "pix";
+  const parcelasPedidas = forma === "cartao" ? Math.max(1, Math.round(Number(escolha.split("-")[1]) || 1)) : 1;
   const cpf = ((formData.get("cpf") as string) || "").replace(/\D/g, "");
   const { user, admin, course } = await usuarioECurso(slug);
 
@@ -60,6 +63,7 @@ export async function comprarCurso(formData: FormData) {
   if (!(preco >= VALOR_MINIMO_CURSO)) volta(slug, "Este treinamento ainda não está à venda.");
   if (!process.env.ASAAS_API_KEY) volta(slug, "O pagamento está indisponível agora. Tente de novo em instantes.");
   if (cpf.length !== 11) volta(slug, "Informe um CPF válido, com 11 dígitos.");
+  const parcelas = Math.min(parcelasPedidas, parcelasPossiveis(preco));
 
   const { data: profile } = await admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
   const email = (user.email || "").toLowerCase();
@@ -96,12 +100,14 @@ export async function comprarCurso(formData: FormData) {
       const payRes = await fetch(`${ASAAS_BASE}/payments`, {
         method: "POST",
         headers,
+        // Parcelado: o Asaas divide totalValue em installmentCount. A primeira
+        // parcela carrega o externalReference e libera a matrícula no webhook.
         body: JSON.stringify({
           customer: cust.id,
           billingType: forma === "cartao" ? "CREDIT_CARD" : "PIX",
-          value: preco,
+          ...(parcelas > 1 ? { installmentCount: parcelas, totalValue: preco } : { value: preco }),
           dueDate: due,
-          description: `DriveData Academy · treinamento: ${course.title}`,
+          description: `DriveData Academy · treinamento: ${course.title}${parcelas > 1 ? ` (${parcelas}x no cartão)` : ""}`,
           externalReference: `curso:${order!.id}`,
         }),
       });

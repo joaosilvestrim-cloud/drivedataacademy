@@ -41,7 +41,7 @@ export async function contextoPlataforma(admin: SupabaseClient): Promise<string>
     linhas.push("", "Treinamentos (aparecem em Cursos, no menu do aluno):");
     for (const c of cursos ?? []) {
       const sp = c.subscriber_price == null ? null : Number(c.subscriber_price);
-      const preco = sp == null ? "venda ainda não aberta" : sp === 0 ? "incluso na assinatura" : `${brl(sp)} para assinantes, pagamento único`;
+      const preco = sp == null ? "venda ainda não aberta" : sp === 0 ? "incluso na assinatura" : `${brl(sp)} para assinantes, no Pix à vista ou em até 12x no cartão`;
       linhas.push(`- ${c.title}${c.coming_soon ? " [EM BREVE, ainda sem aulas]" : ""}: ${preco}${c.workload ? `, ${c.workload}` : ""}.`);
     }
   } else {

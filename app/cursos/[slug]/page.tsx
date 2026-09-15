@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canAccessCourse, hasFullAccess } from "@/lib/access";
 import { enrollFree, comprarCurso } from "./actions";
-import { VALOR_MINIMO_CURSO, brl, descontoCurso } from "@/lib/precoCurso";
+import { VALOR_MINIMO_CURSO, brl, descontoCurso, parcelasPossiveis } from "@/lib/precoCurso";
 import { cargaHoraria, minutosDoTexto } from "@/lib/duracao";
 
 export const dynamic = "force-dynamic";
@@ -120,6 +120,11 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                       {desconto > 0 && <span className="text-sm text-slate-500 line-through">{brl(precoCheio)}</span>}
                       {desconto > 0 && <span className="rounded-full bg-brand-green/15 px-2.5 py-0.5 text-xs font-semibold text-brand-green">{desconto}% OFF</span>}
                     </div>
+                    {parcelasPossiveis(precoAss!) > 1 && (
+                      <p className="mt-1 text-sm text-slate-400">
+                        no Pix à vista ou em até {parcelasPossiveis(precoAss!)}x de {brl(precoAss! / parcelasPossiveis(precoAss!))} no cartão
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <p className="font-display text-2xl font-bold text-white">Exclusivo para assinantes</p>
@@ -160,15 +165,17 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                         <label htmlFor="compra-cpf" className="block text-sm font-medium text-slate-300">CPF para a cobrança</label>
                         <input id="compra-cpf" name="cpf" required inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
                       </div>
-                      <fieldset className="grid grid-cols-2 gap-2">
-                        <legend className="mb-1.5 text-sm font-medium text-slate-300">Forma de pagamento</legend>
-                        {[{ v: "pix", l: "Pix" }, { v: "cartao", l: "Cartão de crédito" }].map((f) => (
-                          <label key={f.v} className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-200 has-[:checked]:border-brand-green/60 has-[:checked]:bg-brand-green/10">
-                            <input type="radio" name="forma" value={f.v} defaultChecked={f.v === "pix"} className="accent-brand-green" />
-                            {f.l}
-                          </label>
-                        ))}
-                      </fieldset>
+                      <div className="space-y-1.5">
+                        <label htmlFor="compra-pagamento" className="block text-sm font-medium text-slate-300">Forma de pagamento</label>
+                        <select id="compra-pagamento" name="pagamento" defaultValue="pix" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-green/60 [&>option]:bg-ink-900">
+                          <option value="pix">Pix à vista · {brl(precoAss!)}</option>
+                          <option value="cartao-1">Cartão de crédito à vista · {brl(precoAss!)}</option>
+                          {Array.from({ length: parcelasPossiveis(precoAss!) - 1 }, (_, i) => i + 2).map((n) => (
+                            <option key={n} value={`cartao-${n}`}>Cartão em {n}x de {brl(precoAss! / n)}</option>
+                          ))}
+                        </select>
+                        <p className="text-xs text-slate-500">Parcelado sem juros. O acesso libera na confirmação da primeira parcela.</p>
+                      </div>
                       <button className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
                         Comprar por {brl(precoAss!)}
                       </button>
