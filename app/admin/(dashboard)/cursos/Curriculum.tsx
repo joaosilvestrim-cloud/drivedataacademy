@@ -154,6 +154,11 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                     </span>
                   </summary>
 
+                  {/* Aula de materiais: o envio de arquivos vem primeiro, é o conteúdo da aula. */}
+                  {l.type === "materiais" && (
+                    <MateriaisDaAula lessonId={l.id} courseId={courseId} itens={l.arquivos ?? []} />
+                  )}
+
                   <form action={saveLesson} className="flex flex-col gap-4 border-t border-ds-line-soft p-4">
                     <input type="hidden" name="id" value={l.id} />
                     <input type="hidden" name="course_id" value={courseId} />
@@ -165,44 +170,50 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       defaultValue={l.title}
                     />
 
-                    <div className="grid gap-4 tablet:grid-cols-2">
+                    <div className={`grid gap-4 ${l.type === "materiais" ? "" : "tablet:grid-cols-2"}`}>
                       <SelectField scope={`aula-${l.id}`} name="type" label="Tipo" defaultValue={l.type}>
                         <option value="video">Vídeo</option>
                         <option value="text">Texto</option>
                         <option value="materiais">Materiais para download</option>
                       </SelectField>
-                      <Field
-                        scope={`aula-${l.id}`}
-                        name="duration"
-                        label="Duração"
-                        defaultValue={l.duration ?? ""}
-                        placeholder="12 min"
-                        description="Texto livre, como aparece para o aluno."
-                      />
+                      {l.type !== "materiais" && (
+                        <Field
+                          scope={`aula-${l.id}`}
+                          name="duration"
+                          label="Duração"
+                          defaultValue={l.duration ?? ""}
+                          placeholder="12 min"
+                          description="Texto livre, como aparece para o aluno."
+                        />
+                      )}
                     </div>
 
                     {/* Vídeo e prévia continuam no VideoField, que é controle
                         especializado e fica para o sublote D6E. */}
-                    <VideoField scope={`aula-${l.id}`} defaultProvider={l.video_provider ?? "youtube"} defaultValue={l.video_id ?? ""} />
+                    {l.type !== "materiais" && (
+                      <VideoField scope={`aula-${l.id}`} defaultProvider={l.video_provider ?? "youtube"} defaultValue={l.video_id ?? ""} />
+                    )}
 
                     <TextareaField
                       scope={`aula-${l.id}`}
                       name="content"
-                      label="Conteúdo em texto"
+                      label={l.type === "materiais" ? "Texto de abertura" : "Conteúdo em texto"}
                       rows={3}
                       defaultValue={l.content ?? ""}
-                      description="Usado nas aulas do tipo Texto. Na aula de materiais, vira o texto de abertura acima da lista."
+                      description={l.type === "materiais" ? "Aparece acima dos arquivos: o que tem aqui e como usar. Opcional." : "Usado nas aulas do tipo Texto."}
                     />
 
-                    <TextareaField
-                      scope={`aula-${l.id}`}
-                      name="materials"
-                      label="Materiais de apoio"
-                      rows={2}
-                      defaultValue={(l.materials ?? []).map((mm) => `${mm.title} | ${mm.url}`).join("\n")}
-                      placeholder="Apostila PDF | https://..."
-                      description="Um por linha, no formato Título | URL. Linha sem barra vira um material chamado Material."
-                    />
+                    {l.type !== "materiais" && (
+                      <TextareaField
+                        scope={`aula-${l.id}`}
+                        name="materials"
+                        label="Materiais de apoio"
+                        rows={2}
+                        defaultValue={(l.materials ?? []).map((mm) => `${mm.title} | ${mm.url}`).join("\n")}
+                        placeholder="Apostila PDF | https://..."
+                        description="Um por linha, no formato Título | URL. Linha sem barra vira um material chamado Material."
+                      />
+                    )}
 
                     <CheckboxField
                       scope={`aula-${l.id}`}
@@ -218,10 +229,6 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       <Button type="submit" size="sm">Salvar aula</Button>
                     </FormActions>
                   </form>
-
-                  {l.type === "materiais" && (
-                    <MateriaisDaAula lessonId={l.id} courseId={courseId} itens={l.arquivos ?? []} />
-                  )}
                 </details>
               ))}
               {m.lessons.length === 0 && (

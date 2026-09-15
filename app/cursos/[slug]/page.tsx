@@ -31,10 +31,12 @@ export default async function CoursePage({ params, searchParams }: { params: { s
 
   const [{ data: mods }, { data: lessons }] = await Promise.all([
     pub.from("course_modules").select("id, title").eq("course_id", course.id).order("position"),
-    pub.from("lessons").select("id, module_id, title, duration, is_preview").eq("course_id", course.id).order("position"),
+    pub.from("lessons").select("id, module_id, title, duration, is_preview, type").eq("course_id", course.id).order("position"),
   ]);
   const modules = (mods ?? []).map((m: any) => ({ ...m, lessons: (lessons ?? []).filter((l: any) => l.module_id === m.id) }));
   const lessonCount = (lessons ?? []).length;
+  // Curso feito só de aulas de materiais: é uma biblioteca de arquivos, não um curso em vídeo.
+  const soArquivos = lessonCount > 0 && (lessons ?? []).every((l: any) => l.type === "materiais");
   // Carga digitada no admin vence. Sem ela, soma a duração das aulas.
   const carga = course.workload || cargaHoraria((lessons ?? []).reduce((t: number, l: any) => t + minutosDoTexto(l.duration), 0));
 
@@ -139,7 +141,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                       venda, mas não tira o acesso de quem já estava matriculado. */}
                   {enrolled ? (
                     <Link href={`/aprender/${course.slug}`} className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                      Continuar curso
+                      {soArquivos ? "Abrir biblioteca" : "Continuar curso"}
                     </Link>
                   ) : emBreve ? (
                     <button disabled className="w-full cursor-not-allowed rounded-xl border border-amber-400/30 bg-amber-400/10 px-6 py-3.5 text-sm font-semibold text-amber-300">
@@ -206,7 +208,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                 <div className="mt-6 space-y-2.5 border-t border-white/10 pt-5">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Este curso inclui</p>
                   {[
-                    { icon: "🎬", label: carga ? `${lessonCount} aula(s) · ${carga} de conteúdo` : `${lessonCount} aula(s) em vídeo` },
+                    soArquivos ? { icon: "📁", label: "Arquivos prontos para download" } : { icon: "🎬", label: carga ? `${lessonCount} aula(s) · ${carga} de conteúdo` : `${lessonCount} aula(s) em vídeo` },
                     { icon: "♾️", label: "Acesso vitalício ao conteúdo" },
                     ...(course.certificate_enabled !== false ? [{ icon: "🎓", label: "Certificado de conclusão" }] : []),
                     { icon: "💬", label: "Comunidade de alunos" },
