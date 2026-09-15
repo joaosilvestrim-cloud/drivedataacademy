@@ -288,10 +288,18 @@ export default function MenuImersivo() {
   );
 
   return (
-    <div id="dd-universe" ref={rootRef} aria-label="Benefícios da assinatura" data-motion="on">
+    <div id="dd-universe" className="dd-full" ref={rootRef} aria-label="Benefícios da assinatura" data-motion="on">
       <main>
         <div className="dd-intro">
-          <div><h2 className="dd-h1">Conhecimento em<br /><em>outra dimensão.</em></h2></div>
+          <div className="dd-hero">
+            <p className="dd-eyebrow"><span />Assinatura DriveData Academy</p>
+            <h1 className="dd-h1">Conhecimento em<br /><em>outra dimensão.</em></h1>
+            <p className="dd-lead">Uma assinatura abre a agenda ao vivo, as gravações, a comunidade e as ferramentas. E coloca os treinamentos completos ao seu alcance, com preço de assinante.</p>
+            <div className="dd-ctas">
+              <Link href="/matricula" className="dd-cta-primary">Quero assinar <ArrowUpRight aria-hidden="true" /></Link>
+              <Link href="/entrar" className="dd-cta-secondary">Já sou assinante</Link>
+            </div>
+          </div>
           <div className="dd-intro-side">
             <p>Selecione um item.<br />Descubra o que ele oferece.</p>
             <button type="button" className="dd-motion" aria-pressed="false">

@@ -44,75 +44,8 @@ export default function AssinaturaPage() {
       <Background />
       <Navbar />
       <main>
-        {/* Abertura: a promessa à esquerda, o passe de assinante à direita. */}
-        <section className="relative mx-auto max-w-7xl px-6 pb-16 pt-36 sm:pt-44">
-          <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
-            <Reveal>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">Assinatura DriveData Academy</p>
-              <h1 className="mt-4 font-display text-4xl font-bold leading-[1.08] tracking-tight sm:text-6xl">
-                Pare de estudar sozinho.
-                <br />
-                <span className="text-gradient">Entre para o ecossistema.</span>
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-slate-300/90">
-                Uma assinatura abre a agenda ao vivo, as gravações, a comunidade e as ferramentas. E coloca os treinamentos
-                completos ao seu alcance, com preço de assinante.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/matricula" className={btnPrimario}>
-                  Quero assinar
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </Link>
-                <Link href="/entrar" className={btnSecundario}>Já sou assinante</Link>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.1}>
-              <div className="relative mx-auto max-w-md">
-                <div className="pointer-events-none absolute -inset-10 rounded-full bg-brand-green/20 blur-[90px] animate-pulse-glow" />
-                <div className="glow-border relative rotate-[-2deg] rounded-[2rem] transition-transform duration-500 hover:rotate-0">
-                  <div className="glass-strong relative overflow-hidden rounded-[2rem] p-7">
-                    <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-gradient-to-br from-brand-green/30 to-brand-blue/30 blur-2xl" />
-                    <div className="relative flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-slate-400">Passe de assinante</p>
-                        <p className="mt-1 font-display text-2xl font-bold text-white">Acesso ao ecossistema</p>
-                      </div>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/drivedata-symbol.png" alt="" className="h-10 w-10 shrink-0" />
-                    </div>
-                    <ul className="relative mt-6 space-y-3">
-                      {PASSE.map((item) => (
-                        <li key={item} className="flex items-center gap-3 text-sm text-slate-200">
-                          <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green/15 text-brand-green">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                          </span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="relative mt-7 flex items-center justify-between border-t border-dashed border-white/15 pt-5">
-                      <span className="font-mono text-xs tracking-widest text-slate-500">DDA · MEMBRO</span>
-                      <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Ativo após o pagamento</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* O que está incluso: menu imersivo com uma cena 3D por benefício. */}
-        <section className="relative mx-auto max-w-7xl px-6 py-20" aria-labelledby="beneficios">
-          <Reveal>
-            <div className="mx-auto max-w-2xl text-center">
-              <p id="beneficios" className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">O que você ganha</p>
-            </div>
-          </Reveal>
-          <div className="mt-8">
-            <MenuImersivo />
-          </div>
-        </section>
+        {/* Abertura: o menu imersivo ocupa a tela toda e faz o papel de herói. */}
+        <MenuImersivo />
 
         {/* Prova de que a agenda é real: os próximos encontros, direto do banco. */}
         <ProximasMentorias cta={{ label: "Assinar para participar", href: "/matricula" }} />
@@ -121,8 +54,10 @@ export default function AssinaturaPage() {
         <section className="relative mx-auto max-w-5xl px-6 py-20">
           <Reveal>
             <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Como começar</h2>
+            <p className="mx-auto mt-3 max-w-md text-center text-slate-300/90">Três passos e o passe de assinante é seu.</p>
           </Reveal>
-          <ol className="mt-12 grid gap-5 md:grid-cols-3">
+          <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+          <ol className="grid gap-5">
             {PASSOS.map((p, i) => (
               <Reveal key={p.titulo} delay={i * 0.08}>
                 <li className="glass relative h-full rounded-3xl border border-white/8 p-6">
@@ -133,6 +68,39 @@ export default function AssinaturaPage() {
               </Reveal>
             ))}
           </ol>
+          <Reveal delay={0.1}>
+          <div className="relative mx-auto max-w-md">
+            <div className="pointer-events-none absolute -inset-10 rounded-full bg-brand-green/20 blur-[90px] animate-pulse-glow" />
+            <div className="glow-border relative rotate-[-2deg] rounded-[2rem] transition-transform duration-500 hover:rotate-0">
+              <div className="glass-strong relative overflow-hidden rounded-[2rem] p-7">
+                <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-gradient-to-br from-brand-green/30 to-brand-blue/30 blur-2xl" />
+                <div className="relative flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-slate-400">Passe de assinante</p>
+                    <p className="mt-1 font-display text-2xl font-bold text-white">Acesso ao ecossistema</p>
+                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/drivedata-symbol.png" alt="" className="h-10 w-10 shrink-0" />
+                </div>
+                <ul className="relative mt-6 space-y-3">
+                  {PASSE.map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-sm text-slate-200">
+                      <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-green/15 text-brand-green">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <div className="relative mt-7 flex items-center justify-between border-t border-dashed border-white/15 pt-5">
+                  <span className="font-mono text-xs tracking-widest text-slate-500">DDA · MEMBRO</span>
+                  <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Ativo após o pagamento</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          </Reveal>
+          </div>
         </section>
 
         {/* Fechamento */}
