@@ -24,6 +24,7 @@ const ICONS: Record<string, string> = {
   billing: "M2 7h20v10a2 2 0 01-2 2H4a2 2 0 01-2-2V7zM2 10h20M6 15h4",
   tool: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4",
   universe: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
+  system: "M4 4h16v6H4zM4 14h16v6H4zM8 7h.01M8 17h.01M12 7h4M12 17h4",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string }[] }[] = [
@@ -54,7 +55,6 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Assinatura", href: "/admin/turma", icon: "launch" },
       { label: "Workshops", href: "/admin/workshops", icon: "live" },
       { label: "Acessos", href: "/admin/acessos", icon: "access" },
-      { label: "Pagamentos e e-mails", href: "/admin/operacao", icon: "billing" },
       { label: "Cupons", href: "/admin/cupons", icon: "billing" },
       { label: "Turmas / lotes", href: "/admin/turmas", icon: "cohort" },
     ],
@@ -74,13 +74,17 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     title: "Suporte",
     items: [
       { label: "Chamados", href: "/admin/suporte", icon: "support" },
-      { label: "Assistente IA", href: "/admin/ia", icon: "community" },
     ],
   },
-  { title: "Sistema", items: [
-    { label: "Integrações", href: "/admin/operacao#integracoes", icon: "settings" },
-    { label: "Configurações", href: "/admin/settings", icon: "settings" },
-  ] },
+  {
+    title: "Sistema",
+    items: [
+      { label: "Visão do sistema", href: "/admin/sistema", icon: "system" },
+      { label: "Pagamentos e e-mails", href: "/admin/operacao", icon: "billing" },
+      { label: "Assistente IA", href: "/admin/ia", icon: "community" },
+      { label: "Configurações", href: "/admin/settings", icon: "settings" },
+    ],
+  },
 ];
 
 type Badges = Record<string, number>;
