@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import CampoSenha from "@/components/CampoSenha";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -48,9 +49,9 @@ export default function AdminLogin() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
             />
-            <input
+            <CampoSenha
               required
-              type="password"
+              autoComplete="current-password"
               placeholder="Senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

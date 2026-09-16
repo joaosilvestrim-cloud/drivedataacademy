@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Background from "@/components/Background";
 import { createClient } from "@/lib/supabase/client";
+import CampoSenha from "@/components/CampoSenha";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
@@ -51,7 +52,7 @@ export default function EntrarPage() {
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-3">
               <input required type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
-              <input required type="password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+              <CampoSenha required autoComplete="current-password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
               <div className="text-right">
                 <Link href="/esqueci-senha" className="text-xs text-slate-400 hover:text-brand-green">Esqueci minha senha</Link>
               </div>

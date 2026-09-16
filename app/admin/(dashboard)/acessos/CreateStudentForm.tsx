@@ -1,5 +1,6 @@
 "use client";
 
+import CampoSenha from "@/components/CampoSenha";
 import { createStudent } from "./actions";
 
 const field =
@@ -13,7 +14,7 @@ export default function CreateStudentForm() {
       <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_180px_auto]">
         <input name="name" placeholder="Nome completo" className={field} />
         <input name="email" type="email" required placeholder="email@aluno.com" className={field} />
-        <input name="password" placeholder="Senha (opcional)" className={field} />
+        <CampoSenha name="password" autoComplete="new-password" placeholder="Senha (opcional)" className={field} />
         <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Criar</button>
       </div>
     </form>

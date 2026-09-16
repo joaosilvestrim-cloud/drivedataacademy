@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Background from "@/components/Background";
 import { createClient } from "@/lib/supabase/client";
 import { enviarCodigoAcesso } from "../esqueci-senha/actions";
+import CampoSenha from "@/components/CampoSenha";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
@@ -96,7 +97,7 @@ function Formulario() {
           className={`${field} font-mono tracking-[0.3em]`}
         />
         <label htmlFor="senha-nova" className="sr-only">Nova senha</label>
-        <input id="senha-nova" required type="password" autoComplete="new-password" placeholder="Nova senha (mínimo 6 caracteres)" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+        <CampoSenha id="senha-nova" required autoComplete="new-password" placeholder="Nova senha (mínimo 6 caracteres)" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
         {error && <p role="alert" className="text-xs text-red-400">{error}</p>}
         <button type="submit" disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
           {loading ? "Salvando..." : "Salvar e entrar"}
