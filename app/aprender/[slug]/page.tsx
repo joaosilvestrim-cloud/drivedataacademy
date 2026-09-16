@@ -77,7 +77,7 @@ export default async function PlayerPage({
   // Arquivos das aulas do tipo "materiais". O link aponta para a rota protegida, nunca para o Storage.
   const idsMateriais = allLessons.filter((l: any) => l.type === "materiais").map((l: any) => l.id);
   const { data: arquivos } = idsMateriais.length
-    ? await admin.from("ready_materials").select("id, lesson_id, title, description, file_name, file_size, external_url").in("lesson_id", idsMateriais).eq("published", true).order("position")
+    ? await admin.from("ready_materials").select("id, lesson_id, title, description, file_name, file_size, external_url, cover_url").in("lesson_id", idsMateriais).eq("published", true).order("position")
     : { data: [] as any[] };
   const arquivosPorAula: Record<string, any[]> = {};
   for (const a of arquivos ?? []) (arquivosPorAula[a.lesson_id] ||= []).push(a);

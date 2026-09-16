@@ -6,7 +6,7 @@ import { tamanhoLegivel, extensao } from "@/lib/materiais";
    módulo vira uma seção e cada aula um grupo de arquivos para baixar. Os links
    passam pela rota protegida /aprender/[slug]/material/[id]. */
 
-type Arquivo = { id: string; title: string; description: string | null; file_name: string | null; file_size: number | null; external_url: string | null };
+type Arquivo = { id: string; title: string; description: string | null; file_name: string | null; file_size: number | null; external_url: string | null; cover_url: string | null };
 type Aula = { id: string; title: string; content: string | null };
 type Modulo = { id: string; title: string; locked: boolean; releaseLabel: string | null; lessons: Aula[] };
 
@@ -73,7 +73,7 @@ export default function Biblioteca({
                       {arquivos.length === 0 ? (
                         <p className="mt-3 text-sm text-slate-500">Os arquivos desta seção estão sendo preparados.</p>
                       ) : (
-                        <ul className="mt-4 grid gap-3 md:grid-cols-2">
+                        <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                           {arquivos.map((f) => {
                             const ext = f.file_name ? extensao(f.file_name) : "LINK";
                             return (
@@ -82,15 +82,23 @@ export default function Biblioteca({
                                   href={`/aprender/${slug}/material/${f.id}`}
                                   target={f.file_name ? undefined : "_blank"}
                                   rel="noreferrer"
-                                  className="group flex h-full items-start gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 transition-colors hover:border-brand-green/40 hover:bg-white/[0.04]"
+                                  className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition-colors hover:border-brand-green/40 hover:bg-white/[0.04]"
                                 >
-                                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-ink-800 font-mono text-[0.7rem] font-bold text-brand-green">{ext || "ARQ"}</span>
-                                  <span className="min-w-0 flex-1">
+                                  {/* A prévia mostra o relatório pronto: é o que faz a pessoa
+                                      escolher um arquivo entre vários. Sem prévia, a extensão. */}
+                                  {f.cover_url ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={f.cover_url} alt={`Prévia de ${f.title}`} className="aspect-[16/9] w-full border-b border-white/10 object-cover" />
+                                  ) : (
+                                    <span className="grid aspect-[16/9] w-full place-items-center border-b border-white/10 bg-ink-800 font-mono text-sm font-bold text-brand-green">{ext || "ARQ"}</span>
+                                  )}
+                                  <span className="flex min-w-0 flex-1 flex-col p-4">
                                     <span className="block font-medium text-white">{f.title}</span>
-                                    {f.description && <span className="mt-0.5 block text-sm text-slate-400">{f.description}</span>}
-                                    <span className="mt-2 flex items-center gap-3 text-xs text-slate-500">
+                                    {f.description && <span className="mt-1 block text-sm text-slate-400">{f.description}</span>}
+                                    <span className="mt-3 flex items-center gap-3 pt-1 text-xs text-slate-500">
+                                      <span className="font-mono text-brand-green/80">{ext}</span>
                                       {f.file_size ? <span className="font-mono tabular-nums">{tamanhoLegivel(f.file_size)}</span> : null}
-                                      <span className="font-semibold text-brand-green group-hover:underline">{f.file_name ? "Baixar" : "Abrir link"}</span>
+                                      <span className="ml-auto font-semibold text-brand-green group-hover:underline">{f.file_name ? "Baixar" : "Abrir link"}</span>
                                     </span>
                                   </span>
                                 </a>
