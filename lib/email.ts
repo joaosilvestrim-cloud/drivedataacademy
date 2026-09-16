@@ -237,6 +237,20 @@ export async function sendWorkshopEmail(to: string, name: string, workshopTitle:
   return sendHtmlEmail(to, `Confirmado: ${workshopTitle}`, shell("Vaga garantida! 🎟️", body));
 }
 
+// Certificado de participação na live, emitido pelo formulário do QR code.
+export async function sendLiveCertificateEmail(to: string, name: string, liveTitle: string, code: string) {
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const url = `${site}/certificado/${code}`;
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const body = `
+    <p style="margin:0 0 16px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Obrigado por participar da transmissão.</p>
+    <p style="margin:0 0 6px;color:#fff;font-size:18px;font-weight:700">${esc(liveTitle)}</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">Seu certificado de participação está pronto. O código <b style="color:#fff">${esc(code)}</b> serve para qualquer pessoa validar.</p>
+    <a href="${url}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Ver e baixar o certificado</a>
+    <p style="margin:24px 0 0;color:#64748b;font-size:12px">Guarde este e-mail: o link vale para sempre.</p>`;
+  return sendHtmlEmail(to, `Seu certificado: ${liveTitle}`, shell("Certificado de participação", body), "RESEND_FROM_CONTA", { kind: "certificado-live" });
+}
+
 // Aviso interno de novo pedido/intenção de matrícula (antes do pagamento automático).
 export async function sendOrderNotice(adminTo: string, data: { name: string; email: string; phone?: string | null; amount?: number | null }) {
   const body = `

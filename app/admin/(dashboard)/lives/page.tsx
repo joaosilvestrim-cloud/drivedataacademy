@@ -117,6 +117,45 @@ function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?:
         description="YouTube (pode ser não listado) ou embed do Panda. Depois do encontro, assinantes assistem pela Agenda."
       />
 
+      {/* Presença por QR code: quem assiste confirma em /presenca e recebe o
+          certificado na hora. A palavra-chave dita ao vivo é a prova. */}
+      <div className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
+        <CheckboxField
+          scope={scope}
+          name="certificate_enabled"
+          label="Emitir certificado de participação"
+          defaultChecked={!!live?.certificate_enabled}
+          description="Libera o formulário do QR code em /presenca meia hora antes de começar e até 12 horas depois."
+        />
+        <div className="grid gap-4 tablet:grid-cols-2">
+          <Field
+            scope={scope}
+            name="attendance_code"
+            label="Palavra-chave da live"
+            defaultValue={live?.attendance_code ?? ""}
+            placeholder="dados2026"
+            description="Dita durante a transmissão. Em branco, qualquer pessoa com o link emite."
+          />
+          <Field
+            scope={scope}
+            name="certificate_hours"
+            label="Carga horária do certificado"
+            defaultValue={live?.certificate_hours ?? ""}
+            placeholder="2 horas"
+            description="Em branco, usa a duração da live."
+          />
+        </div>
+        {editando && live?.certificate_enabled && (
+          <p className="text-body-sm text-ds-text-3">
+            QR code e lista de presença em{" "}
+            <a href={`/admin/presencas?live=${live.id}`} className="text-ds-info underline decoration-ds-line underline-offset-4 hover:decoration-ds-info">
+              Presenças
+            </a>
+            .
+          </p>
+        )}
+      </div>
+
       <CheckboxField
         scope={scope}
         name="published"

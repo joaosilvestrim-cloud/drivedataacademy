@@ -15,7 +15,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
   const [{ data: cert }, { data: sig }] = await Promise.all([
     admin
       .from("certificates")
-      .select("code, student_name, course_title, workload, created_at, expires_at, revoked")
+      .select("code, student_name, course_title, workload, created_at, expires_at, revoked, kind")
       .eq("code", params.code)
       .maybeSingle(),
     admin.from("site_settings").select("key, value").in("key", ["cert_signature_url", "cert_signature_name", "cert_signature_role"]),
@@ -57,6 +57,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
             studentName={cert.student_name}
             courseTitle={cert.course_title}
             workload={cert.workload}
+            achievementLabel={cert.kind === "live" ? "participou da transmissão ao vivo" : undefined}
             dateLabel={fmtDate(cert.created_at)}
             code={cert.code}
             host={host}

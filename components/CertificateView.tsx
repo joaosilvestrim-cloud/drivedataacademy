@@ -20,9 +20,11 @@ export default function CertificateView({
   signatureUrl,
   signatureName,
   signatureRole,
+  achievementLabel = "concluiu com êxito o curso",
 }: {
   studentName: string;
   courseTitle: string;
+  achievementLabel?: string;
   workload?: string | null;
   dateLabel: string;
   code: string;
@@ -57,7 +59,7 @@ export default function CertificateView({
           <p className="font-display text-[5cqw] font-extrabold leading-tight text-slate-900">{studentName}</p>
         </div>
 
-        <p className="mt-[2%] text-[1.9cqw] text-slate-400">concluiu com êxito o curso</p>
+        <p className="mt-[2%] text-[1.9cqw] text-slate-400">{achievementLabel}</p>
         <div className="mt-[1%] flex min-h-[7%] w-full items-center justify-center rounded-2xl border-2 border-brand-blue/40 bg-brand-blue/[0.06] px-4">
           <p className="font-display text-[3.4cqw] font-bold text-slate-900">{courseTitle}</p>
         </div>

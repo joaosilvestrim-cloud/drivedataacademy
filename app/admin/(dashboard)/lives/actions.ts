@@ -35,6 +35,10 @@ export async function saveLive(formData: FormData) {
     kind: (formData.get("kind") as string) === "mentoria" ? "mentoria" : "live",
     price: Number(((formData.get("price") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".")) || null,
     published: formData.get("published") === "on",
+    // Presenca por QR code: so existe quando o certificado esta ligado.
+    certificate_enabled: formData.get("certificate_enabled") === "on",
+    attendance_code: ((formData.get("attendance_code") as string) || "").trim() || null,
+    certificate_hours: ((formData.get("certificate_hours") as string) || "").trim() || null,
   };
 
   if (id) await supabase.from("live_events").update(payload).eq("id", id);

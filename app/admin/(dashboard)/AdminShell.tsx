@@ -41,6 +41,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Comunidade", href: "/admin/comunidade", icon: "community" },
       { label: "Comentários", href: "/admin/comentarios", icon: "blog" },
       { label: "Lives", href: "/admin/lives", icon: "live" },
+      { label: "Presenças", href: "/admin/presencas", icon: "live" },
     ],
   },
   {
