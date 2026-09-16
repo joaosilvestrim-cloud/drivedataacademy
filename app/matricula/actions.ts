@@ -94,10 +94,14 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   await avisarTime("pedido", (para) => sendOrderNotice(para, { name, email, phone, amount: price }));
 
   if (process.env.ASAAS_API_KEY) {
-    const url = ehAnual
+    const cobranca = ehAnual
       ? await createAsaasAnnualPayment(admin, { orderId: order.id, name, email, phone, cpf, price, address, forma })
       : await createAsaasSubscription(admin, { orderId: order.id, name, email, phone, cpf, price: valorAssinatura, address, primeiraCobranca });
-    if (url) return { ok: true, mode: "asaas", url };
+    if (cobranca.url) return { ok: true, mode: "asaas", url: cobranca.url };
+    // Sem link de pagamento não existe compra. Dizer o motivo é melhor do que
+    // mandar a pessoa para um contato manual que ela não pediu.
+    console.error("[matricula] Asaas não gerou cobrança", { orderId: order.id, email, motivo: cobranca.erro });
+    return { ok: false, error: cobranca.erro || "Não consegui gerar sua cobrança agora. Confira o CPF e tente de novo." };
   }
   return { ok: true, mode: "manual", whatsapp: map.checkout_whatsapp || null };
 }
@@ -105,10 +109,22 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
 type Address = { postalCode: string; address: string; addressNumber: string; province: string };
 
 // Cria cliente + ASSINATURA mensal no cartão e devolve o link de pagamento da 1ª cobrança.
+type Cobranca = { url: string | null; erro?: string };
+
+// Traduz a recusa do Asaas para uma frase que a pessoa entende e consegue agir.
+function motivoAsaas(resposta: any, padrao: string): string {
+  const erro = resposta?.errors?.[0]?.description || resposta?.message;
+  if (!erro) return padrao;
+  if (/cpf|cnpj/i.test(erro)) return "O CPF informado não foi aceito pelo Asaas. Confira os números e tente de novo.";
+  if (/email/i.test(erro)) return "O e-mail informado não foi aceito. Confira e tente de novo.";
+  if (/telefone|phone/i.test(erro)) return "O telefone informado não foi aceito. Use DDD e número, só dígitos.";
+  return erro;
+}
+
 async function createAsaasSubscription(
   admin: ReturnType<typeof createAdminClient>,
   { orderId, name, email, phone, cpf, price, address, primeiraCobranca }: { orderId: string; name: string; email: string; phone: string; cpf: string; price: number; address: Address; primeiraCobranca?: number }
-): Promise<string | null> {
+): Promise<Cobranca> {
   const key = process.env.ASAAS_API_KEY!;
   const headers = { access_token: key, "Content-Type": "application/json" };
   try {
@@ -125,7 +141,7 @@ async function createAsaasSubscription(
       }),
     });
     const cust = await custRes.json();
-    if (!custRes.ok || !cust?.id) return null;
+    if (!custRes.ok || !cust?.id) return { url: null, erro: motivoAsaas(cust, "Não consegui criar seu cadastro no Asaas.") };
 
     // Assinatura mensal no CARTÃO (recorrência automática). externalReference liga ao pedido.
     const next = new Date(Date.now() + 864e5).toISOString().slice(0, 10);
@@ -143,7 +159,7 @@ async function createAsaasSubscription(
       }),
     });
     const sub = await subRes.json();
-    if (!subRes.ok || !sub?.id) return null;
+    if (!subRes.ok || !sub?.id) return { url: null, erro: motivoAsaas(sub, "Não consegui abrir a assinatura no Asaas.") };
 
     await admin.from("orders").update({ gateway_id: sub.id, external_reference: `sub:${orderId}` }).eq("id", orderId);
 
@@ -155,9 +171,9 @@ async function createAsaasSubscription(
     if (primeiraCobranca && primeira?.id) {
       await fetch(`${ASAAS_BASE}/payments/${primeira.id}`, { method: "POST", headers, body: JSON.stringify({ value: primeiraCobranca }) });
     }
-    return (pays?.data?.[0]?.invoiceUrl as string) || null;
+    return { url: (pays?.data?.[0]?.invoiceUrl as string) || null, erro: pays?.data?.[0]?.invoiceUrl ? undefined : "A assinatura foi criada, mas o link da primeira cobrança não veio. Fale com o time." };
   } catch {
-    return null;
+    return { url: null, erro: "O Asaas não respondeu agora. Tente de novo em um minuto." };
   }
 }
 
@@ -168,7 +184,7 @@ async function createAsaasSubscription(
 async function createAsaasAnnualPayment(
   admin: ReturnType<typeof createAdminClient>,
   { orderId, name, email, phone, cpf, price, address, forma }: { orderId: string; name: string; email: string; phone: string; cpf: string; price: number; address: Address; forma: "pix" | "cartao" }
-): Promise<string | null> {
+): Promise<Cobranca> {
   const key = process.env.ASAAS_API_KEY!;
   const headers = { access_token: key, "Content-Type": "application/json" };
   try {
@@ -185,7 +201,7 @@ async function createAsaasAnnualPayment(
       }),
     });
     const cust = await custRes.json();
-    if (!custRes.ok || !cust?.id) return null;
+    if (!custRes.ok || !cust?.id) return { url: null, erro: motivoAsaas(cust, "Não consegui criar seu cadastro no Asaas.") };
 
     const due = new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10);
     const payRes = await fetch(`${ASAAS_BASE}/payments`, {
@@ -201,11 +217,11 @@ async function createAsaasAnnualPayment(
       }),
     });
     const pay = await payRes.json();
-    if (!payRes.ok || !pay?.id) return null;
+    if (!payRes.ok || !pay?.id) return { url: null, erro: motivoAsaas(pay, "Não consegui gerar a cobrança no Asaas.") };
 
     await admin.from("orders").update({ gateway_id: pay.id, external_reference: `anual:${orderId}` }).eq("id", orderId);
-    return (pay.invoiceUrl as string) || null;
+    return { url: (pay.invoiceUrl as string) || null, erro: pay.invoiceUrl ? undefined : "A cobrança foi criada, mas o link não veio. Fale com o time." };
   } catch {
-    return null;
+    return { url: null, erro: "O Asaas não respondeu agora. Tente de novo em um minuto." };
   }
 }

@@ -87,7 +87,14 @@ export default async function OperacaoAdmin({ searchParams }: { searchParams: { 
                         <span className="text-body-sm text-ds-text">{PRODUTO[p.product] || p.product}</span>
                         <span className="block text-caption text-ds-text-3">{brl(p.amount)}{p.coupon_code ? ` · ${p.coupon_code}` : ""}</span>
                       </Cell>
-                      <Cell><Status tone={pago ? "accent" : p.status === "pending" ? "attention" : "neutral"}>{pago ? "Pago" : p.status === "pending" ? "Pendente" : p.status}</Status></Cell>
+                      <Cell>
+                        <Status tone={pago ? "accent" : p.status === "pending" ? "attention" : "neutral"}>{pago ? "Pago" : p.status === "pending" ? "Pendente" : p.status}</Status>
+                        {/* Pedido sem cobrança no gateway: o checkout falhou antes de
+                            gerar o link, então essa pessoa nunca viu como pagar. */}
+                        {!pago && !p.gateway_id && (
+                          <span className="mt-1 block text-caption text-ds-danger">cobrança não gerada</span>
+                        )}
+                      </Cell>
                       <Cell><Badge tone={temConta ? "info" : "neutral"}>{temConta ? "Criada" : "Sem conta"}</Badge></Cell>
                       <Cell>{naoPrecisaAcesso ? <span className="text-caption text-ds-text-3">n/a</span> : <Status tone={temAcesso ? "accent" : pago ? "danger" : "neutral"}>{temAcesso ? "Ativa" : pago ? "Faltando" : "—"}</Status>}</Cell>
                       <Cell>
