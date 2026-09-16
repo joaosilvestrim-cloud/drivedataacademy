@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import Cronometro from "@/components/Cronometro";
+import RoadmapInterativo from "@/components/RoadmapInterativo";
 
 export const dynamic = "force-dynamic";
 
@@ -107,41 +108,20 @@ export default async function AgendaPage() {
       {rest.length > 0 && (
         <>
           <h2 className="mt-10 font-display text-lg font-bold text-white">No roadmap</h2>
-          {/* Cartaz da temporada: a grade toda em uma imagem, do jeito que vai
-              para as redes. Abaixo dele, cada encontro com a própria capa. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/banners/proximas-mentorias.jpg"
-            alt="Próximas mentorias ao vivo da DriveData Academy"
-            className="mt-4 w-full rounded-2xl border border-white/10"
+          <p className="mt-1 text-sm text-slate-400">Escolha a data para ver o encontro e salvar no seu calendário.</p>
+          <RoadmapInterativo
+            agoraInicial={now}
+            eventos={rest.map((l: any) => ({
+              id: l.id,
+              title: l.title,
+              description: l.description ?? null,
+              starts_at: l.starts_at,
+              duration_min: l.duration_min ?? null,
+              cover_url: l.cover_url ?? null,
+              url: l.url ?? null,
+              kind: l.kind ?? null,
+            }))}
           />
-          <ol className="mt-4 space-y-4 border-l border-white/10 pl-6">
-            {rest.map((l: any) => (
-              <li key={l.id} className="relative">
-                <span className="absolute -left-[31px] top-4 grid h-6 w-6 place-items-center rounded-full border border-white/10 bg-ink-800 text-[0.6rem] font-bold text-brand-green">{shortDate(l.starts_at).split(" ")[0]}</span>
-                <div className="glass flex flex-col gap-4 rounded-2xl border border-white/8 p-5 sm:flex-row sm:items-start">
-                  {l.cover_url && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={l.cover_url} alt={`Banner: ${l.title}`} className="aspect-[16/9] w-full shrink-0 rounded-xl border border-white/10 object-cover sm:w-56" />
-                  )}
-                  <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-display text-lg font-bold text-white">{l.title}</h3>
-                    {l.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-teal">Mentoria</span>}
-                  </div>
-                  <p className="mt-1 text-sm text-brand-teal">{fmt(l.starts_at)}{l.duration_min ? ` · ${l.duration_min} min` : ""} <span className="text-slate-500">· {countdown(l.starts_at)}</span></p>
-                  {l.description && <p className="mt-2 text-sm text-slate-300">{l.description}</p>}
-                  <div className="mt-3 flex flex-wrap items-center gap-3">
-                    <Cronometro inicio={l.starts_at} duracaoMin={l.duration_min} compacto agoraInicial={now} />
-                    {l.url && /youtu/.test(l.url) && (
-                      <a href={l.url} target="_blank" rel="noreferrer" className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-200 hover:bg-red-500/20">Abrir no YouTube ↗</a>
-                    )}
-                  </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
         </>
       )}
 
