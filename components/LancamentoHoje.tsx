@@ -76,12 +76,14 @@ export default async function LancamentoHoje() {
               uma plataforma atrás. */}
           <a
             href="/matricula"
-            className="inline-flex items-center gap-2 rounded-xl bg-brand-green px-5 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-white"
+            className="group inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-brand-green to-brand-blue px-8 py-4 text-base font-bold text-ink-900 shadow-[0_18px_40px_-18px_rgba(52,232,160,0.9)] transition-transform duration-300 hover:scale-[1.02] sm:text-lg"
           >
             Faça parte da Academy
-            <span aria-hidden="true">→</span>
+            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
           </a>
-          <p className="mt-6 text-sm text-slate-400">
+          <p className="mt-3 text-sm text-slate-400">Comunidade, lives, gravações e biblioteca de materiais no mesmo lugar.</p>
+
+          <p className="mt-8 text-sm text-slate-400">
             {estreia ? `${dataLonga(agora)} · estreia da DriveData Academy` : "DriveData Academy · aulas abertas no YouTube"}
           </p>
           <h1 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
