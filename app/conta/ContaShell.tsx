@@ -40,6 +40,7 @@ const ICONS: Record<string, string> = {
   mentoria: "M12 14l9-5-9-5-9 5 9 5zM12 14v7M5 11v4c0 1 3 2 7 2s7-1 7-2v-4",
   materiais: "M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2",
   marketplace: "M3 3h18v4H3zM5 7v13h14V7M9 11h6",
+  votacao: "M6 20V11M12 20V4M18 20v-7M3 20h18",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string; exact?: boolean }[] }[] = [
@@ -59,6 +60,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Comunidade", href: "/conta/comunidade", icon: "community" },
       { label: "Ranking", href: "/conta/ranking", icon: "ranking" },
       { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine" },
+      { label: "Votação", href: "/votacao", icon: "votacao" },
       { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria" },
       { label: "Parceria & Negócios", href: "/conta/representacao", icon: "rep" },
     ],

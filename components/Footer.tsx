@@ -99,6 +99,11 @@ export default function Footer() {
                   )}
                 </li>
               ))}
+              <li>
+                <a href="/votacao" className="text-sm text-slate-400 transition-colors hover:text-brand-green">
+                  Votação dos temas
+                </a>
+              </li>
             </ul>
           </div>
 
