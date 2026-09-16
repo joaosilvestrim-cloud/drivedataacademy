@@ -8,6 +8,7 @@ import { loadProfiles } from "@/lib/community";
 import { issueCertificate, issueModuleCertificate } from "@/app/certificado/actions";
 import CoursePlayer from "./CoursePlayer";
 import Biblioteca from "./Biblioteca";
+import { liberacaoDeMateriais } from "@/lib/carencia";
 import NpsPrompt from "./NpsPrompt";
 import RatingStars from "./RatingStars";
 
@@ -122,10 +123,14 @@ export default async function PlayerPage({
 
   // Curso só de aulas de materiais: formato de biblioteca, sem player, progresso nem certificado.
   if (allLessons.length > 0 && allLessons.every((l: any) => l.type === "materiais")) {
+    const liberacao = await liberacaoDeMateriais(admin, user.id, course.id, user.email);
     return (
       <Biblioteca
         slug={course.slug}
         titulo={course.title}
+        liberado={liberacao.liberado}
+        liberaEm={liberacao.liberaEm}
+        agoraInicial={Date.now()}
         modulos={modules.map((m: any) => ({ id: m.id, title: m.title, locked: m.locked, releaseLabel: m.releaseLabel, lessons: m.lessons.map((l: any) => ({ id: l.id, title: l.title, content: l.content ?? null })) }))}
         arquivosPorAula={arquivosPorAula as any}
       />

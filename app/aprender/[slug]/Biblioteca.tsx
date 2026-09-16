@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { tamanhoLegivel, extensao } from "@/lib/materiais";
+import ContagemLiberacao from "@/components/ContagemLiberacao";
+import { DIAS_CARENCIA } from "@/lib/carencia";
 
 /* Formato de biblioteca: curso feito só de aulas de materiais. Não tem vídeo,
    progresso, avaliação nem certificado, então o player não faz sentido. Cada
@@ -15,12 +17,21 @@ export default function Biblioteca({
   titulo,
   modulos,
   arquivosPorAula,
+  liberado = true,
+  liberaEm = null,
+  agoraInicial,
 }: {
   slug: string;
   titulo: string;
   modulos: Modulo[];
   arquivosPorAula: Record<string, Arquivo[]>;
+  liberado?: boolean;
+  liberaEm?: string | null;
+  agoraInicial: number;
 }) {
+  const dataLiberacao = liberaEm
+    ? new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" }).format(new Date(liberaEm))
+    : null;
   const total = modulos.flatMap((m) => m.lessons).reduce((t, a) => t + (arquivosPorAula[a.id]?.length || 0), 0);
 
   return (
@@ -44,13 +55,30 @@ export default function Biblioteca({
             <p className="text-sm text-slate-400">Biblioteca · incluída na assinatura</p>
             <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">{titulo}</h1>
             <p className="mt-3 max-w-xl text-slate-400">
-              Arquivos prontos para baixar, abrir no seu computador e adaptar ao seu projeto.{" "}
+              {liberado
+                ? "Arquivos prontos para baixar, abrir no seu computador e adaptar ao seu projeto. "
+                : "Dê uma olhada em tudo que tem aqui. O download abre quando a contagem terminar. "}
               <span className="font-mono tabular-nums text-slate-300">{total}</span> {total === 1 ? "arquivo disponível" : "arquivos disponíveis"}.
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/banners/cases-reais-prontos.png" alt="Cases reais prontos, disponíveis para download" className="hidden aspect-video w-full rounded-2xl border border-white/10 object-cover md:block" />
         </div>
+
+        {/* Enquanto a carência corre, a pessoa navega pela biblioteca inteira e
+            vê exatamente quando o download abre. */}
+        {!liberado && liberaEm && (
+          <div className="mt-10 rounded-2xl border border-amber-300/25 bg-amber-300/[0.06] p-6">
+            <p className="text-sm font-semibold text-amber-200">Seus downloads abrem em</p>
+            <div className="mt-3">
+              <ContagemLiberacao liberaEm={liberaEm} agoraInicial={agoraInicial} />
+            </div>
+            <p className="mt-4 max-w-2xl text-sm text-slate-300/90">
+              O download dos arquivos libera {DIAS_CARENCIA} dias depois da assinatura, em {dataLiberacao}. Até lá você
+              navega pela biblioteca inteira e vê a prévia de cada material, para já escolher por onde começar.
+            </p>
+          </div>
+        )}
 
         <div className="mt-12 flex flex-col gap-12">
           {modulos.map((m) => (
@@ -76,13 +104,16 @@ export default function Biblioteca({
                         <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                           {arquivos.map((f) => {
                             const ext = f.file_name ? extensao(f.file_name) : "LINK";
+                            const Cartao = liberado ? "a" : "div";
                             return (
                               <li key={f.id}>
-                                <a
-                                  href={`/aprender/${slug}/material/${f.id}`}
-                                  target={f.file_name ? undefined : "_blank"}
-                                  rel="noreferrer"
-                                  className="group flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition-colors hover:border-brand-green/40 hover:bg-white/[0.04]"
+                                <Cartao
+                                  {...(liberado
+                                    ? { href: `/aprender/${slug}/material/${f.id}`, target: f.file_name ? undefined : "_blank", rel: "noreferrer" }
+                                    : { "aria-disabled": true })}
+                                  className={`group flex h-full flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] ${
+                                    liberado ? "transition-colors hover:border-brand-green/40 hover:bg-white/[0.04]" : ""
+                                  }`}
                                 >
                                   {/* A prévia mostra o relatório pronto: é o que faz a pessoa
                                       escolher um arquivo entre vários. Sem prévia, a extensão. */}
@@ -98,10 +129,17 @@ export default function Biblioteca({
                                     <span className="mt-3 flex items-center gap-3 pt-1 text-xs text-slate-500">
                                       <span className="font-mono text-brand-green/80">{ext}</span>
                                       {f.file_size ? <span className="font-mono tabular-nums">{tamanhoLegivel(f.file_size)}</span> : null}
-                                      <span className="ml-auto font-semibold text-brand-green group-hover:underline">{f.file_name ? "Baixar" : "Abrir link"}</span>
+                                      {liberado ? (
+                                        <span className="ml-auto font-semibold text-brand-green group-hover:underline">{f.file_name ? "Baixar" : "Abrir link"}</span>
+                                      ) : (
+                                        <span className="ml-auto inline-flex items-center gap-2 text-amber-300/90">
+                                          <span className="font-semibold">Libera em</span>
+                                          {liberaEm && <ContagemLiberacao liberaEm={liberaEm} agoraInicial={agoraInicial} compacto />}
+                                        </span>
+                                      )}
                                     </span>
                                   </span>
-                                </a>
+                                </Cartao>
                               </li>
                             );
                           })}

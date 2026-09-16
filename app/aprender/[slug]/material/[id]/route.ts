@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canAccessCourse } from "@/lib/access";
+import { liberacaoDeMateriais } from "@/lib/carencia";
 import { BUCKET_MATERIAIS } from "@/lib/materiais";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +27,11 @@ export async function GET(req: Request, { params }: { params: { slug: string; id
 
   const { data: aula } = await admin.from("lessons").select("course_id").eq("id", m.lesson_id).maybeSingle();
   if (!aula || !(await canAccessCourse(admin, user.id, aula.course_id))) return NextResponse.redirect(`${base}/matricula`);
+
+  // Sete dias de assinatura antes do primeiro download. Quem tenta pelo
+  // endereço direto volta para a biblioteca, que explica o prazo.
+  const { liberado } = await liberacaoDeMateriais(admin, user.id, aula.course_id, user.email);
+  if (!liberado) return voltar;
 
   await admin.from("ready_material_downloads").insert({ material_id: m.id, user_id: user.id });
 
