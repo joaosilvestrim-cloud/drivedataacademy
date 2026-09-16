@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { liveDePresenca, cargaDaLive } from "@/lib/presenca";
+import { liveDePresenca, cargaDaLive, prazoDaLive, prazoEncerrado, PRAZO_DIAS } from "@/lib/presenca";
 import { registrarPresenca } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 const FUSO = "America/Sao_Paulo";
 const quando = (iso: string) =>
   new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit", timeZone: FUSO }).format(new Date(iso));
+const dia = (d: Date) => new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", timeZone: FUSO }).format(d);
 
 function Campo({
   name,
@@ -64,6 +65,20 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
     );
   }
 
+  if (!aberta && prazoEncerrado(live)) {
+    return (
+      <Aviso titulo="O prazo deste certificado terminou">
+        <p className="mt-3 text-slate-400">
+          O certificado de <span className="text-white">{live.title}</span> podia ser emitido até {dia(prazoDaLive(live))}. São {PRAZO_DIAS} dias corridos depois da transmissão.
+        </p>
+        <p className="mt-3 text-slate-400">
+          Nas próximas lives, emita o seu no mesmo dia. A grade está na{" "}
+          <Link href="/#ao-vivo" className="text-brand-green underline underline-offset-4">página inicial</Link>.
+        </p>
+      </Aviso>
+    );
+  }
+
   if (!aberta) {
     return (
       <Aviso titulo="A presença ainda não abriu">
@@ -105,6 +120,10 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
               <span>O certificado abre na hora e também vai para o seu e-mail.</span>
             </li>
           </ol>
+
+          <p className="mt-6 text-sm text-amber-300/90">
+            Você tem até {dia(prazoDaLive(live))} para emitir. Depois desse prazo o formulário fecha.
+          </p>
         </div>
 
         <form action={registrarPresenca} className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-ink-800/60 p-6 sm:p-8">

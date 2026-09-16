@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { liveDePresenca, normalizarCodigo, emitirCertificadoDeParticipacao } from "@/lib/presenca";
+import { liveDePresenca, normalizarCodigo, emitirCertificadoDeParticipacao, prazoEncerrado, PRAZO_DIAS } from "@/lib/presenca";
 import { sendLiveCertificateEmail } from "@/lib/email";
 
 /* Confirmação de presença na live. Não exige conta: o objetivo é justamente
@@ -19,7 +19,13 @@ export async function registrarPresenca(formData: FormData) {
   const admin = createAdminClient();
   const { live, aberta } = await liveDePresenca(admin, liveId);
   if (!live) volta("Não encontrei essa live.");
-  if (!aberta) volta("A confirmação de presença desta live ainda não está aberta.");
+  if (!aberta) {
+    volta(
+      prazoEncerrado(live!)
+        ? `O prazo para emitir o certificado desta live terminou. Ele vale por ${PRAZO_DIAS} dias corridos depois da transmissão.`
+        : "A confirmação de presença desta live ainda não está aberta."
+    );
+  }
 
   const name = texto("name");
   const email = texto("email").toLowerCase();

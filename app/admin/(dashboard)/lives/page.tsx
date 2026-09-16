@@ -125,7 +125,7 @@ function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?:
           name="certificate_enabled"
           label="Emitir certificado de participação"
           defaultChecked={!!live?.certificate_enabled}
-          description="Libera o formulário do QR code meia hora antes de começar. Fica aberto até você desmarcar aqui."
+          description="Libera o formulário do QR code meia hora antes de começar e mantém por 5 dias corridos depois da transmissão."
         />
         <div className="grid gap-4 tablet:grid-cols-2">
           <Field

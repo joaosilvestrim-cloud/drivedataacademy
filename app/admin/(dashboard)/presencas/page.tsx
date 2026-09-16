@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import QRCode from "qrcode";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { prazoDaLive, prazoEncerrado, PRAZO_DIAS } from "@/lib/presenca";
 import { PageHeader, EmptyState, TableWrap, Th, Td } from "@/components/ui/layout";
 import { Badge } from "@/components/ui/primitives";
 import ExportCsv from "../ExportCsv";
@@ -19,7 +20,7 @@ export default async function PresencasPage({ searchParams }: { searchParams: { 
   const admin = createAdminClient();
   const { data: lives } = await admin
     .from("live_events")
-    .select("id, title, starts_at, attendance_code, certificate_hours")
+    .select("id, title, starts_at, duration_min, attendance_code, certificate_hours")
     .eq("certificate_enabled", true)
     .order("starts_at", { ascending: false });
 
@@ -87,6 +88,15 @@ export default async function PresencasPage({ searchParams }: { searchParams: { 
         <div className="flex flex-col gap-3">
           <h2 className="font-display text-lg font-semibold text-ds-text">{live.title}</h2>
           <p className="text-body-sm text-ds-text-2">{quando(live.starts_at)}</p>
+          <p className="text-body-sm text-ds-text-2">
+            Prazo para emitir:{" "}
+            {prazoEncerrado(live as any) ? (
+              <Badge tone="attention">encerrado</Badge>
+            ) : (
+              <span className="text-ds-text">até {quando(prazoDaLive(live as any).toISOString())}</span>
+            )}{" "}
+            <span className="text-ds-text-3">({PRAZO_DIAS} dias corridos depois da transmissão)</span>
+          </p>
           <p className="text-body-sm text-ds-text-2">
             Link do formulário:{" "}
             <a href={url} target="_blank" rel="noreferrer" className="text-ds-info underline decoration-ds-line underline-offset-4">
