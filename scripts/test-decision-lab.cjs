@@ -106,9 +106,17 @@ test('random legal plans preserve accounting, bounds and terminal day limits',()
     }
   }
 });
-test('Decision Lab has no Knowledge Universe, AI or remote progress dependency',()=>{
+/* O motor e a tela continuam isolados: sem IA, sem rede, sem Knowledge.
+   A Server Action e a excecao deliberada: ela refaz a partida no servidor e
+   registra a evidencia no Knowledge Universe, como as missoes do DataFlow
+   Lab. Nas rotas so IA e fetch continuam proibidos. */
+test('Decision Lab engine and UI have no Knowledge Universe, AI or remote dependency',()=>{
   const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);
-  for(const file of ['lib/decision-lab','components/decision-lab','app/(decision)'].flatMap(dir=>walk(path.resolve(__dirname,'..',dir))).filter(f=>/\.tsx?$/.test(f))) {
+  const isolados=['lib/decision-lab','components/decision-lab'].flatMap(dir=>walk(path.resolve(__dirname,'..',dir))).filter(f=>/\.tsx?$/.test(f));
+  for(const file of isolados) {
     const source=fs.readFileSync(file,'utf8');assert.doesNotMatch(source,/from\s+['"][^'"]*(?:knowledge|\/lib\/ai|openai|anthropic|generative-ai)/);assert.doesNotMatch(source,/\bfetch\s*\(/);
+  }
+  for(const file of walk(path.resolve(__dirname,'..','app/(decision)')).filter(f=>/\.tsx?$/.test(f))) {
+    const source=fs.readFileSync(file,'utf8');assert.doesNotMatch(source,/from\s+['"][^'"]*(?:\/lib\/ai|openai|anthropic|generative-ai)/);assert.doesNotMatch(source,/fetch\s*\(/);
   }
 });

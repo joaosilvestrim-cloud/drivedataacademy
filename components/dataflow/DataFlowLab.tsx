@@ -9,7 +9,7 @@ import {traceOrder,type TraceStep} from '@/lib/dataflow/trace';
 import {MISSIONS} from '@/lib/dataflow/missions';
 import {completeMission} from '@/app/(dataflow)/dataflow-lab/actions';
 import {MAX_PROJECTS,newProject,readSave,recipeSummary,type Project,type Save as ProjectSave} from '@/lib/dataflow/storage';
-import TourDataFlow,{tourJaVisto} from './TourDataFlow';
+import TourDataFlow,{tourDataFlowJaVisto} from './TourDataFlow';
 import s from './dataflow.module.css';
 const Scene=dynamic(()=>import('./FlowScene'),{ssr:false,loading:()=> <div className={s.loading}>Preparando o laboratório 3D…</div>});
 const titles=['Fontes','Limpeza','Filtro','Junção','SQL'];
@@ -38,7 +38,7 @@ export default function DataFlowLab({userId='',demo=false}:{userId?:string;demo?
   const [firstRun,setFirstRun]=useState(false);
   // Tour guiado: abre sozinho na primeira visita e fica no botão do cabeçalho.
   const [tour,setTour]=useState(false);
-  useEffect(()=>{if(!tourJaVisto())setTour(true);},[]);
+  useEffect(()=>{const t=setTimeout(()=>{if(!tourDataFlowJaVisto())setTour(true);},700);return()=>clearTimeout(t);},[]);
   const [missionId,setMissionId]=useState(MISSIONS[MISSIONS.length-1].id),[missionMsg,setMissionMsg]=useState(''),[claiming,setClaiming]=useState(false),[claimed,setClaimed]=useState<string[]>([]);
   const projectFile=useRef<HTMLInputElement>(null);
   const storeKey=`dataflow-lab:v1:${demo?'demo':userId||'anon'}`;

@@ -10,6 +10,7 @@ import { achievements, DAY, LABELS, universe, WEIGHTS } from '@/lib/knowledge/en
 import type { Dimension, Evidence, Requirement, UniverseData } from '@/lib/knowledge/types';
 import styles from './universe.module.css';
 import UniverseGuide from './UniverseGuide';
+import TourUniverso, { tourUniversoJaVisto } from './TourUniverso';
 
 const UniverseCanvas = dynamic(() => import('./UniverseCanvas'), { ssr: false, loading: () => <div className={styles.loading}><Orbit size={32} /><span>Organizando as constelações…</span></div> });
 const date = (value: string) => new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(value));
@@ -44,6 +45,9 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null); const [extra, setExtra] = useState<Evidence[]>([]);
   const helpRef = useRef<HTMLElement>(null);
   const helpButtonRef = useRef<HTMLButtonElement>(null);
+  // Tour guiado: abre sozinho na primeira visita.
+  const [tour, setTour] = useState(false);
+  useEffect(() => { const t = setTimeout(() => { if (!tourUniversoJaVisto()) setTour(true); }, 700); return () => clearTimeout(t); }, []);
   const [milestone, setMilestone] = useState<string | null>(null);
   const previousDay = useRef(day);
   const asOf = stamp(day); const events = useMemo(() => [...(data?.events??DEMO_EVENTS), ...(isDemo?extra:[])], [data,extra,isDemo]);
@@ -127,12 +131,12 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
     <header className={styles.header}>
       <Link href="/conta/ferramentas" className={styles.brand} aria-label="DriveData Academy — voltar às ferramentas"><Image className={styles.brandLogo} src="/drivedata-symbol.png" alt="" width={40} height={40} priority/><span>DriveData<span className={styles.academy}>ACADEMY</span></span></Link>
       <span className={styles.headerDivider} /><span className={styles.productName}>Knowledge Universe <b>4D</b></span>
-      <div className={styles.headerRight}><span className={styles.demoBadge}><i /> {isDemo?'DEMONSTRAÇÃO':'MEU CONHECIMENTO'}</span><button ref={helpButtonRef} className={styles.helpButton} onClick={() => setHelp(true)} aria-haspopup="dialog"><Info size={17} />Como funciona</button><span className={styles.avatar}>DD</span></div>
+      <div className={styles.headerRight}><span className={styles.demoBadge}><i /> {isDemo?'DEMONSTRAÇÃO':'MEU CONHECIMENTO'}</span><button className={styles.helpButton} onClick={() => setTour(true)}><Play size={16} /><span>Tour guiado</span></button><button data-tour="universo-ajuda" ref={helpButtonRef} className={styles.helpButton} onClick={() => setHelp(true)} aria-haspopup="dialog"><Info size={17} />Como funciona</button><span className={styles.avatar}>DD</span></div>
     </header>
     <div className={styles.workspace}>
       <aside className={`${styles.sidebar} ${filters ? styles.sidebarOpen : ''}`}>
         <p className={styles.eyebrow}>SEU ESPAÇO DE DESCOBERTA</p>
-        <nav aria-label="Modos do universo">{tabs.map(({ id, label, icon: Icon }) => <button key={id} className={`${styles.navButton} ${tab === id ? styles.navActive : ''}`} onClick={() => { setTab(id); setFilters(false); setSelected(null); }}><Icon size={18} /><span>{label}</span>{id === 'conquistas' && <em>{earned.length}</em>}</button>)}</nav>
+        <nav data-tour="universo-modos" aria-label="Modos do universo">{tabs.map(({ id, label, icon: Icon }) => <button key={id} className={`${styles.navButton} ${tab === id ? styles.navActive : ''}`} onClick={() => { setTab(id); setFilters(false); setSelected(null); }}><Icon size={18} /><span>{label}</span>{id === 'conquistas' && <em>{earned.length}</em>}</button>)}</nav>
         <div className={styles.sidebarRule} />
         <p className={styles.eyebrow}>CONSTELAÇÕES</p>
         <button className={`${styles.areaButton} ${area === 'all' ? styles.areaActive : ''}`} onClick={() => { setArea('all'); setSelected(null); setTab('explorar'); }}><span className={styles.allDot} />Todas as áreas<span>{catalog.competencies.length}</span></button>
@@ -150,13 +154,13 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
           {tab === 'explorar' && <>
             {!isDemo&&!events.length&&<div className={styles.milestone}><Sparkles size={20}/><span><small>O COMEÇO DA SUA JORNADA</small><strong>Suas primeiras evidências farão este universo crescer.</strong></span></div>}
             <div className={styles.toolbar}><label className={styles.search}><Search size={16} /><input placeholder="Encontrar uma competência…" aria-label="Buscar competência" value={search} onChange={e => { setSearch(e.target.value); setArea('all'); setOpportunities(true); setSelected(null); }} />{search && <button onClick={() => setSearch('')} aria-label="Limpar busca"><X size={14} /></button>}</label><div className={styles.segmented}><button aria-pressed={view === '3d'} onClick={() => setView('3d')}><Orbit size={14} />Universo 3D</button><button aria-pressed={view === 'list'} onClick={() => setView('list')}><List size={15} />Lista</button></div></div>
-            <div className={`${styles.scene} ${selected ? styles.sceneSelected : ''}`}>
+            <div data-tour="universo-mapa" className={`${styles.scene} ${selected ? styles.sceneSelected : ''}`}>
               {view === '3d' ? <SceneBoundary fallback={<div className={styles.fallback}><p>O modo 3D não está disponível neste dispositivo. Explore todas as competências pela lista.</p>{list}</div>}><UniverseCanvas catalog={catalog} scores={scores} visible={visible.map(c => c.id)} selected={selected} onSelect={select} onArea={id => { setArea(id); setSelected(null); }} reduced={reduced} reset={reset} zoom={zoom} /></SceneBoundary> : list}
               {view === '3d' && visible.length === 0 && <div className={styles.noResults}>Nenhuma competência encontrada. <button onClick={() => { setSearch(''); setArea('all'); setOpportunities(true); }}>Limpar filtros</button></div>}
             </div>
             {!selected && view === '3d' && <div className={styles.sceneCaption}><span className={styles.captionLine} /><span>CONHECIMENTOS QUE SE CONECTAM</span><small>Selecione uma estrela para explorar sua competência.</small></div>}
             <div className={styles.sceneFooter}><span><i />Em desenvolvimento <i className={styles.hollow} />Oportunidade</span><div><button onClick={() => { setReset(n => n+1); setSelected(null); }} aria-label="Centralizar universo" title="Centralizar"><RotateCcw size={16} /></button><button onClick={() => setZoom(n => n-1)} aria-label="Afastar"><Minus size={16} /></button><button onClick={() => setZoom(n => n+1)} aria-label="Aproximar"><Plus size={16} /></button></div></div>
-            {comp && score && <aside className={styles.detail} style={{ '--area': color } as CSSProperties} aria-label={`Detalhes de ${comp.name}`}>
+            {comp && score && <aside data-tour="universo-detalhe" className={styles.detail} style={{ '--area': color } as CSSProperties} aria-label={`Detalhes de ${comp.name}`}>
               <div className={styles.detailTop}><span>{catalog.areas.find(a => a.id === comp.area)?.name}</span><button className={styles.iconButton} onClick={() => setSelected(null)} aria-label="Fechar detalhes"><X size={17} /></button></div>
               {comp.parent && <button className={styles.breadcrumb} onClick={() => select(comp.parent!)}>{catalog.competencies.find(c => c.id === comp.parent)?.name}<ChevronRight size={12} /></button>}
               <h2>{comp.name}</h2><p className={styles.description}>{comp.description}</p>
@@ -175,7 +179,7 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
           {tab === 'desafios' && !isDemo && <section className={styles.contentView}><p className={styles.eyebrow}>APRENDIZADO NA PRÁTICA</p><h2>Suas evidências práticas</h2><p>Exercícios, desafios e revisões validados por um instrutor aparecem aqui. Faça as atividades dos seus treinamentos para desenvolver novas competências.</p><div className={styles.achievements}>{events.filter(e=>['exercise','challenge','retention'].includes(e.dimension)&&e.at<=asOf&&(e.effectiveAt??e.at)<=asOf&&(!e.invalidatedAt||e.invalidatedAt>asOf)).map(e=><button key={e.id} onClick={()=>select(e.competency)}><Target size={20}/><div><strong>{e.label}</strong><small>{date(e.at)}</small></div></button>)}</div><Link className={styles.primary} href="/conta/desafios">Fazer uma entrega <ArrowUpRight size={15}/></Link><Link className={styles.secondaryAction} href="/conta/cursos">Ver treinamentos <ArrowUpRight size={15}/></Link></section>}
           {tab === 'conquistas' && <section className={styles.contentView}><p className={styles.eyebrow}>MARCOS DA SUA JORNADA</p><h2>Conhecimento que merece ser celebrado</h2><p>Marcos calculados pelas evidências disponíveis até {date(asOf)}.</p><div className={styles.achievements}>{earned.length ? earned.map(a => <button key={a.id} onClick={() => select(a.competency)}><span><Trophy size={22} /></span><div><strong>{a.label}</strong><small>{date(a.at)}</small></div><ArrowUpRight size={16} /></button>) : <p className={styles.empty}>Os primeiros marcos aparecem quando uma competência alcança 50/100. Avance a timeline para acompanhar.</p>}</div></section>}
         </div>
-        <footer className={styles.timeline}>
+        <footer data-tour="universo-tempo" className={styles.timeline}>
           <div className={styles.timelineTop}><button className={styles.play} onClick={togglePlay} aria-label={playing ? 'Pausar evolução' : 'Reproduzir minha evolução'}>{playing ? <Pause size={17} fill="currentColor" /> : <Play size={17} fill="currentColor" />}<span>{playing ? 'Pausar evolução' : 'Reproduzir minha evolução'}</span></button><button className={styles.speed} onClick={() => setSpeed(s => s === 4 ? 1 : s*2)} aria-label={`Velocidade ${speed} vezes. Alterar velocidade`}>{speed}×</button><span className={styles.timelineLabel}>{isDemo?'12 MESES DE DESCOBERTAS':'SEU HISTÓRICO DE APRENDIZAGEM'}</span><button className={styles.today} onClick={() => { setDay(lastDay); setPlaying(false); }}>Voltar ao presente <ChevronRight size={13} /></button></div>
           <input className={styles.range} aria-label="Data da evolução" aria-valuetext={date(asOf)} type="range" min={0} max={lastDay} value={day} onChange={e => { setDay(Number(e.target.value)); setPlaying(false); }} style={{ '--progress': `${day / lastDay * 100}%` } as CSSProperties} />
           <div className={styles.months}>{[0,1,2,3,4,5,6].map(i=><span key={i}>{new Intl.DateTimeFormat('pt-BR',{month:'short',year:'2-digit',timeZone:'UTC'}).format(new Date(stamp(Math.round(lastDay*i/6)))).toLocaleUpperCase('pt-BR')}</span>)}</div>
@@ -183,6 +187,7 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
         <div className={styles.demoNote}><Info size={12} /><span>{isDemo?'Universo demonstrativo · Perfil fictício · Nenhum dado acadêmico é alterado.':'Seus dados acadêmicos · Histórico importado identificado nas evidências · Mudanças de configuração são versionadas.'} Período: {date(start)} a {date(end)}.</span>{extra.length > 0 && <button onClick={() => { setExtra([]); setAnswer(null); setFeedback(null); }}>Reiniciar demonstração</button>}</div>
       </main>
     </div>
+    <TourUniverso aberto={tour} aoFechar={() => setTour(false)} />
     {help && <div className={styles.modalBackdrop} onClick={() => setHelp(false)}><section ref={helpRef} className={styles.help} role="dialog" aria-modal="true" aria-labelledby="universe-help-title" aria-describedby="universe-help-description" onClick={e => e.stopPropagation()}><button className={styles.closeHelp} onClick={() => setHelp(false)} aria-label="Fechar ajuda"><X size={20} /></button><Orbit size={32} /><UniverseGuide isDemo={isDemo}/><label className={styles.check}><input type="checkbox" checked={reduced} onChange={e => setReduced(e.target.checked)} />Reduzir animações</label><button className={styles.primary} onClick={() => {setHelp(false);dismissIntroduction();}}>Entendi, explorar meu universo <ArrowUpRight size={16} /></button></section></div>}
   </div>;
 }
