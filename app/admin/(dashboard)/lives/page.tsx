@@ -112,9 +112,9 @@ function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?:
         scope={scope}
         name="recording_url"
         label="Gravação"
-        type="url"
         defaultValue={live?.recording_url ?? ""}
-        description="YouTube (pode ser não listado) ou embed do Panda. Depois do encontro, assinantes assistem pela Agenda."
+        placeholder="https://youtu.be/... ou <iframe src=..."
+        description="Aceita link do YouTube, o iframe do Panda colado inteiro, o endereço de embed ou só o id do vídeo. Depois do encontro, assinantes assistem pela Agenda."
       />
 
       {/* Presença por QR code: quem assiste confirma em /presenca e recebe o

@@ -18,6 +18,16 @@ function toISO(local: string): string | null {
   return isNaN(d.getTime()) ? null : d.toISOString();
 }
 
+/* O Panda entrega um <iframe> pronto e é isso que a pessoa cola. Guardar o
+   HTML inteiro funcionaria, mas suja o banco e quebra qualquer validação de
+   link. Aqui fica só o src. */
+function endereçoDoVideo(bruto: string): string | null {
+  const v = (bruto || "").trim();
+  if (!v) return null;
+  const iframe = v.match(/src=["']([^"']+)["']/i);
+  return (iframe ? iframe[1] : v).trim() || null;
+}
+
 export async function saveLive(formData: FormData) {
   const supabase = await admin();
   const id = (formData.get("id") as string) || null;
@@ -30,7 +40,7 @@ export async function saveLive(formData: FormData) {
     starts_at: starts,
     duration_min: Number((formData.get("duration_min") as string) || "0") || null,
     url: ((formData.get("url") as string) || "").trim() || null,
-    recording_url: ((formData.get("recording_url") as string) || "").trim() || null,
+    recording_url: endereçoDoVideo((formData.get("recording_url") as string) || ""),
     cover_url: ((formData.get("cover_url") as string) || "").trim() || null,
     kind: (formData.get("kind") as string) === "mentoria" ? "mentoria" : "live",
     price: Number(((formData.get("price") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".")) || null,
