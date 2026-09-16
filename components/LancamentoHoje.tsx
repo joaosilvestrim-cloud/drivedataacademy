@@ -74,12 +74,16 @@ export default async function LancamentoHoje() {
           {/* A live é a porta de entrada. O convite para assinar vem antes do
               título, senão a pessoa assiste e vai embora sem saber que existe
               uma plataforma atrás. */}
+          {/* Borda em degradê da marca com o miolo escuro: o botão salta do fundo
+              sem virar bloco de cor. No hover o miolo some e o degradê preenche. */}
           <a
             href="/matricula"
-            className="group inline-flex items-center gap-3 rounded-2xl bg-gradient-to-r from-brand-green to-brand-blue px-8 py-4 text-base font-bold text-ink-900 shadow-[0_18px_40px_-18px_rgba(52,232,160,0.9)] transition-transform duration-300 hover:scale-[1.02] sm:text-lg"
+            className="group inline-flex rounded-2xl bg-gradient-to-r from-brand-green via-brand-teal to-brand-blue p-[2px] shadow-[0_18px_44px_-20px_rgba(52,232,160,0.85)] transition-transform duration-300 hover:scale-[1.02]"
           >
-            Faça parte da Academy
-            <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            <span className="inline-flex items-center gap-3 rounded-[14px] bg-ink-900 px-8 py-4 text-base font-bold text-white transition-colors duration-300 group-hover:bg-transparent group-hover:text-ink-900 sm:text-lg">
+              Faça parte da Academy
+              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </span>
           </a>
           <p className="mt-3 text-sm text-slate-400">Comunidade, lives, gravações e biblioteca de materiais no mesmo lugar.</p>
 
