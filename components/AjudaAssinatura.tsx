@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Mascot from "@/components/Mascot";
 import { abrirChamadoCheckout } from "@/app/matricula/ajuda-actions";
 import { MOTIVOS } from "@/lib/ajuda-checkout";
@@ -21,6 +21,13 @@ export default function AjudaAssinatura() {
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [protocolo, setProtocolo] = useState("");
+  // O balão aparece sozinho depois de alguns segundos, uma vez só. Quem está
+  // travado no pagamento não procura ajuda: a ajuda tem que aparecer.
+  const [balao, setBalao] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setBalao(true), 6000);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const set = (campo: string, valor: string) => setForm((f) => ({ ...f, [campo]: valor }));
 
@@ -37,17 +44,32 @@ export default function AjudaAssinatura() {
 
   return (
     <>
-      {/* Chamariz fixo no canto */}
+      {/* Chamariz fixo no canto, com o balão que chama a pessoa */}
+      {!aberto && balao && (
+        <div className="fixed bottom-28 right-5 z-50 w-[min(17rem,calc(100vw-2.5rem))] rounded-2xl rounded-br-sm border border-brand-green/30 bg-ink-800 px-4 py-3 shadow-xl">
+          <p className="text-sm text-slate-200">Travou no pagamento ou não recebeu o código? Fala com a gente.</p>
+          <button type="button" onClick={() => setBalao(false)} className="mt-2 text-xs text-slate-400 hover:text-white">
+            agora não
+          </button>
+        </div>
+      )}
+
       <button
         type="button"
-        onClick={() => setAberto((v) => !v)}
+        onClick={() => { setAberto((v) => !v); setBalao(false); }}
         aria-expanded={aberto}
-        className="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl border border-white/10 bg-ink-800/95 py-2.5 pl-2.5 pr-4 text-left shadow-xl backdrop-blur transition-colors hover:border-brand-green/50"
+        className="group fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl bg-gradient-to-r from-brand-green to-brand-blue p-[2px] shadow-[0_18px_44px_-18px_rgba(52,232,160,0.9)] transition-transform hover:scale-[1.03]"
       >
-        <Mascot className="h-10 w-10" />
-        <span>
-          <span className="block text-sm font-semibold text-white">Precisa de ajuda?</span>
-          <span className="block text-xs text-slate-400">Fale com o time</span>
+        <span className="flex items-center gap-3 rounded-[14px] bg-ink-900 py-2.5 pl-2.5 pr-5 text-left">
+          <span className="relative">
+            {/* Anel pulsando: é o que faz o olho ir até o canto da tela. */}
+            <span className="absolute inset-0 animate-ping rounded-full bg-brand-green/40 motion-reduce:animate-none" aria-hidden="true" />
+            <Mascot className="relative h-11 w-11" />
+          </span>
+          <span>
+            <span className="block text-sm font-bold text-white">Precisa de ajuda?</span>
+            <span className="block text-xs text-brand-green">Time online agora</span>
+          </span>
         </span>
       </button>
 
