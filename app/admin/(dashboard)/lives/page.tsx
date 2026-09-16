@@ -145,6 +145,31 @@ function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?:
             description="Em branco, usa a duração da live."
           />
         </div>
+        <div className="grid gap-4 tablet:grid-cols-2">
+          <Field
+            scope={scope}
+            name="certificate_signature_name"
+            label="Quem assina o certificado"
+            defaultValue={live?.certificate_signature_name ?? ""}
+            placeholder="Tamires Cavani"
+            description="Em branco, usa a assinatura padrão de Configurações."
+          />
+          <Field
+            scope={scope}
+            name="certificate_signature_role"
+            label="Cargo de quem assina"
+            defaultValue={live?.certificate_signature_role ?? ""}
+            placeholder="Docente"
+          />
+        </div>
+        <Field
+          scope={scope}
+          name="certificate_signature_url"
+          label="Imagem da assinatura"
+          type="url"
+          defaultValue={live?.certificate_signature_url ?? ""}
+          description="Endereço de uma imagem com fundo transparente. Opcional."
+        />
         {editando && live?.certificate_enabled && (
           <p className="text-body-sm text-ds-text-3">
             QR code e lista de presença em{" "}

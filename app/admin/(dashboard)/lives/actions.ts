@@ -39,6 +39,9 @@ export async function saveLive(formData: FormData) {
     certificate_enabled: formData.get("certificate_enabled") === "on",
     attendance_code: ((formData.get("attendance_code") as string) || "").trim() || null,
     certificate_hours: ((formData.get("certificate_hours") as string) || "").trim() || null,
+    certificate_signature_name: ((formData.get("certificate_signature_name") as string) || "").trim() || null,
+    certificate_signature_role: ((formData.get("certificate_signature_role") as string) || "").trim() || null,
+    certificate_signature_url: ((formData.get("certificate_signature_url") as string) || "").trim() || null,
   };
 
   if (id) await supabase.from("live_events").update(payload).eq("id", id);

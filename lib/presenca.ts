@@ -23,9 +23,13 @@ export type LiveDePresenca = {
   duration_min: number | null;
   attendance_code: string | null;
   certificate_hours: string | null;
+  certificate_signature_name: string | null;
+  certificate_signature_role: string | null;
+  certificate_signature_url: string | null;
 };
 
-const CAMPOS = "id, title, description, starts_at, duration_min, attendance_code, certificate_hours";
+const CAMPOS =
+  "id, title, description, starts_at, duration_min, attendance_code, certificate_hours, certificate_signature_name, certificate_signature_role, certificate_signature_url";
 
 /* A live do momento. Com id explícito, valida esse id. Sem id, pega a mais
    recente que ainda está no prazo; se nenhuma estiver, devolve a próxima só
@@ -108,6 +112,10 @@ export async function emitirCertificadoDeParticipacao(
     student_name: pessoa.name.trim(),
     course_title: live.title,
     workload: cargaDaLive(live) || null,
+    // Congela quem assinou: trocar o instrutor depois não reescreve o emitido.
+    signature_name: live.certificate_signature_name,
+    signature_role: live.certificate_signature_role,
+    signature_url: live.certificate_signature_url,
   });
   return { code, novo: true };
 }

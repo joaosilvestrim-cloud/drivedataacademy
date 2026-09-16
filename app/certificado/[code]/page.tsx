@@ -15,7 +15,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
   const [{ data: cert }, { data: sig }] = await Promise.all([
     admin
       .from("certificates")
-      .select("code, student_name, course_title, workload, created_at, expires_at, revoked, kind")
+      .select("code, student_name, course_title, workload, created_at, expires_at, revoked, kind, signature_name, signature_role, signature_url")
       .eq("code", params.code)
       .maybeSingle(),
     admin.from("site_settings").select("key, value").in("key", ["cert_signature_url", "cert_signature_name", "cert_signature_role"]),
@@ -53,6 +53,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
         </div>
 
         <div className="cert-wrap">
+          {/* A assinatura da live manda. A configuração global é a reserva. */}
           <CertificateView
             studentName={cert.student_name}
             courseTitle={cert.course_title}
@@ -63,9 +64,9 @@ export default async function CertificatePage({ params }: { params: { code: stri
             code={cert.code}
             host={host}
             qrSvg={qrSvg}
-            signatureUrl={sigMap.cert_signature_url || null}
-            signatureName={sigMap.cert_signature_name || null}
-            signatureRole={sigMap.cert_signature_role || null}
+            signatureUrl={cert.signature_url || sigMap.cert_signature_url || null}
+            signatureName={cert.signature_name || sigMap.cert_signature_name || null}
+            signatureRole={cert.signature_role || sigMap.cert_signature_role || null}
           />
         </div>
 
