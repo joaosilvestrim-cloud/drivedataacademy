@@ -12,5 +12,12 @@ export function createAdminClient() {
   }
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
+    /* O Next guarda o resultado de fetch por URL. Como toda consulta do
+       supabase-js vira um GET parecido, uma leitura antiga voltava no lugar do
+       dado novo: votação apurando zero logo depois do voto, por exemplo. Aqui a
+       leitura é sempre ao vivo, e quem quiser cache usa revalidate na rota. */
+    global: {
+      fetch: (input: RequestInfo | URL, init?: RequestInit) => fetch(input, { ...init, cache: "no-store" }),
+    },
   });
 }
