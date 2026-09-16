@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import Cronometro from "@/components/Cronometro";
 import RoadmapInterativo from "@/components/RoadmapInterativo";
+import AgendaAtualizacao from "@/components/AgendaAtualizacao";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +56,7 @@ export default async function AgendaPage() {
 
   return (
     <div>
+      <AgendaAtualizacao />
       <h1 className="font-display text-3xl font-bold text-white">Agenda de lives</h1>
       <p className="mt-1 text-sm text-slate-400">Encontros ao vivo e o roadmap de conteúdo da turma.</p>
 
