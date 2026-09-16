@@ -44,7 +44,7 @@ const ICONS: Record<string, string> = {
   sugestao: "M12 3a6 6 0 00-4 10.5V16h8v-2.5A6 6 0 0012 3zM9 19h6M10 22h4",
 };
 
-const GROUPS: { title: string | null; items: { label: string; href: string; icon: string; exact?: boolean }[] }[] = [
+const GROUPS: { title: string | null; items: { label: string; href: string; icon: string; exact?: boolean; emBreve?: boolean }[] }[] = [
   { title: null, items: [{ label: "Meus cursos", href: "/conta", icon: "courses", exact: true }] },
   {
     title: "Aprender",
@@ -63,7 +63,9 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine" },
       { label: "Enquete", href: "/votacao", icon: "votacao" },
       { label: "Sugestões", href: "/conta/sugestoes", icon: "sugestao" },
-      { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria" },
+      // Mentoria individual ainda não abriu. Fica visível, para a turma saber
+      // que vem, mas sem link: clicar em uma tela vazia frustra mais do que espera.
+      { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria", emBreve: true },
       { label: "Parceria & Negócios", href: "/conta/representacao", icon: "rep" },
     ],
   },
@@ -88,18 +90,32 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
           <ul className="space-y-0.5">
             {group.items.map((it) => {
               const active = isActive(it.href, it.exact);
+              const icone = (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={active && !it.emBreve ? "text-brand-green" : "text-slate-500"}>
+                  <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              );
               return (
                 <li key={it.href}>
-                  <Link
-                    href={it.href}
-                    onClick={onNavigate}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${active ? "bg-white/10 font-medium text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={active ? "text-brand-green" : "text-slate-500"}>
-                      <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    {it.label}
-                  </Link>
+                  {it.emBreve ? (
+                    <span
+                      aria-disabled="true"
+                      className="flex cursor-default items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-500"
+                    >
+                      {icone}
+                      {it.label}
+                      <span className="ml-auto text-[0.65rem] text-slate-600">em breve</span>
+                    </span>
+                  ) : (
+                    <Link
+                      href={it.href}
+                      onClick={onNavigate}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${active ? "bg-white/10 font-medium text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}
+                    >
+                      {icone}
+                      {it.label}
+                    </Link>
+                  )}
                 </li>
               );
             })}
