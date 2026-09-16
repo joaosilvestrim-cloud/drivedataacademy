@@ -68,6 +68,35 @@ export async function deleteMessage(formData: FormData) {
   revalidatePath("/admin/comunidade");
 }
 
+/* ---------- Moderação de imagem ----------
+   Toda imagem entra como pendente (gatilho no banco) e só aparece no chat
+   depois daqui. Recusar tira a imagem da mensagem e apaga o arquivo: uma
+   imagem recusada não pode continuar acessível por link direto. */
+export async function aprovarImagem(formData: FormData) {
+  const supabase = await admin();
+  await supabase.from("channel_messages").update({ image_status: "aprovada" }).eq("id", formData.get("id") as string);
+  revalidatePath("/admin/comunidade");
+  redirect("/admin/comunidade?ok=" + encodeURIComponent("Imagem aprovada."));
+}
+
+export async function recusarImagem(formData: FormData) {
+  const supabase = await admin();
+  const id = formData.get("id") as string;
+  const { data: msg } = await supabase.from("channel_messages").select("image_url, body").eq("id", id).maybeSingle();
+
+  if (msg?.image_url) {
+    const arquivo = msg.image_url.split("/community/").pop();
+    if (arquivo) await supabase.storage.from("community").remove([arquivo]);
+  }
+
+  // Mensagem que era só a imagem não sobra vazia no chat.
+  if (!((msg?.body as string) || "").trim()) await supabase.from("channel_messages").delete().eq("id", id);
+  else await supabase.from("channel_messages").update({ image_url: null, image_status: "recusada" }).eq("id", id);
+
+  revalidatePath("/admin/comunidade");
+  redirect("/admin/comunidade?ok=" + encodeURIComponent("Imagem recusada e apagada."));
+}
+
 // ---------- Moderação de tópicos (legado) ----------
 export async function togglePinThread(formData: FormData) {
   const supabase = await admin();

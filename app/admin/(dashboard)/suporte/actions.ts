@@ -38,6 +38,17 @@ export async function replyTicketAdmin(formData: FormData) {
   redirect(`/admin/suporte/${ticketId}`);
 }
 
+/* "Já li, não precisa responder." Tira o chamado da fila e do aviso piscando
+   no menu, sem fingir que foi resolvido nem mandar e-mail para o aluno. */
+export async function marcarChamadoLido(formData: FormData) {
+  const supabase = await admin();
+  const ticketId = formData.get("ticket_id") as string;
+  await supabase.from("support_tickets").update({ status: "read", updated_at: new Date().toISOString() }).eq("id", ticketId);
+  revalidatePath("/admin/suporte");
+  revalidatePath(`/admin/suporte/${ticketId}`);
+  redirect(`/admin/suporte${(formData.get("voltar") as string) || ""}`);
+}
+
 export async function setTicketStatus(formData: FormData) {
   const supabase = await admin();
   const ticketId = formData.get("ticket_id") as string;

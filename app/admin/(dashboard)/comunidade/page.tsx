@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import AdminError from "../AdminError";
 import {
-  createChannel, updateChannel, deleteChannel, moveChannel, deleteMessage,
+  createChannel, updateChannel, deleteChannel, moveChannel, deleteMessage, aprovarImagem, recusarImagem,
 } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +29,7 @@ function fmt(iso: string) {
 export default async function AdminComunidadePage() {
   let channels: any[] = [];
   let messages: any[] = [];
+  let pendentes: any[] = [];
   let msgCount = 0;
   let likeCount = 0;
   let nameById: Record<string, string> = {};
@@ -55,7 +56,17 @@ export default async function AdminComunidadePage() {
       const { data: reacts } = await admin.from("message_reactions").select("message_id").in("message_id", shownIds);
       for (const r of reacts ?? []) likesByMsg[r.message_id] = (likesByMsg[r.message_id] || 0) + 1;
     }
-    const prof = await loadProfiles(admin, messages.map((m: any) => m.user_id));
+    // Imagens esperando moderação, de todos os canais.
+    const { data: pend } = await admin
+      .from("channel_messages")
+      .select("id, channel_id, user_id, body, created_at, image_url")
+      .eq("image_status", "pendente")
+      .not("image_url", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(60);
+    pendentes = pend ?? [];
+
+    const prof = await loadProfiles(admin, [...messages, ...pendentes].map((m: any) => m.user_id));
     nameById = prof.nameById;
 
     // contagens por canal + membros ativos (autores distintos)
@@ -85,6 +96,8 @@ export default async function AdminComunidadePage() {
     { label: "Membros ativos", value: activeMembers, d: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z" },
   ];
 
+  const canalPorId: Record<string, string> = Object.fromEntries(channels.map((c: any) => [c.id, c.name]));
+
   return (
     <div>
       <h1 className="font-display text-2xl font-bold text-white">Comunidade</h1>
@@ -102,6 +115,41 @@ export default async function AdminComunidadePage() {
           </div>
         ))}
       </div>
+
+      {/* Fila de imagens */}
+      <h2 className="mt-10 font-display text-lg font-bold text-white">
+        Imagens para aprovar{pendentes.length > 0 && <span className="ml-2 rounded-full bg-amber-400/15 px-2.5 py-0.5 text-sm text-amber-300">{pendentes.length}</span>}
+      </h2>
+      <p className="mt-1 text-sm text-slate-400">Imagem postada no chat fica invisível para a turma até alguém do time aprovar aqui.</p>
+      {pendentes.length === 0 ? (
+        <p className="mt-4 rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-slate-500">Nenhuma imagem esperando.</p>
+      ) : (
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {pendentes.map((m: any) => (
+            <div key={m.id} className="glass overflow-hidden rounded-2xl border border-amber-400/20">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.image_url} alt="Imagem enviada no chat, aguardando aprovação" className="max-h-72 w-full bg-black/40 object-contain" />
+              <div className="p-4">
+                <p className="text-sm font-medium text-white">{nameById[m.user_id] || "Aluno"}</p>
+                <p className="text-xs text-slate-400">
+                  {canalPorId[m.channel_id] || "canal"} · {fmt(m.created_at)}
+                </p>
+                {m.body && <p className="mt-2 text-sm text-slate-300">{m.body}</p>}
+                <div className="mt-4 flex gap-2">
+                  <form action={aprovarImagem}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <button type="submit" className="rounded-lg bg-brand-green px-3 py-1.5 text-xs font-semibold text-ink-900">Aprovar</button>
+                  </form>
+                  <form action={recusarImagem}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <button type="submit" className={smallBtn}>Recusar e apagar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Moderação do chat */}
       <h2 className="mt-10 font-display text-lg font-bold text-white">Moderação do chat</h2>

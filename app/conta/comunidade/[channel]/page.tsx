@@ -22,7 +22,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
 
   const { data: msgsDesc } = await admin
     .from("channel_messages")
-    .select("id, user_id, body, created_at, tag, reply_to, image_url, is_solution, solved")
+    .select("id, user_id, body, created_at, tag, reply_to, image_url, image_status, is_solution, solved")
     .eq("channel_id", channel.id)
     .order("created_at", { ascending: false })
     .limit(80);
@@ -51,7 +51,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
     id: m.id, user_id: m.user_id, body: m.body, created_at: m.created_at,
     name: displayName(nameById, m.user_id), avatar: avatarById[m.user_id] || null,
     likes: likeCount[m.id] || 0, liked: myLiked.has(m.id),
-    tag: m.tag || null, image_url: m.image_url || null, is_solution: !!m.is_solution, solved: !!m.solved,
+    tag: m.tag || null, image_url: m.image_url || null, image_status: m.image_status || "aprovada", is_solution: !!m.is_solution, solved: !!m.solved,
     reply_to: m.reply_to || null,
     reply_name: m.reply_to && byId[m.reply_to] ? displayName(nameById, byId[m.reply_to].user_id) : null,
     reply_body: m.reply_to && byId[m.reply_to] ? (byId[m.reply_to].body || "").slice(0, 120) : null,

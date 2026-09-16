@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import { CATEGORIES, TICKET_STATUS } from "@/lib/support";
 import Mascot from "@/components/Mascot";
-import { replyTicketAdmin, setTicketStatus } from "../actions";
+import { replyTicketAdmin, setTicketStatus, marcarChamadoLido } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +45,12 @@ export default async function AdminTicketPage({ params }: { params: { id: string
 
       {/* Ações de status */}
       <div className="mt-4 flex flex-wrap gap-2">
+        {ticket.status === "open" && (
+          <form action={marcarChamadoLido}>
+            <input type="hidden" name="ticket_id" value={ticket.id} />
+            <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white">Marcar como lido</button>
+          </form>
+        )}
         {ticket.status !== "resolved" ? (
           <form action={setTicketStatus}>
             <input type="hidden" name="ticket_id" value={ticket.id} />

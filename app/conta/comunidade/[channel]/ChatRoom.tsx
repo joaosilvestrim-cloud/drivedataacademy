@@ -10,7 +10,7 @@ import { markChatSolution, signCommunityImage, chatProfiles } from "../actions";
 type Msg = {
   id: string; user_id: string; body: string; created_at: string; name: string; avatar?: string | null;
   likes: number; liked: boolean;
-  tag: string | null; image_url: string | null; is_solution: boolean; solved: boolean;
+  tag: string | null; image_url: string | null; image_status?: string | null; is_solution: boolean; solved: boolean;
   reply_to: string | null; reply_name?: string | null; reply_body?: string | null;
 };
 type Channel = { id: string; slug: string; name: string; description: string | null };
@@ -110,13 +110,13 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
         const person = await personFor(r.user_id);
         setMessages((prev) => (prev.some((m) => m.id === r.id) ? prev : [...prev, {
           id: r.id, user_id: r.user_id, body: r.body, created_at: r.created_at, name: person.name, avatar: person.avatar, likes: 0, liked: false,
-          tag: r.tag || null, image_url: r.image_url || null, is_solution: !!r.is_solution, solved: !!r.solved, reply_to: r.reply_to || null,
+          tag: r.tag || null, image_url: r.image_url || null, image_status: r.image_status || "aprovada", is_solution: !!r.is_solution, solved: !!r.solved, reply_to: r.reply_to || null,
         }]));
         setTimeout(() => { const el = scrollRef.current; if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 200) scrollToBottom(); }, 30);
       })
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "channel_messages", filter: `channel_id=eq.${channel.id}` }, (payload: any) => {
         const r = payload.new;
-        setMessages((prev) => prev.map((m) => (m.id === r.id ? { ...m, is_solution: !!r.is_solution, solved: !!r.solved, tag: r.tag ?? m.tag, body: r.body ?? m.body } : m)));
+        setMessages((prev) => prev.map((m) => (m.id === r.id ? { ...m, is_solution: !!r.is_solution, solved: !!r.solved, tag: r.tag ?? m.tag, body: r.body ?? m.body, image_url: r.image_url ?? null, image_status: r.image_status ?? m.image_status } : m)));
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "message_reactions" }, (payload: any) => {
         const row = (payload.new || payload.old) as any;
@@ -169,7 +169,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
       peopleCache.current[me.id] = { name: me.name, avatar: me.avatar ?? null };
       setMessages((prev) => prev.some((m) => m.id === data.id) ? prev : [...prev, {
         id: data.id, user_id: me.id, body: text, created_at: data.created_at, name: me.name, avatar: me.avatar ?? null, likes: 0, liked: false,
-        tag: payload.tag || null, image_url: payload.image_url || null, is_solution: false, solved: false,
+        tag: payload.tag || null, image_url: payload.image_url || null, image_status: payload.image_url ? "pendente" : null, is_solution: false, solved: false,
         reply_to: rt?.id || null, reply_name: rt?.name || null, reply_body: rt ? rt.body.slice(0, 120) : null,
       }]);
       setTimeout(scrollToBottom, 30);
@@ -351,10 +351,17 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
 
                     {m.body && <p className="mt-0.5 whitespace-pre-line break-words text-[0.92rem] leading-relaxed text-slate-200">{m.body}</p>}
 
-                    {m.image_url && (
+                    {/* Imagem só aparece depois que o time aprova. Até lá, quem vê
+                        sabe que existe um anexo em análise, em vez de sumir sem explicação. */}
+                    {m.image_url && m.image_status !== "aprovada" ? (
+                      <p className="mt-2 inline-flex items-center gap-2 rounded-xl border border-dashed border-white/15 px-3 py-2 text-[0.8rem] text-slate-400">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" /><path d="M12 7v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                        Imagem em análise pelo time
+                      </p>
+                    ) : m.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={m.image_url} alt="anexo" className="mt-2 max-h-72 rounded-xl border border-white/10 object-contain" />
-                    )}
+                    ) : null}
 
                     {m.is_solution && <p className="mt-1 inline-flex items-center gap-1 text-[0.7rem] font-semibold text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg> Marcada como solução</p>}
 

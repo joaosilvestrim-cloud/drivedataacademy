@@ -8,6 +8,7 @@ import { LinkFilter } from "@/components/ui/filter";
 import { DataTable, SortTh, Tr, Cell } from "@/components/ui/data";
 import { EmptyState } from "@/components/ui/layout";
 import AdminError from "../AdminError";
+import { marcarChamadoLido } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -18,21 +19,39 @@ function fmt(iso: string) {
 const TOM: Record<string, "attention" | "accent" | "neutral"> = {
   open: "attention",
   answered: "accent",
+  read: "neutral",
   resolved: "neutral",
 };
 
 const FILTERS = [
   { key: "open", label: "Abertos" },
   { key: "answered", label: "Respondidos" },
+  { key: "read", label: "Lidos" },
   { key: "resolved", label: "Resolvidos" },
   { key: "all", label: "Todos" },
 ];
+
+// Botão de "já li": só faz sentido enquanto o chamado está esperando o time.
+function BotaoLido({ id, voltar }: { id: string; voltar: string }) {
+  return (
+    <form action={marcarChamadoLido}>
+      <input type="hidden" name="ticket_id" value={id} />
+      <input type="hidden" name="voltar" value={voltar} />
+      <button
+        type="submit"
+        className="whitespace-nowrap rounded-ctl border border-ds-line px-2.5 py-1 text-caption text-ds-text-2 transition-colors hover:border-ds-accent hover:text-ds-text"
+      >
+        Marcar como lido
+      </button>
+    </form>
+  );
+}
 
 export default async function SuportePage({ searchParams }: { searchParams: { status?: string } }) {
   const active = searchParams?.status || "open";
   let tickets: any[] = [];
   let nameById: Record<string, string> = {};
-  const counts: Record<string, number> = { open: 0, answered: 0, resolved: 0, all: 0 };
+  const counts: Record<string, number> = { open: 0, answered: 0, read: 0, resolved: 0, all: 0 };
   try {
     const admin = createAdminClient();
     const { data, error } = await admin
@@ -104,6 +123,7 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
                   <SortTh>Aluno</SortTh>
                   <SortTh>Situação</SortTh>
                   <SortTh>Atualizado</SortTh>
+                  <SortTh><span className="sr-only">Ações</span></SortTh>
                 </tr>
               </thead>
               <tbody>
@@ -128,6 +148,9 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
                         <Status tone={TOM[t.status] ?? "neutral"}>{st.label}</Status>
                       </Cell>
                       <Cell muted className="whitespace-nowrap">{fmt(t.updated_at)}</Cell>
+                      <Cell className="whitespace-nowrap">
+                        {t.status === "open" && <BotaoLido id={t.id} voltar={`?status=${active}`} />}
+                      </Cell>
                     </Tr>
                   );
                 })}

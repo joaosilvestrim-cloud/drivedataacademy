@@ -38,15 +38,25 @@ async function pagosSemAcesso(admin: SupabaseClient): Promise<number> {
   return lista.filter((o: any) => !o.user_id || !ativos.has(o.user_id)).length;
 }
 
+async function imagensParaModerar(admin: SupabaseClient): Promise<number> {
+  const { count } = await admin
+    .from("channel_messages")
+    .select("*", { count: "exact", head: true })
+    .eq("image_status", "pendente")
+    .not("image_url", "is", null);
+  return count ?? 0;
+}
+
 async function seguro(fn: () => Promise<number>): Promise<number> {
   try { return await fn(); } catch { return 0; }
 }
 
 export async function contarPendencias(admin: SupabaseClient): Promise<Pendencias> {
-  const [suporte, desafios, pagamentos] = await Promise.all([
+  const [suporte, desafios, pagamentos, imagens] = await Promise.all([
     seguro(() => chamadosAbertos(admin)),
     seguro(() => desafiosParaCorrigir(admin)),
     seguro(() => pagosSemAcesso(admin)),
+    seguro(() => imagensParaModerar(admin)),
   ]);
-  return { "/admin/suporte": suporte, "/admin/desafios": desafios, "/admin/operacao": pagamentos };
+  return { "/admin/suporte": suporte, "/admin/desafios": desafios, "/admin/operacao": pagamentos, "/admin/comunidade": imagens };
 }
