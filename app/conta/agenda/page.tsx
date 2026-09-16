@@ -107,6 +107,14 @@ export default async function AgendaPage() {
       {rest.length > 0 && (
         <>
           <h2 className="mt-10 font-display text-lg font-bold text-white">No roadmap</h2>
+          {/* Cartaz da temporada: a grade toda em uma imagem, do jeito que vai
+              para as redes. Abaixo dele, cada encontro com a própria capa. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/banners/proximas-mentorias.jpg"
+            alt="Próximas mentorias ao vivo da DriveData Academy"
+            className="mt-4 w-full rounded-2xl border border-white/10"
+          />
           <ol className="mt-4 space-y-4 border-l border-white/10 pl-6">
             {rest.map((l: any) => (
               <li key={l.id} className="relative">
