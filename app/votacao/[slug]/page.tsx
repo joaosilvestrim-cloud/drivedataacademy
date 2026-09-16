@@ -42,10 +42,16 @@ export default async function VotacaoPage({
   return (
     <main className="min-h-screen bg-ink-900 px-6 py-14">
       <div className="mx-auto max-w-2xl">
-        <Link href="/" aria-label="DriveData Academy">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="DriveData Academy" className="h-9 w-auto" />
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Link href="/" aria-label="DriveData Academy">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="DriveData Academy" className="h-9 w-auto" />
+          </Link>
+          {/* Quem chega pelo menu do aluno precisa de um caminho de volta. */}
+          <Link href="/conta" className="text-sm text-slate-400 transition-colors hover:text-white">
+            ← Voltar para a plataforma
+          </Link>
+        </div>
 
         <h1 className="mt-10 font-display text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">{votacao.title}</h1>
         {votacao.description && <p className="mt-4 whitespace-pre-line text-slate-300/90">{votacao.description}</p>}

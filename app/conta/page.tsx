@@ -10,8 +10,8 @@ import { Button, Badge, Status, ICON } from "@/components/ui/primitives";
 import { SectionHeader, EmptyState } from "@/components/ui/layout";
 import { DataRule, EvidenceBar, FreshnessRing } from "@/components/ui/signature";
 import ProximasMentorias from "@/components/mentorias/ProximasMentorias";
-import WorkshopPoll from "./WorkshopPoll";
-import { WORKSHOP_OPTIONS } from "./workshop";
+import EnquetePoll from "./EnquetePoll";
+import { carregarVotacao, aberta as enqueteAberta } from "@/lib/votacao";
 
 export const dynamic = "force-dynamic";
 
@@ -75,14 +75,25 @@ export default async function ContaHome() {
 
   // As próximas lives e mentorias aparecem na faixa ProximasMentorias.
 
-  const [{ data: votesData }, { data: myVoteRow }, { data: catalogData }] = await Promise.all([
-    admin.from("workshop_votes").select("option"),
-    admin.from("workshop_votes").select("option").eq("user_id", user!.id).maybeSingle(),
+  const [{ data: catalogData }] = await Promise.all([
     admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon, subscriber_price").eq("published", true).eq("access_mode", "catalogo").order("position"),
   ]);
-  const voteCounts: Record<string, number> = {};
-  for (const v of votesData ?? []) voteCounts[v.option] = (voteCounts[v.option] || 0) + 1;
-  const myVote = myVoteRow?.option ?? null;
+  /* Enquete: a mesma de /votacao. Carregada aqui para o aluno votar em um
+     clique e ver o número igual ao da página pública. */
+  const { votacao: enqueteRaw, opcoes: enqueteOpcoes } = await carregarVotacao(admin);
+  const enquete = enqueteRaw && enqueteAberta(enqueteRaw) ? enqueteRaw : null;
+  const enqueteContagem: Record<string, number> = {};
+  let minhasEscolhas: string[] = [];
+  let enqueteVotos = 0;
+  if (enquete) {
+    const { data: votos } = await admin.from("poll_votes").select("email, options").eq("poll_id", enquete.id);
+    enqueteVotos = (votos ?? []).length;
+    const meuEmail = (user!.email || "").toLowerCase();
+    for (const v of votos ?? []) {
+      for (const id of v.options || []) enqueteContagem[id] = (enqueteContagem[id] || 0) + 1;
+      if (v.email === meuEmail) minhasEscolhas = v.options || [];
+    }
+  }
 
   const courseIds = (enrolls ?? []).map((e: any) => e.course_id);
   let courses: any[] = [];
@@ -320,9 +331,20 @@ export default async function ContaHome() {
       <ProximasMentorias className="" />
 
 
-      <section aria-labelledby="enquete">
-        <WorkshopPoll options={WORKSHOP_OPTIONS} counts={voteCounts} myVote={myVote} />
-      </section>
+      {enquete && (
+        <section aria-labelledby="enquete">
+          <EnquetePoll
+            slug={enquete.slug}
+            titulo={enquete.title}
+            descricao={enquete.description}
+            opcoes={enqueteOpcoes}
+            contagem={enqueteContagem}
+            minhas={minhasEscolhas}
+            totalVotos={enqueteVotos}
+            maxEscolhas={enquete.max_choices}
+          />
+        </section>
+      )}
 
       {catalogo.length > 0 && (
         <section aria-labelledby="catalogo">

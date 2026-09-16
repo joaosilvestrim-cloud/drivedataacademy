@@ -115,7 +115,8 @@ export default async function CursosCardapio() {
 function Cartao({ c, href, selo, rodape }: { c: Curso; href: string; selo: string | null; rodape: React.ReactNode }) {
   return (
     <Link href={href} className="card-hover glass group flex flex-col overflow-hidden rounded-3xl border border-white/8">
-      <div className="relative aspect-[16/9] overflow-hidden">
+      {/* Capa menor de propósito: o card é sobre o treinamento, não sobre o banner. */}
+      <div className="relative aspect-[16/7] overflow-hidden">
         {c.cover_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={c.cover_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />

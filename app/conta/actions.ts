@@ -60,6 +60,52 @@ export async function saveProfile(patch: Partial<Record<ProfileField, string>>) 
   return { ok: true as const };
 }
 
+/* Voto da enquete dentro da conta. O aluno clica na opção e pronto: o e-mail
+   vem da sessão, então não existe formulário de identificação. É a mesma
+   tabela da página pública, para as duas telas mostrarem o mesmo número. */
+export async function votarEnquete(formData: FormData) {
+  const optionId = ((formData.get("option_id") as string) || "").trim();
+  if (!optionId) return;
+
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/entrar");
+  const admin = createAdminClient();
+
+  const { data: opcao } = await admin.from("poll_options").select("id, poll_id").eq("id", optionId).maybeSingle();
+  if (!opcao) return;
+  const { data: enquete } = await admin.from("polls").select("id, slug, max_choices, published, closes_at").eq("id", opcao.poll_id).maybeSingle();
+  if (!enquete || !enquete.published) return;
+  if (enquete.closes_at && new Date(enquete.closes_at).getTime() < Date.now()) return;
+
+  const email = (user.email || "").toLowerCase();
+  const { data: perfil } = await admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+  const { data: voto } = await admin.from("poll_votes").select("options").eq("poll_id", enquete.id).eq("email", email).maybeSingle();
+
+  const atuais: string[] = voto?.options ?? [];
+  let escolhas: string[];
+  if (enquete.max_choices <= 1) {
+    // Clicar na opção já marcada desmarca: o aluno pode tirar o voto.
+    escolhas = atuais.includes(optionId) ? [] : [optionId];
+  } else if (atuais.includes(optionId)) {
+    escolhas = atuais.filter((id) => id !== optionId);
+  } else {
+    escolhas = [...atuais, optionId].slice(-enquete.max_choices);
+  }
+
+  if (escolhas.length === 0) {
+    await admin.from("poll_votes").delete().eq("poll_id", enquete.id).eq("email", email);
+  } else {
+    await admin.from("poll_votes").upsert(
+      { poll_id: enquete.id, email, name: perfil?.full_name || user.email, options: escolhas },
+      { onConflict: "poll_id,email" }
+    );
+  }
+
+  revalidatePath("/conta");
+  revalidatePath(`/votacao/${enquete.slug}`);
+}
+
 export async function voteWorkshop(formData: FormData) {
   const option = ((formData.get("option") as string) || "").trim();
   if (!WORKSHOP_OPTIONS.includes(option)) return;

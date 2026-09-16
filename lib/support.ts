@@ -4,6 +4,7 @@ export const CATEGORIES: Record<string, string> = {
   tecnico: "Problema técnico",
   financeiro: "Pagamento / acesso",
   certificado: "Certificado",
+  sugestao: "Sugestão de melhoria",
   outro: "Outro",
 };
 
