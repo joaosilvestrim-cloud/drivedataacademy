@@ -5,7 +5,7 @@
    fonte. O `key` continua sendo o `type` gravado em rep_requests, então nada
    muda para o admin. */
 
-export type Field = { name: string; label: string; type: "text" | "textarea" | "number" | "select"; options?: string[]; ph?: string };
+export type Field = { name: string; label: string; type: "text" | "textarea" | "number" | "select"; options?: string[]; ph?: string; ajuda?: string };
 // saibaMais: link opcional para conhecer o produto antes de preencher o funil.
 export type Beneficio = { titulo: string; texto: string; icone: string };
 export type Form = { key: string; icon: string; title: string; desc: string; cta: string; saibaMais?: { label: string; href: string }; beneficios?: Beneficio[]; fields: Field[] };
@@ -29,14 +29,51 @@ const FORMS: Form[] = [
   },
   {
     key: "parceria", icon: "M17 20h5v-2a4 4 0 00-3-3.9M9 20H4v-2a4 4 0 013-3.9m6-2a4 4 0 10-4-4 4 4 0 004 4z", title: "Parceria em projetos",
-    desc: "Tem um projeto e precisa de braço? Descreva que a gente entra em contato.",
+    desc: "Tem um projeto de dados para tirar do papel? Responda abaixo e a gente volta com um caminho, um prazo e um preço.",
     cta: "Enviar projeto",
+    /* As perguntas foram escritas para qualificar na primeira conversa: dor,
+       origem dos dados, quem decide, prazo e dinheiro. Com isso a proposta sai
+       na primeira reunião, em vez de gastar um encontro só para entender. */
     fields: [
-      { name: "escopo", label: "Escopo do projeto", type: "textarea", ph: "O que precisa ser feito" },
-      { name: "prazo", label: "Prazo", type: "text", ph: "Ex.: 6 semanas" },
-      { name: "budget", label: "Budget (R$)", type: "text", ph: "Ex.: 15.000" },
-      { name: "segmento", label: "Segmento da empresa", type: "text", ph: "Ex.: Varejo" },
-      { name: "tipo_projeto", label: "Tipo de projeto", type: "select", options: ["Dashboard/BI", "Engenharia de Dados", "Automação", "IA", "App/Fabric", "Outro"] },
+      {
+        name: "tipo_projeto", label: "Que tipo de trabalho você precisa?", type: "select",
+        options: ["Dashboard/BI", "Engenharia de Dados", "Automação", "IA", "App/Fabric", "Ainda não sei", "Outro"],
+        ajuda: "Se não souber, tudo bem. A conversa ajuda a definir.",
+      },
+      {
+        name: "escopo", label: "Qual problema você quer resolver?", type: "textarea",
+        ph: "Ex.: o fechamento comercial leva três dias no Excel e ninguém confia no número final.",
+        ajuda: "Conte o que trava hoje, não a solução. O problema bem contado vale mais que a especificação.",
+      },
+      {
+        name: "origem_dados", label: "De onde vêm os dados hoje?", type: "textarea",
+        ph: "Ex.: ERP Protheus, planilhas do comercial e uma base do marketing no Google Sheets.",
+        ajuda: "Liste sistemas, planilhas e bancos, do jeito que for. Ajuda a saber o tamanho da integração.",
+      },
+      {
+        name: "publico", label: "Quem vai usar o resultado e para decidir o quê?", type: "textarea",
+        ph: "Ex.: seis gerentes de loja acompanhando meta diária e o diretor no fechamento do mês.",
+        ajuda: "Saber quem olha a tela muda o desenho do projeto inteiro.",
+      },
+      {
+        name: "time_interno", label: "Vocês têm time de dados hoje?", type: "select",
+        options: ["Não temos", "Uma pessoa cuida", "Time pequeno, de 2 a 5", "Time estruturado", "Temos fornecedor externo"],
+        ajuda: "Define se a gente entrega pronto ou trabalha junto com o seu pessoal.",
+      },
+      {
+        name: "prazo", label: "Existe uma data limite?", type: "text",
+        ph: "Ex.: precisa rodar antes do fechamento de dezembro",
+        ajuda: "Se há auditoria, reunião de conselho ou virada de sistema, conte aqui.",
+      },
+      {
+        name: "budget", label: "Qual faixa de investimento você considera?", type: "text",
+        ph: "Ex.: até 15.000, ou ainda estou levantando",
+        ajuda: "Uma faixa já basta. Sem ela, a gente sugere o escopo mínimo que resolve.",
+      },
+      {
+        name: "segmento", label: "Segmento e porte da empresa", type: "text",
+        ph: "Ex.: varejo farmacêutico, 300 funcionários, 12 lojas",
+      },
     ],
   },
   {

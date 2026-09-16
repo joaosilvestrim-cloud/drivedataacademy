@@ -1,6 +1,5 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { isAdminEmail } from "@/lib/community";
 
 /* Carência dos materiais.
 
@@ -9,7 +8,8 @@ import { isAdminEmail } from "@/lib/community";
    não virar o motivo de assinar por um dia e cancelar.
 
    Quem entrou por matrícula do time, compra avulsa ou turma não passa pela
-   carência: ali o acesso foi combinado de outro jeito. */
+   carência: ali o acesso foi combinado de outro jeito. Administrador também
+   espera, para o time ver a mesma tela que o aluno vê. */
 
 export const DIAS_CARENCIA = 7;
 
@@ -19,10 +19,8 @@ export async function liberacaoDeMateriais(
   admin: SupabaseClient,
   userId: string,
   courseId: string,
-  email?: string | null
+  _email?: string | null
 ): Promise<Liberacao> {
-  if (isAdminEmail(email)) return { liberado: true, liberaEm: null };
-
   const { data: matricula } = await admin
     .from("enrollments")
     .select("id")

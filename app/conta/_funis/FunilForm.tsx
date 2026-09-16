@@ -100,6 +100,7 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
             return (
               <div key={f.name} className="space-y-1.5">
                 <label htmlFor={id} className="block text-sm font-medium text-slate-300">{f.label}</label>
+                {f.ajuda && <p className="text-xs text-slate-500">{f.ajuda}</p>}
                 {f.type === "textarea" ? (
                   <textarea id={id} value={values[f.name] || ""} onChange={(e) => set(f.name, e.target.value)} rows={3} placeholder={f.ph} className={`${field} resize-y`} />
                 ) : f.type === "select" ? (

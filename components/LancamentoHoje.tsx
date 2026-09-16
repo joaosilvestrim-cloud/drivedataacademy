@@ -71,7 +71,17 @@ export default async function LancamentoHoje() {
 
       <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.05fr]">
         <div>
-          <p className="text-sm text-slate-400">
+          {/* A live é a porta de entrada. O convite para assinar vem antes do
+              título, senão a pessoa assiste e vai embora sem saber que existe
+              uma plataforma atrás. */}
+          <a
+            href="/matricula"
+            className="inline-flex items-center gap-2 rounded-xl bg-brand-green px-5 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-white"
+          >
+            Faça parte da Academy
+            <span aria-hidden="true">→</span>
+          </a>
+          <p className="mt-6 text-sm text-slate-400">
             {estreia ? `${dataLonga(agora)} · estreia da DriveData Academy` : "DriveData Academy · aulas abertas no YouTube"}
           </p>
           <h1 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">

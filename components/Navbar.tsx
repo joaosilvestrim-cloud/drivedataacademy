@@ -61,8 +61,8 @@ export default function Navbar() {
                   aria-disabled={assinaturaAberta ? undefined : true}
                   title={assinaturaAberta ? undefined : "Liberamos nos próximos dias"}
                   className={`relative inline-flex items-baseline gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-semibold transition-colors after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full ${
-                    assinaturaAberta ? "text-white after:bg-brand-green hover:text-brand-green" : "cursor-default text-white/80 after:bg-brand-green/40"
-                  }`}
+                    pathname === DESTAQUE ? "after:bg-brand-green" : "after:bg-transparent"
+                  } ${assinaturaAberta ? "text-white hover:text-brand-green" : "cursor-default text-white/80"}`}
                 >
                   {l.label}
                   {!assinaturaAberta && <span className="text-[0.7rem] font-normal text-slate-400">{EM_BREVE[l.label] || "em breve"}</span>}
