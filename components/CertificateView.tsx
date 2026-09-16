@@ -17,9 +17,7 @@ export default function CertificateView({
   code,
   host,
   qrSvg,
-  signatureUrl,
-  signatureName,
-  signatureRole,
+  assinaturas = [],
   headline = "Certificado de Conclusão",
   achievementLabel = "concluiu com êxito o curso",
 }: {
@@ -32,9 +30,9 @@ export default function CertificateView({
   code: string;
   host: string;
   qrSvg?: string | null;
-  signatureUrl?: string | null;
-  signatureName?: string | null;
-  signatureRole?: string | null;
+  /* Quem assina. A Academy tem dois sócios, e os dois assinam todo
+     certificado, então isto é uma lista e não um responsável só. */
+  assinaturas?: { url?: string | null; nome: string; cargo?: string | null }[];
 }) {
   return (
     <div
@@ -72,20 +70,25 @@ export default function CertificateView({
         </div>
 
         <div className="mt-auto w-full border-t border-slate-200 pt-[2%]">
-          <div className="grid grid-cols-3 items-end gap-4">
+          {/* A faixa do meio ganha mais espaço porque agora são duas assinaturas. */}
+          <div className="grid grid-cols-[1fr_1.6fr_auto] items-end gap-4">
             <div className="text-left">
               <p className="text-[1.2cqw] font-semibold uppercase tracking-wide text-slate-400">Código de autenticidade</p>
               <p className="font-mono text-[1.9cqw] font-bold text-slate-800">{code}</p>
               <p className="mt-1 text-[1.1cqw] text-slate-400">{host}/certificado/{code}</p>
             </div>
-            <div className="text-center">
-              {signatureUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={signatureUrl} alt="Assinatura" className="mx-auto mb-1 h-[8cqw] max-h-[64px] w-auto object-contain" />
-              )}
-              <div className="mx-auto mb-1 w-2/3 border-t border-slate-400" />
-              <p className="text-[1.5cqw] font-semibold text-slate-700">{signatureName || "Assinatura do Responsável"}</p>
-              {signatureName && signatureRole && <p className="text-[1.2cqw] text-slate-500">{signatureRole}</p>}
+            <div className={`grid gap-4 ${assinaturas.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
+              {(assinaturas.length ? assinaturas : [{ nome: "", cargo: null, url: null }]).map((a, i) => (
+                <div key={a.nome || i} className="text-center">
+                  {a.url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={a.url} alt={`Assinatura de ${a.nome}`} className="mx-auto mb-1 h-[7cqw] max-h-[56px] w-auto object-contain" />
+                  )}
+                  <div className="mx-auto mb-1 w-4/5 border-t border-slate-400" />
+                  <p className="text-[1.4cqw] font-semibold text-slate-700">{a.nome || "Assinatura do Responsável"}</p>
+                  {a.nome && a.cargo && <p className="text-[1.05cqw] leading-tight text-slate-500">{a.cargo}</p>}
+                </div>
+              ))}
             </div>
             <div className="flex flex-col items-end">
               {qrSvg ? (

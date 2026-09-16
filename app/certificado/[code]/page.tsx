@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { headers } from "next/headers";
 import QRCode from "qrcode";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -18,7 +19,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
       .select("code, student_name, course_title, workload, created_at, expires_at, revoked, kind, signature_name, signature_role, signature_url")
       .eq("code", params.code)
       .maybeSingle(),
-    admin.from("site_settings").select("key, value").in("key", ["cert_signature_url", "cert_signature_name", "cert_signature_role"]),
+    admin.from("site_settings").select("key, value").like("key", "cert_signature%"),
   ]);
   const sigMap = Object.fromEntries((sig ?? []).map((r: any) => [r.key, r.value]));
 
@@ -38,6 +39,13 @@ export default async function CertificatePage({ params }: { params: { code: stri
     );
   }
 
+  /* Os dois sócios assinam todo certificado. Ficam em site_settings porque é
+     assinatura da escola, não do instrutor da turma. */
+  const assinaturas = [
+    { nome: sigMap.cert_signature_name, cargo: sigMap.cert_signature_role, url: sigMap.cert_signature_url },
+    { nome: sigMap.cert_signature2_name, cargo: sigMap.cert_signature2_role, url: sigMap.cert_signature2_url },
+  ].filter((a) => a.nome);
+
   const expired = cert.expires_at ? new Date(cert.expires_at) < new Date() : false;
   const valid = !cert.revoked && !expired;
   const qrSvg = await QRCode.toString(url, { type: "svg", margin: 0, color: { dark: "#0b1220", light: "#00000000" } });
@@ -47,26 +55,29 @@ export default async function CertificatePage({ params }: { params: { code: stri
       <style>{`@media print { @page { size: A4 landscape; margin: 0 } body { background:#fff !important } .no-print{display:none !important} .cert-wrap{padding:0 !important} }`}</style>
 
       <div className="mx-auto max-w-5xl">
-        <div className={`no-print mx-auto mb-6 flex w-fit items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold ${valid ? "border-brand-green/40 bg-brand-green/10 text-brand-green" : "border-red-400/40 bg-red-400/10 text-red-300"}`}>
-          <span>{valid ? "✓" : "✕"}</span>
-          {valid ? "Certificado válido" : cert.revoked ? "Certificado revogado" : "Certificado expirado"}
+        {/* Quem chega pelo e-mail ou pelo QR precisa de porta de saída. */}
+        <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-4">
+          <Link href="/conta/certificados" className="text-sm text-slate-400 transition-colors hover:text-white">
+            ← Voltar para a plataforma
+          </Link>
+          <div className={`flex w-fit items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold ${valid ? "border-brand-green/40 bg-brand-green/10 text-brand-green" : "border-red-400/40 bg-red-400/10 text-red-300"}`}>
+            <span>{valid ? "✓" : "✕"}</span>
+            {valid ? "Certificado válido" : cert.revoked ? "Certificado revogado" : "Certificado expirado"}
+          </div>
         </div>
 
         <div className="cert-wrap">
-          {/* A assinatura da live manda. A configuração global é a reserva. */}
           <CertificateView
             studentName={cert.student_name}
             courseTitle={cert.course_title}
             workload={cert.workload}
             headline={cert.kind === "live" ? "Certificado de Participação" : undefined}
+            assinaturas={assinaturas}
             achievementLabel={cert.kind === "live" ? "participou da transmissão ao vivo" : undefined}
             dateLabel={fmtDate(cert.created_at)}
             code={cert.code}
             host={host}
             qrSvg={qrSvg}
-            signatureUrl={cert.signature_url || sigMap.cert_signature_url || null}
-            signatureName={cert.signature_name || sigMap.cert_signature_name || null}
-            signatureRole={cert.signature_role || sigMap.cert_signature_role || null}
           />
         </div>
 

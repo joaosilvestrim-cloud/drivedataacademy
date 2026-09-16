@@ -40,11 +40,16 @@ export async function saveCertSignature(formData: FormData) {
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");
 
-  const rows = [
-    { key: "cert_signature_url", value: ((formData.get("cert_signature_url") as string) || "").trim() },
-    { key: "cert_signature_name", value: ((formData.get("cert_signature_name") as string) || "").trim() },
-    { key: "cert_signature_role", value: ((formData.get("cert_signature_role") as string) || "").trim() },
-  ].map((r) => ({ ...r, updated_at: new Date().toISOString() }));
+  // Os dois sócios assinam todo certificado, então são dois blocos iguais.
+  const campos = [
+    "cert_signature_url", "cert_signature_name", "cert_signature_role",
+    "cert_signature2_url", "cert_signature2_name", "cert_signature2_role",
+  ];
+  const rows = campos.map((key) => ({
+    key,
+    value: ((formData.get(key) as string) || "").trim(),
+    updated_at: new Date().toISOString(),
+  }));
 
   const supabase = createAdminClient();
   const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "key" });

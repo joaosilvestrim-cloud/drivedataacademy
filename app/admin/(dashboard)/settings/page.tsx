@@ -17,7 +17,7 @@ export default async function SettingsPage({
     const { data, error } = await supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["promo_videos", "promo_video_url", "cert_signature_url", "cert_signature_name", "cert_signature_role"]);
+      .in("key", ["promo_videos", "promo_video_url", "cert_signature_url", "cert_signature_name", "cert_signature_role", "cert_signature2_url", "cert_signature2_name", "cert_signature2_role"]);
     if (error) throw new Error(error.message);
 
     const map = Object.fromEntries((data ?? []).map((r: any) => [r.key, r.value]));
@@ -25,6 +25,9 @@ export default async function SettingsPage({
       cert_signature_url: map.cert_signature_url || "",
       cert_signature_name: map.cert_signature_name || "",
       cert_signature_role: map.cert_signature_role || "",
+      cert_signature2_url: map.cert_signature2_url || "",
+      cert_signature2_name: map.cert_signature2_name || "",
+      cert_signature2_role: map.cert_signature2_role || "",
     };
     if (map.promo_videos) {
       try {

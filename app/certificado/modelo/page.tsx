@@ -39,9 +39,10 @@ export default async function CertModeloPage({ searchParams }: { searchParams: {
           code="DDA-EXEMPLO"
           host="academy.drivedata.com.br"
           qrSvg={null}
-          signatureUrl={sigMap.cert_signature_url || null}
-          signatureName={sigMap.cert_signature_name || null}
-          signatureRole={sigMap.cert_signature_role || null}
+          assinaturas={[
+            { nome: sigMap.cert_signature_name, cargo: sigMap.cert_signature_role, url: sigMap.cert_signature_url },
+            { nome: sigMap.cert_signature2_name, cargo: sigMap.cert_signature2_role, url: sigMap.cert_signature2_url },
+          ].filter((a) => a.nome)}
         />
       </div>
     </main>
