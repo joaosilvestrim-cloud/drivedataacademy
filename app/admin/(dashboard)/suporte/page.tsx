@@ -62,7 +62,7 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
     const all = data ?? [];
     for (const t of all) { counts.all++; counts[t.status] = (counts[t.status] || 0) + 1; }
     tickets = active === "all" ? all : all.filter((t: any) => t.status === active);
-    const prof = await loadProfiles(admin, all.map((t: any) => t.user_id));
+    const prof = await loadProfiles(admin, all.map((t: any) => t.user_id).filter(Boolean));
     nameById = prof.nameById;
   } catch (e) {
     return (
@@ -141,7 +141,7 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
                       </Cell>
                       <Cell muted className="hidden whitespace-nowrap lg:table-cell">{CATEGORIES[t.category] || t.category}</Cell>
                       <Cell className="max-w-[13rem]">
-                        <span className="block truncate text-ds-text-2">{displayName(nameById, t.user_id)}</span>
+                        <span className="block truncate text-ds-text-2">{t.user_id ? displayName(nameById, t.user_id) : "Visitante"}</span>
                         <span className="block truncate text-caption text-ds-text-3">{t.email}</span>
                       </Cell>
                       <Cell className="whitespace-nowrap">
@@ -170,7 +170,7 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
                     <span className="flex min-w-0 flex-1 flex-col gap-1.5">
                       <span className="truncate text-body-sm font-medium text-ds-text">{t.subject}</span>
                       <span className="truncate text-caption text-ds-text-3">
-                        {displayName(nameById, t.user_id)} · {CATEGORIES[t.category] || t.category}
+                        {t.user_id ? displayName(nameById, t.user_id) : "Visitante"} · {CATEGORIES[t.category] || t.category}
                       </span>
                       <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
                         <Status tone={TOM[t.status] ?? "neutral"}>{st.label}</Status>

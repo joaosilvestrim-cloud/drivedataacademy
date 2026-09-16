@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createAdminClient } from "@/lib/supabase/admin";
 import MatriculaForm from "./MatriculaForm";
+import AjudaAssinatura from "@/components/AjudaAssinatura";
 import { SUB_INCLUDES, parseIncludes, descontoAnual } from "@/lib/subscription";
 
 export const dynamic = "force-dynamic";
@@ -176,6 +177,9 @@ export default async function MatriculaPage() {
       </main>
 
       <Footer />
+
+      {/* Quem trava no pagamento precisa falar com gente, não com robô. */}
+      <AjudaAssinatura />
     </div>
   );
 }

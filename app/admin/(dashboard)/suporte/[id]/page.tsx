@@ -26,9 +26,10 @@ export default async function AdminTicketPage({ params }: { params: { id: string
 
   const [{ data: messages }, prof] = await Promise.all([
     admin.from("support_messages").select("id, author, body, created_at").eq("ticket_id", ticket.id).order("created_at"),
-    loadProfiles(admin, [ticket.user_id]),
+    loadProfiles(admin, ticket.user_id ? [ticket.user_id] : []),
   ]);
-  const studentName = displayName(prof.nameById, ticket.user_id);
+  // Chamado aberto pelo site, sem conta: identifica pelo e-mail informado.
+  const studentName = ticket.user_id ? displayName(prof.nameById, ticket.user_id) : ticket.email || "Visitante";
   const st = TICKET_STATUS[ticket.status] || TICKET_STATUS.open;
 
   return (
