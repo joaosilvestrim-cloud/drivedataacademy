@@ -41,6 +41,7 @@ const ICONS: Record<string, string> = {
   materiais: "M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2",
   marketplace: "M3 3h18v4H3zM5 7v13h14V7M9 11h6",
   votacao: "M6 20V11M12 20V4M18 20v-7M3 20h18",
+  gravacoes: "M23 7l-7 5 7 5V7zM1 5h15v14H1zM6 9.5v5l4-2.5-4-2.5z",
   sugestao: "M12 3a6 6 0 00-4 10.5V16h8v-2.5A6 6 0 0012 3zM9 19h6M10 22h4",
 };
 
@@ -51,6 +52,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Cursos", href: "/conta/cursos", icon: "cardapio" },
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
+      { label: "Gravações", href: "/conta/gravacoes", icon: "gravacoes" },
       { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },
     ],
