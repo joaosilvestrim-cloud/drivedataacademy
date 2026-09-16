@@ -47,11 +47,13 @@ export default async function LancamentoHoje() {
       .from("live_events")
       .select("id, title, description, starts_at, duration_min, url, cover_url, kind")
       .eq("published", true)
-      // Duas horas de tolerância: a live que começou agora continua em destaque.
-      .gte("starts_at", new Date(Date.now() - 2 * 3600e3).toISOString())
+      // Busca o dia inteiro para trás e descarta abaixo o que já terminou: o
+      // destaque acompanha a transmissão e sai do ar junto com ela.
+      .gte("starts_at", new Date(Date.now() - 24 * 3600e3).toISOString())
       .order("starts_at")
-      .limit(6);
-    eventos = data ?? [];
+      .limit(10);
+    const fim = (e: Evento) => new Date(e.starts_at).getTime() + (e.duration_min || 60) * 60e3;
+    eventos = (data ?? []).filter((e) => fim(e) >= Date.now()).slice(0, 6);
   } catch {
     eventos = [];
   }

@@ -20,10 +20,12 @@ export default function CertificateView({
   signatureUrl,
   signatureName,
   signatureRole,
+  headline = "Certificado de Conclusão",
   achievementLabel = "concluiu com êxito o curso",
 }: {
   studentName: string;
   courseTitle: string;
+  headline?: string;
   achievementLabel?: string;
   workload?: string | null;
   dateLabel: string;
@@ -52,7 +54,7 @@ export default function CertificateView({
             bloco e o "ACADEMY" parece colado na linha de baixo. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/cert-logo.png" alt="DriveData Academy" className="h-[13%] w-auto" />
-        <p className="mt-[3.4%] text-[2.1cqw] font-bold uppercase tracking-[0.25em] text-brand-teal">Certificado de Conclusão</p>
+        <p className="mt-[3.4%] text-[2.1cqw] font-bold uppercase tracking-[0.25em] text-brand-teal">{headline}</p>
         <p className="mt-[2.4%] text-[1.9cqw] text-slate-400">Certificamos que</p>
 
         <div className="mt-[1%] flex min-h-[9%] w-full items-center justify-center rounded-2xl border-2 border-brand-green/40 bg-brand-green/[0.06] px-4">

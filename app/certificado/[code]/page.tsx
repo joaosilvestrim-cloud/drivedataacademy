@@ -57,6 +57,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
             studentName={cert.student_name}
             courseTitle={cert.course_title}
             workload={cert.workload}
+            headline={cert.kind === "live" ? "Certificado de Participação" : undefined}
             achievementLabel={cert.kind === "live" ? "participou da transmissão ao vivo" : undefined}
             dateLabel={fmtDate(cert.created_at)}
             code={cert.code}
