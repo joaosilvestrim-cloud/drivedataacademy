@@ -9,8 +9,8 @@ const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
 const label = "block text-sm font-medium text-slate-300";
 
-type Form = { full_name: string; phone: string; country: string; linkedin_url: string; headline: string; bio: string; skills: string; cv_url: string; avatar_url: string; portfolio_url: string };
-const EMPTY: Form = { full_name: "", phone: "", country: "", linkedin_url: "", headline: "", bio: "", skills: "", cv_url: "", avatar_url: "", portfolio_url: "" };
+type Form = { full_name: string; phone: string; country: string; linkedin_url: string; headline: string; bio: string; skills: string; avatar_url: string; portfolio_url: string };
+const EMPTY: Form = { full_name: "", phone: "", country: "", linkedin_url: "", headline: "", bio: "", skills: "", avatar_url: "", portfolio_url: "" };
 
 export default function ProfileForm() {
   const [email, setEmail] = useState("");
@@ -24,7 +24,6 @@ export default function ProfileForm() {
   const [aiText, setAiText] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiMsg, setAiMsg] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
   const avatarRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -33,7 +32,7 @@ export default function ProfileForm() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       setEmail(user.email || ""); setUid(user.id);
-      const { data } = await supabase.from("profiles").select("full_name, phone, country, linkedin_url, headline, bio, skills, cv_url, avatar_url, portfolio_url").eq("id", user.id).maybeSingle();
+      const { data } = await supabase.from("profiles").select("full_name, phone, country, linkedin_url, headline, bio, skills, avatar_url, portfolio_url").eq("id", user.id).maybeSingle();
       if (data) setForm({ ...EMPTY, ...Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v ?? ""])) } as Form);
       setLoading(false);
     })();
@@ -55,27 +54,6 @@ export default function ProfileForm() {
       setSaveErr(err?.message || "Não consegui salvar. Tente de novo.");
     } finally {
       setSaving(false);
-    }
-  }
-
-  async function onCv(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file || !uid) return;
-    if (file.type !== "application/pdf") { setAiMsg("Envie um PDF."); return; }
-    setUploading(true);
-    try {
-      const supabase = createClient();
-      const path = `${uid}/cv-${Date.now()}.pdf`;
-      const { error } = await supabase.storage.from("cv").upload(path, file, { upsert: true, contentType: "application/pdf" });
-      if (error) throw error;
-      const { data } = supabase.storage.from("cv").getPublicUrl(path);
-      const url = data.publicUrl;
-      setForm((f) => ({ ...f, cv_url: url }));
-      await persist({ cv_url: url });
-    } catch {
-      setAiMsg("Não consegui subir o CV. Tente de novo.");
-    } finally {
-      setUploading(false);
     }
   }
 
@@ -189,19 +167,6 @@ export default function ProfileForm() {
             <input id="portfolio_url" value={form.portfolio_url} onChange={(e) => setForm((f) => ({ ...f, portfolio_url: e.target.value }))} placeholder="https://seu-portfolio.com" className={field} />
             <p className="text-xs text-slate-500">Aparece na Vitrine de alunos.</p>
           </div>
-        </div>
-
-        {/* CV */}
-        <div className="space-y-2 rounded-xl border border-white/8 bg-white/[0.02] p-4">
-          <label className={label}>Currículo (PDF)</label>
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-slate-200 hover:border-brand-green/50 hover:text-brand-green disabled:opacity-60">
-              {uploading ? "Enviando..." : "Enviar CV"}
-            </button>
-            <input ref={fileRef} type="file" accept="application/pdf" onChange={onCv} className="hidden" />
-            {form.cv_url && <a href={form.cv_url} target="_blank" rel="noreferrer" className="text-sm text-brand-teal hover:underline">Ver CV enviado ↗</a>}
-          </div>
-          <p className="text-xs text-slate-500">Entra no seu perfil do banco de talentos da DriveData.</p>
         </div>
 
         <div className="flex items-center gap-3">

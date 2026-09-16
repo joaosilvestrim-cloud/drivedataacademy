@@ -25,7 +25,9 @@ export async function signAvatarUpload(ext: string) {
 // Campos do perfil que o próprio aluno pode editar.
 const PROFILE_FIELDS = [
   "full_name", "phone", "country", "linkedin_url",
-  "headline", "bio", "skills", "cv_url", "avatar_url", "portfolio_url",
+  // cv_url saiu: o envio de currículo foi removido do perfil. A coluna
+  // continua no banco com o que já foi enviado, mas ninguém escreve nela.
+  "headline", "bio", "skills", "avatar_url", "portfolio_url",
 ] as const;
 type ProfileField = (typeof PROFILE_FIELDS)[number];
 
