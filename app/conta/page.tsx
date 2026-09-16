@@ -78,7 +78,7 @@ export default async function ContaHome() {
   const [{ data: votesData }, { data: myVoteRow }, { data: catalogData }] = await Promise.all([
     admin.from("workshop_votes").select("option"),
     admin.from("workshop_votes").select("option").eq("user_id", user!.id).maybeSingle(),
-    admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon, subscriber_price").eq("published", true).order("position"),
+    admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon, subscriber_price").eq("published", true).eq("access_mode", "catalogo").order("position"),
   ]);
   const voteCounts: Record<string, number> = {};
   for (const v of votesData ?? []) voteCounts[v.option] = (voteCounts[v.option] || 0) + 1;

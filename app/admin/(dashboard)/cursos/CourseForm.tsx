@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/primitives";
-import { Field, TextareaField, CheckboxField, FormSection, FormActions } from "@/components/ui/form";
+import { Field, TextareaField, CheckboxField, SelectField, FormSection, FormActions } from "@/components/ui/form";
 import { saveCourse } from "./actions";
 import CoverUpload from "./CoverUpload";
 import { descontoCurso } from "@/lib/precoCurso";
@@ -20,6 +20,8 @@ type Course = {
   published: boolean;
   coming_soon?: boolean;
   members_only?: boolean;
+  access_mode?: string | null;
+  client_name?: string | null;
 } | null;
 
 export default function CourseForm({ course, cargaCalculada }: { course?: Course; cargaCalculada?: string | null }) {
@@ -143,6 +145,26 @@ export default function CourseForm({ course, cargaCalculada }: { course?: Course
       </FormSection>
 
       <FormSection title="Publicação">
+        {/* In company: mesmo conteúdo, entrega fechada dentro da empresa
+            contratante. Fica fora do catálogo e fora de venda; o acesso é
+            dado por matrícula em Vendas → Acessos. */}
+        <SelectField
+          scope={scope}
+          name="access_mode"
+          label="Modo de acesso"
+          defaultValue={course?.access_mode || "catalogo"}
+          description="Catálogo: o assinante compra sozinho. In company: turma fechada, só quem o time matricula entra."
+        >
+          <option value="catalogo">Catálogo (venda)</option>
+          <option value="in_company">In company (turma fechada)</option>
+        </SelectField>
+        <Field
+          scope={scope}
+          name="client_name"
+          label="Empresa contratante"
+          defaultValue={course?.client_name ?? ""}
+          description="Só no in company. Aparece no admin para você saber de quem é a turma."
+        />
         <CheckboxField
           scope={scope}
           name="published"

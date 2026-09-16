@@ -83,6 +83,8 @@ export async function saveCourse(formData: FormData) {
     certificate_enabled: formData.get("certificate_enabled") === "on",
     published: formData.get("published") === "on",
     coming_soon: formData.get("coming_soon") === "on",
+    access_mode: (formData.get("access_mode") as string) === "in_company" ? "in_company" : "catalogo",
+    client_name: ((formData.get("client_name") as string) || "").trim() || null,
   };
 
   if (id) {
@@ -94,6 +96,59 @@ export async function saveCourse(formData: FormData) {
     refresh();
     redirect(`/admin/cursos/${data?.id ?? ""}`);
   }
+}
+
+/* Duplica um curso com módulos, aulas e arquivos de material. Serve para o
+   caso in company: a mesma trilha vira duas, uma fechada na empresa e outra no
+   catálogo. A cópia nasce despublicada e sem aluno nenhum: matrícula,
+   progresso, certificado e avaliação não são copiados. */
+export async function duplicarCurso(formData: FormData) {
+  const supabase = await admin();
+  const id = formData.get("id") as string;
+
+  const { data: curso } = await supabase.from("courses").select("*").eq("id", id).maybeSingle();
+  if (!curso) redirect("/admin/cursos?error=" + encodeURIComponent("Curso não encontrado."));
+
+  const { id: _id, created_at, updated_at, ...campos } = curso as any;
+  let slug = slugify(`${curso.slug}-copia`);
+  const { data: existe } = await supabase.from("courses").select("id").eq("slug", slug).maybeSingle();
+  if (existe) slug = `${slug}-${Math.random().toString(36).slice(2, 6)}`;
+
+  const { data: novo, error } = await supabase
+    .from("courses")
+    .insert({ ...campos, slug, title: `${curso.title} (cópia)`, published: false })
+    .select("id")
+    .single();
+  if (error || !novo) redirect("/admin/cursos?error=" + encodeURIComponent(error?.message || "Não consegui duplicar."));
+
+  const { data: modulos } = await supabase.from("course_modules").select("*").eq("course_id", id).order("position");
+  const mapaModulo: Record<string, string> = {};
+  for (const m of modulos ?? []) {
+    const { id: mid, created_at: _c, course_id: _cc, ...mc } = m as any;
+    const { data: novoModulo } = await supabase.from("course_modules").insert({ ...mc, course_id: novo.id }).select("id").single();
+    if (novoModulo) mapaModulo[mid] = novoModulo.id;
+  }
+
+  const { data: aulas } = await supabase.from("lessons").select("*").eq("course_id", id).order("position");
+  for (const a of aulas ?? []) {
+    const { id: aid, created_at: _c, course_id: _cc, module_id, ...ac } = a as any;
+    const { data: novaAula } = await supabase
+      .from("lessons")
+      .insert({ ...ac, course_id: novo.id, module_id: mapaModulo[module_id] ?? null })
+      .select("id")
+      .single();
+    if (!novaAula) continue;
+
+    // Arquivos da aula de materiais apontam para o mesmo objeto no Storage.
+    const { data: arquivos } = await supabase.from("ready_materials").select("*").eq("lesson_id", aid);
+    for (const arq of arquivos ?? []) {
+      const { id: _fid, created_at: _fc, lesson_id, ...fc } = arq as any;
+      await supabase.from("ready_materials").insert({ ...fc, lesson_id: novaAula.id });
+    }
+  }
+
+  refresh(novo.id);
+  redirect(`/admin/cursos/${novo.id}?ok=` + encodeURIComponent("Cópia criada. Ela nasce despublicada e sem alunos."));
 }
 
 export async function deleteCourse(formData: FormData) {

@@ -13,7 +13,7 @@ export default async function CoursesAdminPage() {
   try {
     const supabase = createAdminClient();
     const [{ data: cs }, { data: ls }, { data: es }] = await Promise.all([
-      supabase.from("courses").select("id, title, slug, published, price, subscriber_price, updated_at, coming_soon").order("updated_at", { ascending: false }),
+      supabase.from("courses").select("id, title, slug, published, price, subscriber_price, updated_at, coming_soon, access_mode, client_name").order("updated_at", { ascending: false }),
       supabase.from("lessons").select("course_id"),
       supabase.from("enrollments").select("course_id"),
     ]);
@@ -55,9 +55,16 @@ export default async function CoursesAdminPage() {
                     Em breve
                   </span>
                 )}
+                {c.access_mode === "in_company" && (
+                  <span className="rounded-full bg-sky-400/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-sky-300">
+                    In company{c.client_name ? ` · ${c.client_name}` : ""}
+                  </span>
+                )}
                 {/* Preço que vale hoje: o de assinante. O campo price é só o preço cheio de referência. */}
                 <span className="text-xs text-slate-400">
-                  {c.subscriber_price == null
+                  {c.access_mode === "in_company"
+                    ? "Turma fechada, fora do catálogo"
+                    : c.subscriber_price == null
                     ? "Fora de venda"
                     : Number(c.subscriber_price) === 0
                     ? "Incluso na assinatura"

@@ -29,6 +29,7 @@ export default async function CursosCardapio() {
       .from("courses")
       .select("id, slug, title, subtitle, cover_url, level, coming_soon, subscriber_price")
       .eq("published", true)
+      .eq("access_mode", "catalogo")
       .order("position"),
     admin.from("enrollments").select("course_id").eq("user_id", user!.id).neq("source", "free"),
     hasFullAccess(admin, user!.id),

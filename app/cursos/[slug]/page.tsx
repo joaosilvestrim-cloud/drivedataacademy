@@ -22,7 +22,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
   const pub = createPublicClient();
   const { data: course } = await pub
     .from("courses")
-    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon, subscriber_price, workload")
+    .select("id, slug, title, subtitle, description, cover_url, level, price, instructor_name, certificate_enabled, coming_soon, subscriber_price, workload, access_mode, client_name")
     .eq("slug", params.slug)
     .eq("published", true)
     .maybeSingle();
@@ -42,6 +42,9 @@ export default async function CoursePage({ params, searchParams }: { params: { s
 
   // Estado da matrícula
   const enrolled = await canAccessCourse(createAdminClient(), user.id, course.id);
+  // Turma fechada de empresa: quem não está matriculado nem vê que existe.
+  const inCompany = course.access_mode === "in_company";
+  if (inCompany && !enrolled) notFound();
   // "Em breve" vence os outros estados do card. Quem já estiver matriculado
   // continua entrando por /aprender.
   const emBreve = course.coming_soon === true;
@@ -50,7 +53,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
   const precoCheio = Number(course.price) || 0;
   const precoAss = course.subscriber_price == null ? null : Number(course.subscriber_price);
   const incluso = precoAss === 0;
-  const aVenda = precoAss != null && precoAss >= VALOR_MINIMO_CURSO;
+  const aVenda = !inCompany && precoAss != null && precoAss >= VALOR_MINIMO_CURSO;
   const desconto = descontoCurso(precoCheio, precoAss);
 
   return (

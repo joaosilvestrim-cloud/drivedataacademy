@@ -5,7 +5,7 @@ import CourseForm from "../CourseForm";
 import Curriculum from "../Curriculum";
 import CourseStudents from "../CourseStudents";
 import QuizBuilder from "../QuizBuilder";
-import { deleteCourse, recalcularDuracoes } from "../actions";
+import { deleteCourse, recalcularDuracoes, duplicarCurso } from "../actions";
 import { cargaHoraria, minutosDoTexto, textoDosMinutos } from "@/lib/duracao";
 
 export const dynamic = "force-dynamic";
@@ -93,7 +93,19 @@ export default async function EditCoursePage({ params, searchParams }: { params:
 
       <CourseStudents courseId={course.id} totalLessons={(lessons ?? []).length} />
 
-      <form action={deleteCourse} className="mt-12 border-t border-white/8 pt-6">
+      <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-white/8 pt-6">
+        <form action={duplicarCurso}>
+          <input type="hidden" name="id" value={course.id} />
+          <button className="rounded-lg border border-white/15 px-4 py-2 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">
+            Duplicar curso
+          </button>
+        </form>
+        <span className="text-xs text-slate-500">
+          Copia módulos, aulas e materiais. A cópia nasce despublicada e sem alunos. Serve para separar a turma in company da versão de catálogo.
+        </span>
+      </div>
+
+      <form action={deleteCourse} className="mt-6 border-t border-white/8 pt-6">
         <input type="hidden" name="id" value={course.id} />
         <button className="rounded-lg border border-red-400/20 px-4 py-2 text-xs font-medium text-red-400/80 hover:border-red-400/50 hover:text-red-400">
           Excluir curso

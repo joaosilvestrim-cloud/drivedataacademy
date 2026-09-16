@@ -29,7 +29,9 @@ export async function canAccessCourse(admin: SupabaseClient, userId: string, cou
   if (enr) return true;
   // Curso incluso na assinatura (preço de assinante 0): assinante ativo entra
   // direto, sem precisar clicar em liberar. Os cursos pagos seguem exigindo compra.
-  const { data: curso } = await admin.from("courses").select("subscriber_price").eq("id", courseId).maybeSingle();
+  const { data: curso } = await admin.from("courses").select("subscriber_price, access_mode").eq("id", courseId).maybeSingle();
+  // Turma fechada de empresa: nem assinatura nem compra abrem, só matrícula.
+  if (curso?.access_mode === "in_company") return false;
   if (curso && curso.subscriber_price != null && Number(curso.subscriber_price) === 0) return hasFullAccess(admin, userId);
   return false;
 }
