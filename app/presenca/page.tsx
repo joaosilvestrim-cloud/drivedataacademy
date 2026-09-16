@@ -57,7 +57,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
     return (
       <Aviso titulo="Nenhuma live com certificado no momento">
         <p className="mt-3 text-slate-400">
-          A confirmação de presença abre quando a live começa. Veja a próxima na{" "}
+          A confirmação de presença abre meia hora antes da transmissão. Veja a próxima na{" "}
           <Link href="/#ao-vivo" className="text-brand-green underline underline-offset-4">grade de transmissões</Link>.
         </p>
       </Aviso>

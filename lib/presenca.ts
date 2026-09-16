@@ -6,12 +6,10 @@ import { textoDosMinutos } from "@/lib/duracao";
 /* Presença em live: a pessoa lê o QR code, confirma que estava assistindo e
    recebe o certificado de participação na hora.
 
-   A live elegível é a que tem certificado ligado e está acontecendo agora, com
-   folga para quem chega atrasado ou preenche depois que acabou. Fora dessa
-   janela o formulário não aparece, senão vira certificado de graça. */
+   A live elegível é a que tem certificado ligado e já começou. Antes disso o
+   formulário não aparece, senão vira certificado de graça antes da aula. */
 
 export const JANELA_ANTES_MIN = 30;   // já libera meia hora antes de começar
-export const JANELA_DEPOIS_H = 12;    // e segue aberto no resto do dia
 
 export type LiveDePresenca = {
   id: string;
@@ -25,9 +23,13 @@ export type LiveDePresenca = {
 
 const CAMPOS = "id, title, description, starts_at, duration_min, attendance_code, certificate_hours";
 
-/* A live do momento. Com id explícito, valida esse id. Sem id, pega a que está
-   na janela agora; se nenhuma estiver, devolve a próxima só para explicar ao
-   visitante quando abre. */
+/* A live do momento. Com id explícito, valida esse id. Sem id, pega a mais
+   recente que já abriu; se nenhuma abriu, devolve a próxima só para explicar ao
+   visitante quando abre.
+
+   Não existe prazo de fechamento. Quem assistiu uma live de semanas atrás e
+   perdeu o link continua emitindo o certificado. Fechar é decisão do time:
+   basta desmarcar o certificado na live. */
 export async function liveDePresenca(admin: SupabaseClient, id?: string | null) {
   const agora = Date.now();
   if (id) {
@@ -39,18 +41,17 @@ export async function liveDePresenca(admin: SupabaseClient, id?: string | null) 
     .from("live_events")
     .select(CAMPOS)
     .eq("certificate_enabled", true)
-    .gte("starts_at", new Date(agora - JANELA_DEPOIS_H * 3600e3).toISOString())
-    .order("starts_at")
-    .limit(5);
+    .order("starts_at", { ascending: false })
+    .limit(30);
 
   const lives = (data ?? []) as LiveDePresenca[];
-  const aberta = lives.find((l) => dentroDaJanela(l, agora));
-  return { live: aberta || lives[0] || null, aberta: !!aberta };
+  const aberta = lives.find((l) => dentroDaJanela(l, agora));          // desc: a mais recente já aberta
+  const proxima = [...lives].reverse().find((l) => new Date(l.starts_at).getTime() > agora);
+  return { live: aberta || proxima || lives[0] || null, aberta: !!aberta };
 }
 
 export function dentroDaJanela(live: LiveDePresenca, agora = Date.now()): boolean {
-  const inicio = new Date(live.starts_at).getTime();
-  return agora >= inicio - JANELA_ANTES_MIN * 60e3 && agora <= inicio + JANELA_DEPOIS_H * 3600e3;
+  return agora >= new Date(live.starts_at).getTime() - JANELA_ANTES_MIN * 60e3;
 }
 
 // Carga horária impressa no certificado: o campo do admin manda, senão a duração.

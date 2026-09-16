@@ -19,7 +19,7 @@ export async function registrarPresenca(formData: FormData) {
   const admin = createAdminClient();
   const { live, aberta } = await liveDePresenca(admin, liveId);
   if (!live) volta("Não encontrei essa live.");
-  if (!aberta) volta("A confirmação de presença desta live já foi encerrada.");
+  if (!aberta) volta("A confirmação de presença desta live ainda não está aberta.");
 
   const name = texto("name");
   const email = texto("email").toLowerCase();
