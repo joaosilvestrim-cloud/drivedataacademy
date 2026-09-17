@@ -136,6 +136,20 @@ export function corrigir(banco: Banco, desafio: Desafio, sqlDoAluno: string): Ve
   }
 
   const detalhes: string[] = [];
+
+  /* Resultado vazio merece recado próprio. Comparar contagem de coluna de uma
+     tabela sem linha nenhuma só confunde quem já está perdido. */
+  if (!resultado.linhas.length) {
+    return {
+      certo: false,
+      titulo: "A consulta rodou, mas não voltou nada",
+      detalhe: `Nenhuma linha veio, e o esperado tem ${esperado.linhas.length}. Comece tirando os filtros e veja se a tabela responde. Filtro que nunca é verdadeiro e junção que não casa são as duas causas de lista vazia.`,
+      diagnosticado: false,
+      resultado,
+      esperado,
+    };
+  }
+
   if (resultado.linhas.length !== esperado.linhas.length) {
     detalhes.push(`Você trouxe ${resultado.linhas.length} ${resultado.linhas.length === 1 ? "linha" : "linhas"} e o esperado tem ${esperado.linhas.length}.`);
   }

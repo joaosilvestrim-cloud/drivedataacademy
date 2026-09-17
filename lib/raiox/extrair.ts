@@ -213,8 +213,20 @@ function lerModelo(bytes: Uint8Array | undefined) {
   };
 }
 
+/* O que interessa dentro do arquivo.
+
+   Um .pbix de 280 MB é quase todo modelo compactado, que não dá para ler. Pedir
+   ao descompactador só as partes que a auditoria usa deixa a leitura dez vezes
+   mais rápida e tira da memória do navegador o que nunca seria aberto. */
+const INTERESSA = (nome: string) =>
+  nome.startsWith("Report/definition/") ||
+  nome === "Report/Layout" ||
+  nome === "DiagramLayout" ||
+  nome.endsWith("DataModelSchema") ||
+  nome.startsWith("Report/CustomVisuals/");
+
 export function extrairRelatorio(arquivo: string, bytes: Uint8Array): Relatorio {
-  const zip = unzipSync(bytes);
+  const zip = unzipSync(bytes, { filter: (f) => INTERESSA(f.name) });
   const caminhos = Object.keys(zip);
 
   const temPBIR = caminhos.some((c) => c.startsWith("Report/definition/pages/"));

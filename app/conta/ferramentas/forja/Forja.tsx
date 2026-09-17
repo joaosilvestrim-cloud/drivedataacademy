@@ -269,7 +269,10 @@ export default function Forja() {
       </div>
 
       {/* Código */}
-      <div className="lg:sticky lg:top-6">
+      {/* min-w-0 é obrigatório aqui: item de grid nasce com largura mínima
+          automática, e sem isso o bloco de código empurra a coluna e faz a
+          página inteira rolar de lado no celular. */}
+      <div className="min-w-0 lg:sticky lg:top-6">
         <div data-tour="forja-codigo" className="flex flex-wrap items-center gap-2">
         <button
           type="button"

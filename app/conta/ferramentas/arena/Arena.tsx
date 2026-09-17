@@ -111,7 +111,9 @@ export default function Arena({ semente }: { semente: number }) {
         if (!vivo) return;
         const db = new SQL.Database();
         db.run(base.sql);
-        setBanco(db as Banco);
+        // Fecha o banco anterior antes de trocar: "nova base" várias vezes
+        // deixaria um SQLite pendurado na memória a cada rodada.
+        setBanco((antigo: any) => { try { antigo?.close?.(); } catch { /* já fechado */ } return db as Banco; });
       } catch (e: any) {
         setErroBanco(e?.message || "Não consegui abrir o banco no navegador.");
       }

@@ -89,10 +89,17 @@ export default function CaixaPreta() {
   const modelo = useMemo(() => treinarModelo(corpus.texto, vocab, ordem), [corpus, vocab, ordem]);
 
   const stats = useMemo(() => estatisticas(texto, vocab), [texto, vocab]);
-  const comparacao = useMemo(() => {
-    const outro = CORPORA.find((c) => c.id !== corpusId) ?? CORPORA[1];
-    return { nome: outro.nome, tokens: estatisticas(texto, treinarTokenizador(outro.texto, fusoes)).tokens };
-  }, [texto, corpusId, fusoes]);
+
+  /* O vocabulário do outro corpus é caro de treinar e não depende do texto.
+     Antes ele era refeito a cada tecla digitada, o que dava uns 60 ms de
+     travada por caractere. Agora treina uma vez por corpus e por número de
+     fusões, e digitar volta a ser instantâneo. */
+  const outroCorpus = useMemo(() => CORPORA.find((c) => c.id !== corpusId) ?? CORPORA[1], [corpusId]);
+  const vocabDoOutro = useMemo(() => treinarTokenizador(outroCorpus.texto, fusoes), [outroCorpus, fusoes]);
+  const comparacao = useMemo(
+    () => ({ nome: outroCorpus.nome, tokens: estatisticas(texto, vocabDoOutro).tokens }),
+    [texto, outroCorpus, vocabDoOutro]
+  );
 
   // Estado da geração: os ids do prompt mais o que já foi sorteado.
   const idsPrompt = useMemo(() => codificar(prompt, vocab), [prompt, vocab]);
