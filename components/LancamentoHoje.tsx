@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import Cronometro from "@/components/Cronometro";
+import CupomDestaque from "@/components/CupomDestaque";
 
 /* Abertura da home no formato de grade de programação: o próximo encontro ao
    vivo em destaque e a grade dos seguintes logo abaixo. Os dados vêm de
@@ -86,6 +87,9 @@ export default async function LancamentoHoje() {
             </span>
           </a>
           <p className="mt-3 text-sm text-slate-400">Comunidade, lives, gravações e biblioteca de materiais no mesmo lugar.</p>
+
+          {/* Cupom de lançamento: sai sozinho da home quando vence. */}
+          <CupomDestaque />
 
           <p className="mt-8 text-sm text-slate-400">
             {estreia ? `${dataLonga(agora)} · estreia da DriveData Academy` : "DriveData Academy · aulas abertas no YouTube"}
