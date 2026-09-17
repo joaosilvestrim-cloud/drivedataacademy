@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canUseCommunity, pointsByUser, BADGE_LABELS } from "@/lib/community";
+import { canUseCommunity, pointsByUser, BADGE_LABELS, seloDaCasa } from "@/lib/community";
+import { rankUsers, ranksForUsers } from "@/lib/ranking";
 import VitrineClient, { type Membro } from "./VitrineClient";
 import { listaSkills } from "./skills";
 
@@ -24,6 +25,12 @@ export default async function VitrinePage() {
   const badgesById: Record<string, string[]> = {};
   for (const b of badgeRows ?? []) (badgesById[b.user_id] ||= []).push(b.badge);
 
+  /* A posição no ranking é a mesma do chat e da página de ranking: uma ordenação
+     só, em lib/ranking. Aqui ela vira a moldura da medalha no avatar. */
+  const ranked = rankUsers(totals);
+  const rankById = ranksForUsers(ranked, (profs ?? []).map((p: any) => p.id));
+  const lider = ranked[0]?.pts ?? 0;
+
   const membros: Membro[] = (profs ?? [])
     .filter((p: any) => (p.full_name || "").trim())
     .map((p: any) => ({
@@ -35,6 +42,8 @@ export default async function VitrinePage() {
       badges: (badgesById[p.id] || []).map((k) => ({ key: k, label: BADGE_LABELS[k] || k })),
       since: p.created_at ?? null,
       skills: listaSkills(p.skills),
+      rank: rankById[p.id] ?? null,
+      casa: seloDaCasa(badgesById[p.id]),
     }))
     .sort((a, b) => b.pts - a.pts)
     .slice(0, 100);
@@ -49,7 +58,7 @@ export default async function VitrinePage() {
         <Link href="/conta/perfil" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 hover:border-brand-green/50 hover:text-brand-green">Editar meu perfil</Link>
       </div>
 
-      <VitrineClient membros={membros} meuId={user.id} />
+      <VitrineClient membros={membros} meuId={user.id} lider={lider} />
     </div>
   );
 }

@@ -2,12 +2,21 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import Avatar from "@/components/Avatar";
+import MedalAvatar from "@/components/ranking/MedalAvatar";
+import SeloCasa from "@/components/comunidade/SeloCasa";
 
-/* Lista da Vitrine com busca e filtro.
+/* Lista da Vitrine com busca, filtro e ordenação.
 
    O card virou link para a página do aluno. Antes o único clique era o do
    portfólio, então quem não tinha portfólio virava um cartão morto.
+
+   O que a tela mostra agora vem todo de dado real, nada de enfeite solto:
+   - o pódio de três, com a moldura de medalha do ranking, que é a mesma do chat;
+   - a moldura dourada de quem é da casa, acima de qualquer medalha;
+   - a barra de pontos de cada card, medida contra o líder, que dá a noção de
+     distância que um número seco não dá;
+   - as especialidades viram atalho de filtro, com o tamanho do chip acompanhando
+     quanta gente domina aquilo. É o mapa de forças da comunidade.
 
    As especialidades vêm do campo `skills` do perfil, que é texto separado por
    vírgula. Não inventei estrutura nova: é o mesmo campo que o aluno preenche em
@@ -22,12 +31,24 @@ export type Membro = {
   badges: { key: string; label: string }[];
   since: string | null;
   skills: string[];
+  rank: number | null;
+  casa: string | null;
 };
 
 const BADGE_ICONS: Record<string, string> = {
   fundador: "M12 2l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V5l7-3z",
   top: "M8 21h8M12 17v4M6 4h12v3a6 6 0 01-12 0V4zM6 5H3v1a3 3 0 003 3M18 5h3v1a3 3 0 01-3 3",
 };
+
+// O selo da casa já aparece inteiro, com coroa. Repetir na fileira de badges
+// seria dizer a mesma coisa duas vezes no mesmo card.
+const SELOS_DA_CASA = new Set(["fundadora", "fundador_casa"]);
+
+const ORDENS = [
+  { key: "pontos", label: "Mais pontos" },
+  { key: "novos", label: "Chegaram agora" },
+  { key: "az", label: "A a Z" },
+];
 
 function tempo(iso?: string | null) {
   if (!iso) return "novo por aqui";
@@ -44,9 +65,44 @@ function tempo(iso?: string | null) {
 // "análise". \p{Diacritic} evita escrever a faixa de combinantes na mão.
 const semAcento = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
-export default function VitrineClient({ membros, meuId }: { membros: Membro[]; meuId: string }) {
+function Selos({ m }: { m: Membro }) {
+  const outros = m.badges.filter((b) => !SELOS_DA_CASA.has(b.key));
+  if (!m.casa && outros.length === 0) return null;
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+      <SeloCasa label={m.casa} />
+      {outros.map((b) => (
+        <span
+          key={b.key}
+          title={b.label}
+          className="inline-flex items-center gap-1 rounded-full border border-brand-teal/25 bg-brand-teal/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal"
+        >
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d={BADGE_ICONS[b.key] || "M12 2l3 6 6 .9-4.5 4.2 1 6-5.5-3-5.5 3 1-6L3 8.9 9 8z"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {b.label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function BarraDePontos({ pts, lider }: { pts: number; lider: number }) {
+  const pct = lider > 0 ? Math.max(3, Math.round((pts / lider) * 100)) : 0;
+  return (
+    <span className="mt-2 block h-1 w-full overflow-hidden rounded-full bg-white/8" aria-hidden="true">
+      <span
+        className="block h-full rounded-full bg-gradient-to-r from-brand-green to-brand-teal"
+        style={{ width: `${pts > 0 ? pct : 0}%` }}
+      />
+    </span>
+  );
+}
+
+export default function VitrineClient({ membros, meuId, lider }: { membros: Membro[]; meuId: string; lider: number }) {
   const [busca, setBusca] = useState("");
   const [skill, setSkill] = useState("");
+  const [ordem, setOrdem] = useState("pontos");
 
   // Habilidades declaradas, com quantas pessoas têm cada uma. As mais comuns
   // primeiro, porque é por elas que se costuma procurar.
@@ -56,19 +112,60 @@ export default function VitrineClient({ membros, meuId }: { membros: Membro[]; m
     return [...conta.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
   }, [membros]);
 
+  const maiorSkill = habilidades[0]?.[1] || 1;
+
   const filtrados = useMemo(() => {
     const q = semAcento(busca.trim());
-    return membros.filter((m) => {
+    const lista = membros.filter((m) => {
       if (skill && !m.skills.some((s) => semAcento(s) === semAcento(skill))) return false;
       if (!q) return true;
       return semAcento([m.full_name, m.headline || "", m.skills.join(" ")].join(" ")).includes(q);
     });
-  }, [membros, busca, skill]);
+    if (ordem === "az") return [...lista].sort((a, b) => a.full_name.localeCompare(b.full_name, "pt-BR"));
+    if (ordem === "novos") {
+      return [...lista].sort((a, b) => Date.parse(b.since || "") - Date.parse(a.since || "") || b.pts - a.pts);
+    }
+    return lista; // já chega ordenado por pontos
+  }, [membros, busca, skill, ordem]);
 
   const filtrando = busca.trim() !== "" || skill !== "";
 
+  // O pódio é dos três primeiros do ranking, não do que sobrou do filtro.
+  const podio = useMemo(() => membros.filter((m) => m.rank && m.rank <= 3).sort((a, b) => a.rank! - b.rank!), [membros]);
+
   return (
     <>
+      {/* Pódio: quem está puxando a comunidade agora. */}
+      {podio.length > 0 && !filtrando && (
+        <section className="mt-8">
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 className="font-display text-sm font-bold uppercase tracking-wider text-slate-400">No topo agora</h2>
+            <Link href="/conta/ranking" className="text-xs font-medium text-brand-teal underline-offset-4 hover:underline">ver o ranking →</Link>
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            {podio.map((m) => (
+              <Link
+                key={m.id}
+                href={`/conta/vitrine/${m.id}`}
+                className="glass group flex items-center gap-4 rounded-2xl border border-white/8 p-4 transition-colors hover:border-brand-green/40"
+              >
+                <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-display text-sm font-bold text-white transition-colors group-hover:text-brand-green">
+                    {m.full_name}
+                    {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">(você)</span>}
+                  </p>
+                  <p className="text-[0.7rem] text-slate-400">
+                    {m.rank}º lugar · <span className="font-mono tabular-nums text-brand-green">{m.pts}</span> pts
+                  </p>
+                  <BarraDePontos pts={m.pts} lider={lider} />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="mt-8 flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
@@ -92,7 +189,7 @@ export default function VitrineClient({ membros, meuId }: { membros: Membro[]; m
               id="vitrine-skill"
               value={skill}
               onChange={(e) => setSkill(e.target.value)}
-              className={`w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-white outline-none [&>option]:bg-ink-900 sm:w-64 ${skill ? "border-brand-green/50" : "border-white/10"}`}
+              className={`w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-white outline-none [&>option]:bg-ink-900 sm:w-56 ${skill ? "border-brand-green/50" : "border-white/10"}`}
             >
               <option value="">Todas as especialidades</option>
               {habilidades.map(([s, n]) => (
@@ -100,7 +197,48 @@ export default function VitrineClient({ membros, meuId }: { membros: Membro[]; m
               ))}
             </select>
           </div>
+          <div>
+            <label htmlFor="vitrine-ordem" className="sr-only">Ordenar a vitrine</label>
+            <select
+              id="vitrine-ordem"
+              value={ordem}
+              onChange={(e) => setOrdem(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none [&>option]:bg-ink-900 sm:w-44"
+            >
+              {ORDENS.map((o) => (
+                <option key={o.key} value={o.key}>{o.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        {/* Mapa de forças: o chip cresce com a quantidade de gente que domina
+            aquilo, e clicar filtra. É o atalho e o retrato da turma. */}
+        {habilidades.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {habilidades.slice(0, 12).map(([s, n]) => {
+              const ativo = semAcento(s) === semAcento(skill);
+              const peso = n / maiorSkill;
+              return (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSkill(ativo ? "" : s)}
+                  aria-pressed={ativo}
+                  className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 transition-colors ${
+                    ativo
+                      ? "border-brand-green/60 bg-brand-green/15 text-white"
+                      : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-brand-teal/40 hover:text-white"
+                  }`}
+                  style={{ fontSize: `${0.68 + peso * 0.22}rem` }}
+                >
+                  {s}
+                  <span className="font-mono text-[0.62rem] tabular-nums text-slate-500">{n}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {filtrando && (
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
@@ -124,12 +262,22 @@ export default function VitrineClient({ membros, meuId }: { membros: Membro[]; m
           <Link
             key={m.id}
             href={`/conta/vitrine/${m.id}`}
-            className="glass group flex flex-col rounded-2xl border border-white/8 p-5 transition-colors hover:border-brand-green/40"
+            className={`glass group relative flex flex-col overflow-hidden rounded-2xl border p-5 transition-colors ${
+              m.casa ? "border-[#f6d68c]/35 hover:border-[#f6d68c]/60" : "border-white/8 hover:border-brand-green/40"
+            }`}
           >
+            {/* Traço da marca na lateral, que acende no hover. */}
+            <span
+              aria-hidden="true"
+              className={`absolute inset-y-0 left-0 w-[3px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
+                m.casa ? "bg-gradient-to-b from-[#f6d68c] to-brand-green" : "bg-gradient-to-b from-brand-green to-brand-blue"
+              }`}
+            />
+
             <div className="flex items-center gap-3">
-              <Avatar name={m.full_name} src={m.avatar_url} size="lg" className="ring-2 ring-white/10" />
+              <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
               <div className="min-w-0">
-                <p className="truncate font-display text-base font-bold text-white transition-colors group-hover:text-brand-green">
+                <p className={`truncate font-display text-base font-bold transition-colors ${m.casa ? "text-[#f6d68c]" : "text-white group-hover:text-brand-green"}`}>
                   {m.full_name}
                   {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">(você)</span>}
                 </p>
@@ -155,26 +303,21 @@ export default function VitrineClient({ membros, meuId }: { membros: Membro[]; m
               </div>
             )}
 
-            {m.badges.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {m.badges.map((b) => (
-                  <span key={b.key} className="inline-flex items-center gap-1 rounded-full bg-brand-teal/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={BADGE_ICONS[b.key] || "M12 2l3 6 6 .9-4.5 4.2 1 6-5.5-3-5.5 3 1-6L3 8.9 9 8z"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    {b.label}
-                  </span>
-                ))}
-              </div>
-            )}
+            <Selos m={m} />
 
-            <div className="mt-auto flex items-center justify-between border-t border-white/8 pt-4">
-              <span className="text-sm">
-                <span className="font-display text-lg font-bold text-brand-green">{m.pts}</span>{" "}
-                <span className="text-xs text-slate-400">pts</span>
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors group-hover:text-brand-green">
-                Ver perfil
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </span>
+            <div className="mt-auto border-t border-white/8 pt-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm">
+                  <span className="font-display text-lg font-bold text-brand-green">{m.pts}</span>{" "}
+                  <span className="text-xs text-slate-400">pts</span>
+                  {m.rank && <span className="ml-2 font-mono text-[0.68rem] text-slate-500">{m.rank}º</span>}
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors group-hover:text-brand-green">
+                  Ver perfil
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </span>
+              </div>
+              <BarraDePontos pts={m.pts} lider={lider} />
             </div>
           </Link>
         ))}
