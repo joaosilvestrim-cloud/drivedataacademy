@@ -80,7 +80,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   },
 ];
 
-function NavList({ onNavigate }: { onNavigate?: () => void }) {
+function NavList({ onNavigate, cursosAVenda = 0 }: { onNavigate?: () => void; cursosAVenda?: number }) {
   const pathname = usePathname();
   const isActive = (href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/") || pathname === href);
 
@@ -116,6 +116,13 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
                     >
                       {icone}
                       {it.label}
+                      {/* Treinamento aberto para compra: o número chama, o
+                          aluno decide. Some sozinho quando não há nenhum. */}
+                      {it.href === "/conta/cursos" && cursosAVenda > 0 && (
+                        <span className="ml-auto rounded-full bg-brand-green/15 px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-brand-green" title={`${cursosAVenda} ${cursosAVenda === 1 ? "treinamento à venda" : "treinamentos à venda"}`}>
+                          {cursosAVenda}
+                        </span>
+                      )}
                     </Link>
                   )}
                 </li>
@@ -128,7 +135,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-export default function ContaShell({ email, children }: { email: string; children: React.ReactNode }) {
+export default function ContaShell({ email, children, cursosAVenda = 0 }: { email: string; children: React.ReactNode; cursosAVenda?: number }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -151,7 +158,7 @@ export default function ContaShell({ email, children }: { email: string; childre
               <Link href="/" onClick={() => setOpen(false)}><img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" /></Link>
               <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
             </div>
-            <NavList onNavigate={() => setOpen(false)} />
+            <NavList onNavigate={() => setOpen(false)} cursosAVenda={cursosAVenda} />
             <div className="mt-6 border-t border-white/10 pt-4">
               <WhatsAppGroupLink onNavigate={() => setOpen(false)} />
             </div>
@@ -165,7 +172,7 @@ export default function ContaShell({ email, children }: { email: string; childre
           <img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" />
         </Link>
         <div className="flex-1 overflow-y-auto">
-          <NavList />
+          <NavList cursosAVenda={cursosAVenda} />
         </div>
         <div className="mt-4 border-t border-white/10 pt-4">
           <WhatsAppGroupLink />

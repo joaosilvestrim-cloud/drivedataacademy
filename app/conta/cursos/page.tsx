@@ -18,7 +18,13 @@ type Curso = {
 };
 
 /* Cardápio de treinamentos. O catálogo saiu da página pública e mora aqui:
-   o aluno vê o que já é dele e o que pode pedir, com o preço de assinante. */
+   o aluno vê o que já é dele e o que pode pedir, com o preço de assinante.
+
+   A separação que importa é entre o que dá para levar hoje e o que ainda não
+   abriu. Antes tudo caía numa grade só e o treinamento à venda ficava do lado
+   de cinco "em breve", perdendo o destaque justamente para quem já poderia
+   comprar. Agora quem está à venda abre a página, com moldura própria, e o
+   que ainda não abriu desce para o fim, apagado. */
 export default async function CursosCardapio() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -40,6 +46,29 @@ export default async function CursosCardapio() {
   const seus = todos.filter((c) => meus.has(c.id));
   const cardapio = todos.filter((c) => !meus.has(c.id));
 
+  // À venda é o treinamento com preço definido e sem a marca de "em breve".
+  const aVenda = cardapio.filter((c) => !c.coming_soon && c.subscriber_price != null);
+  const emBreve = cardapio.filter((c) => c.coming_soon || c.subscriber_price == null);
+
+  function rodapeDeVenda(c: Curso) {
+    const preco = Number(c.subscriber_price);
+    return (
+      <>
+        {preco === 0 ? (
+          <span className="text-sm font-semibold text-brand-green">Incluso na assinatura</span>
+        ) : (
+          <span className="flex items-baseline gap-1.5">
+            <span className="font-display text-xl font-bold text-white">{brl(preco)}</span>
+            <span className="text-xs text-slate-500">Pix ou até 12x</span>
+          </span>
+        )}
+        <span className="text-sm font-semibold text-brand-green">
+          {assinante ? (preco === 0 ? "Liberar" : "Comprar") : "Ver detalhes"} →
+        </span>
+      </>
+    );
+  }
+
   return (
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Cursos</p>
@@ -57,8 +86,38 @@ export default async function CursosCardapio() {
         </div>
       )}
 
-      {seus.length > 0 && (
+      {/* Abre a página: o que dá para levar hoje. */}
+      {aVenda.length > 0 && (
         <section className="mt-10">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="flex items-center gap-2.5 font-display text-lg font-bold text-white">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green opacity-75 motion-reduce:animate-none" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-green" />
+              </span>
+              Disponíveis agora
+            </h2>
+            <span className="text-xs font-medium text-slate-500">
+              {aVenda.length} {aVenda.length === 1 ? "treinamento aberto" : "treinamentos abertos"}
+            </span>
+          </div>
+          <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            {aVenda.map((c) => (
+              <Cartao
+                key={c.id}
+                c={c}
+                href={`/cursos/${c.slug}`}
+                destaque
+                selo={Number(c.subscriber_price) === 0 ? "Incluso" : "À venda"}
+                rodape={rodapeDeVenda(c)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {seus.length > 0 && (
+        <section className="mt-12">
           <h2 className="font-display text-lg font-bold text-white">Seus treinamentos</h2>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {seus.map((c) => (
@@ -68,63 +127,87 @@ export default async function CursosCardapio() {
         </section>
       )}
 
-      <section className="mt-10">
-        <h2 className="font-display text-lg font-bold text-white">{seus.length > 0 ? "Para pedir agora" : "Escolha seu treinamento"}</h2>
-        {cardapio.length === 0 ? (
-          <p className="mt-4 rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center text-sm text-slate-500">
-            Você já tem todos os treinamentos disponíveis. Novos chegam em breve.
-          </p>
-        ) : (
+      {emBreve.length > 0 && (
+        <section className="mt-12">
+          <h2 className="font-display text-lg font-bold text-white">Em breve</h2>
+          <p className="mt-1 text-sm text-slate-500">Estes ainda estão em produção. Quando abrirem, aparecem aqui em cima.</p>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {cardapio.map((c) => {
-              const preco = c.subscriber_price == null ? null : Number(c.subscriber_price);
-              const valor =
-                preco == null ? (
-                  <span className="text-sm text-slate-500">Venda em breve</span>
-                ) : preco === 0 ? (
-                  <span className="text-sm font-semibold text-brand-green">Incluso na assinatura</span>
-                ) : (
-                  <span className="flex items-baseline gap-1.5">
-                    <span className="font-display text-xl font-bold text-white">{brl(preco)}</span>
-                    <span className="text-xs text-slate-500">Pix ou até 12x</span>
-                  </span>
-                );
-              const acao = c.coming_soon ? "Em breve" : preco != null && assinante ? (preco === 0 ? "Liberar" : "Ver e comprar") : "Ver detalhes";
-              return (
-                <Cartao
-                  key={c.id}
-                  c={c}
-                  href={`/cursos/${c.slug}`}
-                  selo={c.coming_soon ? "Em breve" : null}
-                  rodape={
-                    <>
-                      {valor}
-                      <span className={`text-sm font-semibold ${c.coming_soon ? "text-amber-300" : "text-brand-teal"}`}>{acao} →</span>
-                    </>
-                  }
-                />
-              );
-            })}
+            {emBreve.map((c) => (
+              <Cartao
+                key={c.id}
+                c={c}
+                href={`/cursos/${c.slug}`}
+                apagado
+                selo="Em breve"
+                rodape={
+                  <>
+                    <span className="text-sm text-slate-500">Venda ainda não aberta</span>
+                    <span className="text-sm font-semibold text-amber-300/80">Espiar →</span>
+                  </>
+                }
+              />
+            ))}
           </div>
-        )}
-      </section>
+        </section>
+      )}
+
+      {cardapio.length === 0 && (
+        <p className="mt-10 rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center text-sm text-slate-500">
+          Você já tem todos os treinamentos disponíveis. Novos chegam em breve.
+        </p>
+      )}
     </div>
   );
 }
 
-function Cartao({ c, href, selo, rodape }: { c: Curso; href: string; selo: string | null; rodape: React.ReactNode }) {
+function Cartao({
+  c,
+  href,
+  selo,
+  rodape,
+  destaque = false,
+  apagado = false,
+}: {
+  c: Curso;
+  href: string;
+  selo: string | null;
+  rodape: React.ReactNode;
+  /** Treinamento à venda: moldura da marca, para o olho cair nele primeiro. */
+  destaque?: boolean;
+  /** Ainda não abriu: fica presente, mas sem competir com o que está à venda. */
+  apagado?: boolean;
+}) {
   return (
-    <Link href={href} className="card-hover glass group flex flex-col overflow-hidden rounded-3xl border border-white/8">
+    <Link
+      href={href}
+      className={`card-hover glass group flex flex-col overflow-hidden rounded-3xl border transition-opacity ${
+        destaque
+          ? "border-brand-green/40 shadow-[0_18px_44px_-24px_rgba(52,232,160,0.75)]"
+          : apagado
+          ? "border-white/8 opacity-70 hover:opacity-100"
+          : "border-white/8"
+      }`}
+    >
       {/* Capa menor de propósito: o card é sobre o treinamento, não sobre o banner. */}
       <div className="relative aspect-[16/7] overflow-hidden">
         {c.cover_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={c.cover_url} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+          <img
+            src={c.cover_url}
+            alt=""
+            className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${apagado ? "saturate-[0.55] group-hover:saturate-100" : ""}`}
+          />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
         )}
         {selo && (
-          <span className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[0.7rem] font-semibold backdrop-blur ${selo === "Seu" ? "bg-brand-green/90 text-ink-900" : "bg-amber-400/90 text-ink-900"}`}>
+          <span
+            className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[0.7rem] font-semibold backdrop-blur ${
+              selo === "Seu" || selo === "À venda" || selo === "Incluso"
+                ? "bg-brand-green/90 text-ink-900"
+                : "bg-amber-400/90 text-ink-900"
+            }`}
+          >
             {selo}
           </span>
         )}
