@@ -280,13 +280,13 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   }, [membros]);
 
   return (
-    <div className="flex h-[calc(100dvh-180px)] min-h-[460px] overflow-hidden rounded-2xl border border-black/50 bg-[#0b131c] shadow-2xl sm:h-[calc(100vh-140px)]">
+    <div className="flex h-[calc(100dvh-140px)] min-h-[520px] overflow-hidden rounded-2xl border border-black/50 bg-[#0b131c] shadow-2xl sm:h-[calc(100vh-108px)]">
       {/* Coluna dos canais */}
-      <aside className="hidden w-60 shrink-0 flex-col bg-[#070d14] sm:flex">
-        <div className="flex items-center gap-2.5 border-b border-black/40 px-4 py-3.5 shadow-sm">
+      <aside className="hidden w-64 shrink-0 flex-col bg-[#070d14] sm:flex xl:w-72">
+        <div className="flex items-center gap-2.5 border-b border-black/40 px-4 py-4 shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/drivedata-symbol.png" alt="" aria-hidden="true" className="h-7 w-7 shrink-0 object-contain" />
-          <span className="font-display text-sm font-bold text-white">Comunidade</span>
+          <span className="font-display text-base font-bold text-white">Comunidade</span>
           <span className="ml-auto flex items-center gap-1.5 text-[0.65rem] text-slate-500">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-green" />
             {onlineCount}
@@ -294,7 +294,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2 py-3">
-          <p className="px-2 pb-1 text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">Canais de texto</p>
+          <p className="px-2 pb-1.5 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Canais de texto</p>
           {channels.map((c) => {
             const active = c.slug === channel.slug;
             const [from] = colorOf(c.slug);
@@ -302,13 +302,13 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               <Link
                 key={c.id}
                 href={`/conta/comunidade/${c.slug}`}
-                className={`group relative mt-0.5 flex items-center gap-1.5 rounded px-2 py-[7px] text-[0.9rem] transition-colors ${
+                className={`group relative mt-1 flex items-center gap-2 rounded-md px-2.5 py-2.5 text-[1rem] transition-colors ${
                   active ? "bg-white/[0.08] font-medium text-white" : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
                 }`}
               >
                 {/* Marca do canal ativo, na cor do próprio canal. */}
                 {active && <span className="absolute -left-2 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r" style={{ backgroundColor: from }} />}
-                <span className={`text-lg font-normal leading-none ${active ? "text-slate-300" : "text-slate-600 group-hover:text-slate-500"}`}>#</span>
+                <span className={`text-xl font-normal leading-none ${active ? "text-slate-300" : "text-slate-600 group-hover:text-slate-500"}`}>#</span>
                 <span className="truncate">{c.name}</span>
               </Link>
             );
@@ -316,10 +316,10 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
         </nav>
 
         {/* Barra do próprio aluno, no rodapé, como no Discord. */}
-        <div className="flex items-center gap-2 border-t border-black/40 bg-black/25 px-2.5 py-2">
-          <MedalAvatar rank={medalRanks[me.id]} casa={me.casa ?? null} name={me.name} src={me.avatar ?? null} size="xs" />
+        <div className="flex items-center gap-2.5 border-t border-black/40 bg-black/25 px-3 py-2.5">
+          <MedalAvatar rank={medalRanks[me.id]} casa={me.casa ?? null} name={me.name} src={me.avatar ?? null} size="sm" />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-xs font-semibold text-slate-200">{me.name}</span>
+            <span className="block truncate text-[0.85rem] font-semibold text-slate-200">{me.name}</span>
             <span className="block text-[0.65rem] text-brand-green">disponível</span>
           </span>
           <Link href="/conta/perfil" title="Editar meu perfil" className="grid h-7 w-7 shrink-0 place-items-center rounded text-slate-500 transition-colors hover:bg-white/5 hover:text-white">
@@ -330,11 +330,11 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
 
       {/* Coluna da conversa */}
       <div className="relative flex min-w-0 flex-1 flex-col bg-[#0b131c]">
-        <header className="relative z-10 flex items-center gap-2.5 border-b border-black/40 px-3 py-2.5 shadow-[0_1px_0_rgba(0,0,0,0.35)] sm:px-4">
-          <span className="text-xl font-normal leading-none text-slate-600">#</span>
-          <span className="font-display font-bold text-white">{channel.name}</span>
+        <header className="relative z-10 flex items-center gap-3 border-b border-black/40 px-4 py-3.5 shadow-[0_1px_0_rgba(0,0,0,0.35)] sm:px-5">
+          <span className="text-2xl font-normal leading-none text-slate-600">#</span>
+          <span className="font-display text-lg font-bold text-white">{channel.name}</span>
           {channel.description && (
-            <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 md:block">{channel.description}</span>
+            <span className="hidden truncate border-l border-white/10 pl-3 text-sm text-slate-500 md:block">{channel.description}</span>
           )}
 
           <div className="ml-auto flex items-center gap-1.5">
@@ -359,7 +359,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                 onChange={(e) => setBusca(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
                 placeholder="Buscar"
-                className="w-28 rounded bg-black/40 py-1.5 pl-7 pr-2.5 text-[0.7rem] text-white placeholder:text-slate-500 outline-none transition-all focus:w-44 sm:w-32 sm:focus:w-56"
+                className="w-32 rounded bg-black/40 py-2 pl-8 pr-3 text-[0.8rem] text-white placeholder:text-slate-500 outline-none transition-all focus:w-52 sm:w-40 sm:focus:w-64"
               />
             </div>
 
@@ -388,7 +388,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
           })}
         </div>
 
-        <div ref={scrollRef} onScroll={aoRolar} className="relative flex-1 overflow-y-auto py-4">
+        <div ref={scrollRef} onScroll={aoRolar} className="relative flex-1 overflow-y-auto py-5">
           {q && visiveis.length === 0 && messages.length > 0 && (
             <div className="grid h-full place-items-center px-6 text-center text-slate-500">
               <div>
@@ -402,12 +402,12 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
 
           {/* Abertura do canal, como o Discord faz no começo do histórico. */}
           {!q && messages.length < 12 && (
-            <div className="px-4 pb-6 pt-2">
+            <div className="px-5 pb-7 pt-3">
               <span className="grid h-16 w-16 place-items-center rounded-full text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>
                 <ChIcon slug={channel.slug} size={30} />
               </span>
-              <h2 className="mt-4 font-display text-2xl font-bold text-white">Bem-vindo ao #{channel.name}</h2>
-              <p className="mt-1 max-w-xl text-sm text-slate-400">
+              <h2 className="mt-4 font-display text-3xl font-bold text-white">Bem-vindo ao #{channel.name}</h2>
+              <p className="mt-1.5 max-w-2xl text-base text-slate-400">
                 {channel.description || "Este é o começo do canal. Puxe assunto: a conversa aqui começa com você."}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -442,12 +442,12 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                   </div>
                 )}
                 <div
-                  className={`group relative flex items-start gap-3 px-4 transition-colors ${grouped ? "py-[3px]" : "mt-2 py-1"} ${
+                  className={`group relative flex items-start gap-4 px-5 transition-colors ${grouped ? "py-[3px]" : "mt-3.5 py-1.5"} ${
                     m.is_solution ? "border-l-2 border-brand-green bg-brand-green/[0.07]" : "hover:bg-black/25"
                   } ${m.tag && !m.is_solution ? "border-l-2" : ""}`}
                   style={m.tag && !m.is_solution ? { borderLeftColor: tagColor(m.tag) } : undefined}
                 >
-                  <div className="w-10 shrink-0 pt-0.5">
+                  <div className="w-11 shrink-0 pt-0.5">
                     {!grouped ? (
                       <MedalAvatar rank={medalRanks[m.user_id]} casa={m.casa ?? null} name={m.name} src={m.avatar ?? null} size="md" />
                     ) : (
@@ -458,12 +458,12 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex flex-wrap items-baseline gap-2">
-                        <span className={`text-[0.95rem] font-semibold ${m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
+                        <span className={`text-[1.05rem] font-semibold ${m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
                         <SeloCasa label={m.casa} />
                         {online.has(m.user_id) && <span className="h-1.5 w-1.5 rounded-full bg-brand-green" title="online" />}
                         {m.tag && <span className="rounded px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{m.tag}</span>}
                         {m.solved && <span className="rounded bg-brand-green/15 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">resolvido</span>}
-                        <span className="text-[0.65rem] text-slate-500">{timeStr(m.created_at)}</span>
+                        <span className="text-[0.72rem] text-slate-500">{timeStr(m.created_at)}</span>
                       </p>
                     )}
 
@@ -478,7 +478,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                       </div>
                     )}
 
-                    {m.body && <p className="whitespace-pre-line break-words text-[0.95rem] leading-[1.45] text-slate-200">{m.body}</p>}
+                    {m.body && <p className="whitespace-pre-line break-words text-[1.02rem] leading-[1.55] text-slate-200">{m.body}</p>}
 
                     {/* Imagem só aparece depois que o time aprova. Até lá, quem vê
                         sabe que existe um anexo em análise, em vez de sumir sem explicação. */}
@@ -531,7 +531,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
         </div>
 
         {/* Composer */}
-        <div className="relative px-4 pb-4 pt-1">
+        <div className="relative px-5 pb-5 pt-1">
           {/* Leu o histórico e chegou mensagem nova: o chat avisa em vez de puxar. */}
           {!noFim && (
             <button
@@ -564,7 +564,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
 
           <div className={`flex items-center gap-1 bg-[#131d28] px-2 ${replyTo || pendingImage ? "rounded-b-lg" : "rounded-lg"}`}>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.currentTarget.value = ""; }} />
-            <button onClick={() => fileRef.current?.click()} disabled={uploading} className="grid h-11 w-9 shrink-0 place-items-center text-slate-400 transition-colors hover:text-white disabled:opacity-40" aria-label="Anexar foto" title="Anexar foto">
+            <button onClick={() => fileRef.current?.click()} disabled={uploading} className="grid h-12 w-10 shrink-0 place-items-center text-slate-400 transition-colors hover:text-white disabled:opacity-40" aria-label="Anexar foto" title="Anexar foto">
               {uploading ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="animate-spin"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" /><path d="M21 12a9 9 0 00-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg>
               ) : (
@@ -578,7 +578,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
               autoComplete="off"
               placeholder={`Conversar em #${channel.name}`}
-              className="flex-1 bg-transparent px-1 py-3 text-[0.95rem] text-white placeholder:text-slate-500 outline-none"
+              className="flex-1 bg-transparent px-1.5 py-3.5 text-[1.02rem] text-white placeholder:text-slate-500 outline-none"
             />
             {/* Marcador do assunto, colado no campo. */}
             <div className="hidden items-center gap-1 pr-1 md:flex">
@@ -587,14 +587,14 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                   key={t.k}
                   onClick={() => setTag(tag === t.k ? null : t.k)}
                   title={`Marcar como ${t.k}`}
-                  className="h-6 rounded px-1.5 text-[0.65rem] font-semibold uppercase tracking-wide transition-colors"
+                  className="h-7 rounded px-2 text-[0.7rem] font-semibold uppercase tracking-wide transition-colors"
                   style={tag === t.k ? { color: "#04140d", background: t.c } : { color: `${t.c}cc` }}
                 >
                   {t.k}
                 </button>
               ))}
             </div>
-            <button onClick={send} disabled={!input.trim() && !pendingImage} className="grid h-8 w-8 shrink-0 place-items-center rounded bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
+            <button onClick={send} disabled={!input.trim() && !pendingImage} className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
@@ -609,26 +609,26 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
             ))}
           </div>
 
-          <p className="mt-1.5 px-1 text-[0.65rem] text-slate-600">Enter envia · solução dá +10 pontos a quem respondeu</p>
+          <p className="mt-2 px-1 text-[0.72rem] text-slate-600">Enter envia · solução dá +10 pontos a quem respondeu</p>
         </div>
       </div>
 
       {/* Coluna dos membros */}
       {mostrarMembros && (
-        <aside className="hidden w-56 shrink-0 flex-col overflow-y-auto border-l border-black/40 bg-[#070d14] py-4 lg:flex">
+        <aside className="hidden w-60 shrink-0 flex-col overflow-y-auto border-l border-black/40 bg-[#070d14] py-5 lg:flex xl:w-72">
           {grupos.map((g) => (
-            <div key={g.titulo} className="mb-4 px-3">
-              <p className="mb-1.5 px-1 text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">
+            <div key={g.titulo} className="mb-5 px-3.5">
+              <p className="mb-2 px-1 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">
                 {g.titulo} — {g.gente.length}
               </p>
               {g.gente.map((p) => (
                 <span
                   key={p.id}
                   title={p.online ? `${p.name} está online` : `${p.name} já participou deste canal`}
-                  className={`flex items-center gap-2 rounded px-1.5 py-1 transition-colors hover:bg-white/[0.04] ${p.online ? "" : "opacity-45"}`}
+                  className={`flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-white/[0.04] ${p.online ? "" : "opacity-45"}`}
                 >
-                  <MedalAvatar name={p.name} src={p.avatar} casa={p.casa} rank={medalRanks[p.id]} size="xs" />
-                  <span className={`truncate text-[0.82rem] ${p.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>
+                  <MedalAvatar name={p.name} src={p.avatar} casa={p.casa} rank={medalRanks[p.id]} size="sm" />
+                  <span className={`truncate text-[0.92rem] ${p.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>
                     {p.name}
                     {p.id === me.id && <span className="ml-1 text-[0.65rem] text-slate-500">(você)</span>}
                   </span>

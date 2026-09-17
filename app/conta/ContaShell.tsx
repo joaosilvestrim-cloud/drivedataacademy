@@ -137,6 +137,10 @@ function NavList({ onNavigate, cursosAVenda = 0 }: { onNavigate?: () => void; cu
 
 export default function ContaShell({ email, children, cursosAVenda = 0 }: { email: string; children: React.ReactNode; cursosAVenda?: number }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const largura = pathname.startsWith("/conta/comunidade")
+    ? "mx-auto w-full max-w-[120rem] px-2 py-3 sm:px-4 sm:py-4"
+    : "mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8";
 
   return (
     <div className="relative min-h-screen">
@@ -183,9 +187,13 @@ export default function ContaShell({ email, children, cursosAVenda = 0 }: { emai
         </div>
       </aside>
 
-      {/* Conteúdo */}
+      {/* Conteúdo
+
+          A comunidade é a única tela que ganha com largura: é conversa, lista
+          de canais e lista de gente ao mesmo tempo. O resto continua na coluna
+          de leitura, que é onde texto longo se lê melhor. */}
       <main className="lg:pl-60">
-        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">{children}</div>
+        <div className={largura}>{children}</div>
       </main>
     </div>
   );
