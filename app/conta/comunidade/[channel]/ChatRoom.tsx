@@ -73,17 +73,50 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   const [pendingImage, setPendingImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [online, setOnline] = useState<Set<string>>(new Set([me.id]));
+  /* Presença com rosto: o track já mandava id e nome, agora manda avatar e selo
+     para o cabeçalho mostrar quem está na sala, e não só quantos. */
+  const [presentes, setPresentes] = useState<{ id: string; name: string; avatar: string | null; casa: string | null }[]>([
+    { id: me.id, name: me.name, avatar: me.avatar ?? null, casa: me.casa ?? null },
+  ]);
+  const [noFim, setNoFim] = useState(true);
+  const [naoVistas, setNaoVistas] = useState(0);
   const [busca, setBusca] = useState("");
   const peopleCache = useRef<Record<string, { name: string; avatar: string | null; casa: string | null }>>(
     Object.fromEntries(initial.map((m) => [m.user_id, { name: m.name, avatar: m.avatar ?? null, casa: m.casa ?? null }]))
   );
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const supa = useRef(createClient());
 
   function scrollToBottom() {
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
+    setNaoVistas(0);
+    setNoFim(true);
+  }
+
+  /* Quem está lendo mensagem antiga não pode ser arrastado para baixo a cada
+     mensagem nova. O botão flutuante avisa e devolve o controle. */
+  function aoRolar() {
+    const el = scrollRef.current;
+    if (!el) return;
+    const fim = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    setNoFim(fim);
+    if (fim) setNaoVistas(0);
+  }
+
+  // Sugestões de primeira mensagem, para o canal vazio não ser uma parede em branco.
+  const SUGESTOES: { texto: string; tag: string | null }[] = [
+    { texto: "Oi, pessoal! Eu trabalho com ", tag: null },
+    { texto: "Tô com uma dúvida: ", tag: "Dúvida" },
+    { texto: "Olha o que eu construí: ", tag: "Conquista" },
+  ];
+
+  function usarSugestao(s: { texto: string; tag: string | null }) {
+    setInput(s.texto);
+    setTag(s.tag);
+    inputRef.current?.focus();
   }
   useEffect(() => { scrollToBottom(); }, []);
 
@@ -113,7 +146,11 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
           id: r.id, user_id: r.user_id, body: r.body, created_at: r.created_at, name: person.name, avatar: person.avatar, casa: person.casa, likes: 0, liked: false,
           tag: r.tag || null, image_url: r.image_url || null, image_status: r.image_status || "aprovada", is_solution: !!r.is_solution, solved: !!r.solved, reply_to: r.reply_to || null,
         }]));
-        setTimeout(() => { const el = scrollRef.current; if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 200) scrollToBottom(); }, 30);
+        setTimeout(() => {
+          const el = scrollRef.current;
+          if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 200) scrollToBottom();
+          else if (r.user_id !== me.id) setNaoVistas((n) => n + 1);
+        }, 30);
       })
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "channel_messages", filter: `channel_id=eq.${channel.id}` }, (payload: any) => {
         const r = payload.new;
@@ -132,9 +169,15 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
       .on("presence", { event: "sync" }, () => {
         const state = ch.presenceState() as Record<string, any>;
         setOnline(new Set(Object.keys(state)));
+        setPresentes(
+          Object.values(state)
+            .map((entradas: any) => entradas?.[0])
+            .filter(Boolean)
+            .map((p: any) => ({ id: p.id, name: p.name || "Aluno", avatar: p.avatar ?? null, casa: p.casa ?? null }))
+        );
       })
       .subscribe(async (status: string) => {
-        if (status === "SUBSCRIBED") await ch.track({ id: me.id, name: me.name });
+        if (status === "SUBSCRIBED") await ch.track({ id: me.id, name: me.name, avatar: me.avatar ?? null, casa: me.casa ?? null });
       });
     return () => { client.removeChannel(ch); };
   }, [channel.id, me.id, me.name]);
@@ -270,7 +313,14 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               className="w-28 rounded-full border border-white/10 bg-white/5 py-1 pl-7 pr-2.5 text-[0.7rem] text-white placeholder:text-slate-500 outline-none transition-all focus:w-44 focus:border-brand-green/50 sm:w-32 sm:focus:w-56"
             />
           </div>
-          <span className="flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-[0.7rem] text-slate-300">
+          {/* Presença com rosto: quem está na sala agora, não só a contagem. */}
+          <span className="flex items-center gap-2 rounded-full bg-white/5 py-1 pl-1.5 pr-2.5 text-[0.7rem] text-slate-300" title={presentes.map((p) => p.name).join(", ")}>
+            <span className="flex -space-x-2">
+              {presentes.slice(0, 4).map((p) => (
+                <MedalAvatar key={p.id} name={p.name} src={p.avatar} casa={p.casa} rank={medalRanks[p.id]} size="xs" className="ring-2 ring-ink-900" />
+              ))}
+            </span>
+            {presentes.length > 4 && <span className="font-mono text-[0.65rem] text-slate-400">+{presentes.length - 4}</span>}
             <span className="h-1.5 w-1.5 rounded-full bg-brand-green shadow-[0_0_6px] shadow-brand-green/60" />
             {onlineCount} online
           </span>
@@ -290,7 +340,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
           })}
         </div>
 
-        <div ref={scrollRef} className="relative flex-1 space-y-0.5 overflow-y-auto px-4 py-4">
+        <div ref={scrollRef} onScroll={aoRolar} className="relative flex-1 space-y-0.5 overflow-y-auto px-4 py-4">
           {q && visiveis.length === 0 && messages.length > 0 && (
             <div className="grid h-full place-items-center px-6 text-center text-slate-500">
               <div>
@@ -313,6 +363,34 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               </div>
             </div>
           )}
+          {/* Canal recém-nascido: em vez de um vazio enorme, a abertura do canal
+              com três começos de conversa que preenchem o campo de mensagem. */}
+          {!q && messages.length > 0 && messages.length < 12 && (
+            <div className="mb-5 rounded-2xl border border-white/8 bg-white/[0.03] p-5">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>
+                  <ChIcon slug={channel.slug} size={22} />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-display text-base font-bold text-white">Este é o começo do #{channel.name}</p>
+                  <p className="text-xs text-slate-400">{channel.description || "Puxe assunto: a conversa aqui começa com você."}</p>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {SUGESTOES.map((sg) => (
+                  <button
+                    key={sg.texto}
+                    type="button"
+                    onClick={() => usarSugestao(sg)}
+                    className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 transition-colors hover:border-brand-green/40 hover:text-white"
+                  >
+                    {sg.tag ? <span className="mr-1.5 font-semibold" style={{ color: tagColor(sg.tag) }}>{sg.tag}</span> : <span className="mr-1.5 text-brand-teal">Apresentação</span>}
+                    {sg.texto.trim()}…
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {visiveis.map((m, i) => {
             const prev = visiveis[i - 1];
             const newDay = !prev || dayStr(prev.created_at) !== dayStr(m.created_at);
@@ -327,7 +405,12 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                     <div className="h-px flex-1 bg-white/8" />
                   </div>
                 )}
-                <div className={`group flex items-start gap-3 rounded-xl px-2.5 transition-colors duration-150 ${grouped ? "py-0.5" : "py-1.5"} ${m.is_solution ? "border border-brand-green/30 bg-brand-green/[0.06]" : "hover:bg-white/[0.04]"}`}>
+                <div
+                  className={`group flex items-start gap-3 rounded-xl px-2.5 transition-colors duration-150 ${grouped ? "py-0.5" : "py-1.5"} ${m.is_solution ? "border border-brand-green/30 bg-brand-green/[0.06]" : "hover:bg-white/[0.04]"} ${m.tag && !m.is_solution ? "border-l-2 pl-2" : ""}`}
+                  /* O traço na cor da tag dá ritmo à lista: dúvida, conquista e
+                     experiência passam a se distinguir antes da leitura. */
+                  style={m.tag && !m.is_solution ? { borderLeftColor: tagColor(m.tag) } : undefined}
+                >
                   <div className="w-9 shrink-0 pt-0.5">{!grouped ? <MedalAvatar rank={medalRanks[m.user_id]} casa={m.casa ?? null} name={m.name} src={m.avatar ?? null} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
                   <div className="min-w-0 flex-1">
                     {!grouped && (
@@ -397,6 +480,17 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
 
         {/* Composer */}
         <div className="relative px-4 pb-4 pt-1">
+          {/* Leu o histórico e chegou mensagem nova: o chat avisa em vez de puxar. */}
+          {!noFim && (
+            <button
+              type="button"
+              onClick={scrollToBottom}
+              className="absolute -top-12 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/15 bg-ink-800/95 px-3.5 py-1.5 text-xs font-medium text-slate-200 shadow-lg backdrop-blur transition-colors hover:border-brand-green/50 hover:text-white"
+            >
+              {naoVistas > 0 ? `${naoVistas} ${naoVistas === 1 ? "mensagem nova" : "mensagens novas"}` : "Ir para o fim"}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
+          )}
           {/* reply banner */}
           {replyTo && (
             <div className="mb-1.5 flex items-center justify-between gap-2 rounded-t-xl border border-b-0 border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs">
@@ -414,7 +508,8 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
             </div>
           )}
           {/* tags */}
-          <div className="mb-1.5 flex flex-wrap gap-1.5">
+          <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
+            <span className="mr-0.5 text-[0.65rem] uppercase tracking-wider text-slate-500">Marcar como</span>
             {TAGS.map((t) => (
               <button key={t.k} onClick={() => setTag(tag === t.k ? null : t.k)} className="rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition-colors" style={tag === t.k ? { color: "#04140d", background: t.c, borderColor: t.c } : { color: t.c, borderColor: `${t.c}55` }}>
                 {t.k}
@@ -432,6 +527,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               )}
             </button>
             <input
+              ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
@@ -443,6 +539,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
+          <p className="mt-1.5 px-1 text-[0.65rem] text-slate-600">Enter envia · solução dá +10 pontos a quem respondeu</p>
         </div>
       </div>
     </div>
