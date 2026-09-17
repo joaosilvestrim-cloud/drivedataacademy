@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canUseCommunity, loadProfiles, displayName } from "@/lib/community";
+import { canUseCommunity, loadProfiles, displayName, seloDaCasa } from "@/lib/community";
 import {loadCommunityRanking} from "@/lib/community-ranking";
 import {ranksForUsers} from "@/lib/ranking";
 import ChatRoom from "./ChatRoom";
@@ -29,7 +29,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
   const msgs = (msgsDesc ?? []).slice().reverse(); // oldest -> newest
 
   const ids = msgs.map((m: any) => m.user_id);
-  const [{ nameById, avatarById }, ranked] = await Promise.all([loadProfiles(admin, [...ids, user.id]),loadCommunityRanking()]);
+  const [{ nameById, avatarById, badgeById }, ranked] = await Promise.all([loadProfiles(admin, [...ids, user.id]),loadCommunityRanking()]);
   const initialRanks=ranksForUsers(ranked,[...ids,user.id]);
 
   // reações
@@ -49,7 +49,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
 
   const initial = msgs.map((m: any) => ({
     id: m.id, user_id: m.user_id, body: m.body, created_at: m.created_at,
-    name: displayName(nameById, m.user_id), avatar: avatarById[m.user_id] || null,
+    name: displayName(nameById, m.user_id), avatar: avatarById[m.user_id] || null, casa: seloDaCasa(badgeById[m.user_id]),
     likes: likeCount[m.id] || 0, liked: myLiked.has(m.id),
     tag: m.tag || null, image_url: m.image_url || null, image_status: m.image_status || "aprovada", is_solution: !!m.is_solution, solved: !!m.solved,
     reply_to: m.reply_to || null,
@@ -57,7 +57,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
     reply_body: m.reply_to && byId[m.reply_to] ? (byId[m.reply_to].body || "").slice(0, 120) : null,
   }));
 
-  const me = { id: user.id, name: displayName(nameById, user.id), avatar: avatarById[user.id] || null };
+  const me = { id: user.id, name: displayName(nameById, user.id), avatar: avatarById[user.id] || null, casa: seloDaCasa(badgeById[user.id]) };
 
   return <ChatRoom key={channel.id} initialRanks={initialRanks} channel={channel} channels={channels ?? []} me={me} initial={initial} />;
 }

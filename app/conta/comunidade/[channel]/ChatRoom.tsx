@@ -5,10 +5,11 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
 import {useChatMedals} from "@/components/ranking/useChatMedals";
+import SeloCasa from "@/components/comunidade/SeloCasa";
 import { markChatSolution, signCommunityImage, chatProfiles } from "../actions";
 
 type Msg = {
-  id: string; user_id: string; body: string; created_at: string; name: string; avatar?: string | null;
+  id: string; user_id: string; body: string; created_at: string; name: string; avatar?: string | null; casa?: string | null;
   likes: number; liked: boolean;
   tag: string | null; image_url: string | null; image_status?: string | null; is_solution: boolean; solved: boolean;
   reply_to: string | null; reply_name?: string | null; reply_body?: string | null;
@@ -63,7 +64,7 @@ function dayStr(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long" }).format(new Date(iso));
 }
 
-export default function ChatRoom({ channel, channels, me, initial, initialRanks }: { initialRanks: Record<string,number|null>; channel: Channel; channels: Channel[]; me: { id: string; name: string; avatar?: string | null }; initial: Msg[] }) {
+export default function ChatRoom({ channel, channels, me, initial, initialRanks }: { initialRanks: Record<string,number|null>; channel: Channel; channels: Channel[]; me: { id: string; name: string; avatar?: string | null; casa?: string | null }; initial: Msg[] }) {
   const [messages, setMessages] = useState<Msg[]>(initial);
   const medalRanks=useChatMedals([me.id,...messages.map(m=>m.user_id)],initialRanks);
   const [input, setInput] = useState("");
@@ -73,8 +74,8 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   const [uploading, setUploading] = useState(false);
   const [online, setOnline] = useState<Set<string>>(new Set([me.id]));
   const [busca, setBusca] = useState("");
-  const peopleCache = useRef<Record<string, { name: string; avatar: string | null }>>(
-    Object.fromEntries(initial.map((m) => [m.user_id, { name: m.name, avatar: m.avatar ?? null }]))
+  const peopleCache = useRef<Record<string, { name: string; avatar: string | null; casa: string | null }>>(
+    Object.fromEntries(initial.map((m) => [m.user_id, { name: m.name, avatar: m.avatar ?? null, casa: m.casa ?? null }]))
   );
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -86,14 +87,14 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   }
   useEffect(() => { scrollToBottom(); }, []);
 
-  async function personFor(uid: string): Promise<{ name: string; avatar: string | null }> {
+  async function personFor(uid: string): Promise<{ name: string; avatar: string | null; casa: string | null }> {
     const cached = peopleCache.current[uid];
     if (cached) return cached;
-    const fallback = { name: "Aluno", avatar: null };
+    const fallback = { name: "Aluno", avatar: null, casa: null };
     try {
       const res = await chatProfiles([uid]);
       const found = res?.people?.find((p) => p.id === uid);
-      const person = found ? { name: found.name, avatar: found.avatar } : fallback;
+      const person = found ? { name: found.name, avatar: found.avatar, casa: found.casa } : fallback;
       peopleCache.current[uid] = person;
       return person;
     } catch {
@@ -109,7 +110,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
         const r = payload.new;
         const person = await personFor(r.user_id);
         setMessages((prev) => (prev.some((m) => m.id === r.id) ? prev : [...prev, {
-          id: r.id, user_id: r.user_id, body: r.body, created_at: r.created_at, name: person.name, avatar: person.avatar, likes: 0, liked: false,
+          id: r.id, user_id: r.user_id, body: r.body, created_at: r.created_at, name: person.name, avatar: person.avatar, casa: person.casa, likes: 0, liked: false,
           tag: r.tag || null, image_url: r.image_url || null, image_status: r.image_status || "aprovada", is_solution: !!r.is_solution, solved: !!r.solved, reply_to: r.reply_to || null,
         }]));
         setTimeout(() => { const el = scrollRef.current; if (el && el.scrollHeight - el.scrollTop - el.clientHeight < 200) scrollToBottom(); }, 30);
@@ -166,9 +167,9 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
     setInput(""); setTag(null); setReplyTo(null); setPendingImage(null);
     const { data } = await supa.current.from("channel_messages").insert(payload).select("id, created_at").single();
     if (data) {
-      peopleCache.current[me.id] = { name: me.name, avatar: me.avatar ?? null };
+      peopleCache.current[me.id] = { name: me.name, avatar: me.avatar ?? null, casa: me.casa ?? null };
       setMessages((prev) => prev.some((m) => m.id === data.id) ? prev : [...prev, {
-        id: data.id, user_id: me.id, body: text, created_at: data.created_at, name: me.name, avatar: me.avatar ?? null, likes: 0, liked: false,
+        id: data.id, user_id: me.id, body: text, created_at: data.created_at, name: me.name, avatar: me.avatar ?? null, casa: me.casa ?? null, likes: 0, liked: false,
         tag: payload.tag || null, image_url: payload.image_url || null, image_status: payload.image_url ? "pendente" : null, is_solution: false, solved: false,
         reply_to: rt?.id || null, reply_name: rt?.name || null, reply_body: rt ? rt.body.slice(0, 120) : null,
       }]);
@@ -235,8 +236,9 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
         </nav>
         <div className="border-t border-white/[0.06] p-3">
           <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] px-3 py-2">
-            <MedalAvatar rank={medalRanks[me.id]} name={me.name} src={me.avatar ?? null} size="xs" className="ring-1 ring-white/10" />
+            <MedalAvatar rank={medalRanks[me.id]} casa={me.casa ?? null} name={me.name} src={me.avatar ?? null} size="xs" className="ring-1 ring-white/10" />
             <span className="truncate text-xs font-medium text-slate-200">{me.name}</span>
+            {me.casa && <SeloCasa label={me.casa} />}
             <span className="ml-auto h-2 w-2 rounded-full bg-brand-green shadow-[0_0_8px] shadow-brand-green/60" />
           </div>
         </div>
@@ -326,11 +328,12 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                   </div>
                 )}
                 <div className={`group flex items-start gap-3 rounded-xl px-2.5 transition-colors duration-150 ${grouped ? "py-0.5" : "py-1.5"} ${m.is_solution ? "border border-brand-green/30 bg-brand-green/[0.06]" : "hover:bg-white/[0.04]"}`}>
-                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <MedalAvatar rank={medalRanks[m.user_id]} name={m.name} src={m.avatar ?? null} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
+                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <MedalAvatar rank={medalRanks[m.user_id]} casa={m.casa ?? null} name={m.name} src={m.avatar ?? null} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex flex-wrap items-baseline gap-2">
-                        <span className={`text-sm font-semibold ${m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
+                        <span className={`text-sm font-semibold ${m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
+                        <SeloCasa label={m.casa} />
                         {online.has(m.user_id) && <span className="h-1.5 w-1.5 rounded-full bg-brand-green" title="online" />}
                         {m.tag && <span className="rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{m.tag}</span>}
                         {m.solved && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">resolvido</span>}

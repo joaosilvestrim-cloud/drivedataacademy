@@ -37,7 +37,25 @@ export async function canUseCommunity(admin: SupabaseClient, userId: string, ema
 export const BADGE_LABELS: Record<string, string> = {
   fundador: "Fundador",
   top: "Top do ranking",
+  fundadora: "Fundadora da Academy",
+  fundador_casa: "Fundador da Academy",
 };
+
+/* Selo da casa: quem criou a Academy e responde por ela.
+
+   Não confundir com o selo "fundador", que é do aluno da turma fundadora e sai
+   sozinho em toda compra de acesso full. Estes dois são nominais, entram na mão
+   e valem para duas pessoas: Tamires Cavani e Reed Lopes. Na comunidade eles
+   trocam a moldura do avatar, acima de qualquer medalha de ranking. */
+export const SELOS_DA_CASA: Record<string, string> = {
+  fundadora: "Fundadora",
+  fundador_casa: "Fundador",
+};
+
+export function seloDaCasa(badges?: string[]): string | null {
+  for (const b of badges ?? []) if (SELOS_DA_CASA[b]) return SELOS_DA_CASA[b];
+  return null;
+}
 
 // Nomes (sem e-mail, por privacidade) e badges de um conjunto de alunos.
 export async function loadProfiles(admin: SupabaseClient, ids: string[]) {

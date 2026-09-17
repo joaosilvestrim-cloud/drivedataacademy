@@ -2,9 +2,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS } from "@/lib/community";
+import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS, seloDaCasa } from "@/lib/community";
 import { createReply, markSolution, unmarkSolution, toggleLike } from "../../actions";
-import Avatar from "@/components/Avatar";
+import MedalAvatar from "@/components/ranking/MedalAvatar";
+import SeloCasa from "@/components/comunidade/SeloCasa";
 
 export const dynamic = "force-dynamic";
 
@@ -79,13 +80,13 @@ export default async function ThreadPage({ params }: { params: { id: string } })
       {/* Pergunta */}
       <div className={`mt-2 overflow-hidden rounded-2xl border ${thread.solved ? "border-brand-green/25" : "border-white/8"} bg-white/[0.02]`}>
         <div className="flex items-start gap-4 p-6">
-          <Avatar name={authorName} size="md" />
+          <MedalAvatar name={authorName} size="md" casa={seloDaCasa(badgeById[thread.user_id])} />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="font-display text-2xl font-bold text-white">{thread.title}</h1>
               {thread.solved && <span className="inline-flex items-center gap-1 rounded-full bg-brand-green/15 px-2.5 py-1 text-xs font-semibold text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>Resolvido</span>}
             </div>
-            <p className="mt-1 text-xs text-slate-500">{authorName}<Badges list={badgeById[thread.user_id]} /> · {fmt(thread.created_at)}</p>
+            <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><span className={seloDaCasa(badgeById[thread.user_id]) ? "font-semibold text-[#f6d68c]" : ""}>{authorName}</span><SeloCasa label={seloDaCasa(badgeById[thread.user_id])} /><Badges list={badgeById[thread.user_id]} /> · {fmt(thread.created_at)}</p>
             {thread.body && <p className="mt-4 whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{thread.body}</p>}
             {isAuthor && thread.solved && (
               <form action={unmarkSolution} className="mt-4">
@@ -117,9 +118,9 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                 </div>
               )}
               <div className="flex items-start gap-4 p-5">
-                <Avatar name={name} size="sm" />
+                <MedalAvatar name={name} size="sm" casa={seloDaCasa(badgeById[p.user_id])} />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs text-slate-500">{name}<Badges list={badgeById[p.user_id]} /> · {fmt(p.created_at)}</p>
+                  <p className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><span className={seloDaCasa(badgeById[p.user_id]) ? "font-semibold text-[#f6d68c]" : ""}>{name}</span><SeloCasa label={seloDaCasa(badgeById[p.user_id])} /><Badges list={badgeById[p.user_id]} /> · {fmt(p.created_at)}</p>
                   <p className="mt-2 whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{p.body}</p>
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <form action={toggleLike}>

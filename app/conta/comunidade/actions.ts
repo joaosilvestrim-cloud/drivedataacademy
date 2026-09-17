@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { canUseCommunity } from "@/lib/community";
+import { canUseCommunity, loadProfiles, seloDaCasa } from "@/lib/community";
 
 import {loadCommunityRanking} from "@/lib/community-ranking";
 import {ranksForUsers,validMedalIds} from "@/lib/ranking";
@@ -152,13 +152,14 @@ export async function chatProfiles(ids: string[]) {
   const { admin } = await requireCommunityUser();
   const uniq = Array.from(new Set(ids)).filter((id) => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 200);
   if (!uniq.length) return { ok: true as const, people: [] };
-  const { data } = await admin.from("profiles").select("id, full_name, avatar_url").in("id", uniq);
+  const { nameById, avatarById, badgeById } = await loadProfiles(admin, uniq);
   return {
     ok: true as const,
-    people: (data ?? []).map((p) => ({
-      id: p.id as string,
-      name: ((p.full_name as string) || "").trim() || "Aluno",
-      avatar: (p.avatar_url as string) || null,
+    people: uniq.map((id) => ({
+      id,
+      name: nameById[id] || "Aluno",
+      avatar: avatarById[id] || null,
+      casa: seloDaCasa(badgeById[id]),
     })),
   };
 }
