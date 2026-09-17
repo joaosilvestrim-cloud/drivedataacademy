@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
@@ -79,6 +79,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
     { id: me.id, name: me.name, avatar: me.avatar ?? null, casa: me.casa ?? null },
   ]);
   const [noFim, setNoFim] = useState(true);
+  const [mostrarMembros, setMostrarMembros] = useState(true);
   const [naoVistas, setNaoVistas] = useState(0);
   const [busca, setBusca] = useState("");
   const peopleCache = useRef<Record<string, { name: string; avatar: string | null; casa: string | null }>>(
@@ -255,142 +256,177 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   const [cFrom, cTo] = colorOf(channel.slug);
   const onlineCount = online.size;
 
+  /* Lista de membros do canal, no formato do Discord: quem está online agora
+     (presença) e quem já apareceu na conversa. Os donos da casa sobem, porque
+     é quem a turma procura. Não existe tabela de "membros do canal": o que dá
+     para saber com verdade é isto. */
+  const membros = useMemo(() => {
+    const mapa = new Map<string, { id: string; name: string; avatar: string | null; casa: string | null; online: boolean }>();
+    for (const p of presentes) mapa.set(p.id, { id: p.id, name: p.name, avatar: p.avatar, casa: p.casa, online: true });
+    for (const m of messages) {
+      if (mapa.has(m.user_id)) continue;
+      mapa.set(m.user_id, { id: m.user_id, name: m.name, avatar: m.avatar ?? null, casa: m.casa ?? null, online: false });
+    }
+    return [...mapa.values()];
+  }, [presentes, messages]);
+
+  const grupos = useMemo(() => {
+    const porNome = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, "pt-BR");
+    return [
+      { titulo: "Fundadores", gente: membros.filter((m) => m.casa).sort(porNome) },
+      { titulo: "Online", gente: membros.filter((m) => !m.casa && m.online).sort(porNome) },
+      { titulo: "Ausentes", gente: membros.filter((m) => !m.casa && !m.online).sort(porNome) },
+    ].filter((g) => g.gente.length > 0);
+  }, [membros]);
+
   return (
-    <div className="flex h-[calc(100dvh-190px)] min-h-[440px] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-ink-800 via-ink-900 to-ink-900 shadow-2xl sm:h-[calc(100vh-150px)]">
-      {/* Canais */}
-      <aside className="hidden w-60 shrink-0 flex-col border-r border-white/[0.06] bg-gradient-to-b from-white/[0.04] to-transparent sm:flex">
-        <div className="flex items-center gap-2.5 border-b border-white/[0.06] px-4 py-4">
+    <div className="flex h-[calc(100dvh-180px)] min-h-[460px] overflow-hidden rounded-2xl border border-black/50 bg-[#0b131c] shadow-2xl sm:h-[calc(100vh-140px)]">
+      {/* Coluna dos canais */}
+      <aside className="hidden w-60 shrink-0 flex-col bg-[#070d14] sm:flex">
+        <div className="flex items-center gap-2.5 border-b border-black/40 px-4 py-3.5 shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/drivedata-symbol.png" alt="" aria-hidden="true" className="h-8 w-8 shrink-0 object-contain" />
+          <img src="/drivedata-symbol.png" alt="" aria-hidden="true" className="h-7 w-7 shrink-0 object-contain" />
           <span className="font-display text-sm font-bold text-white">Comunidade</span>
+          <span className="ml-auto flex items-center gap-1.5 text-[0.65rem] text-slate-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-green" />
+            {onlineCount}
+          </span>
         </div>
-        <nav className="flex-1 space-y-1 overflow-y-auto p-2.5">
-          <p className="px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">Canais</p>
+
+        <nav className="flex-1 overflow-y-auto px-2 py-3">
+          <p className="px-2 pb-1 text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">Canais de texto</p>
           {channels.map((c) => {
             const active = c.slug === channel.slug;
-            const [from, to] = colorOf(c.slug);
+            const [from] = colorOf(c.slug);
             return (
-              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`group flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm transition-all duration-200 ${active ? "bg-white/[0.06] font-medium text-white" : "text-slate-400 hover:translate-x-0.5 hover:bg-white/5 hover:text-slate-100"}`}>
-                <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-lg text-ink-900 transition-all ${active ? "shadow-md" : "opacity-70 group-hover:opacity-100"}`} style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}><ChIcon slug={c.slug} size={13} /></span>
+              <Link
+                key={c.id}
+                href={`/conta/comunidade/${c.slug}`}
+                className={`group relative mt-0.5 flex items-center gap-1.5 rounded px-2 py-[7px] text-[0.9rem] transition-colors ${
+                  active ? "bg-white/[0.08] font-medium text-white" : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
+                }`}
+              >
+                {/* Marca do canal ativo, na cor do próprio canal. */}
+                {active && <span className="absolute -left-2 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r" style={{ backgroundColor: from }} />}
+                <span className={`text-lg font-normal leading-none ${active ? "text-slate-300" : "text-slate-600 group-hover:text-slate-500"}`}>#</span>
                 <span className="truncate">{c.name}</span>
               </Link>
             );
           })}
         </nav>
-        <div className="border-t border-white/[0.06] p-3">
-          <div className="flex items-center gap-2 rounded-xl bg-white/[0.04] px-3 py-2">
-            <MedalAvatar rank={medalRanks[me.id]} casa={me.casa ?? null} name={me.name} src={me.avatar ?? null} size="xs" className="ring-1 ring-white/10" />
-            <span className="truncate text-xs font-medium text-slate-200">{me.name}</span>
-            {me.casa && <SeloCasa label={me.casa} />}
-            <span className="ml-auto h-2 w-2 rounded-full bg-brand-green shadow-[0_0_8px] shadow-brand-green/60" />
-          </div>
+
+        {/* Barra do próprio aluno, no rodapé, como no Discord. */}
+        <div className="flex items-center gap-2 border-t border-black/40 bg-black/25 px-2.5 py-2">
+          <MedalAvatar rank={medalRanks[me.id]} casa={me.casa ?? null} name={me.name} src={me.avatar ?? null} size="xs" />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-xs font-semibold text-slate-200">{me.name}</span>
+            <span className="block text-[0.65rem] text-brand-green">disponível</span>
+          </span>
+          <Link href="/conta/perfil" title="Editar meu perfil" className="grid h-7 w-7 shrink-0 place-items-center rounded text-slate-500 transition-colors hover:bg-white/5 hover:text-white">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.7" /><path d="M4 12a8 8 0 01.2-1.8l-2-1.5 2-3.4 2.3 1a8 8 0 013.1-1.8L10 2h4l.4 2.5a8 8 0 013.1 1.8l2.3-1 2 3.4-2 1.5a8 8 0 010 3.6l2 1.5-2 3.4-2.3-1a8 8 0 01-3.1 1.8L14 22h-4l-.4-2.5a8 8 0 01-3.1-1.8l-2.3 1-2-3.4 2-1.5A8 8 0 014 12z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" /></svg>
+          </Link>
         </div>
       </aside>
 
-      {/* Chat */}
-      <div className="relative flex min-w-0 flex-1 flex-col">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-64 opacity-[0.07]" style={{ background: `radial-gradient(60% 100% at 50% 0%, ${cFrom}, transparent)` }} />
-        <header className="relative flex items-center gap-2.5 border-b border-white/[0.06] bg-gradient-to-b from-white/[0.03] to-transparent px-4 py-3 sm:px-5 sm:py-3.5">
-          <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}><ChIcon slug={channel.slug} size={15} /></span>
+      {/* Coluna da conversa */}
+      <div className="relative flex min-w-0 flex-1 flex-col bg-[#0b131c]">
+        <header className="relative z-10 flex items-center gap-2.5 border-b border-black/40 px-3 py-2.5 shadow-[0_1px_0_rgba(0,0,0,0.35)] sm:px-4">
+          <span className="text-xl font-normal leading-none text-slate-600">#</span>
           <span className="font-display font-bold text-white">{channel.name}</span>
-          {channel.description && <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 md:block">{channel.description}</span>}
-          <Link href="/conta/ranking" title="Ganhe pontos ajudando: solução +10, curtida +2, participar +1/dia" className="ml-auto hidden items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-300/10 px-2.5 py-1 text-[0.7rem] font-medium text-amber-200 hover:bg-amber-300/20 sm:flex">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            Pontos
-          </Link>
-          <div className="relative ml-auto sm:ml-2">
-            <label htmlFor="busca-canal" className="sr-only">Buscar nesta conversa</label>
-            <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500">
-              <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <input
-              id="busca-canal"
-              type="search"
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
-              placeholder="Buscar"
-              className="w-28 rounded-full border border-white/10 bg-white/5 py-1 pl-7 pr-2.5 text-[0.7rem] text-white placeholder:text-slate-500 outline-none transition-all focus:w-44 focus:border-brand-green/50 sm:w-32 sm:focus:w-56"
-            />
+          {channel.description && (
+            <span className="hidden truncate border-l border-white/10 pl-3 text-xs text-slate-500 md:block">{channel.description}</span>
+          )}
+
+          <div className="ml-auto flex items-center gap-1.5">
+            <Link
+              href="/conta/ranking"
+              title="Ganhe pontos ajudando: solução +10, curtida +2, participar +1/dia"
+              className="hidden items-center gap-1.5 rounded px-2 py-1 text-[0.7rem] font-medium text-amber-200/90 transition-colors hover:bg-white/5 sm:flex"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              Pontos
+            </Link>
+
+            <div className="relative">
+              <label htmlFor="busca-canal" className="sr-only">Buscar nesta conversa</label>
+              <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500">
+                <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <input
+                id="busca-canal"
+                type="search"
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
+                placeholder="Buscar"
+                className="w-28 rounded bg-black/40 py-1.5 pl-7 pr-2.5 text-[0.7rem] text-white placeholder:text-slate-500 outline-none transition-all focus:w-44 sm:w-32 sm:focus:w-56"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setMostrarMembros((v) => !v)}
+              title={mostrarMembros ? "Esconder membros" : "Mostrar membros"}
+              aria-pressed={mostrarMembros}
+              className={`hidden h-8 w-8 place-items-center rounded transition-colors lg:grid ${mostrarMembros ? "bg-white/[0.07] text-white" : "text-slate-500 hover:bg-white/5 hover:text-slate-200"}`}
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M17 20v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9.5 10a4 4 0 100-8 4 4 0 000 8zM22 20v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
           </div>
-          {/* Presença com rosto: quem está na sala agora, não só a contagem. */}
-          <span className="flex items-center gap-2 rounded-full bg-white/5 py-1 pl-1.5 pr-2.5 text-[0.7rem] text-slate-300" title={presentes.map((p) => p.name).join(", ")}>
-            <span className="flex -space-x-2">
-              {presentes.slice(0, 4).map((p) => (
-                <MedalAvatar key={p.id} name={p.name} src={p.avatar} casa={p.casa} rank={medalRanks[p.id]} size="xs" className="ring-2 ring-ink-900" />
-              ))}
-            </span>
-            {presentes.length > 4 && <span className="font-mono text-[0.65rem] text-slate-400">+{presentes.length - 4}</span>}
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-green shadow-[0_0_6px] shadow-brand-green/60" />
-            {onlineCount} online
-          </span>
         </header>
 
         {/* Canais (mobile) */}
-        <div className="flex gap-1.5 overflow-x-auto border-b border-white/8 px-3 py-2 sm:hidden">
+        <div className="flex gap-1.5 overflow-x-auto border-b border-black/40 px-3 py-2 sm:hidden">
           {channels.map((c) => {
             const active = c.slug === channel.slug;
-            const [f, t] = colorOf(c.slug);
             return (
-              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`flex shrink-0 items-center gap-1.5 rounded-full py-1 pl-1 pr-3 text-xs ${active ? "bg-white/10 text-white" : "text-slate-400"}`}>
-                <span className="grid h-5 w-5 place-items-center rounded-full text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${f}, ${t})` }}><ChIcon slug={c.slug} size={11} /></span>
+              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`flex shrink-0 items-center gap-1 rounded px-2.5 py-1 text-xs ${active ? "bg-white/[0.08] text-white" : "text-slate-400"}`}>
+                <span className="text-slate-600">#</span>
                 {c.name}
               </Link>
             );
           })}
         </div>
 
-        <div ref={scrollRef} onScroll={aoRolar} className="relative flex-1 space-y-0.5 overflow-y-auto px-4 py-4">
+        <div ref={scrollRef} onScroll={aoRolar} className="relative flex-1 overflow-y-auto py-4">
           {q && visiveis.length === 0 && messages.length > 0 && (
             <div className="grid h-full place-items-center px-6 text-center text-slate-500">
               <div>
                 <p className="text-sm">Nenhuma mensagem com “{busca.trim()}” neste canal.</p>
-                <button type="button" onClick={() => setBusca("")} className="mt-3 rounded-xl border border-white/10 px-4 py-1.5 text-xs text-slate-300 hover:border-white/30 hover:text-white">
+                <button type="button" onClick={() => setBusca("")} className="mt-3 rounded border border-white/10 px-4 py-1.5 text-xs text-slate-300 hover:border-white/30 hover:text-white">
                   Limpar busca
                 </button>
               </div>
             </div>
           )}
-          {messages.length === 0 && (
-            <div className="grid h-full place-items-center text-center text-slate-500">
-              <div>
-                <div className="relative mx-auto mb-4 grid h-20 w-20 place-items-center">
-                  <span className="absolute inset-0 rounded-3xl opacity-40 blur-xl" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }} />
-                  <span className="relative grid h-16 w-16 place-items-center rounded-2xl text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}><ChIcon slug={channel.slug} size={30} /></span>
-                </div>
-                <p className="font-display text-lg font-bold text-white">Bem-vindo ao #{channel.name}</p>
-                <p className="mt-1 text-sm">Este é o começo do canal. Manda a primeira mensagem!</p>
-              </div>
-            </div>
-          )}
-          {/* Canal recém-nascido: em vez de um vazio enorme, a abertura do canal
-              com três começos de conversa que preenchem o campo de mensagem. */}
-          {!q && messages.length > 0 && messages.length < 12 && (
-            <div className="mb-5 rounded-2xl border border-white/8 bg-white/[0.03] p-5">
-              <div className="flex items-center gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>
-                  <ChIcon slug={channel.slug} size={22} />
-                </span>
-                <div className="min-w-0">
-                  <p className="font-display text-base font-bold text-white">Este é o começo do #{channel.name}</p>
-                  <p className="text-xs text-slate-400">{channel.description || "Puxe assunto: a conversa aqui começa com você."}</p>
-                </div>
-              </div>
+
+          {/* Abertura do canal, como o Discord faz no começo do histórico. */}
+          {!q && messages.length < 12 && (
+            <div className="px-4 pb-6 pt-2">
+              <span className="grid h-16 w-16 place-items-center rounded-full text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>
+                <ChIcon slug={channel.slug} size={30} />
+              </span>
+              <h2 className="mt-4 font-display text-2xl font-bold text-white">Bem-vindo ao #{channel.name}</h2>
+              <p className="mt-1 max-w-xl text-sm text-slate-400">
+                {channel.description || "Este é o começo do canal. Puxe assunto: a conversa aqui começa com você."}
+              </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {SUGESTOES.map((sg) => (
                   <button
                     key={sg.texto}
                     type="button"
                     onClick={() => usarSugestao(sg)}
-                    className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 transition-colors hover:border-brand-green/40 hover:text-white"
+                    className="rounded border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 transition-colors hover:border-brand-green/40 hover:text-white"
                   >
                     {sg.tag ? <span className="mr-1.5 font-semibold" style={{ color: tagColor(sg.tag) }}>{sg.tag}</span> : <span className="mr-1.5 text-brand-teal">Apresentação</span>}
                     {sg.texto.trim()}…
                   </button>
                 ))}
               </div>
+              <div className="mt-6 h-px bg-white/[0.06]" />
             </div>
           )}
+
           {visiveis.map((m, i) => {
             const prev = visiveis[i - 1];
             const newDay = !prev || dayStr(prev.created_at) !== dayStr(m.created_at);
@@ -399,34 +435,41 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
             return (
               <div key={m.id}>
                 {newDay && (
-                  <div className="my-4 flex items-center gap-3">
-                    <div className="h-px flex-1 bg-white/8" />
-                    <span className="rounded-full bg-white/5 px-3 py-0.5 text-[0.65rem] font-medium text-slate-400">{dayStr(m.created_at)}</span>
-                    <div className="h-px flex-1 bg-white/8" />
+                  <div className="mx-4 my-4 flex items-center gap-3">
+                    <div className="h-px flex-1 bg-white/[0.08]" />
+                    <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-slate-500">{dayStr(m.created_at)}</span>
+                    <div className="h-px flex-1 bg-white/[0.08]" />
                   </div>
                 )}
                 <div
-                  className={`group flex items-start gap-3 rounded-xl px-2.5 transition-colors duration-150 ${grouped ? "py-0.5" : "py-1.5"} ${m.is_solution ? "border border-brand-green/30 bg-brand-green/[0.06]" : "hover:bg-white/[0.04]"} ${m.tag && !m.is_solution ? "border-l-2 pl-2" : ""}`}
-                  /* O traço na cor da tag dá ritmo à lista: dúvida, conquista e
-                     experiência passam a se distinguir antes da leitura. */
+                  className={`group relative flex items-start gap-3 px-4 transition-colors ${grouped ? "py-[3px]" : "mt-2 py-1"} ${
+                    m.is_solution ? "border-l-2 border-brand-green bg-brand-green/[0.07]" : "hover:bg-black/25"
+                  } ${m.tag && !m.is_solution ? "border-l-2" : ""}`}
                   style={m.tag && !m.is_solution ? { borderLeftColor: tagColor(m.tag) } : undefined}
                 >
-                  <div className="w-9 shrink-0 pt-0.5">{!grouped ? <MedalAvatar rank={medalRanks[m.user_id]} casa={m.casa ?? null} name={m.name} src={m.avatar ?? null} size="sm" className="ring-1 ring-white/10" /> : <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>}</div>
+                  <div className="w-10 shrink-0 pt-0.5">
+                    {!grouped ? (
+                      <MedalAvatar rank={medalRanks[m.user_id]} casa={m.casa ?? null} name={m.name} src={m.avatar ?? null} size="md" />
+                    ) : (
+                      <span className="hidden text-[0.6rem] leading-6 text-slate-600 group-hover:block">{timeStr(m.created_at)}</span>
+                    )}
+                  </div>
+
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex flex-wrap items-baseline gap-2">
-                        <span className={`text-sm font-semibold ${m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
+                        <span className={`text-[0.95rem] font-semibold ${m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
                         <SeloCasa label={m.casa} />
                         {online.has(m.user_id) && <span className="h-1.5 w-1.5 rounded-full bg-brand-green" title="online" />}
-                        {m.tag && <span className="rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{m.tag}</span>}
-                        {m.solved && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">resolvido</span>}
+                        {m.tag && <span className="rounded px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{m.tag}</span>}
+                        {m.solved && <span className="rounded bg-brand-green/15 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">resolvido</span>}
                         <span className="text-[0.65rem] text-slate-500">{timeStr(m.created_at)}</span>
                       </p>
                     )}
 
                     {/* citação do reply */}
                     {m.reply_to && (
-                      <div className="mt-1 flex items-start gap-2 rounded-lg border-l-2 border-brand-teal/50 bg-white/[0.03] px-2.5 py-1.5 text-xs">
+                      <div className="mb-1 flex items-start gap-2 rounded border-l-2 border-brand-teal/50 bg-white/[0.03] px-2.5 py-1 text-xs">
                         <span className="text-brand-teal">↩</span>
                         <span className="min-w-0">
                           <span className="font-semibold text-slate-300">{parent?.name || m.reply_name || "mensagem"}</span>
@@ -435,41 +478,50 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                       </div>
                     )}
 
-                    {m.body && <p className="mt-0.5 whitespace-pre-line break-words text-[0.92rem] leading-relaxed text-slate-200">{m.body}</p>}
+                    {m.body && <p className="whitespace-pre-line break-words text-[0.95rem] leading-[1.45] text-slate-200">{m.body}</p>}
 
                     {/* Imagem só aparece depois que o time aprova. Até lá, quem vê
                         sabe que existe um anexo em análise, em vez de sumir sem explicação. */}
                     {m.image_url && m.image_status !== "aprovada" ? (
-                      <p className="mt-2 inline-flex items-center gap-2 rounded-xl border border-dashed border-white/15 px-3 py-2 text-[0.8rem] text-slate-400">
+                      <p className="mt-2 inline-flex items-center gap-2 rounded border border-dashed border-white/15 px-3 py-2 text-[0.8rem] text-slate-400">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" /><path d="M12 7v6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
                         Imagem em análise pelo time
                       </p>
                     ) : m.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={m.image_url} alt="anexo" className="mt-2 max-h-72 rounded-xl border border-white/10 object-contain" />
+                      <img src={m.image_url} alt="anexo" className="mt-2 max-h-72 rounded-lg border border-black/40 object-contain" />
                     ) : null}
 
-                    {m.is_solution && <p className="mt-1 inline-flex items-center gap-1 text-[0.7rem] font-semibold text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg> Marcada como solução</p>}
+                    {m.is_solution && (
+                      <p className="mt-1 inline-flex items-center gap-1 text-[0.7rem] font-semibold text-brand-green">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        Marcada como solução
+                      </p>
+                    )}
 
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
-                      {(m.likes > 0 || m.liked) && (
-                        <button onClick={() => toggleLike(m)} className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.7rem] transition-colors ${m.liked ? "border-brand-green/40 bg-brand-green/10 text-brand-green" : "border-white/10 text-slate-400 hover:border-white/20"}`}>
-                          👍 {m.likes + (m.liked ? 1 : 0)}
-                        </button>
-                      )}
-                      {canSolve(m) && (
-                        <button onClick={() => solve(m)} title="Marca a resposta que resolveu sua dúvida e dá +10 pontos a quem respondeu" className="rounded-full border border-brand-green/30 px-2 py-0.5 text-[0.7rem] font-medium text-brand-green hover:bg-brand-green/10">marcar como solução <span className="text-brand-green/70">+10</span></button>
-                      )}
-                    </div>
+                    {(m.likes > 0 || m.liked || canSolve(m)) && (
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        {(m.likes > 0 || m.liked) && (
+                          <button onClick={() => toggleLike(m)} className={`inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[0.7rem] transition-colors ${m.liked ? "border-brand-green/40 bg-brand-green/10 text-brand-green" : "border-white/10 bg-white/[0.03] text-slate-400 hover:border-white/20"}`}>
+                            👍 {m.likes + (m.liked ? 1 : 0)}
+                          </button>
+                        )}
+                        {canSolve(m) && (
+                          <button onClick={() => solve(m)} title="Marca a resposta que resolveu sua dúvida e dá +10 pontos a quem respondeu" className="rounded border border-brand-green/30 px-2 py-0.5 text-[0.7rem] font-medium text-brand-green hover:bg-brand-green/10">
+                            marcar como solução <span className="text-brand-green/70">+10</span>
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Ações no hover */}
-                  <div className="mt-0.5 hidden shrink-0 items-center gap-1 group-hover:flex">
-                    <button onClick={() => setReplyTo(m)} className="rounded-lg border border-white/10 bg-ink-800 p-1.5 text-slate-400 hover:text-brand-teal" aria-label="Responder">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 17l-5-5 5-5M4 12h11a5 5 0 015 5v1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    </button>
-                    <button onClick={() => toggleLike(m)} className={`rounded-lg border border-white/10 bg-ink-800 p-1.5 text-slate-400 hover:text-brand-green ${m.liked ? "text-brand-green" : ""}`} aria-label="Curtir">
+                  {/* Barra de ações flutuante, no canto da mensagem, como no Discord. */}
+                  <div className="absolute -top-3 right-4 z-10 hidden items-center rounded-md border border-black/60 bg-[#121c27] shadow-lg group-hover:flex">
+                    <button onClick={() => toggleLike(m)} className={`grid h-7 w-7 place-items-center rounded-l-md transition-colors hover:bg-white/5 ${m.liked ? "text-brand-green" : "text-slate-400 hover:text-brand-green"}`} aria-label="Curtir" title="Curtir">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill={m.liked ? "currentColor" : "none"}><path d="M7 10v11M2 13v6a2 2 0 002 2h13.4a2 2 0 002-1.6l1.4-7A2 2 0 0018.8 10H14V5a2 2 0 00-2-2l-3 7z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+                    </button>
+                    <button onClick={() => setReplyTo(m)} className="grid h-7 w-7 place-items-center rounded-r-md text-slate-400 transition-colors hover:bg-white/5 hover:text-brand-teal" aria-label="Responder" title="Responder">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 17l-5-5 5-5M4 12h11a5 5 0 015 5v1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
                   </div>
                 </div>
@@ -485,45 +537,38 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
             <button
               type="button"
               onClick={scrollToBottom}
-              className="absolute -top-12 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/15 bg-ink-800/95 px-3.5 py-1.5 text-xs font-medium text-slate-200 shadow-lg backdrop-blur transition-colors hover:border-brand-green/50 hover:text-white"
+              className="absolute -top-10 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-black/50 bg-[#121c27] px-3.5 py-1.5 text-xs font-medium text-slate-200 shadow-lg transition-colors hover:text-white"
             >
               {naoVistas > 0 ? `${naoVistas} ${naoVistas === 1 ? "mensagem nova" : "mensagens novas"}` : "Ir para o fim"}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           )}
+
           {/* reply banner */}
           {replyTo && (
-            <div className="mb-1.5 flex items-center justify-between gap-2 rounded-t-xl border border-b-0 border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs">
+            <div className="flex items-center justify-between gap-2 rounded-t-lg bg-black/40 px-3 py-1.5 text-xs">
               <span className="min-w-0 truncate text-slate-400">Respondendo <span className="font-semibold text-slate-200">{replyTo.name}</span>: {replyTo.body.slice(0, 60)}</span>
               <button onClick={() => setReplyTo(null)} className="shrink-0 text-slate-500 hover:text-white">✕</button>
             </div>
           )}
+
           {/* pending image */}
           {pendingImage && (
-            <div className="mb-1.5 flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300">
+            <div className="flex items-center gap-2 rounded-t-lg bg-black/40 px-3 py-1.5 text-xs text-slate-300">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={pendingImage} alt="prévia" className="h-10 w-10 rounded object-cover" />
               <span>Foto anexada</span>
               <button onClick={() => setPendingImage(null)} className="ml-auto text-slate-500 hover:text-white">remover</button>
             </div>
           )}
-          {/* tags */}
-          <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-            <span className="mr-0.5 text-[0.65rem] uppercase tracking-wider text-slate-500">Marcar como</span>
-            {TAGS.map((t) => (
-              <button key={t.k} onClick={() => setTag(tag === t.k ? null : t.k)} className="rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium transition-colors" style={tag === t.k ? { color: "#04140d", background: t.c, borderColor: t.c } : { color: t.c, borderColor: `${t.c}55` }}>
-                {t.k}
-              </button>
-            ))}
-          </div>
 
-          <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.05] px-2 py-1.5 backdrop-blur transition-all duration-200 focus-within:border-brand-green/50 focus-within:shadow-[0_0_0_3px_rgba(52,232,160,0.10)]">
+          <div className={`flex items-center gap-1 bg-[#131d28] px-2 ${replyTo || pendingImage ? "rounded-b-lg" : "rounded-lg"}`}>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.currentTarget.value = ""; }} />
-            <button onClick={() => fileRef.current?.click()} disabled={uploading} className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-slate-400 hover:bg-white/5 hover:text-white disabled:opacity-40" aria-label="Anexar foto" title="Anexar foto">
+            <button onClick={() => fileRef.current?.click()} disabled={uploading} className="grid h-11 w-9 shrink-0 place-items-center text-slate-400 transition-colors hover:text-white disabled:opacity-40" aria-label="Anexar foto" title="Anexar foto">
               {uploading ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="animate-spin"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" /><path d="M21 12a9 9 0 00-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="animate-spin"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" /><path d="M21 12a9 9 0 00-9-9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg>
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 16l5-5 4 4 3-3 4 4M4 6h16v12H4z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" strokeWidth="1.6" /><path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
               )}
             </button>
             <input
@@ -532,16 +577,67 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
               autoComplete="off"
-              placeholder={`Mensagem em #${channel.name}`}
-              className="flex-1 bg-transparent px-1 py-2 text-sm text-white placeholder:text-slate-500 outline-none"
+              placeholder={`Conversar em #${channel.name}`}
+              className="flex-1 bg-transparent px-1 py-3 text-[0.95rem] text-white placeholder:text-slate-500 outline-none"
             />
-            <button onClick={send} disabled={!input.trim() && !pendingImage} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 shadow-md shadow-brand-green/20 transition-transform hover:scale-105 disabled:opacity-40 disabled:shadow-none">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            {/* Marcador do assunto, colado no campo. */}
+            <div className="hidden items-center gap-1 pr-1 md:flex">
+              {TAGS.map((t) => (
+                <button
+                  key={t.k}
+                  onClick={() => setTag(tag === t.k ? null : t.k)}
+                  title={`Marcar como ${t.k}`}
+                  className="h-6 rounded px-1.5 text-[0.65rem] font-semibold uppercase tracking-wide transition-colors"
+                  style={tag === t.k ? { color: "#04140d", background: t.c } : { color: `${t.c}cc` }}
+                >
+                  {t.k}
+                </button>
+              ))}
+            </div>
+            <button onClick={send} disabled={!input.trim() && !pendingImage} className="grid h-8 w-8 shrink-0 place-items-center rounded bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
+
+          {/* No celular as marcações não cabem ao lado do campo. */}
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5 md:hidden">
+            <span className="text-[0.65rem] uppercase tracking-wider text-slate-500">Marcar</span>
+            {TAGS.map((t) => (
+              <button key={t.k} onClick={() => setTag(tag === t.k ? null : t.k)} className="rounded border px-2 py-0.5 text-[0.65rem] font-medium" style={tag === t.k ? { color: "#04140d", background: t.c, borderColor: t.c } : { color: t.c, borderColor: `${t.c}55` }}>
+                {t.k}
+              </button>
+            ))}
+          </div>
+
           <p className="mt-1.5 px-1 text-[0.65rem] text-slate-600">Enter envia · solução dá +10 pontos a quem respondeu</p>
         </div>
       </div>
+
+      {/* Coluna dos membros */}
+      {mostrarMembros && (
+        <aside className="hidden w-56 shrink-0 flex-col overflow-y-auto border-l border-black/40 bg-[#070d14] py-4 lg:flex">
+          {grupos.map((g) => (
+            <div key={g.titulo} className="mb-4 px-3">
+              <p className="mb-1.5 px-1 text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">
+                {g.titulo} — {g.gente.length}
+              </p>
+              {g.gente.map((p) => (
+                <span
+                  key={p.id}
+                  title={p.online ? `${p.name} está online` : `${p.name} já participou deste canal`}
+                  className={`flex items-center gap-2 rounded px-1.5 py-1 transition-colors hover:bg-white/[0.04] ${p.online ? "" : "opacity-45"}`}
+                >
+                  <MedalAvatar name={p.name} src={p.avatar} casa={p.casa} rank={medalRanks[p.id]} size="xs" />
+                  <span className={`truncate text-[0.82rem] ${p.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>
+                    {p.name}
+                    {p.id === me.id && <span className="ml-1 text-[0.65rem] text-slate-500">(você)</span>}
+                  </span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </aside>
+      )}
     </div>
   );
 }
