@@ -12,7 +12,8 @@
     "test:decision-lab": "node scripts/test-decision-lab.cjs",
     "test:dataflow": "node scripts/test-dataflow.cjs",
     "test:community-medals": "node scripts/test-community-medals.cjs",
-    "test:raiox": "tsx scripts/test-raiox.ts"
+    "test:raiox": "tsx scripts/test-raiox.ts",
+    "test:forja": "tsx scripts/test-forja.ts"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",
