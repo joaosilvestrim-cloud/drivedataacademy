@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasToolAccess } from "@/lib/tool";
 import { usuarioAtual } from "@/lib/sessao";
-import CartaoFerramenta, { type Ferramenta } from "@/components/ferramentas/CartaoFerramenta";
+import GradeFerramentas from "@/components/ferramentas/GradeFerramentas";
+import { type Ferramenta } from "@/components/ferramentas/CartaoFerramenta";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default async function FerramentasHub() {
   const ferramentas: Ferramenta[] = [
     {
       key: "raio-x",
+      categoria: "Power BI",
       name: "Raio-X do Dashboard",
       tag: "Novo",
       desc: "Suba seu .pbix e receba a revisão que um consultor faria: o que está errado, por que importa e como arrumar. O arquivo não sai do seu navegador.",
@@ -35,6 +37,7 @@ export default async function FerramentasHub() {
     },
     {
       key: "dataflow-lab",
+      categoria: "Dados",
       name: "DataFlow Lab",
       tag: "Dados · 4D",
       desc: "Importe CSVs, trate dados e execute SQL. Explore as transformações em 3D, reproduza cada etapa e compare resultados.",
@@ -48,6 +51,7 @@ export default async function FerramentasHub() {
     },
     {
       key: "decision-lab",
+      categoria: "Negócios",
       name: "Decision Lab",
       tag: "Simulador de negócios",
       desc: "Assuma uma empresa interativa em 3D. Decida preços, estoque e equipe, simule 30 dias e aprenda com os resultados da sua estratégia.",
@@ -61,6 +65,7 @@ export default async function FerramentasHub() {
     },
     {
       key: "knowledge-universe",
+      categoria: "Conhecimento",
       name: "Knowledge Universe 4D",
       tag: "Conhecimento · 4D",
       desc: "Suas atividades viram um mapa de competências em 3D. Comece pelo diagnóstico, abra seu universo e evolua entregando desafios.",
@@ -74,6 +79,7 @@ export default async function FerramentasHub() {
     },
     {
       key: "visuais",
+      categoria: "Power BI",
       name: "Ferramenta de Visuais",
       tag: "Power BI",
       desc: "Crie cards em HTML e SVG para o Power BI e gere a medida DAX pronta, sem escrever código.",
@@ -86,6 +92,7 @@ export default async function FerramentasHub() {
     },
     {
       key: "em-breve",
+      categoria: "Em breve",
       name: "Novas ferramentas",
       tag: "Em breve",
       desc: "Estamos preparando mais ferramentas DriveData para acelerar o seu dia a dia.",
@@ -103,11 +110,7 @@ export default async function FerramentasHub() {
       <h1 className="mt-1 font-display text-3xl font-bold text-white">Escolha uma ferramenta</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">Escolha uma experiência e comece a praticar.</p>
 
-      <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {ferramentas.map((f, i) => (
-          <CartaoFerramenta key={f.key} t={f} ordem={i} />
-        ))}
-      </div>
+      <GradeFerramentas ferramentas={ferramentas} />
 
       {!liberado && (
         <div className="mt-8 max-w-2xl rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4 text-sm text-slate-300">

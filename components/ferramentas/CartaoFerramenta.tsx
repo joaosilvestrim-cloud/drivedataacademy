@@ -17,7 +17,10 @@ import { useRef, useState } from "react";
 export type Ferramenta = {
   key: string;
   name: string;
+  /** Selo do canto: "Novo", "Em breve", "4D". É recado, não categoria. */
   tag: string;
+  /** Categoria que alimenta o filtro da grade. */
+  categoria: string;
   desc: string;
   href?: string;
   icon: string;
