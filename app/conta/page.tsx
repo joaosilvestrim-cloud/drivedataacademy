@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFullAccess } from "@/lib/access";
 import { brl } from "@/lib/precoCurso";
@@ -12,6 +11,7 @@ import { DataRule, EvidenceBar, FreshnessRing } from "@/components/ui/signature"
 import ProximasMentorias from "@/components/mentorias/ProximasMentorias";
 import EnquetePoll from "./EnquetePoll";
 import { carregarVotacao, aberta as enqueteAberta } from "@/lib/votacao";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -62,32 +62,67 @@ function RowArrow() {
 }
 
 export default async function ContaHome() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   const admin = createAdminClient();
 
-  const [{ data: profile }, { data: enrolls }, full, { count: certCount }] = await Promise.all([
+  /* Uma ida só para tudo o que não depende de nada.
+
+     Esta página era seis idas em fila ao banco: perfil, catálogo, enquete,
+     universo e desafios esperavam a anterior terminar sem precisar. Como o
+     banco fica em São Paulo e cada ida custa o mesmo, a home levava o tempo
+     das seis somadas. Agora são duas: esta, e a de baixo, que só existe
+     porque precisa do id da enquete e das matrículas para perguntar. */
+  const [
+    { data: profile },
+    { data: enrolls },
+    full,
+    { count: certCount },
+    { data: catalogData },
+    { votacao: enqueteRaw, opcoes: enqueteOpcoes },
+    resumo,
+    { data: diag },
+    { data: entregas },
+    { count: desafiosAbertos },
+  ] = await Promise.all([
     admin.from("profiles").select("full_name").eq("id", user!.id).maybeSingle(),
     admin.from("enrollments").select("course_id").eq("user_id", user!.id),
     hasFullAccess(admin, user!.id),
     admin.from("certificates").select("*", { count: "exact", head: true }).eq("user_id", user!.id),
+    admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon, subscriber_price").eq("published", true).eq("access_mode", "catalogo").order("position"),
+    /* Enquete: a mesma de /votacao. Carregada aqui para o aluno votar em um
+       clique e ver o número igual ao da página pública. */
+    carregarVotacao(admin),
+    // knowledgeSummary nunca lança: em erro, sem catálogo ou sem acesso devolve
+    // vazio, e as seções que dependem dele simplesmente não renderizam.
+    knowledgeSummary(user!.id, user!.email),
+    admin.from("ku_diagnostic_attempts").select("user_id").eq("user_id", user!.id).maybeSingle(),
+    admin.from("ku_challenge_submissions").select("status, reviewed_at").eq("user_id", user!.id),
+    admin.from("ku_challenges").select("*", { count: "exact", head: true }).eq("published", true),
   ]);
 
   // As próximas lives e mentorias aparecem na faixa ProximasMentorias.
 
-  const [{ data: catalogData }] = await Promise.all([
-    admin.from("courses").select("id, slug, title, subtitle, cover_url, coming_soon, subscriber_price").eq("published", true).eq("access_mode", "catalogo").order("position"),
-  ]);
-  /* Enquete: a mesma de /votacao. Carregada aqui para o aluno votar em um
-     clique e ver o número igual ao da página pública. */
-  const { votacao: enqueteRaw, opcoes: enqueteOpcoes } = await carregarVotacao(admin);
   const enquete = enqueteRaw && enqueteAberta(enqueteRaw) ? enqueteRaw : null;
+  const courseIds = (enrolls ?? []).map((e: any) => e.course_id);
+
+  // Segunda ida: o que só dá para perguntar depois das respostas de cima.
+  const [{ data: votos }, cursosMatriculados] = await Promise.all([
+    enquete
+      ? admin.from("poll_votes").select("email, options").eq("poll_id", enquete.id)
+      : Promise.resolve({ data: [] as any[] }),
+    courseIds.length
+      ? Promise.all([
+          admin.from("courses").select("id, slug, title, subtitle, cover_url").in("id", courseIds),
+          admin.from("lessons").select("course_id").in("course_id", courseIds),
+          admin.from("lesson_progress").select("course_id").eq("user_id", user!.id).eq("completed", true).in("course_id", courseIds),
+        ])
+      : Promise.resolve(null),
+  ]);
+
   const enqueteContagem: Record<string, number> = {};
   let minhasEscolhas: string[] = [];
-  let enqueteVotos = 0;
+  const enqueteVotos = (votos ?? []).length;
   if (enquete) {
-    const { data: votos } = await admin.from("poll_votes").select("email, options").eq("poll_id", enquete.id);
-    enqueteVotos = (votos ?? []).length;
     const meuEmail = (user!.email || "").toLowerCase();
     for (const v of votos ?? []) {
       for (const id of v.options || []) enqueteContagem[id] = (enqueteContagem[id] || 0) + 1;
@@ -95,31 +130,15 @@ export default async function ContaHome() {
     }
   }
 
-  const courseIds = (enrolls ?? []).map((e: any) => e.course_id);
   let courses: any[] = [];
   const lessonTotals: Record<string, number> = {};
   const doneCounts: Record<string, number> = {};
-
-  if (courseIds.length) {
-    const [{ data: cs }, { data: ls }, { data: pr }] = await Promise.all([
-      admin.from("courses").select("id, slug, title, subtitle, cover_url").in("id", courseIds),
-      admin.from("lessons").select("course_id").in("course_id", courseIds),
-      admin.from("lesson_progress").select("course_id").eq("user_id", user!.id).eq("completed", true).in("course_id", courseIds),
-    ]);
+  if (cursosMatriculados) {
+    const [{ data: cs }, { data: ls }, { data: pr }] = cursosMatriculados;
     courses = cs ?? [];
     for (const l of ls ?? []) lessonTotals[l.course_id] = (lessonTotals[l.course_id] || 0) + 1;
     for (const p of pr ?? []) doneCounts[p.course_id] = (doneCounts[p.course_id] || 0) + 1;
   }
-
-  // knowledgeSummary nunca lança: em erro, sem catálogo ou sem acesso devolve
-  // vazio, e as seções que dependem dele simplesmente não renderizam.
-  const resumo = await knowledgeSummary(user!.id, user!.email);
-
-  const [{ data: diag }, { data: entregas }, { count: desafiosAbertos }] = await Promise.all([
-    admin.from("ku_diagnostic_attempts").select("user_id").eq("user_id", user!.id).maybeSingle(),
-    admin.from("ku_challenge_submissions").select("status, reviewed_at").eq("user_id", user!.id),
-    admin.from("ku_challenges").select("*", { count: "exact", head: true }).eq("published", true),
-  ]);
   const aprovadas = (entregas ?? []).filter((e: any) => e.status === "approved");
   const emCorrecao = (entregas ?? []).filter((e: any) => e.status === "pending").length;
 

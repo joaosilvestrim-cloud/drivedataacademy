@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { TICKET_STATUS } from "@/lib/support";
 import { PageHeader, SectionHeader, EmptyState, Alert } from "@/components/ui/layout";
 import { Button, Status } from "@/components/ui/primitives";
 import { Field, TextareaField, SelectField } from "@/components/ui/form";
 import { enviarSugestao } from "./actions";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -24,8 +24,7 @@ const TOM: Record<string, "attention" | "accent" | "neutral"> = {
 };
 
 export default async function SugestoesPage({ searchParams }: { searchParams: { ok?: string; erro?: string } }) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();

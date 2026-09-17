@@ -1,15 +1,14 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import FunilForm from "../_funis/FunilForm";
 import { FUNIL } from "../_funis/definicoes";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
 export default async function MentoriaPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/conta");

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import { youtubeId } from "@/lib/youtube";
 import ProtectedPlayer from "@/app/aprender/[slug]/ProtectedPlayer";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -28,8 +28,7 @@ function embed(raw: string): string | null {
 /* Gravação de live, workshop ou mentoria. É benefício da assinatura: quem não
    tem acesso ativo vai para a página de assinatura. */
 export default async function GravacaoPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();

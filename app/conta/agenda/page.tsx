@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import Cronometro from "@/components/Cronometro";
 import RoadmapInterativo from "@/components/RoadmapInterativo";
 import AgendaAtualizacao from "@/components/AgendaAtualizacao";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +26,7 @@ function countdown(iso: string): string {
 }
 
 export default async function AgendaPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();

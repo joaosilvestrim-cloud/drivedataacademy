@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasToolAccess } from "@/lib/tool";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +20,7 @@ type Tool = {
 };
 
 export default async function FerramentasHub() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
   const admin = createAdminClient();
   const liberado = await hasToolAccess(admin, user.id, user.email);

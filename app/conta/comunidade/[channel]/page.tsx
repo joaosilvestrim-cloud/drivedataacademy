@@ -1,16 +1,15 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, displayName, seloDaCasa } from "@/lib/community";
 import {loadCommunityRanking} from "@/lib/community-ranking";
 import {ranksForUsers} from "@/lib/ranking";
 import ChatRoom from "./ChatRoom";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
 export default async function ChannelChat({ params }: { params: { channel: string } }) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();

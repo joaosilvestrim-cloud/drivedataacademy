@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS, seloDaCasa } from "@/lib/community";
 import { createReply, markSolution, unmarkSolution, toggleLike } from "../../actions";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
 import SeloCasa from "@/components/comunidade/SeloCasa";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -30,8 +30,7 @@ function Badges({ list }: { list?: string[] }) {
 }
 
 export default async function ThreadPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();

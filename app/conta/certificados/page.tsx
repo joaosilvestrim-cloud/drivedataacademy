@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -9,12 +10,13 @@ function fmt(iso: string) {
 }
 
 export default async function CertificadosPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   // Sem sessão a consulta voltava vazia e a página dizia "nenhum certificado",
   // que é resposta errada para quem só não entrou ainda.
   if (!user) redirect("/entrar");
 
+  // A leitura continua pelo cliente com sessão: a RLS é que limita ao aluno.
+  const supabase = createClient();
   const { data: certs } = await supabase
     .from("certificates")
     .select("code, course_title, created_at")

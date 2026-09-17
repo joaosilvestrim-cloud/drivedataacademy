@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFullAccess } from "@/lib/access";
 import { brl } from "@/lib/precoCurso";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -26,8 +26,7 @@ type Curso = {
    comprar. Agora quem está à venda abre a página, com moldura própria, e o
    que ainda não abriu desce para o fim, apagado. */
 export default async function CursosCardapio() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   const admin = createAdminClient();
 
   const [{ data: cursos }, { data: matriculas }, assinante] = await Promise.all([

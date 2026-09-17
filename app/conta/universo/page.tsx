@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { knowledgeAccess } from "@/lib/knowledge/server";
 import { knowledgeSummary } from "@/lib/knowledge/summary";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -61,8 +61,7 @@ function Passo({
 }
 
 export default async function UniversoHub() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar?next=/conta/universo");
 
   let liberado = false;

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, displayName, BADGE_LABELS } from "@/lib/community";
 import Avatar from "@/components/Avatar";
@@ -8,6 +7,7 @@ import RankingPodium from "@/components/ranking/RankingPodium";
 import RankMedal from "@/components/ranking/RankMedal";
 import MedalCatalog from "@/components/ranking/MedalCatalog";
 import {loadCommunityRanking} from "@/lib/community-ranking";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
@@ -29,8 +29,7 @@ function BadgeChips({ list }: { list?: string[] }) {
   );
 }
 export default async function RankingPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();

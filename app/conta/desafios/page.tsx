@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { knowledgeAccess, catalogVersions, KnowledgeSetupError } from "@/lib/knowledge/server";
 import ChallengeList from "./ChallengeList";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
 export default async function DesafiosPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar?next=/conta/desafios");
 
   const admin = createAdminClient();

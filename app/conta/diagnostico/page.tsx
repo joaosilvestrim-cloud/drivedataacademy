@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { knowledgeAccess, catalogVersions, KnowledgeSetupError } from "@/lib/knowledge/server";
 import DiagnosticForm from "./DiagnosticForm";
+import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
 
 export default async function DiagnosticoPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await usuarioAtual();
   if (!user) redirect("/entrar?next=/conta/diagnostico");
 
   const admin = createAdminClient();
