@@ -14,7 +14,8 @@
     "test:community-medals": "node scripts/test-community-medals.cjs",
     "test:raiox": "tsx scripts/test-raiox.ts",
     "test:forja": "tsx scripts/test-forja.ts",
-    "test:arena": "tsx scripts/test-arena.ts"
+    "test:arena": "tsx scripts/test-arena.ts",
+    "test:caixapreta": "tsx scripts/test-caixapreta.ts"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",
