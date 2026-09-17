@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { extrairRelatorio } from "@/lib/raiox/extrair";
 import { auditar } from "@/lib/raiox/regras";
 import { NOME_DIMENSAO, type Achado, type Laudo, type Severidade } from "@/lib/raiox/tipos";
 import { salvarLaudo } from "./actions";
+import TourRaioX, { tourRaioXJaVisto } from "@/components/raiox/TourRaioX";
 
 /* O Raio-X roda inteiro no navegador.
 
@@ -73,6 +74,13 @@ export default function RaioX({ ultimaNota }: { ultimaNota: number | null }) {
   const [arrastando, setArrastando] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Tour guiado: abre sozinho na primeira visita e fica no botão do canto.
+  const [tour, setTour] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => { if (!tourRaioXJaVisto()) setTour(true); }, 700);
+    return () => clearTimeout(t);
+  }, []);
+
   async function analisar(file: File) {
     setErro(null);
     setLaudo(null);
@@ -104,8 +112,20 @@ export default function RaioX({ ultimaNota }: { ultimaNota: number | null }) {
 
   return (
     <div className="mt-8">
+      <div className="mb-3 flex justify-end">
+        <button
+          type="button"
+          onClick={() => setTour(true)}
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          Tour guiado
+        </button>
+      </div>
+
       {/* Entrada */}
       <div
+        data-tour="raiox-upload"
         onDragOver={(e) => { e.preventDefault(); setArrastando(true); }}
         onDragLeave={() => setArrastando(false)}
         onDrop={aoSoltar}
@@ -137,7 +157,7 @@ export default function RaioX({ ultimaNota }: { ultimaNota: number | null }) {
         >
           {lendo ? "Analisando..." : "Escolher arquivo"}
         </button>
-        <p className="mt-3 text-xs text-slate-500">
+        <p data-tour="raiox-pbit" className="mt-3 text-xs text-slate-500">
           Quer o laudo do modelo e do DAX também? No Power BI: Arquivo, Exportar, Modelo do Power BI (.pbit). O template vai sem dados.
         </p>
       </div>
@@ -149,7 +169,7 @@ export default function RaioX({ ultimaNota }: { ultimaNota: number | null }) {
       {laudo && (
         <div className="mt-8">
           {/* Nota */}
-          <div className="flex flex-col gap-6 rounded-3xl border border-white/8 bg-white/[0.02] p-6 sm:flex-row sm:items-center">
+          <div data-tour="raiox-nota" className="flex flex-col gap-6 rounded-3xl border border-white/8 bg-white/[0.02] p-6 sm:flex-row sm:items-center">
             <Anel nota={laudo.nota} />
             <div className="min-w-0 flex-1">
               <p className="font-mono text-xs text-slate-400">{laudo.arquivo}</p>
@@ -211,7 +231,7 @@ export default function RaioX({ ultimaNota }: { ultimaNota: number | null }) {
           ) : (
             <>
               <h3 className="mt-8 font-display text-lg font-bold text-white">O que encontrei</h3>
-              <ul className="mt-3 grid gap-3 lg:grid-cols-2">
+              <ul data-tour="raiox-achados" className="mt-3 grid gap-3 lg:grid-cols-2">
                 {laudo.achados.map((a, i) => <CartaoAchado key={`${a.regra}-${i}`} a={a} />)}
               </ul>
             </>
@@ -234,6 +254,8 @@ export default function RaioX({ ultimaNota }: { ultimaNota: number | null }) {
           </div>
         </div>
       )}
+
+      <TourRaioX aberto={tour} aoFechar={() => setTour(false)} />
     </div>
   );
 }

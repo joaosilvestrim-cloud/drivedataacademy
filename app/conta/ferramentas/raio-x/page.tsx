@@ -44,7 +44,7 @@ export default async function RaioXPage() {
       <RaioX ultimaNota={ultimaNota} />
 
       {historico.length > 0 && (
-        <section className="mt-12">
+        <section data-tour="raiox-historico" className="mt-12">
           <h2 className="font-display text-lg font-bold text-white">Seus laudos</h2>
           <p className="mt-1 text-sm text-slate-400">A curva que interessa é esta: o mesmo arquivo, melhor a cada volta.</p>
           <ul className="mt-4 divide-y divide-white/[0.06] border-y border-white/[0.06]">

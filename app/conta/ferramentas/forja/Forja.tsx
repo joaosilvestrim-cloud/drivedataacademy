@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   PADROES,
   calendarioDAX,
@@ -10,6 +10,7 @@ import {
   passoAPasso,
   type OpcoesCalendario,
 } from "@/lib/forja/gerar";
+import TourForja, { tourForjaJaVisto } from "@/components/forja/TourForja";
 
 /* Forja DAX.
 
@@ -80,6 +81,13 @@ export default function Forja() {
   const [escolhas, setEscolhas] = useState<string[]>(["ytd", "ano_anterior", "yoy", "media_movel"]);
   const [aba, setAba] = useState("calendario");
 
+  // Tour guiado: abre sozinho na primeira visita e fica no botão do cabeçalho.
+  const [tour, setTour] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => { if (!tourForjaJaVisto()) setTour(true); }, 700);
+    return () => clearTimeout(t);
+  }, []);
+
   const muda = (parte: Partial<OpcoesCalendario>) => setCal((c) => ({ ...c, ...parte }));
 
   const blocos = useMemo(() => {
@@ -107,7 +115,7 @@ export default function Forja() {
     <div className="mt-8 grid gap-6 lg:grid-cols-[22rem_1fr] lg:items-start">
       {/* Escolhas */}
       <div className="flex flex-col gap-6 rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-        <div>
+        <div data-tour="forja-modelo">
           <h2 className="font-display text-base font-bold text-white">O seu modelo</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <label className="col-span-2">
@@ -128,7 +136,7 @@ export default function Forja() {
           </div>
         </div>
 
-        <div>
+        <div data-tour="forja-intervalo">
           <span className={rotulo}>Intervalo de datas</span>
           <div className="mt-2 flex gap-2">
             {[
@@ -178,7 +186,7 @@ export default function Forja() {
           </p>
         </div>
 
-        <div>
+        <div data-tour="forja-fiscal">
           <label>
             <span className={rotulo}>Ano fiscal começa em</span>
             <select
@@ -198,7 +206,7 @@ export default function Forja() {
           )}
         </div>
 
-        <div>
+        <div data-tour="forja-feriados">
           <label className="flex items-start gap-3">
             <input
               type="checkbox"
@@ -221,7 +229,7 @@ export default function Forja() {
           )}
         </div>
 
-        <div className="border-t border-white/8 pt-5">
+        <div data-tour="forja-medidas" className="border-t border-white/8 pt-5">
           <h2 className="font-display text-base font-bold text-white">Medidas de tempo</h2>
           <div className="mt-3 grid gap-3">
             <label>
@@ -262,7 +270,15 @@ export default function Forja() {
 
       {/* Código */}
       <div className="lg:sticky lg:top-6">
-        <div className="flex flex-wrap items-center gap-2">
+        <div data-tour="forja-codigo" className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setTour(true)}
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+          Tour guiado
+        </button>
           {blocos.map((b) => (
             <button
               key={b.chave}
@@ -304,6 +320,8 @@ export default function Forja() {
           </ol>
         </div>
       </div>
+
+      <TourForja aberto={tour} aoFechar={() => setTour(false)} />
     </div>
   );
 }

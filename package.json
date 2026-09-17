@@ -13,7 +13,8 @@
     "test:dataflow": "node scripts/test-dataflow.cjs",
     "test:community-medals": "node scripts/test-community-medals.cjs",
     "test:raiox": "tsx scripts/test-raiox.ts",
-    "test:forja": "tsx scripts/test-forja.ts"
+    "test:forja": "tsx scripts/test-forja.ts",
+    "test:arena": "tsx scripts/test-arena.ts"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",
