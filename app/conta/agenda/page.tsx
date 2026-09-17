@@ -110,7 +110,7 @@ export default async function AgendaPage() {
       {rest.length > 0 && (
         <>
           <h2 className="mt-10 font-display text-lg font-bold text-white">No roadmap</h2>
-          <p className="mt-1 text-sm text-slate-400">Escolha a data para ver o encontro e salvar no seu calendário.</p>
+          <p className="mt-1 text-sm text-slate-400">Explore os próximos encontros e reserve sua próxima data.</p>
           <RoadmapInterativo
             agoraInicial={now}
             eventos={rest.map((l: any) => ({
