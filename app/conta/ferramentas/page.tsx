@@ -64,6 +64,18 @@ export default async function FerramentasHub() {
       demo: false,
     },
     {
+      key: "raio-x",
+      name: "Raio-X do Dashboard",
+      tag: "Power BI · Novo",
+      desc: "Suba seu .pbix e receba a revisão que um consultor faria: o que está errado, por que importa e como arrumar. O arquivo não sai do seu navegador.",
+      href: "/conta/ferramentas/raio-x",
+      sameTab: true,
+      icon: "M12 3a9 9 0 100 18 9 9 0 000-18M12 8v4l3 2M3 12h3M18 12h3",
+      from: "#f6d68c",
+      to: "#34e8a0",
+      available: true,
+    },
+    {
       key: "visuais",
       name: "Ferramenta de Visuais",
       tag: "Power BI",
@@ -107,7 +119,7 @@ export default async function FerramentasHub() {
               <p className="mt-1 flex-1 text-sm text-slate-400">{tool.desc}</p>
               {usable ? (
                 <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">
-                  {tool.key === "dataflow-lab" ? "Explorar meus dados" : tool.key === "decision-lab" ? "Assumir minha empresa" : tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
+                  {tool.key === "dataflow-lab" ? "Explorar meus dados" : tool.key === "decision-lab" ? "Assumir minha empresa" : tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.key === "raio-x" ? "Analisar meu relatório" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               ) : (
