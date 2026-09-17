@@ -1,5 +1,5 @@
 import type { Achado, Dimensao, Laudo, NotaDimensao, Pagina, Relatorio, Visual } from "./tipos";
-import { PESO } from "./tipos";
+import { PESO, PESO_DIMENSAO } from "./tipos";
 
 /* As regras do Raio-X.
 
@@ -327,11 +327,23 @@ export function auditar(r: Relatorio): Laudo {
        .pbix dá para ver o nome das tabelas pelo diagrama, e mais nada: dar 100
        por falta de evidência seria elogio que o aluno não ganhou. */
     const completa = d === "modelo" || d === "dax" ? completo : true;
-    return { dimensao: d, nota: Math.round(100 * Math.exp(-perda / 110)), achados: meus.length, completa };
+    return { dimensao: d, nota: Math.round(100 * Math.exp(-perda / 85)), achados: meus.length, completa };
   });
 
+  /* A nota geral não é média simples, por dois motivos.
+
+     Peso: um modelo quebrado custa mais caro que um título automático. Quem
+     erra a modelagem vai errar todo número que sair dali.
+
+     Teto: a nota geral nunca passa da pior dimensão mais doze. Sem isso, um
+     relatório bonito por fora escondia um modelo com relacionamento
+     bidirecional e caminho ambíguo, e o aluno ia embora achando que estava
+     tudo certo. */
   const contam = notas.filter((n) => n.completa);
-  const nota = Math.round(contam.reduce((s, n) => s + n.nota, 0) / (contam.length || 1));
+  const somaPesos = contam.reduce((s, n) => s + PESO_DIMENSAO[n.dimensao], 0) || 1;
+  const media = contam.reduce((s, n) => s + n.nota * PESO_DIMENSAO[n.dimensao], 0) / somaPesos;
+  const pior = Math.min(...contam.map((n) => n.nota), 100);
+  const nota = Math.round(Math.min(media, pior + 12));
   const ordem = { alta: 0, media: 1, baixa: 2 };
 
   return {

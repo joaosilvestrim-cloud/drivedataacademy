@@ -109,3 +109,14 @@ export const NOME_DIMENSAO: Record<Dimensao, string> = {
    dois achados não ensina nada: assusta. Estes pesos deixam um relatório com
    problemas sérios na casa dos 50, e um relatório limpo acima de 90. */
 export const PESO: Record<Severidade, number> = { alta: 14, media: 7, baixa: 3 };
+
+/* Quanto cada dimensão vale na nota geral. Modelo e DAX pesam mais porque
+   erro ali contamina todo número que o relatório mostra; título automático
+   atrapalha a leitura, mas o número continua certo. */
+export const PESO_DIMENSAO: Record<Dimensao, number> = {
+  estrutura: 1,
+  design: 2,
+  clareza: 1.5,
+  modelo: 3,
+  dax: 2.5,
+};

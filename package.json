@@ -11,7 +11,8 @@
     "test:knowledge-db": "node scripts/test-knowledge-db.cjs",
     "test:decision-lab": "node scripts/test-decision-lab.cjs",
     "test:dataflow": "node scripts/test-dataflow.cjs",
-    "test:community-medals": "node scripts/test-community-medals.cjs"
+    "test:community-medals": "node scripts/test-community-medals.cjs",
+    "test:raiox": "tsx scripts/test-raiox.ts"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",
@@ -38,6 +39,7 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }
