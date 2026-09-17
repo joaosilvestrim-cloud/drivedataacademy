@@ -2,22 +2,15 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasToolAccess } from "@/lib/tool";
 import { usuarioAtual } from "@/lib/sessao";
+import CartaoFerramenta, { type Ferramenta } from "@/components/ferramentas/CartaoFerramenta";
 
 export const dynamic = "force-dynamic";
 
-type Tool = {
-  key: string;
-  name: string;
-  tag: string;
-  desc: string;
-  href?: string;
-  icon: string;
-  from: string;
-  to: string;
-  available: boolean;
-  sameTab?: boolean;
-  demo?: boolean;
-};
+/* Vitrine das ferramentas.
+
+   A ordem não é por data nem por nome: é por quanto a ferramenta muda o dia do
+   aluno. O que acabou de nascer sobe para a primeira posição com o selo de
+   novidade, porque ferramenta nova que ninguém vê não serve para nada. */
 
 export default async function FerramentasHub() {
   const user = await usuarioAtual();
@@ -25,7 +18,21 @@ export default async function FerramentasHub() {
   const admin = createAdminClient();
   const liberado = await hasToolAccess(admin, user.id, user.email);
 
-  const tools: Tool[] = [
+  const ferramentas: Ferramenta[] = [
+    {
+      key: "raio-x",
+      name: "Raio-X do Dashboard",
+      tag: "Novo",
+      desc: "Suba seu .pbix e receba a revisão que um consultor faria: o que está errado, por que importa e como arrumar. O arquivo não sai do seu navegador.",
+      href: "/conta/ferramentas/raio-x",
+      sameTab: true,
+      icon: "M12 3a9 9 0 100 18 9 9 0 000-18M12 8v4l3 2M3 12h3M18 12h3",
+      from: "#f6d68c",
+      to: "#34e8a0",
+      available: true,
+      novo: true,
+      cta: "Analisar meu relatório",
+    },
     {
       key: "dataflow-lab",
       name: "DataFlow Lab",
@@ -37,6 +44,7 @@ export default async function FerramentasHub() {
       from: "#6ce6c7",
       to: "#70a9ef",
       available: true,
+      cta: "Explorar meus dados",
     },
     {
       key: "decision-lab",
@@ -49,6 +57,7 @@ export default async function FerramentasHub() {
       from: "#edb98f",
       to: "#8fc8b6",
       available: true,
+      cta: "Assumir minha empresa",
     },
     {
       key: "knowledge-universe",
@@ -61,19 +70,7 @@ export default async function FerramentasHub() {
       from: "#6be9ce",
       to: "#9c9cff",
       available: true,
-      demo: false,
-    },
-    {
-      key: "raio-x",
-      name: "Raio-X do Dashboard",
-      tag: "Power BI · Novo",
-      desc: "Suba seu .pbix e receba a revisão que um consultor faria: o que está errado, por que importa e como arrumar. O arquivo não sai do seu navegador.",
-      href: "/conta/ferramentas/raio-x",
-      sameTab: true,
-      icon: "M12 3a9 9 0 100 18 9 9 0 000-18M12 8v4l3 2M3 12h3M18 12h3",
-      from: "#f6d68c",
-      to: "#34e8a0",
-      available: true,
+      cta: "Explorar meu universo",
     },
     {
       key: "visuais",
@@ -85,6 +82,7 @@ export default async function FerramentasHub() {
       from: "#34e8a0",
       to: "#22d3ee",
       available: true,
+      cta: liberado ? "Abrir" : "Desbloquear",
     },
     {
       key: "em-breve",
@@ -95,6 +93,7 @@ export default async function FerramentasHub() {
       from: "#3b9dff",
       to: "#a78bfa",
       available: false,
+      cta: "Em breve",
     },
   ];
 
@@ -105,38 +104,9 @@ export default async function FerramentasHub() {
       <p className="mt-2 max-w-2xl text-sm text-slate-400">Escolha uma experiência e comece a praticar.</p>
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {tools.map((tool) => {
-          const usable = tool.available && !!tool.href;
-          const CardInner = (
-            <>
-              <div className="flex items-start justify-between gap-3">
-                <span className="grid h-12 w-12 place-items-center rounded-2xl text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${tool.from}, ${tool.to})` }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d={tool.icon} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </span>
-                <span className={`rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase ${tool.available ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{tool.tag}</span>
-              </div>
-              <h2 className="mt-4 font-display text-lg font-bold text-white">{tool.name}</h2>
-              <p className="mt-1 flex-1 text-sm text-slate-400">{tool.desc}</p>
-              {usable ? (
-                <span className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">
-                  {tool.key === "dataflow-lab" ? "Explorar meus dados" : tool.key === "decision-lab" ? "Assumir minha empresa" : tool.key === "knowledge-universe" ? "Explorar meu universo" : tool.key === "raio-x" ? "Analisar meu relatório" : tool.demo ? "Explorar demonstração" : liberado ? "Abrir" : "Desbloquear"}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                </span>
-              ) : (
-                <span className="mt-4 inline-flex w-fit items-center rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-500">Em breve</span>
-              )}
-            </>
-          );
-
-          const base = "group flex flex-col rounded-3xl border border-white/8 bg-white/[0.02] p-6 transition-all duration-300";
-          return usable ? (
-            <a key={tool.key} href={tool.href} {...(tool.sameTab ? {} : { target: "_blank", rel: "noreferrer" })} className={`${base} hover:-translate-y-1 hover:border-brand-green/30 hover:shadow-[0_24px_60px_-24px_rgba(52,232,160,0.45)]`}>
-              {CardInner}
-            </a>
-          ) : (
-            <div key={tool.key} className={`${base} opacity-70`}>{CardInner}</div>
-          );
-        })}
+        {ferramentas.map((f, i) => (
+          <CartaoFerramenta key={f.key} t={f} ordem={i} />
+        ))}
       </div>
 
       {!liberado && (

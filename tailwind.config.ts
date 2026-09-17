@@ -101,6 +101,16 @@ const config: Config = {
         "spin-slow": {
           to: { transform: "rotate(360deg)" },
         },
+        // Cartão que entra subindo, escalonado pela ordem na grade.
+        sobe: {
+          from: { opacity: "0", transform: "translateY(14px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        // Brilho que atravessa o selo de "novo" de tempos em tempos.
+        brilho: {
+          "0%, 65%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(200%)" },
+        },
       },
       animation: {
         "gradient-x": "gradient-x 6s ease infinite",
@@ -108,6 +118,8 @@ const config: Config = {
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         marquee: "marquee 28s linear infinite",
         "spin-slow": "spin-slow 32s linear infinite",
+        sobe: "sobe 0.5s cubic-bezier(0.22, 1, 0.36, 1) both",
+        brilho: "brilho 3.5s ease-in-out infinite",
       },
     },
   },
