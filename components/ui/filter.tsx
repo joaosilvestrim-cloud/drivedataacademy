@@ -28,6 +28,7 @@ export function LinkFilter({
   options,
   active,
   counts,
+  extra,
 }: {
   /** Nome acessível do grupo, por exemplo "Filtrar chamados por situação". */
   label: string;
@@ -38,7 +39,10 @@ export function LinkFilter({
   active: string;
   /** Opcional. Quando falta, cada opção mostra só o rótulo. */
   counts?: Record<string, number>;
+  /** Outros parâmetros da URL que devem sobreviver ao clique, como busca e período. */
+  extra?: Record<string, string | undefined>;
 }) {
+  const preservados = Object.entries(extra ?? {}).filter(([, v]) => v);
   return (
     <nav aria-label={label} className="flex flex-wrap gap-2">
       {options.map((o) => {
@@ -46,11 +50,10 @@ export function LinkFilter({
         return (
           <Link
             key={o.key}
-            // Versão 1 monta o endereço com um parâmetro só. Nenhuma das três
-            // páginas tem um segundo parâmetro de URL, então preservar outros
-            // seria resolver problema que ainda não existe. Quando aparecer o
-            // primeiro consumidor real, isso evolui sem quebrar os atuais.
-            href={`${basePath}?${param}=${o.key}`}
+            // O filtro é um parâmetro só, mas /admin/operacao combina quatro
+            // (situação, produto, período e busca). Por isso `extra`: quem tem
+            // um segundo parâmetro manda ele junto e o clique não o descarta.
+            href={`${basePath}?${new URLSearchParams([[param, o.key], ...preservados] as string[][]).toString()}`}
             aria-current={atual ? "page" : undefined}
             className={`inline-flex items-baseline gap-2 rounded-ctl border px-3 py-1.5 text-label font-medium transition-colors duration-fast ease-ds ${
               atual
