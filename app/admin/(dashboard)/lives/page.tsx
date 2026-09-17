@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { Button, Badge } from "@/components/ui/primitives";
 import { PageHeader, ErrorState, EmptyState, Alert } from "@/components/ui/layout";
 import { Field, TextareaField, SelectField, CheckboxField, FormActions } from "@/components/ui/form";
+import GravacaoField from "./GravacaoField";
 import { saveLive, deleteLive } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ const KIND = [
 
 // Um formulário por live, mais o de criação. O `scope` garante ids únicos em
 // todos eles, que é o que permite associar rótulo e controle nesta tela.
-function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?: number }) {
+function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; live?: any; sold?: number; pandaHost?: string | null }) {
   const editando = !!live;
   const pago = Number(live?.price) > 0;
 
@@ -108,13 +109,11 @@ function LiveForm({ scope, live, sold = 0 }: { scope: string; live?: any; sold?:
         />
       </div>
 
-      <Field
+      <GravacaoField
         scope={scope}
-        name="recording_url"
-        label="Gravação"
         defaultValue={live?.recording_url ?? ""}
-        placeholder="https://youtu.be/... ou <iframe src=..."
-        description="Aceita link do YouTube, o iframe do Panda colado inteiro, o endereço de embed ou só o id do vídeo. Depois do encontro, assinantes assistem pela Agenda."
+        host={pandaHost}
+        verEm={editando && live?.recording_url ? `/conta/gravacoes/${live.id}` : undefined}
       />
 
       {/* Presença por QR code: quem assiste confirma em /presenca e recebe o
@@ -245,6 +244,7 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
   }
 
   const publicadas = lives.filter((l) => l.published).length;
+  const pandaHost = process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST || null;
 
   return (
     <div className="flex flex-col gap-8">
@@ -266,7 +266,7 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
             <span className="hidden text-label text-ds-text-3 group-open:inline">fechar</span>
           </summary>
           <div className="pt-5">
-            <LiveForm scope="nova" />
+            <LiveForm scope="nova" pandaHost={pandaHost} />
           </div>
         </details>
       </section>
@@ -306,7 +306,7 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
                     </span>
                   </summary>
                   <div className="pb-6 pt-4">
-                    <LiveForm scope={`live-${l.id}`} live={l} sold={soldByEvent[l.id] || 0} />
+                    <LiveForm scope={`live-${l.id}`} live={l} sold={soldByEvent[l.id] || 0} pandaHost={pandaHost} />
                   </div>
                 </details>
               );

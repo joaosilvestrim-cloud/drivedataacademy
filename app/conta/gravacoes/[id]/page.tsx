@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
-import { youtubeId } from "@/lib/youtube";
+import { resolverVideo } from "@/lib/video";
 import ProtectedPlayer from "@/app/aprender/[slug]/ProtectedPlayer";
 import { usuarioAtual } from "@/lib/sessao";
 
@@ -12,18 +12,7 @@ function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "full", timeStyle: "short", timeZone: "America/Sao_Paulo" }).format(new Date(iso));
 }
 
-// YouTube vira embed. Panda aceita o iframe colado, a URL de embed ou só o id.
-function embed(raw: string): string | null {
-  let v = (raw || "").trim();
-  const iframe = v.match(/src=["']([^"']+)["']/i);
-  if (iframe) v = iframe[1];
-  const yt = youtubeId(v);
-  if (yt) return `https://www.youtube.com/embed/${yt}?rel=0&modestbranding=1`;
-  if (/^https?:\/\/[^ ]*pandavideo[^ ]*\/embed/i.test(v)) return v;
-  const host = process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST;
-  if (host && /^[\w-]{20,}$/.test(v)) return `https://${host}/embed/?v=${v}`;
-  return null;
-}
+
 
 /* Gravação de live, workshop ou mentoria. É benefício da assinatura: quem não
    tem acesso ativo vai para a página de assinatura. */
@@ -41,7 +30,7 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
     .maybeSingle();
   if (!ev || !ev.published || !ev.recording_url) notFound();
 
-  const src = embed(ev.recording_url);
+  const src = resolverVideo(ev.recording_url, process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST)?.src ?? null;
 
   return (
     <div className="max-w-4xl">

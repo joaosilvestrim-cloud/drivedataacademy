@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Video } from "lucide-react";
 import { ICON } from "@/components/ui/primitives";
 import { Field, SelectField } from "@/components/ui/form";
+import { resolverVideo } from "@/lib/video";
 
 /* Controle especializado do domínio de cursos. Continua local de propósito:
    dois campos numa área não justificam abstração global.
@@ -12,31 +13,15 @@ import { Field, SelectField } from "@/components/ui/form";
    valor, a montagem da URL e a prévia continuam sendo comportamento próprio
    deste componente, e nada disso foi tocado. */
 
-function youtubeId(v: string): string | null {
-  const m = v.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/) || v.match(/^([\w-]{11})$/);
-  return m ? m[1] : null;
-}
-
-function pandaSrc(raw: string): string | null {
-  let v = (raw || "").trim();
-  const iframe = v.match(/src=["']([^"']+)["']/i);
-  if (iframe) v = iframe[1];
-  if (/^https?:\/\/[^ ]*pandavideo[^ ]*\/embed/i.test(v)) return v;
-  return null;
-}
-
 export default function VideoField({ scope, defaultProvider, defaultValue }: { scope: string; defaultProvider: string; defaultValue: string }) {
   const [provider, setProvider] = useState(defaultProvider || "youtube");
   const [value, setValue] = useState(defaultValue || "");
 
-  let preview: string | null = null;
-  if (value.trim()) {
-    if (provider === "panda") preview = pandaSrc(value);
-    else {
-      const id = youtubeId(value.trim());
-      preview = id ? `https://www.youtube.com/embed/${id}` : null;
-    }
-  }
+  /* A prévia usa o mesmo leitor da página do aluno. Se o provedor escolhido não
+     bate com o link colado, ela não mostra nada de propósito: é o aviso de que
+     o vídeo também não vai tocar para o aluno. */
+  const lido = resolverVideo(value);
+  const preview = lido && lido.provedor === provider ? lido.src : null;
 
   return (
     <div className="flex flex-col gap-4 rounded-srf border border-ds-line-soft p-4">
@@ -82,7 +67,11 @@ export default function VideoField({ scope, defaultProvider, defaultValue }: { s
           </div>
         ) : (
           <div className="grid aspect-video place-items-center rounded-srf border border-dashed border-ds-line px-4 text-center text-caption text-ds-text-3">
-            {value.trim() ? "Não reconheci o link. Confira se colou o embed/link certo." : "Cole o link do vídeo acima para ver o preview aqui."}
+            {!value.trim()
+              ? "Cole o link do vídeo acima para ver o preview aqui."
+              : lido
+                ? `Esse link é do ${lido.provedor === "panda" ? "Panda" : "YouTube"}. Troque o provedor acima para ${lido.provedor === "panda" ? "Panda Video" : "YouTube"}.`
+                : "Não reconheci o link. Confira se colou o embed/link certo."}
           </div>
         )}
       </div>

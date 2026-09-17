@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { srcColado } from "@/lib/video";
 
 async function admin() {
   const user = await getAdminUser();
@@ -20,12 +21,9 @@ function toISO(local: string): string | null {
 
 /* O Panda entrega um <iframe> pronto e é isso que a pessoa cola. Guardar o
    HTML inteiro funcionaria, mas suja o banco e quebra qualquer validação de
-   link. Aqui fica só o src. */
+   link. Aqui fica só o src, lido pelo mesmo módulo que a página do aluno usa. */
 function endereçoDoVideo(bruto: string): string | null {
-  const v = (bruto || "").trim();
-  if (!v) return null;
-  const iframe = v.match(/src=["']([^"']+)["']/i);
-  return (iframe ? iframe[1] : v).trim() || null;
+  return srcColado(bruto) || null;
 }
 
 export async function saveLive(formData: FormData) {
@@ -54,11 +52,17 @@ export async function saveLive(formData: FormData) {
     certificate_signature_url: ((formData.get("certificate_signature_url") as string) || "").trim() || null,
   };
 
-  if (id) await supabase.from("live_events").update(payload).eq("id", id);
-  else await supabase.from("live_events").insert(payload);
+  // Até aqui, um erro do banco era engolido e a tela dizia "Salvo" do mesmo
+  // jeito. Quem colava a gravação e não via nada mudar não tinha como saber se
+  // o problema era o link ou o sistema.
+  const { error } = id
+    ? await supabase.from("live_events").update(payload).eq("id", id)
+    : await supabase.from("live_events").insert(payload);
+  if (error) redirect("/admin/lives?error=" + encodeURIComponent(error.message));
 
   revalidatePath("/admin/lives");
   revalidatePath("/conta/agenda");
+  revalidatePath("/conta/gravacoes");
   redirect("/admin/lives?ok=1");
 }
 
@@ -67,6 +71,7 @@ export async function deleteLive(formData: FormData) {
   await supabase.from("live_events").delete().eq("id", formData.get("id") as string);
   revalidatePath("/admin/lives");
   revalidatePath("/conta/agenda");
+  revalidatePath("/conta/gravacoes");
   redirect("/admin/lives?ok=1");
 }
 

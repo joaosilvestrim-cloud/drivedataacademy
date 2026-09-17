@@ -17,7 +17,8 @@
     "test:arena": "tsx scripts/test-arena.ts",
     "test:caixapreta": "tsx scripts/test-caixapreta.ts",
     "test:conciliacao": "tsx scripts/test-conciliacao.ts",
-    "test:biblioteca": "tsx scripts/test-biblioteca.ts"
+    "test:biblioteca": "tsx scripts/test-biblioteca.ts",
+    "test:video": "tsx scripts/test-video.ts"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",
