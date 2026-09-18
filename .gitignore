@@ -32,3 +32,6 @@ next-env.d.ts
 
 # arquivos soltos
 *.pdf
+
+# Legendas geradas (áudio, transcrição e .vtt): revisar e subir no Panda, não versionar.
+legendas/
