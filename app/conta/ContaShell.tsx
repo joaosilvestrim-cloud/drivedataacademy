@@ -84,7 +84,9 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
   },
 ];
 
-function NavList({ onNavigate, cursosAVenda = 0 }: { onNavigate?: () => void; cursosAVenda?: number }) {
+type Aviso = { n: number; urgente: boolean };
+
+function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate?: () => void; cursosAVenda?: number; avisoComunidade?: Aviso }) {
   const pathname = usePathname();
   const isActive = (href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/") || pathname === href);
 
@@ -122,6 +124,14 @@ function NavList({ onNavigate, cursosAVenda = 0 }: { onNavigate?: () => void; cu
                       {it.label}
                       {/* Treinamento aberto para compra: o número chama, o
                           aluno decide. Some sozinho quando não há nenhum. */}
+                      {it.href === "/conta/comunidade" && avisoComunidade && avisoComunidade.n > 0 && !active && (
+                        <span
+                          className={`ml-auto rounded-full px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums ${avisoComunidade.urgente ? "bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,.5)]" : "bg-brand-green text-ink-900"}`}
+                          title={avisoComunidade.urgente ? `${avisoComunidade.n} mensagens de alunos aguardam resposta` : `${avisoComunidade.n} mensagens novas que você ainda não viu`}
+                        >
+                          {avisoComunidade.n > 99 ? "99+" : avisoComunidade.n}
+                        </span>
+                      )}
                       {it.href === "/conta/cursos" && cursosAVenda > 0 && (
                         <span className="ml-auto rounded-full bg-brand-green/15 px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-brand-green" title={`${cursosAVenda} ${cursosAVenda === 1 ? "treinamento à venda" : "treinamentos à venda"}`}>
                           {cursosAVenda}
@@ -139,7 +149,7 @@ function NavList({ onNavigate, cursosAVenda = 0 }: { onNavigate?: () => void; cu
   );
 }
 
-export default function ContaShell({ email, children, cursosAVenda = 0, eventos = [] }: { email: string; children: React.ReactNode; cursosAVenda?: number; eventos?: EventoFaixa[] }) {
+export default function ContaShell({ email, children, cursosAVenda = 0, eventos = [], avisoComunidade }: { email: string; children: React.ReactNode; cursosAVenda?: number; eventos?: EventoFaixa[]; avisoComunidade?: Aviso }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const largura = pathname.startsWith("/conta/comunidade")
@@ -166,7 +176,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
               <Link href="/" onClick={() => setOpen(false)}><img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" /></Link>
               <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
             </div>
-            <NavList onNavigate={() => setOpen(false)} cursosAVenda={cursosAVenda} />
+            <NavList onNavigate={() => setOpen(false)} cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} />
             <div className="mt-6 border-t border-white/10 pt-4">
               <WhatsAppGroupLink onNavigate={() => setOpen(false)} />
             </div>
@@ -180,7 +190,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
           <img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" />
         </Link>
         <div className="flex-1 overflow-y-auto">
-          <NavList cursosAVenda={cursosAVenda} />
+          <NavList cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} />
         </div>
         <div className="mt-4 border-t border-white/10 pt-4">
           <WhatsAppGroupLink />

@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, seloDaCasa } from "@/lib/community";
 
 import {loadCommunityRanking} from "@/lib/community-ranking";
+import { marcarLido } from "@/lib/comunidade-leitura";
 import {ranksForUsers,validMedalIds} from "@/lib/ranking";
 
 export async function chatMedals(ids: string[]) {
@@ -14,6 +15,15 @@ export async function chatMedals(ids: string[]) {
   const uniq=validMedalIds(ids);
   if(!uniq.length)return {ranks:{} as Record<string,number|null>};
   return {ranks:ranksForUsers(await loadCommunityRanking(),uniq)};
+}
+
+// O aluno abriu o canal (ou chegou mensagem com ele aberto): tudo até agora está visto.
+export async function marcarCanalLido(channelId: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(channelId || "")) return;
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await marcarLido(user.id, channelId);
 }
 
 const SOLUTION_POINTS = 10;

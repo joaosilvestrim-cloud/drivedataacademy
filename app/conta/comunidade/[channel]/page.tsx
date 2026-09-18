@@ -5,6 +5,7 @@ import {loadCommunityRanking} from "@/lib/community-ranking";
 import {ranksForUsers} from "@/lib/ranking";
 import ChatRoom from "./ChatRoom";
 import { usuarioAtual } from "@/lib/sessao";
+import { estadoDaComunidade, marcarLido } from "@/lib/comunidade-leitura";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,11 @@ export default async function ChannelChat({ params }: { params: { channel: strin
     .order("created_at", { ascending: false })
     .limit(80);
   const msgs = (msgsDesc ?? []).slice().reverse(); // oldest -> newest
+
+  // Abrir o canal é ler o canal. Marca antes de contar, para o canal aberto não
+  // aparecer com mensagens "não vistas" que estão na cara do aluno.
+  await marcarLido(user.id, channel.id);
+  const estado = await estadoDaComunidade(user.id, user.email);
 
   const ids = msgs.map((m: any) => m.user_id);
   const [{ nameById, avatarById, badgeById }, ranked] = await Promise.all([loadProfiles(admin, [...ids, user.id]),loadCommunityRanking()]);
@@ -58,5 +64,5 @@ export default async function ChannelChat({ params }: { params: { channel: strin
 
   const me = { id: user.id, name: displayName(nameById, user.id), avatar: avatarById[user.id] || null, casa: seloDaCasa(badgeById[user.id]) };
 
-  return <ChatRoom key={channel.id} initialRanks={initialRanks} channel={channel} channels={channels ?? []} me={me} initial={initial} />;
+  return <ChatRoom key={channel.id} initialRanks={initialRanks} channel={channel} channels={channels ?? []} me={me} initial={initial} estadoInicial={estado} />;
 }

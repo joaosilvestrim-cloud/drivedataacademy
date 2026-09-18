@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
 import {useChatMedals} from "@/components/ranking/useChatMedals";
 import SeloCasa from "@/components/comunidade/SeloCasa";
-import { markChatSolution, signCommunityImage, chatProfiles } from "../actions";
+import { markChatSolution, signCommunityImage, chatProfiles, marcarCanalLido } from "../actions";
+import type { EstadoComunidade, EstadoCanal } from "@/lib/comunidade-leitura";
 
 type Msg = {
   id: string; user_id: string; body: string; created_at: string; name: string; avatar?: string | null; casa?: string | null;
@@ -64,7 +65,24 @@ function dayStr(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long" }).format(new Date(iso));
 }
 
-export default function ChatRoom({ channel, channels, me, initial, initialRanks }: { initialRanks: Record<string,number|null>; channel: Channel; channels: Channel[]; me: { id: string; name: string; avatar?: string | null; casa?: string | null }; initial: Msg[] }) {
+/* O texto do balão que aparece ao passar o mouse num canal com novidade. */
+function textoDaNovidade(n: EstadoCanal, ativo: boolean): string {
+  const partes: string[] = [];
+  if (n.aguardando > 0) partes.push(`${n.aguardando} ${n.aguardando === 1 ? "mensagem de aluno aguarda" : "mensagens de alunos aguardam"} resposta da equipe`);
+  if (!ativo && n.naoLidas > 0) partes.push(`${n.naoLidas} ${n.naoLidas === 1 ? "mensagem nova que você ainda não viu" : "mensagens novas que você ainda não viu"}`);
+  return partes.join(" · ");
+}
+
+export default function ChatRoom({ channel, channels, me, initial, initialRanks, estadoInicial }: { initialRanks: Record<string,number|null>; channel: Channel; channels: Channel[]; me: { id: string; name: string; avatar?: string | null; casa?: string | null }; initial: Msg[]; estadoInicial?: EstadoComunidade }) {
+  /* Novidades por canal. O aluno vê o que ainda não leu; a equipe vê, além
+     disso, quantas mensagens de aluno esperam resposta. Tudo começa com o que o
+     servidor contou e é atualizado ao vivo pelo realtime. */
+  const souEquipe = !!estadoInicial?.souEquipe;
+  const equipeRef = useRef(new Set(estadoInicial?.equipe ?? []));
+  const [porCanal, setPorCanal] = useState<Record<string, EstadoCanal>>(() => ({ ...(estadoInicial?.porCanal ?? {}), [channel.id]: { naoLidas: 0, aguardando: estadoInicial?.porCanal?.[channel.id]?.aguardando ?? 0 } }));
+  const [dicaCanal, setDicaCanal] = useState<{ texto: string; x: number; y: number; alerta: boolean } | null>(null);
+  const marcarTimer = useRef<number | null>(null);
+  const totalAguardando = Object.values(porCanal).reduce((t, n) => t + n.aguardando, 0);
   const [messages, setMessages] = useState<Msg[]>(initial);
   const medalRanks=useChatMedals([me.id,...messages.map(m=>m.user_id)],initialRanks);
   const [input, setInput] = useState("");
@@ -135,6 +153,33 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
       return fallback;
     }
   }
+
+  useEffect(() => {
+    const client = supa.current;
+    const alertas = client
+      .channel(`novidades:${me.id}:${channel.id}`)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "channel_messages" }, (payload: any) => {
+        const r = payload.new;
+        if (!r?.channel_id) return;
+        const daEquipe = equipeRef.current.has(r.user_id);
+        setPorCanal((prev) => {
+          const atual = prev[r.channel_id] ?? { naoLidas: 0, aguardando: 0 };
+          const novo = { ...atual };
+          if (r.user_id !== me.id && r.channel_id !== channel.id) novo.naoLidas++;
+          if (souEquipe) novo.aguardando = daEquipe ? 0 : novo.aguardando + 1;
+          return { ...prev, [r.channel_id]: novo };
+        });
+        // Chegou mensagem no canal aberto: continua lido, sem martelar o servidor.
+        if (r.channel_id === channel.id && r.user_id !== me.id && marcarTimer.current == null) {
+          marcarTimer.current = window.setTimeout(() => { marcarTimer.current = null; marcarCanalLido(channel.id).catch(() => {}); }, 8000);
+        }
+      })
+      .subscribe();
+    return () => {
+      client.removeChannel(alertas);
+      if (marcarTimer.current != null) { window.clearTimeout(marcarTimer.current); marcarTimer.current = null; marcarCanalLido(channel.id).catch(() => {}); }
+    };
+  }, [channel.id, me.id, souEquipe]);
 
   useEffect(() => {
     const client = supa.current;
@@ -281,6 +326,18 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
 
   return (
     <div className="flex h-[calc(100dvh-140px-var(--faixa,0px))] min-h-[520px] overflow-hidden rounded-2xl border border-black/50 bg-[#0b131c] shadow-2xl sm:h-[calc(100vh-108px-var(--faixa,0px))]">
+      {/* Balão do canal com novidade. Fica fora da lista (posição fixa) para não
+          ser cortado pela rolagem da coluna de canais. */}
+      {dicaCanal && (
+        <div
+          role="tooltip"
+          className={`pointer-events-none fixed z-50 max-w-[260px] -translate-y-1/2 rounded-lg border px-3 py-2 text-[0.78rem] font-medium leading-snug shadow-2xl ${dicaCanal.alerta ? "border-red-500/50 bg-[#2a0f12] text-red-100" : "border-white/10 bg-[#111a24] text-slate-100"}`}
+          style={{ left: dicaCanal.x, top: dicaCanal.y }}
+        >
+          <span className={`absolute -left-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border-b border-l ${dicaCanal.alerta ? "border-red-500/50 bg-[#2a0f12]" : "border-white/10 bg-[#111a24]"}`} />
+          {dicaCanal.texto}
+        </div>
+      )}
       {/* Coluna dos canais */}
       <aside className="hidden w-64 shrink-0 flex-col bg-[#070d14] sm:flex xl:w-72">
         <div className="flex items-center gap-2.5 border-b border-black/40 px-4 py-4 shadow-sm">
@@ -295,21 +352,48 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
 
         <nav className="flex-1 overflow-y-auto px-2 py-3">
           <p className="px-2 pb-1.5 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">Canais de texto</p>
+          {souEquipe && totalAguardando > 0 && (
+            <div className="mx-1 mb-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2.5">
+              <p className="flex items-center gap-1.5 text-[0.78rem] font-bold text-red-300">
+                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" /></span>
+                {totalAguardando} {totalAguardando === 1 ? "mensagem aguarda" : "mensagens aguardam"} resposta
+              </p>
+              <p className="mt-0.5 text-[0.7rem] leading-snug text-red-200/70">Alunos falaram depois da última resposta da equipe. O número some quando alguém da equipe responde no canal.</p>
+            </div>
+          )}
           {channels.map((c) => {
             const active = c.slug === channel.slug;
             const [from] = colorOf(c.slug);
+            const novidade = porCanal[c.id] ?? { naoLidas: 0, aguardando: 0 };
+            const textoDica = textoDaNovidade(novidade, active);
             return (
               <Link
                 key={c.id}
                 href={`/conta/comunidade/${c.slug}`}
+                onMouseEnter={(e) => { if (!textoDica) return; const r = e.currentTarget.getBoundingClientRect(); setDicaCanal({ texto: textoDica, x: r.right + 10, y: r.top + r.height / 2, alerta: souEquipe && novidade.aguardando > 0 }); }}
+                onMouseLeave={() => setDicaCanal(null)}
+                onClick={() => setDicaCanal(null)}
                 className={`group relative mt-1 flex items-center gap-2 rounded-md px-2.5 py-2.5 text-[1rem] transition-colors ${
                   active ? "bg-white/[0.08] font-medium text-white" : "text-slate-400 hover:bg-white/[0.04] hover:text-slate-200"
                 }`}
               >
                 {/* Marca do canal ativo, na cor do próprio canal. */}
                 {active && <span className="absolute -left-2 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r" style={{ backgroundColor: from }} />}
+                {/* Não lido, como no Discord: tracinho branco na borda e nome aceso. */}
+                {!active && novidade.naoLidas > 0 && <span className="absolute -left-2 top-1/2 h-2 w-1 -translate-y-1/2 rounded-r bg-white" />}
                 <span className={`text-xl font-normal leading-none ${active ? "text-slate-300" : "text-slate-600 group-hover:text-slate-500"}`}>#</span>
-                <span className="truncate">{c.name}</span>
+                <span className={`truncate ${!active && novidade.naoLidas > 0 ? "font-semibold text-white" : ""}`}>{c.name}</span>
+                <span className="ml-auto flex shrink-0 items-center gap-1">
+                  {souEquipe && novidade.aguardando > 0 && (
+                    <span className="relative flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[0.65rem] font-bold tabular-nums text-white shadow-[0_0_10px_rgba(239,68,68,.55)]">
+                      <span className="absolute inset-0 animate-ping rounded-full bg-red-500/40" />
+                      <span className="relative">{novidade.aguardando > 99 ? "99+" : novidade.aguardando}</span>
+                    </span>
+                  )}
+                  {!active && novidade.naoLidas > 0 && !(souEquipe && novidade.aguardando > 0) && (
+                    <span className="rounded-full bg-brand-green px-1.5 py-0.5 text-[0.65rem] font-bold tabular-nums text-ink-900">{novidade.naoLidas > 99 ? "99+" : novidade.naoLidas}</span>
+                  )}
+                </span>
               </Link>
             );
           })}
@@ -375,14 +459,30 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
           </div>
         </header>
 
+        {/* Para a equipe: aviso fixo enquanto houver aluno esperando neste canal. */}
+        {souEquipe && (porCanal[channel.id]?.aguardando ?? 0) > 0 && (
+          <div className="flex items-center gap-2 border-b border-red-500/30 bg-red-500/10 px-4 py-2 text-[0.8rem] text-red-200">
+            <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" /></span>
+            <span>
+              <b className="font-bold text-red-100">{porCanal[channel.id].aguardando}</b>{" "}
+              {porCanal[channel.id].aguardando === 1 ? "mensagem de aluno está esperando" : "mensagens de alunos estão esperando"} resposta da equipe neste canal.
+            </span>
+          </div>
+        )}
+
         {/* Canais (mobile) */}
         <div className="flex gap-1.5 overflow-x-auto border-b border-black/40 px-3 py-2 sm:hidden">
           {channels.map((c) => {
             const active = c.slug === channel.slug;
             return (
-              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} className={`flex shrink-0 items-center gap-1 rounded px-2.5 py-1 text-xs ${active ? "bg-white/[0.08] text-white" : "text-slate-400"}`}>
+              <Link key={c.id} href={`/conta/comunidade/${c.slug}`} title={textoDaNovidade(porCanal[c.id] ?? { naoLidas: 0, aguardando: 0 }, active) || undefined} className={`flex shrink-0 items-center gap-1 rounded px-2.5 py-1 text-xs ${active ? "bg-white/[0.08] text-white" : (porCanal[c.id]?.naoLidas ?? 0) > 0 ? "font-semibold text-white" : "text-slate-400"}`}>
                 <span className="text-slate-600">#</span>
                 {c.name}
+                {souEquipe && (porCanal[c.id]?.aguardando ?? 0) > 0 ? (
+                  <span className="ml-1 rounded-full bg-red-500 px-1.5 text-[0.6rem] font-bold text-white">{porCanal[c.id].aguardando}</span>
+                ) : !active && (porCanal[c.id]?.naoLidas ?? 0) > 0 ? (
+                  <span className="ml-1 rounded-full bg-brand-green px-1.5 text-[0.6rem] font-bold text-ink-900">{porCanal[c.id].naoLidas}</span>
+                ) : null}
               </Link>
             );
           })}
