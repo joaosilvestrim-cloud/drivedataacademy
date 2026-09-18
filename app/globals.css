@@ -233,3 +233,17 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Faixa de próximos eventos (components/FaixaEventos.tsx). */
+.faixa-trilha { animation: marquee 40s linear infinite; will-change: transform; }
+.faixa-eventos:hover .faixa-trilha,
+.faixa-eventos:focus-within .faixa-trilha { animation-play-state: paused; }
+.faixa-mascara {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 40px), transparent);
+}
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .faixa-trilha { animation: none; }
+  .faixa-mascara { overflow-x: auto; }
+}

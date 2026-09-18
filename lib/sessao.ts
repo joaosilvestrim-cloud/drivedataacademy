@@ -46,3 +46,27 @@ export const treinamentosAVenda = cache(async (userId: string) => {
     return 0;
   }
 });
+
+/* Próximos encontros para a faixa do topo da área do aluno. Só o que está
+   publicado e ainda não acabou: uma live que começou há meia hora continua na
+   faixa, porque ainda dá para entrar. */
+export type EventoFaixa = { id: string; title: string; starts_at: string; kind: string | null };
+
+export const proximosEventos = cache(async (): Promise<EventoFaixa[]> => {
+  try {
+    const desde = new Date(Date.now() - 2 * 3600_000).toISOString();
+    const { data } = await createAdminClient()
+      .from("live_events")
+      .select("id, title, starts_at, kind, duration_min")
+      .eq("published", true)
+      .gte("starts_at", desde)
+      .order("starts_at", { ascending: true })
+      .limit(8);
+    const agora = Date.now();
+    return (data ?? [])
+      .filter((e: any) => Date.parse(e.starts_at) + (Number(e.duration_min) || 120) * 60_000 > agora)
+      .map((e: any) => ({ id: e.id, title: e.title, starts_at: e.starts_at, kind: e.kind }));
+  } catch {
+    return [];
+  }
+});

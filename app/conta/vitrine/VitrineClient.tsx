@@ -277,7 +277,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
             <div className="flex items-center gap-3">
               <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
               <div className="min-w-0">
-                <p className={`truncate font-display text-base font-bold transition-colors ${m.casa ? "text-[#f6d68c]" : "text-white group-hover:text-brand-green"}`}>
+                <p className={`truncate font-display text-base font-bold transition-colors ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa ? "text-[#f6d68c]" : "text-white group-hover:text-brand-green"}`}>
                   {m.full_name}
                   {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">(você)</span>}
                 </p>

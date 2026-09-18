@@ -6,3 +6,6 @@
 @media(max-width:1000px){.catalogGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.catalog{padding:18px 14px}.catalogHeading{align-items:flex-start;flex-direction:column;gap:10px}.catalogHeading h2{font-size:17px}.catalogGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.catalogCard:last-child{grid-column:1/-1}.catalogCard>p{min-height:0}.chatExample{gap:8px}}
 @media(prefers-reduced-motion:reduce){.ring,.spark{animation:none}.spark:before{box-shadow:none}}
+
+/* Conta oficial: azul elétrico e violeta, anel mais rápido que o dourado da fundação e escudo no lugar da coroa. */
+.oficial{--accent:#7cc4ff;--glow:112,169,239;box-shadow:0 0 20px rgba(80,150,255,.35),0 0 8px rgba(167,139,250,.4)}.oficial .ring{inset:-4px;padding:2.5px;background:conic-gradient(from 0deg,#3b9dff,#a78bfa 22%,#fff 28%,#6ce6c7 50%,#a78bfa 74%,#3b9dff);animation-duration:6s}.oficial .spark{animation-duration:6s}.oficial .spark:before{box-shadow:0 0 6px #7cc4ff,0 0 12px #a78bfa}.escudo{background:linear-gradient(140deg,#fff,#7cc4ff 60%,#a78bfa);color:#0b1a33}

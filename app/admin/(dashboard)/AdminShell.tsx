@@ -36,6 +36,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Painel", href: "/admin/ensino", icon: "overview" },
       { label: "Progresso", href: "/admin/progresso", icon: "analytics" },
+      { label: "Uso da plataforma", href: "/admin/uso", icon: "analytics" },
       { label: "Cursos", href: "/admin/cursos", icon: "courses" },
       { label: "Desafios", href: "/admin/desafios", icon: "courses" },
       { label: "Alunos", href: "/admin/alunos", icon: "students" },

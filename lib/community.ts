@@ -50,7 +50,13 @@ export const BADGE_LABELS: Record<string, string> = {
 export const SELOS_DA_CASA: Record<string, string> = {
   fundadora: "Fundadora",
   fundador_casa: "Fundador",
+  // Conta institucional da Academy (admin@drivedata.com.br). Moldura própria,
+  // azul com escudo, para ninguém confundir a voz oficial com a de um aluno.
+  oficial: "Oficial",
 };
+
+/** O selo "Oficial" usa moldura e cor próprias; os de fundação usam o dourado. */
+export const SELO_OFICIAL = "Oficial";
 
 export function seloDaCasa(badges?: string[]): string | null {
   for (const b of badges ?? []) if (SELOS_DA_CASA[b]) return SELOS_DA_CASA[b];

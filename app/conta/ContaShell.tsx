@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import FaixaEventos from "@/components/FaixaEventos";
+import type { EventoFaixa } from "@/lib/sessao";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
 import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
@@ -137,7 +139,7 @@ function NavList({ onNavigate, cursosAVenda = 0 }: { onNavigate?: () => void; cu
   );
 }
 
-export default function ContaShell({ email, children, cursosAVenda = 0 }: { email: string; children: React.ReactNode; cursosAVenda?: number }) {
+export default function ContaShell({ email, children, cursosAVenda = 0, eventos = [] }: { email: string; children: React.ReactNode; cursosAVenda?: number; eventos?: EventoFaixa[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const largura = pathname.startsWith("/conta/comunidade")
@@ -194,7 +196,11 @@ export default function ContaShell({ email, children, cursosAVenda = 0 }: { emai
           A comunidade é a única tela que ganha com largura: é conversa, lista
           de canais e lista de gente ao mesmo tempo. O resto continua na coluna
           de leitura, que é onde texto longo se lê melhor. */}
-      <main className="lg:pl-60">
+      <main className="lg:pl-60" style={eventos.length ? ({ "--faixa": "36px" } as React.CSSProperties) : undefined}>
+        {/* Abaixo do cabeçalho no celular, colada no topo no desktop. */}
+        <div className="sticky top-[61px] z-30 lg:top-0">
+          <FaixaEventos eventos={eventos} />
+        </div>
         <div className={largura}>{children}</div>
       </main>
     </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
+import RastreioDeUso from "@/components/RastreioDeUso";
 
 // Três papéis, um sistema. Archivo carrega os títulos, Plex Sans o texto lido,
 // Plex Mono todo número medido. Antes o produto não carregava fonte nenhuma:
@@ -50,6 +51,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="font-sans antialiased">
         <LanguageProvider>{children}</LanguageProvider>
+        <RastreioDeUso />
       </body>
     </html>
   );

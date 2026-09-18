@@ -280,7 +280,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
   }, [membros]);
 
   return (
-    <div className="flex h-[calc(100dvh-140px)] min-h-[520px] overflow-hidden rounded-2xl border border-black/50 bg-[#0b131c] shadow-2xl sm:h-[calc(100vh-108px)]">
+    <div className="flex h-[calc(100dvh-140px-var(--faixa,0px))] min-h-[520px] overflow-hidden rounded-2xl border border-black/50 bg-[#0b131c] shadow-2xl sm:h-[calc(100vh-108px-var(--faixa,0px))]">
       {/* Coluna dos canais */}
       <aside className="hidden w-64 shrink-0 flex-col bg-[#070d14] sm:flex xl:w-72">
         <div className="flex items-center gap-2.5 border-b border-black/40 px-4 py-4 shadow-sm">
@@ -458,7 +458,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex flex-wrap items-baseline gap-2">
-                        <span className={`text-[1.05rem] font-semibold ${m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
+                        <span className={`text-[1.05rem] font-semibold ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
                         <SeloCasa label={m.casa} />
                         {online.has(m.user_id) && <span className="h-1.5 w-1.5 rounded-full bg-brand-green" title="online" />}
                         {m.tag && <span className="rounded px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{m.tag}</span>}
@@ -628,7 +628,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks 
                   className={`flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-white/[0.04] ${p.online ? "" : "opacity-45"}`}
                 >
                   <MedalAvatar name={p.name} src={p.avatar} casa={p.casa} rank={medalRanks[p.id]} size="sm" />
-                  <span className={`truncate text-[0.92rem] ${p.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>
+                  <span className={`truncate text-[0.92rem] ${p.casa === "Oficial" ? "font-semibold text-[#9fd3ff]" : p.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>
                     {p.name}
                     {p.id === me.id && <span className="ml-1 text-[0.65rem] text-slate-500">(você)</span>}
                   </span>
