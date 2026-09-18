@@ -247,3 +247,10 @@ body {
   .faixa-trilha { animation: none; }
   .faixa-mascara { overflow-x: auto; }
 }
+
+/* Modo demonstração (components/ModoDemo.tsx): tudo que não está liberado
+   mostra que não responde. O menu e o DriveCanvas continuam normais. */
+.modo-demo main :is(a, button, input, textarea, select, label, [role="button"]):not([data-demo-livre] *):not([href^="/ferramenta"]):not([href^="/matricula"]) {
+  cursor: not-allowed;
+}
+.modo-demo main { padding-bottom: 4rem; }

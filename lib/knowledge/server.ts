@@ -1,6 +1,7 @@
 import 'server-only';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { hasFullAccess } from '@/lib/access';
+import { demoAte } from '@/lib/demo';
 import { isAdminEmail } from '@/lib/community';
 import { liveData } from './project';
 import { universe } from './engine';
@@ -22,7 +23,7 @@ export async function catalogVersions(): Promise<CatalogVersion[]> {
 }
 export async function knowledgeAccess(userId: string, email?: string | null) {
   const admin=createAdminClient();
-  if(isAdminEmail(email)||await hasFullAccess(admin,userId)) return true;
+  if(isAdminEmail(email)||await hasFullAccess(admin,userId)||await demoAte(admin,userId)) return true;
   const {data,error}=await admin.from('ku_entitlements').select('expires_at').eq('user_id',userId).maybeSingle();
   failure(error);
   return !!data && (!data.expires_at||Date.parse(data.expires_at)>Date.now());

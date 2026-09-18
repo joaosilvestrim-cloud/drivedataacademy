@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { demoAtual } from "@/lib/demo";
 import { hasFullAccess } from "@/lib/access";
 import { brl } from "@/lib/precoCurso";
 import { usuarioAtual } from "@/lib/sessao";
@@ -37,7 +38,7 @@ export default async function CursosCardapio() {
       .eq("access_mode", "catalogo")
       .order("position"),
     admin.from("enrollments").select("course_id").eq("user_id", user!.id).neq("source", "free"),
-    hasFullAccess(admin, user!.id),
+    hasFullAccess(admin, user!.id).then(async (a) => a || !!(await demoAtual(user!.id))),
   ]);
 
   const meus = new Set((matriculas ?? []).map((m: any) => m.course_id));

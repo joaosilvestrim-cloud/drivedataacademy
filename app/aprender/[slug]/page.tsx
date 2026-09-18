@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { demoAtual } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { youtubeId } from "@/lib/youtube";
@@ -24,6 +25,7 @@ export default async function PlayerPage({
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/entrar");
+  if (await demoAtual(user.id)) redirect("/conta/cursos?demo=1");
 
   const admin = createAdminClient();
   const { data: course } = await admin.from("courses").select("id, slug, title, certificate_enabled").eq("slug", params.slug).maybeSingle();

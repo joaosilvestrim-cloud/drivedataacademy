@@ -212,6 +212,31 @@ export async function sendAccountSetupEmail(to: string, name: string, codigo: st
   return sendHtmlEmail(to, "Pagamento confirmado: crie sua senha de acesso", shell("Sua conta está pronta", body), "RESEND_FROM_CONTA", { kind: "conta", orderId });
 }
 
+// Acesso de demonstração: login temporário que mostra a área do assinante e
+// libera só o DriveCanvas. Com código quando a conta é nova (a pessoa cria a
+// senha), sem código quando ela já tinha conta.
+export async function sendDemoAccessEmail(to: string, name: string, codigo: string | null, ate: string) {
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const fim = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" }).format(new Date(ate));
+  const botao = codigo
+    ? `<a href="${site}/redefinir-senha?email=${encodeURIComponent(to)}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Criar senha e entrar</a>`
+    : `<a href="${site}/entrar" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Entrar na Academy</a>`;
+  const body = `
+    <p style="margin:0 0 14px;color:#cbd5e1">Olá${firstName ? ", " + firstName : ""}! Liberamos para você um acesso de demonstração à DriveData Academy.</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">Você vai ver a área completa do assinante, e pode usar à vontade o <b style="color:#fff">DriveCanvas</b>, nossa ferramenta de visuais HTML e SVG para o Power BI. O acesso vale até <b style="color:#fff">${esc(fim)}</b>.</p>
+    ${codigo ? `<p style="margin:0 0 12px;color:#cbd5e1">Para entrar, crie sua senha com o código abaixo.</p>${blocoCodigo(codigo)}` : ""}
+    ${botao}
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px">
+      <tr><td style="padding:14px 16px">
+        <p style="margin:0 0 4px;color:#94a3b8;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Seu login</p>
+        <p style="margin:0;color:#fff;font-size:15px">${esc(to)}</p>
+      </td></tr>
+    </table>
+    <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">Gostou? Assinando, você libera tudo: cursos, lives, gravações, comunidade e todas as ferramentas.</p>`;
+  return sendHtmlEmail(to, "Seu acesso de demonstração à DriveData Academy", shell("Acesso de demonstração", body), "RESEND_FROM_CONTA", { kind: "demo" });
+}
+
 // Código para criar ou trocar a senha, pedido em /esqueci-senha.
 export async function sendAccessCodeEmail(to: string, codigo: string) {
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");

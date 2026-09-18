@@ -159,7 +159,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
   return (
     <div className="relative min-h-screen">
       {/* Topo (mobile) */}
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur lg:hidden">
+      <header data-demo-nav className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur lg:hidden">
         <button onClick={() => setOpen(true)} aria-label="Menu" className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-white">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" /></svg>
         </button>
@@ -169,7 +169,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
 
       {/* Drawer (mobile) */}
       {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div data-demo-nav className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
           <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto border-r border-white/10 bg-ink-900 p-4">
             <div className="mb-6 flex items-center justify-between">
@@ -185,7 +185,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
       )}
 
       {/* Sidebar (desktop) */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-white/10 bg-ink-900/70 p-4 backdrop-blur lg:flex">
+      <aside data-demo-nav className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-white/10 bg-ink-900/70 p-4 backdrop-blur lg:flex">
         <Link href="/" className="mb-8 block px-2">
           <img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" />
         </Link>

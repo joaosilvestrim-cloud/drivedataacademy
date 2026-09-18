@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendAccessGrantedEmail } from "@/lib/email";
+import { sendAccessGrantedEmail, sendDemoAccessEmail } from "@/lib/email";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -136,4 +136,57 @@ export async function reactivateMembership(formData: FormData) {
   await admin.from("memberships").update({ status: "active" }).eq("id", id);
   revalidatePath("/admin/acessos");
   redirect("/admin/acessos?ok=" + encodeURIComponent("Acesso reativado."));
+}
+
+/* Acesso de demonstração: cria (ou reaproveita) a conta, marca o prazo e manda
+   o e-mail. A pessoa vê a área do assinante e só usa o DriveCanvas. Rodar de
+   novo para a mesma pessoa só troca o prazo. */
+export async function criarDemonstracao(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+
+  const email = ((formData.get("email") as string) || "").trim().toLowerCase();
+  const nome = ((formData.get("name") as string) || "").trim();
+  const horas = Number(formData.get("horas") || "72");
+  if (!email || !email.includes("@")) redirect("/admin/acessos?error=" + encodeURIComponent("Informe o e-mail da pessoa."));
+  if (![24, 72, 168, 336].includes(horas)) redirect("/admin/acessos?error=" + encodeURIComponent("Duração inválida."));
+
+  const admin = createAdminClient();
+  let alvo: any = await findUserByEmail(admin, email);
+  let nova = false;
+  if (!alvo) {
+    const senha = "Dd" + Math.random().toString(36).slice(2, 10) + "!9";
+    const { data, error } = await admin.auth.admin.createUser({ email, password: senha, email_confirm: true, user_metadata: { full_name: nome } });
+    if (error || !data.user) redirect("/admin/acessos?error=" + encodeURIComponent(error?.message || "Não foi possível criar a conta."));
+    alvo = data!.user;
+    nova = true;
+    await admin.from("profiles").upsert({ id: alvo.id, full_name: nome }, { onConflict: "id" });
+  }
+
+  const ate = new Date(Date.now() + horas * 3600_000).toISOString();
+  const { error } = await admin.from("demo_access").upsert(
+    { user_id: alvo.id, expires_at: ate, created_by: user!.email || null, note: nome || null },
+    { onConflict: "user_id" }
+  );
+  if (error) redirect("/admin/acessos?error=" + encodeURIComponent(error.message + " (rode o SQL do acesso de demonstração)"));
+
+  let codigo: string | null = null;
+  if (nova) {
+    const { data: link } = await admin.auth.admin.generateLink({ type: "recovery", email } as any);
+    codigo = ((link as any)?.properties?.email_otp as string) || null;
+  }
+  const r = await sendDemoAccessEmail(email, nome || (alvo.user_metadata?.full_name as string) || "", codigo, ate);
+
+  revalidatePath("/admin/acessos");
+  const quando = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" }).format(new Date(ate));
+  redirect("/admin/acessos?ok=" + encodeURIComponent(`Demonstração liberada para ${email} até ${quando}.` + (r.sent ? " E-mail enviado." : " O e-mail não saiu: confira em Pagamentos e e-mails.")));
+}
+
+export async function encerrarDemonstracao(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+  const id = (formData.get("user_id") as string) || "";
+  await createAdminClient().from("demo_access").update({ expires_at: new Date().toISOString() }).eq("user_id", id);
+  revalidatePath("/admin/acessos");
+  redirect("/admin/acessos?ok=" + encodeURIComponent("Demonstração encerrada."));
 }

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasToolAccess } from "@/lib/tool";
 import EditorClient from "@/components/editor/EditorClient";
+import { nomeDaFerramenta } from "@/lib/ferramentas-nomes";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ export default async function FerramentaPage() {
   if (!user) redirect("/entrar?next=/ferramenta");
 
   const admin = createAdminClient();
-  const liberado = await hasToolAccess(admin, user.id, user.email);
+  const [liberado, nome] = await Promise.all([hasToolAccess(admin, user.id, user.email), nomeDaFerramenta("visuais")]);
 
   if (!liberado) {
     const { data: cfg } = await admin.from("site_settings").select("value").eq("key", "tool_price").maybeSingle();
@@ -24,7 +25,7 @@ export default async function FerramentaPage() {
           <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-ink-900">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v10H4zM2 19h20M9 9l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
-          <h1 className="font-display text-2xl font-bold text-white">Ferramenta de Visuais</h1>
+          <h1 className="font-display text-2xl font-bold text-white">{nome}</h1>
           <p className="mt-2 text-slate-300">Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.</p>
           <p className="mt-3 text-sm text-slate-400"><span className="font-semibold text-brand-green">Incluída na assinatura da Academy.</span> Assine e use a ferramenta e todos os cursos.</p>
           <Link href="/matricula" className="mt-6 inline-block w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar a Academy</Link>
@@ -44,7 +45,7 @@ export default async function FerramentaPage() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Voltar ao sistema
           </Link>
-          <span className="font-display text-sm font-bold text-foreground">Ferramenta de <span className="text-viz-dark">Visuais</span></span>
+          <span className="font-display text-sm font-bold text-foreground">{nome}</span>
         </div>
         <span className="hidden text-xs text-muted sm:block">Power BI · cards HTML/SVG + DAX</span>
       </header>

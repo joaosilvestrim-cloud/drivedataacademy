@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import { resolverVideo } from "@/lib/video";
+import { demoAtual } from "@/lib/demo";
 import ProtectedPlayer from "@/app/aprender/[slug]/ProtectedPlayer";
 import { usuarioAtual } from "@/lib/sessao";
 
@@ -22,6 +23,8 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
 
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/matricula");
+  // Demonstração vê a lista de gravações, mas não assiste.
+  if (await demoAtual(user.id)) redirect("/conta/gravacoes?demo=1");
 
   const { data: ev } = await admin
     .from("live_events")

@@ -7,6 +7,7 @@ import Avatar from "@/components/Avatar";
 import GrantForm from "./GrantForm";
 import CreateStudentForm from "./CreateStudentForm";
 import GrantCoursesForm from "./GrantCoursesForm";
+import DemoForm, { type Demo } from "./DemoForm";
 import { revokeMembership, reactivateMembership } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -46,6 +47,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
   let members: any[] = [];
   let orders: any[] = [];
   let courses: { id: string; title: string }[] = [];
+  let demos: Demo[] = [];
   try {
     const admin = createAdminClient();
     const [{ data: mem, error: memErr }, { data: userData }, { data: profs }, { data: ord }, { data: cs }] = await Promise.all([
@@ -55,6 +57,8 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
       admin.from("orders").select("id, email, amount, status, gateway, created_at, product").order("created_at", { ascending: false }).limit(50),
       admin.from("courses").select("id, title").order("title"),
     ]);
+    // Demonstrações: se a tabela ainda não existir, a lista só fica vazia.
+    const { data: dem } = await admin.from("demo_access").select("user_id, expires_at, note").order("expires_at", { ascending: false }).limit(30);
     if (memErr) throw new Error(memErr.message);
     courses = cs ?? [];
 
@@ -71,6 +75,13 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
       active: m.status === "active" && (!m.expires_at || new Date(m.expires_at).getTime() > now),
     }));
     orders = ord ?? [];
+    demos = (dem ?? []).map((d: any) => ({
+      user_id: d.user_id,
+      email: emailById[d.user_id] || "(sem e-mail)",
+      nome: nameById[d.user_id] || d.note || "",
+      expires_at: d.expires_at,
+      ativo: new Date(d.expires_at).getTime() > now,
+    }));
   } catch (e) {
     return (
       <div>
@@ -107,6 +118,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
         <CreateStudentForm />
         <GrantForm />
         <GrantCoursesForm courses={courses} />
+        <DemoForm demos={demos} />
       </div>
 
       {/* Alunos com acesso. A tabela some no celular e vira lista estruturada:

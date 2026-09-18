@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { hasFullAccess } from "@/lib/access";
+import { demoAte } from "@/lib/demo";
 
 export function isAdminEmail(email?: string | null): boolean {
   if (!email) return false;
@@ -24,6 +25,8 @@ export function isAdminEmail(email?: string | null): boolean {
 export async function canUseCommunity(admin: SupabaseClient, userId: string, email?: string | null): Promise<boolean> {
   if (isAdminEmail(email)) return true;
   if (await hasFullAccess(admin, userId)) return true;
+  // Demonstração vê a comunidade como assinante; o que ela não pode é agir.
+  if (await demoAte(admin, userId)) return true;
   const { data } = await admin
     .from("enrollments")
     .select("id")
