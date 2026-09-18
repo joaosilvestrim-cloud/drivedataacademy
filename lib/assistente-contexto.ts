@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { descontoAnual } from "@/lib/subscription";
+import { idsDaEquipe } from "@/lib/community";
 
 /* Contexto do assistente de IA, montado do banco a cada pergunta. Tudo o que
    muda com o tempo (preços, cursos, lives, estado da conta) vem daqui, nunca
@@ -79,7 +80,9 @@ export async function contextoAluno(admin: SupabaseClient, user: { id: string; e
   const totais: Record<string, number> = {};
   for (const e of todosPontos ?? []) totais[e.user_id] = (totais[e.user_id] || 0) + (e.points || 0);
   const pontos = totais[user.id] || 0;
-  const posicao = Object.entries(totais).sort((a, b) => b[1] - a[1]).findIndex(([id]) => id === user.id);
+  // Mesma regra do ranking: a equipe não ocupa posição de aluno.
+  const equipe = await idsDaEquipe(admin);
+  const posicao = equipe.has(user.id) ? -1 : Object.entries(totais).filter(([id]) => !equipe.has(id)).sort((a, b) => b[1] - a[1]).findIndex(([id]) => id === user.id);
   const porTipo: Record<string, number> = {};
   for (const e of meusPontos ?? []) porTipo[e.kind] = (porTipo[e.kind] || 0) + (e.points || 0);
 
@@ -115,7 +118,7 @@ export async function contextoAluno(admin: SupabaseClient, user: { id: string; e
   }
 
   const detalhe = Object.entries(porTipo).map(([k, v]) => `${v} de ${PONTOS[k] || k}`).join(", ");
-  linhas.push(`- Pontos: ${pontos}${detalhe ? ` (${detalhe})` : ""}. Posição no ranking: ${posicao >= 0 && pontos > 0 ? "#" + (posicao + 1) : "ainda sem pontos"}.`);
+  linhas.push(`- Pontos: ${pontos}${detalhe ? ` (${detalhe})` : ""}. Posição no ranking: ${equipe.has(user.id) ? "não disputa (faz parte da equipe, o ranking é só de alunos)" : posicao >= 0 && pontos > 0 ? "#" + (posicao + 1) : "ainda sem pontos"}.`);
   const nomes = (selos ?? []).map((s: any) => SELOS[s.badge] || s.badge);
   linhas.push(`- Selos: ${nomes.length ? nomes.join(", ") : "nenhum"}. Certificados emitidos: ${certs ?? 0}.`);
   return linhas.join("\n");

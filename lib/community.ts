@@ -87,7 +87,46 @@ export function displayName(nameById: Record<string, string>, id: string): strin
 }
 
 // Pontos totais por usuário: eventos (solução = 10) + curtidas no chat (2 por curtida de outra pessoa).
+/* Quem é da equipe e por isso não disputa ranking.
+
+   Ranking é prêmio de aluno. Fundadora, fundadores, a conta oficial e qualquer
+   pessoa com e-mail da DriveData (ou na lista de administradores) continuam
+   usando a comunidade normalmente, com moldura própria, mas não somam pontos,
+   não ganham medalha e não ocupam posição de aluno.
+
+   A lista muda raramente, então fica guardada por 5 minutos na memória do
+   servidor em vez de custar uma varredura de usuários a cada leitura. */
+const DOMINIO_DA_EQUIPE = "@drivedata.com.br";
+let equipeMemo: { ids: Set<string>; em: number } | null = null;
+
+export function ehEmailDaEquipe(email?: string | null): boolean {
+  const e = (email || "").trim().toLowerCase();
+  return !!e && (e.endsWith(DOMINIO_DA_EQUIPE) || isAdminEmail(e));
+}
+
+export async function idsDaEquipe(admin: SupabaseClient): Promise<Set<string>> {
+  if (equipeMemo && Date.now() - equipeMemo.em < 5 * 60_000) return equipeMemo.ids;
+  const ids = new Set<string>();
+  const { data: selos } = await admin.from("user_badges").select("user_id").in("badge", Object.keys(SELOS_DA_CASA));
+  for (const s of selos ?? []) ids.add((s as any).user_id);
+  for (let page = 1; page <= 10; page++) {
+    const { data } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+    const users = data?.users ?? [];
+    for (const u of users) if (ehEmailDaEquipe(u.email)) ids.add(u.id);
+    if (users.length < 1000) break;
+  }
+  equipeMemo = { ids, em: Date.now() };
+  return ids;
+}
+
+/** Pontos de quem disputa o ranking: só alunos. A equipe fica de fora. */
 export async function pointsByUser(admin: SupabaseClient): Promise<Record<string, number>> {
+  const [totais, equipe] = await Promise.all([pontosDeTodos(admin), idsDaEquipe(admin)]);
+  for (const id of equipe) delete totais[id];
+  return totais;
+}
+
+async function pontosDeTodos(admin: SupabaseClient): Promise<Record<string, number>> {
   // Caminho rápido: função agregada no banco (1 chamada). Se ainda não existir, cai no cálculo em JS.
   const rpc = await admin.rpc("points_by_user");
   if (!rpc.error && Array.isArray(rpc.data)) {
