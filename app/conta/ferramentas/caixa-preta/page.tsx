@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { usuarioAtual } from "@/lib/sessao";
 import CaixaPreta from "./CaixaPreta";
+import { nomeDaFerramenta } from "@/lib/ferramentas-nomes";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ export default async function CaixaPretaPage() {
   return (
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Ferramentas</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Caixa-Preta</h1>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{await nomeDaFerramenta("caixa-preta")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         Monte e opere um modelo de linguagem dentro do seu navegador. Veja o texto virar token, o corpus virar tabela de
         probabilidade e a frase ser escrita um token por vez, com os candidatos à vista. Sem API, sem chave e sem custo.

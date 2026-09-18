@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { usuarioAtual } from "@/lib/sessao";
 import RaioX from "./RaioX";
+import { nomeDaFerramenta } from "@/lib/ferramentas-nomes";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function RaioXPage() {
   return (
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Ferramentas</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Raio-X do Dashboard</h1>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{await nomeDaFerramenta("raio-x")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         Suba o seu relatório do Power BI e receba o mesmo tipo de revisão que um consultor faria: o que está errado, por que
         isso importa e como arrumar. Sem achismo: cada achado aponta a página, o visual ou a medida.

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { usuarioAtual } from "@/lib/sessao";
 import Arena from "./Arena";
+import { nomeDaFerramenta } from "@/lib/ferramentas-nomes";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function ArenaPage() {
   return (
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Ferramentas</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Arena SQL</h1>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{await nomeDaFerramenta("arena")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         Seis desafios sobre uma base de comércio gerada só para você. Escreva a consulta, execute ali mesmo e receba a
         correção na hora. Quando errar, a Arena não diz só que errou: diz onde você tropeçou.

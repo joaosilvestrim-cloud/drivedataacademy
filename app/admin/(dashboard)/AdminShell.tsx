@@ -53,6 +53,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
     items: [
       { label: "Knowledge Universe 4D", href: "/admin/universo", icon: "universe" },
       { label: "Ferramenta de visuais", href: "/admin/ferramenta", icon: "tool" },
+      { label: "Nomes das ferramentas", href: "/admin/nomes-ferramentas", icon: "tool" },
     ],
   },
   {

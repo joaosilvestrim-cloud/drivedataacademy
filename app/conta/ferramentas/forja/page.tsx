@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { usuarioAtual } from "@/lib/sessao";
 import Forja from "./Forja";
+import { nomeDaFerramenta } from "@/lib/ferramentas-nomes";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function ForjaPage() {
   return (
     <div>
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Ferramentas</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Forja DAX</h1>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{await nomeDaFerramenta("forja")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         A tabela de calendário e as medidas de tempo do seu modelo, escritas com o nome das suas tabelas e prontas para
         colar. Com ano fiscal, feriados nacionais de verdade e um comentário em cada decisão, para você entender o que

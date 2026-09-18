@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { hasToolAccess } from "@/lib/tool";
 import { usuarioAtual } from "@/lib/sessao";
 import GradeFerramentas from "@/components/ferramentas/GradeFerramentas";
+import { nomesDasFerramentas } from "@/lib/ferramentas-nomes";
 import { type Ferramenta } from "@/components/ferramentas/CartaoFerramenta";
 
 export const dynamic = "force-dynamic";
@@ -17,15 +18,15 @@ export default async function FerramentasHub() {
   const user = await usuarioAtual();
   if (!user) redirect("/entrar");
   const admin = createAdminClient();
-  const liberado = await hasToolAccess(admin, user.id, user.email);
+  const [liberado, nomes] = await Promise.all([hasToolAccess(admin, user.id, user.email), nomesDasFerramentas()]);
 
   const ferramentas: Ferramenta[] = [
     {
       key: "raio-x",
       categoria: "Power BI",
-      name: "Raio-X do Dashboard",
+      name: nomes["raio-x"].nome,
       tag: "Novo",
-      desc: "Suba seu .pbix e receba a revisão que um consultor faria: o que está errado, por que importa e como arrumar. O arquivo não sai do seu navegador.",
+      desc: nomes["raio-x"].desc,
       href: "/conta/ferramentas/raio-x",
       sameTab: true,
       icon: "M12 3a9 9 0 100 18 9 9 0 000-18M12 8v4l3 2M3 12h3M18 12h3",
@@ -38,9 +39,9 @@ export default async function FerramentasHub() {
     {
       key: "conciliacao",
       categoria: "Análise",
-      name: "O número não bate",
+      name: nomes["conciliacao"].nome,
       tag: "Novo",
-      desc: "O painel diz uma coisa, o sistema diz outra. Treine a investigação que resolve a cena mais comum da profissão: total, quebra por dimensão, linha.",
+      desc: nomes["conciliacao"].desc,
       href: "/conta/ferramentas/conciliacao",
       sameTab: true,
       icon: "M3 6h18M3 12h18M3 18h10M17 15l3 3-3 3M20 18h-6",
@@ -53,9 +54,9 @@ export default async function FerramentasHub() {
     {
       key: "caixa-preta",
       categoria: "IA",
-      name: "Caixa-Preta",
+      name: nomes["caixa-preta"].nome,
       tag: "Novo",
-      desc: "Monte um modelo de linguagem no seu navegador e veja como a IA escolhe cada palavra. Token, probabilidade, temperatura e alucinação, ao vivo. Sem API.",
+      desc: nomes["caixa-preta"].desc,
       href: "/conta/ferramentas/caixa-preta",
       sameTab: true,
       icon: "M4 5h16v14H4zM8 9h.01M12 9h.01M16 9h.01M8 13h8M8 17h5",
@@ -68,9 +69,9 @@ export default async function FerramentasHub() {
     {
       key: "arena",
       categoria: "SQL",
-      name: "Arena SQL",
+      name: nomes["arena"].nome,
       tag: "Novo",
-      desc: "Desafios de SQL sobre uma base gerada só para você, com correção na hora. Quando erra, a Arena diz exatamente onde você tropeçou.",
+      desc: nomes["arena"].desc,
       href: "/conta/ferramentas/arena",
       sameTab: true,
       icon: "M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3",
@@ -83,9 +84,9 @@ export default async function FerramentasHub() {
     {
       key: "forja",
       categoria: "Power BI",
-      name: "Forja DAX",
+      name: nomes["forja"].nome,
       tag: "Novo",
-      desc: "Gera a tabela de calendário e as medidas de tempo com o nome das suas tabelas, com ano fiscal e feriados nacionais calculados. É só colar no Power BI.",
+      desc: nomes["forja"].desc,
       href: "/conta/ferramentas/forja",
       sameTab: true,
       icon: "M8 3h8M12 3v6M6 21h12M7 21l1.5-7h7L17 21M9.5 14a3 3 0 015 0",
@@ -98,9 +99,9 @@ export default async function FerramentasHub() {
     {
       key: "dataflow-lab",
       categoria: "Dados",
-      name: "DataFlow Lab",
+      name: nomes["dataflow-lab"].nome,
       tag: "Dados · 4D",
-      desc: "Importe CSVs, trate dados e execute SQL. Explore as transformações em 3D, reproduza cada etapa e compare resultados.",
+      desc: nomes["dataflow-lab"].desc,
       href: "/dataflow-lab",
       sameTab: true,
       icon: "M4 6h5v5H4zM15 13h5v5h-5zM9 8h8v5M6 11v6h9",
@@ -112,9 +113,9 @@ export default async function FerramentasHub() {
     {
       key: "decision-lab",
       categoria: "Negócios",
-      name: "Decision Lab",
+      name: nomes["decision-lab"].nome,
       tag: "Simulador de negócios",
-      desc: "Assuma uma empresa interativa em 3D. Decida preços, estoque e equipe, simule 30 dias e aprenda com os resultados da sua estratégia.",
+      desc: nomes["decision-lab"].desc,
       href: "/decision-lab",
       sameTab: true,
       icon: "M3 21h18M5 21V7l8-4v18M19 21V11l-6-3",
@@ -126,9 +127,9 @@ export default async function FerramentasHub() {
     {
       key: "knowledge-universe",
       categoria: "Conhecimento",
-      name: "Knowledge Universe 4D",
+      name: nomes["knowledge-universe"].nome,
       tag: "Conhecimento · 4D",
-      desc: "Suas atividades viram um mapa de competências em 3D. Comece pelo diagnóstico, abra seu universo e evolua entregando desafios.",
+      desc: nomes["knowledge-universe"].desc,
       href: "/conta/universo",
       sameTab: true,
       icon: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
@@ -140,9 +141,9 @@ export default async function FerramentasHub() {
     {
       key: "visuais",
       categoria: "Power BI",
-      name: "Ferramenta de Visuais",
+      name: nomes["visuais"].nome,
       tag: "Power BI",
-      desc: "Crie cards em HTML e SVG para o Power BI e gere a medida DAX pronta, sem escrever código.",
+      desc: nomes["visuais"].desc,
       href: "/ferramenta",
       icon: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4",
       from: "#34e8a0",

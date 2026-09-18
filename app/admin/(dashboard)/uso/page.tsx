@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { PageHeader, SectionHeader, Alert } from "@/components/ui/layout";
 import { LinkFilter } from "@/components/ui/filter";
 import { FERRAMENTAS } from "@/lib/uso";
+import { nomesDasFerramentas, CHAVE_DA_VITRINE } from "@/lib/ferramentas-nomes";
 
 export const dynamic = "force-dynamic";
 
@@ -116,6 +117,7 @@ export default async function UsoAdmin({ searchParams }: { searchParams: { perio
   const inicioAntes = new Date(agora - 2 * dias * 864e5).toISOString();
 
   const admin = createAdminClient();
+  const nomes = await nomesDasFerramentas();
   const [evRes, cursosRes, progRes, matRes] = await Promise.all([
     admin.from("access_events").select("user_id, tipo, chave, created_at").gte("created_at", inicioAntes).order("created_at", { ascending: false }).limit(50000),
     admin.from("courses").select("id, slug, title, published"),
@@ -133,7 +135,7 @@ export default async function UsoAdmin({ searchParams }: { searchParams: { perio
   const fAntes = agrupa(anteriores, "ferramenta");
   const ferramentas: Linha[] = FERRAMENTAS.map((f) => ({
     chave: f.chave,
-    nome: f.nome,
+    nome: nomes[CHAVE_DA_VITRINE[f.chave] ?? f.chave]?.nome ?? f.nome,
     href: f.prefixos[0],
     alunos: fAgora.get(f.chave)?.alunos.size ?? 0,
     acessos: fAgora.get(f.chave)?.acessos ?? 0,
