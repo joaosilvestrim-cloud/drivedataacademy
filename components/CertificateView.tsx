@@ -1,26 +1,23 @@
-// Cartão visual do certificado (usado na página pública e no preview do admin).
-function Rings({ className }: { className: string }) {
-  return (
-    <svg className={className} width="360" height="360" viewBox="0 0 360 360" fill="none" aria-hidden>
-      {[70, 120, 170, 220].map((r) => (
-        <circle key={r} cx="180" cy="180" r={r} stroke="#22c9a3" strokeOpacity="0.16" strokeWidth="2" />
-      ))}
-    </svg>
-  );
+import type { CSSProperties } from "react";
+import styles from "./certificate.module.css";
+
+function TechFrame() {
+  return <svg className={styles.frame} viewBox="0 0 842 595" fill="none" aria-hidden="true">
+    <defs><pattern id="certificate-grid" width="19" height="19" patternUnits="userSpaceOnUse"><path d="M19 0H0V19" stroke="#153246" strokeWidth=".55" /></pattern></defs>
+    <path fill="url(#certificate-grid)" d="M560 0h282v448H560z" />
+    <path d="M23 572h776l20-20V23H43L23 43z" stroke="#244052" />
+    <path d="M23 75V43l20-20h67" stroke="#30d9f0" strokeWidth="1.8" />
+    <path d="M819 499v53l-20 20h-73" stroke="#56ecc0" strokeWidth="1.8" />
+    <path d="M51 101h738" stroke="#234354" /><path d="M51 101h124" stroke="#56ecc0" strokeWidth="2" />
+    <path d="M659 164h106v114l-18 18H641V182z" stroke="#2a5a70" />
+    <path d="M650 155h124v132l-18 18H632V173z" stroke="#123247" />
+    {[0,1,2,3,4].map(i=><g key={i}><path d={`M776 ${268-i*17}h11l15-15h40`} stroke="#1c6277" strokeWidth=".7"/><circle cx="777" cy={268-i*17} r="1.8" fill={i===2?"#30d9f0":"#22556d"}/></g>)}
+    {[0,1,2,3].map(i=><path key={i} d={`M${668+i*20} 150V${126-i*6}l20-20`} stroke="#1e455b" strokeWidth=".6"/>)}
+    <path d="M623 314l25 25h136" stroke="#295469" />
+  </svg>;
 }
 
-export default function CertificateView({
-  studentName,
-  courseTitle,
-  workload,
-  dateLabel,
-  code,
-  host,
-  qrSvg,
-  assinaturas = [],
-  headline = "Certificado de Conclusão",
-  achievementLabel = "concluiu com êxito o curso",
-}: {
+export type CertificateViewProps = {
   studentName: string;
   courseTitle: string;
   headline?: string;
@@ -30,77 +27,70 @@ export default function CertificateView({
   code: string;
   host: string;
   qrSvg?: string | null;
-  /* Quem assina. A Academy tem dois sócios, e os dois assinam todo
-     certificado, então isto é uma lista e não um responsável só. */
+  verificationUrl?: string;
+  status?: "valid" | "revoked" | "expired" | "preview";
   assinaturas?: { url?: string | null; nome: string; cargo?: string | null }[];
-}) {
-  return (
-    <div
-      className="relative mx-auto aspect-[1.414/1] w-full overflow-hidden rounded-xl bg-gradient-to-br from-white to-[#eef4fb] text-slate-700 shadow-2xl"
-      style={{ containerType: "inline-size" }}
-    >
-      {/* Molduras */}
-      <div className="absolute inset-y-0 left-0 w-[1.6%] bg-gradient-to-b from-brand-blue via-brand-teal to-brand-green" />
-      <div className="absolute inset-x-0 top-0 h-[0.6%] bg-gradient-to-r from-brand-blue via-brand-teal to-brand-green" />
-      <div className="absolute inset-y-0 right-0 w-[0.6%] bg-gradient-to-b from-brand-blue via-brand-teal to-brand-green" />
-      <Rings className="pointer-events-none absolute -right-24 -top-24" />
-      <Rings className="pointer-events-none absolute -bottom-28 -left-24" />
+};
 
-      {/* Conteúdo */}
-      <div className="relative flex h-full flex-col items-center px-[7%] py-[5%] text-center">
-        {/* A marca precisa de ar em volta: encostada no título ela some dentro do
-            bloco e o "ACADEMY" parece colado na linha de baixo. */}
+// The document uses a fixed A4 ratio. cqw units keep every element on the same
+// scale on screen and paper; longer data receives more room instead of truncation.
+export default function CertificateView({studentName,courseTitle,workload,dateLabel,code,host,qrSvg,verificationUrl,assinaturas=[],headline="Certificado de Conclusão",achievementLabel="concluiu com êxito o curso",status="valid"}: CertificateViewProps) {
+  const nameSize = studentName.length > 70 ? 2.5 : studentName.length > 45 ? 3 : studentName.length > 28 ? 3.8 : 4.65;
+  const courseSize = courseTitle.length > 115 ? 1.65 : courseTitle.length > 75 ? 1.95 : courseTitle.length > 42 ? 2.35 : 2.95;
+  const validationUrl = verificationUrl || `https://${host}/certificado/${encodeURIComponent(code)}`;
+  return <div className={styles.viewport} role="region" aria-label="Certificado DriveData Academy" tabIndex={0}>
+    <style>{`@media print {
+      html,body{margin:0!important;padding:0!important;min-height:0!important;background:#071320!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .no-print{display:none!important}
+      .certificate-page{margin:0!important;padding:0!important;min-height:0!important;width:297mm!important}
+      .certificate-page-inner{margin:0!important;padding:0!important;max-width:none!important;width:297mm!important}
+    }`}</style>
+    <article className={styles.document} aria-label={`${headline}: ${studentName}`} style={{"--name-size":`${nameSize}cqw`,"--course-size":`${courseSize}cqw`} as CSSProperties}>
+      <TechFrame />
+      <header className={styles.brand}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/cert-logo.png" alt="DriveData Academy" className="h-[13%] w-auto" />
-        <p className="mt-[3.4%] text-[2.1cqw] font-bold uppercase tracking-[0.25em] text-brand-teal">{headline}</p>
-        <p className="mt-[2.4%] text-[1.9cqw] text-slate-400">Certificamos que</p>
-
-        <div className="mt-[1%] flex min-h-[9%] w-full items-center justify-center rounded-2xl border-2 border-brand-green/40 bg-brand-green/[0.06] px-4">
-          <p className="font-display text-[5cqw] font-extrabold leading-tight text-slate-900">{studentName}</p>
-        </div>
-
-        <p className="mt-[2%] text-[1.9cqw] text-slate-400">{achievementLabel}</p>
-        <div className="mt-[1%] flex min-h-[7%] w-full items-center justify-center rounded-2xl border-2 border-brand-blue/40 bg-brand-blue/[0.06] px-4">
-          <p className="font-display text-[3.4cqw] font-bold text-slate-900">{courseTitle}</p>
-        </div>
-
-        <div className="mt-[1.8%] text-[1.8cqw] leading-relaxed text-slate-500">
-          {workload && <p>Carga horária: {workload}</p>}
-          <p>Emitido em {dateLabel}</p>
-        </div>
-
-        <div className="mt-auto w-full border-t border-slate-200 pt-[2%]">
-          {/* A faixa do meio ganha mais espaço porque agora são duas assinaturas. */}
-          <div className="grid grid-cols-[1fr_1.6fr_auto] items-end gap-4">
-            <div className="text-left">
-              <p className="text-[1.2cqw] font-semibold uppercase tracking-wide text-slate-400">Código de autenticidade</p>
-              <p className="font-mono text-[1.9cqw] font-bold text-slate-800">{code}</p>
-              <p className="mt-1 text-[1.1cqw] text-slate-400">{host}/certificado/{code}</p>
-            </div>
-            <div className={`grid gap-4 ${assinaturas.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}>
-              {(assinaturas.length ? assinaturas : [{ nome: "", cargo: null, url: null }]).map((a, i) => (
-                <div key={a.nome || i} className="text-center">
-                  {a.url && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={a.url} alt={`Assinatura de ${a.nome}`} className="mx-auto mb-1 h-[7cqw] max-h-[56px] w-auto object-contain" />
-                  )}
-                  <div className="mx-auto mb-1 w-4/5 border-t border-slate-400" />
-                  <p className="text-[1.4cqw] font-semibold text-slate-700">{a.nome || "Assinatura do Responsável"}</p>
-                  {a.nome && a.cargo && <p className="text-[1.05cqw] leading-tight text-slate-500">{a.cargo}</p>}
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col items-end">
-              {qrSvg ? (
-                <div className="h-[15cqw] w-[15cqw] max-h-[120px] max-w-[120px]" aria-label="QR de validação" dangerouslySetInnerHTML={{ __html: qrSvg }} />
-              ) : (
-                <div className="grid h-[15cqw] max-h-[120px] w-[15cqw] max-w-[120px] place-items-center rounded bg-slate-100 text-[1.1cqw] text-slate-400">QR</div>
-              )}
-              <p className="mt-1 text-[1.2cqw] text-slate-400">Validar certificado</p>
-            </div>
-          </div>
-        </div>
+        <img src="/certificate-mark.png" alt="" />
+        <div><strong>DriveData</strong><span>ACADEMY</span></div>
+      </header>
+      <div className={styles.headerMeta} aria-hidden="true"><span>FORMAÇÃO EM DADOS E IA</span><small>DRIVEDATA / CERTIFICAÇÃO</small></div>
+      <p className={styles.overline}>{headline}</p>
+      <h1 className={styles.title}>CERTIFICADO</h1>
+      <p className={styles.certify}>Certificamos que</p>
+      <p className={styles.name}>{studentName}</p>
+      <div className={styles.rule} aria-hidden="true" />
+      <p className={styles.achievement}>{achievementLabel}</p>
+      <h2 className={styles.course}>{courseTitle}</h2>
+      <div className={styles.chip} aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/certificate-mark.png" alt="" />
+        <span>DRIVEDATA ACADEMY</span>
       </div>
-    </div>
-  );
+      <dl className={styles.metadata}>
+        {workload && <div><dt>Carga horária</dt><dd className={styles.hours}>{workload}</dd></div>}
+        <div><dt>Emitido em</dt><dd>{dateLabel}</dd></div>
+        <div><dt>Código de autenticidade</dt><dd className={styles.code}>{code}</dd></div>
+      </dl>
+      <footer className={styles.authentication}>
+        <div className={styles.signatures}>
+          {(assinaturas.length ? assinaturas : [{nome:"DriveData Academy",cargo:null,url:null}]).map((signer,i)=><div className={styles.signature} key={`${signer.nome}-${i}`}>
+            <div className={styles.signatureImage}>
+              {signer.url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={signer.url} alt={`Assinatura de ${signer.nome}`} />
+              )}
+            </div>
+            <strong>{signer.nome}</strong>
+            {signer.cargo && <p>{signer.cargo}</p>}
+          </div>)}
+        </div>
+        <div className={styles.validation}>
+          <div><strong>VALIDAÇÃO</strong><p>{status === "preview" ? "Modelo demonstrativo. Sem validade." : qrSvg ? "Escaneie para verificar o certificado." : "Consulte o código de autenticidade."}</p></div>
+          {qrSvg ? <a href={validationUrl} aria-label="Verificar autenticidade do certificado" className={styles.qr} dangerouslySetInnerHTML={{__html:qrSvg}} />
+          : <div className={styles.qrPlaceholder}>{status === "preview" ? <>PRÉVIA<br/>DO MODELO</> : <>VALIDAÇÃO<br/>PELO CÓDIGO</>}</div>}
+        </div>
+      </footer>
+      <div className={styles.documentFooter}><span>{status === "preview" ? "MODELO DEMONSTRATIVO / SEM VALIDADE" : status === "revoked" ? "CERTIFICADO REVOGADO" : status === "expired" ? "CERTIFICADO EXPIRADO" : "DRIVEDATA ACADEMY / CERTIFICAÇÃO"}</span><span>{host}</span></div>
+      {(status === "revoked" || status === "expired") && <p className={styles.invalid}>{status === "revoked" ? "REVOGADO" : "EXPIRADO"}</p>}
+    </article>
+  </div>;
 }

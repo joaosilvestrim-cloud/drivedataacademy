@@ -48,13 +48,12 @@ export default async function CertificatePage({ params }: { params: { code: stri
 
   const expired = cert.expires_at ? new Date(cert.expires_at) < new Date() : false;
   const valid = !cert.revoked && !expired;
-  const qrSvg = await QRCode.toString(url, { type: "svg", margin: 0, color: { dark: "#0b1220", light: "#00000000" } });
+  const qrSvg = await QRCode.toString(url, { type: "svg", margin: 2, color: { dark: "#0b1220", light: "#ffffff" } });
 
   return (
-    <main className="min-h-screen bg-ink-900 px-4 py-10">
-      <style>{`@media print { @page { size: A4 landscape; margin: 0 } body { background:#fff !important } .no-print{display:none !important} .cert-wrap{padding:0 !important} }`}</style>
+    <main className="certificate-page min-h-screen bg-ink-900 px-4 py-10">
 
-      <div className="mx-auto max-w-5xl">
+      <div className="certificate-page-inner mx-auto max-w-6xl">
         {/* Quem chega pelo e-mail ou pelo QR precisa de porta de saída. */}
         <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-4">
           <Link href="/conta/certificados" className="text-sm text-slate-400 transition-colors hover:text-white">
@@ -78,8 +77,11 @@ export default async function CertificatePage({ params }: { params: { code: stri
             code={cert.code}
             host={host}
             qrSvg={qrSvg}
+            verificationUrl={url}
+            status={cert.revoked ? "revoked" : expired ? "expired" : "valid"}
           />
         </div>
+        <p className="no-print mt-3 text-center text-xs text-slate-400 sm:hidden">Deslize para os lados para ver o certificado completo.</p>
 
         <CertActions shareUrl={url} courseTitle={cert.course_title} code={cert.code} dateISO={cert.created_at} />
       </div>

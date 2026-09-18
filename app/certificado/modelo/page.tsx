@@ -13,16 +13,16 @@ export default async function CertModeloPage({ searchParams }: { searchParams: {
   let sigMap: Record<string, string> = {};
   try {
     const admin = createAdminClient();
-    const { data: sig } = await admin.from("site_settings").select("key, value").in("key", ["cert_signature_url", "cert_signature_name", "cert_signature_role"]);
+    const { data: sig } = await admin.from("site_settings").select("key, value").like("key", "cert_signature%");
     sigMap = Object.fromEntries((sig ?? []).map((r: any) => [r.key, r.value]));
   } catch {
     sigMap = {};
   }
 
   return (
-    <main className="min-h-screen bg-ink-900 px-4 py-10">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <main className="certificate-page min-h-screen bg-ink-900 px-4 py-10">
+      <div className="certificate-page-inner mx-auto max-w-6xl">
+        <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-brand-green">Modelo de certificado</p>
             <h1 className="font-display text-xl font-bold text-white">Pré-visualização</h1>
@@ -39,6 +39,7 @@ export default async function CertModeloPage({ searchParams }: { searchParams: {
           code="DDA-EXEMPLO"
           host="academy.drivedata.com.br"
           qrSvg={null}
+          status="preview"
           assinaturas={[
             { nome: sigMap.cert_signature_name, cargo: sigMap.cert_signature_role, url: sigMap.cert_signature_url },
             { nome: sigMap.cert_signature2_name, cargo: sigMap.cert_signature2_role, url: sigMap.cert_signature2_url },
