@@ -2,7 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Mascot from "./Mascot";
+import { montarFila, type Balao } from "@/lib/mascote";
+
+/* Ritmo dos balões: o primeiro aparece logo, fica um tempo e some; o próximo
+   só vem bem depois. Fechar no ✕ cala o mascote até o fim da sessão. */
+const PRIMEIRO_MS = 3500;
+const VISIVEL_MS = 14000;
+const INTERVALO_MS = 45000;
+const MAX_POR_SESSAO = 12;
+
+function lerSessao(chave: string): string | null {
+  try { return sessionStorage.getItem(chave); } catch { return null; }
+}
+function gravarSessao(chave: string, valor: string) {
+  try { sessionStorage.setItem(chave, valor); } catch {}
+}
 
 type Msg = { role: "user" | "assistant"; content: string; link?: { href: string; label: string } };
 
@@ -17,6 +33,13 @@ export default function AssistantButton() {
   const [escalated, setEscalated] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hintDismissed, setHintDismissed] = useState(false);
+  const [balao, setBalao] = useState<Balao | null>(null);
+  const [revelado, setRevelado] = useState(false);
+  const pathname = usePathname() || "";
+  const pathRef = useRef(pathname);
+  pathRef.current = pathname;
+  const openRef = useRef(false);
+  openRef.current = open;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,16 +47,48 @@ export default function AssistantButton() {
   }, [messages, loading, open]);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowHint(true), 3500);
     const openEv = () => openChat();
     window.addEventListener("open-assistant", openEv);
-    return () => { clearTimeout(t); window.removeEventListener("open-assistant", openEv); };
+    return () => window.removeEventListener("open-assistant", openEv);
   }, []);
 
+  // Ciclo dos balões. A posição na fila fica na sessão, então trocar de tela
+  // continua de onde parou em vez de repetir o primeiro balão.
+  useEffect(() => {
+    if (lerSessao("mascote:mudo") === "1") { setHintDismissed(true); return; }
+    let semente = Number(lerSessao("mascote:semente"));
+    if (!semente) { semente = Math.floor(Math.random() * 1e9) + 1; gravarSessao("mascote:semente", String(semente)); }
+
+    const timers: number[] = [];
+    const agenda = (fn: () => void, ms: number) => { timers.push(window.setTimeout(fn, ms)); };
+
+    const mostrar = () => {
+      const pos = Number(lerSessao("mascote:pos") || "0");
+      if (pos >= MAX_POR_SESSAO) return;
+      if (openRef.current) { agenda(mostrar, INTERVALO_MS); return; }
+      const fila = montarFila(pathRef.current, semente);
+      setBalao(fila[pos % fila.length]);
+      setRevelado(false);
+      setShowHint(true);
+      gravarSessao("mascote:pos", String(pos + 1));
+      agenda(() => setRevelado(true), 2200);
+      agenda(() => { setShowHint(false); agenda(mostrar, INTERVALO_MS); }, VISIVEL_MS);
+    };
+    agenda(mostrar, PRIMEIRO_MS);
+    return () => timers.forEach(window.clearTimeout);
+  }, []);
+
+  function calar() {
+    setShowHint(false);
+    setHintDismissed(true);
+    gravarSessao("mascote:mudo", "1");
+  }
+
+  // Abrir o chat só esconde o balão da vez: o mascote volta a falar depois,
+  // quando a conversa estiver fechada. Quem quer silêncio usa o ✕.
   function openChat() {
     setOpen(true);
     setShowHint(false);
-    setHintDismissed(true);
   }
 
   async function callApi(convo: Msg[], extra: Record<string, any> = {}) {
@@ -167,15 +222,45 @@ export default function AssistantButton() {
         </div>
       )}
 
-      {/* Balãozinho de atenção */}
-      {showHint && !open && !hintDismissed && (
-        <div className="absolute bottom-3 right-[88px] w-56 animate-float">
+      {/* Balão do mascote: convite, dica da plataforma ou piada de tech. */}
+      {showHint && !open && !hintDismissed && balao && (
+        <div className="absolute bottom-3 right-[88px] w-64 max-w-[calc(100vw-120px)] animate-float" role="status" aria-live="polite">
           <div className="relative rounded-2xl border border-white/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
-            <button onClick={() => { setShowHint(false); setHintDismissed(true); }} aria-label="Fechar" className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
-            <button onClick={openChat} className="block text-left">
-              <p className="text-sm font-semibold text-white">Precisa de ajuda?</p>
-              <p className="mt-0.5 text-xs text-slate-300">Fale comigo, respondo na hora.</p>
-            </button>
+            <button onClick={calar} aria-label="Não mostrar mais balões nesta sessão" title="Não mostrar mais nesta sessão" className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
+
+            {balao.tipo === "ajuda" && (
+              <button onClick={openChat} className="block pr-4 text-left">
+                <p className="text-sm font-semibold text-white">Precisa de ajuda?</p>
+                <p className="mt-0.5 text-xs text-slate-300">Fale comigo, respondo na hora.</p>
+              </button>
+            )}
+
+            {balao.tipo === "dica" && (
+              <div className="pr-4">
+                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-green">Dica</p>
+                <p className="mt-0.5 text-sm font-semibold text-white">{balao.titulo}</p>
+                <p className="mt-1 text-xs leading-relaxed text-slate-300">{balao.texto}</p>
+                {!pathname.startsWith(balao.href) && (
+                  <Link href={balao.href} onClick={() => setShowHint(false)} className="mt-2 inline-block text-xs font-semibold text-brand-green hover:underline">
+                    {balao.acao} →
+                  </Link>
+                )}
+              </div>
+            )}
+
+            {balao.tipo === "piada" && (
+              <div className="pr-4">
+                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-amber-300">Piada de dev</p>
+                <p className="mt-0.5 text-sm text-white">{balao.texto}</p>
+                {balao.final && (
+                  <p className={`mt-1 text-xs font-semibold text-brand-green transition-opacity duration-500 ${revelado ? "opacity-100" : "opacity-0"}`}>
+                    {balao.final}
+                  </p>
+                )}
+                <button onClick={openChat} className="mt-2 text-[0.7rem] text-slate-400 hover:text-white">Posso ajudar em algo? →</button>
+              </div>
+            )}
+
             <span className="absolute -right-1.5 bottom-4 h-3 w-3 rotate-45 border-b border-r border-white/10 bg-ink-800" />
           </div>
         </div>
