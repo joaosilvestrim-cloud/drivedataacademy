@@ -35,3 +35,4 @@ next-env.d.ts
 
 # Legendas geradas (áudio, transcrição e .vtt): revisar e subir no Panda, não versionar.
 legendas/
+__pycache__/
