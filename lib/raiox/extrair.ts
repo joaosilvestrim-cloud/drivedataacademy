@@ -1,5 +1,6 @@
 import { unzipSync, strFromU8 } from "fflate";
 import type { Campo, Pagina, Relatorio, Visual } from "./tipos";
+import { LIMITE_ARQUIVO } from "./tipos";
 
 /* Leitor de arquivo do Power BI.
 
@@ -13,24 +14,25 @@ import type { Campo, Pagina, Relatorio, Visual } from "./tipos";
 
    O modelo (tabelas, medidas, relacionamentos) fica em "DataModel", que é
    binário e comprimido: não dá para ler aqui. Por isso o .pbit importa. O
-   template guarda o mesmo modelo em "DataModelSchema", que é JSON puro, e não
-   leva um único dado do cliente junto. É o arquivo certo para auditar modelo.
+   template guarda o modelo em "DataModelSchema", que é JSON. Ele pode conter
+   nomes, fórmulas e valores de filtros; também deve ser tratado como confidencial.
 
    Tudo isto roda no navegador do aluno. O arquivo não sobe para lugar nenhum:
    o que viaja é o laudo. */
 
 const decodifica = (bytes: Uint8Array): string => {
   // UTF-16 LE começa com o primeiro byte do caractere e um zero em seguida.
-  if (bytes.length > 1 && bytes[1] === 0) {
+  if (bytes.length > 1 && (bytes[1] === 0 || (bytes[0] === 255 && bytes[1] === 254))) {
     return new TextDecoder("utf-16le").decode(bytes);
   }
   return strFromU8(bytes);
 };
 
-const json = <T,>(bytes: Uint8Array, padrao: T): T => {
+const json = <T,>(bytes: Uint8Array, padrao: T, obrigatorio = false): T => {
   try {
     return JSON.parse(decodifica(bytes).replace(/^﻿/, "")) as T;
   } catch {
+    if (obrigatorio) throw new Error("Uma definição do relatório está ilegível. Abra o arquivo no Power BI, salve novamente e tente outra vez.");
     return padrao;
   }
 };
@@ -80,7 +82,7 @@ function leTitulo(objetos: any): { proprio: boolean; visivel: boolean } {
   const textoLiteral = titulo?.text?.expr?.Literal?.Value;
   const mostra = titulo?.show?.expr?.Literal?.Value;
   return {
-    proprio: typeof textoLiteral === "string" && textoLiteral.replace(/'/g, "").trim().length > 0,
+    proprio: !!titulo?.text?.expr && (typeof textoLiteral !== "string" || textoLiteral.replace(/'/g, "").trim().length > 0),
     visivel: mostra === undefined ? true : String(mostra) !== "false",
   };
 }
@@ -92,13 +94,16 @@ function lerPBIR(arquivos: Record<string, Uint8Array>): Pagina[] {
 
   for (const caminho of paginasJson) {
     const pasta = caminho.replace(/\/page\.json$/, "");
-    const pg = json<any>(arquivos[caminho], {});
+    const pg = json<any>(arquivos[caminho], {}, true);
+    if (!pg?.name || !pg?.displayName) throw new Error("Uma página está sem definição válida. Salve o relatório novamente no Power BI.");
     const visuais: Visual[] = [];
 
     for (const c of caminhos.filter((x) => x.startsWith(`${pasta}/visuals/`) && x.endsWith("/visual.json"))) {
-      const v = json<any>(arquivos[c], {});
+      const v = json<any>(arquivos[c], {}, true);
       const pos = v?.position ?? {};
       const sv = v?.visual ?? {};
+      if (!v?.name || (!sv?.visualType && !v?.visualGroup)) throw new Error("Encontrei um visual que não consigo interpretar. Salve uma nova versão no Power BI.");
+      if (v?.visualGroup) continue;
       const objetos = { ...(sv?.visualContainerObjects ?? {}), ...(sv?.objects ?? {}) };
       const titulo = leTitulo(objetos);
       visuais.push({
@@ -112,6 +117,7 @@ function lerPBIR(arquivos: Record<string, Uint8Array>): Pagina[] {
         tituloProprio: titulo.proprio,
         tituloVisivel: titulo.visivel,
         temFiltroProprio: ((v?.filterConfig?.filters ?? []) as any[]).length > 0,
+        oculto: v?.isHidden === true || v?.isHidden === "true",
       });
     }
 
@@ -127,14 +133,17 @@ function lerPBIR(arquivos: Record<string, Uint8Array>): Pagina[] {
 }
 
 function lerLayoutAntigo(bytes: Uint8Array): Pagina[] {
-  const layout = json<any>(bytes, {});
+  const layout = json<any>(bytes, {}, true);
+  if (!Array.isArray(layout?.sections)) throw new Error("Não consegui ler as páginas deste relatório.");
   return ((layout?.sections ?? []) as any[]).map((s) => {
-    const visuais: Visual[] = ((s?.visualContainers ?? []) as any[]).map((v, i) => {
-      const cfg = typeof v?.config === "string" ? json<any>(new TextEncoder().encode(v.config), {}) : v?.config ?? {};
+    const visuais: Visual[] = ((s?.visualContainers ?? []) as any[]).flatMap((v, i): Visual[] => {
+      const cfg = typeof v?.config === "string" ? json<any>(new TextEncoder().encode(v.config), {}, true) : v?.config ?? {};
       const sv = cfg?.singleVisual ?? {};
+      if (cfg?.singleVisualGroup) return [];
+      if (!sv.visualType) throw new Error("Encontrei um visual sem definição legível. Salve novamente no Power BI.");
       const titulo = leTitulo(sv?.vcObjects ?? sv?.objects);
       const filtros = typeof v?.filters === "string" ? json<any[]>(new TextEncoder().encode(v.filters), []) : v?.filters ?? [];
-      return {
+      return [{
         id: cfg?.name || String(i),
         tipo: sv?.visualType || "desconhecido",
         x: Number(v?.x) || 0,
@@ -145,7 +154,8 @@ function lerLayoutAntigo(bytes: Uint8Array): Pagina[] {
         tituloProprio: titulo.proprio,
         tituloVisivel: titulo.visivel,
         temFiltroProprio: Array.isArray(filtros) && filtros.length > 0,
-      };
+        oculto: cfg?.singleVisual?.display?.mode === "hidden" || cfg?.visibility === 1,
+      }];
     });
     return {
       id: s?.name || s?.displayName || "",
@@ -178,10 +188,10 @@ function lerModelo(bytes: Uint8Array | undefined) {
     temTabelaDeDatas: false,
   };
   if (!bytes) return vazio;
-  const schema = json<any>(bytes, {});
+  const schema = json<any>(bytes, {}, true);
   const modelo = schema?.model ?? schema;
   const tabelas: any[] = modelo?.tables ?? [];
-  if (!tabelas.length) return vazio;
+  if (!Array.isArray(tabelas) || !tabelas.length) throw new Error("O modelo do .pbit não contém tabelas legíveis. Exporte um novo modelo no Power BI.");
 
   const texto = (e: any) => (Array.isArray(e) ? e.join("\n") : String(e ?? ""));
 
@@ -226,7 +236,17 @@ const INTERESSA = (nome: string) =>
   nome.startsWith("Report/CustomVisuals/");
 
 export function extrairRelatorio(arquivo: string, bytes: Uint8Array): Relatorio {
-  const zip = unzipSync(bytes, { filter: (f) => INTERESSA(f.name) });
+  if (!/\.(pbix|pbit)$/i.test(arquivo)) throw new Error("Escolha um arquivo .pbix ou .pbit.");
+  if (!bytes.length || bytes.length > LIMITE_ARQUIVO) throw new Error("Escolha um arquivo de até 300 MB. Para arquivos maiores, exporte como .pbit.");
+  let total = 0;
+  let entradas = 0;
+  const zip = unzipSync(bytes, { filter: (f) => {
+    if (++entradas > 20000) throw new Error("O arquivo contém definições demais para esta análise.");
+    if (!INTERESSA(f.name)) return false;
+    total += f.originalSize;
+    if (f.originalSize > 20 * 1024 * 1024 || total > 60 * 1024 * 1024) throw new Error("As definições descompactadas excedem o limite de leitura (60 MB). Divida o relatório em arquivos menores.");
+    return true;
+  } });
   const caminhos = Object.keys(zip);
 
   const temPBIR = caminhos.some((c) => c.startsWith("Report/definition/pages/"));
@@ -238,6 +258,9 @@ export function extrairRelatorio(arquivo: string, bytes: Uint8Array): Relatorio 
   }
 
   const paginas = temPBIR ? lerPBIR(zip) : temLayout ? lerLayoutAntigo(zip["Report/Layout"]) : [];
+  if (!paginas.length || !paginas.some((p) => p.visuais.length > 0)) throw new Error("Não encontrei páginas com visuais legíveis. Nenhuma nota foi atribuída.");
+  if (paginas.length > 100 || paginas.reduce((n, p) => n + p.visuais.length, 0) > 3000) throw new Error("Esta análise aceita até 100 páginas e 3.000 visuais. Divida o relatório para continuar.");
+  if (paginas.some(p => !Number.isFinite(p.largura) || !Number.isFinite(p.altura) || p.largura <= 0 || p.altura <= 0 || p.visuais.some(v => ![v.x,v.y,v.largura,v.altura].every(Number.isFinite)))) throw new Error("A geometria das páginas está inválida. Salve novamente o relatório.");
   const modelo = lerModelo(schema ? zip[schema] : undefined);
   const doDiagrama = tabelasDoDiagrama(zip["DiagramLayout"]);
 
@@ -251,5 +274,6 @@ export function extrairRelatorio(arquivo: string, bytes: Uint8Array): Relatorio 
     relacionamentos: modelo.relacionamentos,
     colunasCalculadas: modelo.colunasCalculadas,
     temTabelaDeDatas: modelo.temTabelaDeDatas,
+    modeloLido: !!schema && modelo.tabelas.length > 0,
   };
 }

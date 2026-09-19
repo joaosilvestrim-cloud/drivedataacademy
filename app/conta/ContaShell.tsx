@@ -57,6 +57,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
       { label: "Gravações", href: "/conta/gravacoes", icon: "gravacoes" },
       { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
+      { label: "Novidades", href: "/conta/novidades", icon: "challenge" },
       { label: "Biblioteca", href: "/conta/biblioteca", icon: "biblioteca" },
       { label: "Certificados", href: "/conta/certificados", icon: "cert" },
     ],

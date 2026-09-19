@@ -13,6 +13,7 @@
     "test:dataflow": "node scripts/test-dataflow.cjs",
     "test:community-medals": "node scripts/test-community-medals.cjs",
     "test:raiox": "tsx scripts/test-raiox.ts",
+    "test:liberacao-materiais": "tsx scripts/test-liberacao-materiais.ts",
     "test:forja": "tsx scripts/test-forja.ts",
     "test:arena": "tsx scripts/test-arena.ts",
     "test:caixapreta": "tsx scripts/test-caixapreta.ts",

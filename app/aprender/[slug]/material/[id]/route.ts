@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { canAccessCourse } from "@/lib/access";
 import { liberacaoDeMateriais } from "@/lib/carencia";
 import { BUCKET_MATERIAIS } from "@/lib/materiais";
+import { demoAtual } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ export async function GET(req: Request, { params }: { params: { slug: string; id
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.redirect(`${base}/entrar`);
+  if(await demoAtual(user.id)) return NextResponse.redirect(`${base}/conta/cursos?demo=1`);
 
   const admin = createAdminClient();
   const { data: m } = await admin
@@ -25,8 +27,10 @@ export async function GET(req: Request, { params }: { params: { slug: string; id
     .maybeSingle();
   if (!m || !m.published || !m.lesson_id) return voltar;
 
-  const { data: aula } = await admin.from("lessons").select("course_id").eq("id", m.lesson_id).maybeSingle();
+  const { data: aula } = await admin.from("lessons").select("course_id,module_id").eq("id", m.lesson_id).maybeSingle();
   if (!aula || !(await canAccessCourse(admin, user.id, aula.course_id))) return NextResponse.redirect(`${base}/matricula`);
+  const { data: modulo } = await admin.from("course_modules").select("available_at").eq("id",aula.module_id).eq("course_id",aula.course_id).maybeSingle();
+  if(!modulo || (modulo.available_at && (!Number.isFinite(Date.parse(modulo.available_at)) || Date.parse(modulo.available_at)>Date.now()))) return voltar;
 
   // Sete dias de assinatura antes do primeiro download. Quem tenta pelo
   // endereço direto volta para a biblioteca, que explica o prazo.

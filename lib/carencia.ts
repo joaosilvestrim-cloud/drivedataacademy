@@ -1,5 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { calcularCarencia, type Liberacao } from "./carencia-core";
+export { DIAS_CARENCIA, type Liberacao } from "./carencia-core";
 
 /* Carência dos materiais.
 
@@ -10,10 +12,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
    Quem entrou por matrícula do time, compra avulsa ou turma não passa pela
    carência: ali o acesso foi combinado de outro jeito. Administrador também
    espera, para o time ver a mesma tela que o aluno vê. */
-
-export const DIAS_CARENCIA = 7;
-
-export type Liberacao = { liberado: boolean; liberaEm: string | null };
 
 export async function liberacaoDeMateriais(
   admin: SupabaseClient,
@@ -38,10 +36,5 @@ export async function liberacaoDeMateriais(
     .eq("status", "active")
     .order("starts_at");
 
-  const agora = Date.now();
-  const ativa = (assinaturas ?? []).find((m: any) => !m.expires_at || Date.parse(m.expires_at) > agora);
-  if (!ativa) return { liberado: false, liberaEm: null };
-
-  const liberaEm = new Date(Date.parse(ativa.starts_at) + DIAS_CARENCIA * 864e5);
-  return { liberado: agora >= liberaEm.getTime(), liberaEm: liberaEm.toISOString() };
+  return calcularCarencia(assinaturas ?? [],false,Date.now());
 }

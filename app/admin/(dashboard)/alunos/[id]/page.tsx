@@ -42,6 +42,7 @@ export default async function AlunoDetail({ params }: { params: { id: string } }
       <Link href="/admin/alunos" className="text-xs text-slate-500 hover:text-white">← Alunos</Link>
       <h1 className="mt-1 font-display text-2xl font-bold text-white">{profile?.full_name || user.user_metadata?.full_name || "Aluno"}</h1>
       <p className="mt-1 text-sm text-slate-400">{user.email}</p>
+      <Link href="/admin/downloads" className="mt-3 inline-flex rounded-lg border border-brand-green/30 px-4 py-2 text-sm text-brand-green">Acompanhar liberação dos downloads →</Link>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         <div className="glass rounded-2xl border border-white/8 p-4"><p className="text-xs text-slate-500">Telefone</p><p className="mt-1 text-sm text-white">{profile?.phone || "—"}</p></div>

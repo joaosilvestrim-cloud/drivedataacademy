@@ -18,6 +18,7 @@ import { zipSync, strToU8 } from "fflate";
 import { extrairRelatorio } from "../lib/raiox/extrair";
 import { auditar } from "../lib/raiox/regras";
 import type { Laudo } from "../lib/raiox/tipos";
+import { validarLaudo, validarPlano, compararLaudos } from "../lib/raiox/historico";
 
 /* ------------------------------------------------------------------ fixtures */
 
@@ -176,9 +177,9 @@ console.log("\nRegras de design");
   ] }])), "visuais_sobrepostos");
   acusa("visuais fora de grade", laudoDe(pbix([{ nome: "Painel", visuais: [
     { tipo: "card", x: 3, y: 7, w: 100, h: 100, titulo: "a" },
-    { tipo: "card", x: 111, y: 7, w: 100, h: 100, titulo: "b" },
-    { tipo: "card", x: 219, y: 9, w: 100, h: 100, titulo: "c" },
-    { tipo: "card", x: 327, y: 11, w: 100, h: 100, titulo: "d" },
+    { tipo: "card", x: 111, y: 27, w: 100, h: 100, titulo: "b" },
+    { tipo: "card", x: 219, y: 49, w: 100, h: 100, titulo: "c" },
+    { tipo: "card", x: 327, y: 71, w: 100, h: 100, titulo: "d" },
   ] }])), "desalinhado");
   acusa("página fora de 16:9", laudoDe(pbix([{ nome: "Painel", largura: 900, altura: 1600, visuais: grade(2) }])), "fora_16_9");
   acusa("cinco filtros na página", laudoDe(pbix([{ nome: "Painel", visuais: Array.from({ length: 5 }, (_, i) => ({ tipo: "slicer", x: i * 200, y: 0, w: 180, h: 80, titulo: "f" })) }])), "muitos_slicers");
@@ -285,6 +286,36 @@ console.log("\nNota parcial no .pbix");
   const modelo = l.notas.find((n) => n.dimensao === "modelo");
   confere("modelo entra como parcial, sem valer nota", modelo?.completa === false);
   confere("DAX nem aparece sem o .pbit", !l.notas.some((n) => n.dimensao === "dax"));
+}
+
+console.log("\nRegressões da revisão 2.0");
+{
+  const recusa = (fn:()=>unknown) => { try {fn();return false;}catch{return true;} };
+  confere("Layout vazio não recebe nota 100",recusa(()=>laudoDe(zipSync({"Report/Layout":strToU8('{"sections":[]}')}))));
+  confere("Layout corrompido é recusado",recusa(()=>laudoDe(zipSync({"Report/Layout":strToU8('{quebrado')}))));
+  confere("visual sem definição é recusado",recusa(()=>laudoDe(zipSync({"Report/Layout":strToU8(JSON.stringify({sections:[{visualContainers:[{config:"{}"}]}]}))}))));
+  const pags=[{nome:"Resumo",visuais:grade(10)},{nome:"Detalhes",visuais:grade(16)}];
+  confere("ordem das páginas não altera a nota",laudoDe(pbix(pags)).nota===laudoDe(pbix([...pags].reverse())).nota);
+  naoAcusa("grade alinhada fora do múltiplo de quatro",laudoDe(pbix([{nome:"Resumo",visuais:grade(4).map(v=>({...v,x:v.x!+3,y:v.y!+7}))}])),"desalinhado");
+  acusa("visual com posição negativa",laudoDe(pbix([{nome:"Resumo",visuais:[{tipo:"card",x:-50,w:100,h:100}]}])),"fora_da_pagina");
+  const modelo={tables:[{name:"Fiscal",dataCategory:"Time"},{name:"Vendas"},{name:"Cliente"}],relationships:[]};
+  const semMedidas=laudoDe(pbit([{nome:"Resumo",visuais:grade(2)}],modelo),"exemplo.pbit");
+  confere("modelo sem medidas também entra na nota",semMedidas.notas.some(n=>n.dimensao==="modelo"&&n.completa));
+  naoAcusa("calendário marcado com nome Fiscal",semMedidas,"sem_tabela_datas");
+  function dax(expr:string){return laudoDe(pbit([{nome:"Resumo",visuais:grade(2)}],{tables:[{name:"Vendas",measures:[{name:"Teste",expression:expr,formatString:"0.00"}]}]}),"teste.pbit");}
+  naoAcusa("divisão por constante não nula",dax("[Receita] / 100"),"sem_divide");
+  naoAcusa("barra em texto não é divisão",dax('IF([Receita]>0,"Sim/Não","Outro")'),"sem_divide");
+  naoAcusa("barra em comentário é ignorada",dax('[Receita] /* / [Lucro] */'),"sem_divide");
+  acusa("DIVIDE não esconde outra divisão",dax("DIVIDE([Lucro],[Receita])+[A]/[B]"),"sem_divide");
+  acusa("divisão por zero é sinalizada",dax("[Receita]/0"),"sem_divide");
+  const l=laudoDe(pbix([{nome:"Resumo",visuais:grade(2)}]));
+  confere("contrato aceita laudo do motor",validarLaudo(l).nota===l.nota);
+  confere("servidor recusa nota adulterada",recusa(()=>validarLaudo({...l,nota:1})));
+  confere("servidor recusa plano alheio",recusa(()=>validarPlano({inexistente:"ajustado"},l)));
+  const registro={id:"a",criadoEm:new Date().toISOString(),projeto:"Projeto",assinatura:"abc",laudo:l,plano:{}};
+  confere("compara versões do mesmo projeto",!!compararLaudos(registro,{...registro,id:"b"}));
+  confere("não compara projetos diferentes",compararLaudos(registro,{...registro,id:"b",projeto:"Outro"})===null);
+  confere("não compara motores diferentes",compararLaudos(registro,{...registro,id:"b",laudo:{...l,versao:"1.0.0"}})===null);
 }
 
 /* Arquivos de verdade, se vierem por argumento. */

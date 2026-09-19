@@ -14,7 +14,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export type NomeFerramenta = { nome: string; desc: string };
 
 export const NOMES_PADRAO: Record<string, NomeFerramenta> = {
-  "raio-x": { nome: "Raio-X do Dashboard", desc: "Suba seu .pbix e receba a revisão que um consultor faria: o que está errado, por que importa e como arrumar. O arquivo não sai do seu navegador." },
+  "raio-x": { nome: "Raio-X do Dashboard", desc: "Analise seu .pbix ou .pbit, explore o mapa das páginas e transforme pontos de atenção em um plano de revisão. Compare versões do mesmo projeto, com leitura local do arquivo." },
   conciliacao: { nome: "O número não bate", desc: "O painel diz uma coisa, o sistema diz outra. Treine a investigação que resolve a cena mais comum da profissão: total, quebra por dimensão, linha." },
   "caixa-preta": { nome: "Caixa-Preta", desc: "Monte um modelo de linguagem no seu navegador e veja como a IA escolhe cada palavra. Token, probabilidade, temperatura e alucinação, ao vivo. Sem API." },
   arena: { nome: "Arena SQL", desc: "Desafios de SQL sobre uma base gerada só para você, com correção na hora. Quando erra, a Arena diz exatamente onde você tropeçou." },

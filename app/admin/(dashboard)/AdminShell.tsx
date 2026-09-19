@@ -40,6 +40,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Cursos", href: "/admin/cursos", icon: "courses" },
       { label: "Desafios", href: "/admin/desafios", icon: "courses" },
       { label: "Alunos", href: "/admin/alunos", icon: "students" },
+      { label: "Liberação de downloads", href: "/admin/downloads", icon: "materials" },
       { label: "Comunidade", href: "/admin/comunidade", icon: "community" },
       { label: "Comentários", href: "/admin/comentarios", icon: "blog" },
       { label: "Lives", href: "/admin/lives", icon: "live" },

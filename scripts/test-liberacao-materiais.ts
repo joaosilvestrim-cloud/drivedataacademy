@@ -1,0 +1,22 @@
+import assert from "node:assert/strict";
+import { calcularCarencia,agendaDeMateriais,type MaterialAgenda } from "../lib/carencia-core";
+const inicio=Date.parse("2026-09-01T12:00:00Z"),dia=86400000;
+const assinatura={status:"active",starts_at:new Date(inicio).toISOString(),expires_at:null};
+let testes=0;
+function testa(nome:string,fn:()=>void){fn();testes++;console.log(`ok ${nome}`);}
+const material:MaterialAgenda={id:"m",titulo:"Planilha",criadoEm:new Date(inicio).toISOString(),cursoId:"c",curso:"Curso",slug:"curso",subscriberPrice:0,accessMode:"normal",moduloEm:null};
+testa("aguarda até o último milissegundo",()=>assert.equal(calcularCarencia([assinatura],false,inicio+7*dia-1).liberado,false));
+testa("libera exatamente em sete dias",()=>assert.equal(calcularCarencia([assinatura],false,inicio+7*dia).liberado,true));
+testa("renovação não reinicia carência ativa",()=>assert.equal(calcularCarencia([{...assinatura,starts_at:new Date(inicio+6*dia).toISOString()},assinatura],false,inicio+7*dia).liberado,true));
+testa("assinatura vencida não concede acesso",()=>assert.equal(calcularCarencia([{...assinatura,expires_at:new Date(inicio+5*dia).toISOString()}],false,inicio+7*dia).liberado,false));
+testa("assinatura futura não concede acesso",()=>assert.equal(calcularCarencia([assinatura],false,inicio-1).liberado,false));
+testa("matrícula direta não tem carência",()=>assert.equal(calcularCarencia([],true,inicio).liberado,true));
+testa("agenda usa a mesma data do download",()=>assert.equal(agendaDeMateriais([material],[assinatura],[],inicio)[0].liberaEm,calcularCarencia([assinatura],false,inicio).liberaEm));
+testa("agenda só anuncia quando servidor confirma",()=>assert.equal(agendaDeMateriais([material],[assinatura],[],inicio+7*dia-1)[0].liberado,false));
+testa("módulo futuro prevalece sobre carência",()=>assert.equal(agendaDeMateriais([{...material,moduloEm:new Date(inicio+10*dia).toISOString()}],[assinatura],[],inicio+8*dia)[0].liberado,false));
+testa("data do módulo vale também para matrícula",()=>assert.equal(agendaDeMateriais([{...material,moduloEm:new Date(inicio+10*dia).toISOString()}],[],[{user_id:"u",course_id:"c",source:"compra",created_at:new Date(inicio).toISOString()}],inicio+8*dia)[0].liberado,false));
+testa("assinatura não libera curso pago",()=>assert.equal(agendaDeMateriais([{...material,subscriberPrice:100}],[assinatura],[],inicio+8*dia).length,0));
+testa("assinatura não libera curso de empresa",()=>assert.equal(agendaDeMateriais([{...material,accessMode:"in_company"}],[assinatura],[],inicio+8*dia).length,0));
+testa("matrícula free não concede acesso",()=>assert.equal(agendaDeMateriais([material],[],[{user_id:"u",course_id:"c",source:"free",created_at:new Date(inicio).toISOString()}],inicio+8*dia).length,0));
+testa("material novo recebe chave de aviso própria",()=>assert.notEqual(agendaDeMateriais([material],[assinatura],[],inicio+9*dia)[0].chave,agendaDeMateriais([{...material,id:"novo"}],[assinatura],[],inicio+9*dia)[0].chave));
+console.log(`${testes} verificações passaram.`);

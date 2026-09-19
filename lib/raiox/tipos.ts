@@ -27,6 +27,7 @@ export type Visual = {
   tituloProprio: boolean;
   tituloVisivel: boolean;
   temFiltroProprio: boolean;
+  oculto?: boolean;
 };
 
 export type Pagina = {
@@ -59,6 +60,7 @@ export type Relatorio = {
   colunasCalculadas: { tabela: string; nome: string; dax: string }[];
   /** Tabela marcada como tabela de datas no modelo. */
   temTabelaDeDatas: boolean;
+  modeloLido?: boolean;
 };
 
 export type Severidade = "alta" | "media" | "baixa";
@@ -76,6 +78,7 @@ export type Achado = {
   porque: string;
   /** O que fazer para resolver. */
   comoArrumar: string;
+  alvo?: { paginaId: string; visuais: string[] };
 };
 
 export type NotaDimensao = {
@@ -84,6 +87,7 @@ export type NotaDimensao = {
   achados: number;
   /** Falso quando o arquivo não trouxe matéria-prima suficiente para julgar. */
   completa: boolean;
+  motivo?: string;
 };
 
 export type Laudo = {
@@ -95,7 +99,19 @@ export type Laudo = {
   notas: NotaDimensao[];
   achados: Achado[];
   resumo: { paginas: number; visuais: number; tabelas: number; medidas: number };
+  versao?: string;
+  paginas?: PaginaMapa[];
 };
+
+export type PaginaMapa = Omit<Pagina, "visuais"> & {
+  visuais: Pick<Visual, "id" | "tipo" | "x" | "y" | "largura" | "altura" | "oculto">[];
+};
+export type EstadoRevisao = "pendente" | "revisando" | "ajustado";
+export type Plano = Record<string, EstadoRevisao>;
+export type LaudoSalvo = { id: string; criadoEm: string; projeto: string; assinatura: string; laudo: Laudo; plano: Plano };
+export const VERSAO_MOTOR = "2.0.0";
+export const LIMITE_ARQUIVO = 300 * 1024 * 1024;
+export const chaveAchado = (a: Achado) => `${a.regra}:${a.alvo?.paginaId || a.onde}`;
 
 export const NOME_DIMENSAO: Record<Dimensao, string> = {
   estrutura: "Estrutura",

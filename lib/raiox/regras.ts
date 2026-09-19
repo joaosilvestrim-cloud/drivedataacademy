@@ -1,5 +1,5 @@
 import type { Achado, Dimensao, Laudo, NotaDimensao, Pagina, Relatorio, Visual } from "./tipos";
-import { PESO, PESO_DIMENSAO } from "./tipos";
+import { PESO, PESO_DIMENSAO, VERSAO_MOTOR } from "./tipos";
 
 /* As regras do Raio-X.
 
@@ -44,7 +44,7 @@ const NOME_VISUAL: Record<string, string> = {
   azureMap: "mapa", funnel: "funil", gauge: "velocímetro", waterfallChart: "cascata",
   ribbonChart: "fita", decompositionTreeVisual: "árvore de decomposição", keyDriversVisual: "principais influenciadores",
 };
-const nomeDoVisual = (t: string) => NOME_VISUAL[t] || (t.startsWith("htmlContent") ? "visual HTML" : t === "desconhecido" ? "visual" : "visual customizado");
+export const nomeDoVisual = (t: string) => NOME_VISUAL[t] || (t.startsWith("htmlContent") ? "visual HTML" : t === "desconhecido" ? "visual" : "visual customizado");
 
 const NOME_GENERICO = /^(página|pagina|page|sheet|planilha|folha|tabela|table|query|consulta)\s*\d*$/i;
 const PARECE_CALENDARIO = /(calend|data|date|dim.?tempo|d.?tempo|time)/i;
@@ -75,19 +75,21 @@ function achado(
 
 function regrasDaPagina(p: Pagina): Achado[] {
   const saida: Achado[] = [];
+  const alvos: Record<string, string[]> = {};
   const emPagina = `Página "${p.nome}"`;
-  const comDados = p.visuais.filter((v) => VISUAL_DE_DADOS.has(v.tipo));
-  const pesados = p.visuais.filter((v) => !DECORATIVO.has(v.tipo) && v.tipo !== "slicer");
+  const visiveis = p.visuais.filter(v => !v.oculto);
+  const comDados = visiveis.filter((v) => VISUAL_DE_DADOS.has(v.tipo));
+  const pesados = visiveis.filter((v) => !DECORATIVO.has(v.tipo) && v.tipo !== "slicer");
 
   if (pesados.length > 14) {
     saida.push(achado("pagina_lotada", "design", "alta",
       `${pesados.length} visuais de dados em uma página só`, emPagina,
-      "Cada visual é uma consulta ao modelo. Acima de doze, a página demora a abrir e o leitor não sabe para onde olhar primeiro.",
+      "Muitos visuais podem disputar a atenção e aumentar o trabalho de consulta. O tempo real precisa ser medido no Analisador de desempenho do Power BI.",
       "Quebre em duas páginas ou use drill-through: uma página de visão geral e outra de detalhe."));
   } else if (pesados.length > 9) {
     saida.push(achado("pagina_lotada", "design", "media",
       `${pesados.length} visuais de dados nesta página`, emPagina,
-      "Oito visuais já é o limite em que o leitor consegue ler a página em um golpe de vista.",
+      "Esta é uma indicação de densidade, não um limite universal. Confira a hierarquia de leitura e o desempenho real da página.",
       "Junte o que responde à mesma pergunta e mande o resto para uma página de detalhe."));
   }
 
@@ -96,6 +98,7 @@ function regrasDaPagina(p: Pagina): Achado[] {
     for (let j = i + 1; j < pesados.length; j++) {
       if (sobreposicao(pesados[i], pesados[j]) > 0.35) {
         paresSobrepostos.push(`${nomeDoVisual(pesados[i].tipo)} sobre ${nomeDoVisual(pesados[j].tipo)}`);
+        alvos.visuais_sobrepostos = [...new Set([...(alvos.visuais_sobrepostos || []), pesados[i].id, pesados[j].id])];
       }
     }
   }
@@ -103,11 +106,12 @@ function regrasDaPagina(p: Pagina): Achado[] {
     saida.push(achado("visuais_sobrepostos", "design", "media",
       `${paresSobrepostos.length} ${paresSobrepostos.length === 1 ? "par de visuais sobrepostos" : "pares de visuais sobrepostos"}`,
       `${emPagina}: ${paresSobrepostos.slice(0, 3).join(", ")}`,
-      "Visual em cima de visual costuma ser sobra de edição. Some no publicado, atrapalha o foco e ainda consulta o modelo à toa.",
-      "Abra o painel de seleção do Power BI e confira a ordem das camadas. Apague o que virou sobra."));
+      "As áreas se cruzam. Indicadores ou camadas podem tornar essa sobreposição intencional; a geometria sozinha não confirma um erro.",
+      "Confira a visibilidade no painel de seleção e nos indicadores. Se ambos aparecerem juntos sem intenção, reposicione os elementos."));
   }
 
-  const fora = p.visuais.filter((v) => v.x + v.largura > p.largura + 1 || v.y + v.altura > p.altura + 1);
+  const fora = visiveis.filter((v) => v.x < -1 || v.y < -1 || v.x + v.largura > p.largura + 1 || v.y + v.altura > p.altura + 1);
+  alvos.fora_da_pagina = fora.map(v => v.id);
   if (fora.length) {
     saida.push(achado("fora_da_pagina", "design", "alta",
       `${fora.length} ${fora.length === 1 ? "visual passa" : "visuais passam"} da borda da página`, emPagina,
@@ -116,7 +120,8 @@ function regrasDaPagina(p: Pagina): Achado[] {
   }
 
   if (pesados.length >= 4) {
-    const desalinhados = pesados.filter((v) => v.x % 4 !== 0 || v.y % 4 !== 0).length;
+    // Mede proximidade entre arestas: uma grade deslocada por 3 px pode estar perfeitamente alinhada.
+    const desalinhados = pesados.filter(v => !pesados.some(o => o.id !== v.id && Math.abs(o.x - v.x) <= 2) && !pesados.some(o => o.id !== v.id && Math.abs(o.y - v.y) <= 2)).length;
     if (desalinhados / pesados.length > 0.5) {
       saida.push(achado("desalinhado", "design", "baixa",
         `${desalinhados} de ${pesados.length} visuais fora de uma grade`, emPagina,
@@ -145,7 +150,7 @@ function regrasDaPagina(p: Pagina): Achado[] {
     saida.push(achado("titulo_automatico", "clareza", "media",
       `${semTitulo.length} de ${comDados.length} visuais com o título automático`, emPagina,
       "O título automático descreve o cálculo (\"Soma de Valor por Mês\"), não a pergunta que o visual responde.",
-      "Troque por um título que afirme algo: \"Receita cresce no segundo semestre\"."));
+      "Prefira um título que descreva a pergunta, como \"Receita mensal\". Se afirmar uma tendência, use um título dinâmico que acompanhe os filtros."));
   }
 
   const escondidos = comDados.filter((v) => !v.tituloVisivel && !v.tituloProprio);
@@ -157,7 +162,8 @@ function regrasDaPagina(p: Pagina): Achado[] {
   }
 
   const contagem = new Map<string, number>();
-  for (const v of p.visuais) for (const c of v.campos) if (c.medida) contagem.set(c.ref, (contagem.get(c.ref) || 0) + 1);
+  // Só cartões sem quebra por dimensão: a mesma medida por mês e por produto é informativa.
+  for (const v of visiveis.filter(v => ["card", "cardVisual", "multiRowCard"].includes(v.tipo) && !v.temFiltroProprio && v.campos.every(c => c.medida))) for (const c of new Map(v.campos.filter(c => c.medida).map(c => [c.ref,c])).values()) contagem.set(c.ref, (contagem.get(c.ref) || 0) + 1);
   const repetida = [...contagem.entries()].filter(([, n]) => n >= 3);
   if (repetida.length) {
     saida.push(achado("medida_repetida", "clareza", "baixa",
@@ -190,16 +196,22 @@ function regrasDaPagina(p: Pagina): Achado[] {
       "Deixe dois ou três filtros na página e mande o resto para o painel de filtros lateral."));
   }
 
-  return saida;
+  alvos.titulo_automatico = semTitulo.map(v => v.id);
+  alvos.titulo_escondido = escondidos.map(v => v.id);
+  alvos.tabela_larga = tabelasLargas.map(v => v.id);
+  alvos.muitas_pizzas = pizzas.map(v => v.id);
+  alvos.pagina_lotada = pesados.map(v => v.id);
+  alvos.muitos_slicers = visiveis.filter(v => v.tipo === "slicer").map(v => v.id);
+  return saida.map(a => ({ ...a, alvo: { paginaId: p.id, visuais: alvos[a.regra] || [] } }));
 }
 
 function regrasDoModelo(r: Relatorio): Achado[] {
   const saida: Achado[] = [];
 
-  if (r.tabelas.length >= 3 && !r.tabelas.some((t) => PARECE_CALENDARIO.test(t))) {
+  if (r.formato === "pbit" && r.tabelas.length >= 3 && !r.temTabelaDeDatas && !r.tabelas.some((t) => PARECE_CALENDARIO.test(t))) {
     saida.push(achado("sem_tabela_datas", "modelo", "alta",
       "Nenhuma tabela de calendário no modelo", `${r.tabelas.length} tabelas`,
-      "Sem tabela de datas própria, a inteligência de tempo do DAX não funciona direito e comparações com o ano passado saem erradas.",
+      "Não identifiquei uma tabela marcada como datas nem um nome típico. Se houver análises temporais, confira a estratégia de calendário do modelo.",
       "Crie uma tabela de calendário, relacione com as datas dos fatos e marque como tabela de datas."));
   }
 
@@ -212,22 +224,22 @@ function regrasDoModelo(r: Relatorio): Achado[] {
       "Renomeie pelo que a tabela é: dCliente, dCalendario, fVendas."));
   }
 
-  const bidirecionais = r.relacionamentos.filter((x) => x.cruzado === "bothDirections");
+  const bidirecionais = r.relacionamentos.filter((x) => x.ativo && x.cruzado === "bothDirections" && x.cardinalidade !== "one-one");
   if (bidirecionais.length) {
     saida.push(achado("bidirecional", "modelo", "alta",
       `${bidirecionais.length} ${bidirecionais.length === 1 ? "relacionamento bidirecional" : "relacionamentos bidirecionais"}`,
       bidirecionais.slice(0, 3).map((x) => `${x.de} ↔ ${x.para}`).join(", "),
-      "Filtro nos dois sentidos abre caminho ambíguo entre as tabelas, derruba a performance e produz número que muda sem explicação.",
-      "Deixe o filtro em um sentido só e resolva o caso específico com CROSSFILTER dentro da medida que precisa."));
+      "Filtros nos dois sentidos merecem revisão de ambiguidade e desempenho. Há usos válidos, como pontes entre dimensões; esta regra não comprova erro nos resultados.",
+      "Confira os caminhos de filtro e a finalidade da relação. Quando adequado, use filtro em um sentido e CROSSFILTER na medida que precisa."));
   }
 
-  const muitosParaMuitos = r.relacionamentos.filter((x) => x.cardinalidade.startsWith("many-many"));
+  const muitosParaMuitos = r.relacionamentos.filter((x) => x.ativo && x.cardinalidade.startsWith("many-many"));
   if (muitosParaMuitos.length) {
     saida.push(achado("muitos_para_muitos", "modelo", "alta",
       `${muitosParaMuitos.length} ${muitosParaMuitos.length === 1 ? "relacionamento muitos para muitos" : "relacionamentos muitos para muitos"}`,
       muitosParaMuitos.slice(0, 3).map((x) => `${x.de} ↔ ${x.para}`).join(", "),
-      "Muitos para muitos quase sempre é sintoma de dimensão faltando, e o resultado fica difícil de auditar.",
-      "Crie a tabela dimensão que falta, com a chave única, e ligue as duas pontas nela."));
+      "A cardinalidade exige atenção à granularidade e à propagação dos filtros. Pode ser intencional; valide totais e linhas de detalhe.",
+      "Confira a chave e o grão de cada tabela. Avalie uma dimensão com chave única ou uma ponte, conforme o modelo."));
   }
 
   if (r.colunasCalculadas.length > 5) {
@@ -241,26 +253,42 @@ function regrasDoModelo(r: Relatorio): Achado[] {
   return saida;
 }
 
+// Remove strings e comentários antes de inspecionar operadores. Não executa DAX.
+export function codigoDax(dax: string) {
+  return dax.replace(/"(?:[^"]|"")*"|\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g, " ");
+}
+
+export function divisaoARevisar(dax: string) {
+  const codigo = codigoDax(dax);
+  for (let i = 0; i < codigo.length; i++) {
+    if (codigo[i] !== "/") continue;
+    const depois = codigo.slice(i + 1).trimStart();
+    const constante = depois.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)(?=\s|[),+*/-]|$)/i);
+    if (!constante || Number(constante[1]) === 0) return true;
+  }
+  return false;
+}
+
 function regrasDoDax(r: Relatorio): Achado[] {
   const saida: Achado[] = [];
   if (!r.medidas.length) return saida;
 
-  const comFilterEmCalculate = r.medidas.filter((m) => /CALCULATE\s*\(/i.test(m.dax) && /FILTER\s*\(\s*'?[A-Za-zÀ-ú]/i.test(m.dax));
+  const comFilterEmCalculate = r.medidas.filter((m) => /CALCULATE\s*\(/i.test(codigoDax(m.dax)) && /FILTER\s*\(\s*(?:'[^']+'|[A-Za-zÀ-ú][\wÀ-ú]*)\s*,/i.test(codigoDax(m.dax)));
   if (comFilterEmCalculate.length) {
     saida.push(achado("filter_em_calculate", "dax", "media",
       `${comFilterEmCalculate.length} ${comFilterEmCalculate.length === 1 ? "medida usa" : "medidas usam"} FILTER dentro de CALCULATE`,
       comFilterEmCalculate.slice(0, 3).map((m) => `[${m.nome}]`).join(", "),
-      "FILTER sobre a tabela inteira varre linha a linha. Com milhões de linhas, é a diferença entre instantâneo e cinco segundos.",
+      "FILTER sobre a tabela inteira pode exigir mais trabalho que um filtro de coluna. O impacto depende da expressão e deve ser medido no seu modelo.",
       "Quando o filtro for simples, escreva a condição direto no CALCULATE. Se precisar do FILTER, aplique sobre a coluna e não sobre a tabela."));
   }
 
-  const semDivide = r.medidas.filter((m) => /[^/]\/[^/]/.test(m.dax) && !/DIVIDE\s*\(/i.test(m.dax));
+  const semDivide = r.medidas.filter((m) => divisaoARevisar(m.dax));
   if (semDivide.length) {
     saida.push(achado("sem_divide", "dax", "media",
       `${semDivide.length} ${semDivide.length === 1 ? "medida divide" : "medidas dividem"} com a barra`,
       semDivide.slice(0, 3).map((m) => `[${m.nome}]`).join(", "),
-      "Divisão por zero no meio de um painel vira erro na cara do usuário, e a barra não trata isso.",
-      "Use DIVIDE(numerador, denominador), que devolve vazio em vez de erro e ainda é mais rápido."));
+      "Há divisão com denominador que não reconheci como constante diferente de zero. Confira se ele pode ficar vazio ou zerado no contexto dos filtros.",
+      "Quando o denominador puder ser zero ou vazio, use DIVIDE(numerador, denominador). Divisão por constante não nula pode usar a barra."));
   }
 
   const semFormato = r.medidas.filter((m) => !m.formato);
@@ -285,6 +313,7 @@ function regrasDoDax(r: Relatorio): Achado[] {
 }
 
 export function auditar(r: Relatorio): Laudo {
+  if (!r.paginas.length || !r.paginas.some(p => p.visuais.length)) throw new Error("Não há páginas com visuais legíveis para avaliar. Nenhuma nota foi atribuída.");
   const achados: Achado[] = [
     ...r.paginas.flatMap(regrasDaPagina),
     ...regrasDoModelo(r),
@@ -294,13 +323,13 @@ export function auditar(r: Relatorio): Laudo {
   if (r.temVisualCustomizado) {
     achados.push(achado("visual_customizado", "estrutura", "media",
       "O relatório usa visual customizado", "Pasta CustomVisuals dentro do arquivo",
-      "Visual de terceiro pode não estar liberado no ambiente da empresa e costuma travar publicação e exportação.",
+      "Confira as políticas da organização e a certificação. A presença de visual customizado, por si só, não comprova problema.",
       "Confirme se o visual é certificado. Se não for, veja se o nativo resolve antes de depender dele."));
   }
 
   // Dimensões sem matéria-prima não entram na conta: um .pbix não tem modelo,
   // e dar nota zero em DAX por isso seria mentira.
-  const completo = r.formato === "pbit" && r.medidas.length > 0;
+  const completo = r.modeloLido ?? (r.formato === "pbit" && r.tabelas.length > 0);
   const temModelo = r.tabelas.length > 0;
   const dimensoes: Dimensao[] = ["estrutura", "design", "clareza", ...(temModelo ? (["modelo"] as Dimensao[]) : []), ...(completo ? (["dax"] as Dimensao[]) : [])];
 
@@ -321,13 +350,13 @@ export function auditar(r: Relatorio): Laudo {
     let perda = 0;
     for (const lista of porRegra.values()) {
       const fator = Math.min(2, 1 + (lista.length - 1) / 3);
-      perda += PESO[lista[0].severidade] * fator;
+      perda += Math.max(...lista.map(a => PESO[a.severidade])) * fator;
     }
     /* Modelo e DAX só são julgados por inteiro quando o arquivo é .pbit. No
        .pbix dá para ver o nome das tabelas pelo diagrama, e mais nada: dar 100
        por falta de evidência seria elogio que o aluno não ganhou. */
-    const completa = d === "modelo" || d === "dax" ? completo : true;
-    return { dimensao: d, nota: Math.round(100 * Math.exp(-perda / 85)), achados: meus.length, completa };
+    const completa = d === "modelo" ? completo : d === "dax" ? completo && r.medidas.length > 0 : true;
+    return { dimensao: d, nota: Math.round(100 * Math.exp(-perda / 85)), achados: meus.length, completa, ...(!completa ? { motivo: d === "dax" && completo ? "Sem medidas explícitas" : "Exporte como .pbit" } : {}) };
   });
 
   /* A nota geral não é média simples, por dois motivos.
@@ -348,6 +377,8 @@ export function auditar(r: Relatorio): Laudo {
 
   return {
     arquivo: r.arquivo,
+    versao: VERSAO_MOTOR,
+    paginas: r.paginas.map(p => ({ ...p, visuais: p.visuais.map(({ id, tipo, x, y, largura, altura, oculto }) => ({ id, tipo, x, y, largura, altura, oculto })) })),
     formato: r.formato,
     parcial: !completo,
     nota,
