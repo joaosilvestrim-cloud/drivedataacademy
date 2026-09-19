@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { acessoDoEndereco } from "@/lib/uso";
+import { acessoDoEndereco, ehAreaLogada } from "@/lib/uso";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,8 +19,14 @@ const JANELA_MIN = 30;
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => null);
-    const acesso = acessoDoEndereco(typeof body?.pathname === "string" ? body.pathname : "");
-    if (!acesso) return new NextResponse(null, { status: 204 });
+    const caminho = typeof body?.pathname === "string" ? body.pathname : "";
+    const acesso = acessoDoEndereco(caminho);
+    // Toda tela da área logada vale presença; ferramenta e curso contam em dobro: presença e uso.
+    const registros = [
+      ...(ehAreaLogada(caminho) || acesso ? [{ tipo: "sessao" as const, chave: "portal" }] : []),
+      ...(acesso ? [acesso] : []),
+    ];
+    if (!registros.length) return new NextResponse(null, { status: 204 });
 
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -28,16 +34,18 @@ export async function POST(req: Request) {
 
     const admin = createAdminClient();
     const desde = new Date(Date.now() - JANELA_MIN * 60_000).toISOString();
-    const { data: recente } = await admin
-      .from("access_events")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("tipo", acesso.tipo)
-      .eq("chave", acesso.chave)
-      .gte("created_at", desde)
-      .limit(1)
-      .maybeSingle();
-    if (!recente) await admin.from("access_events").insert({ user_id: user.id, tipo: acesso.tipo, chave: acesso.chave });
+    for (const r of registros) {
+      const { data: recente } = await admin
+        .from("access_events")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("tipo", r.tipo)
+        .eq("chave", r.chave)
+        .gte("created_at", desde)
+        .limit(1)
+        .maybeSingle();
+      if (!recente) await admin.from("access_events").insert({ user_id: user.id, tipo: r.tipo, chave: r.chave });
+    }
   } catch {
     // Silêncio de propósito: ver comentário acima.
   }

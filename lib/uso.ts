@@ -7,7 +7,7 @@
    Só é contado o que tem dono logado. Página pública e demonstração ficam de fora:
    a pergunta do painel é o que o aluno usa, não o que o visitante espia. */
 
-export type TipoAcesso = "ferramenta" | "curso";
+export type TipoAcesso = "ferramenta" | "curso" | "sessao";
 
 export const FERRAMENTAS: { chave: string; nome: string; prefixos: string[] }[] = [
   { chave: "raio-x", nome: "Raio-X do Dashboard", prefixos: ["/conta/ferramentas/raio-x"] },
@@ -38,3 +38,13 @@ export function acessoDoEndereco(pathname: string): { tipo: TipoAcesso; chave: s
 }
 
 export const CHAVE_VALIDA = /^[a-z0-9-]{1,80}$/;
+
+/* Área logada: qualquer tela aqui conta como "o aluno esteve na plataforma".
+   É o que alimenta dias de acesso, sessões e horário de uso no analytics. */
+const AREA_LOGADA = [/^\/conta(\/|$)/, /^\/aprender\//, /^\/ferramenta(\/|$)/, /^\/universo(\/|$)/, /^\/dataflow-lab(\/|$)/, /^\/decision-lab(\/|$)/];
+
+export function ehAreaLogada(pathname: string): boolean {
+  const p = (pathname || "").split("?")[0];
+  if (FORA.some((r) => r.test(p))) return false;
+  return AREA_LOGADA.some((r) => r.test(p));
+}

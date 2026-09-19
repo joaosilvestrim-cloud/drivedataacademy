@@ -31,12 +31,43 @@ export default function PandaPlayer({
   const watched = useRef(0);
   const lastT = useRef<number | null>(null);
   const frame = useRef<HTMLIFrameElement>(null);
+  // Retenção: trechos de 5% vistos, tempo assistido desde o último envio e até onde chegou.
+  const buckets = useRef<string[]>(Array(20).fill("0"));
+  const pendente = useRef(0);
+  const maxPos = useRef(0);
+  const duracao = useRef(0);
+  const novaSessao = useRef(true);
   const src = resolveSrc(videoId, host);
 
   useEffect(() => {
     marked.current = false;
     watched.current = 0;
     lastT.current = null;
+    buckets.current = Array(20).fill("0");
+    pendente.current = 0;
+    maxPos.current = 0;
+    duracao.current = 0;
+    novaSessao.current = true;
+
+    /* Envia o que foi assistido. Sai a cada 20s enquanto o vídeo roda e uma
+       última vez quando o aluno troca de aula ou fecha a aba (sendBeacon, que
+       o navegador entrega mesmo com a página saindo). */
+    function enviar(saindo = false) {
+      if (!duracao.current || (!pendente.current && !buckets.current.includes("1"))) return;
+      const corpo = JSON.stringify({
+        lessonId, courseId, duration: duracao.current, watched: pendente.current,
+        maxPos: maxPos.current, buckets: buckets.current.join(""), nova: novaSessao.current,
+      });
+      pendente.current = 0;
+      novaSessao.current = false;
+      try {
+        if (saindo && navigator.sendBeacon) navigator.sendBeacon("/api/video-progresso", new Blob([corpo], { type: "application/json" }));
+        else fetch("/api/video-progresso", { method: "POST", body: corpo, headers: { "Content-Type": "application/json" }, keepalive: true }).catch(() => {});
+      } catch {}
+    }
+    const intervalo = window.setInterval(() => enviar(false), 20000);
+    const aoSair = () => enviar(true);
+    window.addEventListener("pagehide", aoSair);
 
     function done(pct: number) {
       if (marked.current) return;
@@ -58,14 +89,23 @@ export default function PandaPlayer({
         // soma só o tempo assistido de fato (evita "pular pro fim")
         if (lastT.current != null && ct > lastT.current && ct - lastT.current < 1.5) {
           watched.current += ct - lastT.current;
+          pendente.current += ct - lastT.current;
+          buckets.current[Math.min(19, Math.floor((ct / dur) * 20))] = "1";
         }
+        duracao.current = dur;
+        maxPos.current = Math.max(maxPos.current, ct);
         lastT.current = ct;
         if (watched.current / dur >= 0.9) done((watched.current / dur) * 100);
       }
     }
 
     window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
+    return () => {
+      window.removeEventListener("message", onMessage);
+      window.removeEventListener("pagehide", aoSair);
+      window.clearInterval(intervalo);
+      enviar(true);
+    };
   }, [lessonId, courseId, slug, src]);
 
   if (!src) {

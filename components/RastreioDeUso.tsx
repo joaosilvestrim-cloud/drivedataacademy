@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { acessoDoEndereco } from "@/lib/uso";
+import { acessoDoEndereco, ehAreaLogada } from "@/lib/uso";
 
 /* Avisa o servidor quando o aluno abre uma ferramenta ou um curso.
 
@@ -13,7 +13,7 @@ export default function RastreioDeUso() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!pathname || !acessoDoEndereco(pathname)) return;
+    if (!pathname || (!acessoDoEndereco(pathname) && !ehAreaLogada(pathname))) return;
     const corpo = JSON.stringify({ pathname });
     try {
       if (navigator.sendBeacon) navigator.sendBeacon("/api/acesso", new Blob([corpo], { type: "application/json" }));
