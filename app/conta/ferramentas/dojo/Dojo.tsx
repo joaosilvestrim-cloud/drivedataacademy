@@ -71,7 +71,7 @@ export default function Dojo({ semente }: { semente: number }) {
   }
 
   function conferir() {
-    const r = corrigir(desafio, base, { valor, formula });
+    const r = corrigir(desafio, base, { valor, formula }, tr);
     setVeredito(r);
     if (r.acertou) {
       setResolvidos((antes) => {
@@ -166,7 +166,7 @@ export default function Dojo({ semente }: { semente: number }) {
                   onClick={() => setAcendeRecorte((v) => !v)}
                   className={`rounded-lg border px-2.5 py-1 text-[0.7rem] transition-colors ${acendeRecorte ? "border-brand-green/50 text-brand-green" : "border-white/10 text-slate-400 hover:text-white"}`}
                 >
-                  {acendeRecorte ? "Apagar destaque" : `Acender ${desafio.recorte.rotulo}`}
+                  {acendeRecorte ? tr("Apagar destaque") : `${tr("Acender")} ${tr(desafio.recorte.rotulo)}`}
                 </button>
               )}
               <button onClick={copiarBase} className="rounded-lg border border-white/10 px-2.5 py-1 text-[0.7rem] text-slate-300 transition-colors hover:border-brand-green/50 hover:text-white">
@@ -207,8 +207,13 @@ export default function Dojo({ semente }: { semente: number }) {
             </table>
           </div>
           <p className="mt-2 text-xs text-slate-500">
-            A letra ao lado do cabeçalho é a coluna no Excel; a linha 1 é o cabeçalho, então os dados começam na 2.
-            {desafio.recorte && acendeRecorte && <span className="text-brand-green"> Aceso: {desafio.recorte.rotulo}, {base.vendas.filter(desafio.recorte.linha).length} linhas.</span>}
+            {tr("A letra ao lado do cabeçalho é a coluna no Excel; a linha 1 é o cabeçalho, então os dados começam na 2.")}
+            {desafio.recorte && acendeRecorte && (
+              <span className="text-brand-green">
+                {" "}
+                {tr("Aceso:")} {tr(desafio.recorte.rotulo)}, {base.vendas.filter(desafio.recorte.linha).length} {tr("linhas.")}
+              </span>
+            )}
           </p>
         </div>
 
@@ -225,8 +230,8 @@ export default function Dojo({ semente }: { semente: number }) {
               {resolvidos[trilha].includes(desafio.id) && <span className="text-[0.65rem] font-semibold text-brand-green">{tr("resolvido")}</span>}
             </div>
 
-            <h2 className="mt-2 font-display text-xl font-bold text-white">{desafio.titulo}</h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300">{desafio.enunciado}</p>
+            <h2 className="mt-2 font-display text-xl font-bold text-white">{tr(desafio.titulo)}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">{tr(desafio.enunciado)}</p>
 
             <div className="mt-4 flex flex-col gap-3">
               <div>
@@ -274,7 +279,7 @@ export default function Dojo({ semente }: { semente: number }) {
               </button>
             </div>
 
-            {verDica && <p className="mt-3 rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2 text-sm text-slate-300">{desafio.dica}</p>}
+            {verDica && <p className="mt-3 rounded-xl border border-white/8 bg-white/[0.03] px-3 py-2 text-sm text-slate-300">{tr(desafio.dica)}</p>}
           </div>
 
           {veredito && (
@@ -299,7 +304,7 @@ export default function Dojo({ semente }: { semente: number }) {
               )}
 
               {veredito.acertou ? (
-                <p className="mt-3 text-sm leading-relaxed text-slate-300">{desafio.porque}</p>
+                <p className="mt-3 text-sm leading-relaxed text-slate-300">{tr(desafio.porque)}</p>
               ) : (
                 <button onClick={() => setVerGabarito(true)} className="mt-3 text-sm text-slate-400 underline underline-offset-4 hover:text-white">
                   {tr("Ver a resposta e a explicação")}
@@ -310,7 +315,7 @@ export default function Dojo({ semente }: { semente: number }) {
                 <div className="mt-3">
                   <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Um jeito certo de escrever")}</p>
                   <pre className="mt-1 overflow-x-auto rounded-xl border border-white/10 bg-[#0b1020] p-3 text-[0.78rem] leading-relaxed text-slate-200"><code>{desafio.gabarito}</code></pre>
-                  {!veredito.acertou && <p className="mt-2 text-sm leading-relaxed text-slate-300">{desafio.porque}</p>}
+                  {!veredito.acertou && <p className="mt-2 text-sm leading-relaxed text-slate-300">{tr(desafio.porque)}</p>}
                 </div>
               )}
             </div>

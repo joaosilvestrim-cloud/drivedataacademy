@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,8 +28,9 @@ const GREETING = "Oi! Sou o assistente da DriveData. Posso ajudar com cursos, ce
 const SUGGESTIONS = ["Onde fica meu certificado?", "Em qual curso eu estou?", "Como ganho pontos na comunidade?"];
 
 export default function AssistantButton() {
+  const tr = usarTraducao();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: GREETING }]);
+  const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: tr(GREETING) }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [escalated, setEscalated] = useState(false);
@@ -105,11 +108,11 @@ export default function AssistantButton() {
         setEscalated(true);
         setMessages((m) => [
           ...m,
-          { role: "assistant", content: "Acompanhe o atendimento por aqui:", link: { href: `/conta/ajuda/${data.ticketId}`, label: "Ver meu chamado" } },
+          { role: "assistant", content: tr("Acompanhe o atendimento por aqui:"), link: { href: `/conta/ajuda/${data.ticketId}`, label: "Ver meu chamado" } },
         ]);
       }
     } catch {
-      setMessages((m) => [...m, { role: "assistant", content: "Tive um problema de conexão. Tente de novo em instantes." }]);
+      setMessages((m) => [...m, { role: "assistant", content: tr("Tive um problema de conexão. Tente de novo em instantes.") }]);
     } finally {
       setLoading(false);
     }
@@ -126,7 +129,7 @@ export default function AssistantButton() {
 
   async function talkToTeam() {
     if (loading || escalated) return;
-    const next = [...messages, { role: "user" as const, content: "Quero falar com o time." }];
+    const next = [...messages, { role: "user" as const, content: tr("Quero falar com o time.") }];
     setMessages(next);
     await callApi(next, { forceEscalate: true });
   }
@@ -149,10 +152,10 @@ export default function AssistantButton() {
             <div className="relative flex items-center gap-3">
               <Mascot className="h-12 w-12 animate-float drop-shadow" />
               <div className="flex-1">
-                <p className="font-display text-sm font-bold text-white">Assistente DriveData</p>
-                <p className="flex items-center gap-1.5 text-xs text-slate-200"><span className="h-1.5 w-1.5 rounded-full bg-brand-green animate-pulse" /> Online agora</p>
+                <p className="font-display text-sm font-bold text-white">{tr("Assistente DriveData")}</p>
+                <p className="flex items-center gap-1.5 text-xs text-slate-200"><span className="h-1.5 w-1.5 rounded-full bg-brand-green animate-pulse" /> {tr("Online agora")}</p>
               </div>
-              <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg text-slate-300 transition-colors hover:bg-white/10 hover:text-white">✕</button>
+              <button onClick={() => setOpen(false)} aria-label={tr("Fechar")} className="grid h-8 w-8 place-items-center rounded-lg text-slate-300 transition-colors hover:bg-white/10 hover:text-white">✕</button>
             </div>
           </div>
 
@@ -205,15 +208,15 @@ export default function AssistantButton() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKey}
                 rows={1}
-                placeholder="Escreva sua mensagem..."
+                placeholder={tr("Escreva sua mensagem...")}
                 className="max-h-24 flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
               />
-              <button onClick={() => sendText(input)} disabled={loading || !input.trim()} aria-label="Enviar" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
+              <button onClick={() => sendText(input)} disabled={loading || !input.trim()} aria-label={tr("Enviar")} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             </div>
             <div className="mt-2 flex items-center justify-between px-1">
-              <span className="text-[0.65rem] text-slate-500">IA · pode conter imprecisões</span>
+              <span className="text-[0.65rem] text-slate-500">{tr("IA · pode conter imprecisões")}</span>
               <button onClick={talkToTeam} disabled={loading || escalated} className="text-[0.72rem] font-medium text-brand-teal hover:underline disabled:opacity-50">
                 {escalated ? "Time acionado ✓" : "Falar com uma pessoa"}
               </button>
@@ -226,23 +229,23 @@ export default function AssistantButton() {
       {showHint && !open && !hintDismissed && balao && (
         <div className="absolute bottom-3 right-[88px] w-64 max-w-[calc(100vw-120px)] animate-float" role="status" aria-live="polite">
           <div className="relative rounded-2xl border border-white/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
-            <button onClick={calar} aria-label="Não mostrar mais balões nesta sessão" title="Não mostrar mais nesta sessão" className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
+            <button onClick={calar} aria-label={tr("Não mostrar mais balões nesta sessão")} title={tr("Não mostrar mais nesta sessão")} className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
 
             {balao.tipo === "ajuda" && (
               <button onClick={openChat} className="block pr-4 text-left">
-                <p className="text-sm font-semibold text-white">Precisa de ajuda?</p>
-                <p className="mt-0.5 text-xs text-slate-300">Fale comigo, respondo na hora.</p>
+                <p className="text-sm font-semibold text-white">{tr("Precisa de ajuda?")}</p>
+                <p className="mt-0.5 text-xs text-slate-300">{tr("Fale comigo, respondo na hora.")}</p>
               </button>
             )}
 
             {balao.tipo === "dica" && (
               <div className="pr-4">
-                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-green">Dica</p>
-                <p className="mt-0.5 text-sm font-semibold text-white">{balao.titulo}</p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-300">{balao.texto}</p>
+                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-green">{tr("Dica")}</p>
+                <p className="mt-0.5 text-sm font-semibold text-white">{tr(balao.titulo)}</p>
+                <p className="mt-1 text-xs leading-relaxed text-slate-300">{tr(balao.texto)}</p>
                 {!pathname.startsWith(balao.href) && (
                   <Link href={balao.href} onClick={() => setShowHint(false)} className="mt-2 inline-block text-xs font-semibold text-brand-green hover:underline">
-                    {balao.acao} →
+                    {tr(balao.acao)} →
                   </Link>
                 )}
               </div>
@@ -250,14 +253,14 @@ export default function AssistantButton() {
 
             {balao.tipo === "piada" && (
               <div className="pr-4">
-                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-amber-300">Piada de dev</p>
-                <p className="mt-0.5 text-sm text-white">{balao.texto}</p>
+                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-amber-300">{tr("Piada de dev")}</p>
+                <p className="mt-0.5 text-sm text-white">{tr(balao.texto)}</p>
                 {balao.final && (
                   <p className={`mt-1 text-xs font-semibold text-brand-green transition-opacity duration-500 ${revelado ? "opacity-100" : "opacity-0"}`}>
-                    {balao.final}
+                    {tr(balao.final)}
                   </p>
                 )}
-                <button onClick={openChat} className="mt-2 text-[0.7rem] text-slate-400 hover:text-white">Posso ajudar em algo? →</button>
+                <button onClick={openChat} className="mt-2 text-[0.7rem] text-slate-400 hover:text-white">{tr("Posso ajudar em algo? →")}</button>
               </div>
             )}
 
@@ -267,7 +270,7 @@ export default function AssistantButton() {
       )}
 
       {/* Botão flutuante */}
-      <button onClick={() => (open ? setOpen(false) : openChat())} aria-label="Assistente de dúvidas" className="group relative grid h-[72px] w-[72px] place-items-center rounded-full transition-transform hover:scale-105">
+      <button onClick={() => (open ? setOpen(false) : openChat())} aria-label={tr("Assistente de dúvidas")} className="group relative grid h-[72px] w-[72px] place-items-center rounded-full transition-transform hover:scale-105">
         {!open && <span className="absolute inset-0 rounded-full bg-brand-green/30 animate-ping" />}
         <span className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-green/50 to-brand-blue/40 blur-lg" />
         <span className="absolute inset-1 rounded-full border border-white/15 bg-ink-800/85 backdrop-blur" />

@@ -148,7 +148,7 @@ export default function Arena({ semente }: { semente: number }) {
     setVeredito({
       certo: false,
       titulo: "Resposta esperada",
-      detalhe: "Olhar o gabarito não conta ponto. Feche, escreva do seu jeito e rode de novo: o que fixa é escrever.",
+      detalhe: tr("Olhar o gabarito não conta ponto. Feche, escreva do seu jeito e rode de novo: o que fixa é escrever."),
       diagnosticado: true,
       resultado: null,
       esperado: rodar(banco, desafio.referencia),

@@ -105,9 +105,9 @@ export default function Conciliacao({ semente }: { semente: number }) {
       {/* Passo 1: o total */}
       <div data-tour="conc-totais" className="mt-4 grid gap-3 sm:grid-cols-3">
         {[
-          { nome: "Extrato do sistema", valor: recorte.origem, linhas: recorte.linhasOrigem, tom: "text-white" },
-          { nome: "O que o painel mostra", valor: recorte.painel, linhas: recorte.linhasPainel, tom: "text-white" },
-          { nome: "Diferença", valor: recorte.diferenca, linhas: null, tom: cor(recorte.diferenca) },
+          { nome: tr("Extrato do sistema"), valor: recorte.origem, linhas: recorte.linhasOrigem, tom: "text-white" },
+          { nome: tr("O que o painel mostra"), valor: recorte.painel, linhas: recorte.linhasPainel, tom: "text-white" },
+          { nome: tr("Diferença"), valor: recorte.diferenca, linhas: null, tom: cor(recorte.diferenca) },
         ].map((c) => (
           <div key={c.nome} className="rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4">
             <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{c.nome}</p>
@@ -224,7 +224,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
                         <td className="px-3 py-1.5 text-slate-400">{(r.painel[0] ?? r.origem[0])?.status}</td>
                         <td className="px-3 py-1.5 font-mono tabular-nums text-slate-300">{r.origem.length ? moeda(r.origem.reduce((s, l) => s + l.valor, 0)) : "—"}</td>
                         <td className="px-3 py-1.5 font-mono tabular-nums text-slate-300">{r.painel.length ? moeda(r.painel.reduce((s, l) => s + l.valor, 0)) : "—"}</td>
-                        <td className={`px-3 py-1.5 text-xs ${s.cor}`}>{s.texto}</td>
+                        <td className={`px-3 py-1.5 text-xs ${s.cor}`}>{tr(s.texto)}</td>
                       </tr>
                     );
                   })}

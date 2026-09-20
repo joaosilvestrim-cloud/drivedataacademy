@@ -60,8 +60,8 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
   const souEu = p.id === user.id;
 
   const links = [
-    p.portfolio_url ? { label: "Portfólio", url: comProtocolo(p.portfolio_url) } : null,
-    p.linkedin_url ? { label: "LinkedIn", url: comProtocolo(p.linkedin_url) } : null,
+    p.portfolio_url ? { label: tr("Portfólio"), url: comProtocolo(p.portfolio_url) } : null,
+    p.linkedin_url ? { label: tr("LinkedIn"), url: comProtocolo(p.linkedin_url) } : null,
   ].filter(Boolean) as { label: string; url: string }[];
 
   return (

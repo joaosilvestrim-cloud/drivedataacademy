@@ -64,7 +64,7 @@ def texto_valido(t: str) -> bool:
     if not re.search(r"[A-Za-zÀ-ÿ]{2}", limpo):
         return False
     # sinais de que é código e não fala humana
-    CODIGO = r"""(className|https?://|[{}<>$`"[\]]|=>|===|!==|;|\|\||&&|\(\)|\.length|\)\s*:|\?\s*\(\s*$|\.\w+\(|eslint|\breturn\b|\bconst\b|\bfunction\b|/\*|\*/)"""
+    CODIGO = r"""(className|https?://|[{}<>$`"[\]]|=>|===|!==|\|\||&&|\(\)|\.length|\)\s*:|\?\s*\(\s*$|\.\w+\(|eslint|;\s*$|;\s*[})]|\breturn\b|\bconst\b|\bfunction\b|/\*|\*/)"""
     if re.search(CODIGO, limpo):
         return False
     if re.fullmatch(r"[\d\s.,:%/-]+", limpo):
@@ -87,7 +87,7 @@ def texto_valido(t: str) -> bool:
 # mostra o campo, então este modo só junta as frases para traduzir.
 CAMPO = re.compile(
     r'\b(titulo|subtitulo|quando|explicacao|armadilha|enunciado|dica|porque|recado|'
-    r'nome|descricao|resumo|texto|rotulo|pergunta|resposta|legenda)\s*:\s*"((?:[^"\\]|\\.)*)"'
+    r'nome|descricao|resumo|texto|rotulo|pergunta|resposta|legenda|acao|final)\s*:\s*"((?:[^"\\]|\\.)*)"'
 )
 
 def extrair_campos(caminhos):
@@ -103,6 +103,22 @@ def extrair_campos(caminhos):
                 achadas.setdefault(normalizar(valor), []).append(os.path.relpath(c, RAIZ))
     return achadas
 
+# Frase que mora numa constante da própria tela: o mapa de rótulos no topo do
+# arquivo, o texto de um estado vazio. Não está entre tags nem num atributo,
+# então só entra na lista para traduzir; o tr() vai à mão no lugar que usa.
+LITERAL = re.compile(
+    r'(?:(\w+)\s*:\s*'                                   # campo de objeto
+    r'|\b(?:const|let|var)\s+\w+(?:\s*:[^=\n]*)?\s*=\s*)'  # constante do arquivo
+    r'"((?:[^"\\\n]|\\.){4,})"'
+)
+
+# Campos cujo valor é endereço, classe ou apelido de busca: parecem frase, mas
+# traduzir quebra o link ou o atalho.
+CHAVE_TECNICA = {
+    "busca", "href", "src", "icon", "className", "id", "key", "type", "role",
+    "slug", "chave", "path", "d", "viewBox", "fill", "stroke", "name", "value",
+}
+
 def extrair(caminhos):
     achadas = {}
     for c in caminhos:
@@ -116,6 +132,95 @@ def extrair(caminhos):
             if texto_valido(t):
                 achadas.setdefault(normalizar(t), []).append(os.path.relpath(c, RAIZ))
     return achadas
+
+PALAVRA_DE_GENTE = re.compile(
+    r"\b(o|a|os|as|um|uma|de|do|da|dos|das|em|no|na|nos|nas|ao|à|para|por|com|sem|que|se|"
+    r"seu|sua|você|não|mais|já|quando|onde|como|aqui|ainda|só|também|entre|sobre)\b",
+    re.I,
+)
+SVG = re.compile(r"^[MmLlHhVvCcSsQqTtAaZz0-9 .,\-]+$")
+
+def frase_de_gente(t: str) -> bool:
+    """Um literal solto no meio do código é quase sempre rota, classe, slug ou
+    desenho de ícone. Frase para ler tem espaço e tem cara de português: acento,
+    palavra de ligação ou ponto final. O resto fica de fora."""
+    if " " not in t or t.startswith("/") or SVG.match(t):
+        return False
+    return bool(re.search(r"[À-ÿ]", t) or PALAVRA_DE_GENTE.search(t) or re.search(r"[.?!]$", t))
+
+def extrair_literais(caminhos):
+    achadas = {}
+    for c in caminhos:
+        texto = open(c, encoding="utf-8").read()
+        for m in LITERAL.finditer(texto):
+            if m.group(1) in CHAVE_TECNICA:
+                continue
+            try:
+                valor = json.loads('"' + m.group(2) + '"')
+            except json.JSONDecodeError:
+                continue
+            if texto_valido(valor) and frase_de_gente(normalizar(valor)):
+                achadas.setdefault(normalizar(valor), []).append(os.path.relpath(c, RAIZ))
+    return achadas
+
+def aplicar_literais(caminhos, mapa):
+    """Envolve com tr() a frase que está numa constante, e não entre tags.
+
+    Só onde o tr existe: em tela de servidor ele é import e vale no arquivo
+    inteiro; em tela de navegador é hook, então vale dentro do componente. O
+    que ficar de fora é listado, para resolver à mão."""
+    for c in caminhos:
+        texto = open(c, encoding="utf-8").read()
+        cliente = texto.lstrip().startswith('"use client"')
+        trocas = 0
+        pendente = []
+
+        # Onde cada componente começa e termina, para saber se o tr alcança.
+        # Aqui o corpo é medido de chave a chave, e não até a próxima função:
+        # entre um componente e o seguinte costuma haver constante de módulo,
+        # onde o tr do hook ainda não existe.
+        faixas = []
+        for d in DEFINICAO.finditer(texto):
+            nome = d.group(1) or d.group(2)
+            abre = abertura_do_corpo(texto, d.end() - 1, len(texto))
+            if abre < 0:
+                continue
+            faixas.append((abre, fim_do_bloco(texto, abre), bool(nome[:1].isupper())))
+
+        def dentro_de_componente(pos):
+            return any(ini < pos < fim and comp for ini, fim, comp in faixas)
+
+        def troca(m):
+            nonlocal trocas
+            if m.group(1) in CHAVE_TECNICA:
+                return m.group(0)
+            try:
+                valor = json.loads('"' + m.group(2) + '"')
+            except json.JSONDecodeError:
+                return m.group(0)
+            chave = normalizar(valor)
+            if chave not in mapa:
+                return m.group(0)
+            if cliente and not dentro_de_componente(m.start()):
+                pendente.append(chave)
+                return m.group(0)
+            trocas += 1
+            prefixo = m.group(0)[: m.group(0).index('"')]
+            return f"{prefixo}tr({json.dumps(chave, ensure_ascii=False)})"
+
+        texto = LITERAL.sub(troca, texto)
+        if pendente:
+            print(f"      ! {os.path.relpath(c, RAIZ)}: fora de componente, à mão: {len(pendente)}")
+            for p in pendente[:4]:
+                print(f"          {p[:70]}")
+        if not trocas:
+            continue
+        if cliente:
+            texto = ligar_hook(texto, os.path.relpath(c, RAIZ))
+        elif "traduzir-servidor" not in texto:
+            texto = 'import { tr } from "@/lib/i18n/traduzir-servidor";\n' + texto
+        open(c, "w", encoding="utf-8", newline="\n").write(texto)
+        print(f"   {os.path.relpath(c, RAIZ)}: {trocas}")
 
 # ------------------------------------------------------------------ tradução
 def http(url, dados, cabecalhos, tentativas=6):
@@ -248,6 +353,30 @@ def ligar_hook(texto: str, nome_arquivo: str) -> str:
             continue
         texto = texto[:abre + 1] + "\n  const tr = usarTraducao();" + texto[abre + 1:]
     return texto
+
+def fim_do_bloco(texto: str, abre: int) -> int:
+    """A chave que fecha o bloco aberto em `abre`, pulando texto entre aspas.
+
+    Não é um parser de JavaScript: só conta chaves e ignora o que está dentro
+    de aspas, que é onde mora quase toda chave solta. Basta para dizer se uma
+    linha está dentro de um componente ou solta no arquivo."""
+    nivel = 0
+    i = abre
+    while i < len(texto):
+        c = texto[i]
+        if c in "\"'`":
+            fecha = c
+            i += 1
+            while i < len(texto) and texto[i] != fecha:
+                i += 2 if texto[i] == "\\" else 1
+        elif c == "{":
+            nivel += 1
+        elif c == "}":
+            nivel -= 1
+            if nivel == 0:
+                return i
+        i += 1
+    return len(texto)
 
 def abertura_do_corpo(texto: str, desde: int, limite: int) -> int:
     """A chave que abre o corpo da função, e não a do parâmetro desestruturado.

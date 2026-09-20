@@ -109,7 +109,7 @@ export default function Forja() {
       ...(cal.feriados ? [{ chave: "feriados", nome: "Feriados", linguagem: "DAX", codigo: feriadosDAX(cal) }] : []),
       { chave: "calendario", nome: "Calendário", linguagem: "DAX", codigo: calendarioDAX(cal) },
       { chave: "calendarioM", nome: "Calendário", linguagem: "Power Query", codigo: calendarioM(cal) },
-      ...(medidas ? [{ chave: "medidas", nome: "Medidas de tempo", linguagem: "DAX", codigo: medidas }] : []),
+      ...(medidas ? [{ chave: "medidas", nome: tr("Medidas de tempo"), linguagem: "DAX", codigo: medidas }] : []),
     ];
   }, [cal, medidaBase, expressaoBase, escolhas, formato]);
 
@@ -145,8 +145,8 @@ export default function Forja() {
           <span className={rotulo}>{tr("Intervalo de datas")}</span>
           <div className="mt-2 flex gap-2">
             {[
-              { chave: "fato", texto: "Pela tabela de fatos" },
-              { chave: "anos", texto: "Por anos fixos" },
+              { chave: "fato", texto: tr("Pela tabela de fatos") },
+              { chave: "anos", texto: tr("Por anos fixos") },
             ].map((o) => (
               <button
                 key={o.chave}

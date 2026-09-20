@@ -47,7 +47,14 @@ export function normalizar(formula: string): string {
     .trim();
 }
 
-export function corrigir(desafio: Desafio, base: Base, resposta: { valor: string; formula: string }): Veredito {
+/* `tr` é o tradutor da tela. Fica como parâmetro, e não importado aqui, para
+   a correção continuar sendo uma função pura que o teste roda sem React. */
+export function corrigir(
+  desafio: Desafio,
+  base: Base,
+  resposta: { valor: string; formula: string },
+  tr: (t: string) => string = (t) => t,
+): Veredito {
   const esperado = desafio.valor(base);
   const digitado = numeroDigitado(resposta.valor);
 
@@ -57,18 +64,21 @@ export function corrigir(desafio: Desafio, base: Base, resposta: { valor: string
   const valorOk = digitado != null && Math.abs(digitado - esperado) <= folga;
 
   const formula = normalizar(resposta.formula);
-  const faltou = formula ? desafio.precisa.filter((p) => !p.padrao.test(formula)).map((p) => p.nome) : desafio.precisa.map((p) => p.nome);
-  const alertas = (desafio.evitar ?? []).filter((e) => e.padrao.test(formula)).map((e) => e.recado);
+  const faltou = (formula ? desafio.precisa.filter((p) => !p.padrao.test(formula)) : desafio.precisa).map((p) => tr(p.nome));
+  const alertas = (desafio.evitar ?? []).filter((e) => e.padrao.test(formula)).map((e) => tr(e.recado));
   const formulaOk = !!formula && faltou.length === 0 && alertas.length === 0;
 
   let recado: string;
-  if (valorOk && formulaOk) recado = "Número certo e fórmula certa. É isso.";
-  else if (valorOk && !formula) recado = "O número está certo. Escreva a fórmula para fechar o desafio: é ela que você vai usar no trabalho.";
-  else if (valorOk && alertas.length) recado = "O número bateu, mas a fórmula tem um atalho que quebra na base real.";
-  else if (valorOk) recado = `O número está certo, mas a fórmula não usa ${faltou.join(" e ")}.`;
-  else if (digitado == null) recado = "Faltou o número. Calcule a resposta e escreva no campo.";
-  else if (formulaOk) recado = "A fórmula está certa, então o erro está na conta ou na leitura da base. Confira coluna por coluna.";
-  else recado = "Ainda não. Compare o que o enunciado pede com o que a sua fórmula está somando.";
+  if (valorOk && formulaOk) recado = tr("Número certo e fórmula certa. É isso.");
+  else if (valorOk && !formula) recado = tr("O número está certo. Escreva a fórmula para fechar o desafio: é ela que você vai usar no trabalho.");
+  else if (valorOk && alertas.length) recado = tr("O número bateu, mas a fórmula tem um atalho que quebra na base real.");
+  // A lista do que faltou é montada fora da frase, em vez de entrar num
+  // molde com lacuna: molde com lacuna volta da tradução com a lacuna no
+  // lugar errado, e aí a frase quebra em vez de só ficar estranha.
+  else if (valorOk) recado = `${tr("O número está certo, mas a fórmula não usa")} ${faltou.join(tr(" e "))}.`;
+  else if (digitado == null) recado = tr("Faltou o número. Calcule a resposta e escreva no campo.");
+  else if (formulaOk) recado = tr("A fórmula está certa, então o erro está na conta ou na leitura da base. Confira coluna por coluna.");
+  else recado = tr("Ainda não. Compare o que o enunciado pede com o que a sua fórmula está somando.");
 
   return { acertou: valorOk && formulaOk, valorOk, formulaOk, esperado, faltou, alertas, recado };
 }

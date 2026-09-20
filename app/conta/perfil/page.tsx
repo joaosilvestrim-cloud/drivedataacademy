@@ -31,7 +31,7 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
   );
 
   const stats = [
-    { label: "Pontos", value: myPoints, d: "M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" },
+    { label: tr("Pontos"), value: myPoints, d: "M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z" },
     { label: "Posição", value: myRank >= 0 ? `#${myRank + 1}` : "—", d: "M4 20h16M7 20V9M12 20V4M17 20v-7" },
     { label: "Soluções", value: solutions, d: "M20 6L9 17l-5-5" },
   ];

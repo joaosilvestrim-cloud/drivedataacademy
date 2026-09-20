@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useI18n } from "./LanguageProvider";
 import { frase } from "./frases";
 
@@ -13,5 +14,7 @@ import { frase } from "./frases";
    receberiam o texto uma da outra. O hook lê do contexto, que é por render. */
 export function usarTraducao() {
   const { lang } = useI18n();
-  return (texto: string) => frase(texto, lang);
+  // Estável enquanto o idioma não muda: a função entra em dependência de
+  // useMemo em algumas telas, e uma função nova por render refaria a conta.
+  return useCallback((texto: string) => frase(texto, lang), [lang]);
 }

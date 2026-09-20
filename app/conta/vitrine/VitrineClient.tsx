@@ -69,6 +69,7 @@ function tempo(iso?: string | null) {
 const semAcento = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
 function Selos({ m }: { m: Membro }) {
+  const tr = usarTraducao();
   const outros = m.badges.filter((b) => !SELOS_DA_CASA.has(b.key));
   if (!m.casa && outros.length === 0) return null;
   return (
@@ -77,13 +78,13 @@ function Selos({ m }: { m: Membro }) {
       {outros.map((b) => (
         <span
           key={b.key}
-          title={b.label}
+          title={tr(b.label)}
           className="inline-flex items-center gap-1 rounded-full border border-brand-teal/25 bg-brand-teal/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal"
         >
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d={BADGE_ICONS[b.key] || "M12 2l3 6 6 .9-4.5 4.2 1 6-5.5-3-5.5 3 1-6L3 8.9 9 8z"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          {b.label}
+          {tr(b.label)}
         </span>
       ))}
     </div>
@@ -210,7 +211,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none [&>option]:bg-ink-900 sm:w-44"
             >
               {ORDENS.map((o) => (
-                <option key={o.key} value={o.key}>{o.label}</option>
+                <option key={o.key} value={o.key}>{tr(o.label)}</option>
               ))}
             </select>
           </div>

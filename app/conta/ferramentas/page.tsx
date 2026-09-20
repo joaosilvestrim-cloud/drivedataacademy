@@ -36,7 +36,7 @@ export default async function FerramentasHub() {
       to: "#34e8a0",
       available: true,
       novo: true,
-      cta: "Analisar meu relatório",
+      cta: tr("Analisar meu relatório"),
     },
     {
       key: "biblioteca",
@@ -50,7 +50,7 @@ export default async function FerramentasHub() {
       from: "#70a9ef",
       to: "#a78bfa",
       available: true,
-      cta: "Abrir a Biblioteca",
+      cta: tr("Abrir a Biblioteca"),
     },
     {
       key: "dojo",
@@ -65,7 +65,7 @@ export default async function FerramentasHub() {
       to: "#f6d68c",
       available: true,
       novo: true,
-      cta: "Começar o treino",
+      cta: tr("Começar o treino"),
     },
     {
       key: "conciliacao",
@@ -80,7 +80,7 @@ export default async function FerramentasHub() {
       to: "#fbbf24",
       available: true,
       novo: true,
-      cta: "Pegar um chamado",
+      cta: tr("Pegar um chamado"),
     },
     {
       key: "caixa-preta",
@@ -95,7 +95,7 @@ export default async function FerramentasHub() {
       to: "#3b9dff",
       available: true,
       novo: true,
-      cta: "Abrir a caixa",
+      cta: tr("Abrir a caixa"),
     },
     {
       key: "arena",
@@ -110,7 +110,7 @@ export default async function FerramentasHub() {
       to: "#6ce6c7",
       available: true,
       novo: true,
-      cta: "Entrar na Arena",
+      cta: tr("Entrar na Arena"),
     },
     {
       key: "forja",
@@ -125,7 +125,7 @@ export default async function FerramentasHub() {
       to: "#f6d68c",
       available: true,
       novo: true,
-      cta: "Forjar meu calendário",
+      cta: tr("Forjar meu calendário"),
     },
     {
       key: "dataflow-lab",
@@ -145,7 +145,7 @@ export default async function FerramentasHub() {
       key: "decision-lab",
       categoria: "Negócios",
       name: nomes["decision-lab"].nome,
-      tag: "Simulador de negócios",
+      tag: tr("Simulador de negócios"),
       desc: nomes["decision-lab"].desc,
       href: "/decision-lab",
       sameTab: true,
@@ -184,15 +184,15 @@ export default async function FerramentasHub() {
     },
     {
       key: "em-breve",
-      categoria: "Em breve",
+      categoria: tr("Em breve"),
       name: "Novas ferramentas",
-      tag: "Em breve",
-      desc: "Estamos preparando mais ferramentas DriveData para acelerar o seu dia a dia.",
+      tag: tr("Em breve"),
+      desc: tr("Estamos preparando mais ferramentas DriveData para acelerar o seu dia a dia."),
       icon: "M12 6v6l4 2M12 22a10 10 0 100-20 10 10 0 000 20z",
       from: "#3b9dff",
       to: "#a78bfa",
       available: false,
-      cta: "Em breve",
+      cta: tr("Em breve"),
     },
   ];
 

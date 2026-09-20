@@ -84,7 +84,7 @@ function Card({ item }: { item: Item }) {
           </div>
           <h2 className="mt-2 font-display text-lg font-bold text-white">{item.title}</h2>
         </div>
-        {status && <span className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${status.cls}`}>{status.label}</span>}
+        {status && <span className={`shrink-0 rounded-full border px-3 py-1 text-xs font-semibold ${status.cls}`}>{tr(status.label)}</span>}
         {!status && done && <span className="shrink-0 rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-200">{tr("Enviado")}</span>}
       </div>
 

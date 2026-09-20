@@ -25,7 +25,9 @@ const chaves = Object.keys(GERADAS);
 ok(chaves.length > 400, `dicionário com ${chaves.length} frases`);
 
 // 1. Nenhuma chave é pedaço de código.
-const CODIGO = /(className|=>|===|!==|;|\|\||&&|\breturn\b|\bconst\b|https?:\/\/)/;
+// O ponto e vírgula só denuncia código no fim da linha: no meio da frase ele
+// é pontuação, e a Academy escreve assim em vários lugares.
+const CODIGO = /(className|=>|===|!==|;\s*$|;\s*[})]|\|\||&&|\breturn\b|\bconst\b|https?:\/\/)/;
 for (const k of chaves) ok(!CODIGO.test(k), `chave parece código: ${k.slice(0, 60)}`);
 
 // 2. Nenhuma tradução vazia.

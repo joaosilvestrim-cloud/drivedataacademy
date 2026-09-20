@@ -58,7 +58,7 @@ export default function Biblioteca() {
     return () => clearTimeout(t);
   }, []);
 
-  const resultado = useMemo(() => filtrar(ITENS, busca, linguagem, tag), [busca, linguagem, tag]);
+  const resultado = useMemo(() => filtrar(ITENS, busca, linguagem, tag, tr), [busca, linguagem, tag, tr]);
 
   const porLinguagem = useMemo(() => {
     const mapa = new Map<Linguagem, number>();
@@ -191,14 +191,14 @@ export default function Biblioteca() {
                 onClick={() => setTag(tag === t ? "" : t)}
                 className={`rounded-md px-2 py-0.5 text-[0.72rem] transition-colors ${tag === t ? "bg-brand-green/20 font-semibold text-brand-green" : "bg-white/[0.05] text-slate-400 hover:text-white"}`}
               >
-                {t} <span className="font-mono tabular-nums opacity-60">{n}</span>
+                {tr(t)} <span className="font-mono tabular-nums opacity-60">{n}</span>
               </button>
             ))}
           </div>
         )}
 
         {linguagem !== "todas" && !busca.trim() && (
-          <p className="mt-2 text-xs leading-relaxed text-slate-500">{ABERTURA[linguagem]}</p>
+          <p className="mt-2 text-xs leading-relaxed text-slate-500">{tr(ABERTURA[linguagem])}</p>
         )}
       </div>
 
@@ -227,8 +227,8 @@ export default function Biblioteca() {
                             ativo ? `${COR[i.linguagem].borda} bg-white/[0.06]` : "border-transparent hover:bg-white/[0.03]"
                           }`}
                         >
-                          <span className={`block text-sm font-medium ${ativo ? "text-white" : "text-slate-200"}`}>{i.titulo}</span>
-                          <span className="mt-0.5 block text-xs leading-snug text-slate-500">{i.quando}</span>
+                          <span className={`block text-sm font-medium ${ativo ? "text-white" : "text-slate-200"}`}>{tr(i.titulo)}</span>
+                          <span className="mt-0.5 block text-xs leading-snug text-slate-500">{tr(i.quando)}</span>
                         </button>
                       </li>
                     );
@@ -260,10 +260,10 @@ export default function Biblioteca() {
                 <span className={`rounded px-1.5 py-0.5 font-mono text-[0.65rem] font-bold uppercase ${COR[item.linguagem].chip}`}>
                   {NOME_LINGUAGEM[item.linguagem]}
                 </span>
-                <span className="rounded bg-white/[0.06] px-2 py-0.5 text-[0.65rem] text-slate-300">{item.nivel}</span>
+                <span className="rounded bg-white/[0.06] px-2 py-0.5 text-[0.65rem] text-slate-300">{tr(item.nivel)}</span>
                 {item.tags.map((t) => (
                   <button key={t} onClick={() => { setTag(t); setVerAssuntos(true); }} className="rounded px-1 text-[0.68rem] text-slate-500 transition-colors hover:text-white">
-                    #{t}
+                    #{tr(t)}
                   </button>
                 ))}
                 <span className="ml-auto flex items-center gap-1 text-[0.7rem] text-slate-500">
@@ -273,11 +273,11 @@ export default function Biblioteca() {
                 </span>
               </div>
 
-              <h2 className="mt-3 font-display text-2xl font-bold text-white">{item.titulo}</h2>
+              <h2 className="mt-3 font-display text-2xl font-bold text-white">{tr(item.titulo)}</h2>
 
               <div data-tour="bib-quando" className="mt-3 border-l-2 border-brand-green/50 pl-3">
                 <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">{tr("Quando usar")}</p>
-                <p className="mt-0.5 text-sm text-slate-200">{item.quando}</p>
+                <p className="mt-0.5 text-sm text-slate-200">{tr(item.quando)}</p>
               </div>
 
               <div data-tour="bib-codigo" className="mt-5">
@@ -299,13 +299,13 @@ export default function Biblioteca() {
 
               <div className="mt-5">
                 <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Por que é assim")}</p>
-                <p className="mt-1 text-sm leading-relaxed text-slate-300">{item.explicacao}</p>
+                <p className="mt-1 text-sm leading-relaxed text-slate-300">{tr(item.explicacao)}</p>
               </div>
 
               {item.armadilha && (
                 <div data-tour="bib-armadilha" className="mt-5 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4">
                   <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-amber-300">{tr("A armadilha")}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-amber-100/90">{item.armadilha}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-amber-100/90">{tr(item.armadilha)}</p>
                 </div>
               )}
 

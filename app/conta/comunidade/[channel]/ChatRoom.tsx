@@ -131,9 +131,9 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
 
   // Sugestões de primeira mensagem, para o canal vazio não ser uma parede em branco.
   const SUGESTOES: { texto: string; tag: string | null }[] = [
-    { texto: "Oi, pessoal! Eu trabalho com ", tag: null },
-    { texto: "Tô com uma dúvida: ", tag: "Dúvida" },
-    { texto: "Olha o que eu construí: ", tag: "Conquista" },
+    { texto: tr("Oi, pessoal! Eu trabalho com"), tag: null },
+    { texto: tr("Tô com uma dúvida:"), tag: "Dúvida" },
+    { texto: tr("Olha o que eu construí:"), tag: "Conquista" },
   ];
 
   function usarSugestao(s: { texto: string; tag: string | null }) {
@@ -522,7 +522,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                     onClick={() => usarSugestao(sg)}
                     className="rounded border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 transition-colors hover:border-brand-green/40 hover:text-white"
                   >
-                    {sg.tag ? <span className="mr-1.5 font-semibold" style={{ color: tagColor(sg.tag) }}>{sg.tag}</span> : <span className="mr-1.5 text-brand-teal">{tr("Apresentação")}</span>}
+                    {sg.tag ? <span className="mr-1.5 font-semibold" style={{ color: tagColor(sg.tag) }}>{tr(sg.tag)}</span> : <span className="mr-1.5 text-brand-teal">{tr("Apresentação")}</span>}
                     {sg.texto.trim()}…
                   </button>
                 ))}
@@ -565,7 +565,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                         <span className={`text-[1.05rem] font-semibold ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
                         <SeloCasa label={m.casa} />
                         {online.has(m.user_id) && <span className="h-1.5 w-1.5 rounded-full bg-brand-green" title={tr("online")} />}
-                        {m.tag && <span className="rounded px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{m.tag}</span>}
+                        {m.tag && <span className="rounded px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{tr(m.tag)}</span>}
                         {m.solved && <span className="rounded bg-brand-green/15 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">{tr("resolvido")}</span>}
                         <span className="text-[0.72rem] text-slate-500">{timeStr(m.created_at)}</span>
                       </p>
@@ -690,11 +690,11 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                 <button
                   key={t.k}
                   onClick={() => setTag(tag === t.k ? null : t.k)}
-                  title={`Marcar como ${t.k}`}
+                  title={`${tr("Marcar como")} ${tr(t.k)}`}
                   className="h-7 rounded px-2 text-[0.7rem] font-semibold uppercase tracking-wide transition-colors"
                   style={tag === t.k ? { color: "#04140d", background: t.c } : { color: `${t.c}cc` }}
                 >
-                  {t.k}
+                  {tr(t.k)}
                 </button>
               ))}
             </div>
@@ -708,7 +708,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
             <span className="text-[0.65rem] uppercase tracking-wider text-slate-500">{tr("Marcar")}</span>
             {TAGS.map((t) => (
               <button key={t.k} onClick={() => setTag(tag === t.k ? null : t.k)} className="rounded border px-2 py-0.5 text-[0.65rem] font-medium" style={tag === t.k ? { color: "#04140d", background: t.c, borderColor: t.c } : { color: t.c, borderColor: `${t.c}55` }}>
-                {t.k}
+                {tr(t.k)}
               </button>
             ))}
           </div>

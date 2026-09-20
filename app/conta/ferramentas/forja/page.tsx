@@ -25,8 +25,7 @@ export default async function ForjaPage() {
         <div>
           <p className="text-sm font-semibold text-brand-green">{tr("Feriado móvel no lugar certo")}</p>
           <p className="mt-1 text-sm text-slate-400">
-            Carnaval, Sexta-feira Santa e Corpus Christi andam com a Páscoa. A Forja calcula a Páscoa de cada ano e
-            monta a lista, então &quot;dia útil&quot; passa a ser dia útil de verdade.
+            {tr("Carnaval, Sexta-feira Santa e Corpus Christi andam com a Páscoa. A Forja calcula a Páscoa de cada ano e monta a lista, então &quot;dia útil&quot; passa a ser dia útil de verdade.")}
           </p>
         </div>
         <div>

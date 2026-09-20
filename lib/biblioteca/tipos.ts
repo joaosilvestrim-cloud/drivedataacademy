@@ -36,13 +36,27 @@ export const NOME_LINGUAGEM: Record<Linguagem, string> = {
 /** Busca sem frescura: ignora acento e procura em tudo que é texto do verbete. */
 export const semAcento = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
-export function filtrar(itens: Item[], busca: string, linguagem: Linguagem | "todas", tag: string): Item[] {
+/* `traduzir` faz a busca achar o verbete pelo texto que está na tela.
+
+   Quem lê em inglês digita "running total", não "acumulado". Sem isso o
+   acervo pareceria vazio para quem não escreve em português. O texto original
+   continua na busca porque o código e os nomes de função são iguais nos três
+   idiomas, e muita gente procura justamente por eles. */
+export function filtrar(
+  itens: Item[],
+  busca: string,
+  linguagem: Linguagem | "todas",
+  tag: string,
+  traduzir: (t: string) => string = (t) => t,
+): Item[] {
   const q = semAcento(busca.trim());
   return itens.filter((i) => {
     if (linguagem !== "todas" && i.linguagem !== linguagem) return false;
     if (tag && !i.tags.includes(tag)) return false;
     if (!q) return true;
-    return semAcento([i.titulo, i.quando, i.explicacao, i.armadilha ?? "", i.codigo, i.tags.join(" ")].join(" ")).includes(q);
+    const campos = [i.titulo, i.quando, i.explicacao, i.armadilha ?? ""];
+    const tudo = [...campos, ...campos.map(traduzir), i.codigo, i.tags.join(" ")].join(" ");
+    return semAcento(tudo).includes(q);
   });
 }
 

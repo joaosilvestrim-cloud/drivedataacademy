@@ -12,10 +12,12 @@ import SignOutButton from "./SignOutButton";
 import PaletaDeComandos, { type Destino } from "@/components/conta/PaletaDeComandos";
 import SeletorDeIdioma from "@/components/conta/SeletorDeIdioma";
 import { textos } from "@/lib/i18n/textos";
+import { frase } from "@/lib/i18n/frases";
 import { IDIOMA_PADRAO, type Idioma } from "@/lib/i18n/idioma";
 import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
 
 function WhatsAppGroupLink({ onNavigate, idioma = IDIOMA_PADRAO }: { onNavigate?: () => void; idioma?: Idioma }) {
+  const tr = usarTraducao();
   const t = textos(idioma);
   if (!COMMUNITY_WHATSAPP_URL) return null;
   return (
@@ -108,8 +110,7 @@ const GROUPS: { title: ChaveGrupo | null; items: ItemMenu[] }[] = [
 ];
 
 /* Ferramenta não ocupa linha no menu, mas continua a uma tecla de distância:
-   a busca rápida conhece cada uma pelo nome e pelo apelido. O nome da
-   ferramenta não se traduz: é nome próprio. */
+   a busca rápida conhece cada uma pelo nome e pelo apelido. */
 const FERRAMENTAS_NA_BUSCA: Omit<Destino, "grupo">[] = [
   { label: "Biblioteca de referência", href: "/conta/ferramentas/biblioteca", busca: "dax sql power query oracle protheus codigo verbete" },
   { label: "Treino de DAX e Excel", href: "/conta/ferramentas/dojo", busca: "dojo exercicio formula planilha" },
@@ -134,7 +135,13 @@ function destinosDe(idioma: Idioma): Destino[] {
         busca: i.busca,
       }))
     ),
-    ...FERRAMENTAS_NA_BUSCA.map((f) => ({ ...f, grupo: t.menu.paleta.grupoFerramentas })),
+    // Arena SQL, Forja DAX e DriveCanvas são nome próprio e ficam como estão.
+    // "Biblioteca de referência" é descrição, e descrição se traduz.
+    ...FERRAMENTAS_NA_BUSCA.map((f) => ({
+      ...f,
+      label: frase(f.label, idioma),
+      grupo: t.menu.paleta.grupoFerramentas,
+    })),
   ];
 }
 

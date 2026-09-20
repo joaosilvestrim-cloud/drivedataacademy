@@ -159,16 +159,16 @@ export default async function ContaHome() {
 
   // Uma ação principal, decidida em cascata pelo estado real do aluno.
   const passo = !full
-    ? { rotulo: "Ver a assinatura", titulo: "Seu acesso está inativo", apoio: "Assine para entrar na comunidade, assistir às gravações e comprar os treinamentos com desconto.", href: "/matricula", curso: null as any }
+    ? { rotulo: tr("Ver a assinatura"), titulo: tr("Seu acesso está inativo"), apoio: tr("Assine para entrar na comunidade, assistir às gravações e comprar os treinamentos com desconto."), href: "/matricula", curso: null as any }
     : resumo.available && !diag
-    ? { rotulo: "Fazer o diagnóstico", titulo: "Comece pelo diagnóstico", apoio: "São 25 perguntas rápidas e você responde uma vez só.", href: "/conta/diagnostico", curso: null as any }
+    ? { rotulo: tr("Fazer o diagnóstico"), titulo: tr("Comece pelo diagnóstico"), apoio: tr("São 25 perguntas rápidas e você responde uma vez só."), href: "/conta/diagnostico", curso: null as any }
     : retomar
     ? { rotulo: retomar.pct > 0 ? "Continuar" : "Começar", titulo: retomar.title, apoio: `${retomar.done} de ${retomar.total} aulas concluídas.`, href: `/aprender/${retomar.slug}`, curso: retomar }
     : resumo.cooling.length
-    ? { rotulo: "Ver desafios", titulo: `Revisar ${resumo.cooling[0].name}`, apoio: `${resumo.cooling[0].days} dias sem prática nessa competência.`, href: "/conta/desafios", curso: null as any }
+    ? { rotulo: tr("Ver desafios"), titulo: `Revisar ${resumo.cooling[0].name}`, apoio: `${resumo.cooling[0].days} dias sem prática nessa competência.`, href: "/conta/desafios", curso: null as any }
     : desafiosAbertos
-    ? { rotulo: "Ver desafios", titulo: "Prove na prática o que aprendeu", apoio: `${desafiosAbertos} desafios abertos esperando entrega.`, href: "/conta/desafios", curso: null as any }
-    : { rotulo: "Abrir o catálogo", titulo: "Escolha por onde começar", apoio: "Seus treinamentos aparecem aqui assim que você iniciar um.", href: "/conta/cursos", curso: null as any };
+    ? { rotulo: tr("Ver desafios"), titulo: tr("Prove na prática o que aprendeu"), apoio: `${desafiosAbertos} desafios abertos esperando entrega.`, href: "/conta/desafios", curso: null as any }
+    : { rotulo: tr("Abrir o catálogo"), titulo: tr("Escolha por onde começar"), apoio: tr("Seus treinamentos aparecem aqui assim que você iniciar um."), href: "/conta/cursos", curso: null as any };
 
   const leitura = !full
     ? "Sua assinatura não está ativa no momento."
@@ -221,7 +221,7 @@ export default async function ContaHome() {
       <DataRule
         items={[
           { label: "Treinamentos", value: courses.length },
-          { label: "Em andamento", value: emAndamento.length },
+          { label: tr("Em andamento"), value: emAndamento.length },
           { label: "Concluídos", value: concluidos },
           { label: "Certificados", value: certCount ?? 0 },
           { label: "Competências", value: resumo.developed, hint: resumo.advanced ? `${resumo.advanced} no avançado` : undefined },

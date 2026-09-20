@@ -65,7 +65,7 @@ export default async function DesafiosPage() {
 
   return (
     <div>
-      <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">&larr; Knowledge Universe</Link>
+      <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">{tr("&larr; Knowledge Universe")}</Link>
       <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Desafios")}</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Desafios práticos")}</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400">
