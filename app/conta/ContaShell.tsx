@@ -75,6 +75,7 @@ const GROUPS: { title: ChaveGrupo | null; items: ItemMenu[] }[] = [
       { chave: "cursos", href: "/conta/cursos", icon: "cardapio", busca: "treinamentos catalogo comprar" },
       { chave: "agenda", href: "/conta/agenda", icon: "agenda", busca: "lives mentorias proximos encontros" },
       { chave: "gravacoes", href: "/conta/gravacoes", icon: "gravacoes", busca: "replay assistir depois" },
+      { chave: "ebooks", href: "/conta/ebooks", icon: "biblioteca", busca: "ebook pdf livro leitura material" },
       { chave: "certificados", href: "/conta/certificados", icon: "cert", busca: "diploma comprovante" },
     ],
   },

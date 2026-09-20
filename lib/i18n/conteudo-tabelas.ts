@@ -13,6 +13,7 @@ export const TRADUZIVEIS = {
   materials: ["title", "subtitle", "description", "cta_text"],
   forum_channels: ["name", "description"],
   posts: ["title", "excerpt", "category", "content"],
+  ebooks: ["title", "subtitle", "description"],
 } as const;
 
 export type TabelaTraduzivel = keyof typeof TRADUZIVEIS;

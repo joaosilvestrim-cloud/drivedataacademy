@@ -1625,6 +1625,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Once payment is confirmed, we send an access code to your email.",
     "es": "En cuanto el pago se confirma, enviamos un código de acceso a tu email."
   },
+  "Assim que o time publicar o primeiro ebook, ele aparece aqui.": {
+    "en": "As soon as the team publishes the first ebook, it shows up here.",
+    "es": "En cuanto el equipo publique el primer ebook, aparecerá aquí."
+  },
   "Assim que o time subir a gravação de um encontro, ela aparece aqui.": {
     "en": "As soon as the team uploads a recording of a meeting, it appears here.",
     "es": "En cuanto el equipo suba la grabación de una reunión, aparece aquí."
@@ -1868,6 +1872,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Baixar SQL": {
     "en": "Download SQL",
     "es": "Descargar SQL"
+  },
+  "Baixar em": {
+    "en": "Download in",
+    "es": "Descargar en"
+  },
+  "Baixar o PDF": {
+    "en": "Download the PDF",
+    "es": "Descargar el PDF"
   },
   "Baixar relatório": {
     "en": "Download report",
@@ -4181,6 +4193,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "EXPLORE MEDAL",
     "es": "EXPLORAR MEDALLA"
   },
+  "Ebooks": {
+    "en": "Ebooks",
+    "es": "Ebooks"
+  },
   "Editar": {
     "en": "Edit",
     "es": "Editar"
@@ -6476,6 +6492,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Materiais liberados": {
     "en": "Released materials",
     "es": "Materiales liberados"
+  },
+  "Material de leitura para levar junto: o método por escrito, para consultar no meio do projeto. Incluído na assinatura.": {
+    "en": "Reading material to take with you: the method in writing, to check in the middle of a project. Included in the subscription.",
+    "es": "Material de lectura para llevar contigo: el método por escrito, para consultar en medio del proyecto. Incluido en la suscripción."
   },
   "Material gratuito": {
     "en": "Free material",
@@ -13040,6 +13060,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "página inicial": {
     "en": "home page",
     "es": "página principal"
+  },
+  "páginas": {
+    "en": "pages",
+    "es": "páginas"
   },
   "qualidade": {
     "en": "quality",
