@@ -15,10 +15,13 @@ const LanguageContext = createContext<Ctx>({
   t: dict[DEFAULT_LANG],
 });
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(DEFAULT_LANG);
+export function LanguageProvider({ children, inicial }: { children: React.ReactNode; inicial?: Lang }) {
+  // O servidor já leu o cookie e mandou o idioma: começar por ele evita a
+  // tela nascer em português e trocar depois.
+  const [lang, setLangState] = useState<Lang>(inicial ?? DEFAULT_LANG);
 
   useEffect(() => {
+    if (inicial) return; // veio do servidor, não precisa perguntar ao navegador
     try {
       const saved = localStorage.getItem("lang") as Lang | null;
       if (saved && (LANGS as readonly string[]).includes(saved)) {

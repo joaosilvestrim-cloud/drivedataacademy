@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { textos } from "@/lib/i18n/textos";
+import { IDIOMA_PADRAO, type Idioma } from "@/lib/i18n/idioma";
 
 /* Busca rápida do aluno: Ctrl+K (ou Cmd+K) abre, digita, Enter vai.
 
@@ -13,7 +15,8 @@ export type Destino = { label: string; href: string; grupo: string; busca?: stri
 
 const semAcento = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
-export default function PaletaDeComandos({ destinos }: { destinos: Destino[] }) {
+export default function PaletaDeComandos({ destinos, idioma = IDIOMA_PADRAO }: { destinos: Destino[]; idioma?: Idioma }) {
+  const t = textos(idioma);
   const [aberta, setAberta] = useState(false);
   const [busca, setBusca] = useState("");
   const [marcado, setMarcado] = useState(0);
@@ -55,7 +58,7 @@ export default function PaletaDeComandos({ destinos }: { destinos: Destino[] }) 
 
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/70 p-4 pt-[12vh] backdrop-blur-sm" onClick={() => setAberta(false)}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-2xl" role="dialog" aria-modal="true" aria-label="Buscar tela">
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-2xl" role="dialog" aria-modal="true" aria-label={t.menu.buscarTela}>
         <div className="flex items-center gap-2 border-b border-white/8 px-4">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-slate-500">
             <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -69,8 +72,8 @@ export default function PaletaDeComandos({ destinos }: { destinos: Destino[] }) 
               if (e.key === "ArrowUp") { e.preventDefault(); setMarcado((m) => Math.max(0, m - 1)); }
               if (e.key === "Enter" && achados[marcado]) ir(achados[marcado]);
             }}
-            placeholder="Para onde você quer ir?"
-            aria-label="Buscar tela"
+            placeholder={t.menu.paleta.titulo}
+            aria-label={t.menu.buscarTela}
             className="w-full bg-transparent py-3.5 text-sm text-white placeholder:text-slate-500 outline-none"
           />
           <kbd className="rounded border border-white/10 px-1.5 text-[0.65rem] text-slate-500">esc</kbd>
@@ -90,7 +93,7 @@ export default function PaletaDeComandos({ destinos }: { destinos: Destino[] }) 
               </button>
             </li>
           ))}
-          {!achados.length && <li className="px-3 py-6 text-center text-sm text-slate-500">Nenhuma tela com esse nome.</li>}
+          {!achados.length && <li className="px-3 py-6 text-center text-sm text-slate-500">{t.menu.paleta.vazio}</li>}
         </ul>
       </div>
     </div>

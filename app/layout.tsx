@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
+import { TAG_HTML } from "@/lib/i18n/idioma";
+import { idiomaAtual } from "@/lib/i18n/idioma-servidor";
 import RastreioDeUso from "@/components/RastreioDeUso";
 import AvisoMateriaisLiberados from "@/components/AvisoMateriaisLiberados";
 
@@ -48,10 +50,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const idioma = idiomaAtual();
   return (
-    <html lang="pt-BR" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang={TAG_HTML[idioma]} className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="font-sans antialiased">
-        <LanguageProvider>{children}</LanguageProvider>
+        <LanguageProvider inicial={idioma}>{children}</LanguageProvider>
         <RastreioDeUso />
         <AvisoMateriaisLiberados />
       </body>

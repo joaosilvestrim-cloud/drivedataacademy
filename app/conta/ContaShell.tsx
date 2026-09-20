@@ -7,9 +7,13 @@ import type { EventoFaixa } from "@/lib/sessao";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
 import PaletaDeComandos, { type Destino } from "@/components/conta/PaletaDeComandos";
+import SeletorDeIdioma from "@/components/conta/SeletorDeIdioma";
+import { textos } from "@/lib/i18n/textos";
+import { IDIOMA_PADRAO, type Idioma } from "@/lib/i18n/idioma";
 import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
 
-function WhatsAppGroupLink({ onNavigate }: { onNavigate?: () => void }) {
+function WhatsAppGroupLink({ onNavigate, idioma = IDIOMA_PADRAO }: { onNavigate?: () => void; idioma?: Idioma }) {
+  const t = textos(idioma);
   if (!COMMUNITY_WHATSAPP_URL) return null;
   return (
     <a
@@ -20,7 +24,7 @@ function WhatsAppGroupLink({ onNavigate }: { onNavigate?: () => void }) {
       className="flex items-center gap-3 rounded-lg border border-[#25D366]/30 bg-[#25D366]/[0.08] px-3 py-2 text-sm text-white transition-colors hover:border-[#25D366]/50 hover:bg-[#25D366]/[0.14]"
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-[#25D366]"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm-3.5 4c-.2 0-.5 0-.7.4-.2.4-.9.9-.9 2.2s.9 2.5 1 2.7c.2.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.1-1.3l-.6-.3s-1.5-.7-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.1-.2 0-.4.1-.5l.4-.5.3-.5c.1-.2 0-.3 0-.5l-.8-1.9c-.2-.4-.4-.4-.6-.4h-.4z"/></svg>
-      <span className="leading-tight">Grupo de avisos<span className="block text-[0.65rem] text-slate-400">no WhatsApp</span></span>
+      <span className="leading-tight">{t.menu.grupoWhats}<span className="block text-[0.65rem] text-slate-400">{t.menu.grupoWhatsSub}</span></span>
     </a>
   );
 }
@@ -54,89 +58,103 @@ const ICONS: Record<string, string> = {
    assistir, praticar, conviver e resolver a própria conta. "busca" são os
    apelidos que a pessoa digita na busca rápida (Ctrl+K) e que não estão no
    rótulo, como "dax" para a Biblioteca. */
-type ItemMenu = { label: string; href: string; icon: string; exact?: boolean; emBreve?: boolean; busca?: string };
+type ChaveItem = keyof ReturnType<typeof textos>["menu"]["itens"];
+type ItemMenu = { chave: ChaveItem; href: string; icon: string; exact?: boolean; emBreve?: boolean; busca?: string };
 
-const GROUPS: { title: string | null; items: ItemMenu[] }[] = [
-  { title: null, items: [{ label: "Meus cursos", href: "/conta", icon: "courses", exact: true, busca: "inicio home painel" }] },
+type ChaveGrupo = keyof ReturnType<typeof textos>["menu"]["grupos"];
+const GROUPS: { title: ChaveGrupo | null; items: ItemMenu[] }[] = [
+  { title: null, items: [{ chave: "meusCursos", href: "/conta", icon: "courses", exact: true, busca: "inicio home painel" }] },
   {
-    title: "Assistir",
+    title: "assistir" as const,
     items: [
-      { label: "Cursos", href: "/conta/cursos", icon: "cardapio", busca: "treinamentos catalogo comprar" },
-      { label: "Agenda", href: "/conta/agenda", icon: "agenda", busca: "lives mentorias proximos encontros" },
-      { label: "Gravações", href: "/conta/gravacoes", icon: "gravacoes", busca: "replay assistir depois" },
-      { label: "Certificados", href: "/conta/certificados", icon: "cert", busca: "diploma comprovante" },
+      { chave: "cursos", href: "/conta/cursos", icon: "cardapio", busca: "treinamentos catalogo comprar" },
+      { chave: "agenda", href: "/conta/agenda", icon: "agenda", busca: "lives mentorias proximos encontros" },
+      { chave: "gravacoes", href: "/conta/gravacoes", icon: "gravacoes", busca: "replay assistir depois" },
+      { chave: "certificados", href: "/conta/certificados", icon: "cert", busca: "diploma comprovante" },
     ],
   },
   {
-    title: "Praticar",
+    title: "praticar" as const,
     items: [
-      { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool", busca: "raio-x forja arena caixa-preta drivecanvas treino dojo biblioteca universo" },
-      { label: "Novidades", href: "/conta/novidades", icon: "challenge", busca: "o que mudou changelog" },
+      { chave: "ferramentas", href: "/conta/ferramentas", icon: "tool", busca: "raio-x forja arena caixa-preta drivecanvas treino dojo biblioteca universo" },
+      { chave: "novidades", href: "/conta/novidades", icon: "challenge", busca: "o que mudou changelog" },
     ],
   },
   {
-    title: "Conviver",
+    title: "conviver" as const,
     items: [
-      { label: "Comunidade", href: "/conta/comunidade", icon: "community", busca: "chat duvidas conversa" },
-      { label: "Portfólio", href: "/conta/portfolio", icon: "portfolio", busca: "projetos vitrine trabalho" },
-      { label: "Ranking", href: "/conta/ranking", icon: "ranking", busca: "pontos medalhas" },
-      { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine", busca: "alunos perfis rede" },
-      { label: "Enquete", href: "/votacao", icon: "votacao", busca: "votacao" },
-      { label: "Sugestões", href: "/conta/sugestoes", icon: "sugestao", busca: "ideia pedido melhoria" },
+      { chave: "comunidade", href: "/conta/comunidade", icon: "community", busca: "chat duvidas conversa" },
+      { chave: "portfolio", href: "/conta/portfolio", icon: "portfolio", busca: "projetos vitrine trabalho" },
+      { chave: "ranking", href: "/conta/ranking", icon: "ranking", busca: "pontos medalhas" },
+      { chave: "vitrine", href: "/conta/vitrine", icon: "vitrine", busca: "alunos perfis rede" },
+      { chave: "enquete", href: "/votacao", icon: "votacao", busca: "votacao" },
+      { chave: "sugestoes", href: "/conta/sugestoes", icon: "sugestao", busca: "ideia pedido melhoria" },
     ],
   },
   {
-    title: "Minha conta",
+    title: "conta" as const,
     items: [
-      { label: "Perfil", href: "/conta/perfil", icon: "profile", busca: "foto linkedin dados senha" },
-      { label: "Parceria & Negócios", href: "/conta/representacao", icon: "rep", busca: "portal bi revenda indicar" },
-      { label: "Ajuda", href: "/conta/ajuda", icon: "help", busca: "suporte chamado problema" },
+      { chave: "perfil", href: "/conta/perfil", icon: "profile", busca: "foto linkedin dados senha" },
+      { chave: "parceria", href: "/conta/representacao", icon: "rep", busca: "portal bi revenda indicar" },
+      { chave: "ajuda", href: "/conta/ajuda", icon: "help", busca: "suporte chamado problema" },
       // Mentoria individual ainda não abriu. Fica visível, para a turma saber
       // que vem, mas sem link: clicar em uma tela vazia frustra mais do que espera.
-      { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria", emBreve: true },
+      { chave: "mentoria", href: "/conta/mentoria", icon: "mentoria", emBreve: true },
     ],
   },
 ];
 
 /* Ferramenta não ocupa linha no menu, mas continua a uma tecla de distância:
-   a busca rápida conhece cada uma pelo nome e pelo apelido. */
-const FERRAMENTAS_NA_BUSCA: Destino[] = [
-  { label: "Biblioteca de referência", href: "/conta/ferramentas/biblioteca", grupo: "Ferramentas", busca: "dax sql power query oracle protheus codigo verbete" },
-  { label: "Treino de DAX e Excel", href: "/conta/ferramentas/dojo", grupo: "Ferramentas", busca: "dojo exercicio formula planilha" },
-  { label: "Raio-X do Dashboard", href: "/conta/ferramentas/raio-x", grupo: "Ferramentas", busca: "pbix revisao relatorio" },
-  { label: "Arena SQL", href: "/conta/ferramentas/arena", grupo: "Ferramentas", busca: "sql consulta desafio" },
-  { label: "Forja DAX", href: "/conta/ferramentas/forja", grupo: "Ferramentas", busca: "calendario medidas tempo" },
-  { label: "O número não bate", href: "/conta/ferramentas/conciliacao", grupo: "Ferramentas", busca: "conciliacao divergencia" },
-  { label: "Caixa-Preta", href: "/conta/ferramentas/caixa-preta", grupo: "Ferramentas", busca: "ia modelo token" },
-  { label: "DriveCanvas", href: "/ferramenta", grupo: "Ferramentas", busca: "visuais html svg cards" },
-  { label: "Knowledge Universe 4D", href: "/conta/universo", grupo: "Ferramentas", busca: "universo competencias 3d" },
+   a busca rápida conhece cada uma pelo nome e pelo apelido. O nome da
+   ferramenta não se traduz: é nome próprio. */
+const FERRAMENTAS_NA_BUSCA: Omit<Destino, "grupo">[] = [
+  { label: "Biblioteca de referência", href: "/conta/ferramentas/biblioteca", busca: "dax sql power query oracle protheus codigo verbete" },
+  { label: "Treino de DAX e Excel", href: "/conta/ferramentas/dojo", busca: "dojo exercicio formula planilha" },
+  { label: "Raio-X do Dashboard", href: "/conta/ferramentas/raio-x", busca: "pbix revisao relatorio" },
+  { label: "Arena SQL", href: "/conta/ferramentas/arena", busca: "sql consulta desafio" },
+  { label: "Forja DAX", href: "/conta/ferramentas/forja", busca: "calendario medidas tempo" },
+  { label: "O número não bate", href: "/conta/ferramentas/conciliacao", busca: "conciliacao divergencia" },
+  { label: "Caixa-Preta", href: "/conta/ferramentas/caixa-preta", busca: "ia modelo token" },
+  { label: "DriveCanvas", href: "/ferramenta", busca: "visuais html svg cards" },
+  { label: "Knowledge Universe 4D", href: "/conta/universo", busca: "universo competencias 3d" },
 ];
 
-/** A mesma lista, achatada, mais as ferramentas, para a busca rápida do Ctrl+K. */
-const DESTINOS: Destino[] = [
-  ...GROUPS.flatMap((g) => g.items.filter((i) => !i.emBreve).map((i) => ({ label: i.label, href: i.href, grupo: g.title ?? "Início", busca: i.busca }))),
-  ...FERRAMENTAS_NA_BUSCA,
-];
+/** A mesma lista, achatada e no idioma da pessoa, para a busca rápida do Ctrl+K. */
+function destinosDe(idioma: Idioma): Destino[] {
+  const t = textos(idioma);
+  return [
+    ...GROUPS.flatMap((g) =>
+      g.items.filter((i) => !i.emBreve).map((i) => ({
+        label: t.menu.itens[i.chave],
+        href: i.href,
+        grupo: g.title ? t.menu.grupos[g.title] : t.menu.inicio,
+        busca: i.busca,
+      }))
+    ),
+    ...FERRAMENTAS_NA_BUSCA.map((f) => ({ ...f, grupo: t.menu.paleta.grupoFerramentas })),
+  ];
+}
 
 type Aviso = { n: number; urgente: boolean };
 
 /* No celular, menu que só abre por gaveta faz a pessoa parar de navegar. A
    barra de baixo deixa os cinco destinos principais a um toque, com o aviso da
    comunidade junto. */
-const BARRA: { label: string; href: string; icon: string; exact?: boolean }[] = [
-  { label: "Início", href: "/conta", icon: "courses", exact: true },
-  { label: "Cursos", href: "/conta/cursos", icon: "cardapio" },
-  { label: "Comunidade", href: "/conta/comunidade", icon: "community" },
-  { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
-  { label: "Perfil", href: "/conta/perfil", icon: "profile" },
+const BARRA: { chave: ChaveItem; href: string; icon: string; exact?: boolean }[] = [
+  { chave: "meusCursos", href: "/conta", icon: "courses", exact: true },
+  { chave: "cursos", href: "/conta/cursos", icon: "cardapio" },
+  { chave: "comunidade", href: "/conta/comunidade", icon: "community" },
+  { chave: "ferramentas", href: "/conta/ferramentas", icon: "tool" },
+  { chave: "perfil", href: "/conta/perfil", icon: "profile" },
 ];
 
-function BarraInferior({ avisoComunidade }: { avisoComunidade?: Aviso }) {
+function BarraInferior({ avisoComunidade, idioma }: { avisoComunidade?: Aviso; idioma: Idioma }) {
+  const t = textos(idioma);
   const pathname = usePathname();
   const ativo = (href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/"));
   return (
     <nav
-      aria-label="Atalhos"
+      aria-label={t.menu.buscarTela}
       className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-ink-900/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
       {BARRA.map((it) => {
@@ -159,7 +177,7 @@ function BarraInferior({ avisoComunidade }: { avisoComunidade?: Aviso }) {
                 </span>
               )}
             </span>
-            {it.label}
+            {it.chave === "meusCursos" ? t.menu.inicio : t.menu.itens[it.chave]}
           </Link>
         );
       })}
@@ -167,7 +185,8 @@ function BarraInferior({ avisoComunidade }: { avisoComunidade?: Aviso }) {
   );
 }
 
-function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate?: () => void; cursosAVenda?: number; avisoComunidade?: Aviso }) {
+function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { onNavigate?: () => void; cursosAVenda?: number; avisoComunidade?: Aviso; idioma: Idioma }) {
+  const t = textos(idioma);
   const pathname = usePathname();
   const isActive = (href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/") || pathname === href);
 
@@ -181,13 +200,13 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
         </svg>
-        Buscar tela
+        {t.menu.buscarTela}
         <kbd className="ml-auto rounded border border-white/10 px-1.5 text-[0.62rem] text-slate-500">Ctrl K</kbd>
       </button>
 
       {GROUPS.map((group, gi) => (
         <div key={gi}>
-          {group.title && <p className="mb-2 px-3 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{group.title}</p>}
+          {group.title && <p className="mb-2 px-3 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{t.menu.grupos[group.title]}</p>}
           <ul className="space-y-0.5">
             {group.items.map((it) => {
               const active = isActive(it.href, it.exact);
@@ -204,8 +223,8 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate
                       className="flex cursor-default items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-500"
                     >
                       {icone}
-                      {it.label}
-                      <span className="ml-auto text-[0.65rem] text-slate-600">em breve</span>
+                      {t.menu.itens[it.chave]}
+                      <span className="ml-auto text-[0.65rem] text-slate-600">{t.menu.emBreve}</span>
                     </span>
                   ) : (
                     <Link
@@ -217,19 +236,19 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate
                       {/* Trilho do item aberto: diz onde você está sem depender só do fundo. */}
                       {active && <span aria-hidden="true" className="absolute -left-1 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r bg-brand-green" />}
                       {icone}
-                      {it.label}
+                      {t.menu.itens[it.chave]}
                       {/* Treinamento aberto para compra: o número chama, o
                           aluno decide. Some sozinho quando não há nenhum. */}
                       {it.href === "/conta/comunidade" && avisoComunidade && avisoComunidade.n > 0 && !active && (
                         <span
                           className={`ml-auto rounded-full px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums ${avisoComunidade.urgente ? "bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,.5)]" : "bg-brand-green text-ink-900"}`}
-                          title={avisoComunidade.urgente ? `${avisoComunidade.n} mensagens de alunos aguardam resposta` : `${avisoComunidade.n} mensagens novas que você ainda não viu`}
+                          title={avisoComunidade.urgente ? t.menu.avisoComunidade.aguardando(avisoComunidade.n) : t.menu.avisoComunidade.naoLidas(avisoComunidade.n)}
                         >
                           {avisoComunidade.n > 99 ? "99+" : avisoComunidade.n}
                         </span>
                       )}
                       {it.href === "/conta/cursos" && cursosAVenda > 0 && (
-                        <span className="ml-auto rounded-full bg-brand-green/15 px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-brand-green" title={`${cursosAVenda} ${cursosAVenda === 1 ? "treinamento à venda" : "treinamentos à venda"}`}>
+                        <span className="ml-auto rounded-full bg-brand-green/15 px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-brand-green" title={t.menu.cursosAVenda(cursosAVenda)}>
                           {cursosAVenda}
                         </span>
                       )}
@@ -245,7 +264,8 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate
   );
 }
 
-export default function ContaShell({ email, children, cursosAVenda = 0, eventos = [], avisoComunidade }: { email: string; children: React.ReactNode; cursosAVenda?: number; eventos?: EventoFaixa[]; avisoComunidade?: Aviso }) {
+export default function ContaShell({ email, children, cursosAVenda = 0, eventos = [], avisoComunidade, idioma = IDIOMA_PADRAO }: { email: string; children: React.ReactNode; cursosAVenda?: number; eventos?: EventoFaixa[]; avisoComunidade?: Aviso; idioma?: Idioma }) {
+  const t = textos(idioma);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const largura = pathname.startsWith("/conta/comunidade")
@@ -263,7 +283,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
         <div className="flex items-center gap-2">
           <button
             onClick={() => window.dispatchEvent(new Event("abrir-paleta"))}
-            aria-label="Buscar tela"
+            aria-label={t.menu.buscarTela}
             className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-slate-300"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -283,9 +303,12 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
               <Link href="/" onClick={() => setOpen(false)}><img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" /></Link>
               <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
             </div>
-            <NavList onNavigate={() => setOpen(false)} cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} />
+            <NavList onNavigate={() => setOpen(false)} cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} idioma={idioma} />
             <div className="mt-6 border-t border-white/10 pt-4">
-              <WhatsAppGroupLink onNavigate={() => setOpen(false)} />
+              <WhatsAppGroupLink onNavigate={() => setOpen(false)} idioma={idioma} />
+            </div>
+            <div className="mt-4 border-t border-white/10 pt-4">
+              <SeletorDeIdioma atual={idioma} />
             </div>
           </div>
         </div>
@@ -297,14 +320,17 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
           <img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" />
         </Link>
         <div className="flex-1 overflow-y-auto">
-          <NavList cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} />
+          <NavList cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} idioma={idioma} />
         </div>
         <div className="mt-4 border-t border-white/10 pt-4">
-          <WhatsAppGroupLink />
+          <WhatsAppGroupLink idioma={idioma} />
         </div>
         <div className="mt-4 border-t border-white/10 pt-4">
           <p className="truncate px-2 text-xs text-slate-500">{email}</p>
-          <div className="mt-2 px-2"><SignOutButton /></div>
+          <div className="mt-2 flex items-center justify-between gap-2 px-2">
+            <SignOutButton rotulo={t.menu.sair} />
+            <SeletorDeIdioma atual={idioma} />
+          </div>
         </div>
       </aside>
 
@@ -313,13 +339,13 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
           A comunidade é a única tela que ganha com largura: é conversa, lista
           de canais e lista de gente ao mesmo tempo. O resto continua na coluna
           de leitura, que é onde texto longo se lê melhor. */}
-      <PaletaDeComandos destinos={DESTINOS} />
-      <BarraInferior avisoComunidade={avisoComunidade} />
+      <PaletaDeComandos destinos={destinosDe(idioma)} idioma={idioma} />
+      <BarraInferior avisoComunidade={avisoComunidade} idioma={idioma} />
 
       <main className="pb-16 lg:pb-0 lg:pl-60" style={eventos.length ? ({ "--faixa": "36px" } as React.CSSProperties) : undefined}>
         {/* Abaixo do cabeçalho no celular, colada no topo no desktop. */}
         <div className="sticky top-[61px] z-30 lg:top-0">
-          <FaixaEventos eventos={eventos} />
+          <FaixaEventos eventos={eventos} idioma={idioma} />
         </div>
         <div className={largura}>{children}</div>
       </main>

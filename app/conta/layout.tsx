@@ -5,6 +5,7 @@ import { usuarioAtual, treinamentosAVenda, proximosEventos } from "@/lib/sessao"
 import ContaShell from "./ContaShell";
 import ModoDemo from "@/components/ModoDemo";
 import { demoAtual } from "@/lib/demo";
+import { idiomaAtual } from "@/lib/i18n/idioma-servidor";
 import { estadoDaComunidade } from "@/lib/comunidade-leitura";
 
 export default async function ContaLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +24,7 @@ export default async function ContaLayout({ children }: { children: React.ReactN
   return (
     <>
       <Background />
-      <ContaShell email={user.email || ""} cursosAVenda={cursosAVenda} eventos={eventos} avisoComunidade={avisoComunidade}>{children}</ContaShell>
+      <ContaShell email={user.email || ""} cursosAVenda={cursosAVenda} eventos={eventos} avisoComunidade={avisoComunidade} idioma={idiomaAtual()}>{children}</ContaShell>
       {/* Na demonstração o assistente sai de cena: ele não é o que está sendo mostrado. */}
       {demo ? <ModoDemo ate={demo} /> : <AssistantButton />}
     </>
