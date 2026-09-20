@@ -25,9 +25,9 @@ export default async function AssinarFerramentaPage() {
   const price = Number(cfg?.value || "19.90") || 19.9;
 
   const beneficios = [
-    "Gera cards em HTML e SVG para o Power BI",
-    "Medida DAX pronta para copiar, sem escrever código",
-    "Dezenas de templates e componentes",
+    tr("Gera cards em HTML e SVG para o Power BI"),
+    tr("Medida DAX pronta para copiar, sem escrever código"),
+    tr("Dezenas de templates e componentes"),
     "Salve seus visuais e reaproveite",
   ];
 

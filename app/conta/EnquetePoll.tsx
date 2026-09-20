@@ -74,7 +74,7 @@ export default function EnquetePoll({
       </div>
 
       <p className="mt-4 text-caption text-ds-text-3">
-        {maxEscolhas > 1 ? `Você pode marcar até ${maxEscolhas} temas. ` : "Dá para trocar o voto quando quiser. "}
+        {maxEscolhas > 1 ? `Você pode marcar até ${maxEscolhas} temas. ` : tr("Dá para trocar o voto quando quiser.")}
         Também dá para responder pelo link público:{" "}
         <Link href={`/votacao/${slug}`} className="text-ds-info underline decoration-ds-line underline-offset-4">
           {tr("página da enquete")}

@@ -35,7 +35,7 @@ export default function StartModal({ open, onClose }: { open: boolean; onClose: 
   const [rows, setRows] = useState(3);
   const [gap, setGap] = useState(8);
 
-  // Faixa "como funciona": aparece até o aluno dispensar (lembrado no navegador).
+  // Faixa tr("como funciona"): aparece até o aluno dispensar (lembrado no navegador).
   const [verComo, setVerComo] = useState(false);
   useEffect(() => {
     if (!open) return;

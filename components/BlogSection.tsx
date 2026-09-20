@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { createPublicClient } from "@/lib/supabase/public";
 import BlogSectionView, { type Post } from "./BlogSectionView";
 
@@ -25,7 +26,9 @@ export default async function BlogSection() {
     const r1 = await q(WITH_I18N);
     // Colunas de tradução ainda não criadas? Cai no select básico (blog continua em PT).
     data = r1.error ? (await q(BASIC)).data : r1.data;
-    posts = (data ?? []) as Post[];
+    // A tradução do banco vence; as colunas title_en/excerpt_en antigas
+    // continuam valendo como revisão humana dentro do BlogSectionView.
+    posts = await listaTraduzida("posts", (data ?? []) as any[]) as Post[];
   } catch {
     return null;
   }

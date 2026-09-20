@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { Radio } from "lucide-react";
@@ -74,7 +75,9 @@ export default async function ProximasMentorias({
       .gte("starts_at", new Date(Date.now() - 2 * 3600e3).toISOString())
       .order("starts_at")
       .limit(limite);
-    mentorias = data ?? [];
+    // Título e chamada da live saem no idioma de quem está lendo, com a
+    // tradução que o time revisou no /admin/traducoes.
+    mentorias = await listaTraduzida("live_events", (data ?? []) as any[]);
   } catch {
     mentorias = [];
   }

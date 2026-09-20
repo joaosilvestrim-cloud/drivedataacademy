@@ -170,7 +170,7 @@ export default function Dojo({ semente }: { semente: number }) {
                 </button>
               )}
               <button onClick={copiarBase} className="rounded-lg border border-white/10 px-2.5 py-1 text-[0.7rem] text-slate-300 transition-colors hover:border-brand-green/50 hover:text-white">
-                {copiou ? "Copiado" : "Copiar para a planilha"}
+                {copiou ? "Copiado" : tr("Copiar para a planilha")}
               </button>
               <span className="text-xs text-slate-500">{base.vendas.length} linhas</span>
             </div>
@@ -269,7 +269,7 @@ export default function Dojo({ semente }: { semente: number }) {
                 {tr("Conferir")}
               </button>
               <button onClick={() => setVerDica((v) => !v)} className="rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-300 hover:border-brand-green/50 hover:text-white">
-                {verDica ? "Esconder a dica" : "Dica"}
+                {verDica ? tr("Esconder a dica") : "Dica"}
               </button>
               <button
                 onClick={() => { setIndice((i) => (i + 1) % desafios.length); limpar(); }}

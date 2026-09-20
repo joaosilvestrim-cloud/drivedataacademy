@@ -57,7 +57,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
   // Turma fechada de empresa: quem não está matriculado nem vê que existe.
   const inCompany = course.access_mode === "in_company";
   if (inCompany && !enrolled) notFound();
-  // "Em breve" vence os outros estados do card. Quem já estiver matriculado
+  // tr("Em breve") vence os outros estados do card. Quem já estiver matriculado
   // continua entrando por /aprender.
   const emBreve = course.coming_soon === true;
   // Só assinante compra. A assinatura não abre o curso sozinha: dá o preço de assinante.
@@ -207,16 +207,16 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                 </div>
                 <p className="mt-3 text-center text-xs text-slate-500">
                   {enrolled
-                    ? "Você já tem este treinamento."
+                    ? tr("Você já tem este treinamento.")
                     : emBreve
                     ? aVenda
                       ? `Estamos preparando as aulas. Quando abrir, assinantes compram por ${brl(precoAss!)}.`
-                      : "Estamos preparando as aulas. Avisamos assim que abrir."
+                      : tr("Estamos preparando as aulas. Avisamos assim que abrir.")
                     : !assinaturaAtiva
-                    ? "Treinamentos são vendidos só para assinantes, com preço especial."
+                    ? tr("Treinamentos são vendidos só para assinantes, com preço especial.")
                     : aVenda
-                    ? "Você vai para a página segura do Asaas. O acesso libera assim que o pagamento confirmar."
-                    : "Acesso imediato."}
+                    ? tr("Você vai para a página segura do Asaas. O acesso libera assim que o pagamento confirmar.")
+                    : tr("Acesso imediato.")}
                 </p>
 
                 {/* O que você recebe */}

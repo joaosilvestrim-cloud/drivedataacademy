@@ -85,12 +85,12 @@ export default function CertificateView({studentName,courseTitle,workload,dateLa
           </div>)}
         </div>
         <div className={styles.validation}>
-          <div><strong>{tr("VALIDAÇÃO")}</strong><p>{status === "preview" ? "Modelo demonstrativo. Sem validade." : qrSvg ? "Escaneie para verificar o certificado." : "Consulte o código de autenticidade."}</p></div>
+          <div><strong>{tr("VALIDAÇÃO")}</strong><p>{status === "preview" ? tr("Modelo demonstrativo. Sem validade.") : qrSvg ? tr("Escaneie para verificar o certificado.") : tr("Consulte o código de autenticidade.")}</p></div>
           {qrSvg ? <a href={validationUrl} aria-label={tr("Verificar autenticidade do certificado")} className={styles.qr} dangerouslySetInnerHTML={{__html:qrSvg}} />
           : <div className={styles.qrPlaceholder}>{status === "preview" ? <>{tr("PRÉVIA")}<br/>{tr("DO MODELO")}</> : <>{tr("VALIDAÇÃO")}<br/>{tr("PELO CÓDIGO")}</>}</div>}
         </div>
       </footer>
-      <div className={styles.documentFooter}><span>{status === "preview" ? "MODELO DEMONSTRATIVO / SEM VALIDADE" : status === "revoked" ? "CERTIFICADO REVOGADO" : status === "expired" ? "CERTIFICADO EXPIRADO" : "DRIVEDATA ACADEMY / CERTIFICAÇÃO"}</span><span>{host}</span></div>
+      <div className={styles.documentFooter}><span>{status === "preview" ? tr("MODELO DEMONSTRATIVO / SEM VALIDADE") : status === "revoked" ? "CERTIFICADO REVOGADO" : status === "expired" ? "CERTIFICADO EXPIRADO" : tr("DRIVEDATA ACADEMY / CERTIFICAÇÃO")}</span><span>{host}</span></div>
       {(status === "revoked" || status === "expired") && <p className={styles.invalid}>{status === "revoked" ? "REVOGADO" : "EXPIRADO"}</p>}
     </article>
   </div>;

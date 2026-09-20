@@ -31,7 +31,7 @@ export default function EntrarPage() {
     });
     if (error) {
       setLoading(false);
-      setError("E-mail ou senha inválidos.");
+      setError(tr("E-mail ou senha inválidos."));
       return;
     }
     const next=new URLSearchParams(window.location.search).get("next");

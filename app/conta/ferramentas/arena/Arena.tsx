@@ -120,7 +120,7 @@ export default function Arena({ semente }: { semente: number }) {
         // deixaria um SQLite pendurado na memória a cada rodada.
         setBanco((antigo: any) => { try { antigo?.close?.(); } catch { /* já fechado */ } return db as Banco; });
       } catch (e: any) {
-        setErroBanco(e?.message || "Não consegui abrir o banco no navegador.");
+        setErroBanco(e?.message || tr("Não consegui abrir o banco no navegador."));
       }
     })();
     return () => { vivo = false; };
@@ -226,7 +226,7 @@ export default function Arena({ semente }: { semente: number }) {
               disabled={!banco}
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-50"
             >
-              {banco ? "Executar e corrigir" : "Abrindo o banco..."}
+              {banco ? "Executar e corrigir" : tr("Abrindo o banco...")}
             </button>
             <button type="button" onClick={() => setConsulta("")} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:border-white/30 hover:text-white">
               {tr("Limpar")}

@@ -68,7 +68,7 @@ export default function Navbar() {
                   } ${assinaturaAberta ? "text-white hover:text-brand-green" : "cursor-default text-white/80"}`}
                 >
                   {l.label}
-                  {!assinaturaAberta && <span className="text-[0.7rem] font-normal text-slate-400">{EM_BREVE[l.label] || "em breve"}</span>}
+                  {!assinaturaAberta && <span className="text-[0.7rem] font-normal text-slate-400">{EM_BREVE[l.label] || tr("em breve")}</span>}
                 </a>
               ) : (
                 <a
@@ -120,7 +120,7 @@ export default function Navbar() {
               {l.href === DESTAQUE ? (
                 <>
                   <span className={`border-b-2 pb-0.5 ${assinaturaAberta ? "border-brand-green" : "border-brand-green/40"}`}>{l.label}</span>
-                  {!assinaturaAberta && <span className="ml-2 text-xs font-normal text-slate-400">{EM_BREVE[l.label] || "em breve"}</span>}
+                  {!assinaturaAberta && <span className="ml-2 text-xs font-normal text-slate-400">{EM_BREVE[l.label] || tr("em breve")}</span>}
                 </>
               ) : (
                 l.label

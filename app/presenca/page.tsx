@@ -59,7 +59,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
 
   if (!live) {
     return (
-      <Aviso titulo="Nenhuma live com certificado no momento">
+      <Aviso titulo={tr("Nenhuma live com certificado no momento")}>
         <p className="mt-3 text-slate-400">
           {tr("A confirmação de presença abre meia hora antes da transmissão. Veja a próxima na")}{" "}
           <Link href="/#ao-vivo" className="text-brand-green underline underline-offset-4">{tr("grade de transmissões")}</Link>.
@@ -70,7 +70,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
 
   if (!aberta && prazoEncerrado(live)) {
     return (
-      <Aviso titulo="O prazo deste certificado terminou">
+      <Aviso titulo={tr("O prazo deste certificado terminou")}>
         <p className="mt-3 text-slate-400">
           {tr("O certificado de")} <span className="text-white">{live.title}</span> {tr("podia ser emitido até")} {dia(prazoDaLive(live))}. São {PRAZO_DIAS} {tr("dias corridos depois da transmissão.")}
         </p>
@@ -84,7 +84,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
 
   if (!aberta) {
     return (
-      <Aviso titulo="A presença ainda não abriu">
+      <Aviso titulo={tr("A presença ainda não abriu")}>
         <p className="mt-3 text-slate-400">
           <span className="text-white">{live.title}</span> {tr("começa")} {quando(live.starts_at)}{tr(". Leia o QR code de novo quando a transmissão estiver no ar.")}
         </p>
@@ -116,7 +116,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
             </li>
             <li className="flex gap-3">
               <span className="font-mono text-brand-green">2</span>
-              <span>{live.attendance_code ? "Digite a palavra-chave dita na transmissão." : "Confirme o envio."}</span>
+              <span>{live.attendance_code ? tr("Digite a palavra-chave dita na transmissão.") : tr("Confirme o envio.")}</span>
             </li>
             <li className="flex gap-3">
               <span className="font-mono text-brand-green">3</span>
@@ -138,8 +138,8 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
             </p>
           )}
 
-          <Campo name="name" label={tr("Nome completo")} required autoComplete="name" ajuda="É exatamente assim que sai no certificado." />
-          <Campo name="email" label={tr("E-mail")} type="email" required autoComplete="email" ajuda="Enviamos o certificado para cá." />
+          <Campo name="name" label={tr("Nome completo")} required autoComplete="name" ajuda={tr("É exatamente assim que sai no certificado.")} />
+          <Campo name="email" label={tr("E-mail")} type="email" required autoComplete="email" ajuda={tr("Enviamos o certificado para cá.")} />
           <Campo name="phone" label={tr("WhatsApp")} type="tel" autoComplete="tel" />
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -158,7 +158,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
           </label>
 
           {live.attendance_code && (
-            <Campo name="code" label={tr("Palavra-chave da live")} required ajuda="Dita durante a transmissão. Prova que você estava assistindo." />
+            <Campo name="code" label={tr("Palavra-chave da live")} required ajuda={tr("Dita durante a transmissão. Prova que você estava assistindo.")} />
           )}
 
           <label className="flex items-start gap-3 text-sm text-slate-300">

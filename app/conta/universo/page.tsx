@@ -131,26 +131,26 @@ export default async function UniversoHub() {
 
       <h2 className="mt-10 font-display text-lg font-bold text-white">{tr("Como começar")}</h2>
       <div className="mt-4 space-y-3">
-        <Passo numero={1} titulo="Faça o diagnóstico" estado={passo1}
-          acao={fezDiagnostico ? "Ver meu resultado" : "Começar o diagnóstico"} href="/conta/diagnostico">
+        <Passo numero={1} titulo={tr("Faça o diagnóstico")} estado={passo1}
+          acao={fezDiagnostico ? "Ver meu resultado" : tr("Começar o diagnóstico")} href="/conta/diagnostico">
           {fezDiagnostico
-            ? "Você já respondeu. Ele deu o ponto de partida do seu mapa."
-            : "São 25 perguntas rápidas. Servem só para dar um ponto de partida ao seu mapa. Você responde uma vez, então faça com calma."}
+            ? tr("Você já respondeu. Ele deu o ponto de partida do seu mapa.")
+            : tr("São 25 perguntas rápidas. Servem só para dar um ponto de partida ao seu mapa. Você responde uma vez, então faça com calma.")}
         </Passo>
 
-        <Passo numero={2} titulo="Abra o seu universo" estado={passo2} externo
-          acao="Abrir o mapa 3D" href="/universo">
+        <Passo numero={2} titulo={tr("Abra o seu universo")} estado={passo2} externo
+          acao={tr("Abrir o mapa 3D")} href="/universo">
           {temEvidencia
             ? `Seu mapa já tem ${resumo.developed} competências com evidência. Gire, clique numa estrela e veja de onde veio cada ponto.`
-            : "Aqui você vê o mapa. Estrela apagada não quer dizer que você não sabe: quer dizer que ainda não há registro na plataforma."}
+            : tr("Aqui você vê o mapa. Estrela apagada não quer dizer que você não sabe: quer dizer que ainda não há registro na plataforma.")}
         </Passo>
 
-        <Passo numero={3} titulo="Entregue um desafio" estado={passo3}
+        <Passo numero={3} titulo={tr("Entregue um desafio")} estado={passo3}
           acao={enviadas ? "Ver minhas entregas" : "Ver desafios abertos"} href="/conta/desafios">
           {aprovadas > 0
             ? `Você já teve ${aprovadas} ${aprovadas === 1 ? "entrega aprovada" : "entregas aprovadas"}. Cada uma virou evidência no seu mapa.`
             : enviadas > 0
-            ? "Sua entrega está na fila de correção. A gente te avisa por e-mail assim que revisar."
+            ? tr("Sua entrega está na fila de correção. A gente te avisa por e-mail assim que revisar.")
             : `Temos ${abertos ?? 0} desafios abertos. É aqui que você prova na prática o que aprendeu, e a equipe corrige.`}
         </Passo>
       </div>

@@ -21,7 +21,8 @@
     "test:biblioteca": "tsx scripts/test-biblioteca.ts",
     "test:video": "tsx scripts/test-video.ts",
     "test:dojo": "tsx scripts/test-dojo.ts",
-    "test:i18n": "tsx scripts/test-i18n.ts"
+    "test:i18n": "tsx scripts/test-i18n.ts",
+    "test:pt": "tsx scripts/test-sem-portugues.ts"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",

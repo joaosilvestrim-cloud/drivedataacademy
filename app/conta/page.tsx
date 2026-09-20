@@ -172,12 +172,12 @@ export default async function ContaHome() {
     : { rotulo: tr("Abrir o catálogo"), titulo: tr("Escolha por onde começar"), apoio: tr("Seus treinamentos aparecem aqui assim que você iniciar um."), href: "/conta/cursos", curso: null as any };
 
   const leitura = !full
-    ? "Sua assinatura não está ativa no momento."
+    ? tr("Sua assinatura não está ativa no momento.")
     : resumo.developed > 0
     ? `Você tem evidência em ${resumo.developed} ${resumo.developed === 1 ? "competência" : "competências"}${resumo.advanced ? `, ${resumo.advanced} no nível avançado` : ""}.${resumo.cooling.length ? ` ${resumo.cooling.length === 1 ? "Uma anda esfriando" : `${resumo.cooling.length} andam esfriando`}.` : ""}`
     : courses.length
-    ? "Suas primeiras evidências aparecem conforme você avança nas aulas."
-    : "Tudo pronto para começar.";
+    ? tr("Suas primeiras evidências aparecem conforme você avança nas aulas.")
+    : tr("Tudo pronto para começar.");
 
   return (
     <div className="flex flex-col gap-12 pb-4 tablet:gap-14">
@@ -274,7 +274,7 @@ export default async function ContaHome() {
             {emCorrecao > 0 && (
               <li className="flex items-baseline justify-between gap-4 border-b border-ds-line-soft py-2.5">
                 <span className="text-body-sm text-ds-text-2">
-                  {emCorrecao === 1 ? "Uma entrega aguardando correção" : `${emCorrecao} entregas aguardando correção`}
+                  {emCorrecao === 1 ? tr("Uma entrega aguardando correção") : `${emCorrecao} entregas aguardando correção`}
                 </span>
                 <Badge tone="attention">{tr("em correção")}</Badge>
               </li>
@@ -300,13 +300,13 @@ export default async function ContaHome() {
         />
         {withPct.length === 0 ? (
           <EmptyState
-            title={full ? "Nenhum treinamento iniciado" : "Você ainda não tem acesso"}
+            title={full ? "Nenhum treinamento iniciado" : tr("Você ainda não tem acesso")}
             description={
               full
-                ? "Escolha um treinamento no cardápio e ele passa a aparecer aqui."
-                : "Assine a Academy para entrar na comunidade, usar as ferramentas e comprar treinamentos com preço de assinante."
+                ? tr("Escolha um treinamento no cardápio e ele passa a aparecer aqui.")
+                : tr("Assine a Academy para entrar na comunidade, usar as ferramentas e comprar treinamentos com preço de assinante.")
             }
-            action={<Button href={full ? "/conta/cursos" : "/matricula"} variant={full ? "secondary" : "primary"}>{full ? "Abrir cardápio" : "Ver assinatura"}</Button>}
+            action={<Button href={full ? "/conta/cursos" : "/matricula"} variant={full ? "secondary" : "primary"}>{full ? tr("Abrir cardápio") : "Ver assinatura"}</Button>}
           />
         ) : (
           <ul className="mt-2 flex flex-col">
@@ -369,11 +369,11 @@ export default async function ContaHome() {
 
       {catalogo.length > 0 && (
         <section aria-labelledby="catalogo">
-          <SectionHeader title={full ? "Treinamentos com preço de assinante" : "Treinamentos da Academy"} />
+          <SectionHeader title={full ? tr("Treinamentos com preço de assinante") : tr("Treinamentos da Academy")} />
           <p className="mt-1 text-caption text-ds-text-3">
             {full
-              ? "Sua assinatura dá desconto: cada treinamento sai pelo preço de assinante, pago uma vez só."
-              : "Treinamentos são vendidos só para assinantes, com preço especial."}
+              ? tr("Sua assinatura dá desconto: cada treinamento sai pelo preço de assinante, pago uma vez só.")
+              : tr("Treinamentos são vendidos só para assinantes, com preço especial.")}
           </p>
           <ul className="mt-2 flex flex-col">
             {catalogo.slice(0, 6).map((c: any) => (

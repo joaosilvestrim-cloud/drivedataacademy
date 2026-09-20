@@ -29,7 +29,7 @@ export default function TemplateModal({ open, onClose }: { open: boolean; onClos
   }, [open]);
 
   async function criar() {
-    if (!nome.trim()) return setErro("Dê um nome ao template.");
+    if (!nome.trim()) return setErro(tr("Dê um nome ao template."));
     setEnviando(true);
     setErro(null);
     const res = await criarTemplate({ nome: nome.trim(), descricao: desc, premium, formato: "custom", definicao: doc });
@@ -39,7 +39,7 @@ export default function TemplateModal({ open, onClose }: { open: boolean; onClos
   }
 
   return (
-    <Modal open={open} onClose={onClose} titulo="Salvar como template" wide>
+    <Modal open={open} onClose={onClose} titulo={tr("Salvar como template")} wide>
       {ok ? (
         <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
           <CheckCircle2 className="h-10 w-10 text-emerald-500" />

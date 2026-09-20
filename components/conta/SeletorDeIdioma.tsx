@@ -5,6 +5,7 @@ import { usarTraducao } from "@/lib/i18n/usarTraducao";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { IDIOMAS, NOME_DO_IDIOMA, TAG_HTML, type Idioma } from "@/lib/i18n/idioma";
+import Bandeira from "@/components/i18n/Bandeira";
 
 /* Troca de idioma.
 
@@ -62,11 +63,16 @@ export default function SeletorDeIdioma({ atual, compacto }: { atual: Idioma; co
           aria-pressed={idioma === l}
           aria-label={NOME_DO_IDIOMA[l]}
           title={NOME_DO_IDIOMA[l]}
-          className={`rounded-md px-2 py-1 text-[0.68rem] font-semibold uppercase transition-colors ${
-            idioma === l ? "bg-white/10 text-white" : "text-slate-500 hover:text-white"
-          } ${pendente && idioma === l ? "opacity-60" : ""}`}
+          /* O escolhido ganha anel e fundo; os outros só perdem opacidade.
+             Tirar a cor não dá: a bandeira da Espanha é faixa horizontal, e
+             em cinza vira um retângulo sem identidade nenhuma. */
+          className={`rounded-md p-1 transition-all ${
+            idioma === l
+              ? "bg-white/10 ring-1 ring-white/25"
+              : "opacity-55 hover:opacity-100"
+          } ${pendente && idioma === l ? "animate-pulse" : ""}`}
         >
-          {l}
+          <Bandeira idioma={l} tamanho={compacto ? 19 : 21} />
         </button>
       ))}
     </div>

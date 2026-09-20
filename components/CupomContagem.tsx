@@ -106,7 +106,7 @@ export default function CupomContagem({
       </span>
 
       <span className="text-xs text-slate-400" aria-live="polite">
-        {copiado ? <span className="text-brand-green">{tr("código copiado")}</span> : "use no checkout"}
+        {copiado ? <span className="text-brand-green">{tr("código copiado")}</span> : tr("use no checkout")}
       </span>
     </div>
   );

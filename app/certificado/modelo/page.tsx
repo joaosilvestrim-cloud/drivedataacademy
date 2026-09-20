@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 // Preview do modelo de certificado (dados de exemplo). Útil para conferir o design.
 export default async function CertModeloPage({ searchParams }: { searchParams: { curso?: string; carga?: string } }) {
-  const courseTitle = searchParams.curso || "Power BI do Zero ao Avançado";
+  const courseTitle = searchParams.curso || tr("Power BI do Zero ao Avançado");
   const workload = searchParams.carga || "8 horas";
   const dateLabel = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "long", year: "numeric" }).format(new Date());
 

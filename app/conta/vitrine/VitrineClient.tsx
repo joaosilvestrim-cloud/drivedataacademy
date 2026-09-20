@@ -331,8 +331,8 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
       {filtrados.length === 0 && (
         <p className="mt-6 rounded-2xl border border-dashed border-white/10 px-4 py-12 text-center text-slate-500">
           {membros.length === 0
-            ? "Ainda não há alunos na vitrine."
-            : "Nenhum aluno encontrado com esses termos. Tente outra busca ou limpe o filtro."}
+            ? tr("Ainda não há alunos na vitrine.")
+            : tr("Nenhum aluno encontrado com esses termos. Tente outra busca ou limpe o filtro.")}
         </p>
       )}
     </>

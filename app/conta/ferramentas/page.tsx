@@ -129,7 +129,7 @@ export default async function FerramentasHub() {
     },
     {
       key: "dataflow-lab",
-      categoria: "Dados",
+      categoria: tr("Dados"),
       name: nomes["dataflow-lab"].nome,
       tag: "Dados · 4D",
       desc: nomes["dataflow-lab"].desc,

@@ -44,7 +44,7 @@ export default function ProfileForm() {
 
   async function persist(patch: Partial<Form>) {
     const res = await saveProfile(patch as any);
-    if (!res?.ok) throw new Error(res?.error || "Não consegui salvar.");
+    if (!res?.ok) throw new Error(res?.error || tr("Não consegui salvar."));
   }
 
   async function save(e: React.FormEvent) {
@@ -55,7 +55,7 @@ export default function ProfileForm() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err: any) {
-      setSaveErr(err?.message || "Não consegui salvar. Tente de novo.");
+      setSaveErr(err?.message || tr("Não consegui salvar. Tente de novo."));
     } finally {
       setSaving(false);
     }
@@ -76,23 +76,23 @@ export default function ProfileForm() {
       setForm((f) => ({ ...f, avatar_url: url }));
       await persist({ avatar_url: url });
     } catch {
-      setAiMsg("Não consegui subir a foto. Tente uma imagem menor.");
+      setAiMsg(tr("Não consegui subir a foto. Tente uma imagem menor."));
     } finally {
       setUploading(false);
     }
   }
 
   async function aiFill() {
-    if (aiText.trim().length < 20) { setAiMsg("Cole mais detalhes (seu LinkedIn ou currículo)."); return; }
+    if (aiText.trim().length < 20) { setAiMsg(tr("Cole mais detalhes (seu LinkedIn ou currículo).")); return; }
     setAiLoading(true); setAiMsg("");
     try {
       const res = await fetch("/api/profile/ai-fill", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: aiText }) });
       const data = await res.json();
-      if (!res.ok) { setAiMsg(data.error || "Não consegui processar."); return; }
+      if (!res.ok) { setAiMsg(data.error || tr("Não consegui processar.")); return; }
       setForm((f) => ({ ...f, headline: data.headline || f.headline, bio: data.bio || f.bio, skills: data.skills || f.skills }));
-      setAiMsg("Prontinho! Confira os campos e salve.");
+      setAiMsg(tr("Prontinho! Confira os campos e salve."));
     } catch {
-      setAiMsg("Falha de conexão.");
+      setAiMsg(tr("Falha de conexão."));
     } finally {
       setAiLoading(false);
     }
@@ -112,7 +112,7 @@ export default function ProfileForm() {
         </button>
         <input ref={avatarRef} type="file" accept="image/*" onChange={onAvatar} className="hidden" />
         <div className="min-w-0">
-          <p className="truncate font-display text-lg font-bold text-white">{form.full_name || "Complete seu nome"}</p>
+          <p className="truncate font-display text-lg font-bold text-white">{form.full_name || tr("Complete seu nome")}</p>
           {form.headline && <p className="truncate text-sm text-brand-teal">{form.headline}</p>}
           <p className="truncate text-sm text-slate-400">{email}</p>
           <button type="button" onClick={() => avatarRef.current?.click()} disabled={uploading} className="mt-1 text-xs text-brand-teal hover:underline disabled:opacity-60">{uploading ? "enviando..." : "trocar foto"}</button>
@@ -127,7 +127,7 @@ export default function ProfileForm() {
           <textarea value={aiText} onChange={(e) => setAiText(e.target.value)} rows={4} placeholder={tr("Cole aqui seu LinkedIn/currículo...")} className={`${field} mt-3 resize-y`} />
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <button type="button" onClick={aiFill} disabled={aiLoading} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
-              {aiLoading ? "Processando..." : "Preencher com IA"}
+              {aiLoading ? "Processando..." : tr("Preencher com IA")}
             </button>
             {aiMsg && <span className="text-xs text-slate-400">{aiMsg}</span>}
           </div>

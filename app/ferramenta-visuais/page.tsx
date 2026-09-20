@@ -23,18 +23,18 @@ export default async function FerramentaVisuaisLP() {
   } catch { /* usa padrão */ }
 
   const features = [
-    { t: tr("Dezenas de presets prontos"), d: "Cards, velocímetros, storytelling, gráficos. Arraste, edite e pronto.", d2: "M4 5h16v6H4zM4 15h7v4H4zM14 15h6v4h-6z" },
-    { t: tr("Aponte para suas medidas"), d: "Marque cada elemento como dinâmico e ligue direto à sua medida do Power BI.", d2: "M3 3v18h18M7 13l3-3 4 4 5-6" },
-    { t: tr("Gera o DAX pronto"), d: "Um clique e você copia a medida DAX para colar no Power BI. Sem escrever código.", d2: "M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12" },
-    { t: tr("Transições entre telas"), d: "Crie páginas e transições para storytelling dentro do próprio visual.", d2: "M4 12h16M14 6l6 6-6 6" },
-    { t: tr("Comunidade com upvotes"), d: "Publique seu visual, veja os melhores e reaproveite o que a comunidade criou.", d2: "M12 4l3 6 6 .5-4.5 4 1.5 6-6-3.5L6 20.5 7.5 14.5 3 10.5 9 10z" },
-    { t: tr("É como um Figma do BI"), d: "Uma tela visual para prototipar e construir o visual do zero, do seu jeito.", d2: "M4 4h16v16H4zM4 9h16M9 9v11" },
+    { t: tr("Dezenas de presets prontos"), d: tr("Cards, velocímetros, storytelling, gráficos. Arraste, edite e pronto."), d2: "M4 5h16v6H4zM4 15h7v4H4zM14 15h6v4h-6z" },
+    { t: tr("Aponte para suas medidas"), d: tr("Marque cada elemento como dinâmico e ligue direto à sua medida do Power BI."), d2: "M3 3v18h18M7 13l3-3 4 4 5-6" },
+    { t: tr("Gera o DAX pronto"), d: tr("Um clique e você copia a medida DAX para colar no Power BI. Sem escrever código."), d2: "M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12" },
+    { t: tr("Transições entre telas"), d: tr("Crie páginas e transições para storytelling dentro do próprio visual."), d2: "M4 12h16M14 6l6 6-6 6" },
+    { t: tr("Comunidade com upvotes"), d: tr("Publique seu visual, veja os melhores e reaproveite o que a comunidade criou."), d2: "M12 4l3 6 6 .5-4.5 4 1.5 6-6-3.5L6 20.5 7.5 14.5 3 10.5 9 10z" },
+    { t: tr("É como um Figma do BI"), d: tr("Uma tela visual para prototipar e construir o visual do zero, do seu jeito."), d2: "M4 4h16v16H4zM4 9h16M9 9v11" },
   ];
 
   const steps = [
     { n: "1", t: tr("Escolha um preset"), d: "Comece de um bloco pronto ou do zero." },
     { n: "2", t: "Configure e aponte", d: "Edite cores, textos e ligue os campos às suas medidas." },
-    { n: "3", t: tr("Copie o DAX"), d: "Leve a medida pronta para o Power BI e use no seu relatório." },
+    { n: "3", t: tr("Copie o DAX"), d: tr("Leve a medida pronta para o Power BI e use no seu relatório.") },
   ];
 
   return (

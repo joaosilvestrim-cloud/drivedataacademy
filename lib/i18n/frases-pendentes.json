@@ -158,6 +158,9 @@
   "Agenda ao vivo, gravações, comunidade, ferramentas e certificados. E os treinamentos completos com preço de assinante.": [
     "app\\matricula\\page.tsx"
   ],
+  "Agendar mentoria": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Agregação e filtro": [
     "lib\\arena\\familias.ts"
   ],
@@ -256,6 +259,9 @@
   "Associação de curso inválida.": [
     "lib\\knowledge\\catalog.ts"
   ],
+  "Assunto": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Atenção: chaves repetidas multiplicaram registros.": [
     "lib\\dataflow\\engine.ts"
   ],
@@ -323,6 +329,9 @@
   "Canal": [
     "lib\\conciliacao\\tipos.ts"
   ],
+  "Candidatar-se na DriveData": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Capacidade da equipe": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
@@ -373,6 +382,9 @@
   ],
   "Começar o diagnóstico": [
     "app\\conta\\universo\\page.tsx"
+  ],
+  "Comissão recorrente": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você.": [
     "app\\conta\\cursos\\page.tsx"
@@ -434,6 +446,9 @@
   "Confraternização Universal": [
     "lib\\forja\\feriados.ts"
   ],
+  "Conheça o Portal Fabric": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Conheça suas competências e acompanhe como seu conhecimento evolui.": [
     "components\\knowledge\\ProfilePreview.tsx"
   ],
@@ -454,6 +469,15 @@
   ],
   "Consulte o código de autenticidade.": [
     "components\\CertificateView.tsx"
+  ],
+  "Conta um pouco do seu público": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Conte o que trava hoje, não a solução. O problema bem contado vale mais que a especificação.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Contexto da sua dúvida ou desafio": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Conteúdo estudado": [
     "lib\\knowledge\\demo.ts"
@@ -524,6 +548,9 @@
   "Dados da partida inválidos.": [
     "lib\\decision-lab\\storage.ts"
   ],
+  "Dashboard exclusivo para monitorar seus clientes, indicações e comissões em tempo real.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Data inválida": [
     "lib\\knowledge\\engine.ts"
   ],
@@ -536,6 +563,9 @@
   "DataFlow Lab · Demonstração": [
     "app\\(dataflow)\\dataflow-lab\\demo\\page.tsx"
   ],
+  "De onde vêm os dados hoje?": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "De quanto é a diferença entre os dois lados?": [
     "lib\\conciliacao\\gerador.ts"
   ],
@@ -544,6 +574,9 @@
   ],
   "Decisão inválida.": [
     "lib\\decision-lab\\engine.ts"
+  ],
+  "Define se a gente entrega pronto ou trabalha junto com o seu pessoal.": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Demonstração salva neste navegador.": [
     "components\\decision-lab\\DecisionLab.tsx"
@@ -645,6 +678,9 @@
   "Enviar para revisão": [
     "app\\conta\\portfolio\\Portfolio.tsx"
   ],
+  "Enviar projeto": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Equilibre crescimento, caixa e atendimento.": [
     "lib\\decision-lab\\engine.ts"
   ],
@@ -729,6 +765,27 @@
   "Evidência registrada no seu Knowledge Universe.": [
     "components\\dataflow\\DataFlowLab.tsx"
   ],
+  "Ex.: ERP Protheus, planilhas do comercial e uma base do marketing no Google Sheets.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Ex.: até 15.000, ou ainda estou levantando": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Ex.: manhãs, ou uma data": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Ex.: o fechamento comercial leva três dias no Excel e ninguém confia no número final.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Ex.: precisa rodar antes do fechamento de dezembro": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Ex.: seis gerentes de loja acompanhando meta diária e o diretor no fechamento do mês.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Ex.: varejo farmacêutico, 300 funcionários, 12 lojas": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Excluir este projeto? Não dá para desfazer.": [
     "app\\conta\\portfolio\\Portfolio.tsx"
   ],
@@ -743,6 +800,12 @@
   ],
   "Exercício demonstrativo · Contexto de filtro": [
     "lib\\knowledge\\demo.ts"
+  ],
+  "Existe uma data limite?": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Experiência, tecnologias, o que te move": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Explorador": [
     "lib\\decision-lab\\engine.ts"
@@ -767,6 +830,9 @@
   ],
   "Falar com uma pessoa": [
     "components\\AssistantButton.tsx"
+  ],
+  "Fale sobre você": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Falha ao registrar evidência.": [
     "lib\\knowledge\\practical.ts"
@@ -818,6 +884,9 @@
   ],
   "Função de janela": [
     "lib\\arena\\familias.ts"
+  ],
+  "Ganhe comissão na instalação e também mensalmente sobre o faturamento de cada cliente ativo que você trouxer para a plataforma.": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Gera cards em HTML e SVG para o Power BI": [
     "app\\ferramenta\\assinar\\page.tsx"
@@ -905,8 +974,14 @@
   "Linhas perdidas na junção": [
     "lib\\conciliacao\\tipos.ts"
   ],
+  "LinkedIn ou portfólio": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Lista inválida ou acima do limite.": [
     "lib\\knowledge\\catalog.ts"
+  ],
+  "Liste sistemas, planilhas e bancos, do jeito que for. Ajuda a saber o tamanho da integração.": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Live no YouTube": [
     "components\\LancamentoHoje.tsx"
@@ -946,6 +1021,12 @@
   ],
   "Marque cada elemento como dinâmico e ligue direto à sua medida do Power BI.": [
     "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Marque uma mentoria 1:1 com o time. Escolha o assunto.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Me candidatar": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Medalhas do ranking · DriveData Academy": [
     "app\\(ranking)\\ranking\\medalhas\\page.tsx"
@@ -1204,6 +1285,9 @@
   "O que foi vendido em cada pedido.": [
     "lib\\arena\\gerador.ts"
   ],
+  "O que você quer resolver?": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "O relacionamento entre": [
     "lib\\caixapreta\\corpora.ts"
   ],
@@ -1258,6 +1342,12 @@
   "Os treinamentos são vendidos só para assinantes, com preço especial.": [
     "app\\conta\\cursos\\page.tsx"
   ],
+  "Painel de acompanhamento": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Parceria em projetos": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Partida ativa não encontrada.": [
     "lib\\decision-lab\\storage.ts"
   ],
@@ -1311,6 +1401,9 @@
   ],
   "Preencher com IA": [
     "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Preferência de horário": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Preparando a análise local": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
@@ -1390,14 +1483,26 @@
   "Páscoa": [
     "lib\\forja\\feriados.ts"
   ],
+  "Qual faixa de investimento você considera?": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Qual problema você quer resolver?": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Qualidade fora do intervalo.": [
     "lib\\knowledge\\practical.ts"
+  ],
+  "Quantos clientes você pretende levar?": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Quarta-feira de Cinzas": [
     "lib\\forja\\feriados.ts"
   ],
   "Quase. Sei exatamente onde você tropeçou": [
     "lib\\arena\\motor.ts"
+  ],
+  "Que tipo de trabalho você precisa?": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Quebre por status. A diferença vai aparecer inteira em um status que só existe de um lado. É o erro mais comum de relatório de vendas.": [
     "lib\\conciliacao\\tipos.ts"
@@ -1407,6 +1512,15 @@
   ],
   "Quem compra. Nem todo cliente tem pedido.": [
     "lib\\arena\\gerador.ts"
+  ],
+  "Quem vai usar o resultado e para decidir o quê?": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Quer ser consultor(a) DriveData? Preencha e entra na nossa triagem.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Quero revender": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Quinta-Feira, 11 De Setembro": [
     "app\\conta\\page.tsx"
@@ -1475,6 +1589,9 @@
   "Resultado acumulado": [
     "lib\\decision-lab\\engine.ts"
   ],
+  "Revenda o Portal BI da DriveData e ganhe recorrência com a gente. Simule abaixo e registre seu interesse.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Revise os valores da decisão.": [
     "lib\\decision-lab\\engine.ts"
   ],
@@ -1493,6 +1610,9 @@
   "SEU HISTÓRICO DE APRENDIZAGEM": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
+  "Saber quem olha a tela muda o desenho do projeto inteiro.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Salvamento indisponível": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
@@ -1508,11 +1628,23 @@
   "Saída da etapa": [
     "components\\dataflow\\DataFlowLab.tsx"
   ],
+  "Se há auditoria, reunião de conselho ou virada de sistema, conte aqui.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Se não souber, tudo bem. A conversa ajuda a definir.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Se um cliente sem pedido some da sua lista, a junção está cortando ele. E cuidado com o que você conta: contar linha não é a mesma coisa que contar pedido.": [
     "lib\\arena\\familias.ts"
   ],
   "Se você agrupar só pelo número do mês, janeiro de um ano cai em cima de janeiro do outro.": [
     "lib\\arena\\familias.ts"
+  ],
+  "Segmento e porte da empresa": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Segmento, região, como pretende vender...": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Seguiu como uma linha única.": [
     "lib\\dataflow\\trace.ts"
@@ -1541,6 +1673,9 @@
   "Semente invalida na partida.": [
     "lib\\decision-lab\\storage.ts"
   ],
+  "Senioridade": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Seu caminho de aprendizagem": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
@@ -1564,6 +1699,9 @@
   ],
   "Simulação educacional com regras fixas. Os resultados não constituem uma previsão de negócio real.": [
     "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Solicitar mentoria": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Soma corrida, sem reiniciar no ano.": [
     "lib\\forja\\gerar.ts"
@@ -1601,6 +1739,9 @@
   "Suporte de monitor": [
     "lib\\arena\\gerador.ts"
   ],
+  "Suporte técnico dedicado": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "São 25 perguntas rápidas. Servem só para dar um ponto de partida ao seu mapa. Você responde uma vez, então faça com calma.": [
     "app\\conta\\universo\\page.tsx"
   ],
@@ -1617,6 +1758,9 @@
   "Teclado mecânico": [
     "lib\\arena\\gerador.ts"
   ],
+  "Tem um projeto de dados para tirar do papel? Responda abaixo e a gente volta com um caminho, um prazo e um preço.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Tente atualizar a página em instantes. Se o problema continuar, entre em contato com o suporte.": [
     "app\\(knowledge)\\universo\\page.tsx"
   ],
@@ -1625,6 +1769,9 @@
   ],
   "Texto do botão": [
     "components\\editor\\Properties.tsx"
+  ],
+  "Time especializado para dar suporte a você e aos seus clientes durante toda a jornada.": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Tipo de evidência inválido.": [
     "lib\\knowledge\\practical.ts"
@@ -1684,6 +1831,9 @@
   "Uma entrega aguardando correção": [
     "app\\conta\\page.tsx"
   ],
+  "Uma faixa já basta. Sem ela, a gente sugere o escopo mínimo que resolve.": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Uma nova gestão": [
     "lib\\decision-lab\\engine.ts"
   ],
@@ -1714,6 +1864,9 @@
   "Variação contra o mês anterior (%)": [
     "lib\\forja\\gerar.ts"
   ],
+  "Venda autorizada Portal BI": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Vitrine do bairro": [
     "lib\\decision-lab\\engine.ts"
   ],
@@ -1738,6 +1891,9 @@
   "Você vai para a página segura do Asaas. O acesso libera assim que o pagamento confirmar.": [
     "app\\cursos\\[slug]\\page.tsx"
   ],
+  "Vocês têm time de dados hoje?": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "Votação encerrada.": [
     "app\\votacao\\[slug]\\page.tsx"
   ],
@@ -1750,6 +1906,9 @@
   "antes depois atual anterior lado a lado versus": [
     "components\\editor\\Toolbox.tsx"
   ],
+  "area": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "arquivo disponível": [
     "app\\aprender\\[slug]\\Biblioteca.tsx",
     "components\\AvisoMateriaisLiberados.tsx"
@@ -1757,6 +1916,9 @@
   "arquivos disponíveis": [
     "app\\aprender\\[slug]\\Biblioteca.tsx",
     "components\\AvisoMateriaisLiberados.tsx"
+  ],
+  "assunto": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "atingidas até agora": [
     "components\\decision-lab\\DecisionLab.tsx"
@@ -1769,6 +1931,9 @@
   ],
   "aumenta a receita por unidade, mas reduz": [
     "lib\\decision-lab\\engine.ts"
+  ],
+  "budget": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "canal": [
     "lib\\arena\\gerador.ts"
@@ -1794,6 +1959,9 @@
   "desconto": [
     "lib\\arena\\gerador.ts"
   ],
+  "descricao": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "dia útil": [
     "lib\\forja\\feriados.ts"
   ],
@@ -1803,14 +1971,23 @@
   "em minutos": [
     "app\\conta\\page.tsx"
   ],
+  "escopo": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "frete": [
     "lib\\arena\\gerador.ts"
+  ],
+  "horario": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "itens": [
     "lib\\arena\\gerador.ts"
   ],
   "linha do tempo passos etapas jornada": [
     "components\\editor\\Toolbox.tsx"
+  ],
+  "linkedin": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "membros do canal": [
     "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
@@ -1832,6 +2009,9 @@
   ],
   "mensagens novas que você ainda não viu": [
     "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "mensalidade": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "modo de preparo": [
     "lib\\caixapreta\\corpora.ts"
@@ -1870,11 +2050,17 @@
   "o que mudou changelog": [
     "app\\conta\\ContaShell.tsx"
   ],
+  "observacao": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
   "participou da transmissão ao vivo": [
     "app\\certificado\\[code]\\page.tsx"
   ],
   "pedidos": [
     "lib\\arena\\gerador.ts"
+  ],
+  "prazo": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "preco": [
     "lib\\arena\\gerador.ts"
@@ -1884,6 +2070,9 @@
   ],
   "produtos": [
     "lib\\arena\\gerador.ts"
+  ],
+  "publico": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "quando usar": [
     "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
@@ -1895,7 +2084,7 @@
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
   ],
   "segmento": [
-    "lib\\arena\\gerador.ts"
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "sem filtro": [
     "lib\\dataflow\\storage.ts"
@@ -1905,6 +2094,12 @@
   ],
   "sem limpeza": [
     "lib\\dataflow\\storage.ts"
+  ],
+  "senioridade": [
+    "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "sobre": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "status": [
     "lib\\arena\\gerador.ts"
@@ -1920,6 +2115,9 @@
   ],
   "À venda": [
     "app\\conta\\cursos\\page.tsx"
+  ],
+  "Área de atuação": [
+    "app\\conta\\_funis\\definicoes.ts"
   ],
   "Área duplicada.": [
     "lib\\knowledge\\catalog.ts"

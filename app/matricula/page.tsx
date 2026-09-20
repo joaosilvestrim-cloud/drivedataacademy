@@ -69,7 +69,7 @@ export default async function MatriculaPage() {
   const nome = cfg.turma_nome || "DriveData Academy";
   const descricao =
     cfg.turma_descricao ||
-    "Agenda ao vivo, gravações, comunidade, ferramentas e certificados. E os treinamentos completos com preço de assinante.";
+    tr("Agenda ao vivo, gravações, comunidade, ferramentas e certificados. E os treinamentos completos com preço de assinante.");
   const price = Number(cfg.sub_price || cfg.full_access_price || "0") || 0;
   const anual = Number(cfg.sub_price_annual || "0") || 0;
   // Calculado dos dois preços configurados no admin, nunca digitado à mão.
@@ -77,7 +77,7 @@ export default async function MatriculaPage() {
   const temAnual = anual > 0 && desconto > 0;
 
   const picked = parseIncludes(cfg.sub_includes);
-  const beneficios = SUB_INCLUDES.filter((i) => picked.includes(i.key)).map((i) => i.label);
+  const beneficios = SUB_INCLUDES.filter((i) => picked.includes(i.key)).map((i) => tr(i.label));
 
   return (
     <div className="relative min-h-screen bg-ink-900">

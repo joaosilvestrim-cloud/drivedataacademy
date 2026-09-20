@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import DataFlowLab from '@/components/dataflow/DataFlowLab';
-export const metadata={title:'DataFlow Lab · Demonstração',description:'Investigue o faturamento fantasma em um laboratório interativo de dados.'};
+export function generateMetadata(){return {title:`DataFlow Lab · ${tr('Demonstração')}`,description:tr('Investigue o faturamento fantasma em um laboratório interativo de dados.')};}
 export default function Page(){return <DataFlowLab demo/>;}

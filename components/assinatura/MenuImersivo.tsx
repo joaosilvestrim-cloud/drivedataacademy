@@ -50,15 +50,15 @@ function Cenas() {
           <div className="dd-lab-label">DADOS<br /><b>{tr("EM AÇÃO.")}</b></div>
         </div>
         <div className="dd-scene dd-scene-books" data-scene="3" aria-hidden="true" hidden>
-          <div className="dd-book dd-book-back"><span>03</span><b>APLICAR</b></div><div className="dd-book dd-book-mid"><span>02</span><b>PRATICAR</b></div>
-          <div className="dd-book dd-book-front"><span>{tr("01 / DRIVEDATA")}</span><strong>{tr("VÁ")}<br />{tr("ALÉM.")}</strong><small>TREINAMENTOS</small></div>
+          <div className="dd-book dd-book-back"><span>03</span><b>{tr("APLICAR")}</b></div><div className="dd-book dd-book-mid"><span>02</span><b>{tr("PRATICAR")}</b></div>
+          <div className="dd-book dd-book-front"><span>{tr("01 / DRIVEDATA")}</span><strong>{tr("VÁ")}<br />{tr("ALÉM.")}</strong><small>{tr("TREINAMENTOS")}</small></div>
         </div>
         <div className="dd-scene dd-scene-material" data-scene="4" aria-hidden="true" hidden>
           <div className="dd-sheet dd-sheet-back" /><div className="dd-sheet dd-sheet-mid" />
           <div className="dd-sheet dd-sheet-front"><span>{tr("DO ARQUIVO AO PROJETO")}</span><strong>CASE<br />ABERTO.</strong><div className="dd-paper-bars"><B q={5} /></div><small>{tr("POWER BI · MATERIAIS")}</small></div>
         </div>
         <div className="dd-scene dd-scene-certificate" data-scene="5" aria-hidden="true" hidden>
-          <div className="dd-credential"><div className="dd-credential-top">DRIVEDATA <span>ACADEMY</span></div><div className="dd-credential-line" /><span className="dd-credential-label">{tr("COMPETÊNCIAS")}</span><strong>{tr("Você")}<br />{tr("chegou")}<br />{tr("até aqui.")}</strong><div className="dd-credential-seal">DD</div><small>CERTIFICADO</small></div>
+          <div className="dd-credential"><div className="dd-credential-top">DRIVEDATA <span>ACADEMY</span></div><div className="dd-credential-line" /><span className="dd-credential-label">{tr("COMPETÊNCIAS")}</span><strong>{tr("Você")}<br />{tr("chegou")}<br />{tr("até aqui.")}</strong><div className="dd-credential-seal">DD</div><small>{tr("CERTIFICADO")}</small></div>
         </div>
         <div className="dd-scene dd-scene-community" data-scene="6" aria-hidden="true" hidden>
           <div className="dd-word-orbit" /><div className="dd-word dd-word-a">TROCAR.</div><div className="dd-word dd-word-b">{tr("CRIAR.")}</div><div className="dd-word dd-word-c">CRESCER.</div><div className="dd-word-center">JUNTO.</div>

@@ -34,12 +34,13 @@ const visivel = (t: string) => t.replace(/ /g, "·").replace(/\n/g, "↵");
 const METADE = "�";
 
 function Ficha({ token, indice }: { token: string; indice: number }) {
+  const tr = usarTraducao();
   const texto = textoDoToken(token);
   const parcial = texto.includes(METADE);
   const cor = CORES[indice % CORES.length];
   return (
     <span
-      title={parcial ? "Pedaço de uma letra acentuada: o modelo trabalha em bytes, não em letras" : `token ${indice + 1}`}
+      title={parcial ? tr("Pedaço de uma letra acentuada: o modelo trabalha em bytes, não em letras") : `token ${indice + 1}`}
       className="rounded border px-1.5 py-0.5 font-mono text-[0.8rem]"
       style={
         parcial
@@ -74,7 +75,7 @@ export default function CaixaPreta() {
   const [estacao, setEstacao] = useState<"tokenizar" | "gerar">("tokenizar");
   const [corpusId, setCorpusId] = useState(CORPORA[0].id);
   const [fusoes, setFusoes] = useState(250);
-  const [texto, setTexto] = useState("A tabela de calendário do modelo. O CPF 12345678909 não é um número para a IA.");
+  const [texto, setTexto] = useState(tr("A tabela de calendário do modelo. O CPF 12345678909 não é um número para a IA."));
 
   const [ordem, setOrdem] = useState(3);
   const [prompt, setPrompt] = useState(COMECOS[0]);
@@ -255,7 +256,7 @@ export default function CaixaPreta() {
                   <span className={rotulo}>Temperatura: {temperatura.toFixed(2)}</span>
                   <input type="range" min={0} max={2} step={0.05} value={temperatura} onChange={(e) => setTemperatura(Number(e.target.value))} className="mt-3 w-full accent-[#34e8a0]" />
                   <span className="mt-1 block text-[0.7rem] text-slate-500">
-                    {temperatura <= 0.05 ? "Zero: sempre o campeão. Repetitivo e previsível." : temperatura < 0.9 ? "Baixa: escolhe o provável. Texto sem graça e mais seguro." : temperatura < 1.5 ? "Alta: começa a arriscar." : "Muito alta: escolhe o improvável e delira com confiança."}
+                    {temperatura <= 0.05 ? tr("Zero: sempre o campeão. Repetitivo e previsível.") : temperatura < 0.9 ? tr("Baixa: escolhe o provável. Texto sem graça e mais seguro.") : temperatura < 1.5 ? tr("Alta: começa a arriscar.") : tr("Muito alta: escolhe o improvável e delira com confiança.")}
                   </span>
                 </label>
                 <label>

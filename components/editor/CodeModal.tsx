@@ -42,7 +42,7 @@ export default function CodeModal({ open, onClose }: { open: boolean; onClose: (
   }
 
   return (
-    <Modal open={open} onClose={onClose} titulo="Código DAX" wide>
+    <Modal open={open} onClose={onClose} titulo={tr("Código DAX")} wide>
       <div className="flex max-h-[calc(90vh-3rem)] flex-col p-4">
         <div className="mb-3 rounded-xl border border-border bg-background p-3">
           <div className="mb-2 flex items-center justify-between">

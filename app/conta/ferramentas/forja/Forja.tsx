@@ -82,7 +82,7 @@ export default function Forja() {
 
   const [medidaBase, setMedidaBase] = useState("Receita");
   const [expressaoBase, setExpressaoBase] = useState("SUM ( fVendas[Valor] )");
-  const [formato, setFormato] = useState("moeda com duas casas");
+  const [formato, setFormato] = useState(tr("moeda com duas casas"));
   const [escolhas, setEscolhas] = useState<string[]>(["ytd", "ano_anterior", "yoy", "media_movel"]);
   const [aba, setAba] = useState("calendario");
 
@@ -186,8 +186,8 @@ export default function Forja() {
           </div>
           <p className="mt-1.5 text-[0.7rem] text-slate-500">
             {cal.origem === "fato"
-              ? "O calendário acompanha a sua tabela de fatos. Os anos acima valem para a lista de feriados."
-              : "O calendário vai de 1º de janeiro do primeiro ano a 31 de dezembro do último."}
+              ? tr("O calendário acompanha a sua tabela de fatos. Os anos acima valem para a lista de feriados.")
+              : tr("O calendário vai de 1º de janeiro do primeiro ano a 31 de dezembro do último.")}
           </p>
         </div>
 
@@ -306,7 +306,7 @@ export default function Forja() {
           <div className="mt-4 overflow-hidden rounded-3xl border border-white/8 bg-[#070d14]">
             <div className="flex items-center justify-between gap-3 border-b border-white/8 px-4 py-2.5">
               <span className="font-mono text-xs text-slate-400">
-                {atual.linguagem === "DAX" ? "Modelagem, Nova tabela" : "Transformar dados, Editor avançado"}
+                {atual.linguagem === "DAX" ? "Modelagem, Nova tabela" : tr("Transformar dados, Editor avançado")}
               </span>
               <Copiar texto={atual.codigo} />
             </div>

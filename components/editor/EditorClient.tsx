@@ -88,7 +88,7 @@ export default function EditorClient({ inicial, auth }: Props) {
     if (inicial?.doc) {
       carregar(inicial.doc, { savedId: inicial.savedId ?? null, templateId: inicial.templateId ?? null });
     }
-    // marca "não salvo" a cada mudança do doc (após a carga inicial acima)
+    // marca tr("não salvo") a cada mudança do doc (após a carga inicial acima)
     let atual = useEditor.getState().doc;
     const unsub = useEditor.subscribe((s) => {
       if (s.doc !== atual) { atual = s.doc; setNaoSalvo(true); }

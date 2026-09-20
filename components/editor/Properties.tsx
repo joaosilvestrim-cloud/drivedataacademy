@@ -223,7 +223,7 @@ function PropsCard() {
         </div>
       </Secao>
 
-      <Secao titulo="Tipografia do tema">
+      <Secao titulo={tr("Tipografia do tema")}>
         <Linha rotulo={tr("Fonte")}>
           <select value={tema.fonte} onChange={(e) => setTema({ fonte: e.target.value })} className="rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none">
             {FONTES.map((f) => (<option key={f.label} value={f.v} style={{ fontFamily: f.v || "inherit" }}>{f.label}</option>))}
@@ -263,7 +263,7 @@ function PropsCard() {
         </button>
       </Secao>
 
-      <Secao titulo="Tamanho do card">
+      <Secao titulo={tr("Tamanho do card")}>
         <div className="flex gap-2">
           <NumBox rotulo={tr("Largura")} valor={card.w} onChange={(w) => atualizarCard({ w })} />
           <NumBox rotulo={tr("Altura")} valor={card.h} onChange={(h) => atualizarCard({ h })} />
@@ -274,7 +274,7 @@ function PropsCard() {
         <Linha rotulo={tr("Cantos")}><Num valor={card.borderRadius} onChange={(borderRadius) => atualizarCard({ borderRadius })} min={0} max={60} suf="px" /></Linha>
       </Secao>
 
-      <Secao titulo="Fundo do card">
+      <Secao titulo={tr("Fundo do card")}>
         <Linha rotulo="Cor"><ColorPicker compact valor={card.fundo} onChange={(fundo) => atualizarCard({ fundo })} /></Linha>
         <button onClick={() => setGradCard((v) => !v)} className="flex w-full items-center justify-between rounded-md border border-border px-2 py-1 text-[11px] font-medium text-muted hover:text-foreground">
           {tr("Gradiente")}
@@ -304,7 +304,7 @@ function PropsCard() {
       </Secao>
 
       <div className="px-4 py-3">
-        <button onClick={() => { if (confirm("Remover todos os elementos desta página?")) esvaziarPagina(); }} className="w-full rounded-md border border-red-200 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
+        <button onClick={() => { if (confirm(tr("Remover todos os elementos desta página?"))) esvaziarPagina(); }} className="w-full rounded-md border border-red-200 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
           {tr("Esvaziar página")}
         </button>
       </div>
@@ -545,7 +545,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
   const acaoBtn = "flex flex-1 items-center justify-center rounded-md border border-border py-1.5 text-muted hover:text-foreground";
 
   function salvarFav() {
-    const nome = window.prompt("Nome do componente favorito:", el.nome);
+    const nome = window.prompt(tr("Nome do componente favorito:"), el.nome);
     if (nome) salvarFavorito(nome, el);
   }
 
@@ -562,7 +562,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
         <button onClick={salvarFav} title={tr("Salvar como favorito")} className={acaoBtn}><Star className="h-4 w-4" /></button>
       </div>
 
-      <Secao titulo="Estilo rápido" inicial={false}>
+      <Secao titulo={tr("Estilo rápido")} inicial={false}>
         <div className="grid grid-cols-3 gap-1.5">
           {QUICK_STYLES.map((q) => (
             <button key={q.nome} onClick={() => { commit(); patchEstilo(el.id, q.estilo); }} className="flex flex-col items-center gap-1 rounded-md border border-border p-1.5 hover:border-viz">
@@ -579,7 +579,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
         </Linha>
       </Secao>
 
-      <Secao titulo="Posição e tamanho">
+      <Secao titulo={tr("Posição e tamanho")}>
         <div className="flex gap-2">
           <NumBox rotulo="X" valor={el.x} onStart={commit} onChange={(x) => patchElemento(el.id, { x })} />
           <NumBox rotulo="Y" valor={el.y} onStart={commit} onChange={(y) => patchElemento(el.id, { y })} />
@@ -597,7 +597,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       </Secao>
 
       {ehBadge && (
-        <Secao titulo="Estilo do badge">
+        <Secao titulo={tr("Estilo do badge")}>
           <div className="grid grid-cols-3 gap-1.5">
             {BADGE_ESTILOS.map((p) => (
               <button key={p.nome} onClick={() => { commit(); patchEstilo(el.id, p.estilo); }} className="flex items-center justify-center rounded-full border border-border px-2 py-1 text-[11px] font-medium hover:border-viz" style={{ background: p.estilo.fundo, color: p.estilo.cor }}>{p.nome}</button>
@@ -644,7 +644,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       )}
 
       {!semBind && (
-        <Secao titulo={ehMedidor || ehPictograma || ehWaffle ? "Valor (%)" : ehRating ? "Nota" : temMaximo ? "Valor" : ehImagem ? "Imagem (URL)" : ehBotao ? "Texto do botão" : ehTendencia ? "Variação" : ehDivisor ? "Rótulo" : "Conteúdo"}>
+        <Secao titulo={ehMedidor || ehPictograma || ehWaffle ? "Valor (%)" : ehRating ? "Nota" : temMaximo ? "Valor" : ehImagem ? "Imagem (URL)" : ehBotao ? tr("Texto do botão") : ehTendencia ? "Variação" : ehDivisor ? "Rótulo" : "Conteúdo"}>
           {ehTendencia && (
             <div className="flex gap-1">
               {([["up", ArrowUp, "Melhor"], ["down", ArrowDown, "Pior"], ["neutral", Minus, "Neutro"]] as const).map(([d, Ic, lbl]) => (
@@ -701,7 +701,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       )}
 
       {ehPictograma && (
-        <Secao titulo="Ícone do pictograma">
+        <Secao titulo={tr("Ícone do pictograma")}>
           <IconePicker valorAtual={el.iconeNome} cor="#0E7490" stroke={2} onPick={(nome, inner) => { commit(); patchElemento(el.id, { iconeNome: nome, iconeNomePaths: inner }); }} />
         </Secao>
       )}
@@ -718,7 +718,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
             <div key={i} className="flex items-center gap-1">
               <input value={c.coluna} onFocus={commit} onChange={(e) => { const cols = [...(el.colunas ?? [])]; cols[i] = { ...cols[i], coluna: e.target.value }; patchElemento(el.id, { colunas: cols }); }} placeholder="Vendas[Coluna]" className="w-1/2 rounded-md border border-border bg-surface px-2 py-1 font-mono text-[11px] focus:border-viz focus:outline-none" />
               <input value={c.rotulo} onFocus={commit} onChange={(e) => { const cols = [...(el.colunas ?? [])]; cols[i] = { ...cols[i], rotulo: e.target.value }; patchElemento(el.id, { colunas: cols }); }} placeholder={tr("Rótulo")} className="w-1/2 rounded-md border border-border bg-surface px-2 py-1 text-[11px] focus:border-viz focus:outline-none" />
-              <button disabled={(el.colunas ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { colunas: (el.colunas ?? []).filter((_, j) => j !== i) }); }} title={(el.colunas ?? []).length <= 1 ? "A tabela precisa de ao menos 1 coluna" : "Remover coluna"} className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
+              <button disabled={(el.colunas ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { colunas: (el.colunas ?? []).filter((_, j) => j !== i) }); }} title={(el.colunas ?? []).length <= 1 ? tr("A tabela precisa de ao menos 1 coluna") : "Remover coluna"} className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
             </div>
           ))}
           <button onClick={() => { commit(); patchElemento(el.id, { colunas: [...(el.colunas ?? []), { coluna: (el.tabela ?? "Tabela") + "[Coluna]", rotulo: "Coluna" }] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Coluna")}</button>
@@ -763,7 +763,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       )}
 
       {ehLista && (
-        <Secao titulo="Itens da lista">
+        <Secao titulo={tr("Itens da lista")}>
           {(el.itens ?? []).map((t, i) => (
             <div key={i} className="flex items-center gap-1">
               <input value={t} onFocus={commit} onChange={(e) => { const arr = [...(el.itens ?? [])]; arr[i] = e.target.value; patchElemento(el.id, { itens: arr }); }} className="flex-1 rounded-md border border-border bg-surface px-2 py-1 text-[13px] focus:border-viz focus:outline-none" />
@@ -777,7 +777,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       )}
 
       {(ehVelocimetro || ehTermometro) && !ehMedidorFamilia && (
-        <Secao titulo="Faixas de cor">
+        <Secao titulo={tr("Faixas de cor")}>
           <p className="text-[11px] text-muted">{tr("Cada faixa preenche até o valor indicado (verde/amarelo/vermelho).")}</p>
           {(el.faixas ?? []).map((f, i) => (
             <div key={i} className="flex items-center gap-2">
@@ -811,7 +811,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       )}
 
       {ehComparativo && (
-        <Secao titulo="Título e cores">
+        <Secao titulo={tr("Título e cores")}>
           <label className="flex flex-col gap-1">
             <span className="text-xs text-muted">{tr("Título")}</span>
             <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
@@ -840,12 +840,12 @@ function PropsElemento({ el }: { el: SceneElement }) {
         <Secao titulo="Filtros">
           <MedidasEditor el={el} bloqueado={false} rotuloEditavel addLabel="Adicionar filtro" />
           <Linha rotulo={tr("Cor do rótulo")}><ColorPicker compact valor={el.estilo.corTitulo ?? "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
-          <p className="text-[11px] text-muted">Cada filtro vira uma pílula "Rótulo: valor". Ligue cada um à medida do slicer (ex.: <b>SELECTEDVALUE</b>{tr("). Cor do valor e da pílula ficam em")} <b>{tr("Cores")}</b>.</p>
+          <p className="text-[11px] text-muted">Cada filtro vira uma pílula tr("Rótulo: valor"). Ligue cada um à medida do slicer (ex.: <b>SELECTEDVALUE</b>{tr("). Cor do valor e da pílula ficam em")} <b>{tr("Cores")}</b>.</p>
         </Secao>
       )}
 
       {ehFunil && (
-        <Secao titulo="Etapas do funil">
+        <Secao titulo={tr("Etapas do funil")}>
           {(el.etapas ?? []).map((et, i) => (
             <div key={i} className="flex items-center gap-1.5">
               <input value={et.rotulo} onFocus={commit} onChange={(ev) => { const es = [...(el.etapas ?? [])]; es[i] = { ...es[i], rotulo: ev.target.value }; patchElemento(el.id, { etapas: es }); }} placeholder={tr("Etapa")} className="min-w-0 flex-1 rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none" />
@@ -944,7 +944,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       )}
 
       {ehComparaAB && (
-        <Secao titulo="Comparativo A/B">
+        <Secao titulo={tr("Comparativo A/B")}>
           <label className="flex flex-col gap-1">
             <span className="text-xs text-muted">{tr("Rótulo do lado A")}</span>
             <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} placeholder={tr("ex.: Atual")} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />

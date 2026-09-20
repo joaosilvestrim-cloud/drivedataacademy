@@ -93,7 +93,7 @@ export default function Footer() {
                 <li key={l.href}>
                   {l.href === "/cursos" && !assinaturaAberta ? (
                     <span aria-disabled="true" className="text-sm text-slate-500">
-                      {l.label} <span className="text-xs">({EM_BREVE[l.label] || "em breve"})</span>
+                      {l.label} <span className="text-xs">({EM_BREVE[l.label] || tr("em breve")})</span>
                     </span>
                   ) : (
                     <a href={l.href} className="text-sm text-slate-400 transition-colors hover:text-brand-green">

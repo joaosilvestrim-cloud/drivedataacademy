@@ -19,7 +19,7 @@ export default function RankingPodium({participants}:{participants:Participant[]
         <div className={s.positionTag}>{rank===1?'OURO':rank===2?'PRATA':'BRONZE'} <span>· {rank}º LUGAR</span></div>
         <RankMedal rank={rank} name={person.name} points={person.pts}/>
         <div className={s.student}><Avatar name={person.name} size="sm"/><div><h3 title={person.name}>{person.name}</h3><p>{person.pts.toLocaleString('pt-BR')} <span>{tr("pontos")}</span></p></div></div>
-        <div className={s.pedestal}><span>0{rank}</span><i/>{rank===1?'Liderando pelo exemplo':rank===2?'Inspirando a comunidade':'Compartilhando para crescer'}</div>
+        <div className={s.pedestal}><span>0{rank}</span><i/>{rank===1?'Liderando pelo exemplo':rank===2?tr("Inspirando a comunidade"):tr("Compartilhando para crescer")}</div>
       </article>)}
     </div>
     <p className={s.podiumHint}>{tr("Toque em uma medalha para explorar os dois lados em 3D.")}</p>

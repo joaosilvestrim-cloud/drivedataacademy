@@ -198,7 +198,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           onClick={() => setVerRegistros((v) => !v)}
           className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
         >
-          {verRegistros ? "Esconder os lançamentos" : "Abrir os lançamentos deste recorte"}
+          {verRegistros ? tr("Esconder os lançamentos") : tr("Abrir os lançamentos deste recorte")}
         </button>
 
         {verRegistros && (

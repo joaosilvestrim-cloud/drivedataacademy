@@ -26,7 +26,7 @@ export default function EsqueciSenhaPage() {
     const res = await enviarCodigoAcesso(limpo);
     setLoading(false);
     if (!res.ok) {
-      setError(res.error || "Não foi possível enviar agora.");
+      setError(res.error || tr("Não foi possível enviar agora."));
       return;
     }
     router.push(`/redefinir-senha?email=${encodeURIComponent(limpo)}&enviado=1`);
@@ -49,7 +49,7 @@ export default function EsqueciSenhaPage() {
               <input id="esqueci-email" required type="email" autoComplete="email" placeholder={tr("Seu e-mail")} value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
               {error && <p role="alert" className="text-xs text-red-400">{error}</p>}
               <button type="submit" disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
-                {loading ? "Enviando..." : "Enviar código"}
+                {loading ? "Enviando..." : tr("Enviar código")}
               </button>
             </form>
             <p className="mt-5 text-center text-sm text-slate-400">

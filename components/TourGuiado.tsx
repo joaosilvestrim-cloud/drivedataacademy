@@ -120,7 +120,7 @@ export default function TourGuiado({ passos: PASSOS, chave, aberto, aoFechar }: 
             onClick={() => (ultimo ? fechar(true) : setPasso((p) => p + 1))}
             style={{ background: "#34e8a0", color: "#04140d", fontWeight: 700, borderRadius: 10, padding: "9px 16px", fontSize: 14 }}
           >
-            {ultimo ? "Começar a usar" : "Próximo"}
+            {ultimo ? tr("Começar a usar") : "Próximo"}
           </button>
           {passo > 0 && (
             <button type="button" onClick={() => setPasso((p) => p - 1)} style={{ color: "#94a3b8", fontSize: 13 }}>

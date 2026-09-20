@@ -74,7 +74,7 @@ export default async function AgendaPage() {
                   {tr("AO VIVO AGORA")}
                 </span>
               ) : (
-                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">{next.kind === "mentoria" ? "Próxima mentoria" : "Próxima live"} · {countdown(next.starts_at)}</span>
+                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">{next.kind === "mentoria" ? tr("Próxima mentoria") : tr("Próxima live")} · {countdown(next.starts_at)}</span>
               )}
               {next.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-3 py-1 text-xs font-semibold text-brand-teal">{tr("Mentoria")}</span>}
             </div>

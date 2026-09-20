@@ -1,7 +1,7 @@
 import "server-only";
 import { NOME_DO_IDIOMA, type Idioma } from "./idioma";
 
-/* Traduz texto de curso, aula, live e material com a mesma IA do assistente.
+/* Traduz texto de curso, aula, live, material e artigo.
 
    O resultado não vai direto para o ar como verdade final: ele entra na
    tabela com origem 'ia', e a tela do admin mostra o que ainda não passou por
@@ -16,13 +16,22 @@ const GLOSSARIO =
   "Keep the same tone and roughly the same length. Keep line breaks and Markdown as they are. " +
   "Do not add explanations, notes or quotes around the answer.";
 
-/* A cota da Groq é por modelo e por dia. Traduzir o catálogo inteiro passa do
-   que um modelo sozinho aguenta, então a lista existe: quando um esgota o
-   dia, o trabalho segue no próximo em vez de parar no meio. */
-const MODELOS = (process.env.GROQ_MODEL || "openai/gpt-oss-120b,openai/gpt-oss-20b,qwen/qwen3.8-27b")
+/* Tradução NUNCA usa o modelo do assistente.
+
+   A cota da Groq é por modelo e por dia. O assistente que atende o aluno roda
+   no GROQ_MODEL; se a tradução também rodasse ali, um lote grande de catálogo
+   gastaria a cota e o aluno ficaria sem resposta no chat. Já aconteceu uma
+   vez, e o jeito de não repetir é este: orçamentos separados por modelo.
+
+   Então aqui a lista é outra, e o modelo do assistente é removido dela de
+   propósito, mesmo que alguém o coloque na variável por engano. */
+const MODELO_DO_ASSISTENTE = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+
+const MODELOS = (process.env.GROQ_MODEL_TRADUCAO || "openai/gpt-oss-20b,qwen/qwen3.8-27b")
   .split(",")
   .map((m) => m.trim())
-  .filter(Boolean);
+  .filter(Boolean)
+  .filter((m) => m !== MODELO_DO_ASSISTENTE);
 
 const esgotados = new Set<string>();
 

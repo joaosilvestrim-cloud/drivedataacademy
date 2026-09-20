@@ -207,7 +207,7 @@ export default function Portfolio({
               />
             </div>
             <div className="flex gap-1.5">
-              {([["recentes", "Recentes"], ["curtidos", "Mais curtidos"]] as const).map(([k, rotulo]) => (
+              {([["recentes", "Recentes"], ["curtidos", tr("Mais curtidos")]] as const).map(([k, rotulo]) => (
                 <Chip key={k} ativo={ordem === k} onClick={() => setOrdem(k)}>{rotulo}</Chip>
               ))}
             </div>
@@ -377,7 +377,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
   async function subirCapa(e: React.ChangeEvent<HTMLInputElement>) {
     const arquivo = e.target.files?.[0];
     if (!arquivo) return;
-    if (!arquivo.type.startsWith("image/")) { setErro("Escolha uma imagem."); return; }
+    if (!arquivo.type.startsWith("image/")) { setErro(tr("Escolha uma imagem.")); return; }
     setSubindo(true);
     setErro("");
     try {
@@ -388,7 +388,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
       if (error) throw error;
       setCapa(assinado.url);
     } catch (err: any) {
-      setErro("Não consegui subir a imagem: " + (err?.message || "erro desconhecido"));
+      setErro(tr("Não consegui subir a imagem:") + (err?.message || "erro desconhecido"));
     } finally {
       setSubindo(false);
     }
@@ -525,7 +525,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
 
           <div className="flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
             <button type="submit" onClick={() => (acao.current = "enviar")} disabled={salvando || subindo} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-50">
-              {salvando ? "Enviando..." : "Enviar para revisão"}
+              {salvando ? "Enviando..." : tr("Enviar para revisão")}
             </button>
             {/* Rascunho não exige campo obrigatório: a pessoa salva o que tem e volta depois. */}
             <button type="submit" formNoValidate onClick={() => (acao.current = "rascunho")} disabled={salvando} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-200 hover:border-brand-green/50">
@@ -534,7 +534,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
             {projeto && (
               <button
                 type="button"
-                onClick={async () => { if (confirm("Excluir este projeto? Não dá para desfazer.")) { await excluirProjeto(projeto.id); aoFechar(); } }}
+                onClick={async () => { if (confirm(tr("Excluir este projeto? Não dá para desfazer."))) { await excluirProjeto(projeto.id); aoFechar(); } }}
                 className="ml-auto text-sm text-red-300 hover:underline"
               >
                 {tr("Excluir")}

@@ -307,7 +307,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
 
   /* Lista de membros do canal, no formato do Discord: quem está online agora
      (presença) e quem já apareceu na conversa. Os donos da casa sobem, porque
-     é quem a turma procura. Não existe tabela de "membros do canal": o que dá
+     é quem a turma procura. Não existe tabela de tr("membros do canal"): o que dá
      para saber com verdade é isto. */
   const membros = useMemo(() => {
     const mapa = new Map<string, { id: string; name: string; avatar: string | null; casa: string | null; online: boolean }>();
@@ -469,7 +469,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
             <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" /></span>
             <span>
               <b className="font-bold text-red-100">{porCanal[channel.id].aguardando}</b>{" "}
-              {porCanal[channel.id].aguardando === 1 ? "mensagem de aluno está esperando" : "mensagens de alunos estão esperando"} {tr("resposta da equipe neste canal.")}
+              {porCanal[channel.id].aguardando === 1 ? tr("mensagem de aluno está esperando") : tr("mensagens de alunos estão esperando")} {tr("resposta da equipe neste canal.")}
             </span>
           </div>
         )}
@@ -512,7 +512,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
               </span>
               <h2 className="mt-4 font-display text-3xl font-bold text-white">{tr("Bem-vindo ao #")}{channel.name}</h2>
               <p className="mt-1.5 max-w-2xl text-base text-slate-400">
-                {channel.description || "Este é o começo do canal. Puxe assunto: a conversa aqui começa com você."}
+                {channel.description || tr("Este é o começo do canal. Puxe assunto: a conversa aqui começa com você.")}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {SUGESTOES.map((sg) => (
@@ -643,7 +643,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
               onClick={scrollToBottom}
               className="absolute -top-10 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-black/50 bg-[#121c27] px-3.5 py-1.5 text-xs font-medium text-slate-200 shadow-lg transition-colors hover:text-white"
             >
-              {naoVistas > 0 ? `${naoVistas} ${naoVistas === 1 ? "mensagem nova" : "mensagens novas"}` : "Ir para o fim"}
+              {naoVistas > 0 ? `${naoVistas} ${naoVistas === 1 ? "mensagem nova" : "mensagens novas"}` : tr("Ir para o fim")}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           )}

@@ -50,7 +50,7 @@ export default async function CursosCardapio() {
   const seus = todos.filter((c) => meus.has(c.id));
   const cardapio = todos.filter((c) => !meus.has(c.id));
 
-  // À venda é o treinamento com preço definido e sem a marca de "em breve".
+  // À venda é o treinamento com preço definido e sem a marca de tr("em breve").
   const aVenda = cardapio.filter((c) => !c.coming_soon && c.subscriber_price != null);
   const emBreve = cardapio.filter((c) => c.coming_soon || c.subscriber_price == null);
 
@@ -79,8 +79,8 @@ export default async function CursosCardapio() {
       <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Cardápio de treinamentos")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {assinante
-          ? "Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você."
-          : "Os treinamentos são vendidos só para assinantes, com preço especial."}
+          ? tr("Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você.")
+          : tr("Os treinamentos são vendidos só para assinantes, com preço especial.")}
       </p>
 
       {!assinante && (
@@ -112,7 +112,7 @@ export default async function CursosCardapio() {
                 c={c}
                 href={`/cursos/${c.slug}`}
                 destaque
-                selo={Number(c.subscriber_price) === 0 ? "Incluso" : "À venda"}
+                selo={Number(c.subscriber_price) === 0 ? "Incluso" : tr("À venda")}
                 rodape={rodapeDeVenda(c)}
               />
             ))}
@@ -142,7 +142,7 @@ export default async function CursosCardapio() {
                 c={c}
                 href={`/cursos/${c.slug}`}
                 apagado
-                selo="Em breve"
+                selo={tr("Em breve")}
                 rodape={
                   <>
                     <span className="text-sm text-slate-500">{tr("Venda ainda não aberta")}</span>

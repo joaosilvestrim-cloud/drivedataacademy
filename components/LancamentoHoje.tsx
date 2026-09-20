@@ -97,7 +97,7 @@ export default async function LancamentoHoje() {
           <CupomDestaque />
 
           <p className="mt-8 text-sm text-slate-400">
-            {estreia ? `${dataLonga(agora)} · estreia da DriveData Academy` : "DriveData Academy · aulas abertas no YouTube"}
+            {estreia ? `${dataLonga(agora)} · estreia da DriveData Academy` : tr("DriveData Academy · aulas abertas no YouTube")}
           </p>
           <h1 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
             {estreia ? (
@@ -108,13 +108,13 @@ export default async function LancamentoHoje() {
           </h1>
           <p className="mt-5 max-w-lg text-lg text-slate-300/90">
             {estreia
-              ? "Duas noites de aula aberta no YouTube, com quem entrega projeto de dados todo dia. Sem inscrição: é só entrar no horário."
-              : "Lives e mentorias com quem faz dados de verdade. Sem inscrição: é só entrar no horário."}
+              ? tr("Duas noites de aula aberta no YouTube, com quem entrega projeto de dados todo dia. Sem inscrição: é só entrar no horário.")
+              : tr("Lives e mentorias com quem faz dados de verdade. Sem inscrição: é só entrar no horário.")}
           </p>
 
           <div className="mt-8 border-t border-white/10 pt-6">
             <p className="text-sm text-slate-400">
-              {destaqueHoje ? "Hoje às" : `${rotuloDia(destaque.starts_at, agora)} às`}{" "}
+              {destaqueHoje ? tr("Hoje às") : `${rotuloDia(destaque.starts_at, agora)} às`}{" "}
               <span className="font-mono tabular-nums text-white">{hora(destaque.starts_at)}</span>
             </p>
             <p className="mt-1 font-display text-2xl font-semibold leading-snug text-white">{destaque.title}</p>
@@ -172,7 +172,7 @@ export default async function LancamentoHoje() {
                 <span className="font-mono text-sm tabular-nums text-slate-400 sm:order-none">{hora(e.starts_at)}</span>
                 <span className="col-span-2 min-w-0 sm:col-span-1">
                   <span className="block font-medium text-white">{e.title}</span>
-                  <span className="block text-sm text-slate-500">{e.kind === "mentoria" ? "Mentoria" : "Live no YouTube"}</span>
+                  <span className="block text-sm text-slate-500">{e.kind === "mentoria" ? "Mentoria" : tr("Live no YouTube")}</span>
                 </span>
                 {e.url ? (
                   <a href={e.url} target="_blank" rel="noreferrer" className="col-span-2 text-sm text-slate-300 underline decoration-white/20 underline-offset-4 transition-colors hover:text-brand-green hover:decoration-brand-green sm:col-span-1">

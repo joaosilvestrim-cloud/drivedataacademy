@@ -103,7 +103,7 @@ export default function AssistantButton() {
         body: JSON.stringify({ messages: convo.map(({ role, content }) => ({ role, content })), escalated, ...extra }),
       });
       const data = await res.json();
-      setMessages((m) => [...m, { role: "assistant", content: data.reply || "Não consegui responder agora." }]);
+      setMessages((m) => [...m, { role: "assistant", content: data.reply || tr("Não consegui responder agora.") }]);
       if (data.escalated && data.ticketId) {
         setEscalated(true);
         setMessages((m) => [
@@ -218,7 +218,7 @@ export default function AssistantButton() {
             <div className="mt-2 flex items-center justify-between px-1">
               <span className="text-[0.65rem] text-slate-500">{tr("IA · pode conter imprecisões")}</span>
               <button onClick={talkToTeam} disabled={loading || escalated} className="text-[0.72rem] font-medium text-brand-teal hover:underline disabled:opacity-50">
-                {escalated ? "Time acionado ✓" : "Falar com uma pessoa"}
+                {escalated ? "Time acionado ✓" : tr("Falar com uma pessoa")}
               </button>
             </div>
           </div>

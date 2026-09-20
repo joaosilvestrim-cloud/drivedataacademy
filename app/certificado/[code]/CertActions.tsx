@@ -66,7 +66,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
         </a>
       </div>
       <p className="mt-3 text-center text-xs text-slate-500">
-        "Adicionar ao LinkedIn" já leva o certificado como credencial no seu perfil, com o link de validação e o código.
+        tr("Adicionar ao LinkedIn") já leva o certificado como credencial no seu perfil, com o link de validação e o código.
       </p>
     </div>
   );

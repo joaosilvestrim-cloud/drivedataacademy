@@ -54,7 +54,7 @@ function Card({ item }: { item: Item }) {
       if (error) throw error;
       setLink(s.url);
     } catch (e2: any) {
-      setErr(e2?.message || "Não consegui enviar o arquivo.");
+      setErr(e2?.message || tr("Não consegui enviar o arquivo."));
     } finally {
       setUploading(false);
     }
@@ -120,7 +120,7 @@ function Card({ item }: { item: Item }) {
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
               className="rounded-lg border border-white/12 px-4 py-2 text-sm font-medium text-slate-200 hover:border-brand-green/50 hover:text-brand-green disabled:opacity-60">
-              {uploading ? "Enviando arquivo..." : "Anexar arquivo"}
+              {uploading ? tr("Enviando arquivo...") : "Anexar arquivo"}
             </button>
             <input ref={fileRef} type="file" onChange={onFile} className="hidden" />
             <span className="text-xs text-slate-500">{tr(".pbix, PDF, imagem, planilha. Até")} {MAX_MB} MB.</span>

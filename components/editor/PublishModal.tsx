@@ -43,7 +43,7 @@ export default function PublishModal({ open, onClose }: { open: boolean; onClose
   }
 
   async function publicar() {
-    if (!nome.trim()) return setErro("Dê um nome ao seu visual.");
+    if (!nome.trim()) return setErro(tr("Dê um nome ao seu visual."));
     setEnviando(true);
     setErro(null);
     const res = await publicarVisual({ nome: nome.trim(), descricao: desc, doc, tags });
@@ -53,7 +53,7 @@ export default function PublishModal({ open, onClose }: { open: boolean; onClose
   }
 
   return (
-    <Modal open={open} onClose={onClose} titulo="Publicar na comunidade" wide>
+    <Modal open={open} onClose={onClose} titulo={tr("Publicar na comunidade")} wide>
       {ok ? (
         <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
           <CheckCircle2 className="h-10 w-10 text-emerald-500" />
@@ -95,7 +95,7 @@ export default function PublishModal({ open, onClose }: { open: boolean; onClose
             {erro && <p className="text-sm text-red-600">{erro}</p>}
 
             <button onClick={publicar} disabled={enviando || !nome.trim()} className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-viz py-2.5 font-medium text-white transition-colors hover:bg-viz-dark disabled:opacity-50">
-              <Share2 className="h-4 w-4" /> {enviando ? "Publicando…" : "Publicar na comunidade"}
+              <Share2 className="h-4 w-4" /> {enviando ? "Publicando…" : tr("Publicar na comunidade")}
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ function Formulario() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [aviso, setAviso] = useState<string | null>(params.get("enviado") ? "Enviamos o código para o seu e-mail. Confira também o lixo eletrônico." : null);
+  const [aviso, setAviso] = useState<string | null>(params.get("enviado") ? tr("Enviamos o código para o seu e-mail. Confira também o lixo eletrônico.") : null);
   const [espera, setEspera] = useState(0);
 
   useEffect(() => {
@@ -37,28 +37,28 @@ function Formulario() {
   async function reenviar() {
     setError(null);
     if (!email.trim()) {
-      setError("Preencha o e-mail para receber um código.");
+      setError(tr("Preencha o e-mail para receber um código."));
       return;
     }
     setEspera(60);
     const res = await enviarCodigoAcesso(email);
     if (!res.ok) {
-      setError(res.error || "Não foi possível enviar agora.");
+      setError(res.error || tr("Não foi possível enviar agora."));
       setEspera(0);
       return;
     }
-    setAviso("Enviamos um código novo. Use sempre o último que chegou.");
+    setAviso(tr("Enviamos um código novo. Use sempre o último que chegou."));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const token = codigo.replace(/\D/g, "");
     if (token.length < 6) {
-      setError("Digite o código que chegou no seu e-mail.");
+      setError(tr("Digite o código que chegou no seu e-mail."));
       return;
     }
     if (password.length < 6) {
-      setError("A senha precisa ter pelo menos 6 caracteres.");
+      setError(tr("A senha precisa ter pelo menos 6 caracteres."));
       return;
     }
     setLoading(true);
@@ -67,13 +67,13 @@ function Formulario() {
     const { error: erroCodigo } = await supabase.auth.verifyOtp({ email: email.trim().toLowerCase(), token, type: "recovery" });
     if (erroCodigo) {
       setLoading(false);
-      setError("Código inválido ou expirado. Peça um novo código abaixo.");
+      setError(tr("Código inválido ou expirado. Peça um novo código abaixo."));
       return;
     }
     const { error: erroSenha } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (erroSenha) {
-      setError(/different|same/i.test(erroSenha.message) ? "Escolha uma senha diferente da anterior." : "Não foi possível salvar a senha. Tente de novo.");
+      setError(/different|same/i.test(erroSenha.message) ? tr("Escolha uma senha diferente da anterior.") : tr("Não foi possível salvar a senha. Tente de novo."));
       return;
     }
     router.push("/conta");
@@ -109,7 +109,7 @@ function Formulario() {
       <p className="mt-5 text-center text-sm text-slate-400">
         {tr("Não chegou ou expirou?")}{" "}
         <button type="button" onClick={reenviar} disabled={espera > 0} className="font-medium text-brand-green hover:underline disabled:cursor-not-allowed disabled:text-slate-500 disabled:no-underline">
-          {espera > 0 ? `Enviar de novo em ${espera}s` : "Enviar novo código"}
+          {espera > 0 ? `Enviar de novo em ${espera}s` : tr("Enviar novo código")}
         </button>
       </p>
       <p className="mt-2 text-center text-sm text-slate-400">

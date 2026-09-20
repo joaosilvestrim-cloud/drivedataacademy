@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { notFound, redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -33,7 +34,7 @@ export default async function ChannelChat({ params }: { params: { channel: strin
   const msgs = (msgsDesc ?? []).slice().reverse(); // oldest -> newest
 
   // Abrir o canal é ler o canal. Marca antes de contar, para o canal aberto não
-  // aparecer com mensagens "não vistas" que estão na cara do aluno.
+  // aparecer com mensagens tr("não vistas") que estão na cara do aluno.
   await marcarLido(user.id, channel.id);
   const estado = await estadoDaComunidade(user.id, user.email);
 

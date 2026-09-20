@@ -221,7 +221,7 @@ export default function CoursePlayer({
               <div className="flex items-center gap-2">
                 {nextId && <button onClick={() => select(nextId)} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-white/30 hover:text-white">{tr("Próxima aula →")}</button>}
                 <button onClick={complete} disabled={pending} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-70">
-                  {done.has(current.id) ? (nextId ? "Concluída · avançar" : "Concluída") : nextId ? "Concluir e avançar" : "Marcar como concluída"}
+                  {done.has(current.id) ? (nextId ? tr("Concluída · avançar") : "Concluída") : nextId ? tr("Concluir e avançar") : tr("Marcar como concluída")}
                 </button>
               </div>
             </div>

@@ -75,7 +75,7 @@ export default async function AvaliacaoPage({
                     ) : (
                       <span className="inline-block h-1 w-1 rounded-full bg-current align-middle" />
                     );
-                    return <li key={idx} className={cls}><span className="mr-1.5">{mark}</span>{o.text}{isPicked ? " (sua resposta)" : ""}</li>;
+                    return <li key={idx} className={cls}><span className="mr-1.5">{mark}</span>{o.text}{isPicked ? tr("(sua resposta)") : ""}</li>;
                   })}
                 </ul>
               </div>

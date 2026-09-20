@@ -101,9 +101,9 @@ export default function MatriculaForm({
 
         <ol className="mt-6 space-y-3 text-left">
           {[
-            { t: tr("Pague na página do Asaas"), d: pix ? "Copie o código Pix ou leia o QR Code no app do seu banco." : "Informe os dados do cartão na página segura do Asaas." },
+            { t: tr("Pague na página do Asaas"), d: pix ? tr("Copie o código Pix ou leia o QR Code no app do seu banco.") : tr("Informe os dados do cartão na página segura do Asaas.") },
             { t: tr("Receba o código de acesso"), d: <>{tr("Enviamos para")} <b className="text-white">{indo.email}</b> {tr("assim que o pagamento confirmar. Olhe também o lixo eletrônico.")}</> },
-            { t: tr("Crie sua senha"), d: "Clique em Criar minha senha no e-mail, digite o código e escolha a senha." },
+            { t: tr("Crie sua senha"), d: tr("Clique em Criar minha senha no e-mail, digite o código e escolha a senha.") },
           ].map((s, i) => (
             <li key={i} className="flex gap-3 rounded-xl border border-white/8 bg-white/[0.03] p-3">
               <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue text-xs font-bold text-ink-900">{i + 1}</span>
@@ -143,7 +143,7 @@ export default function MatriculaForm({
       <input type="hidden" name="forma" value={forma} />
       <input type="hidden" name="cupom" value={cupom?.codigo || ""} />
 
-      <Etapa n={1} titulo="Plano e pagamento">
+      <Etapa n={1} titulo={tr("Plano e pagamento")}>
         {anual > 0 && (
           <div className="grid grid-cols-2 gap-3">
             {([
@@ -191,7 +191,7 @@ export default function MatriculaForm({
         )}
       </Etapa>
 
-      <Etapa n={2} titulo="Seus dados">
+      <Etapa n={2} titulo={tr("Seus dados")}>
         <div>
           <label htmlFor="mat-name" className={rotulo}>{tr("Nome completo")}</label>
           <input id="mat-name" name="name" required autoComplete="name" placeholder={tr("Como vai aparecer no certificado")} className={field} />
@@ -229,7 +229,7 @@ export default function MatriculaForm({
         </details>
       </Etapa>
 
-      <Etapa n={3} titulo="Cupom e confirmação">
+      <Etapa n={3} titulo={tr("Cupom e confirmação")}>
         {/* Cupom. O desconto mostrado vem do servidor e é conferido de novo ao pagar. */}
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
           <label htmlFor="cupom-codigo" className="block text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Cupom de desconto")} <span className="normal-case tracking-normal text-slate-500">(opcional)</span></label>
@@ -271,13 +271,13 @@ export default function MatriculaForm({
         {/* Resumo do que vai ser cobrado, antes do clique. */}
         <div className="rounded-xl border border-white/10 bg-ink-900/40 px-4 py-3 text-sm">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-slate-400">{plano === "anual" ? `Plano anual · ${forma === "pix" ? "Pix" : "cartão"}` : "Plano mensal · cartão"}</span>
+            <span className="text-slate-400">{plano === "anual" ? `Plano anual · ${forma === "pix" ? "Pix" : "cartão"}` : tr("Plano mensal · cartão")}</span>
             <span className="font-display text-lg font-bold text-white">
-              {plano === "anual" ? brl(cupom ? cupom.final : anual) : `${brl(cupom ? cupom.final : mensal)}${cupom && !cupom.recorrente ? " no 1º mês" : "/mês"}`}
+              {plano === "anual" ? brl(cupom ? cupom.final : anual) : `${brl(cupom ? cupom.final : mensal)}${cupom && !cupom.recorrente ? tr("no 1º mês") : "/mês"}`}
             </span>
           </div>
           <p className="mt-1 text-xs text-slate-500">
-            {plano === "anual" ? "Cobrança única. Acesso por 12 meses a partir da confirmação." : "Renova todo mês. Cancele quando quiser."}
+            {plano === "anual" ? tr("Cobrança única. Acesso por 12 meses a partir da confirmação.") : tr("Renova todo mês. Cancele quando quiser.")}
           </p>
         </div>
 
@@ -288,7 +288,7 @@ export default function MatriculaForm({
           disabled={loading}
           className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60"
         >
-          {loading ? "Gerando pagamento..." : "Continuar para o pagamento"}
+          {loading ? tr("Gerando pagamento...") : tr("Continuar para o pagamento")}
         </button>
         <p className="text-center text-xs text-slate-500">
           {tr("Depois de pagar, você recebe por e-mail um código para criar a senha. Não precisa criar conta antes.")}

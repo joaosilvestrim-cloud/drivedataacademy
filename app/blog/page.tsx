@@ -10,7 +10,7 @@ export const revalidate = 60;
 
 export const metadata = {
   title: "Blog · DriveData Academy",
-  description: "Tendências, técnica e prática em dados, BI e IA, escritas por quem entrega projeto.",
+  description: tr("Tendências, técnica e prática em dados, BI e IA, escritas por quem entrega projeto."),
 };
 
 function data(iso: string | null) {

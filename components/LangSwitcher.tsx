@@ -4,6 +4,7 @@ import { usarTraducao } from "@/lib/i18n/usarTraducao";
 
 import { useI18n } from "@/lib/i18n/LanguageProvider";
 import { LANGS, LANG_LABEL } from "@/lib/i18n/dictionaries";
+import Bandeira from "@/components/i18n/Bandeira";
 
 export default function LangSwitcher({ className = "" }: { className?: string }) {
   const tr = usarTraducao();
@@ -20,13 +21,13 @@ export default function LangSwitcher({ className = "" }: { className?: string })
           key={l}
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
-          className={`rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
-            lang === l
-              ? "bg-gradient-to-r from-brand-green to-brand-blue text-ink-900"
-              : "text-slate-400 hover:text-white"
+          aria-label={LANG_LABEL[l]}
+          title={LANG_LABEL[l]}
+          className={`rounded-full p-1 transition-all ${
+            lang === l ? "bg-white/15 ring-1 ring-white/30" : "opacity-55 hover:opacity-100"
           }`}
         >
-          {LANG_LABEL[l]}
+          <Bandeira idioma={l} tamanho={20} />
         </button>
       ))}
     </div>

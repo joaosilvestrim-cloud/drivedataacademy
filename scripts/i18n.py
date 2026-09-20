@@ -35,8 +35,11 @@ GROQ = ENV.get("GROQ_API_KEY", "")
 # A cota da Groq é por modelo e por dia (TPD). Traduzir a plataforma inteira
 # gasta mais do que um modelo sozinho aguenta, então a lista existe: quando um
 # esgota o dia, o trabalho continua no seguinte em vez de parar.
-MODELOS = [m.strip() for m in (os.environ.get("GROQ_MODEL") or ENV.get("GROQ_MODEL") or
-           "openai/gpt-oss-120b,openai/gpt-oss-20b,qwen/qwen3.8-27b").split(",") if m.strip()]
+# O modelo do assistente fica de fora: a cota é por modelo e por dia, e um
+# lote grande de tradução deixaria o aluno sem resposta no chat.
+ASSISTENTE = os.environ.get("GROQ_MODEL") or ENV.get("GROQ_MODEL") or "openai/gpt-oss-120b"
+MODELOS = [m.strip() for m in (os.environ.get("GROQ_MODEL_TRADUCAO") or ENV.get("GROQ_MODEL_TRADUCAO") or
+           "openai/gpt-oss-20b,qwen/qwen3.8-27b").split(",") if m.strip() and m.strip() != ASSISTENTE]
 esgotados = set()
 
 def modelo_atual():
@@ -129,7 +132,7 @@ CAMPO = re.compile(
     r"""nome|descricao|resumo|texto|rotulo|pergunta|resposta|legenda|acao|final|desc|"""
     # Os laboratórios têm o nome do campo em inglês, mas o texto dentro é
     # português e aparece na tela igual ao resto.
-    r"""name|headline|title|label|hint|note|summary|goal|brief|caption|message)"""
+    r"""name|headline|title|label|hint|note|summary|goal|brief|caption|message|ph|cta|ajuda|aviso|erro|vazio|sub)"""
     r"""\s*:\s*(["'])((?:(?!\2)[^\\]|\\.)*)\2"""
 )
 
@@ -139,6 +142,24 @@ def _valor_da_aspas(bruto: str) -> str | None:
         return json.loads('"' + bruto.replace('"', '\\"') + '"')
     except json.JSONDecodeError:
         return None
+
+# Lista de opções de um select: `options: ["Dashboard/BI", "Automação"]`.
+# O valor é o que a pessoa lê e o que é gravado, então a tradução entra só na
+# hora de mostrar — aqui só juntamos as frases.
+OPCOES = re.compile(r"(options|opcoes)\s*:\s*\[([^\]]*)\]", re.S)
+UMA_ASPA = re.compile(r"""(["'])((?:(?!)[^\
+]|\.)*)""")
+
+def extrair_opcoes(caminhos):
+    achadas = {}
+    for c in caminhos:
+        texto = open(c, encoding="utf-8").read()
+        for m in OPCOES.finditer(texto):
+            for o in UMA_ASPA.finditer(m.group(2)):
+                valor = _valor_da_aspas(o.group(2))
+                if valor is not None and texto_valido(valor):
+                    achadas.setdefault(normalizar(valor), []).append(os.path.relpath(c, RAIZ))
+    return achadas
 
 def extrair_campos(caminhos):
     achadas = {}
@@ -397,7 +418,13 @@ def traduzir_lote(frases, idioma_nome):
     while True:
         modelo = modelo_atual()
         if not modelo:
-            raise RuntimeError("todos os modelos gastaram a cota do dia; volte amanhã ou assine o tier pago")
+            # A janela da cota é móvel: ela volta aos poucos, não à meia-noite.
+            # Morrer aqui jogaria fora o lote já traduzido, então o script
+            # dorme e tenta de novo — é feito para rodar sozinho.
+            print("   todos os modelos sem cota; esperando 15 min e tentando de novo")
+            esgotados.clear()
+            time.sleep(900)
+            continue
         try:
             r = http("https://api.groq.com/openai/v1/chat/completions",
                      json.dumps({"model": modelo, "temperature": 0.2, "reasoning_effort": "low",
@@ -506,7 +533,10 @@ def ligar_hook(texto: str, nome_arquivo: str) -> str:
         nome = m.group(1) or m.group(2)
         corpo_ate = defs[n + 1].start() if n + 1 < len(defs) else len(texto)
         corpo = texto[m.start():corpo_ate]
-        if "tr(" not in corpo or "const tr = usarTraducao();" in corpo:
+        # A comparação ignora espaço: o projeto tem código compacto, e
+        # `const tr=usarTraducao()` é a mesma linha que `const tr = ...`.
+        compacto = re.sub(r"\s+", "", corpo)
+        if "tr(" not in corpo or "consttr=usarTraducao()" in compacto:
             continue
         if not nome[:1].isupper():
             print(f"      ! {nome_arquivo}: {nome}() usa tr() mas não é componente, resolva à mão")

@@ -82,7 +82,7 @@ export default function ContextMenu({ menu, onClose }: { menu: MenuCtx | null; o
       )}
       <Item icon={el.bloqueado ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />} label={el.bloqueado ? "Desbloquear" : "Bloquear"} onClick={run(() => st.toggleBloqueio(el.id))} />
       <Item icon={<EyeOff className="h-4 w-4" />} label={tr("Ocultar")} onClick={run(() => st.toggleVisivel(el.id))} />
-      <Item icon={<Star className="h-4 w-4" />} label={tr("Salvar como favorito")} onClick={run(() => { const n = window.prompt("Nome do componente favorito:", el.nome); if (n) st.salvarFavorito(n, el); })} />
+      <Item icon={<Star className="h-4 w-4" />} label={tr("Salvar como favorito")} onClick={run(() => { const n = window.prompt(tr("Nome do componente favorito:"), el.nome); if (n) st.salvarFavorito(n, el); })} />
       <div className="my-1 h-px bg-border" />
       <Item icon={<Trash2 className="h-4 w-4" />} label={tr("Excluir")} atalho="Del" danger onClick={run(() => st.removerSelecionados())} />
     </div>

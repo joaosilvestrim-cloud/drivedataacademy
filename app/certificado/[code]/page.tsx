@@ -62,7 +62,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
           </Link>
           <div className={`flex w-fit items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold ${valid ? "border-brand-green/40 bg-brand-green/10 text-brand-green" : "border-red-400/40 bg-red-400/10 text-red-300"}`}>
             <span>{valid ? "✓" : "✕"}</span>
-            {valid ? "Certificado válido" : cert.revoked ? "Certificado revogado" : "Certificado expirado"}
+            {valid ? tr("Certificado válido") : cert.revoked ? "Certificado revogado" : "Certificado expirado"}
           </div>
         </div>
 
@@ -71,9 +71,9 @@ export default async function CertificatePage({ params }: { params: { code: stri
             studentName={cert.student_name}
             courseTitle={cert.course_title}
             workload={cert.workload}
-            headline={cert.kind === "live" ? "Certificado de Participação" : undefined}
+            headline={cert.kind === "live" ? tr("Certificado de Participação") : undefined}
             assinaturas={assinaturas}
-            achievementLabel={cert.kind === "live" ? "participou da transmissão ao vivo" : undefined}
+            achievementLabel={cert.kind === "live" ? tr("participou da transmissão ao vivo") : undefined}
             dateLabel={fmtDate(cert.created_at)}
             code={cert.code}
             host={host}

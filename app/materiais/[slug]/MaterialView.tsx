@@ -91,8 +91,8 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                   <h2 className="mt-4 font-display text-2xl font-bold text-white">{tr("Tudo certo! 🎉")}</h2>
                   <p className="mt-2 text-sm text-slate-300">
                     {done.emailed
-                      ? "Enviamos o material para o seu e-mail. Confira a caixa de entrada (e o spam)."
-                      : "Seu material está pronto para download abaixo."}
+                      ? tr("Enviamos o material para o seu e-mail. Confira a caixa de entrada (e o spam).")
+                      : tr("Seu material está pronto para download abaixo.")}
                   </p>
                   {done.fileUrl && (
                     <a

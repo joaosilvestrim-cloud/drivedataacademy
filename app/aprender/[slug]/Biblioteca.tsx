@@ -57,9 +57,9 @@ export default function Biblioteca({
             <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">{titulo}</h1>
             <p className="mt-3 max-w-xl text-slate-400">
               {liberado
-                ? "Arquivos prontos para baixar, abrir no seu computador e adaptar ao seu projeto. "
-                : "Dê uma olhada em tudo que tem aqui. O download abre quando a contagem terminar. "}
-              <span className="font-mono tabular-nums text-slate-300">{total}</span> {total === 1 ? "arquivo disponível" : "arquivos disponíveis"}.
+                ? tr("Arquivos prontos para baixar, abrir no seu computador e adaptar ao seu projeto.")
+                : tr("Dê uma olhada em tudo que tem aqui. O download abre quando a contagem terminar.")}
+              <span className="font-mono tabular-nums text-slate-300">{total}</span> {total === 1 ? tr("arquivo disponível") : tr("arquivos disponíveis")}.
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}

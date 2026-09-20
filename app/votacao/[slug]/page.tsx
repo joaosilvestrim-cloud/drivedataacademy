@@ -64,11 +64,11 @@ export default async function VotacaoPage({
             </>
           )}
           {encerrada(votacao)
-            ? "Votação encerrada."
+            ? tr("Votação encerrada.")
             : votacao.closes_at
               ? `Aberta até ${dia(votacao.closes_at)}.`
               : umaSo
-                ? "Escolha uma opção."
+                ? tr("Escolha uma opção.")
                 : `Escolha até ${votacao.max_choices} opções.`}
         </p>
 
