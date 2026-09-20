@@ -126,7 +126,7 @@ def texto_valido_encostado(t: str) -> bool:
 # mostra o campo, então este modo só junta as frases para traduzir.
 CAMPO = re.compile(
     r'\b(titulo|subtitulo|quando|explicacao|armadilha|enunciado|dica|porque|recado|'
-    r'nome|descricao|resumo|texto|rotulo|pergunta|resposta|legenda|acao|final)\s*:\s*"((?:[^"\\]|\\.)*)"'
+    r'nome|descricao|resumo|texto|rotulo|pergunta|resposta|legenda|acao|final|desc)\s*:\s*"((?:[^"\\]|\\.)*)"'
 )
 
 def extrair_campos(caminhos):

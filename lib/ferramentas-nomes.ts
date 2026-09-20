@@ -1,6 +1,8 @@
 import "server-only";
 import { cache } from "react";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { frase } from "@/lib/i18n/frases";
+import { idiomaAtual } from "@/lib/i18n/idioma-servidor";
 
 /* Nome e descrição de cada ferramenta, com o que o admin trocou por cima.
 
@@ -47,11 +49,16 @@ export const trocasDoAdmin = cache(async (): Promise<Record<string, Partial<Nome
 /** Nome e descrição finais de todas as ferramentas, já com as trocas do admin. */
 export const nomesDasFerramentas = cache(async (): Promise<Record<string, NomeFerramenta>> => {
   const trocas = await trocasDoAdmin();
+  const idioma = idiomaAtual();
   const final: Record<string, NomeFerramenta> = {};
   for (const [chave, padrao] of Object.entries(NOMES_PADRAO)) {
+    /* A tradução entra aqui, e não na tela, porque a tela recebe o texto já
+       resolvido. Nome próprio (Arena SQL, Forja DAX) não está no dicionário e
+       volta igual, que é o certo. O que o admin renomeou sai como ele
+       escreveu: é texto dele, não da plataforma. */
     final[chave] = {
-      nome: (trocas[chave]?.nome || "").trim() || padrao.nome,
-      desc: (trocas[chave]?.desc || "").trim() || padrao.desc,
+      nome: (trocas[chave]?.nome || "").trim() || frase(padrao.nome, idioma),
+      desc: (trocas[chave]?.desc || "").trim() || frase(padrao.desc, idioma),
     };
   }
   return final;

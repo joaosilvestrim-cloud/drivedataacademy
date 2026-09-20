@@ -22,6 +22,9 @@ const CORRECOES: Record<string, Partial<Par>> = {
   "Vitrine": { en: "Directory", es: "Directorio" },
   // "Revisar" é revisar de novo; o botão manda conferir a resposta.
   "Conferir": { es: "Comprobar" },
+  // Nome da ferramenta, não descrição: "Raio-X of the Dashboard" fica com
+  // cara de tradução pela metade. O nome é o mesmo nos três idiomas.
+  "Raio-X do Dashboard": { en: "Raio-X do Dashboard", es: "Raio-X do Dashboard" },
   "Destaque": { es: "Destacado" },
   // O modelo resumiu estas duas em estilo de telegrama e perdeu a segunda
   // metade da ideia, que é justamente a parte útil.

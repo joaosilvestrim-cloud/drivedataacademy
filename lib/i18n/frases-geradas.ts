@@ -261,6 +261,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "68/100 in DAX",
     "es": "68/100 en DAX"
   },
+  "96 padrões de DAX, SQL, Power Query, Oracle e Protheus. Cada um diz quando usar, traz o código para colar e a armadilha em que a maioria cai.": {
+    "en": "96 DAX, SQL, Power Query, Oracle, and Protheus patterns. Each tells when to use, gives code to paste, and the trap most fall into.",
+    "es": "96 patrones de DAX, SQL, Power Query, Oracle y Protheus. Cada uno indica cuándo usar, trae el código para pegar y la trampa en la que la mayoría cae."
+  },
   ": arraste a linha do tempo ou clique em": {
     "en": ": drag timeline or click on",
     "es": ": arrastre la línea de tiempo o haga clic en"
@@ -512,6 +516,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "A medida já existe. Falta mudar o contexto de filtro dela.": {
     "en": "The measure already exists. You need to change its filter context.",
     "es": "La medida ya existe. Falta cambiar su contexto de filtro."
+  },
+  "A mesma base, as mesmas perguntas, duas ferramentas. Você responde com o número e com a fórmula, e a correção confere as duas coisas.": {
+    "en": "Same base, same questions, two tools. You answer with the number and the formula, and the correction checks both.",
+    "es": "La misma base, las mismas preguntas, dos herramientas. Respondes con el número y la fórmula, y la corrección verifica ambas cosas."
   },
   "A mesma base, as mesmas perguntas, duas ferramentas. Você responde com o número e com a fórmula, e a correção separa as duas coisas: entender o problema e saber escrever a solução.": {
     "en": "Same data, same questions, two tools. You answer with the number and the formula, and the check separates the two: understanding the problem and writing the solution.",
@@ -1001,6 +1009,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Analyze my report",
     "es": "Analiza mi informe"
   },
+  "Analise seu .pbix ou .pbit, explore o mapa das páginas e transforme pontos de atenção em um plano de revisão. Compare versões do mesmo projeto, com leitura local do arquivo.": {
+    "en": "Analyze your .pbix or .pbit, explore the page map, and turn pain points into a review plan. Compare versions of the same project, with local file reading.",
+    "es": "Analiza tu .pbix o .pbit, explora el mapa de páginas y convierte puntos de atención en un plan de revisión. Compara versiones del mismo proyecto, con lectura local del archivo."
+  },
   "Andar no calendário": {
     "en": "Navigate the calendar",
     "es": "Navegar en el calendario"
@@ -1368,6 +1380,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Assuma uma empresa fictícia e teste suas decisões em 30 dias simulados.": {
     "en": "Assume a fictional company and test your decisions in 30 simulated days.",
     "es": "Asume una empresa ficticia y prueba tus decisiones en 30 días simulados."
+  },
+  "Assuma uma empresa interativa em 3D. Decida preços, estoque e equipe, simule 30 dias e aprenda com os resultados da sua estratégia.": {
+    "en": "Assume an interactive 3D company. Set prices, inventory, and staff, simulate 30 days, and learn from your strategy results.",
+    "es": "Asume una empresa interactiva en 3D. Decide precios, inventario y equipo, simula 30 días y aprende con los resultados de tu estrategia."
   },
   "Assumir a loja": {
     "en": "Take over the store",
@@ -2629,6 +2645,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Creating a second calendar fixes it, but spreads duplicate filter across the whole report and confuses users.",
     "es": "Crear un segundo calendario soluciona, pero dispersa filtro duplicado por todo el informe y confunde al usuario."
   },
+  "Crie cards em HTML e SVG para o Power BI e gere a medida DAX pronta, sem escrever código.": {
+    "en": "Create HTML and SVG cards for Power BI and generate the ready DAX measure, no code writing.",
+    "es": "Crea tarjetas en HTML y SVG para Power BI y genera la medida DAX lista, sin escribir código."
+  },
   "Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.": {
     "en": "Create HTML/SVG cards for Power BI and ready DAX measure, no code.",
     "es": "Crea tarjetas en HTML/SVG para Power BI y genera la medida DAX lista, sin escribir código."
@@ -2976,6 +2996,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Desafios": {
     "en": "Challenges",
     "es": "Desafíos"
+  },
+  "Desafios de SQL sobre uma base gerada só para você, com correção na hora. Quando erra, a Arena diz exatamente onde você tropeçou.": {
+    "en": "SQL challenges on a database made just for you, with instant correction. When you miss, Arena tells exactly where you tripped.",
+    "es": "Desafíos de SQL sobre una base generada solo para ti, con corrección al instante. Cuando fallas, Arena indica exactamente dónde tropezaste."
   },
   "Desafios práticos": {
     "en": "Practical challenges",
@@ -4357,6 +4381,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Generates day list and enriches. The +1 in size includes the last day.",
     "es": "Genera la lista de días y la enriquece. El +1 en tamaño incluye el último día."
   },
+  "Gera a tabela de calendário e as medidas de tempo com o nome das suas tabelas, com ano fiscal e feriados nacionais calculados. É só colar no Power BI.": {
+    "en": "Generate the calendar table and time measures with your table names, fiscal year and national holidays calculated. Just paste into Power BI.",
+    "es": "Genera la tabla de calendario y las medidas de tiempo con el nombre de tus tablas, con año fiscal y feriados nacionales calculados. Solo pega en Power BI."
+  },
   "Gera a tabela de feriados com Carnaval, Sexta-feira Santa e Corpus Christi calculados pela Páscoa de cada ano, e uma coluna de dia útil que leva isso em conta.": {
     "en": "Generates the holiday table with Carnival, Good Friday and Corpus Christi calculated from Easter each year, and a business‑day column that accounts for them.",
     "es": "Genera la tabla de festivos con Carnaval, Viernes Santo y Corpus Christi calculados a partir de la Pascua de cada año, y una columna de día hábil que lo considera."
@@ -4532,6 +4560,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Importar projetos": {
     "en": "Import projects",
     "es": "Importar proyectos"
+  },
+  "Importe CSVs, trate dados e execute SQL. Explore as transformações em 3D, reproduza cada etapa e compare resultados.": {
+    "en": "Import CSVs, clean data, and run SQL. Explore 3D transformations, replay each step, and compare results.",
+    "es": "Importa CSVs, trata datos y ejecuta SQL. Explora las transformaciones en 3D, reproduce cada paso y compara resultados."
   },
   "Imprimir / PDF": {
     "en": "Print / PDF",
@@ -5224,6 +5256,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Monte sua trajetória com IA": {
     "en": "Build your path with AI",
     "es": "Construye tu trayectoria con IA"
+  },
+  "Monte um modelo de linguagem no seu navegador e veja como a IA escolhe cada palavra. Token, probabilidade, temperatura e alucinação, ao vivo. Sem API.": {
+    "en": "Build a language model in your browser and see how the AI picks each word. Token, probability, temperature, and hallucination, live. No API.",
+    "es": "Construye un modelo de lenguaje en tu navegador y observa cómo la IA elige cada palabra. Token, probabilidad, temperatura y alucinación, en vivo. Sin API."
   },
   "Mostra a consulta que cada sessão está rodando e há quanto tempo.": {
     "en": "Shows the query each session is running and for how long.",
@@ -5964,6 +6000,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "O painel diz uma coisa, o sistema diz outra, e alguém importante está esperando a explicação. Aqui você treina a cena mais comum da profissão, com um método que funciona sempre: total, quebra, linha.": {
     "en": "The dashboard says one thing, the system another, and someone important awaits an explanation. Here you train the most common professional scenario with a method that always works: total, break, line.",
     "es": "El panel dice una cosa, el sistema dice otra, y alguien importante está esperando la explicación. Aquí entrenas la escena más común de la profesión, con un método que siempre funciona: total, quiebra, línea."
+  },
+  "O painel diz uma coisa, o sistema diz outra. Treine a investigação que resolve a cena mais comum da profissão: total, quebra por dimensão, linha.": {
+    "en": "The dashboard says one thing, the system says another. Train the investigation that solves the most common profession scene: total, breakdown by dimension, line.",
+    "es": "El panel dice una cosa, el sistema otra. Entrena la investigación que resuelve la escena más común de la profesión: total, desglose por dimensión, línea."
   },
   "O painel não bate com o sistema e você quer ver onde a diferença mora.": {
     "en": "Dashboard doesn't match system; you want to see where the difference lies.",
@@ -8232,6 +8272,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Suas atividades viram evidências de conhecimento.": {
     "en": "Your activities become evidence of knowledge.",
     "es": "Tus actividades se convierten en evidencias de conocimiento."
+  },
+  "Suas atividades viram um mapa de competências em 3D. Comece pelo diagnóstico, abra seu universo e evolua entregando desafios.": {
+    "en": "Your activities become a 3D competency map. Start with diagnosis, open your universe, and evolve by delivering challenges.",
+    "es": "Tus actividades se convierten en un mapa de competencias en 3D. Comienza con el diagnóstico, abre tu universo y evoluciona entregando desafíos."
   },
   "Suas conquistas na DriveData Academy.": {
     "en": "Your achievements in DriveData Academy.",
