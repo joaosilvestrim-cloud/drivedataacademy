@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { votarEnquete } from "./actions";
 
@@ -76,7 +77,7 @@ export default function EnquetePoll({
         {maxEscolhas > 1 ? `Você pode marcar até ${maxEscolhas} temas. ` : "Dá para trocar o voto quando quiser. "}
         Também dá para responder pelo link público:{" "}
         <Link href={`/votacao/${slug}`} className="text-ds-info underline decoration-ds-line underline-offset-4">
-          página da enquete
+          {tr("página da enquete")}
         </Link>
         .
       </p>

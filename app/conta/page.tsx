@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -184,7 +185,7 @@ export default async function ContaHome() {
       <header>
         <p className="text-meta uppercase text-ds-text-3">
           {hoje(new Date().toISOString())}
-          {full && <> · <span className="text-ds-accent">assinatura ativa</span></>}
+          {full && <> · <span className="text-ds-accent">{tr("assinatura ativa")}</span></>}
         </p>
         <h1 className="mt-2.5 text-balance font-display text-title font-semibold text-ds-text">
           Olá{firstName ? `, ${firstName}` : ""}
@@ -194,7 +195,7 @@ export default async function ContaHome() {
 
       {/* ── 2 · Próximo passo. O elemento mais forte da página. ──────── */}
       <section aria-labelledby="passo" className="border-l-2 border-ds-accent pl-5 tablet:pl-6">
-        <p id="passo" className="text-meta uppercase text-ds-text-3">Próximo passo</p>
+        <p id="passo" className="text-meta uppercase text-ds-text-3">{tr("Próximo passo")}</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
           <div className="min-w-0 max-w-lg">
             <h2 className="text-balance font-display text-section font-semibold text-ds-text">{passo.titulo}</h2>
@@ -235,15 +236,14 @@ export default async function ContaHome() {
             meta={<span className="font-mono tabular-nums">{resumo.top.score}/100</span>}
           />
           <p className="mt-3 max-w-xl text-body-sm text-ds-text-2">
-            Estes são os pontos de <span className="text-ds-text">{resumo.top.name}</span> e de onde cada um veio.
-            Cada competência tem a sua própria composição.
+            {tr("Estes são os pontos de")} <span className="text-ds-text">{resumo.top.name}</span> {tr("e de onde cada um veio. Cada competência tem a sua própria composição.")}
           </p>
           <EvidenceBar parts={resumo.top.parts} className="mt-4 max-w-2xl" />
           <Link
             href="/conta/universo"
             className="group mt-4 inline-flex items-center gap-1.5 text-label text-ds-text-2 transition-colors duration-fast ease-ds hover:text-ds-accent"
           >
-            Ver todas as competências
+            {tr("Ver todas as competências")}
             <ChevronRight size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className="transition-transform duration-fast ease-ds group-hover:translate-x-0.5" />
           </Link>
         </section>
@@ -252,11 +252,11 @@ export default async function ContaHome() {
       {resumo.cooling.length > 0 && (
         <section aria-labelledby="frescor">
           <SectionHeader
-            title="Hora de revisar"
-            action={<Link href="/conta/desafios" className="text-label text-ds-accent hover:underline">Ver desafios</Link>}
+            title={tr("Hora de revisar")}
+            action={<Link href="/conta/desafios" className="text-label text-ds-accent hover:underline">{tr("Ver desafios")}</Link>}
           />
           <p className="mt-3 max-w-xl text-body-sm text-ds-text-2">
-            O conhecimento continua seu. O que caiu foi o frescor, por falta de prática recente.
+            {tr("O conhecimento continua seu. O que caiu foi o frescor, por falta de prática recente.")}
           </p>
           <div className="mt-5 grid gap-6 tablet:grid-cols-2 lg:grid-cols-4">
             {resumo.cooling.map((c) => (
@@ -268,19 +268,19 @@ export default async function ContaHome() {
 
       {(aprovadas.length > 0 || emCorrecao > 0) && (
         <section aria-labelledby="pratica">
-          <SectionHeader title="Sua prática" />
+          <SectionHeader title={tr("Sua prática")} />
           <ul className="mt-3 flex flex-col">
             {emCorrecao > 0 && (
               <li className="flex items-baseline justify-between gap-4 border-b border-ds-line-soft py-2.5">
                 <span className="text-body-sm text-ds-text-2">
                   {emCorrecao === 1 ? "Uma entrega aguardando correção" : `${emCorrecao} entregas aguardando correção`}
                 </span>
-                <Badge tone="attention">em correção</Badge>
+                <Badge tone="attention">{tr("em correção")}</Badge>
               </li>
             )}
             {aprovadas.slice(0, 3).map((e: any, i: number) => (
               <li key={i} className="flex items-baseline justify-between gap-4 border-b border-ds-line-soft py-2.5">
-                <span className="text-body-sm text-ds-text-2">Desafio aprovado, evidência registrada</span>
+                <span className="text-body-sm text-ds-text-2">{tr("Desafio aprovado, evidência registrada")}</span>
                 {/* Carimbo de quando a evidência entrou: medição, vai em mono. */}
                 <span className="shrink-0 font-mono text-meta tabular-nums text-ds-text-3">
                   {e.reviewed_at ? quando(e.reviewed_at) : "—"}
@@ -294,8 +294,8 @@ export default async function ContaHome() {
       {/* ── 5 · Conteúdo e secundários. ─────────────────────────────── */}
       <section aria-labelledby="cursos">
         <SectionHeader
-          title="Em curso"
-          action={<Link href="/conta/cursos" className="text-label text-ds-text-2 hover:text-ds-text">Cardápio</Link>}
+          title={tr("Em curso")}
+          action={<Link href="/conta/cursos" className="text-label text-ds-text-2 hover:text-ds-text">{tr("Cardápio")}</Link>}
         />
         {withPct.length === 0 ? (
           <EmptyState
@@ -323,7 +323,7 @@ export default async function ContaHome() {
                         <span className="truncate font-display text-component font-medium text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
                           {c.title}
                         </span>
-                        {completo && <Badge tone="accent">concluído</Badge>}
+                        {completo && <Badge tone="accent">{tr("concluído")}</Badge>}
                       </span>
                       <span className="mt-2 flex items-center gap-3">
                         <span className="h-0.5 w-full max-w-[16rem] bg-ds-line" aria-hidden="true">
@@ -386,7 +386,7 @@ export default async function ContaHome() {
                       <span className="truncate text-body-sm text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
                         {c.title}
                       </span>
-                      {c.coming_soon && <Status tone="attention">Em breve</Status>}
+                      {c.coming_soon && <Status tone="attention">{tr("Em breve")}</Status>}
                     </span>
                     {c.subtitle && <span className="block truncate text-caption text-ds-text-3">{c.subtitle}</span>}
                   </span>
@@ -414,7 +414,7 @@ export default async function ContaHome() {
             rel="noreferrer"
             className="text-ds-text-2 underline decoration-ds-line underline-offset-4 transition-colors duration-fast ease-ds hover:text-ds-accent hover:decoration-ds-accent"
           >
-            grupo do WhatsApp
+            {tr("grupo do WhatsApp")}
           </a>
           .
         </p>

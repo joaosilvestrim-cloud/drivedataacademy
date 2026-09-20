@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -37,17 +38,17 @@ export default async function GravacoesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-white">Gravações</h1>
+      <h1 className="font-display text-3xl font-bold text-white">{tr("Gravações")}</h1>
       <p className="mt-1 text-sm text-slate-400">
-        As lives e mentorias que já aconteceram, para assistir quando der. Incluídas na assinatura.
+        {tr("As lives e mentorias que já aconteceram, para assistir quando der. Incluídas na assinatura.")}
       </p>
 
       {gravacoes.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
-          <p className="font-medium text-white">Nenhuma gravação publicada ainda</p>
+          <p className="font-medium text-white">{tr("Nenhuma gravação publicada ainda")}</p>
           <p className="mt-2 text-sm text-slate-400">
             Assim que o time subir a gravação de um encontro, ela aparece aqui.{" "}
-            <Link href="/conta/agenda" className="text-brand-green underline underline-offset-4">Ver a agenda</Link>
+            <Link href="/conta/agenda" className="text-brand-green underline underline-offset-4">{tr("Ver a agenda")}</Link>
           </p>
         </div>
       ) : (
@@ -79,7 +80,7 @@ export default async function GravacoesPage() {
                   {primeiraLinha(l.description) && (
                     <span className="mt-1 text-sm text-slate-400">{primeiraLinha(l.description)}</span>
                   )}
-                  <span className="mt-3 text-sm font-semibold text-brand-green group-hover:underline">Assistir →</span>
+                  <span className="mt-3 text-sm font-semibold text-brand-green group-hover:underline">{tr("Assistir →")}</span>
                 </span>
               </Link>
             </li>

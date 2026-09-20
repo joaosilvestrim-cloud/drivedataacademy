@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { demoAtual } from "@/lib/demo";
@@ -55,11 +56,11 @@ export default async function CursosCardapio() {
     return (
       <>
         {preco === 0 ? (
-          <span className="text-sm font-semibold text-brand-green">Incluso na assinatura</span>
+          <span className="text-sm font-semibold text-brand-green">{tr("Incluso na assinatura")}</span>
         ) : (
           <span className="flex items-baseline gap-1.5">
             <span className="font-display text-xl font-bold text-white">{brl(preco)}</span>
-            <span className="text-xs text-slate-500">Pix ou até 12x</span>
+            <span className="text-xs text-slate-500">{tr("Pix ou até 12x")}</span>
           </span>
         )}
         <span className="text-sm font-semibold text-brand-green">
@@ -71,8 +72,8 @@ export default async function CursosCardapio() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Cursos</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Cardápio de treinamentos</h1>
+      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Cursos")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Cardápio de treinamentos")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {assinante
           ? "Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você."
@@ -81,8 +82,8 @@ export default async function CursosCardapio() {
 
       {!assinante && (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-green/25 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
-          <p className="text-sm text-slate-200">Assine para liberar a compra dos treinamentos com preço de assinante.</p>
-          <Link href="/matricula" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Ver assinatura</Link>
+          <p className="text-sm text-slate-200">{tr("Assine para liberar a compra dos treinamentos com preço de assinante.")}</p>
+          <Link href="/matricula" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Ver assinatura")}</Link>
         </div>
       )}
 
@@ -95,7 +96,7 @@ export default async function CursosCardapio() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green opacity-75 motion-reduce:animate-none" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-green" />
               </span>
-              Disponíveis agora
+              {tr("Disponíveis agora")}
             </h2>
             <span className="text-xs font-medium text-slate-500">
               {aVenda.length} {aVenda.length === 1 ? "treinamento aberto" : "treinamentos abertos"}
@@ -118,10 +119,10 @@ export default async function CursosCardapio() {
 
       {seus.length > 0 && (
         <section className="mt-12">
-          <h2 className="font-display text-lg font-bold text-white">Seus treinamentos</h2>
+          <h2 className="font-display text-lg font-bold text-white">{tr("Seus treinamentos")}</h2>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {seus.map((c) => (
-              <Cartao key={c.id} c={c} href={`/aprender/${c.slug}`} rodape={<span className="text-sm font-semibold text-brand-green">Continuar →</span>} selo="Seu" />
+              <Cartao key={c.id} c={c} href={`/aprender/${c.slug}`} rodape={<span className="text-sm font-semibold text-brand-green">{tr("Continuar →")}</span>} selo="Seu" />
             ))}
           </div>
         </section>
@@ -129,8 +130,8 @@ export default async function CursosCardapio() {
 
       {emBreve.length > 0 && (
         <section className="mt-12">
-          <h2 className="font-display text-lg font-bold text-white">Em breve</h2>
-          <p className="mt-1 text-sm text-slate-500">Estes ainda estão em produção. Quando abrirem, aparecem aqui em cima.</p>
+          <h2 className="font-display text-lg font-bold text-white">{tr("Em breve")}</h2>
+          <p className="mt-1 text-sm text-slate-500">{tr("Estes ainda estão em produção. Quando abrirem, aparecem aqui em cima.")}</p>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {emBreve.map((c) => (
               <Cartao
@@ -141,8 +142,8 @@ export default async function CursosCardapio() {
                 selo="Em breve"
                 rodape={
                   <>
-                    <span className="text-sm text-slate-500">Venda ainda não aberta</span>
-                    <span className="text-sm font-semibold text-amber-300/80">Espiar →</span>
+                    <span className="text-sm text-slate-500">{tr("Venda ainda não aberta")}</span>
+                    <span className="text-sm font-semibold text-amber-300/80">{tr("Espiar →")}</span>
                   </>
                 }
               />
@@ -153,7 +154,7 @@ export default async function CursosCardapio() {
 
       {cardapio.length === 0 && (
         <p className="mt-10 rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center text-sm text-slate-500">
-          Você já tem todos os treinamentos disponíveis. Novos chegam em breve.
+          {tr("Você já tem todos os treinamentos disponíveis. Novos chegam em breve.")}
         </p>
       )}
     </div>

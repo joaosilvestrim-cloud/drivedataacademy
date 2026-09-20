@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -50,10 +51,10 @@ export default async function RankingPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-bold text-white">Ranking</h1>
-          <p className="mt-1 text-sm text-slate-400">Pontos por ajudar a comunidade. Responda dúvidas e suba.</p>
+          <h1 className="font-display text-3xl font-bold text-white">{tr("Ranking")}</h1>
+          <p className="mt-1 text-sm text-slate-400">{tr("Pontos por ajudar a comunidade. Responda dúvidas e suba.")}</p>
         </div>
-        <Link href="/conta/comunidade" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">← Comunidade</Link>
+        <Link href="/conta/comunidade" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">{tr("← Comunidade")}</Link>
       </div>
 
       {/* Comunicado do prêmio */}
@@ -62,14 +63,14 @@ export default async function RankingPage() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
         <div className="text-sm text-slate-300">
-          <p className="font-semibold text-white">O 1º lugar leva prêmio 🏆</p>
-          <p className="mt-0.5">Quem terminar em <b className="text-amber-200">1º no ranking</b> ganha <b className="text-white">assinatura grátis</b> pelo período seguinte e <b className="text-white">10% de desconto</b> na compra de cursos. Suba respondendo dúvidas, participando e concluindo treinamentos.</p>
+          <p className="font-semibold text-white">{tr("O 1º lugar leva prêmio 🏆")}</p>
+          <p className="mt-0.5">{tr("Quem terminar em")} <b className="text-amber-200">{tr("1º no ranking")}</b> {tr("ganha")} <b className="text-white">{tr("assinatura grátis")}</b> {tr("pelo período seguinte e")} <b className="text-white">{tr("10% de desconto")}</b> {tr("na compra de cursos. Suba respondendo dúvidas, participando e concluindo treinamentos.")}</p>
         </div>
       </div>
 
       {/* Como ganhar pontos */}
       <div className="mt-4 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-        <h2 className="font-display text-sm font-bold text-white">Como ganhar pontos</h2>
+        <h2 className="font-display text-sm font-bold text-white">{tr("Como ganhar pontos")}</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { pts: "+10", t: "Resolver dúvidas", d: "Sua resposta marcada como solução vale 10 pontos.", d2: "M20 6L9 17l-5-5" },
@@ -99,7 +100,7 @@ export default async function RankingPage() {
       <div className="mt-8 flex items-center gap-4 rounded-2xl border border-brand-green/25 bg-gradient-to-r from-brand-green/[0.10] to-brand-blue/[0.06] px-5 py-4">
         {myRank >= 0 ? <RankMedal rank={myRank+1} name={displayName(nameById,user.id)} points={myPts} compact/> : <Avatar name={displayName(nameById, user.id)} size="md" />}
         <div className="min-w-0 flex-1">
-          <p className="text-xs uppercase tracking-wide text-slate-400">Você</p>
+          <p className="text-xs uppercase tracking-wide text-slate-400">{tr("Você")}</p>
           <p className="font-semibold text-white">{displayName(nameById, user.id)}<BadgeChips list={badgeById[user.id]} /></p>
         </div>
         <div className="text-right">
@@ -132,9 +133,9 @@ export default async function RankingPage() {
           <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-white/5 text-brand-green">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
-          <p className="font-medium text-white">O ranking está em branco.</p>
-          <p className="mt-1 text-sm text-slate-400">Seja o primeiro a pontuar respondendo dúvidas na comunidade.</p>
-          <Link href="/conta/comunidade" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Ir para a comunidade</Link>
+          <p className="font-medium text-white">{tr("O ranking está em branco.")}</p>
+          <p className="mt-1 text-sm text-slate-400">{tr("Seja o primeiro a pontuar respondendo dúvidas na comunidade.")}</p>
+          <Link href="/conta/comunidade" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Ir para a comunidade")}</Link>
         </div>
       )}
     </div>

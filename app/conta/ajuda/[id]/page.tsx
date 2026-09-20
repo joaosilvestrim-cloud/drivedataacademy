@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -43,7 +44,7 @@ export default async function TicketPage({ params }: { params: { id: string } })
 
   return (
     <div className="mx-auto max-w-2xl">
-      <Link href="/conta/ajuda" className="text-xs text-slate-500 transition-colors hover:text-white">← Central de Ajuda</Link>
+      <Link href="/conta/ajuda" className="text-xs text-slate-500 transition-colors hover:text-white">{tr("← Central de Ajuda")}</Link>
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -74,13 +75,13 @@ export default async function TicketPage({ params }: { params: { id: string } })
 
       {/* Responder */}
       {ticket.status === "resolved" ? (
-        <p className="mt-8 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm text-slate-400">Este chamado foi marcado como resolvido. Precisa de mais ajuda? Abra um novo na Central.</p>
+        <p className="mt-8 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm text-slate-400">{tr("Este chamado foi marcado como resolvido. Precisa de mais ajuda? Abra um novo na Central.")}</p>
       ) : (
         <form action={replyTicket} className="mt-8 space-y-3 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
           <input type="hidden" name="ticket_id" value={ticket.id} />
-          <p className="text-sm font-semibold text-white">Responder</p>
-          <textarea name="body" required rows={3} placeholder="Escreva sua mensagem..." className={`${field} resize-y`} />
-          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Enviar</button>
+          <p className="text-sm font-semibold text-white">{tr("Responder")}</p>
+          <textarea name="body" required rows={3} placeholder={tr("Escreva sua mensagem...")} className={`${field} resize-y`} />
+          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Enviar")}</button>
         </form>
       )}
     </div>

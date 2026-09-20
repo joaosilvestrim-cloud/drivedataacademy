@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useState } from "react";
 import FunilForm from "../_funis/FunilForm";
 import { FUNIS_REPRESENTACAO } from "../_funis/definicoes";
@@ -9,12 +12,13 @@ import { FUNIS_REPRESENTACAO } from "../_funis/definicoes";
    dentro de Representação. As definições e o formulário vivem em _funis. */
 
 export default function RepClient() {
+  const tr = usarTraducao();
   const [active, setActive] = useState<string>(FUNIS_REPRESENTACAO[0].key);
   const form = FUNIS_REPRESENTACAO.find((f) => f.key === active)!;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-      <nav aria-label="Caminhos de representação" className="space-y-2">
+      <nav aria-label={tr("Caminhos de representação")} className="space-y-2">
         {FUNIS_REPRESENTACAO.map((f) => {
           const on = f.key === active;
           return (

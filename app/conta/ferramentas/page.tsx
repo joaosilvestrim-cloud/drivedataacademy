@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -197,16 +198,16 @@ export default async function FerramentasHub() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Ferramentas</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Escolha uma ferramenta</h1>
-      <p className="mt-2 max-w-2xl text-sm text-slate-400">Escolha uma experiência e comece a praticar.</p>
+      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Ferramentas")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Escolha uma ferramenta")}</h1>
+      <p className="mt-2 max-w-2xl text-sm text-slate-400">{tr("Escolha uma experiência e comece a praticar.")}</p>
 
-      <Link href="/conta/novidades" className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-green/25 bg-brand-green/[.06] px-5 py-4 text-sm text-slate-200"><span><strong className="text-brand-green">O Raio-X está de cara nova.</strong> Mapa interativo, plano de revisão e comparação de versões.</span><span className="font-semibold text-brand-green">Ver as novidades →</span></Link>
+      <Link href="/conta/novidades" className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-green/25 bg-brand-green/[.06] px-5 py-4 text-sm text-slate-200"><span><strong className="text-brand-green">{tr("O Raio-X está de cara nova.")}</strong> {tr("Mapa interativo, plano de revisão e comparação de versões.")}</span><span className="font-semibold text-brand-green">{tr("Ver as novidades →")}</span></Link>
       <GradeFerramentas ferramentas={ferramentas} />
 
       {!liberado && (
         <div className="mt-8 max-w-2xl rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4 text-sm text-slate-300">
-          A Ferramenta de Visuais está <b className="text-white">incluída na assinatura da Academy</b>. Se ainda não tem acesso, ao abrir você verá a opção de assinar.
+          {tr("A Ferramenta de Visuais está")} <b className="text-white">{tr("incluída na assinatura da Academy")}</b>{tr(". Se ainda não tem acesso, ao abrir você verá a opção de assinar.")}
         </div>
       )}
     </div>

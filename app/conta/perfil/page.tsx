@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -37,8 +38,8 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
 
   return (
     <div className="max-w-2xl">
-      <h1 className="font-display text-3xl font-bold text-white">Meu perfil</h1>
-      <p className="mt-1 text-sm text-slate-400">Seus dados de aluno na DriveData Academy.</p>
+      <h1 className="font-display text-3xl font-bold text-white">{tr("Meu perfil")}</h1>
+      <p className="mt-1 text-sm text-slate-400">{tr("Seus dados de aluno na DriveData Academy.")}</p>
 
       {/* Chega aqui quem tentou emitir certificado sem nome no cadastro. O nome
           é o que fica impresso, então a emissão para em vez de imprimir e-mail. */}
@@ -48,8 +49,8 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
             <path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <div>
-            <p className="text-sm font-semibold text-amber-200">Preencha seu nome completo para emitir o certificado</p>
-            <p className="mt-1 text-sm text-slate-300">É o nome que fica impresso no documento e no seu LinkedIn. Salve abaixo e volte ao curso para emitir.</p>
+            <p className="text-sm font-semibold text-amber-200">{tr("Preencha seu nome completo para emitir o certificado")}</p>
+            <p className="mt-1 text-sm text-slate-300">{tr("É o nome que fica impresso no documento e no seu LinkedIn. Salve abaixo e volte ao curso para emitir.")}</p>
           </div>
         </div>
       )}
@@ -59,8 +60,8 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
 
       {/* Gamificação */}
       <div className="mt-8">
-        <h2 className="font-display text-lg font-bold text-white">Minha gamificação</h2>
-        <p className="mt-1 text-sm text-slate-400">Você ganha pontos participando da comunidade: cada curtida que suas mensagens recebem vale pontos e te faz subir no ranking.</p>
+        <h2 className="font-display text-lg font-bold text-white">{tr("Minha gamificação")}</h2>
+        <p className="mt-1 text-sm text-slate-400">{tr("Você ganha pontos participando da comunidade: cada curtida que suas mensagens recebem vale pontos e te faz subir no ranking.")}</p>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
           {stats.map((s) => (
@@ -74,7 +75,7 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
 
         {/* Selos */}
         <div className="mt-4 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-          <p className="text-sm font-semibold text-white">Meus selos</p>
+          <p className="text-sm font-semibold text-white">{tr("Meus selos")}</p>
           {myBadges.length > 0 ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {myBadges.map((b) => (
@@ -85,13 +86,13 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
               ))}
             </div>
           ) : (
-            <p className="mt-2 text-sm text-slate-500">Você ainda não tem selos. O selo Fundador é dado aos alunos da primeira turma.</p>
+            <p className="mt-2 text-sm text-slate-500">{tr("Você ainda não tem selos. O selo Fundador é dado aos alunos da primeira turma.")}</p>
           )}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link href="/conta/comunidade" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Ir para a comunidade</Link>
-          <Link href="/conta/ranking" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">Ver ranking completo</Link>
+          <Link href="/conta/comunidade" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Ir para a comunidade")}</Link>
+          <Link href="/conta/ranking" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">{tr("Ver ranking completo")}</Link>
         </div>
       </div>
     </div>

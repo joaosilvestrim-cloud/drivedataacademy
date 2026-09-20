@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useEffect, useMemo, useState } from "react";
 import { CORPORA, COMECOS } from "@/lib/caixapreta/corpora";
 import { codificar, estatisticas, textoDoToken, treinarTokenizador } from "@/lib/caixapreta/tokenizador";
@@ -67,6 +70,7 @@ function Numero({ valor, rotulo: r, tom }: { valor: string | number; rotulo: str
 }
 
 export default function CaixaPreta() {
+  const tr = usarTraducao();
   const [estacao, setEstacao] = useState<"tokenizar" | "gerar">("tokenizar");
   const [corpusId, setCorpusId] = useState(CORPORA[0].id);
   const [fusoes, setFusoes] = useState(250);
@@ -148,7 +152,7 @@ export default function CaixaPreta() {
           className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-          Tour guiado
+          {tr("Tour guiado")}
         </button>
       </div>
 
@@ -156,7 +160,7 @@ export default function CaixaPreta() {
       <div data-tour="cp-corpus" className="mt-4 rounded-3xl border border-white/8 bg-white/[0.02] p-5">
         <div className="grid gap-4 sm:grid-cols-[1fr_1fr]">
           <label>
-            <span className={rotulo}>Corpus de treino</span>
+            <span className={rotulo}>{tr("Corpus de treino")}</span>
             <select className={`${campo} mt-1 [&>option]:bg-ink-900`} value={corpusId} onChange={(e) => setCorpusId(e.target.value)}>
               {CORPORA.map((c) => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </select>
@@ -165,7 +169,7 @@ export default function CaixaPreta() {
           <label>
             <span className={rotulo}>Fusões do tokenizador: {fusoes}</span>
             <input type="range" min={10} max={500} step={10} value={fusoes} onChange={(e) => setFusoes(Number(e.target.value))} className="mt-3 w-full accent-[#34e8a0]" />
-            <span className="mt-1 block text-[0.7rem] text-slate-500">Cada fusão junta o par de pedaços mais comum. Menos fusões, tokens menores.</span>
+            <span className="mt-1 block text-[0.7rem] text-slate-500">{tr("Cada fusão junta o par de pedaços mais comum. Menos fusões, tokens menores.")}</span>
           </label>
         </div>
       </div>
@@ -174,51 +178,48 @@ export default function CaixaPreta() {
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_18rem] lg:items-start">
           <div>
             <div data-tour="cp-texto" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-              <span className={rotulo}>Seu texto</span>
+              <span className={rotulo}>{tr("Seu texto")}</span>
               <textarea
                 value={texto}
                 onChange={(e) => setTexto(e.target.value)}
                 rows={4}
                 className={`${campo} mt-2 resize-y font-mono text-[0.85rem]`}
               />
-              <p className="mt-4 text-[0.7rem] uppercase tracking-wider text-slate-500">Como o modelo enxerga</p>
+              <p className="mt-4 text-[0.7rem] uppercase tracking-wider text-slate-500">{tr("Como o modelo enxerga")}</p>
               <div className="mt-2">
                 <Fichas tokens={stats.lista} />
               </div>
               <p className="mt-3 text-xs text-slate-500">
-                O ponto médio é espaço. Repare que o espaço vem grudado na palavra seguinte, e que cada dígito virou um token sozinho.
-                A ficha em amarelo é <b className="text-amber-300/90">meia letra</b>: um acento partido ao meio, porque o modelo trabalha em bytes.
+                {tr("O ponto médio é espaço. Repare que o espaço vem grudado na palavra seguinte, e que cada dígito virou um token sozinho. A ficha em amarelo é")} <b className="text-amber-300/90">{tr("meia letra")}</b>{tr(": um acento partido ao meio, porque o modelo trabalha em bytes.")}
               </p>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Numero rotulo="Tokens" valor={stats.tokens} tom="text-brand-green" />
-              <Numero rotulo="Caracteres" valor={stats.caracteres} />
-              <Numero rotulo="Palavras" valor={stats.palavras} />
-              <Numero rotulo="Tokens por palavra" valor={stats.porPalavra.toFixed(2)} />
+              <Numero rotulo={tr("Tokens")} valor={stats.tokens} tom="text-brand-green" />
+              <Numero rotulo={tr("Caracteres")} valor={stats.caracteres} />
+              <Numero rotulo={tr("Palavras")} valor={stats.palavras} />
+              <Numero rotulo={tr("Tokens por palavra")} valor={stats.porPalavra.toFixed(2)} />
             </div>
 
             <div className="mt-4 rounded-3xl border border-brand-blue/25 bg-brand-blue/[0.06] p-5">
-              <p className="font-display text-base font-bold text-white">O mesmo texto, outro corpus</p>
+              <p className="font-display text-base font-bold text-white">{tr("O mesmo texto, outro corpus")}</p>
               <p className="mt-1 text-sm text-slate-300">
-                Treinado em <b className="text-white">{corpus.nome}</b>, o seu texto custa <b className="text-brand-green">{stats.tokens} tokens</b>.
-                Treinado em <b className="text-white">{comparacao.nome}</b>, custa <b className="text-amber-300">{comparacao.tokens}</b>.
+                {tr("Treinado em")} <b className="text-white">{corpus.nome}</b>{tr(", o seu texto custa")} <b className="text-brand-green">{stats.tokens} tokens</b>{tr(". Treinado em")} <b className="text-white">{comparacao.nome}</b>{tr(", custa")} <b className="text-amber-300">{comparacao.tokens}</b>.
               </p>
               <p className="mt-2 text-sm text-slate-400">
-                O tokenizador não é neutro: ele é barato no assunto em que foi treinado e caro fora dele. É por isso que português custa mais token
-                que inglês nos modelos grandes, e por que texto técnico do seu domínio consome mais contexto do que você espera.
+                {tr("O tokenizador não é neutro: ele é barato no assunto em que foi treinado e caro fora dele. É por isso que português custa mais token que inglês nos modelos grandes, e por que texto técnico do seu domínio consome mais contexto do que você espera.")}
               </p>
             </div>
           </div>
 
           <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-            <p className="font-display text-base font-bold text-white">O que está acontecendo</p>
+            <p className="font-display text-base font-bold text-white">{tr("O que está acontecendo")}</p>
             <div className="mt-3 flex flex-col gap-3 text-sm leading-relaxed text-slate-400">
-              <p><b className="text-slate-200">1. Pré-corte.</b> O texto é quebrado em palavras, pontuação e dígitos soltos, com o espaço colado na palavra seguinte.</p>
-              <p><b className="text-slate-200">2. Bytes.</b> Cada pedaço vira bytes. Acento e emoji ocupam mais de um, e é aí que o português começa a ficar caro.</p>
-              <p><b className="text-slate-200">3. Fusões.</b> O par de pedaços mais frequente é fundido, e isso se repete centenas de vezes. Sobem os pedaços do assunto do corpus.</p>
+              <p><b className="text-slate-200">{tr("1. Pré-corte.")}</b> {tr("O texto é quebrado em palavras, pontuação e dígitos soltos, com o espaço colado na palavra seguinte.")}</p>
+              <p><b className="text-slate-200">{tr("2. Bytes.")}</b> {tr("Cada pedaço vira bytes. Acento e emoji ocupam mais de um, e é aí que o português começa a ficar caro.")}</p>
+              <p><b className="text-slate-200">{tr("3. Fusões.")}</b> {tr("O par de pedaços mais frequente é fundido, e isso se repete centenas de vezes. Sobem os pedaços do assunto do corpus.")}</p>
               <p className="rounded-xl border border-amber-400/25 bg-amber-400/[0.07] px-3 py-2 text-amber-200/90">
-                Nenhum modelo vê letra. Ele vê esses pedaços, numerados. Quando você pede para ele somar um CPF, ele está manipulando onze pedaços sem noção de número.
+                {tr("Nenhum modelo vê letra. Ele vê esses pedaços, numerados. Quando você pede para ele somar um CPF, ele está manipulando onze pedaços sem noção de número.")}
               </p>
             </div>
           </div>
@@ -229,15 +230,15 @@ export default function CaixaPreta() {
             <div data-tour="cp-prompt" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
               <div className="grid gap-4 sm:grid-cols-[1fr_9rem]">
                 <label>
-                  <span className={rotulo}>Comece uma frase</span>
+                  <span className={rotulo}>{tr("Comece uma frase")}</span>
                   <input className={`${campo} mt-1`} value={prompt} onChange={(e) => setPrompt(e.target.value)} />
                 </label>
                 <label>
-                  <span className={rotulo}>Contexto</span>
+                  <span className={rotulo}>{tr("Contexto")}</span>
                   <select className={`${campo} mt-1 [&>option]:bg-ink-900`} value={ordem} onChange={(e) => setOrdem(Number(e.target.value))}>
-                    <option value={2}>1 token</option>
-                    <option value={3}>2 tokens</option>
-                    <option value={4}>3 tokens</option>
+                    <option value={2}>{tr("1 token")}</option>
+                    <option value={3}>{tr("2 tokens")}</option>
+                    <option value={4}>{tr("3 tokens")}</option>
                   </select>
                 </label>
               </div>
@@ -258,7 +259,7 @@ export default function CaixaPreta() {
                   </span>
                 </label>
                 <label>
-                  <span className={rotulo}>Semente</span>
+                  <span className={rotulo}>{tr("Semente")}</span>
                   <input type="number" className={`${campo} mt-1`} value={semente} onChange={(e) => setSemente(Number(e.target.value) || 1)} />
                 </label>
               </div>
@@ -278,37 +279,35 @@ export default function CaixaPreta() {
               </p>
               <div className="flex flex-wrap items-center gap-2 border-t border-white/8 px-4 py-3">
                 <button type="button" onClick={() => passo(1)} className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">
-                  Gerar 1 token
+                  {tr("Gerar 1 token")}
                 </button>
                 <button type="button" onClick={() => passo(40)} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                  Gerar 40
+                  {tr("Gerar 40")}
                 </button>
                 <button type="button" onClick={() => setGerados([])} className="rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-400 transition-colors hover:text-white">
-                  Recomeçar
+                  {tr("Recomeçar")}
                 </button>
               </div>
             </div>
 
             {origem.geral && (
               <p className="mt-3 rounded-2xl border border-red-500/25 bg-red-500/[0.07] px-4 py-3 text-sm text-red-200">
-                O modelo não reconheceu nada do contexto atual e está respondendo pela frequência geral do corpus. Repare que ele não avisa,
-                não hesita e não erra o tom: continua escrevendo com a mesma cara de certeza. É exatamente isso que acontece quando um modelo
-                grande alucina.
+                {tr("O modelo não reconheceu nada do contexto atual e está respondendo pela frequência geral do corpus. Repare que ele não avisa, não hesita e não erra o tom: continua escrevendo com a mesma cara de certeza. É exatamente isso que acontece quando um modelo grande alucina.")}
               </p>
             )}
           </div>
 
           <div className="flex flex-col gap-4 lg:sticky lg:top-6">
             <div data-tour="cp-candidatos" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-              <p className="font-display text-base font-bold text-white">O próximo token</p>
-              <p className="mt-1 text-[0.7rem] text-slate-500">O que o modelo considera agora, e com que chance.</p>
+              <p className="font-display text-base font-bold text-white">{tr("O próximo token")}</p>
+              <p className="mt-1 text-[0.7rem] text-slate-500">{tr("O que o modelo considera agora, e com que chance.")}</p>
               <div className="mt-3 flex flex-col gap-2">
-                {proximos.length === 0 && <p className="text-sm text-slate-500">Sem candidatos para este contexto.</p>}
+                {proximos.length === 0 && <p className="text-sm text-slate-500">{tr("Sem candidatos para este contexto.")}</p>}
                 {proximos.map((c, i) => (
                   <div key={c.id}>
                     <div className="flex items-baseline justify-between gap-2">
                       <span className="font-mono text-sm text-slate-200">
-                        {textoDoToken(c.token).includes(METADE) ? <span className="text-amber-300/90">½ letra</span> : visivel(textoDoToken(c.token)) || "·"}
+                        {textoDoToken(c.token).includes(METADE) ? <span className="text-amber-300/90">{tr("½ letra")}</span> : visivel(textoDoToken(c.token)) || "·"}
                       </span>
                       <span className="font-mono text-[0.7rem] tabular-nums text-slate-500">
                         {(c.probabilidade * 100).toFixed(1)}% · {c.contagem}x
@@ -323,15 +322,14 @@ export default function CaixaPreta() {
             </div>
 
             <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-              <p className="font-display text-base font-bold text-white">O modelo</p>
+              <p className="font-display text-base font-bold text-white">{tr("O modelo")}</p>
               <div className="mt-3 flex flex-col gap-1.5 text-sm text-slate-400">
-                <p>Vocabulário: <b className="text-slate-200">{vocab.tokens.length.toLocaleString("pt-BR")}</b> tokens</p>
-                <p>Corpus: <b className="text-slate-200">{modelo.totalTokens.toLocaleString("pt-BR")}</b> tokens</p>
-                <p>Contextos aprendidos: <b className="text-slate-200">{modelo.contextos.toLocaleString("pt-BR")}</b></p>
+                <p>{tr("Vocabulário:")} <b className="text-slate-200">{vocab.tokens.length.toLocaleString("pt-BR")}</b> {tr("tokens")}</p>
+                <p>Corpus: <b className="text-slate-200">{modelo.totalTokens.toLocaleString("pt-BR")}</b> {tr("tokens")}</p>
+                <p>{tr("Contextos aprendidos:")} <b className="text-slate-200">{modelo.contextos.toLocaleString("pt-BR")}</b></p>
               </div>
               <p className="mt-3 text-[0.75rem] leading-relaxed text-slate-500">
-                Um GPT tem bilhões de parâmetros e este tem uma tabela de contagem. A diferença de qualidade é abissal, e o mecanismo de escolher o
-                próximo token pela probabilidade é o mesmo.
+                {tr("Um GPT tem bilhões de parâmetros e este tem uma tabela de contagem. A diferença de qualidade é abissal, e o mecanismo de escolher o próximo token pela probabilidade é o mesmo.")}
               </p>
             </div>
           </div>

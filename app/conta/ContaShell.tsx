@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useState } from "react";
 import Link from "next/link";
 import FaixaEventos from "@/components/FaixaEventos";
@@ -186,6 +189,7 @@ function BarraInferior({ avisoComunidade, idioma }: { avisoComunidade?: Aviso; i
 }
 
 function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { onNavigate?: () => void; cursosAVenda?: number; avisoComunidade?: Aviso; idioma: Idioma }) {
+  const tr = usarTraducao();
   const t = textos(idioma);
   const pathname = usePathname();
   const isActive = (href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/") || pathname === href);
@@ -201,7 +205,7 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { on
           <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
         </svg>
         {t.menu.buscarTela}
-        <kbd className="ml-auto rounded border border-white/10 px-1.5 text-[0.62rem] text-slate-500">Ctrl K</kbd>
+        <kbd className="ml-auto rounded border border-white/10 px-1.5 text-[0.62rem] text-slate-500">{tr("Ctrl K")}</kbd>
       </button>
 
       {GROUPS.map((group, gi) => (
@@ -265,6 +269,7 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { on
 }
 
 export default function ContaShell({ email, children, cursosAVenda = 0, eventos = [], avisoComunidade, idioma = IDIOMA_PADRAO }: { email: string; children: React.ReactNode; cursosAVenda?: number; eventos?: EventoFaixa[]; avisoComunidade?: Aviso; idioma?: Idioma }) {
+  const tr = usarTraducao();
   const t = textos(idioma);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -276,10 +281,10 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
     <div className="relative min-h-screen">
       {/* Topo (mobile) */}
       <header data-demo-nav className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur lg:hidden">
-        <button onClick={() => setOpen(true)} aria-label="Menu" className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-white">
+        <button onClick={() => setOpen(true)} aria-label={tr("Menu")} className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-white">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" /></svg>
         </button>
-        <Link href="/"><img src="/logo.png" alt="Drive Data Academy" className="h-8 w-auto" /></Link>
+        <Link href="/"><img src="/logo.png" alt={tr("Drive Data Academy")} className="h-8 w-auto" /></Link>
         <div className="flex items-center gap-2">
           <button
             onClick={() => window.dispatchEvent(new Event("abrir-paleta"))}
@@ -300,8 +305,8 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
           <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
           <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto border-r border-white/10 bg-ink-900 p-4">
             <div className="mb-6 flex items-center justify-between">
-              <Link href="/" onClick={() => setOpen(false)}><img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" /></Link>
-              <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
+              <Link href="/" onClick={() => setOpen(false)}><img src="/logo.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" /></Link>
+              <button onClick={() => setOpen(false)} aria-label={tr("Fechar")} className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
             </div>
             <NavList onNavigate={() => setOpen(false)} cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} idioma={idioma} />
             <div className="mt-6 border-t border-white/10 pt-4">
@@ -317,7 +322,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
       {/* Sidebar (desktop) */}
       <aside data-demo-nav className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-white/10 bg-ink-900/70 p-4 backdrop-blur lg:flex">
         <Link href="/" className="mb-8 block px-2">
-          <img src="/logo.png" alt="Drive Data Academy" className="h-9 w-auto" />
+          <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" />
         </Link>
         <div className="flex-1 overflow-y-auto">
           <NavList cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} idioma={idioma} />

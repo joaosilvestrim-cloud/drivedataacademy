@@ -1,10 +1,11 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { Skeleton } from "@/components/ui/primitives";
 
 // Esqueleto com a MESMA estrutura da Home, para a troca não deslocar layout.
 // O anterior desenhava cards arredondados, que deixaram de existir na página.
 export default function ContaLoading() {
   return (
-    <div className="flex flex-col gap-12 pb-4 tablet:gap-14" aria-busy="true" aria-label="Carregando seu portal">
+    <div className="flex flex-col gap-12 pb-4 tablet:gap-14" aria-busy="true" aria-label={tr("Carregando seu portal")}>
       <div>
         <Skeleton className="h-3 w-56" />
         <Skeleton className="mt-3.5 h-8 w-48" />

@@ -20,7 +20,8 @@
     "test:conciliacao": "tsx scripts/test-conciliacao.ts",
     "test:biblioteca": "tsx scripts/test-biblioteca.ts",
     "test:video": "tsx scripts/test-video.ts",
-    "test:dojo": "tsx scripts/test-dojo.ts"
+    "test:dojo": "tsx scripts/test-dojo.ts",
+    "test:i18n": "tsx scripts/test-i18n.ts"
   },
   "dependencies": {
     "@react-three/fiber": "8.18.0",

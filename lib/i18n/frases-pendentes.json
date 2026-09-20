@@ -1,0 +1,1710 @@
+{
+  "(abre em nova aba)": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "(seu voto)": [
+    "app\\conta\\WorkshopPoll.tsx"
+  ],
+  "(você)": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx",
+    "app\\conta\\vitrine\\VitrineClient.tsx",
+    "app\\conta\\vitrine\\[id]\\page.tsx"
+  ],
+  "+10 pontos": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  ", custa": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  ", não a sua pontuação. Uma competência parada há meses continua sua, mas aparece esfriando na sua home como lembrete de revisar.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  ", o seu texto custa": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  ". O template pode conter nomes e valores nos metadados, embora não inclua as linhas do modelo.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  ". Se ainda não tem acesso, ao abrir você verá a opção de assinar.": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  ". Treinado em": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "1 token": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "1. Abra o Raio-X.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "1. Pré-corte.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "10% de desconto": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "1º no ranking": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "2 tokens": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "2. Bytes.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "2. Escolha um .pbix ou .pbit.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "3 tokens": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "3. Fusões.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "3. Monte seu plano.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  ": um acento partido ao meio, porque o modelo trabalha em bytes.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "A Ferramenta de Visuais está": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "A análise acontece no navegador. O .pbit pode ampliar a leitura do modelo e das medidas.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "A análise acontece no navegador. Você escolhe se deseja salvar o laudo, que contém nomes e o mapa estrutural. Se esses metadados forem confidenciais, mantenha a análise local. Nenhuma fórmula ou linha de dados é enviada no salvamento.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "A armadilha": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "A armadilha é o conteúdo": [
+    "app\\conta\\ferramentas\\biblioteca\\page.tsx"
+  ],
+  "A comunidade é exclusiva para alunos com acesso ativo.": [
+    "app\\conta\\comunidade\\page.tsx"
+  ],
+  "A comunidade: canais, encontros, interação": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "A consulta rodou, mas não devolveu nenhuma linha.": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "A correção procura os pedaços que a solução precisa ter, não um texto idêntico. SUMX escrito de outro jeito continua valendo.": [
+    "app\\conta\\ferramentas\\dojo\\page.tsx"
+  ],
+  "A equipe ainda está montando a estrutura de conhecimento. Volte em breve.": [
+    "app\\conta\\desafios\\page.tsx"
+  ],
+  "A equipe publica novos desafios conforme as turmas avançam.": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "A estrutura de conhecimento ainda está sendo montada.": [
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "A marcação manual organiza a revisão. A nota só muda após uma nova análise.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "A mesma base, as mesmas perguntas, duas ferramentas. Você responde com o número e com a fórmula, e a correção separa as duas coisas: entender o problema e saber escrever a solução.": [
+    "app\\conta\\ferramentas\\dojo\\page.tsx"
+  ],
+  "A nota resume as regras aplicáveis. Não certifica os números de negócio nem mede o tempo de execução.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "A plataforma: telas, navegação, algo que não funciona bem": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "A primeira sugestão que você mandar aparece nesta lista, com a resposta do time.": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "A quarta dimensão é o tempo. Dá para voltar no calendário e ver como seu conhecimento evoluiu, e o que anda esfriando por falta de prática.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "A resposta certa é calculada na sua base, na hora. Por isso cada aluno tem números próprios e a resposta do colega não serve.": [
+    "app\\conta\\ferramentas\\arena\\page.tsx"
+  ],
+  "A tabela de calendário e as medidas de tempo do seu modelo, escritas com o nome das suas tabelas e prontas para colar. Com ano fiscal, feriados nacionais de verdade e um comentário em cada decisão, para você entender o que está colando.": [
+    "app\\conta\\ferramentas\\forja\\page.tsx"
+  ],
+  "A tabela é gerada a partir da sua conta. Copiar a resposta de alguém não funciona: os números são outros.": [
+    "app\\conta\\ferramentas\\dojo\\page.tsx"
+  ],
+  "A vitrine ainda não foi ligada no banco. Peça para o time rodar a migration 20260920_portfolio.sql no Supabase.": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "AO VIVO AGORA": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Abra o assistente acima e mande sua dúvida. Se ele acionar o time, o atendimento aparece nesta lista.": [
+    "app\\conta\\ajuda\\page.tsx"
+  ],
+  "Abra os achados do diagnóstico e escolha “Adicionar ao plano”.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Abrir": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Abrir a Forja DAX": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Abrir gravação ↗": [
+    "app\\conta\\gravacoes\\[id]\\page.tsx"
+  ],
+  "Abrir meu universo ↗": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Abrir no YouTube ↗": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Acertar o número com a fórmula errada é o que mais acontece no trabalho, e é o que quebra quando a base cresce. Aqui os dois são conferidos, e o atalho perigoso vira alerta.": [
+    "app\\conta\\ferramentas\\dojo\\page.tsx"
+  ],
+  "Acessar meus cursos e materiais": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Adicionar": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Agenda de lives": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Ainda não tem projeto publicado aqui": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Ajustado — aguarda análise": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Alunos falaram depois da última resposta da equipe. O número some quando alguém da equipe responde no canal.": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Anexar foto": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Ano fiscal começa em": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Ano fiscal tratado": [
+    "app\\conta\\ferramentas\\forja\\page.tsx"
+  ],
+  "Análise no navegador": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Aparece na Vitrine de alunos.": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Apresentação": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Aqui você demonstra na prática o que aprendeu. A equipe corrige e a evidência entra no seu Knowledge Universe. Sem prática avaliada, uma competência não passa de 79 pontos.": [
+    "app\\conta\\desafios\\page.tsx"
+  ],
+  "Arquivo → Exportar → Modelo do Power BI (.pbit)": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Arraste seu arquivo aqui ou escolha no computador.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "As lives e mentorias que já aconteceram, para assistir quando der. Incluídas na assinatura.": [
+    "app\\conta\\gravacoes\\page.tsx"
+  ],
+  "As regras procuram sinais em páginas, visuais, modelo e DAX. Achados são orientações de revisão, não uma validação dos resultados de negócio. Não executamos consultas nem medimos desempenho real.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "As tabelas": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Assine para liberar a compra dos treinamentos com preço de assinante.": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Assistir gravação": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Assistir →": [
+    "app\\conta\\gravacoes\\page.tsx"
+  ],
+  "Até": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Até 300 MB. Para relatórios grandes, prefira .pbit.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Avançado": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Banco de verdade, no seu navegador": [
+    "app\\conta\\ferramentas\\arena\\page.tsx"
+  ],
+  "Biblioteca": [
+    "app\\conta\\ferramentas\\biblioteca\\page.tsx"
+  ],
+  "Brasil": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Buscar": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Buscar aluno por nome, título ou especialidade": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Buscar na biblioteca": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Buscar nesta conversa": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Buscar no diagnóstico": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Buscar pelo problema: não bate, duplicata, mês anterior...": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Buscar por nome, título ou especialidade": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Buscar projeto": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Cada competência vai de 0 a 100 e soma cinco tipos de evidência:": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Cada fusão junta o par de pedaços mais comum. Menos fusões, tokens menores.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Cada pedaço vira bytes. Acento e emoji ocupam mais de um, e é aí que o português começa a ficar caro.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Caminhos de representação": [
+    "app\\conta\\representacao\\RepClient.tsx"
+  ],
+  "Canais de texto": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Cancelar": [
+    "app\\conta\\desafios\\ChallengeList.tsx",
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Caracteres": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Cardápio": [
+    "app\\conta\\page.tsx"
+  ],
+  "Cardápio de treinamentos": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Carregando seu portal": [
+    "app\\conta\\loading.tsx"
+  ],
+  "Causa": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Central de Ajuda": [
+    "app\\conta\\ajuda\\page.tsx"
+  ],
+  "Certificado": [
+    "app\\conta\\certificados\\page.tsx"
+  ],
+  "Chamado do dia": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Chegou no resultado certo por outro caminho? Está certo. O que a Arena cobra é o número, como na vida real.": [
+    "app\\conta\\ferramentas\\arena\\page.tsx"
+  ],
+  "Cole aqui seu LinkedIn/currículo...": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Coluna de data": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Coluna de data dela": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Comece em três passos": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Comece por aqui": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Comece uma frase": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Como a pontuação funciona": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Como começar": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Como foi feito": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Como funciona": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Como ganhar pontos": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "Como interpretar o diagnóstico e proteger os metadados": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Como o modelo enxerga": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Como reconhecer da próxima vez:": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Como revisar no Power BI": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Como você fez (opcional)": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Comparar": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Comparar com o esperado": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Comunidade": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx",
+    "app\\conta\\comunidade\\page.tsx"
+  ],
+  "Conclua um curso para emitir o seu.": [
+    "app\\conta\\certificados\\page.tsx"
+  ],
+  "Concluir um curso contribui, mas não significa dominar o assunto.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Concluído": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Conferir": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Conhecer a assinatura": [
+    "app\\conta\\desafios\\page.tsx",
+    "app\\conta\\diagnostico\\page.tsx",
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Conheça a comunidade: especialidades, pontos, conquistas e portfólio.": [
+    "app\\conta\\vitrine\\page.tsx"
+  ],
+  "Conheça mais": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Conta com suas palavras": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Conta o que está faltando, o que atrapalha e o que você quer ver por aqui. Lemos tudo e respondemos.": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Conte o problema, não a ferramenta": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Conte o que você fez, as decisões que tomou e o resultado.": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Contexto": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Contextos aprendidos:": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Continuar →": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Conversar com o assistente": [
+    "app\\conta\\ajuda\\page.tsx"
+  ],
+  "Copiado": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Copiar": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Corpus de treino": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Cresça com a gente": [
+    "app\\conta\\representacao\\page.tsx"
+  ],
+  "Ctrl + Enter": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Ctrl + Enter executa": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Ctrl K": [
+    "app\\conta\\ContaShell.tsx"
+  ],
+  "Cursos": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Curtir": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Código o Google já tem. O que falta é alguém dizer por que aquele padrão quebra na sua base. Todo verbete traz o erro que a maioria comete.": [
+    "app\\conta\\ferramentas\\biblioteca\\page.tsx"
+  ],
+  "Código ↗": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "DA ANÁLISE À AÇÃO": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Daqui pra frente seu mapa cresce com aulas, avaliações e desafios entregues.": [
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "De": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Demonstração com dados fictícios. As interações do exemplo ficam apenas nesta sessão.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Desafio aprovado, evidência registrada": [
+    "app\\conta\\page.tsx"
+  ],
+  "Desafios": [
+    "app\\conta\\desafios\\page.tsx"
+  ],
+  "Desafios práticos": [
+    "app\\conta\\desafios\\page.tsx"
+  ],
+  "Desmarcado, ele fica só para a turma, dentro do portal.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Desmarcar solução": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Destaque": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Detalhes do achado": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Diagnóstico": [
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "Diagnóstico de entrada": [
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "Diagnóstico e plano de revisão": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Diferença": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Dimensão": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Disponíveis agora": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Drive Data Academy": [
+    "app\\conta\\ContaShell.tsx"
+  ],
+  "DriveData Academy · Atualização de ferramentas": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Duplicata na origem, filtro de status, linha perdida na junção, devolução dobrada, escopo diferente, corte de data e arredondamento por linha. É o que quebra número no mundo real.": [
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx"
+  ],
+  "Dá para deixar o projeto só para a turma. Dado de cliente nunca deve aparecer no print: troque nome e número antes de publicar.": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Editar": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Editar meu perfil": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx",
+    "app\\conta\\vitrine\\[id]\\page.tsx",
+    "app\\conta\\vitrine\\page.tsx"
+  ],
+  "Edição 01 · 18 de setembro de 2026": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Em breve": [
+    "app\\conta\\cursos\\page.tsx",
+    "app\\conta\\page.tsx"
+  ],
+  "Em curso": [
+    "app\\conta\\page.tsx"
+  ],
+  "Em preparação": [
+    "app\\conta\\desafios\\page.tsx",
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "Em revisão": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Encontre pontos de atenção, entenda as evidências e organize sua próxima revisão.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Encontros ao vivo e o roadmap de conteúdo da turma.": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Enter envia · solução dá +10 pontos a quem respondeu": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Entram as colunas de ano e mês fiscal, e o YTD passa a fechar no mês certo.": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Entrar na live →": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Entregar o laudo": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Enviado": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Enviar": [
+    "app\\conta\\ajuda\\[id]\\page.tsx"
+  ],
+  "Enviar diagnóstico": [
+    "app\\conta\\diagnostico\\DiagnosticForm.tsx"
+  ],
+  "Enviar o diagnóstico?": [
+    "app\\conta\\diagnostico\\DiagnosticForm.tsx"
+  ],
+  "Enviar outra": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Enviar sugestão": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Errar a causa também ensina": [
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx"
+  ],
+  "Escolha a causa": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Escolha o próximo workshop": [
+    "app\\conta\\WorkshopPoll.tsx"
+  ],
+  "Escolha um elemento": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Escolha um verbete na lista.": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Escolha uma experiência e comece a praticar.": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "Escolha uma ferramenta": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "Escolhendo um mês diferente de janeiro, entram as colunas de ano e mês fiscal e o YTD passa a fechar no mês certo, que é o detalhe que quase todo modelo erra.": [
+    "app\\conta\\ferramentas\\forja\\page.tsx"
+  ],
+  "Escreva qual": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Escreva sua mensagem...": [
+    "app\\conta\\ajuda\\[id]\\page.tsx"
+  ],
+  "Escreva sua resposta...": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Escrito para consulta": [
+    "app\\conta\\ferramentas\\biblioteca\\page.tsx"
+  ],
+  "Especialidades": [
+    "app\\conta\\vitrine\\[id]\\page.tsx"
+  ],
+  "Espiar →": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Este aluno ainda não publicou portfólio nem LinkedIn.": [
+    "app\\conta\\vitrine\\[id]\\page.tsx"
+  ],
+  "Este chamado foi marcado como resolvido. Precisa de mais ajuda? Abra um novo na Central.": [
+    "app\\conta\\ajuda\\[id]\\page.tsx"
+  ],
+  "Este laudo antigo não possui mapa. Analise o arquivo novamente para gerar uma versão atualizada.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Este plano está apenas nesta sessão. Salve o diagnóstico ou exporte o JSON para conservá-lo.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Este tópico está fechado para novas respostas.": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Estes ainda estão em produção. Quando abrirem, aparecem aqui em cima.": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Estes são os pontos de": [
+    "app\\conta\\page.tsx"
+  ],
+  "Está incluído na assinatura ativa da Academy. Enquanto isso, você pode explorar a demonstração.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Evidência registrada no seu universo.": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Ex.: Analista de Dados | Power BI": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Ex.: Vendas da empresa (opcional)": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Excluir": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Exclusivo para alunos com acesso ativo.": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Exemplo ilustrativo. Os percentuais reais são combinados na parceria.": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Explorar exemplo": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Explorar o novo Raio-X": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Explore os próximos encontros e reserve sua próxima data.": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Exportar JSON": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Expressão dela": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Fale com o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.": [
+    "app\\conta\\ajuda\\page.tsx"
+  ],
+  "Faz parte do Knowledge Universe, incluído na assinatura ativa.": [
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "Fechamento caiu de 2 dias para 20 minutos.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Fechar": [
+    "app\\conta\\ContaShell.tsx",
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Fechar comparação": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Feriado móvel no lugar certo": [
+    "app\\conta\\ferramentas\\forja\\page.tsx"
+  ],
+  "Feriados nacionais": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Ferramentas": [
+    "app\\conta\\ferramentas\\arena\\page.tsx",
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx",
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx",
+    "app\\conta\\ferramentas\\dojo\\page.tsx",
+    "app\\conta\\ferramentas\\forja\\page.tsx",
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "Ferramentas usadas": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Filtrar por especialidade": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Fique de olho, o calendário é atualizado toda semana.": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Fontes, modelagem, medidas principais, decisões de visual.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Formato sugerido": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Foto anexada": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Funciona offline": [
+    "app\\conta\\ferramentas\\biblioteca\\page.tsx"
+  ],
+  "Ganhe pontos ajudando: solução +10, curtida +2, participar +1/dia": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Garantir meu acesso": [
+    "app\\conta\\agenda\\page.tsx",
+    "app\\conta\\comunidade\\page.tsx"
+  ],
+  "Gera a tabela de feriados com Carnaval, Sexta-feira Santa e Corpus Christi calculados pela Páscoa de cada ano, e uma coluna de dia útil que leva isso em conta.": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Gera uma base nova, com outros números": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Gerar 1 token": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Gerar 40": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "GitHub, Drive": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Gravação em breve": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Gravações": [
+    "app\\conta\\gravacoes\\page.tsx"
+  ],
+  "Gravações anteriores": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Habilidades": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Histórico": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Histórico de diagnósticos": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Hora de revisar": [
+    "app\\conta\\page.tsx"
+  ],
+  "INSPECIONAR E REVISAR": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Idioma": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Imagem do projeto": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Imagem em análise pelo time": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Imprimir / PDF": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Inclui também o modelo e as medidas legíveis.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Incluso na assinatura": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Inglês": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Intervalo de datas": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Ir para a comunidade": [
+    "app\\conta\\perfil\\page.tsx",
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "Ir para os desafios": [
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "Knowledge Universe 4D": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Limpar": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Limpar a busca e o filtro": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Limpar busca": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx",
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Link do arquivo, repositório ou publicação (opcional)": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Link do código (opcional)": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Link do projeto (opcional)": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "LinkedIn": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Localizar visual": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "MESMO PROJETO · MESMA COBERTURA": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Mais clareza para analisar.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Mais controle para evoluir.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Mais de um jeito certo": [
+    "app\\conta\\ferramentas\\dojo\\page.tsx"
+  ],
+  "Mapa do relatório": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Mapa interativo, plano de revisão e comparação de versões.": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "Marca a resposta que resolveu sua dúvida e dá +10 pontos a quem respondeu": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Marcada como solução": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Marcar": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Marcar como solução": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Medidas de tempo": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Mentoria": [
+    "app\\conta\\agenda\\page.tsx",
+    "app\\conta\\mentoria\\page.tsx"
+  ],
+  "Menu": [
+    "app\\conta\\ContaShell.tsx"
+  ],
+  "Meu perfil": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Meus atendimentos": [
+    "app\\conta\\ajuda\\page.tsx"
+  ],
+  "Meus certificados": [
+    "app\\conta\\certificados\\page.tsx"
+  ],
+  "Meus selos": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Minha gamificação": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Modelo e DAX não foram avaliados por completo. No Power BI, use": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Modelo grande convence e esconde o mecanismo. Este é pequeno o suficiente para você ver a tabela de probabilidade que decide cada palavra.": [
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx"
+  ],
+  "Monte e opere um modelo de linguagem dentro do seu navegador. Veja o texto virar token, o corpus virar tabela de probabilidade e a frase ser escrita um token por vez, com os candidatos à vista. Sem API, sem chave e sem custo.": [
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx"
+  ],
+  "Monte sua trajetória com IA": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Nada aqui é aula. É o que você abre com o chefe esperando, acha em cinco segundos, cola e volta ao trabalho.": [
+    "app\\conta\\ferramentas\\biblioteca\\page.tsx"
+  ],
+  "Nada com esse termo.": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Nada por aqui ainda": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Nada sai daqui": [
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx"
+  ],
+  "Nasceu em algum curso? (opcional)": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Nenhum atendimento por aqui ainda.": [
+    "app\\conta\\ajuda\\page.tsx"
+  ],
+  "Nenhum desafio aberto no momento.": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Nenhum modelo vê letra. Ele vê esses pedaços, numerados. Quando você pede para ele somar um CPF, ele está manipulando onze pedaços sem noção de número.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Nenhum projeto com esse recorte": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Nenhuma gravação publicada ainda": [
+    "app\\conta\\gravacoes\\page.tsx"
+  ],
+  "Nenhuma live agendada por enquanto.": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Nenhuma resposta ainda. Seja o primeiro a ajudar.": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "No roadmap": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "No topo agora": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Nome completo": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Nome da medida base": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Nome da tabela de calendário": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Nome da tabela de feriados": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Nosso time vai analisar e entrar em contato. Você pode enviar outra solicitação quando quiser.": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Nova base": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Nunca acaba e não repete": [
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx"
+  ],
+  "Não, é do meu trabalho": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Número e fórmula": [
+    "app\\conta\\ferramentas\\dojo\\page.tsx"
+  ],
+  "O 1º lugar leva prêmio 🏆": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "O Raio-X do Dashboard está de cara nova. A experiência conecta os pontos de atenção do relatório a um plano de revisão — e os materiais agora avisam quando já podem ser baixados.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "O Raio-X está de cara nova.": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "O acervo inteiro carrega junto com a página. A busca é instantânea e nada do que você digita sai do seu navegador.": [
+    "app\\conta\\ferramentas\\biblioteca\\page.tsx"
+  ],
+  "O arquivo não é enviado. Ao escolher salvar, o laudo guarda nomes, achados e o mapa estrutural. Fórmulas e linhas de dados não fazem parte do histórico.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "O caminho é seu": [
+    "app\\conta\\ferramentas\\arena\\page.tsx"
+  ],
+  "O caso é gerado a partir do seu cadastro, com valores próprios. O do colega é outro, e o seu muda a cada chamado novo.": [
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx"
+  ],
+  "O conhecimento continua seu. O que caiu foi o frescor, por falta de prática recente.": [
+    "app\\conta\\page.tsx"
+  ],
+  "O conteúdo: temas de aula, materiais, profundidade": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "O código": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "O diagnóstico ainda não foi publicado pela equipe.": [
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "O link libera no horário": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "O mesmo texto, outro corpus": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O modelo": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O modelo não reconheceu nada do contexto atual e está respondendo pela frequência geral do corpus. Repare que ele não avisa, não hesita e não erra o tom: continua escrevendo com a mesma cara de certeza. É exatamente isso que acontece quando um modelo grande alucina.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O número": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "O painel diz uma coisa, o sistema diz outra, e alguém importante está esperando a explicação. Aqui você treina a cena mais comum da profissão, com um método que funciona sempre: total, quebra, linha.": [
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx"
+  ],
+  "O par de pedaços mais frequente é fundido, e isso se repete centenas de vezes. Sobem os pedaços do assunto do corpus.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O ponto médio é espaço. Repare que o espaço vem grudado na palavra seguinte, e que cada dígito virou um token sozinho. A ficha em amarelo é": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O problema": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "O próximo token": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O que a sua consulta devolveu": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "O que a turma construiu": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "O que está acontecendo": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O que muda no seu trabalho": [
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx"
+  ],
+  "O que mudou": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "O que mudou depois": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "O que o modelo considera agora, e com que chance.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O que você ganha como parceiro": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "O que você já enviou": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "O ranking está em branco.": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "O resultado": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "O seu modelo": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "O tempo derruba o": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "O texto é quebrado em palavras, pontuação e dígitos soltos, com o espaço colado na palavra seguinte.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "O time fechava o mês somando planilha na mão, e o número nunca batia.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "O time revisa antes de publicar na vitrine. Costuma sair em até dois dias úteis.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "O tokenizador não é neutro: ele é barato no assunto em que foi treinado e caro fora dele. É por isso que português custa mais token que inglês nos modelos grandes, e por que texto técnico do seu domínio consome mais contexto do que você espera.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Onde colar, na ordem": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Ordenar a vitrine": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Os desafios fazem parte do Knowledge Universe e estão incluídos na assinatura ativa da Academy.": [
+    "app\\conta\\desafios\\page.tsx"
+  ],
+  "Outro chamado": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "PBIX permite revisar a estrutura do relatório. PBIT pode disponibilizar também o modelo. Dimensões sem evidência ficam sem nota. Para exportar um PBIT, abra Arquivo → Exportar → Modelo do Power BI.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "POWER BI / DIAGNÓSTICO": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Painel": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Painel de vendas da distribuidora": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Painel do trabalho, exercício da Academy que virou coisa séria, automação que economizou o seu dia. Se resolveu um problema real, entra.": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Palavras": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Para comparar versões, informe o mesmo nome de projeto. A comparação exige as mesmas dimensões avaliadas e a mesma versão das regras. Uma análise local registra participação autodeclarada, não proficiência comprovada.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Parceria & Negócios": [
+    "app\\conta\\representacao\\page.tsx"
+  ],
+  "País": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Pendente": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Pix ou até 12x": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Pode aparecer na página pública da Academy": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Poder marcar aula como favorita": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Pontos": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Pontos de atenção": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Pontos por ajudar a comunidade. Responda dúvidas e suba.": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "Por isso uma competência só passa de 79 pontos quando você tem também uma avaliação avançada aprovada e um desafio avançado com boa qualidade. É proposital: o número precisa significar alguma coisa.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Por que revisar": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Por que um modelo pequeno": [
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx"
+  ],
+  "Por que é assim": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Portfólio": [
+    "app\\conta\\perfil\\ProfileForm.tsx",
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Portfólio é o que abre porta. Publique um projeto com a imagem, o problema que ele resolve e o resultado, e ele passa a aparecer para a turma e para quem visita o site.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Português": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Power BI, SQL, Python, Storytelling...": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Preencha seu nome completo para emitir o certificado": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Prefere e-mail? Fale com o suporte": [
+    "app\\conta\\ajuda\\page.tsx"
+  ],
+  "Prioridade": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Projeto para comparar versões": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Projeto pronto vale mais que certificado em entrevista. Publique o seu com a imagem, o problema que ele resolvia e o resultado. O time revisa e ele entra na vitrine, aqui e na página pública da Academy.": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Próximo passo": [
+    "app\\conta\\page.tsx"
+  ],
+  "Próximo verbete": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Próximo →": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Publicar meu primeiro projeto": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Publicar um projeto": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Página": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Página, medida ou problema": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Páginas, visuais e organização.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Qual problema resolvia": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Quando usar": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Quebre por": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Quem contrata quer saber o que estava quebrado e o que mudou depois. A lista de ferramentas é o detalhe, não a história.": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Quem terminar em": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "Ranking": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "Recebemos! 🎉": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Receita": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Receita mensal dos clientes": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Recomeçar": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Resolvido": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Resolvidos": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Respondendo": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Responder": [
+    "app\\conta\\ajuda\\[id]\\page.tsx",
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx",
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Resposta marcada como solução vale": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Resumo em uma linha": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Resumo, em uma frase": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Retorno da equipe": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Revenda o Portal BI, traga projetos ou candidate-se ao time. Escolha um caminho e registre seu interesse. Agendar mentoria agora tem item próprio no menu.": [
+    "app\\conta\\representacao\\page.tsx"
+  ],
+  "SEU TRABALHO, VERSÃO A VERSÃO": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Sai do Raio-X e chega aqui": [
+    "app\\conta\\ferramentas\\forja\\page.tsx"
+  ],
+  "Salvar rascunho": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Salve o diagnóstico e use o mesmo nome de projeto ao analisar a próxima versão.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Se for um problema, diz onde aconteceu. Se for uma ideia, diz o que ela resolveria no seu dia.": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Se você escolher a causa errada, eu explico por que ela não fecha com o que está na tela. Descartar hipótese pelo sinal da diferença é metade do trabalho de um sênior.": [
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx"
+  ],
+  "Seis desafios sobre uma base de comércio gerada só para você. Escreva a consulta, execute ali mesmo e receba a correção na hora. Quando errar, a Arena não diz só que errou: diz onde você tropeçou.": [
+    "app\\conta\\ferramentas\\arena\\page.tsx"
+  ],
+  "Seja o primeiro a pontuar respondendo dúvidas na comunidade.": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "Seja o primeiro. Um dashboard que você montou no trabalho, um exercício da Academy que virou coisa séria, uma automação que economizou o seu dia: tudo conta.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Selecione um ponto de atenção para ver sua evidência e orientação.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Sem candidatos para este contexto.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Sem gabarito escrito por ninguém": [
+    "app\\conta\\ferramentas\\arena\\page.tsx"
+  ],
+  "Semente": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Serve qualquer projeto": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Sete causas, as de verdade": [
+    "app\\conta\\ferramentas\\conciliacao\\page.tsx"
+  ],
+  "Seu laudo": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Seu mapa de competências": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Seu texto": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Seu voto define o tema do próximo encontro ao vivo. Dá para trocar quando quiser.": [
+    "app\\conta\\WorkshopPoll.tsx"
+  ],
+  "Seus dados de aluno na DriveData Academy.": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Seus treinamentos": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Seções do diagnóstico": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Simulação": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Sistema": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Sobre": [
+    "app\\conta\\vitrine\\[id]\\page.tsx"
+  ],
+  "Sobre você / trajetória": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Solução escolhida": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Sua base · tabela Vendas": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Sua base, não a do colega": [
+    "app\\conta\\ferramentas\\dojo\\page.tsx"
+  ],
+  "Sua prática": [
+    "app\\conta\\page.tsx"
+  ],
+  "Sua próxima revisão": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Sua recorrência (exemplo)": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Sua resposta": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "Sua voz na Academy": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Suas conquistas na DriveData Academy.": [
+    "app\\conta\\certificados\\page.tsx"
+  ],
+  "Sugestão enviada. Obrigado. Você acompanha a resposta aqui embaixo.": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Sugestões e melhorias": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "Tabela de fatos": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Telefone / WhatsApp": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Tente pelo problema, não pela função: “não bate”, “duplicata”, “mês anterior”, “filial”.": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Tirar uma dúvida na comunidade": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Todas": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx",
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx",
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Todas as especialidades": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Todas as ferramentas": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Tokenizador, treino e geração acontecem na sua máquina. O texto que você colar não vai para servidor nenhum.": [
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx"
+  ],
+  "Tokens": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Tokens por palavra": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Tour guiado": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx",
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx",
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx",
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Travei, me dá uma pista": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Treinado em": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Trocar foto": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Troquei 12 planilhas por um painel que abre em 3 segundos.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Tudo que você faz na Academy vira um mapa em 3D do seu conhecimento. Cada estrela é uma competência, e ela cresce conforme você acumula evidências: aulas assistidas, avaliações feitas e desafios entregues.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Título": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Título profissional": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Um GPT tem bilhões de parâmetros e este tem uma tabela de contagem. A diferença de qualidade é abissal, e o mecanismo de escolher o próximo token pela probabilidade é o mesmo.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Um detalhe honesto: 68 pontos não quer dizer que você sabe 68% de tudo sobre um assunto. Quer dizer que você cumpriu 68% dos critérios que a Academy consegue evidenciar hoje.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Um jeito certo de escrever": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Um novo olhar para o seu relatório": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Um print do painel já resolve. Proporção 16:9 fica melhor no cartão.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Use o mesmo nome nas próximas análises. Se ficar vazio, usamos o nome do arquivo.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Use “Explorar exemplo” para conhecer a experiência sem enviar um arquivo.": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Valor da divergência": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Veja o produto, os casos de uso e a calculadora de retorno antes de registrar seu interesse.": [
+    "app\\conta\\_funis\\FunilForm.tsx"
+  ],
+  "Venda ainda não aberta": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Ver a agenda": [
+    "app\\conta\\gravacoes\\page.tsx"
+  ],
+  "Ver a demonstração": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Ver a resposta e a explicação": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Ver a resposta esperada": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Ver as novidades →": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "Ver assinatura": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Ver certificado →": [
+    "app\\conta\\certificados\\page.tsx"
+  ],
+  "Ver cursos": [
+    "app\\conta\\certificados\\page.tsx"
+  ],
+  "Ver desafios": [
+    "app\\conta\\page.tsx"
+  ],
+  "Ver detalhes": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Ver meu universo ↗": [
+    "app\\conta\\desafios\\page.tsx",
+    "app\\conta\\diagnostico\\page.tsx"
+  ],
+  "Ver meus pontos": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Ver o projeto ↗": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Ver o que deixou de aparecer": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Ver perfil": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Ver projeto ↗": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Ver ranking completo": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Ver todas as competências": [
+    "app\\conta\\page.tsx"
+  ],
+  "Ver todas as ferramentas": [
+    "app\\conta\\novidades\\page.tsx"
+  ],
+  "Verbete anterior": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "Vitrine de alunos": [
+    "app\\conta\\vitrine\\page.tsx"
+  ],
+  "Vocabulário:": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Você": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "Você ainda não publicou nada": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Você ainda não tem certificados.": [
+    "app\\conta\\certificados\\page.tsx"
+  ],
+  "Você ainda não tem diagnósticos salvos. Ao terminar uma análise, escolha “Salvar diagnóstico”.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Você ainda não tem selos. O selo Fundador é dado aos alunos da primeira turma.": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Você controla a exposição": [
+    "app\\conta\\portfolio\\page.tsx"
+  ],
+  "Você ganha pontos participando da comunidade: cada curtida que suas mensagens recebem vale pontos e te faz subir no ranking.": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "Você já tem todos os treinamentos disponíveis. Novos chegam em breve.": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Você para de pedir conta exata para a IA, passa a entender por que o contexto estoura e começa a desconfiar na hora certa.": [
+    "app\\conta\\ferramentas\\caixa-preta\\page.tsx"
+  ],
+  "Voltar": [
+    "app\\conta\\diagnostico\\DiagnosticForm.tsx"
+  ],
+  "Voltar para a vitrine": [
+    "app\\conta\\vitrine\\[id]\\page.tsx"
+  ],
+  "andam na lista": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "anexo": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "assinatura ativa": [
+    "app\\conta\\page.tsx"
+  ],
+  "assinatura grátis": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "aulas (25), avaliações (35), exercícios (15), desafios (20) e revisões (5)": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "buscar por projeto, ferramenta ou pessoa": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "competências com evidência": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "concluído": [
+    "app\\conta\\page.tsx"
+  ],
+  "de 100": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "desafios aprovados": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "disponível": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "e de onde cada um veio. Cada competência tem a sua própria composição.": [
+    "app\\conta\\page.tsx"
+  ],
+  "em correção": [
+    "app\\conta\\page.tsx"
+  ],
+  "em nível avançado": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "frescor": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "ganha": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "grupo do WhatsApp": [
+    "app\\conta\\page.tsx"
+  ],
+  "incluída na assinatura da Academy": [
+    "app\\conta\\ferramentas\\page.tsx"
+  ],
+  "isolar": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "limpar": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx",
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "limpar os filtros": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "marcar como solução": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "marque a que resolveu →": [
+    "app\\conta\\comunidade\\t\\[id]\\page.tsx"
+  ],
+  "meia letra": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "na Arena ↗": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "na compra de cursos. Suba respondendo dúvidas, participando e concluindo treinamentos.": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "online": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "outra ferramenta": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "pelo período seguinte e": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "pontos": [
+    "app\\conta\\vitrine\\[id]\\page.tsx"
+  ],
+  "prévia": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "publicado no Power BI, vídeo, post": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "página da enquete": [
+    "app\\conta\\EnquetePoll.tsx"
+  ],
+  "remover": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "resolvido": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx",
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "sem imagem": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "tokens": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "vazio": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "ver o ranking →": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "½ letra": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "É o nome que fica impresso no documento e no seu LinkedIn. Salve abaixo e volte ao curso para emitir.": [
+    "app\\conta\\perfil\\page.tsx"
+  ],
+  "É sobre o quê?": [
+    "app\\conta\\sugestoes\\page.tsx"
+  ],
+  "É um SQLite completo rodando na sua máquina. A sua consulta é executada mesmo, não comparada com texto.": [
+    "app\\conta\\ferramentas\\arena\\page.tsx"
+  ],
+  "Últimos 30 laudos. Compare versões do mesmo projeto com a mesma cobertura e regras.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "← Central de Ajuda": [
+    "app\\conta\\ajuda\\[id]\\page.tsx"
+  ],
+  "← Comunidade": [
+    "app\\conta\\ranking\\page.tsx"
+  ],
+  "← Lista": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "← Voltar para a agenda": [
+    "app\\conta\\gravacoes\\[id]\\page.tsx"
+  ]
+}

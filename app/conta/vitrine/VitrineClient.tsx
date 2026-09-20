@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
@@ -100,6 +103,7 @@ function BarraDePontos({ pts, lider }: { pts: number; lider: number }) {
 }
 
 export default function VitrineClient({ membros, meuId, lider }: { membros: Membro[]; meuId: string; lider: number }) {
+  const tr = usarTraducao();
   const [busca, setBusca] = useState("");
   const [skill, setSkill] = useState("");
   const [ordem, setOrdem] = useState("pontos");
@@ -139,8 +143,8 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
       {podio.length > 0 && !filtrando && (
         <section className="mt-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="font-display text-sm font-bold uppercase tracking-wider text-slate-400">No topo agora</h2>
-            <Link href="/conta/ranking" className="text-xs font-medium text-brand-teal underline-offset-4 hover:underline">ver o ranking →</Link>
+            <h2 className="font-display text-sm font-bold uppercase tracking-wider text-slate-400">{tr("No topo agora")}</h2>
+            <Link href="/conta/ranking" className="text-xs font-medium text-brand-teal underline-offset-4 hover:underline">{tr("ver o ranking →")}</Link>
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {podio.map((m) => (
@@ -153,7 +157,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-display text-sm font-bold text-white transition-colors group-hover:text-brand-green">
                     {m.full_name}
-                    {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">(você)</span>}
+                    {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">{tr("(você)")}</span>}
                   </p>
                   <p className="text-[0.7rem] text-slate-400">
                     {m.rank}º lugar · <span className="font-mono tabular-nums text-brand-green">{m.pts}</span> pts
@@ -169,7 +173,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
       <div className="mt-8 flex flex-col gap-3">
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <label htmlFor="vitrine-busca" className="sr-only">Buscar aluno por nome, título ou especialidade</label>
+            <label htmlFor="vitrine-busca" className="sr-only">{tr("Buscar aluno por nome, título ou especialidade")}</label>
             <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
               <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -179,26 +183,26 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
-              placeholder="Buscar por nome, título ou especialidade"
+              placeholder={tr("Buscar por nome, título ou especialidade")}
               className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
             />
           </div>
           <div>
-            <label htmlFor="vitrine-skill" className="sr-only">Filtrar por especialidade</label>
+            <label htmlFor="vitrine-skill" className="sr-only">{tr("Filtrar por especialidade")}</label>
             <select
               id="vitrine-skill"
               value={skill}
               onChange={(e) => setSkill(e.target.value)}
               className={`w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-white outline-none [&>option]:bg-ink-900 sm:w-56 ${skill ? "border-brand-green/50" : "border-white/10"}`}
             >
-              <option value="">Todas as especialidades</option>
+              <option value="">{tr("Todas as especialidades")}</option>
               {habilidades.map(([s, n]) => (
                 <option key={s} value={s}>{s} ({n})</option>
               ))}
             </select>
           </div>
           <div>
-            <label htmlFor="vitrine-ordem" className="sr-only">Ordenar a vitrine</label>
+            <label htmlFor="vitrine-ordem" className="sr-only">{tr("Ordenar a vitrine")}</label>
             <select
               id="vitrine-ordem"
               value={ordem}
@@ -251,7 +255,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               onClick={() => { setBusca(""); setSkill(""); }}
               className="font-medium text-brand-teal underline-offset-4 hover:underline"
             >
-              limpar
+              {tr("limpar")}
             </button>
           </p>
         )}
@@ -279,7 +283,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               <div className="min-w-0">
                 <p className={`truncate font-display text-base font-bold transition-colors ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa ? "text-[#f6d68c]" : "text-white group-hover:text-brand-green"}`}>
                   {m.full_name}
-                  {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">(você)</span>}
+                  {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">{tr("(você)")}</span>}
                 </p>
                 {m.headline && <p className="truncate text-xs text-slate-400">{m.headline}</p>}
                 <p className="text-[0.7rem] text-slate-500">na comunidade {tempo(m.since)}</p>
@@ -313,7 +317,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
                   {m.rank && <span className="ml-2 font-mono text-[0.68rem] text-slate-500">{m.rank}º</span>}
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors group-hover:text-brand-green">
-                  Ver perfil
+                  {tr("Ver perfil")}
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               </div>

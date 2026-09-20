@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -40,38 +41,38 @@ export default async function SugestoesPage({ searchParams }: { searchParams: { 
   return (
     <div className="flex flex-col gap-10">
       <PageHeader
-        context="Sua voz na Academy"
-        title="Sugestões e melhorias"
-        lede="Conta o que está faltando, o que atrapalha e o que você quer ver por aqui. Lemos tudo e respondemos."
+        context={tr("Sua voz na Academy")}
+        title={tr("Sugestões e melhorias")}
+        lede={tr("Conta o que está faltando, o que atrapalha e o que você quer ver por aqui. Lemos tudo e respondemos.")}
       />
 
-      {searchParams.ok && <Alert tone="accent">Sugestão enviada. Obrigado. Você acompanha a resposta aqui embaixo.</Alert>}
+      {searchParams.ok && <Alert tone="accent">{tr("Sugestão enviada. Obrigado. Você acompanha a resposta aqui embaixo.")}</Alert>}
       {searchParams.erro && <Alert tone="danger">{searchParams.erro}</Alert>}
 
       <form action={enviarSugestao} className="flex max-w-2xl flex-col gap-5 rounded-srf border border-ds-line p-5">
-        <SelectField scope="sug" name="about" label="É sobre o quê?" defaultValue="plataforma">
-          <option value="plataforma">A plataforma: telas, navegação, algo que não funciona bem</option>
-          <option value="conteudo">O conteúdo: temas de aula, materiais, profundidade</option>
-          <option value="comunidade">A comunidade: canais, encontros, interação</option>
+        <SelectField scope="sug" name="about" label={tr("É sobre o quê?")} defaultValue="plataforma">
+          <option value="plataforma">{tr("A plataforma: telas, navegação, algo que não funciona bem")}</option>
+          <option value="conteudo">{tr("O conteúdo: temas de aula, materiais, profundidade")}</option>
+          <option value="comunidade">{tr("A comunidade: canais, encontros, interação")}</option>
         </SelectField>
-        <Field scope="sug" name="subject" label="Resumo em uma linha" required placeholder="Poder marcar aula como favorita" />
+        <Field scope="sug" name="subject" label={tr("Resumo em uma linha")} required placeholder={tr("Poder marcar aula como favorita")} />
         <TextareaField
           scope="sug"
           name="message"
-          label="Conta com suas palavras"
+          label={tr("Conta com suas palavras")}
           rows={5}
           required
-          description="Se for um problema, diz onde aconteceu. Se for uma ideia, diz o que ela resolveria no seu dia."
+          description={tr("Se for um problema, diz onde aconteceu. Se for uma ideia, diz o que ela resolveria no seu dia.")}
         />
         <div>
-          <Button type="submit">Enviar sugestão</Button>
+          <Button type="submit">{tr("Enviar sugestão")}</Button>
         </div>
       </form>
 
       <section className="flex flex-col gap-4">
-        <SectionHeader title="O que você já enviou" meta={lista.length ? `${lista.length}` : undefined} />
+        <SectionHeader title={tr("O que você já enviou")} meta={lista.length ? `${lista.length}` : undefined} />
         {lista.length === 0 ? (
-          <EmptyState title="Nada por aqui ainda" description="A primeira sugestão que você mandar aparece nesta lista, com a resposta do time." />
+          <EmptyState title={tr("Nada por aqui ainda")} description={tr("A primeira sugestão que você mandar aparece nesta lista, com a resposta do time.")} />
         ) : (
           <ul className="flex flex-col">
             {lista.map((t) => {

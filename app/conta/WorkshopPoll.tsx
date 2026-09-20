@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { voteWorkshop } from "./actions";
 
 // Mesma função de antes: um form por opção, voto trocável, Server Action
@@ -17,14 +18,14 @@ export default function WorkshopPoll({
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
         <h2 className="font-display text-section font-semibold text-ds-text">
-          Escolha o próximo workshop
+          {tr("Escolha o próximo workshop")}
         </h2>
         <span className="text-meta uppercase text-ds-text-3">
           {total} {total === 1 ? "voto" : "votos"}
         </span>
       </div>
       <p className="mt-3 text-body-sm text-ds-text-2">
-        Seu voto define o tema do próximo encontro ao vivo. Dá para trocar quando quiser.
+        {tr("Seu voto define o tema do próximo encontro ao vivo. Dá para trocar quando quiser.")}
       </p>
 
       <div className="mt-4 flex flex-col gap-1.5">
@@ -53,7 +54,7 @@ export default function WorkshopPoll({
                   <span className={`text-body-sm ${mine ? "font-medium text-ds-text" : "text-ds-text-2"}`}>
                     {mine && <span className="mr-1.5 text-ds-accent" aria-hidden="true">✓</span>}
                     {opt}
-                    {mine && <span className="sr-only"> (seu voto)</span>}
+                    {mine && <span className="sr-only"> {tr("(seu voto)")}</span>}
                   </span>
                   <span className="shrink-0 font-mono text-meta tabular-nums text-ds-text-3">{pct}%</span>
                 </span>

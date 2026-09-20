@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -34,10 +35,10 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
         <div className="glass flex flex-col items-center gap-5 p-8 text-center sm:flex-row sm:text-left">
           <Mascot className="h-24 w-24 shrink-0 animate-float" />
           <div className="flex-1">
-            <h1 className="font-display text-2xl font-bold text-white">Central de Ajuda</h1>
-            <p className="mt-1 text-sm text-slate-300">Fale com o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.</p>
+            <h1 className="font-display text-2xl font-bold text-white">{tr("Central de Ajuda")}</h1>
+            <p className="mt-1 text-sm text-slate-300">{tr("Fale com o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.")}</p>
             <OpenAssistant auto={searchParams?.novo === "1"} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-              Conversar com o assistente
+              {tr("Conversar com o assistente")}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </OpenAssistant>
           </div>
@@ -50,21 +51,21 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4zM4 7l8 6 8-6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-white">Prefere e-mail? Fale com o suporte</p>
+          <p className="text-sm font-semibold text-white">{tr("Prefere e-mail? Fale com o suporte")}</p>
           <p className="truncate text-sm text-brand-teal">{supportEmail}</p>
         </div>
       </a>
 
       {/* Meus chamados */}
       <div className="mt-10 flex items-center justify-between">
-        <h2 className="font-display text-lg font-bold text-white">Meus atendimentos</h2>
+        <h2 className="font-display text-lg font-bold text-white">{tr("Meus atendimentos")}</h2>
         <span className="text-xs text-slate-500">{(tickets ?? []).length} no total</span>
       </div>
       <div className="mt-4 space-y-2">
         {(tickets ?? []).length === 0 && (
           <div className="rounded-2xl border border-dashed border-white/10 px-6 py-14 text-center">
-            <p className="font-medium text-white">Nenhum atendimento por aqui ainda.</p>
-            <p className="mt-1 text-sm text-slate-400">Abra o assistente acima e mande sua dúvida. Se ele acionar o time, o atendimento aparece nesta lista.</p>
+            <p className="font-medium text-white">{tr("Nenhum atendimento por aqui ainda.")}</p>
+            <p className="mt-1 text-sm text-slate-400">{tr("Abra o assistente acima e mande sua dúvida. Se ele acionar o time, o atendimento aparece nesta lista.")}</p>
           </div>
         )}
         {(tickets ?? []).map((t: any) => {

@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useMemo, useState } from "react";
 import { submitRepRequest } from "../representacao/actions";
 import type { Form } from "./definicoes";
@@ -19,6 +22,7 @@ function brl(v: number) {
 }
 
 export default function FunilForm({ form, cabecalho = true }: { form: Form; cabecalho?: boolean }) {
+  const tr = usarTraducao();
   const [values, setValues] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,18 +60,18 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
             >
               <span>
                 <span className="block text-sm font-semibold text-white">{form.saibaMais.label}</span>
-                <span className="block text-xs text-slate-400">Veja o produto, os casos de uso e a calculadora de retorno antes de registrar seu interesse.</span>
+                <span className="block text-xs text-slate-400">{tr("Veja o produto, os casos de uso e a calculadora de retorno antes de registrar seu interesse.")}</span>
               </span>
               <span className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-xs font-semibold text-ink-900">
-                Conheça mais
+                {tr("Conheça mais")}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="transition-transform group-hover:translate-x-0.5"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                <span className="sr-only"> (abre em nova aba)</span>
+                <span className="sr-only"> {tr("(abre em nova aba)")}</span>
               </span>
             </a>
           )}
           {form.beneficios && form.beneficios.length > 0 && (
             <div className="mt-6 border-y border-white/10 py-5">
-              <p className="text-sm font-semibold text-white">O que você ganha como parceiro</p>
+              <p className="text-sm font-semibold text-white">{tr("O que você ganha como parceiro")}</p>
               <ul className="mt-4 grid gap-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-white/10">
                 {form.beneficios.map((b, i) => (
                   <li key={b.titulo} className={`flex flex-col gap-2 ${i === 0 ? "sm:pr-5" : i === form.beneficios!.length - 1 ? "sm:pl-5" : "sm:px-5"}`}>
@@ -89,9 +93,9 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
           <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-brand-green/20 text-brand-green">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
-          <p className="text-lg font-semibold text-white">Recebemos! 🎉</p>
-          <p className="mt-1 text-sm text-slate-300">Nosso time vai analisar e entrar em contato. Você pode enviar outra solicitação quando quiser.</p>
-          <button onClick={() => setSent(false)} className="mt-4 rounded-xl border border-white/10 px-5 py-2 text-sm text-slate-300 hover:border-white/30 hover:text-white">Enviar outra</button>
+          <p className="text-lg font-semibold text-white">{tr("Recebemos! 🎉")}</p>
+          <p className="mt-1 text-sm text-slate-300">{tr("Nosso time vai analisar e entrar em contato. Você pode enviar outra solicitação quando quiser.")}</p>
+          <button onClick={() => setSent(false)} className="mt-4 rounded-xl border border-white/10 px-5 py-2 text-sm text-slate-300 hover:border-white/30 hover:text-white">{tr("Enviar outra")}</button>
         </div>
       ) : (
         <form onSubmit={submit} className={`${cabecalho ? "mt-6" : ""} space-y-4`}>
@@ -120,7 +124,7 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
                     onChange={(e) => set(`${f.name}_outro`, e.target.value)}
                     required
                     autoFocus
-                    placeholder="Escreva qual"
+                    placeholder={tr("Escreva qual")}
                     className={`${field} mt-2`}
                   />
                 )}
@@ -130,12 +134,12 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
 
           {form.key === "portal" && Number(values.clientes) > 0 && Number(values.mensalidade) > 0 && (
             <div className="rounded-2xl border border-brand-blue/25 bg-brand-blue/[0.06] p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-teal">Simulação</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand-teal">{tr("Simulação")}</p>
               <div className="mt-2 flex flex-wrap gap-6">
-                <div><p className="text-xs text-slate-400">Receita mensal dos clientes</p><p className="font-display text-xl font-bold text-white">{brl(sim.receita)}</p></div>
-                <div><p className="text-xs text-slate-400">Sua recorrência (exemplo)</p><p className="font-display text-xl font-bold text-brand-green">{brl(sim.recorrencia)}/mês</p></div>
+                <div><p className="text-xs text-slate-400">{tr("Receita mensal dos clientes")}</p><p className="font-display text-xl font-bold text-white">{brl(sim.receita)}</p></div>
+                <div><p className="text-xs text-slate-400">{tr("Sua recorrência (exemplo)")}</p><p className="font-display text-xl font-bold text-brand-green">{brl(sim.recorrencia)}/mês</p></div>
               </div>
-              <p className="mt-2 text-[0.7rem] text-slate-500">Exemplo ilustrativo. Os percentuais reais são combinados na parceria.</p>
+              <p className="mt-2 text-[0.7rem] text-slate-500">{tr("Exemplo ilustrativo. Os percentuais reais são combinados na parceria.")}</p>
             </div>
           )}
 

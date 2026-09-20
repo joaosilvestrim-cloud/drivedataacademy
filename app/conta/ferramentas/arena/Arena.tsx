@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DICIONARIO, gerarBase } from "@/lib/arena/gerador";
 import { FAMILIAS, type Desafio } from "@/lib/arena/familias";
@@ -40,8 +43,9 @@ async function carregarSqlJs(): Promise<any> {
 }
 
 function Tabela({ dados, limite = 12 }: { dados: Resultado; limite?: number }) {
+  const tr = usarTraducao();
   if (!dados.linhas.length) {
-    return <p className="px-4 py-6 text-sm text-slate-500">A consulta rodou, mas não devolveu nenhuma linha.</p>;
+    return <p className="px-4 py-6 text-sm text-slate-500">{tr("A consulta rodou, mas não devolveu nenhuma linha.")}</p>;
   }
   return (
     <div className="overflow-auto">
@@ -58,7 +62,7 @@ function Tabela({ dados, limite = 12 }: { dados: Resultado; limite?: number }) {
             <tr key={i} className="border-b border-white/[0.04]">
               {linha.map((v, j) => (
                 <td key={j} className={`whitespace-nowrap px-3 py-1.5 ${typeof v === "number" ? "font-mono tabular-nums text-slate-200" : "text-slate-300"}`}>
-                  {v === null ? <span className="text-slate-600">vazio</span> : String(v)}
+                  {v === null ? <span className="text-slate-600">{tr("vazio")}</span> : String(v)}
                 </td>
               ))}
             </tr>
@@ -73,6 +77,7 @@ function Tabela({ dados, limite = 12 }: { dados: Resultado; limite?: number }) {
 }
 
 export default function Arena({ semente }: { semente: number }) {
+  const tr = usarTraducao();
   const [banco, setBanco] = useState<Banco | null>(null);
   const [erroBanco, setErroBanco] = useState<string | null>(null);
   const [rodada, setRodada] = useState(0);
@@ -193,7 +198,7 @@ export default function Arena({ semente }: { semente: number }) {
             <p className="mt-4 rounded-2xl border border-brand-teal/25 bg-brand-teal/[0.07] px-4 py-3 text-sm text-slate-200">{desafio.dica}</p>
           ) : (
             <button type="button" onClick={() => setDica(true)} className="mt-4 text-sm font-medium text-brand-teal underline-offset-4 hover:underline">
-              Travei, me dá uma pista
+              {tr("Travei, me dá uma pista")}
             </button>
           )}
         </div>
@@ -202,7 +207,7 @@ export default function Arena({ semente }: { semente: number }) {
         <div data-tour="arena-editor" className="mt-4 overflow-hidden rounded-3xl border border-white/8 bg-[#070d14]">
           <div className="flex items-center justify-between gap-3 border-b border-white/8 px-4 py-2.5">
             <span className="font-mono text-xs text-slate-400">consulta.sql</span>
-            <span className="text-[0.7rem] text-slate-500">Ctrl + Enter executa</span>
+            <span className="text-[0.7rem] text-slate-500">{tr("Ctrl + Enter executa")}</span>
           </div>
           <textarea
             ref={editorRef}
@@ -224,10 +229,10 @@ export default function Arena({ semente }: { semente: number }) {
               {banco ? "Executar e corrigir" : "Abrindo o banco..."}
             </button>
             <button type="button" onClick={() => setConsulta("")} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-300 transition-colors hover:border-white/30 hover:text-white">
-              Limpar
+              {tr("Limpar")}
             </button>
             <button type="button" onClick={espiar} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-400 transition-colors hover:border-white/30 hover:text-white">
-              Ver a resposta esperada
+              {tr("Ver a resposta esperada")}
             </button>
           </div>
         </div>
@@ -242,7 +247,7 @@ export default function Arena({ semente }: { semente: number }) {
 
             {veredito.resultado && (
               <div className="mt-4">
-                <p className="text-[0.7rem] uppercase tracking-wider text-slate-500">O que a sua consulta devolveu</p>
+                <p className="text-[0.7rem] uppercase tracking-wider text-slate-500">{tr("O que a sua consulta devolveu")}</p>
                 <div className="mt-2 overflow-hidden rounded-2xl border border-white/8 bg-[#070d14]">
                   <Tabela dados={veredito.resultado} />
                 </div>
@@ -251,7 +256,7 @@ export default function Arena({ semente }: { semente: number }) {
 
             {!veredito.certo && veredito.esperado && (
               <details className="mt-4" open={veredito.titulo === "Resposta esperada"}>
-                <summary className="cursor-pointer text-sm font-medium text-slate-400 hover:text-white">Comparar com o esperado</summary>
+                <summary className="cursor-pointer text-sm font-medium text-slate-400 hover:text-white">{tr("Comparar com o esperado")}</summary>
                 <div className="mt-2 overflow-hidden rounded-2xl border border-white/8 bg-[#070d14]">
                   <Tabela dados={veredito.esperado} />
                 </div>
@@ -266,7 +271,7 @@ export default function Arena({ semente }: { semente: number }) {
         <div data-tour="arena-progresso" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="text-[0.7rem] uppercase tracking-wider text-slate-500">Resolvidos</p>
+              <p className="text-[0.7rem] uppercase tracking-wider text-slate-500">{tr("Resolvidos")}</p>
               <p className="font-display text-2xl font-bold text-white">
                 {feitos}<span className="text-base text-slate-500">/{FAMILIAS.length}</span>
               </p>
@@ -274,10 +279,10 @@ export default function Arena({ semente }: { semente: number }) {
             <button
               type="button"
               onClick={() => setRodada((r) => r + 1)}
-              title="Gera uma base nova, com outros números"
+              title={tr("Gera uma base nova, com outros números")}
               className="rounded-xl border border-white/10 px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
             >
-              Nova base
+              {tr("Nova base")}
             </button>
           </div>
           <span className="mt-3 block h-1 w-full overflow-hidden rounded-full bg-white/8">
@@ -290,14 +295,14 @@ export default function Arena({ semente }: { semente: number }) {
 
         <div data-tour="arena-dicionario" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
           <div className="flex items-center justify-between gap-3">
-            <p className="font-display text-base font-bold text-white">As tabelas</p>
+            <p className="font-display text-base font-bold text-white">{tr("As tabelas")}</p>
         <button
           type="button"
           onClick={() => setTour(true)}
           className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-          Tour guiado
+          {tr("Tour guiado")}
         </button>
           </div>
           <div className="mt-3 flex flex-col gap-4">

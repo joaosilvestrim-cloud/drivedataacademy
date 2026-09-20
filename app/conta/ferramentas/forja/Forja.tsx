@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useEffect, useMemo, useState } from "react";
 import {
   PADROES,
@@ -26,6 +29,7 @@ const campo =
 const rotulo = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400";
 
 function Copiar({ texto }: { texto: string }) {
+  const tr = usarTraducao();
   const [copiado, setCopiado] = useState(false);
   return (
     <button
@@ -46,12 +50,12 @@ function Copiar({ texto }: { texto: string }) {
       {copiado ? (
         <>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          Copiado
+          {tr("Copiado")}
         </>
       ) : (
         <>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M9 9h10v10H9zM5 15V5h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          Copiar
+          {tr("Copiar")}
         </>
       )}
     </button>
@@ -59,6 +63,7 @@ function Copiar({ texto }: { texto: string }) {
 }
 
 export default function Forja() {
+  const tr = usarTraducao();
   const anoAtual = new Date().getFullYear();
 
   const [cal, setCal] = useState<OpcoesCalendario>({
@@ -116,28 +121,28 @@ export default function Forja() {
       {/* Escolhas */}
       <div className="flex flex-col gap-6 rounded-3xl border border-white/8 bg-white/[0.02] p-5">
         <div data-tour="forja-modelo">
-          <h2 className="font-display text-base font-bold text-white">O seu modelo</h2>
+          <h2 className="font-display text-base font-bold text-white">{tr("O seu modelo")}</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <label className="col-span-2">
-              <span className={rotulo}>Nome da tabela de calendário</span>
+              <span className={rotulo}>{tr("Nome da tabela de calendário")}</span>
               <input className={`${campo} mt-1`} value={cal.tabela} onChange={(e) => muda({ tabela: e.target.value })} />
             </label>
             <label>
-              <span className={rotulo}>Coluna de data</span>
+              <span className={rotulo}>{tr("Coluna de data")}</span>
               <input className={`${campo} mt-1`} value={cal.coluna} onChange={(e) => muda({ coluna: e.target.value })} />
             </label>
             <label>
-              <span className={rotulo}>Idioma</span>
+              <span className={rotulo}>{tr("Idioma")}</span>
               <select className={`${campo} mt-1 [&>option]:bg-ink-900`} value={cal.idioma} onChange={(e) => muda({ idioma: e.target.value as "pt" | "en" })}>
-                <option value="pt">Português</option>
-                <option value="en">Inglês</option>
+                <option value="pt">{tr("Português")}</option>
+                <option value="en">{tr("Inglês")}</option>
               </select>
             </label>
           </div>
         </div>
 
         <div data-tour="forja-intervalo">
-          <span className={rotulo}>Intervalo de datas</span>
+          <span className={rotulo}>{tr("Intervalo de datas")}</span>
           <div className="mt-2 flex gap-2">
             {[
               { chave: "fato", texto: "Pela tabela de fatos" },
@@ -159,11 +164,11 @@ export default function Forja() {
           {cal.origem === "fato" ? (
             <div className="mt-3 grid grid-cols-2 gap-3">
               <label>
-                <span className={rotulo}>Tabela de fatos</span>
+                <span className={rotulo}>{tr("Tabela de fatos")}</span>
                 <input className={`${campo} mt-1`} value={cal.fatoTabela} onChange={(e) => muda({ fatoTabela: e.target.value })} />
               </label>
               <label>
-                <span className={rotulo}>Coluna de data dela</span>
+                <span className={rotulo}>{tr("Coluna de data dela")}</span>
                 <input className={`${campo} mt-1`} value={cal.fatoColuna} onChange={(e) => muda({ fatoColuna: e.target.value })} />
               </label>
             </div>
@@ -171,11 +176,11 @@ export default function Forja() {
 
           <div className="mt-3 grid grid-cols-2 gap-3">
             <label>
-              <span className={rotulo}>De</span>
+              <span className={rotulo}>{tr("De")}</span>
               <input type="number" className={`${campo} mt-1`} value={cal.de} onChange={(e) => muda({ de: Number(e.target.value) || anoAtual })} />
             </label>
             <label>
-              <span className={rotulo}>Até</span>
+              <span className={rotulo}>{tr("Até")}</span>
               <input type="number" className={`${campo} mt-1`} value={cal.ate} onChange={(e) => muda({ ate: Number(e.target.value) || anoAtual })} />
             </label>
           </div>
@@ -188,7 +193,7 @@ export default function Forja() {
 
         <div data-tour="forja-fiscal">
           <label>
-            <span className={rotulo}>Ano fiscal começa em</span>
+            <span className={rotulo}>{tr("Ano fiscal começa em")}</span>
             <select
               className={`${campo} mt-1 [&>option]:bg-ink-900`}
               value={cal.inicioAnoFiscal}
@@ -201,7 +206,7 @@ export default function Forja() {
           </label>
           {cal.inicioAnoFiscal !== 1 && (
             <p className="mt-1.5 text-[0.7rem] text-brand-teal">
-              Entram as colunas de ano e mês fiscal, e o YTD passa a fechar no mês certo.
+              {tr("Entram as colunas de ano e mês fiscal, e o YTD passa a fechar no mês certo.")}
             </p>
           )}
         </div>
@@ -215,33 +220,33 @@ export default function Forja() {
               className="mt-0.5 h-4 w-4 shrink-0 accent-[#34e8a0]"
             />
             <span>
-              <span className="block text-sm font-medium text-white">Feriados nacionais</span>
+              <span className="block text-sm font-medium text-white">{tr("Feriados nacionais")}</span>
               <span className="block text-[0.7rem] text-slate-500">
-                Gera a tabela de feriados com Carnaval, Sexta-feira Santa e Corpus Christi calculados pela Páscoa de cada ano, e uma coluna de dia útil que leva isso em conta.
+                {tr("Gera a tabela de feriados com Carnaval, Sexta-feira Santa e Corpus Christi calculados pela Páscoa de cada ano, e uma coluna de dia útil que leva isso em conta.")}
               </span>
             </span>
           </label>
           {cal.feriados && (
             <label className="mt-3 block">
-              <span className={rotulo}>Nome da tabela de feriados</span>
+              <span className={rotulo}>{tr("Nome da tabela de feriados")}</span>
               <input className={`${campo} mt-1`} value={cal.tabelaFeriados} onChange={(e) => muda({ tabelaFeriados: e.target.value })} />
             </label>
           )}
         </div>
 
         <div data-tour="forja-medidas" className="border-t border-white/8 pt-5">
-          <h2 className="font-display text-base font-bold text-white">Medidas de tempo</h2>
+          <h2 className="font-display text-base font-bold text-white">{tr("Medidas de tempo")}</h2>
           <div className="mt-3 grid gap-3">
             <label>
-              <span className={rotulo}>Nome da medida base</span>
-              <input className={`${campo} mt-1`} value={medidaBase} onChange={(e) => setMedidaBase(e.target.value)} placeholder="Receita" />
+              <span className={rotulo}>{tr("Nome da medida base")}</span>
+              <input className={`${campo} mt-1`} value={medidaBase} onChange={(e) => setMedidaBase(e.target.value)} placeholder={tr("Receita")} />
             </label>
             <label>
-              <span className={rotulo}>Expressão dela <span className="normal-case tracking-normal text-slate-500">(opcional)</span></span>
+              <span className={rotulo}>{tr("Expressão dela")} <span className="normal-case tracking-normal text-slate-500">(opcional)</span></span>
               <input className={`${campo} mt-1 font-mono text-[0.8rem]`} value={expressaoBase} onChange={(e) => setExpressaoBase(e.target.value)} placeholder="SUM ( fVendas[Valor] )" />
             </label>
             <label>
-              <span className={rotulo}>Formato sugerido</span>
+              <span className={rotulo}>{tr("Formato sugerido")}</span>
               <input className={`${campo} mt-1`} value={formato} onChange={(e) => setFormato(e.target.value)} />
             </label>
           </div>
@@ -280,7 +285,7 @@ export default function Forja() {
           className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-          Tour guiado
+          {tr("Tour guiado")}
         </button>
           {blocos.map((b) => (
             <button
@@ -312,7 +317,7 @@ export default function Forja() {
         )}
 
         <div className="mt-5 rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-          <h2 className="font-display text-base font-bold text-white">Onde colar, na ordem</h2>
+          <h2 className="font-display text-base font-bold text-white">{tr("Onde colar, na ordem")}</h2>
           <ol className="mt-3 flex flex-col gap-3">
             {passos.map((p, i) => (
               <li key={i} className="grid grid-cols-[1.5rem_1fr] gap-3">

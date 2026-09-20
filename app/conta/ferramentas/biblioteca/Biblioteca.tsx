@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ITENS, NOME_LINGUAGEM, filtrar, tagsDe, type Item, type Linguagem } from "@/lib/biblioteca";
 import TourBiblioteca, { tourBibliotecaJaVisto } from "@/components/biblioteca/TourBiblioteca";
@@ -38,6 +41,7 @@ const ABERTURA: Record<Linguagem, string> = {
 };
 
 export default function Biblioteca() {
+  const tr = usarTraducao();
   const [busca, setBusca] = useState("");
   const [linguagem, setLinguagem] = useState<Linguagem | "todas">("todas");
   const [tag, setTag] = useState("");
@@ -132,13 +136,13 @@ export default function Biblioteca() {
               ref={campoBusca}
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              placeholder="Buscar pelo problema: não bate, duplicata, mês anterior..."
-              aria-label="Buscar na biblioteca"
+              placeholder={tr("Buscar pelo problema: não bate, duplicata, mês anterior...")}
+              aria-label={tr("Buscar na biblioteca")}
               className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 pl-9 pr-16 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
             />
             <span className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1.5">
               {busca ? (
-                <button onClick={() => setBusca("")} aria-label="Limpar busca" className="rounded-md px-1.5 text-slate-500 hover:text-white">✕</button>
+                <button onClick={() => setBusca("")} aria-label={tr("Limpar busca")} className="rounded-md px-1.5 text-slate-500 hover:text-white">✕</button>
               ) : (
                 <kbd className="rounded border border-white/10 px-1.5 text-[0.65rem] text-slate-500">/</kbd>
               )}
@@ -151,7 +155,7 @@ export default function Biblioteca() {
               onClick={() => { setLinguagem("todas"); setTag(""); }}
               className={`rounded-lg px-2.5 py-1.5 text-xs transition-colors ${linguagem === "todas" ? "bg-white/10 font-semibold text-white" : "text-slate-400 hover:text-white"}`}
             >
-              Todas <span className="font-mono tabular-nums opacity-60">{ITENS.length}</span>
+              {tr("Todas")} <span className="font-mono tabular-nums opacity-60">{ITENS.length}</span>
             </button>
             {LINGUAGENS.map((l) => (
               <button
@@ -175,7 +179,7 @@ export default function Biblioteca() {
           </button>
 
           {filtrando && (
-            <button onClick={limparTudo} className="text-xs text-slate-400 underline underline-offset-4 hover:text-white">limpar</button>
+            <button onClick={limparTudo} className="text-xs text-slate-400 underline underline-offset-4 hover:text-white">{tr("limpar")}</button>
           )}
         </div>
 
@@ -235,11 +239,11 @@ export default function Biblioteca() {
 
             {!resultado.length && (
               <li className="rounded-xl border border-white/8 bg-white/[0.02] px-4 py-8 text-center">
-                <p className="text-sm text-slate-300">Nada com esse termo.</p>
+                <p className="text-sm text-slate-300">{tr("Nada com esse termo.")}</p>
                 <p className="mx-auto mt-1 max-w-xs text-xs text-slate-500">
-                  Tente pelo problema, não pela função: “não bate”, “duplicata”, “mês anterior”, “filial”.
+                  {tr("Tente pelo problema, não pela função: “não bate”, “duplicata”, “mês anterior”, “filial”.")}
                 </p>
-                {filtrando && <button onClick={limparTudo} className="mt-3 text-xs text-brand-green hover:underline">limpar os filtros</button>}
+                {filtrando && <button onClick={limparTudo} className="mt-3 text-xs text-brand-green hover:underline">{tr("limpar os filtros")}</button>}
               </li>
             )}
           </ul>
@@ -251,7 +255,7 @@ export default function Biblioteca() {
             <article className="rounded-3xl border border-white/8 bg-white/[0.02] p-5 sm:p-6 lg:sticky lg:top-[7.5rem]">
               <div className="flex flex-wrap items-center gap-2">
                 <button onClick={() => setAbertoNoCelular(false)} className="mr-1 rounded-lg border border-white/10 px-2 py-1 text-xs text-slate-300 lg:hidden">
-                  ← Lista
+                  {tr("← Lista")}
                 </button>
                 <span className={`rounded px-1.5 py-0.5 font-mono text-[0.65rem] font-bold uppercase ${COR[item.linguagem].chip}`}>
                   {NOME_LINGUAGEM[item.linguagem]}
@@ -263,22 +267,22 @@ export default function Biblioteca() {
                   </button>
                 ))}
                 <span className="ml-auto flex items-center gap-1 text-[0.7rem] text-slate-500">
-                  <button onClick={() => andar(-1)} disabled={posicao <= 0} aria-label="Verbete anterior" className="rounded px-1.5 py-0.5 hover:text-white disabled:opacity-30">↑</button>
+                  <button onClick={() => andar(-1)} disabled={posicao <= 0} aria-label={tr("Verbete anterior")} className="rounded px-1.5 py-0.5 hover:text-white disabled:opacity-30">↑</button>
                   <span className="font-mono tabular-nums">{posicao + 1}/{resultado.length}</span>
-                  <button onClick={() => andar(1)} disabled={posicao >= resultado.length - 1} aria-label="Próximo verbete" className="rounded px-1.5 py-0.5 hover:text-white disabled:opacity-30">↓</button>
+                  <button onClick={() => andar(1)} disabled={posicao >= resultado.length - 1} aria-label={tr("Próximo verbete")} className="rounded px-1.5 py-0.5 hover:text-white disabled:opacity-30">↓</button>
                 </span>
               </div>
 
               <h2 className="mt-3 font-display text-2xl font-bold text-white">{item.titulo}</h2>
 
               <div data-tour="bib-quando" className="mt-3 border-l-2 border-brand-green/50 pl-3">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">Quando usar</p>
+                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">{tr("Quando usar")}</p>
                 <p className="mt-0.5 text-sm text-slate-200">{item.quando}</p>
               </div>
 
               <div data-tour="bib-codigo" className="mt-5">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">O código</p>
+                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("O código")}</p>
                   <button
                     onClick={copiar}
                     className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
@@ -294,13 +298,13 @@ export default function Biblioteca() {
               </div>
 
               <div className="mt-5">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">Por que é assim</p>
+                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Por que é assim")}</p>
                 <p className="mt-1 text-sm leading-relaxed text-slate-300">{item.explicacao}</p>
               </div>
 
               {item.armadilha && (
                 <div data-tour="bib-armadilha" className="mt-5 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4">
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-amber-300">A armadilha</p>
+                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-amber-300">{tr("A armadilha")}</p>
                   <p className="mt-1 text-sm leading-relaxed text-amber-100/90">{item.armadilha}</p>
                 </div>
               )}
@@ -308,12 +312,12 @@ export default function Biblioteca() {
               <p className="mt-4 hidden text-[0.7rem] text-slate-600 lg:block">
                 Atalhos: <kbd className="rounded border border-white/10 px-1">/</kbd> busca ·{" "}
                 <kbd className="rounded border border-white/10 px-1">↑</kbd>{" "}
-                <kbd className="rounded border border-white/10 px-1">↓</kbd> andam na lista
+                <kbd className="rounded border border-white/10 px-1">↓</kbd> {tr("andam na lista")}
               </p>
             </article>
           ) : (
             <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center text-sm text-slate-400">
-              Escolha um verbete na lista.
+              {tr("Escolha um verbete na lista.")}
             </div>
           )}
         </div>

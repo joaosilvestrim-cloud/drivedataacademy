@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { COLUNAS, gerarBase, linhas } from "@/lib/dojo/dados";
@@ -29,6 +32,7 @@ const campo =
 const chave = (t: Trilha) => `dojo:${t}:resolvidos`;
 
 export default function Dojo({ semente }: { semente: number }) {
+  const tr = usarTraducao();
   const [trilha, setTrilha] = useState<Trilha>("dax");
   const [indice, setIndice] = useState(0);
   const [valor, setValor] = useState("");
@@ -116,10 +120,10 @@ export default function Dojo({ semente }: { semente: number }) {
           href="/conta/ferramentas/arena"
           className="rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-brand-green/50 hover:text-white"
         >
-          SQL <span className="text-[0.7rem] opacity-70">na Arena ↗</span>
+          SQL <span className="text-[0.7rem] opacity-70">{tr("na Arena ↗")}</span>
         </Link>
         <button onClick={() => setTour(true)} className="ml-auto rounded-full border border-white/10 px-3 py-1.5 text-xs text-slate-300 hover:border-brand-green/50 hover:text-white">
-          Como funciona
+          {tr("Como funciona")}
         </button>
       </div>
 
@@ -155,7 +159,7 @@ export default function Dojo({ semente }: { semente: number }) {
         {/* Base */}
         <div data-tour="dojo-base" className="min-w-0 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-[0.7rem] uppercase tracking-wider text-brand-green">Sua base · tabela Vendas</p>
+            <p className="text-[0.7rem] uppercase tracking-wider text-brand-green">{tr("Sua base · tabela Vendas")}</p>
             <div className="flex flex-wrap items-center gap-2">
               {desafio.recorte && (
                 <button
@@ -218,7 +222,7 @@ export default function Dojo({ semente }: { semente: number }) {
               <span className="text-[0.65rem] uppercase tracking-wide text-slate-500">
                 {desafio.nivel === 1 ? "básico" : desafio.nivel === 2 ? "intermediário" : "avançado"}
               </span>
-              {resolvidos[trilha].includes(desafio.id) && <span className="text-[0.65rem] font-semibold text-brand-green">resolvido</span>}
+              {resolvidos[trilha].includes(desafio.id) && <span className="text-[0.65rem] font-semibold text-brand-green">{tr("resolvido")}</span>}
             </div>
 
             <h2 className="mt-2 font-display text-xl font-bold text-white">{desafio.titulo}</h2>
@@ -227,7 +231,7 @@ export default function Dojo({ semente }: { semente: number }) {
             <div className="mt-4 flex flex-col gap-3">
               <div>
                 <label className="block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400" htmlFor="dojo-valor">
-                  O número
+                  {tr("O número")}
                 </label>
                 <input
                   id="dojo-valor"
@@ -256,8 +260,8 @@ export default function Dojo({ semente }: { semente: number }) {
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button onClick={conferir} title="Ctrl + Enter" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                Conferir
+              <button onClick={conferir} title={tr("Ctrl + Enter")} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                {tr("Conferir")}
               </button>
               <button onClick={() => setVerDica((v) => !v)} className="rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-300 hover:border-brand-green/50 hover:text-white">
                 {verDica ? "Esconder a dica" : "Dica"}
@@ -266,7 +270,7 @@ export default function Dojo({ semente }: { semente: number }) {
                 onClick={() => { setIndice((i) => (i + 1) % desafios.length); limpar(); }}
                 className="ml-auto rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-300 hover:border-brand-green/50 hover:text-white"
               >
-                Próximo →
+                {tr("Próximo →")}
               </button>
             </div>
 
@@ -298,13 +302,13 @@ export default function Dojo({ semente }: { semente: number }) {
                 <p className="mt-3 text-sm leading-relaxed text-slate-300">{desafio.porque}</p>
               ) : (
                 <button onClick={() => setVerGabarito(true)} className="mt-3 text-sm text-slate-400 underline underline-offset-4 hover:text-white">
-                  Ver a resposta e a explicação
+                  {tr("Ver a resposta e a explicação")}
                 </button>
               )}
 
               {(verGabarito || veredito.acertou) && (
                 <div className="mt-3">
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">Um jeito certo de escrever</p>
+                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Um jeito certo de escrever")}</p>
                   <pre className="mt-1 overflow-x-auto rounded-xl border border-white/10 bg-[#0b1020] p-3 text-[0.78rem] leading-relaxed text-slate-200"><code>{desafio.gabarito}</code></pre>
                   {!veredito.acertou && <p className="mt-2 text-sm leading-relaxed text-slate-300">{desafio.porque}</p>}
                 </div>

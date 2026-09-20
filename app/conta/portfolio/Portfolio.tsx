@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
@@ -34,6 +37,7 @@ function Chip({ children, ativo, onClick }: { children: React.ReactNode; ativo?:
 }
 
 function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, grande }: { p: Projeto; autor?: Autor; curtido?: boolean; total?: number; aoCurtir?: () => void; aoEditar?: () => void; aoAbrir?: () => void; meu?: boolean; grande?: boolean }) {
+  const tr = usarTraducao();
   const st = STATUS[p.status];
   return (
     <article className={`group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] transition-colors hover:border-brand-green/30 ${grande ? "sm:col-span-2 xl:col-span-2" : ""}`}>
@@ -42,10 +46,10 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.cover_url} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
         ) : (
-          <div className="grid h-full place-items-center text-xs text-slate-600">sem imagem</div>
+          <div className="grid h-full place-items-center text-xs text-slate-600">{tr("sem imagem")}</div>
         )}
         {p.destaque && p.status === "aprovado" && (
-          <span className="absolute left-3 top-3 rounded-full bg-[#f6d68c] px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-ink-900">Destaque</span>
+          <span className="absolute left-3 top-3 rounded-full bg-[#f6d68c] px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-ink-900">{tr("Destaque")}</span>
         )}
         {meu && p.status !== "aprovado" && (
           <span className={`absolute right-3 top-3 rounded-full bg-ink-900/90 px-2 py-0.5 text-[0.65rem] font-semibold ${st.cor}`}>{st.rotulo}</span>
@@ -95,16 +99,16 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
               </button>
             )}
             {p.link_url && (
-              <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">Ver projeto ↗</a>
+              <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">{tr("Ver projeto ↗")}</a>
             )}
             {p.repo_url && (
-              <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-300 hover:text-white">Código ↗</a>
+              <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-300 hover:text-white">{tr("Código ↗")}</a>
             )}
             {aoAbrir && (
-              <button onClick={aoAbrir} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">Ver detalhes</button>
+              <button onClick={aoAbrir} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">{tr("Ver detalhes")}</button>
             )}
             {aoEditar && (
-              <button onClick={aoEditar} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">Editar</button>
+              <button onClick={aoEditar} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">{tr("Editar")}</button>
             )}
           </span>
         </div>
@@ -126,6 +130,7 @@ export default function Portfolio({
   curtidos: string[];
   cursos: { id: string; title: string }[];
 }) {
+  const tr = usarTraducao();
   const [aba, setAba] = useState<"vitrine" | "meus">(meus.length ? "meus" : "vitrine");
   const [filtro, setFiltro] = useState("");
   const [curtidas, setCurtidas] = useState<Record<string, { curtido: boolean; total: number }>>(
@@ -182,7 +187,7 @@ export default function Portfolio({
           onClick={() => setEditando("novo")}
           className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
         >
-          Publicar um projeto
+          {tr("Publicar um projeto")}
         </button>
       </div>
 
@@ -196,8 +201,8 @@ export default function Portfolio({
               <input
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
-                placeholder="buscar por projeto, ferramenta ou pessoa"
-                aria-label="Buscar projeto"
+                placeholder={tr("buscar por projeto, ferramenta ou pessoa")}
+                aria-label={tr("Buscar projeto")}
                 className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2 pl-9 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
               />
             </div>
@@ -210,7 +215,7 @@ export default function Portfolio({
 
           {ferramentas.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1.5">
-              <Chip ativo={!filtro} onClick={() => setFiltro("")}>Todas</Chip>
+              <Chip ativo={!filtro} onClick={() => setFiltro("")}>{tr("Todas")}</Chip>
               {ferramentas.map(([f, n]) => (
                 <Chip key={f} ativo={filtro === f} onClick={() => setFiltro(filtro === f ? "" : f)}>
                   {f} <span className="font-mono tabular-nums opacity-60">{n}</span>
@@ -221,14 +226,14 @@ export default function Portfolio({
 
           {lista.length === 0 && (busca || filtro) ? (
             <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center">
-              <p className="font-medium text-white">Nenhum projeto com esse recorte</p>
-              <button onClick={() => { setBusca(""); setFiltro(""); }} className="mt-3 text-sm text-brand-green hover:underline">Limpar a busca e o filtro</button>
+              <p className="font-medium text-white">{tr("Nenhum projeto com esse recorte")}</p>
+              <button onClick={() => { setBusca(""); setFiltro(""); }} className="mt-3 text-sm text-brand-green hover:underline">{tr("Limpar a busca e o filtro")}</button>
             </div>
           ) : lista.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
-              <p className="font-medium text-white">Ainda não tem projeto publicado aqui</p>
+              <p className="font-medium text-white">{tr("Ainda não tem projeto publicado aqui")}</p>
               <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
-                Seja o primeiro. Um dashboard que você montou no trabalho, um exercício da Academy que virou coisa séria, uma automação que economizou o seu dia: tudo conta.
+                {tr("Seja o primeiro. Um dashboard que você montou no trabalho, um exercício da Academy que virou coisa séria, uma automação que economizou o seu dia: tudo conta.")}
               </p>
             </div>
           ) : (
@@ -250,12 +255,12 @@ export default function Portfolio({
         </>
       ) : meus.length === 0 ? (
         <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
-          <p className="font-medium text-white">Você ainda não publicou nada</p>
+          <p className="font-medium text-white">{tr("Você ainda não publicou nada")}</p>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
-            Portfólio é o que abre porta. Publique um projeto com a imagem, o problema que ele resolve e o resultado, e ele passa a aparecer para a turma e para quem visita o site.
+            {tr("Portfólio é o que abre porta. Publique um projeto com a imagem, o problema que ele resolve e o resultado, e ele passa a aparecer para a turma e para quem visita o site.")}
           </p>
           <button onClick={() => setEditando("novo")} className="mt-6 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">
-            Publicar meu primeiro projeto
+            {tr("Publicar meu primeiro projeto")}
           </button>
         </div>
       ) : (
@@ -280,6 +285,7 @@ export default function Portfolio({
 }
 
 function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: () => void }) {
+  const tr = usarTraducao();
   useEffect(() => {
     const esc = (e: KeyboardEvent) => { if (e.key === "Escape") aoFechar(); };
     window.addEventListener("keydown", esc);
@@ -300,7 +306,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
               <h2 className="font-display text-2xl font-bold text-white">{p.titulo}</h2>
               <p className="mt-1 text-sm text-slate-400">{p.resumo}</p>
             </div>
-            <button onClick={aoFechar} aria-label="Fechar" className="shrink-0 rounded-lg px-2 py-1 text-slate-400 hover:text-white">✕</button>
+            <button onClick={aoFechar} aria-label={tr("Fechar")} className="shrink-0 rounded-lg px-2 py-1 text-slate-400 hover:text-white">✕</button>
           </div>
 
           {autor && (
@@ -316,19 +322,19 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
 
           {p.problema && (
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">O problema</p>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("O problema")}</p>
               <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.problema}</p>
             </div>
           )}
           {p.resultado && (
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">O resultado</p>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">{tr("O resultado")}</p>
               <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-200">{p.resultado}</p>
             </div>
           )}
           {p.descricao && (
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">Como foi feito</p>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Como foi feito")}</p>
               <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.descricao}</p>
             </div>
           )}
@@ -340,8 +346,8 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
           )}
 
           <div className="flex flex-wrap gap-3 pt-1">
-            {p.link_url && <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">Ver o projeto ↗</a>}
-            {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-200 hover:border-brand-green/50">Código ↗</a>}
+            {p.link_url && <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">{tr("Ver o projeto ↗")}</a>}
+            {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-200 hover:border-brand-green/50">{tr("Código ↗")}</a>}
           </div>
         </div>
       </article>
@@ -350,6 +356,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
 }
 
 function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cursos: { id: string; title: string }[]; aoFechar: () => void }) {
+  const tr = usarTraducao();
   const [ferramentas, setFerramentas] = useState<string[]>(projeto?.ferramentas ?? []);
   const [capa, setCapa] = useState(projeto?.cover_url ?? "");
   const [subindo, setSubindo] = useState(false);
@@ -412,45 +419,45 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-display text-2xl font-bold text-white">{projeto ? "Editar projeto" : "Publicar projeto"}</h2>
-            <p className="mt-1 text-sm text-slate-400">O time revisa antes de publicar na vitrine. Costuma sair em até dois dias úteis.</p>
+            <p className="mt-1 text-sm text-slate-400">{tr("O time revisa antes de publicar na vitrine. Costuma sair em até dois dias úteis.")}</p>
           </div>
-          <button type="button" onClick={aoFechar} aria-label="Fechar" className="rounded-lg px-2 py-1 text-slate-400 hover:text-white">✕</button>
+          <button type="button" onClick={aoFechar} aria-label={tr("Fechar")} className="rounded-lg px-2 py-1 text-slate-400 hover:text-white">✕</button>
         </div>
 
         {projeto && <input type="hidden" name="id" value={projeto.id} />}
 
         <div className="mt-5 flex flex-col gap-4">
           <div>
-            <label className={rotulo} htmlFor="p-titulo">Título</label>
-            <input id="p-titulo" name="titulo" defaultValue={projeto?.titulo} maxLength={LIMITES.titulo} required placeholder="Painel de vendas da distribuidora" className={`${campo} mt-1`} />
+            <label className={rotulo} htmlFor="p-titulo">{tr("Título")}</label>
+            <input id="p-titulo" name="titulo" defaultValue={projeto?.titulo} maxLength={LIMITES.titulo} required placeholder={tr("Painel de vendas da distribuidora")} className={`${campo} mt-1`} />
           </div>
 
           <div>
-            <label className={rotulo} htmlFor="p-resumo">Resumo, em uma frase</label>
-            <input id="p-resumo" name="resumo" defaultValue={projeto?.resumo} maxLength={LIMITES.resumo} required placeholder="Troquei 12 planilhas por um painel que abre em 3 segundos." className={`${campo} mt-1`} />
+            <label className={rotulo} htmlFor="p-resumo">{tr("Resumo, em uma frase")}</label>
+            <input id="p-resumo" name="resumo" defaultValue={projeto?.resumo} maxLength={LIMITES.resumo} required placeholder={tr("Troquei 12 planilhas por um painel que abre em 3 segundos.")} className={`${campo} mt-1`} />
           </div>
 
           <div>
-            <span className={rotulo}>Imagem do projeto</span>
+            <span className={rotulo}>{tr("Imagem do projeto")}</span>
             <div className="mt-1 flex items-start gap-4">
               <div className="grid aspect-video w-40 shrink-0 place-items-center overflow-hidden rounded-xl border border-white/10 bg-ink-800">
                 {capa ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={capa} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="text-xs text-slate-600">sem imagem</span>
+                  <span className="text-xs text-slate-600">{tr("sem imagem")}</span>
                 )}
               </div>
               <div className="min-w-0 flex-1 space-y-2">
                 <input type="file" accept="image/*" onChange={subirCapa} disabled={subindo} className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white" />
                 {subindo && <p className="text-xs text-brand-teal">Subindo...</p>}
-                <p className="text-xs text-slate-500">Um print do painel já resolve. Proporção 16:9 fica melhor no cartão.</p>
+                <p className="text-xs text-slate-500">{tr("Um print do painel já resolve. Proporção 16:9 fica melhor no cartão.")}</p>
               </div>
             </div>
           </div>
 
           <div>
-            <span className={rotulo}>Ferramentas usadas</span>
+            <span className={rotulo}>{tr("Ferramentas usadas")}</span>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {[...new Set([...FERRAMENTAS_SUGERIDAS, ...ferramentas])].map((f) => (
                 <Chip key={f} ativo={ferramentas.includes(f)} onClick={() => setFerramentas((a) => (a.includes(f) ? a.filter((x) => x !== f) : a.length < LIMITES.ferramentas ? [...a, f] : a))}>
@@ -459,57 +466,57 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
               ))}
             </div>
             <div className="mt-2 flex gap-2">
-              <input value={nova} onChange={(e) => setNova(e.target.value)} placeholder="outra ferramenta" className={campo} maxLength={24} />
+              <input value={nova} onChange={(e) => setNova(e.target.value)} placeholder={tr("outra ferramenta")} className={campo} maxLength={24} />
               <button
                 type="button"
                 onClick={() => { const f = nova.trim(); if (f && !ferramentas.includes(f) && ferramentas.length < LIMITES.ferramentas) setFerramentas((a) => [...a, f]); setNova(""); }}
                 className="shrink-0 rounded-xl border border-white/10 px-3 text-sm text-slate-200 hover:border-brand-green/50"
               >
-                Adicionar
+                {tr("Adicionar")}
               </button>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={rotulo} htmlFor="p-problema">Qual problema resolvia</label>
-              <textarea id="p-problema" name="problema" defaultValue={projeto?.problema ?? ""} rows={3} maxLength={600} placeholder="O time fechava o mês somando planilha na mão, e o número nunca batia." className={`${campo} mt-1 resize-y`} />
+              <label className={rotulo} htmlFor="p-problema">{tr("Qual problema resolvia")}</label>
+              <textarea id="p-problema" name="problema" defaultValue={projeto?.problema ?? ""} rows={3} maxLength={600} placeholder={tr("O time fechava o mês somando planilha na mão, e o número nunca batia.")} className={`${campo} mt-1 resize-y`} />
             </div>
             <div>
-              <label className={rotulo} htmlFor="p-resultado">O que mudou depois</label>
-              <textarea id="p-resultado" name="resultado" defaultValue={projeto?.resultado ?? ""} rows={3} maxLength={600} placeholder="Fechamento caiu de 2 dias para 20 minutos." className={`${campo} mt-1 resize-y`} />
+              <label className={rotulo} htmlFor="p-resultado">{tr("O que mudou depois")}</label>
+              <textarea id="p-resultado" name="resultado" defaultValue={projeto?.resultado ?? ""} rows={3} maxLength={600} placeholder={tr("Fechamento caiu de 2 dias para 20 minutos.")} className={`${campo} mt-1 resize-y`} />
             </div>
           </div>
 
           <div>
-            <label className={rotulo} htmlFor="p-descricao">Como você fez (opcional)</label>
-            <textarea id="p-descricao" name="descricao" defaultValue={projeto?.descricao ?? ""} rows={4} maxLength={LIMITES.descricao} placeholder="Fontes, modelagem, medidas principais, decisões de visual." className={`${campo} mt-1 resize-y`} />
+            <label className={rotulo} htmlFor="p-descricao">{tr("Como você fez (opcional)")}</label>
+            <textarea id="p-descricao" name="descricao" defaultValue={projeto?.descricao ?? ""} rows={4} maxLength={LIMITES.descricao} placeholder={tr("Fontes, modelagem, medidas principais, decisões de visual.")} className={`${campo} mt-1 resize-y`} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={rotulo} htmlFor="p-link">Link do projeto (opcional)</label>
-              <input id="p-link" name="link_url" defaultValue={projeto?.link_url ?? ""} placeholder="publicado no Power BI, vídeo, post" className={`${campo} mt-1`} />
+              <label className={rotulo} htmlFor="p-link">{tr("Link do projeto (opcional)")}</label>
+              <input id="p-link" name="link_url" defaultValue={projeto?.link_url ?? ""} placeholder={tr("publicado no Power BI, vídeo, post")} className={`${campo} mt-1`} />
             </div>
             <div>
-              <label className={rotulo} htmlFor="p-repo">Link do código (opcional)</label>
-              <input id="p-repo" name="repo_url" defaultValue={projeto?.repo_url ?? ""} placeholder="GitHub, Drive" className={`${campo} mt-1`} />
+              <label className={rotulo} htmlFor="p-repo">{tr("Link do código (opcional)")}</label>
+              <input id="p-repo" name="repo_url" defaultValue={projeto?.repo_url ?? ""} placeholder={tr("GitHub, Drive")} className={`${campo} mt-1`} />
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={rotulo} htmlFor="p-curso">Nasceu em algum curso? (opcional)</label>
+              <label className={rotulo} htmlFor="p-curso">{tr("Nasceu em algum curso? (opcional)")}</label>
               <select id="p-curso" name="course_id" defaultValue={projeto?.course_id ?? ""} className={`${campo} mt-1 [&>option]:bg-ink-900`}>
-                <option value="">Não, é do meu trabalho</option>
+                <option value="">{tr("Não, é do meu trabalho")}</option>
                 {cursos.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
               </select>
             </div>
             <label className="flex items-start gap-2.5 rounded-xl border border-white/8 bg-white/[0.02] p-3 text-sm text-slate-300">
               <input type="checkbox" name="publico" defaultChecked={projeto?.publico ?? true} className="mt-0.5 h-4 w-4 accent-[#15c47e]" />
               <span>
-                Pode aparecer na página pública da Academy
-                <span className="mt-0.5 block text-xs text-slate-500">Desmarcado, ele fica só para a turma, dentro do portal.</span>
+                {tr("Pode aparecer na página pública da Academy")}
+                <span className="mt-0.5 block text-xs text-slate-500">{tr("Desmarcado, ele fica só para a turma, dentro do portal.")}</span>
               </span>
             </label>
           </div>
@@ -522,7 +529,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
             </button>
             {/* Rascunho não exige campo obrigatório: a pessoa salva o que tem e volta depois. */}
             <button type="submit" formNoValidate onClick={() => (acao.current = "rascunho")} disabled={salvando} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-200 hover:border-brand-green/50">
-              Salvar rascunho
+              {tr("Salvar rascunho")}
             </button>
             {projeto && (
               <button
@@ -530,7 +537,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
                 onClick={async () => { if (confirm("Excluir este projeto? Não dá para desfazer.")) { await excluirProjeto(projeto.id); aoFechar(); } }}
                 className="ml-auto text-sm text-red-300 hover:underline"
               >
-                Excluir
+                {tr("Excluir")}
               </button>
             )}
           </div>

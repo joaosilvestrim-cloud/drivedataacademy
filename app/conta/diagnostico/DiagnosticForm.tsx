@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { submitDiagnostic } from "./actions";
@@ -7,6 +10,7 @@ import { submitDiagnostic } from "./actions";
 type Question = { id: string; prompt: string; options: string[]; competencyName: string };
 
 export default function DiagnosticForm({ questions }: { questions: Question[] }) {
+  const tr = usarTraducao();
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [busy, setBusy] = useState(false);
@@ -62,7 +66,7 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
       <div className="mt-6 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
         {confirming ? (
           <>
-            <p className="text-sm font-medium text-white">Enviar o diagnóstico?</p>
+            <p className="text-sm font-medium text-white">{tr("Enviar o diagnóstico?")}</p>
             <p className="mt-1 text-sm text-slate-400">
               {faltam > 0 ? `Ainda faltam ${faltam} perguntas. ` : ""}Você responde uma vez só, então não dá para refazer depois.
             </p>
@@ -70,13 +74,13 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
               <button onClick={send} disabled={busy} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-60">
                 {busy ? "Enviando..." : "Confirmar envio"}
               </button>
-              <button onClick={() => setConfirming(false)} disabled={busy} className="text-sm text-slate-400 hover:text-white">Voltar</button>
+              <button onClick={() => setConfirming(false)} disabled={busy} className="text-sm text-slate-400 hover:text-white">{tr("Voltar")}</button>
             </div>
           </>
         ) : (
           <div className="flex flex-wrap items-center gap-3">
             <button onClick={() => setConfirming(true)} disabled={respondidas === 0} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 disabled:opacity-40">
-              Enviar diagnóstico
+              {tr("Enviar diagnóstico")}
             </button>
             {faltam > 0 && <span className="text-sm text-slate-400">Faltam {faltam}.</span>}
           </div>

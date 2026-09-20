@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
@@ -17,7 +18,7 @@ export default async function MentoriaPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Mentoria</p>
+      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Mentoria")}</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-white">{form.title}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">{form.desc}</p>
 

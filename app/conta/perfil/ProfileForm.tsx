@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
@@ -13,6 +16,7 @@ type Form = { full_name: string; phone: string; country: string; linkedin_url: s
 const EMPTY: Form = { full_name: "", phone: "", country: "", linkedin_url: "", headline: "", bio: "", skills: "", avatar_url: "", portfolio_url: "" };
 
 export default function ProfileForm() {
+  const tr = usarTraducao();
   const [email, setEmail] = useState("");
   const [uid, setUid] = useState("");
   const [form, setForm] = useState<Form>(EMPTY);
@@ -100,7 +104,7 @@ export default function ProfileForm() {
     <>
       {/* Cabeçalho com avatar */}
       <div className="mt-6 flex items-center gap-4 rounded-2xl border border-white/8 bg-gradient-to-r from-brand-green/[0.08] to-brand-blue/[0.05] p-5">
-        <button type="button" onClick={() => avatarRef.current?.click()} className="group relative shrink-0 rounded-full" title="Trocar foto">
+        <button type="button" onClick={() => avatarRef.current?.click()} className="group relative shrink-0 rounded-full" title={tr("Trocar foto")}>
           <Avatar name={form.full_name || email} src={form.avatar_url || null} size="lg" className="ring-2 ring-white/10" />
           <span className="absolute inset-0 grid place-items-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-white"><path d="M4 7h3l2-2h6l2 2h3v12H4zM12 16a3.5 3.5 0 100-7 3.5 3.5 0 000 7z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -118,9 +122,9 @@ export default function ProfileForm() {
       {/* Trajetória com IA */}
       <div className="mt-6 glow-border rounded-2xl">
         <div className="glass rounded-2xl p-5">
-          <p className="font-display text-base font-bold text-white">Monte sua trajetória com IA</p>
+          <p className="font-display text-base font-bold text-white">{tr("Monte sua trajetória com IA")}</p>
           <p className="mt-1 text-sm text-slate-400">Cole o texto do seu LinkedIn (seção "Sobre" + experiências) ou do seu currículo. A IA organiza seu título, resumo e habilidades. Você revisa e salva.</p>
-          <textarea value={aiText} onChange={(e) => setAiText(e.target.value)} rows={4} placeholder="Cole aqui seu LinkedIn/currículo..." className={`${field} mt-3 resize-y`} />
+          <textarea value={aiText} onChange={(e) => setAiText(e.target.value)} rows={4} placeholder={tr("Cole aqui seu LinkedIn/currículo...")} className={`${field} mt-3 resize-y`} />
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <button type="button" onClick={aiFill} disabled={aiLoading} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
               {aiLoading ? "Processando..." : "Preencher com IA"}
@@ -132,40 +136,40 @@ export default function ProfileForm() {
 
       <form onSubmit={save} className="mt-6 space-y-5 rounded-2xl border border-white/8 bg-white/[0.02] p-6">
         <div className="space-y-1.5">
-          <label className={label} htmlFor="full_name">Nome completo</label>
+          <label className={label} htmlFor="full_name">{tr("Nome completo")}</label>
           <input id="full_name" value={form.full_name} onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))} className={field} />
         </div>
         <div className="space-y-1.5">
-          <label className={label} htmlFor="headline">Título profissional</label>
-          <input id="headline" value={form.headline} onChange={(e) => setForm((f) => ({ ...f, headline: e.target.value }))} placeholder="Ex.: Analista de Dados | Power BI" className={field} />
+          <label className={label} htmlFor="headline">{tr("Título profissional")}</label>
+          <input id="headline" value={form.headline} onChange={(e) => setForm((f) => ({ ...f, headline: e.target.value }))} placeholder={tr("Ex.: Analista de Dados | Power BI")} className={field} />
         </div>
         <div className="space-y-1.5">
-          <label className={label} htmlFor="bio">Sobre você / trajetória</label>
+          <label className={label} htmlFor="bio">{tr("Sobre você / trajetória")}</label>
           <textarea id="bio" value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} rows={3} className={`${field} resize-y`} />
         </div>
         <div className="space-y-1.5">
-          <label className={label} htmlFor="skills">Habilidades</label>
-          <input id="skills" value={form.skills} onChange={(e) => setForm((f) => ({ ...f, skills: e.target.value }))} placeholder="Power BI, SQL, Python, Storytelling..." className={field} />
+          <label className={label} htmlFor="skills">{tr("Habilidades")}</label>
+          <input id="skills" value={form.skills} onChange={(e) => setForm((f) => ({ ...f, skills: e.target.value }))} placeholder={tr("Power BI, SQL, Python, Storytelling...")} className={field} />
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label className={label} htmlFor="phone">Telefone / WhatsApp</label>
+            <label className={label} htmlFor="phone">{tr("Telefone / WhatsApp")}</label>
             <input id="phone" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className={field} />
           </div>
           <div className="space-y-1.5">
-            <label className={label} htmlFor="country">País</label>
-            <input id="country" value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} placeholder="Brasil" className={field} />
+            <label className={label} htmlFor="country">{tr("País")}</label>
+            <input id="country" value={form.country} onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} placeholder={tr("Brasil")} className={field} />
           </div>
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <label className={label} htmlFor="linkedin_url">LinkedIn</label>
+            <label className={label} htmlFor="linkedin_url">{tr("LinkedIn")}</label>
             <input id="linkedin_url" value={form.linkedin_url} onChange={(e) => setForm((f) => ({ ...f, linkedin_url: e.target.value }))} placeholder="https://linkedin.com/in/seu-perfil" className={field} />
           </div>
           <div className="space-y-1.5">
-            <label className={label} htmlFor="portfolio_url">Portfólio</label>
+            <label className={label} htmlFor="portfolio_url">{tr("Portfólio")}</label>
             <input id="portfolio_url" value={form.portfolio_url} onChange={(e) => setForm((f) => ({ ...f, portfolio_url: e.target.value }))} placeholder="https://seu-portfolio.com" className={field} />
-            <p className="text-xs text-slate-500">Aparece na Vitrine de alunos.</p>
+            <p className="text-xs text-slate-500">{tr("Aparece na Vitrine de alunos.")}</p>
           </div>
         </div>
 

@@ -1,5 +1,8 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
+
 import { useEffect, useMemo, useState } from "react";
 import { sortearCaso } from "@/lib/conciliacao/gerador";
 import { comparar, moeda, quebrar, registros, corrigir, type Filtro } from "@/lib/conciliacao/motor";
@@ -29,6 +32,7 @@ const SITUACAO: Record<string, { texto: string; cor: string }> = {
 };
 
 export default function Conciliacao({ semente }: { semente: number }) {
+  const tr = usarTraducao();
   const [rodada, setRodada] = useState(0);
   const [filtro, setFiltro] = useState<Filtro>({});
   const [dimensao, setDimensao] = useState<Dimensao>("mes");
@@ -75,7 +79,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
       {/* Caso */}
       <div className="flex flex-wrap items-start justify-between gap-4 rounded-3xl border border-white/8 bg-white/[0.02] p-6">
         <div className="min-w-0 flex-1">
-          <p className="text-[0.7rem] uppercase tracking-wider text-brand-green">Chamado do dia</p>
+          <p className="text-[0.7rem] uppercase tracking-wider text-brand-green">{tr("Chamado do dia")}</p>
           <h2 className="mt-1 font-display text-2xl font-bold text-white">{caso.titulo}</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">{caso.contexto}</p>
         </div>
@@ -86,14 +90,14 @@ export default function Conciliacao({ semente }: { semente: number }) {
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-            Tour guiado
+            {tr("Tour guiado")}
           </button>
           <button
             type="button"
             onClick={() => setRodada((r) => r + 1)}
             className="rounded-xl border border-white/10 px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-teal/50 hover:text-brand-teal"
           >
-            Outro chamado
+            {tr("Outro chamado")}
           </button>
         </div>
       </div>
@@ -136,7 +140,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
       {/* Passo 2: a quebra */}
       <div data-tour="conc-quebra" className="mt-5">
         <div className="flex flex-wrap items-center gap-2">
-          <span className={rotulo}>Quebre por</span>
+          <span className={rotulo}>{tr("Quebre por")}</span>
           {DIMENSOES.map((d) => (
             <button
               key={d.chave}
@@ -156,9 +160,9 @@ export default function Conciliacao({ semente }: { semente: number }) {
             <thead>
               <tr className="border-b border-white/10">
                 <th className="px-4 py-2.5 text-[0.7rem] uppercase tracking-wide text-slate-400">{nomeDaDimensao(dimensao)}</th>
-                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">Sistema</th>
-                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">Painel</th>
-                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">Diferença</th>
+                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Sistema")}</th>
+                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Painel")}</th>
+                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Diferença")}</th>
                 <th className="px-4 py-2.5" />
               </tr>
             </thead>
@@ -177,7 +181,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
                       onClick={() => setFiltro((f) => ({ ...f, [dimensao]: l.grupo }))}
                       className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-brand-teal/50 hover:text-brand-teal"
                     >
-                      isolar
+                      {tr("isolar")}
                     </button>
                   </td>
                 </tr>
@@ -234,17 +238,17 @@ export default function Conciliacao({ semente }: { semente: number }) {
 
       {/* Resposta */}
       <div data-tour="conc-resposta" className="mt-6 rounded-3xl border border-white/8 bg-white/[0.02] p-6">
-        <h3 className="font-display text-lg font-bold text-white">Seu laudo</h3>
+        <h3 className="font-display text-lg font-bold text-white">{tr("Seu laudo")}</h3>
         <p className="mt-1 text-sm text-slate-400">{caso.pergunta}</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-[14rem_1fr_auto] sm:items-end">
           <label>
-            <span className={rotulo}>Valor da divergência</span>
+            <span className={rotulo}>{tr("Valor da divergência")}</span>
             <input className={`${campo} mt-1 font-mono`} value={valor} onChange={(e) => setValor(e.target.value)} placeholder="0,00" inputMode="decimal" />
           </label>
           <label>
-            <span className={rotulo}>Causa</span>
+            <span className={rotulo}>{tr("Causa")}</span>
             <select className={`${campo} mt-1 [&>option]:bg-ink-900`} value={classe} onChange={(e) => setClasse(e.target.value as ClasseDefeito | "")}>
-              <option value="">Escolha a causa</option>
+              <option value="">{tr("Escolha a causa")}</option>
               {CAUSAS.map((c) => <option key={c.classe} value={c.classe}>{c.nome}</option>)}
             </select>
           </label>
@@ -253,7 +257,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
             onClick={responder}
             className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
           >
-            Entregar o laudo
+            {tr("Entregar o laudo")}
           </button>
         </div>
         {classe && <p className="mt-2 text-xs text-slate-500">{CAUSAS.find((c) => c.classe === classe)?.descricao}</p>}
@@ -263,7 +267,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
             <p className={`font-display text-lg font-bold ${veredito.acertouValor && veredito.acertouClasse ? "text-brand-green" : "text-white"}`}>{veredito.titulo}</p>
             <p className="mt-1 text-sm leading-relaxed text-slate-300">{veredito.detalhe}</p>
             <p className="mt-3 border-t border-white/10 pt-3 text-sm leading-relaxed text-slate-400">
-              <span className="font-semibold text-slate-200">Como reconhecer da próxima vez: </span>
+              <span className="font-semibold text-slate-200">{tr("Como reconhecer da próxima vez:")} </span>
               {veredito.metodo}
             </p>
             {veredito.acertouValor && veredito.acertouClasse && (

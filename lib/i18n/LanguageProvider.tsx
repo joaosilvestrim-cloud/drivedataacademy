@@ -20,6 +20,16 @@ export function LanguageProvider({ children, inicial }: { children: React.ReactN
   // tela nascer em português e trocar depois.
   const [lang, setLangState] = useState<Lang>(inicial ?? DEFAULT_LANG);
 
+  // Depois de trocar o idioma, o servidor reenvia a página (router.refresh) e
+  // este `inicial` chega diferente. Acertar o estado aqui, durante o render,
+  // e não num efeito: assim os filhos já nascem no idioma novo, em vez de
+  // aparecerem em português por um quadro.
+  const [inicialAnterior, setInicialAnterior] = useState(inicial);
+  if (inicial && inicial !== inicialAnterior) {
+    setInicialAnterior(inicial);
+    setLangState(inicial);
+  }
+
   useEffect(() => {
     if (inicial) return; // veio do servidor, não precisa perguntar ao navegador
     try {

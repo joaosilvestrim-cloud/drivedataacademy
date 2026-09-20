@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -18,10 +19,10 @@ export default async function DiagnosticoPage() {
     return (
       <div className="max-w-xl">
         <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">&larr; Knowledge Universe</Link>
-      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">Diagnóstico</p>
-        <h1 className="mt-1 font-display text-3xl font-bold text-white">Diagnóstico de entrada</h1>
-        <p className="mt-3 text-sm text-slate-400">Faz parte do Knowledge Universe, incluído na assinatura ativa.</p>
-        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Conhecer a assinatura</Link>
+      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Diagnóstico")}</p>
+        <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Diagnóstico de entrada")}</h1>
+        <p className="mt-3 text-sm text-slate-400">{tr("Faz parte do Knowledge Universe, incluído na assinatura ativa.")}</p>
+        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Conhecer a assinatura")}</Link>
       </div>
     );
   }
@@ -34,8 +35,8 @@ export default async function DiagnosticoPage() {
     if (error instanceof KnowledgeSetupError) {
       return (
         <div className="max-w-xl">
-          <h1 className="font-display text-3xl font-bold text-white">Em preparação</h1>
-          <p className="mt-3 text-sm text-slate-400">A estrutura de conhecimento ainda está sendo montada.</p>
+          <h1 className="font-display text-3xl font-bold text-white">{tr("Em preparação")}</h1>
+          <p className="mt-3 text-sm text-slate-400">{tr("A estrutura de conhecimento ainda está sendo montada.")}</p>
         </div>
       );
     }
@@ -49,8 +50,8 @@ export default async function DiagnosticoPage() {
   const header = (
     <>
       <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">&larr; Knowledge Universe</Link>
-      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">Diagnóstico</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Diagnóstico de entrada</h1>
+      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Diagnóstico")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Diagnóstico de entrada")}</h1>
     </>
   );
 
@@ -76,11 +77,11 @@ export default async function DiagnosticoPage() {
           ))}
         </div>
         <p className="mt-6 text-sm text-slate-400">
-          Daqui pra frente seu mapa cresce com aulas, avaliações e desafios entregues.
+          {tr("Daqui pra frente seu mapa cresce com aulas, avaliações e desafios entregues.")}
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Ver meu universo ↗</Link>
-          <Link href="/conta/desafios" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-slate-200 hover:border-brand-green/50 hover:text-brand-green">Ir para os desafios</Link>
+          <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Ver meu universo ↗")}</Link>
+          <Link href="/conta/desafios" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-slate-200 hover:border-brand-green/50 hover:text-brand-green">{tr("Ir para os desafios")}</Link>
         </div>
       </div>
     );
@@ -90,7 +91,7 @@ export default async function DiagnosticoPage() {
     return (
       <div className="max-w-xl">
         {header}
-        <p className="mt-3 text-sm text-slate-400">O diagnóstico ainda não foi publicado pela equipe.</p>
+        <p className="mt-3 text-sm text-slate-400">{tr("O diagnóstico ainda não foi publicado pela equipe.")}</p>
       </div>
     );
   }

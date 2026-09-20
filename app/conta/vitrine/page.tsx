@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -51,10 +52,10 @@ export default async function VitrinePage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-bold text-white">Vitrine de alunos</h1>
-          <p className="mt-1 text-sm text-slate-400">Conheça a comunidade: especialidades, pontos, conquistas e portfólio.</p>
+          <h1 className="font-display text-3xl font-bold text-white">{tr("Vitrine de alunos")}</h1>
+          <p className="mt-1 text-sm text-slate-400">{tr("Conheça a comunidade: especialidades, pontos, conquistas e portfólio.")}</p>
         </div>
-        <Link href="/conta/perfil" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 hover:border-brand-green/50 hover:text-brand-green">Editar meu perfil</Link>
+        <Link href="/conta/perfil" className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 hover:border-brand-green/50 hover:text-brand-green">{tr("Editar meu perfil")}</Link>
       </div>
 
       <VitrineClient membros={membros} meuId={user.id} lider={lider} />

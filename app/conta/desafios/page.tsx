@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -22,12 +23,12 @@ export default async function DesafiosPage() {
   if (!liberado) {
     return (
       <div className="max-w-xl">
-        <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Desafios</p>
-        <h1 className="mt-1 font-display text-3xl font-bold text-white">Desafios práticos</h1>
+        <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Desafios")}</p>
+        <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Desafios práticos")}</h1>
         <p className="mt-3 text-sm leading-relaxed text-slate-400">
-          Os desafios fazem parte do Knowledge Universe e estão incluídos na assinatura ativa da Academy.
+          {tr("Os desafios fazem parte do Knowledge Universe e estão incluídos na assinatura ativa da Academy.")}
         </p>
-        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">Conhecer a assinatura</Link>
+        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Conhecer a assinatura")}</Link>
       </div>
     );
   }
@@ -41,9 +42,9 @@ export default async function DesafiosPage() {
     if (error instanceof KnowledgeSetupError) {
       return (
         <div className="max-w-xl">
-          <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Desafios</p>
-          <h1 className="mt-1 font-display text-3xl font-bold text-white">Em preparação</h1>
-          <p className="mt-3 text-sm leading-relaxed text-slate-400">A equipe ainda está montando a estrutura de conhecimento. Volte em breve.</p>
+          <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Desafios")}</p>
+          <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Em preparação")}</h1>
+          <p className="mt-3 text-sm leading-relaxed text-slate-400">{tr("A equipe ainda está montando a estrutura de conhecimento. Volte em breve.")}</p>
         </div>
       );
     }
@@ -65,13 +66,12 @@ export default async function DesafiosPage() {
   return (
     <div>
       <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">&larr; Knowledge Universe</Link>
-      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">Desafios</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">Desafios práticos</h1>
+      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Desafios")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Desafios práticos")}</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400">
-        Aqui você demonstra na prática o que aprendeu. A equipe corrige e a evidência entra no seu
-        Knowledge Universe. Sem prática avaliada, uma competência não passa de 79 pontos.
+        {tr("Aqui você demonstra na prática o que aprendeu. A equipe corrige e a evidência entra no seu Knowledge Universe. Sem prática avaliada, uma competência não passa de 79 pontos.")}
       </p>
-      <Link href="/universo" target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-brand-teal hover:underline">Ver meu universo ↗</Link>
+      <Link href="/universo" target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-brand-teal hover:underline">{tr("Ver meu universo ↗")}</Link>
 
       <ChallengeList items={items} />
     </div>
