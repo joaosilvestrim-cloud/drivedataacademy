@@ -38,8 +38,11 @@ export default function Dojo({ semente }: { semente: number }) {
   const [verDica, setVerDica] = useState(false);
   const [resolvidos, setResolvidos] = useState<Record<Trilha, string[]>>({ dax: [], excel: [] });
   const [tour, setTour] = useState(false);
+  const [acendeRecorte, setAcendeRecorte] = useState(false);
+  const [copiou, setCopiou] = useState(false);
 
   const base = useMemo(() => gerarBase(semente), [semente]);
+  const tabela = useMemo(() => linhas(base), [base]);
   const desafios = useMemo(() => DESAFIOS_DA_TRILHA(trilha), [trilha]);
   const desafio = desafios[Math.min(indice, desafios.length - 1)];
 
@@ -55,6 +58,7 @@ export default function Dojo({ semente }: { semente: number }) {
   }, []);
 
   function limpar() {
+    setAcendeRecorte(false);
     setValor("");
     setFormula("");
     setVeredito(null);
@@ -75,8 +79,22 @@ export default function Dojo({ semente }: { semente: number }) {
     }
   }
 
+  /* A base copiada sai em TSV: colar no Excel ou no Sheets já cai em colunas.
+     Para a trilha de Excel isso muda o exercício de lugar, porque a pessoa
+     resolve na ferramenta de verdade e volta só com a resposta. */
+  async function copiarBase() {
+    const cabecalho = COLUNAS.join("\t");
+    const corpo = tabela.map((l) => l.join("\t")).join("\n");
+    try {
+      await navigator.clipboard.writeText(`${cabecalho}\n${corpo}`);
+      setCopiou(true);
+      setTimeout(() => setCopiou(false), 2200);
+    } catch {
+      setCopiou(false);
+    }
+  }
+
   const feitos = resolvidos[trilha].length;
-  const tabela = linhas(base);
 
   return (
     <div className="mt-8">
@@ -105,12 +123,53 @@ export default function Dojo({ semente }: { semente: number }) {
         </button>
       </div>
 
+      {/* Mapa da trilha: dá para ir direto no desafio que interessa e ver o que já caiu. */}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="h-1.5 w-full max-w-[220px] overflow-hidden rounded-full bg-white/8">
+          <span className="block h-full rounded-full bg-gradient-to-r from-brand-green to-brand-blue transition-all duration-500" style={{ width: `${(feitos / desafios.length) * 100}%` }} />
+        </span>
+        <span className="font-mono text-xs tabular-nums text-slate-400">{feitos}/{desafios.length}</span>
+        <span className="flex flex-wrap gap-1.5">
+          {desafios.map((d, i) => {
+            const feito = resolvidos[trilha].includes(d.id);
+            const atual = i === indice;
+            return (
+              <button
+                key={d.id}
+                onClick={() => { setIndice(i); limpar(); }}
+                title={`${i + 1}. ${d.titulo}${feito ? " (resolvido)" : ""}`}
+                aria-label={`Desafio ${i + 1}: ${d.titulo}`}
+                aria-current={atual ? "step" : undefined}
+                className={`grid h-7 w-7 place-items-center rounded-lg text-[0.7rem] font-semibold tabular-nums transition-colors ${
+                  atual ? "bg-brand-green text-ink-900" : feito ? "bg-brand-green/20 text-brand-green" : "bg-white/[0.06] text-slate-400 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {feito && !atual ? "✓" : i + 1}
+              </button>
+            );
+          })}
+        </span>
+      </div>
+
       <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
         {/* Base */}
         <div data-tour="dojo-base" className="min-w-0 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-[0.7rem] uppercase tracking-wider text-brand-green">Sua base · tabela Vendas</p>
-            <p className="text-xs text-slate-500">{base.vendas.length} linhas · gerada para a sua conta</p>
+            <div className="flex flex-wrap items-center gap-2">
+              {desafio.recorte && (
+                <button
+                  onClick={() => setAcendeRecorte((v) => !v)}
+                  className={`rounded-lg border px-2.5 py-1 text-[0.7rem] transition-colors ${acendeRecorte ? "border-brand-green/50 text-brand-green" : "border-white/10 text-slate-400 hover:text-white"}`}
+                >
+                  {acendeRecorte ? "Apagar destaque" : `Acender ${desafio.recorte.rotulo}`}
+                </button>
+              )}
+              <button onClick={copiarBase} className="rounded-lg border border-white/10 px-2.5 py-1 text-[0.7rem] text-slate-300 transition-colors hover:border-brand-green/50 hover:text-white">
+                {copiou ? "Copiado" : "Copiar para a planilha"}
+              </button>
+              <span className="text-xs text-slate-500">{base.vendas.length} linhas</span>
+            </div>
           </div>
           <div className="mt-3 max-h-[26rem] overflow-auto rounded-xl border border-white/8">
             <table className="w-full min-w-[640px] text-[0.8rem]">
@@ -126,8 +185,11 @@ export default function Dojo({ semente }: { semente: number }) {
                 </tr>
               </thead>
               <tbody>
-                {tabela.map((l, i) => (
-                  <tr key={i} className="border-t border-white/5 text-slate-300">
+                {tabela.map((l, i) => {
+                  const dentro = !!desafio.recorte?.linha(base.vendas[i]);
+                  const acesa = acendeRecorte && dentro;
+                  return (
+                  <tr key={i} className={`border-t border-white/5 transition-colors ${acesa ? "bg-brand-green/10 text-white" : acendeRecorte ? "text-slate-500 opacity-60" : "text-slate-300"}`}>
                     <td className="px-2 py-1.5 font-mono text-[0.68rem] tabular-nums text-slate-600">{i + 2}</td>
                     {l.map((c, j) => (
                       <td key={j} className={`px-2 py-1.5 ${typeof c === "number" ? "font-mono tabular-nums" : ""}`}>
@@ -135,12 +197,14 @@ export default function Dojo({ semente }: { semente: number }) {
                       </td>
                     ))}
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>
           <p className="mt-2 text-xs text-slate-500">
             A letra ao lado do cabeçalho é a coluna no Excel; a linha 1 é o cabeçalho, então os dados começam na 2.
+            {desafio.recorte && acendeRecorte && <span className="text-brand-green"> Aceso: {desafio.recorte.rotulo}, {base.vendas.filter(desafio.recorte.linha).length} linhas.</span>}
           </p>
         </div>
 
@@ -184,6 +248,7 @@ export default function Dojo({ semente }: { semente: number }) {
                   value={formula}
                   onChange={(e) => setFormula(e.target.value)}
                   rows={4}
+                  onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) conferir(); }}
                   placeholder={trilha === "dax" ? "Minha Medida = ..." : "=SOMASES(...)"}
                   className={`${campo} mt-1 resize-y font-mono text-[0.8rem]`}
                 />
@@ -191,7 +256,7 @@ export default function Dojo({ semente }: { semente: number }) {
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button onClick={conferir} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+              <button onClick={conferir} title="Ctrl + Enter" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
                 Conferir
               </button>
               <button onClick={() => setVerDica((v) => !v)} className="rounded-xl border border-white/10 px-3 py-2.5 text-sm text-slate-300 hover:border-brand-green/50 hover:text-white">

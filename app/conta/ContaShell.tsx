@@ -6,6 +6,7 @@ import FaixaEventos from "@/components/FaixaEventos";
 import type { EventoFaixa } from "@/lib/sessao";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
+import PaletaDeComandos, { type Destino } from "@/components/conta/PaletaDeComandos";
 import { COMMUNITY_WHATSAPP_URL } from "@/lib/links";
 
 function WhatsAppGroupLink({ onNavigate }: { onNavigate?: () => void }) {
@@ -49,45 +50,109 @@ const ICONS: Record<string, string> = {
   portfolio: "M4 7h16v13H4zM9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M4 12h16",
 };
 
-const GROUPS: { title: string | null; items: { label: string; href: string; icon: string; exact?: boolean; emBreve?: boolean }[] }[] = [
-  { title: null, items: [{ label: "Meus cursos", href: "/conta", icon: "courses", exact: true }] },
+/* O menu segue o que o aluno quer fazer, não o que o sistema tem:
+   assistir, praticar, conviver e resolver a própria conta. "busca" são os
+   apelidos que a pessoa digita na busca rápida (Ctrl+K) e que não estão no
+   rótulo, como "dax" para a Biblioteca. */
+type ItemMenu = { label: string; href: string; icon: string; exact?: boolean; emBreve?: boolean; busca?: string };
+
+const GROUPS: { title: string | null; items: ItemMenu[] }[] = [
+  { title: null, items: [{ label: "Meus cursos", href: "/conta", icon: "courses", exact: true, busca: "inicio home painel" }] },
   {
-    title: "Aprender",
+    title: "Assistir",
     items: [
-      { label: "Cursos", href: "/conta/cursos", icon: "cardapio" },
-      { label: "Agenda", href: "/conta/agenda", icon: "agenda" },
-      { label: "Gravações", href: "/conta/gravacoes", icon: "gravacoes" },
-      { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
-      { label: "Novidades", href: "/conta/novidades", icon: "challenge" },
-      { label: "Biblioteca", href: "/conta/biblioteca", icon: "biblioteca" },
-      { label: "Certificados", href: "/conta/certificados", icon: "cert" },
+      { label: "Cursos", href: "/conta/cursos", icon: "cardapio", busca: "treinamentos catalogo comprar" },
+      { label: "Agenda", href: "/conta/agenda", icon: "agenda", busca: "lives mentorias proximos encontros" },
+      { label: "Gravações", href: "/conta/gravacoes", icon: "gravacoes", busca: "replay assistir depois" },
+      { label: "Certificados", href: "/conta/certificados", icon: "cert", busca: "diploma comprovante" },
     ],
   },
   {
-    title: "Comunidade",
+    title: "Praticar",
     items: [
-      { label: "Comunidade", href: "/conta/comunidade", icon: "community" },
-      { label: "Ranking", href: "/conta/ranking", icon: "ranking" },
-      { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine" },
-      { label: "Portfólio", href: "/conta/portfolio", icon: "portfolio" },
-      { label: "Enquete", href: "/votacao", icon: "votacao" },
-      { label: "Sugestões", href: "/conta/sugestoes", icon: "sugestao" },
+      { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool", busca: "raio-x forja arena caixa-preta drivecanvas" },
+      { label: "Treino de DAX e Excel", href: "/conta/ferramentas/dojo", icon: "challenge", busca: "dojo exercicio formula" },
+      { label: "Biblioteca", href: "/conta/biblioteca", icon: "biblioteca", busca: "dax sql power query oracle protheus codigo" },
+      { label: "Novidades", href: "/conta/novidades", icon: "challenge", busca: "o que mudou changelog" },
+    ],
+  },
+  {
+    title: "Conviver",
+    items: [
+      { label: "Comunidade", href: "/conta/comunidade", icon: "community", busca: "chat duvidas conversa" },
+      { label: "Portfólio", href: "/conta/portfolio", icon: "portfolio", busca: "projetos vitrine trabalho" },
+      { label: "Ranking", href: "/conta/ranking", icon: "ranking", busca: "pontos medalhas" },
+      { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine", busca: "alunos perfis rede" },
+      { label: "Enquete", href: "/votacao", icon: "votacao", busca: "votacao" },
+      { label: "Sugestões", href: "/conta/sugestoes", icon: "sugestao", busca: "ideia pedido melhoria" },
+    ],
+  },
+  {
+    title: "Minha conta",
+    items: [
+      { label: "Perfil", href: "/conta/perfil", icon: "profile", busca: "foto linkedin dados senha" },
+      { label: "Parceria & Negócios", href: "/conta/representacao", icon: "rep", busca: "portal bi revenda indicar" },
+      { label: "Ajuda", href: "/conta/ajuda", icon: "help", busca: "suporte chamado problema" },
       // Mentoria individual ainda não abriu. Fica visível, para a turma saber
       // que vem, mas sem link: clicar em uma tela vazia frustra mais do que espera.
       { label: "Agendar mentoria", href: "/conta/mentoria", icon: "mentoria", emBreve: true },
-      { label: "Parceria & Negócios", href: "/conta/representacao", icon: "rep" },
-    ],
-  },
-  {
-    title: "Conta",
-    items: [
-      { label: "Perfil", href: "/conta/perfil", icon: "profile" },
-      { label: "Ajuda", href: "/conta/ajuda", icon: "help" },
     ],
   },
 ];
 
+/** A mesma lista, achatada, para a busca rápida do Ctrl+K. */
+const DESTINOS: Destino[] = GROUPS.flatMap((g) =>
+  g.items.filter((i) => !i.emBreve).map((i) => ({ label: i.label, href: i.href, grupo: g.title ?? "Início", busca: i.busca }))
+);
+
 type Aviso = { n: number; urgente: boolean };
+
+/* No celular, menu que só abre por gaveta faz a pessoa parar de navegar. A
+   barra de baixo deixa os cinco destinos principais a um toque, com o aviso da
+   comunidade junto. */
+const BARRA: { label: string; href: string; icon: string; exact?: boolean }[] = [
+  { label: "Início", href: "/conta", icon: "courses", exact: true },
+  { label: "Cursos", href: "/conta/cursos", icon: "cardapio" },
+  { label: "Comunidade", href: "/conta/comunidade", icon: "community" },
+  { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool" },
+  { label: "Perfil", href: "/conta/perfil", icon: "profile" },
+];
+
+function BarraInferior({ avisoComunidade }: { avisoComunidade?: Aviso }) {
+  const pathname = usePathname();
+  const ativo = (href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/"));
+  return (
+    <nav
+      aria-label="Atalhos"
+      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-ink-900/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+    >
+      {BARRA.map((it) => {
+        const on = ativo(it.href, it.exact);
+        const aviso = it.href === "/conta/comunidade" && avisoComunidade && avisoComunidade.n > 0;
+        return (
+          <Link
+            key={it.href}
+            href={it.href}
+            aria-current={on ? "page" : undefined}
+            className={`relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.62rem] transition-colors ${on ? "text-brand-green" : "text-slate-400"}`}
+          >
+            <span className="relative">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {aviso && (
+                <span className={`absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full px-1 text-[0.55rem] font-bold ${avisoComunidade!.urgente ? "bg-red-500 text-white" : "bg-brand-green text-ink-900"}`}>
+                  {avisoComunidade!.n > 9 ? "9+" : avisoComunidade!.n}
+                </span>
+              )}
+            </span>
+            {it.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
 
 function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate?: () => void; cursosAVenda?: number; avisoComunidade?: Aviso }) {
   const pathname = usePathname();
@@ -95,6 +160,18 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate
 
   return (
     <nav className="space-y-5">
+      {/* Atalho para quem já sabe aonde vai. O mesmo botão serve de dica do Ctrl+K. */}
+      <button
+        onClick={() => window.dispatchEvent(new Event("abrir-paleta"))}
+        className="flex w-full items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-left text-sm text-slate-400 transition-colors hover:border-brand-green/40 hover:text-white"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+        </svg>
+        Buscar tela
+        <kbd className="ml-auto rounded border border-white/10 px-1.5 text-[0.62rem] text-slate-500">Ctrl K</kbd>
+      </button>
+
       {GROUPS.map((group, gi) => (
         <div key={gi}>
           {group.title && <p className="mb-2 px-3 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{group.title}</p>}
@@ -121,8 +198,11 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade }: { onNavigate
                     <Link
                       href={it.href}
                       onClick={onNavigate}
-                      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${active ? "bg-white/10 font-medium text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"}`}
+                      aria-current={active ? "page" : undefined}
+                      className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all ${active ? "bg-white/10 font-medium text-white" : "text-slate-300 hover:bg-white/5 hover:pl-3.5 hover:text-white"}`}
                     >
+                      {/* Trilho do item aberto: diz onde você está sem depender só do fundo. */}
+                      {active && <span aria-hidden="true" className="absolute -left-1 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r bg-brand-green" />}
                       {icone}
                       {it.label}
                       {/* Treinamento aberto para compra: o número chama, o
@@ -167,7 +247,18 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" /></svg>
         </button>
         <Link href="/"><img src="/logo.png" alt="Drive Data Academy" className="h-8 w-auto" /></Link>
-        <SignOutButton />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => window.dispatchEvent(new Event("abrir-paleta"))}
+            aria-label="Buscar tela"
+            className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-slate-300"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+            </svg>
+          </button>
+          <SignOutButton />
+        </div>
       </header>
 
       {/* Drawer (mobile) */}
@@ -209,7 +300,10 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
           A comunidade é a única tela que ganha com largura: é conversa, lista
           de canais e lista de gente ao mesmo tempo. O resto continua na coluna
           de leitura, que é onde texto longo se lê melhor. */}
-      <main className="lg:pl-60" style={eventos.length ? ({ "--faixa": "36px" } as React.CSSProperties) : undefined}>
+      <PaletaDeComandos destinos={DESTINOS} />
+      <BarraInferior avisoComunidade={avisoComunidade} />
+
+      <main className="pb-16 lg:pb-0 lg:pl-60" style={eventos.length ? ({ "--faixa": "36px" } as React.CSSProperties) : undefined}>
         {/* Abaixo do cabeçalho no celular, colada no topo no desktop. */}
         <div className="sticky top-[61px] z-30 lg:top-0">
           <FaixaEventos eventos={eventos} />

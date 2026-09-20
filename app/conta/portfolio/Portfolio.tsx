@@ -33,11 +33,11 @@ function Chip({ children, ativo, onClick }: { children: React.ReactNode; ativo?:
   );
 }
 
-function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, meu }: { p: Projeto; autor?: Autor; curtido?: boolean; total?: number; aoCurtir?: () => void; aoEditar?: () => void; meu?: boolean }) {
+function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, grande }: { p: Projeto; autor?: Autor; curtido?: boolean; total?: number; aoCurtir?: () => void; aoEditar?: () => void; aoAbrir?: () => void; meu?: boolean; grande?: boolean }) {
   const st = STATUS[p.status];
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] transition-colors hover:border-brand-green/30">
-      <div className="relative aspect-video overflow-hidden bg-ink-800">
+    <article className={`group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] transition-colors hover:border-brand-green/30 ${grande ? "sm:col-span-2 xl:col-span-2" : ""}`}>
+      <div className={`relative overflow-hidden bg-ink-800 ${grande ? "aspect-[21/9]" : "aspect-video"} ${aoAbrir ? "cursor-zoom-in" : ""}`} onClick={aoAbrir}>
         {p.cover_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.cover_url} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
@@ -54,8 +54,15 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, meu }: { p: Proj
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <h3 className="font-display text-lg font-bold leading-snug text-white">{p.titulo}</h3>
+          {aoAbrir ? (
+            <button onClick={aoAbrir} className="text-left">
+              <h3 className={`font-display font-bold leading-snug text-white transition-colors group-hover:text-brand-green ${grande ? "text-2xl" : "text-lg"}`}>{p.titulo}</h3>
+            </button>
+          ) : (
+            <h3 className="font-display text-lg font-bold leading-snug text-white">{p.titulo}</h3>
+          )}
           <p className="mt-1 text-sm leading-relaxed text-slate-400">{p.resumo}</p>
+          {grande && p.resultado && <p className="mt-2 text-sm text-brand-teal">{p.resultado}</p>}
         </div>
 
         {p.ferramentas.length > 0 && (
@@ -93,6 +100,9 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, meu }: { p: Proj
             {p.repo_url && (
               <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-300 hover:text-white">Código ↗</a>
             )}
+            {aoAbrir && (
+              <button onClick={aoAbrir} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">Ver detalhes</button>
+            )}
             {aoEditar && (
               <button onClick={aoEditar} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">Editar</button>
             )}
@@ -122,6 +132,9 @@ export default function Portfolio({
     Object.fromEntries(vitrine.map((p) => [p.id, { curtido: curtidos.includes(p.id), total: p.curtidas || 0 }]))
   );
   const [editando, setEditando] = useState<Projeto | "novo" | null>(null);
+  const [aberto, setAberto] = useState<Projeto | null>(null);
+  const [busca, setBusca] = useState("");
+  const [ordem, setOrdem] = useState<"recentes" | "curtidos">("recentes");
 
   const ferramentas = useMemo(() => {
     const conta = new Map<string, number>();
@@ -129,7 +142,19 @@ export default function Portfolio({
     return [...conta.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "pt-BR")).slice(0, 12);
   }, [vitrine]);
 
-  const lista = filtro ? vitrine.filter((p) => p.ferramentas.includes(filtro)) : vitrine;
+  const semAcento = (x: string) => x.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+  const q = semAcento(busca.trim());
+  const lista = useMemo(() => {
+    const base = vitrine
+      .filter((p) => (filtro ? p.ferramentas.includes(filtro) : true))
+      .filter((p) => (q ? semAcento(`${p.titulo} ${p.resumo} ${p.resultado ?? ""} ${p.ferramentas.join(" ")} ${autores[p.user_id]?.nome ?? ""}`).includes(q) : true));
+    // Destaque sempre na frente: é a curadoria do time, não o gosto do filtro.
+    return [...base].sort((a, b) => {
+      if (a.destaque !== b.destaque) return a.destaque ? -1 : 1;
+      if (ordem === "curtidos") return (curtidas[b.id]?.total ?? b.curtidas) - (curtidas[a.id]?.total ?? a.curtidas);
+      return (b.aprovado_em ?? b.updated_at).localeCompare(a.aprovado_em ?? a.updated_at);
+    });
+  }, [vitrine, filtro, q, ordem, curtidas, autores]);
 
   async function curtir(id: string) {
     const antes = curtidas[id] ?? { curtido: false, total: 0 };
@@ -163,8 +188,28 @@ export default function Portfolio({
 
       {aba === "vitrine" ? (
         <>
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <div className="relative min-w-[12rem] flex-1">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" aria-hidden="true">
+                <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+              </svg>
+              <input
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                placeholder="buscar por projeto, ferramenta ou pessoa"
+                aria-label="Buscar projeto"
+                className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2 pl-9 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
+              />
+            </div>
+            <div className="flex gap-1.5">
+              {([["recentes", "Recentes"], ["curtidos", "Mais curtidos"]] as const).map(([k, rotulo]) => (
+                <Chip key={k} ativo={ordem === k} onClick={() => setOrdem(k)}>{rotulo}</Chip>
+              ))}
+            </div>
+          </div>
+
           {ferramentas.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-1.5">
+            <div className="mt-3 flex flex-wrap gap-1.5">
               <Chip ativo={!filtro} onClick={() => setFiltro("")}>Todas</Chip>
               {ferramentas.map(([f, n]) => (
                 <Chip key={f} ativo={filtro === f} onClick={() => setFiltro(filtro === f ? "" : f)}>
@@ -174,7 +219,12 @@ export default function Portfolio({
             </div>
           )}
 
-          {lista.length === 0 ? (
+          {lista.length === 0 && (busca || filtro) ? (
+            <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center">
+              <p className="font-medium text-white">Nenhum projeto com esse recorte</p>
+              <button onClick={() => { setBusca(""); setFiltro(""); }} className="mt-3 text-sm text-brand-green hover:underline">Limpar a busca e o filtro</button>
+            </div>
+          ) : lista.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
               <p className="font-medium text-white">Ainda não tem projeto publicado aqui</p>
               <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
@@ -183,8 +233,17 @@ export default function Portfolio({
             </div>
           ) : (
             <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {lista.map((p) => (
-                <Cartao key={p.id} p={p} autor={autores[p.user_id]} curtido={curtidas[p.id]?.curtido} total={curtidas[p.id]?.total} aoCurtir={() => curtir(p.id)} />
+              {lista.map((p, i) => (
+                <Cartao
+                  key={p.id}
+                  p={p}
+                  autor={autores[p.user_id]}
+                  curtido={curtidas[p.id]?.curtido}
+                  total={curtidas[p.id]?.total}
+                  aoCurtir={() => curtir(p.id)}
+                  aoAbrir={() => setAberto(p)}
+                  grande={i === 0 && p.destaque}
+                />
               ))}
             </div>
           )}
@@ -202,10 +261,12 @@ export default function Portfolio({
       ) : (
         <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {meus.map((p) => (
-            <Cartao key={p.id} p={p} meu aoEditar={() => setEditando(p)} />
+            <Cartao key={p.id} p={p} meu aoEditar={() => setEditando(p)} aoAbrir={() => setAberto(p)} />
           ))}
         </div>
       )}
+
+      {aberto && <Detalhe p={aberto} autor={autores[aberto.user_id]} aoFechar={() => setAberto(null)} />}
 
       {editando && (
         <Formulario
@@ -214,6 +275,76 @@ export default function Portfolio({
           aoFechar={() => setEditando(null)}
         />
       )}
+    </div>
+  );
+}
+
+function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: () => void }) {
+  useEffect(() => {
+    const esc = (e: KeyboardEvent) => { if (e.key === "Escape") aoFechar(); };
+    window.addEventListener("keydown", esc);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", esc); document.body.style.overflow = ""; };
+  }, [aoFechar]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm" onClick={aoFechar} role="dialog" aria-modal="true" aria-label={p.titulo}>
+      <article onClick={(e) => e.stopPropagation()} className="my-8 w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-ink-900 shadow-2xl">
+        {p.cover_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={p.cover_url} alt="" className="max-h-[60vh] w-full object-contain bg-ink-800" />
+        )}
+        <div className="flex flex-col gap-4 p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h2 className="font-display text-2xl font-bold text-white">{p.titulo}</h2>
+              <p className="mt-1 text-sm text-slate-400">{p.resumo}</p>
+            </div>
+            <button onClick={aoFechar} aria-label="Fechar" className="shrink-0 rounded-lg px-2 py-1 text-slate-400 hover:text-white">✕</button>
+          </div>
+
+          {autor && (
+            <div className="flex items-center gap-2.5 border-y border-white/8 py-3">
+              <MedalAvatar name={autor.nome} src={autor.avatar} casa={autor.casa} size="sm" />
+              <div className="min-w-0">
+                <p className={`truncate text-sm ${autor.casa ? "font-semibold text-[#f6d68c]" : "text-slate-200"}`}>{autor.nome}</p>
+                {autor.headline && <p className="truncate text-xs text-slate-500">{autor.headline}</p>}
+              </div>
+              <SeloCasa label={autor.casa} className="ml-1" />
+            </div>
+          )}
+
+          {p.problema && (
+            <div>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">O problema</p>
+              <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.problema}</p>
+            </div>
+          )}
+          {p.resultado && (
+            <div>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">O resultado</p>
+              <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-200">{p.resultado}</p>
+            </div>
+          )}
+          {p.descricao && (
+            <div>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">Como foi feito</p>
+              <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.descricao}</p>
+            </div>
+          )}
+
+          {p.ferramentas.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {p.ferramentas.map((f) => <Chip key={f}>{f}</Chip>)}
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-3 pt-1">
+            {p.link_url && <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">Ver o projeto ↗</a>}
+            {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-200 hover:border-brand-green/50">Código ↗</a>}
+          </div>
+        </div>
+      </article>
     </div>
   );
 }

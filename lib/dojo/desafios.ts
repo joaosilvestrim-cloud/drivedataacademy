@@ -24,6 +24,9 @@ export type Desafio = {
   /** Como o número aparece: dinheiro, número puro ou percentual. */
   formato: "moeda" | "numero" | "percentual";
   precisa: { padrao: RegExp; nome: string }[];
+  /* Quais linhas da base entram na conta. Serve para a tela acender o recorte
+     quando o aluno pede ajuda: ler o critério na tabela é metade do exercício. */
+  recorte?: { rotulo: string; linha: (v: Venda) => boolean };
   evitar?: { padrao: RegExp; recado: string }[];
   gabarito: string;
   porque: string;
@@ -83,6 +86,7 @@ export const DESAFIOS: Desafio[] = [
     dica: "A medida já existe. Falta mudar o contexto de filtro dela.",
     valor: (b) => arred(b.vendas.filter((v) => v.categoria === "Periféricos").reduce((t, v) => t + liquido(v), 0)),
     formato: "moeda",
+    recorte: { rotulo: "categoria Periféricos", linha: (v) => v.categoria === "Periféricos" },
     precisa: [{ padrao: /\bCALCULATE\s*\(/i, nome: "CALCULATE" }, { padrao: /Periféricos|Perifericos/i, nome: "o filtro da categoria" }],
     gabarito: 'Receita Periféricos = CALCULATE ( [Receita Líquida], Vendas[Categoria] = "Periféricos" )',
     porque: "CALCULATE é a única função que muda o contexto de filtro. O filtro simples dentro dela vira um FILTER na tabela inteira.",
@@ -100,6 +104,7 @@ export const DESAFIOS: Desafio[] = [
       return arred((parte / total) * 100);
     },
     formato: "percentual",
+    recorte: { rotulo: "categoria Periféricos", linha: (v) => v.categoria === "Periféricos" },
     precisa: [{ padrao: /\bDIVIDE\s*\(/i, nome: "DIVIDE" }, { padrao: /\bALL\s*\(|\bREMOVEFILTERS\s*\(|\bALLSELECTED\s*\(/i, nome: "ALL ou REMOVEFILTERS no denominador" }],
     gabarito: "% da Categoria = DIVIDE ( [Receita Líquida], CALCULATE ( [Receita Líquida], REMOVEFILTERS ( Vendas[Categoria] ) ) )",
     porque: "Sem tirar o filtro, o denominador é o mesmo do numerador e todo percentual dá 100%. É o erro mais comum de participação.",
@@ -210,6 +215,7 @@ RETURN SUMX ( FILTER ( Vendas, Vendas[Quantidade] * Vendas[Preço] * ( 1 - Venda
     dica: "Soma com condição tem função própria, no plural, que aceita vários critérios.",
     valor: (b) => b.vendas.filter((v) => v.regiao === "Sul").reduce((t, v) => t + v.quantidade, 0),
     formato: "numero",
+    recorte: { rotulo: "região Sul", linha: (v) => v.regiao === "Sul" },
     precisa: [{ padrao: /SOMASES|SUMIFS|SOMASE|SUMIF/i, nome: "SOMASES" }, { padrao: /Sul/i, nome: "o critério Sul" }],
     gabarito: '=SOMASES(F2:F19;C2:C19;"Sul")',
     porque: "SOMASES aceita quantos critérios você precisar. É o que substitui filtrar na mão e olhar a barra de status.",
@@ -223,6 +229,7 @@ RETURN SUMX ( FILTER ( Vendas, Vendas[Quantidade] * Vendas[Preço] * ( 1 - Venda
     dica: "Contar com condição também tem função no plural.",
     valor: (b) => b.vendas.filter((v) => v.desconto > 0).length,
     formato: "numero",
+    recorte: { rotulo: "linhas com desconto", linha: (v) => v.desconto > 0 },
     precisa: [{ padrao: /CONT\.SES|COUNTIFS|CONT\.SE|COUNTIF/i, nome: "CONT.SES" }, { padrao: />\s*0|">0"/, nome: "o critério maior que zero" }],
     gabarito: '=CONT.SES(H2:H19;">0")',
     porque: "O critério vai entre aspas, inclusive o sinal de maior. É a pegadinha que faz a fórmula devolver zero sem dar erro.",
@@ -236,6 +243,7 @@ RETURN SUMX ( FILTER ( Vendas, Vendas[Quantidade] * Vendas[Preço] * ( 1 - Venda
     dica: "Procura na coluna de produto e devolve a coluna de preço.",
     valor: (b) => b.vendas.find((v) => v.produto === "Monitor")?.preco ?? 0,
     formato: "moeda",
+    recorte: { rotulo: "produto Monitor", linha: (v) => v.produto === "Monitor" },
     precisa: [{ padrao: /PROCX|XLOOKUP|ÍNDICE|INDICE|INDEX|PROCV|VLOOKUP/i, nome: "PROCX, ÍNDICE+CORRESP ou PROCV" }, { padrao: /Monitor/i, nome: "o produto procurado" }],
     evitar: [{ padrao: /PROCV\s*\([^;,]*[;,][^;,]*[;,]\s*\d+\s*\)/i, recado: "PROCV sem o último argumento FALSO faz busca aproximada e devolve o valor errado quando a lista não está ordenada." }],
     gabarito: '=PROCX("Monitor";E2:E19;G2:G19)',
@@ -253,6 +261,7 @@ RETURN SUMX ( FILTER ( Vendas, Vendas[Quantidade] * Vendas[Preço] * ( 1 - Venda
       return lista.length ? arred(lista.reduce((t, x) => t + x, 0) / lista.length) : 0;
     },
     formato: "moeda",
+    recorte: { rotulo: "categoria Telas", linha: (v) => v.categoria === "Telas" },
     precisa: [{ padrao: /MÉDIASES|MEDIASES|AVERAGEIFS|MÉDIASE|MEDIASE|AVERAGEIF/i, nome: "MÉDIASES" }, { padrao: /Telas/i, nome: "o critério Telas" }],
     gabarito: '=MÉDIASES(G2:G19;D2:D19;"Telas")',
     porque: "MÉDIASES ignora as linhas que não atendem ao critério. Somar e dividir na mão pelo total de linhas dá um número menor e errado.",
@@ -282,6 +291,7 @@ RETURN SUMX ( FILTER ( Vendas, Vendas[Quantidade] * Vendas[Preço] * ( 1 - Venda
       return lista.length ? arred(Math.max(...lista)) : 0;
     },
     formato: "moeda",
+    recorte: { rotulo: "vendas da Ana", linha: (v) => v.vendedor === "Ana" },
     precisa: [{ padrao: /MÁXIMOSES|MAXIMOSES|MAXIFS|MÁXIMO|MAXIMO|\bMAX\b/i, nome: "MÁXIMO ou MÁXIMOSES" }, { padrao: /Ana/i, nome: "o critério Ana" }],
     gabarito: '=MÁXIMO(SE(B2:B19="Ana";F2:F19*G2:G19*(1-H2:H19)))   (matriz)',
     porque: "MÁXIMOSES não aceita expressão calculada, só coluna. Por isso entra o MÁXIMO com SE em matriz, ou uma coluna auxiliar com o líquido.",
@@ -299,6 +309,7 @@ RETURN SUMX ( FILTER ( Vendas, Vendas[Quantidade] * Vendas[Preço] * ( 1 - Venda
       return arred((dele / total) * 100);
     },
     formato: "percentual",
+    recorte: { rotulo: "vendas do Bruno", linha: (v) => v.vendedor === "Bruno" },
     precisa: [{ padrao: /SOMASES|SUMIFS|SOMASE|SUMIF/i, nome: "SOMASES no numerador" }, { padrao: /SOMA\s*\(|SUM\s*\(/i, nome: "a soma total no denominador" }],
     gabarito: '=SOMASES(F2:F19;B2:B19;"Bruno")/SOMA(F2:F19)',
     porque: "O denominador precisa ser o total sem critério. Repetir o critério nos dois lados sempre dá 100%.",
@@ -312,6 +323,7 @@ RETURN SUMX ( FILTER ( Vendas, Vendas[Quantidade] * Vendas[Preço] * ( 1 - Venda
     dica: "Data em critério funciona por faixa: maior ou igual ao primeiro dia e menor que o primeiro dia do mês seguinte.",
     valor: (b) => b.vendas.filter((v) => mes(v) === 2).reduce((t, v) => t + v.quantidade, 0),
     formato: "numero",
+    recorte: { rotulo: "fevereiro", linha: (v) => mes(v) === 2 },
     precisa: [{ padrao: /SOMASES|SUMIFS/i, nome: "SOMASES" }, { padrao: />=|>/, nome: "o critério de data inicial" }, { padrao: /<\s*"?\d|</, nome: "o critério de data final" }],
     gabarito: '=SOMASES(F2:F19;A2:A19;">="&DATA(2026;2;1);A2:A19;"<"&DATA(2026;3;1))',
     porque: "Comparar o mês com texto quebra na virada do ano. A faixa de datas funciona sempre e usa o formato real da célula.",
