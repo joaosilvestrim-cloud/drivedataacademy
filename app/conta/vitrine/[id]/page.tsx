@@ -84,7 +84,7 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
             </h1>
             {p.headline && <p className="mt-1 text-slate-300">{p.headline}</p>}
             <p className="mt-1.5 text-xs text-slate-500">
-              na comunidade {tempo(p.created_at)}
+              {tr("na comunidade")} {tempo(p.created_at)}
               {p.country && ` · ${p.country}`}
             </p>
 

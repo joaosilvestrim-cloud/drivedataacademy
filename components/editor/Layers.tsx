@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import {
   Type,
@@ -84,6 +86,7 @@ const ICON: Record<ElementType, LucideIcon> = {
 };
 
 export default function Layers() {
+  const tr = usarTraducao();
   const els = useEditor(elementosAtivos);
   const selectedIds = useEditor((s) => s.selectedIds);
   const selecionar = useEditor((s) => s.selecionar);
@@ -170,7 +173,7 @@ export default function Layers() {
         <button onClick={(e) => { e.stopPropagation(); toggleVisivel(el.id); }} title={el.visivel ? "Ocultar" : "Mostrar"} className="text-muted hover:text-foreground">
           {el.visivel ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
         </button>
-        <button onClick={(e) => { e.stopPropagation(); removerElemento(el.id); }} title="Excluir" className="text-muted opacity-0 hover:text-red-600 group-hover:opacity-100">
+        <button onClick={(e) => { e.stopPropagation(); removerElemento(el.id); }} title={tr("Excluir")} className="text-muted opacity-0 hover:text-red-600 group-hover:opacity-100">
           <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -179,8 +182,8 @@ export default function Layers() {
 
   return (
     <div>
-      <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">Camadas</h2>
-      <p className="mb-2 text-[11px] text-muted">Arraste para reordenar. Grupos viram pastas.</p>
+      <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">{tr("Camadas")}</h2>
+      <p className="mb-2 text-[11px] text-muted">{tr("Arraste para reordenar. Grupos viram pastas.")}</p>
       <div className="flex flex-col gap-0.5">
         {linhas.map((ln) => {
           if (ln.tipo === "item") return Row(ln.el, false);

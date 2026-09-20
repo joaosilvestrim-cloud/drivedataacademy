@@ -1,10 +1,13 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useT } from "@/lib/i18n/LanguageProvider";
 
 export default function WaitlistForm({ compact = false }: { compact?: boolean }) {
+  const tr = usarTraducao();
   const t = useT();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -74,44 +77,44 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         <select
           value={ddi}
           onChange={(e) => setDdi(e.target.value)}
-          aria-label="Código do país"
+          aria-label={tr("Código do país")}
           className="shrink-0 rounded-xl border border-white/10 bg-white/5 px-2 text-sm text-slate-200 outline-none focus:border-brand-green/60 [&>option]:bg-ink-900"
         >
-          <option value="+55">🇧🇷 +55 Brasil</option>
-          <option value="+351">🇵🇹 +351 Portugal</option>
-          <option value="+244">🇦🇴 +244 Angola</option>
-          <option value="+258">🇲🇿 +258 Moçambique</option>
-          <option value="+238">🇨🇻 +238 Cabo Verde</option>
-          <option value="+245">🇬🇼 +245 Guiné-Bissau</option>
-          <option value="+239">🇸🇹 +239 São Tomé e Príncipe</option>
-          <option value="+670">🇹🇱 +670 Timor-Leste</option>
-          <option value="+1">🇺🇸 +1 EUA / Canadá</option>
-          <option value="+52">🇲🇽 +52 México</option>
-          <option value="+54">🇦🇷 +54 Argentina</option>
-          <option value="+56">🇨🇱 +56 Chile</option>
-          <option value="+57">🇨🇴 +57 Colômbia</option>
-          <option value="+51">🇵🇪 +51 Peru</option>
-          <option value="+58">🇻🇪 +58 Venezuela</option>
-          <option value="+593">🇪🇨 +593 Equador</option>
-          <option value="+591">🇧🇴 +591 Bolívia</option>
-          <option value="+595">🇵🇾 +595 Paraguai</option>
-          <option value="+598">🇺🇾 +598 Uruguai</option>
-          <option value="+34">🇪🇸 +34 Espanha</option>
-          <option value="+44">🇬🇧 +44 Reino Unido</option>
-          <option value="+33">🇫🇷 +33 França</option>
-          <option value="+49">🇩🇪 +49 Alemanha</option>
-          <option value="+39">🇮🇹 +39 Itália</option>
-          <option value="+31">🇳🇱 +31 Holanda</option>
-          <option value="+41">🇨🇭 +41 Suíça</option>
-          <option value="+353">🇮🇪 +353 Irlanda</option>
-          <option value="+27">🇿🇦 +27 África do Sul</option>
-          <option value="+234">🇳🇬 +234 Nigéria</option>
-          <option value="+971">🇦🇪 +971 Emirados Árabes</option>
-          <option value="+61">🇦🇺 +61 Austrália</option>
-          <option value="+81">🇯🇵 +81 Japão</option>
-          <option value="+86">🇨🇳 +86 China</option>
-          <option value="+91">🇮🇳 +91 Índia</option>
-          <option value="+">🌎 Outro país</option>
+          <option value="+55">{tr("🇧🇷 +55 Brasil")}</option>
+          <option value="+351">{tr("🇵🇹 +351 Portugal")}</option>
+          <option value="+244">{tr("🇦🇴 +244 Angola")}</option>
+          <option value="+258">{tr("🇲🇿 +258 Moçambique")}</option>
+          <option value="+238">{tr("🇨🇻 +238 Cabo Verde")}</option>
+          <option value="+245">{tr("🇬🇼 +245 Guiné-Bissau")}</option>
+          <option value="+239">{tr("🇸🇹 +239 São Tomé e Príncipe")}</option>
+          <option value="+670">{tr("🇹🇱 +670 Timor-Leste")}</option>
+          <option value="+1">{tr("🇺🇸 +1 EUA / Canadá")}</option>
+          <option value="+52">{tr("🇲🇽 +52 México")}</option>
+          <option value="+54">{tr("🇦🇷 +54 Argentina")}</option>
+          <option value="+56">{tr("🇨🇱 +56 Chile")}</option>
+          <option value="+57">{tr("🇨🇴 +57 Colômbia")}</option>
+          <option value="+51">{tr("🇵🇪 +51 Peru")}</option>
+          <option value="+58">{tr("🇻🇪 +58 Venezuela")}</option>
+          <option value="+593">{tr("🇪🇨 +593 Equador")}</option>
+          <option value="+591">{tr("🇧🇴 +591 Bolívia")}</option>
+          <option value="+595">{tr("🇵🇾 +595 Paraguai")}</option>
+          <option value="+598">{tr("🇺🇾 +598 Uruguai")}</option>
+          <option value="+34">{tr("🇪🇸 +34 Espanha")}</option>
+          <option value="+44">{tr("🇬🇧 +44 Reino Unido")}</option>
+          <option value="+33">{tr("🇫🇷 +33 França")}</option>
+          <option value="+49">{tr("🇩🇪 +49 Alemanha")}</option>
+          <option value="+39">{tr("🇮🇹 +39 Itália")}</option>
+          <option value="+31">{tr("🇳🇱 +31 Holanda")}</option>
+          <option value="+41">{tr("🇨🇭 +41 Suíça")}</option>
+          <option value="+353">{tr("🇮🇪 +353 Irlanda")}</option>
+          <option value="+27">{tr("🇿🇦 +27 África do Sul")}</option>
+          <option value="+234">{tr("🇳🇬 +234 Nigéria")}</option>
+          <option value="+971">{tr("🇦🇪 +971 Emirados Árabes")}</option>
+          <option value="+61">{tr("🇦🇺 +61 Austrália")}</option>
+          <option value="+81">{tr("🇯🇵 +81 Japão")}</option>
+          <option value="+86">{tr("🇨🇳 +86 China")}</option>
+          <option value="+91">{tr("🇮🇳 +91 Índia")}</option>
+          <option value="+">{tr("🌎 Outro país")}</option>
         </select>
         <input
           required

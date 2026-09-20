@@ -15,7 +15,7 @@ const field =
 const STATUS: Record<string, { label: string; cls: string }> = {
   open: { label: "Aberto", cls: "bg-amber-400/15 text-amber-300" },
   answered: { label: "Respondido", cls: "bg-brand-green/15 text-brand-green" },
-  resolved: { label: tr("Resolvido"), cls: "bg-white/10 text-slate-400" },
+  resolved: { label: "Resolvido", cls: "bg-white/10 text-slate-400" },
 };
 
 function fmt(iso: string) {
@@ -51,7 +51,7 @@ export default async function TicketPage({ params }: { params: { id: string } })
           <h1 className="font-display text-2xl font-bold text-white">{ticket.subject}</h1>
           <p className="mt-1 text-xs text-slate-500">{CATEGORIES[ticket.category] || ticket.category} · aberto em {fmt(ticket.created_at)}</p>
         </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${st.cls}`}>{st.label}</span>
+        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${st.cls}`}>{tr(st.label)}</span>
       </div>
 
       {/* Conversa */}

@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Background from "@/components/Background";
@@ -35,17 +36,17 @@ export default async function WorkshopPage({ params }: { params: { id: string } 
       <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
         <div className="grid items-start gap-10 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-brand-green">Workshop ao vivo</p>
+            <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Workshop ao vivo")}</p>
             <h1 className="mt-2 font-display text-4xl font-bold text-white">{ev.title}</h1>
             <p className="mt-2 text-brand-teal">{fmt(ev.starts_at)}{ev.duration_min ? ` · ${ev.duration_min} min` : ""}</p>
             {ev.description && <p className="mt-4 text-lg text-slate-300">{ev.description}</p>}
             {paid && (
               <div className="mt-8 inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
                 <div>
-                  <span className="block text-xs uppercase tracking-wide text-slate-400">Ingresso avulso</span>
+                  <span className="block text-xs uppercase tracking-wide text-slate-400">{tr("Ingresso avulso")}</span>
                   <span className="font-display text-3xl font-bold text-white">{brl(price)}</span>
                 </div>
-                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">Grátis para assinantes</span>
+                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-brand-green">{tr("Grátis para assinantes")}</span>
               </div>
             )}
           </div>
@@ -57,21 +58,21 @@ export default async function WorkshopPage({ params }: { params: { id: string } 
                   <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-brand-green/20 text-brand-green">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </div>
-                  <p className="text-lg font-semibold text-white">Você já tem acesso!</p>
-                  <p className="mt-1 text-sm text-slate-300">Como assinante, este workshop está incluso. Ele aparece na sua Agenda e o link libera no horário.</p>
-                  <Link href="/conta/agenda" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Ver na agenda</Link>
+                  <p className="text-lg font-semibold text-white">{tr("Você já tem acesso!")}</p>
+                  <p className="mt-1 text-sm text-slate-300">{tr("Como assinante, este workshop está incluso. Ele aparece na sua Agenda e o link libera no horário.")}</p>
+                  <Link href="/conta/agenda" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">{tr("Ver na agenda")}</Link>
                 </div>
               ) : paid ? (
                 <>
-                  <h2 className="font-display text-xl font-bold text-white">Garanta sua vaga</h2>
-                  <p className="mt-1 text-sm text-slate-400">Ingresso avulso. Já é assinante? <Link href="/entrar" className="text-brand-teal hover:underline">entre</Link> e participe de graça.</p>
+                  <h2 className="font-display text-xl font-bold text-white">{tr("Garanta sua vaga")}</h2>
+                  <p className="mt-1 text-sm text-slate-400">{tr("Ingresso avulso. Já é assinante?")} <Link href="/entrar" className="text-brand-teal hover:underline">{tr("entre")}</Link> {tr("e participe de graça.")}</p>
                   <div className="mt-6"><WorkshopBuyForm eventId={ev.id} title={ev.title} /></div>
                 </>
               ) : (
                 <div className="text-center">
-                  <p className="text-lg font-semibold text-white">Workshop exclusivo para assinantes</p>
-                  <p className="mt-1 text-sm text-slate-300">Assine a DriveData Academy e participe deste e de todos os encontros ao vivo.</p>
-                  <Link href="/matricula" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Ver assinatura</Link>
+                  <p className="text-lg font-semibold text-white">{tr("Workshop exclusivo para assinantes")}</p>
+                  <p className="mt-1 text-sm text-slate-300">{tr("Assine a DriveData Academy e participe deste e de todos os encontros ao vivo.")}</p>
+                  <Link href="/matricula" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">{tr("Ver assinatura")}</Link>
                 </div>
               )}
             </div>

@@ -70,7 +70,7 @@ function Tabela({ dados, limite = 12 }: { dados: Resultado; limite?: number }) {
         </tbody>
       </table>
       {dados.linhas.length > limite && (
-        <p className="px-3 py-2 text-xs text-slate-500">e mais {dados.linhas.length - limite} linhas</p>
+        <p className="px-3 py-2 text-xs text-slate-500">{tr("e mais")} {dados.linhas.length - limite} linhas</p>
       )}
     </div>
   );
@@ -289,7 +289,7 @@ export default function Arena({ semente }: { semente: number }) {
             <span className="block h-full rounded-full bg-gradient-to-r from-brand-green to-brand-teal" style={{ width: `${(feitos / FAMILIAS.length) * 100}%` }} />
           </span>
           <p className="mt-3 text-xs text-slate-500">
-            A sua base tem {base.tabelas.reduce((s, t) => s + t.linhas.length, 0).toLocaleString("pt-BR")} linhas e foi sorteada só para você. A resposta do colega não fecha na sua.
+            {tr("A sua base tem")} {base.tabelas.reduce((s, t) => s + t.linhas.length, 0).toLocaleString("pt-BR")} {tr("linhas e foi sorteada só para você. A resposta do colega não fecha na sua.")}
           </p>
         </div>
 

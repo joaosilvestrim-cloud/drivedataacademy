@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Background from "@/components/Background";
@@ -48,7 +49,7 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
       <Background />
       <Navbar />
       <main className="relative mx-auto max-w-6xl px-6 pb-24 pt-32 sm:pt-40">
-        <Link href="/blog" className="text-sm text-slate-400 transition-colors hover:text-brand-green">← Todos os artigos</Link>
+        <Link href="/blog" className="text-sm text-slate-400 transition-colors hover:text-brand-green">{tr("← Todos os artigos")}</Link>
 
         <header className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div>
@@ -56,7 +57,7 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
             <h1 className="mt-3 font-display text-3xl font-bold leading-[1.1] tracking-tight sm:text-5xl">{post.title}</h1>
             {post.excerpt && <p className="mt-5 max-w-2xl text-lg text-slate-300/90">{post.excerpt}</p>}
             <p className="mt-6 text-sm text-slate-500">
-              {post.author || "DriveData Academy"} · {data(post.published_at)} · {minutos} min de leitura
+              {post.author || "DriveData Academy"} · {data(post.published_at)} · {minutos} {tr("min de leitura")}
             </p>
           </div>
           {post.cover_url && (
@@ -72,15 +73,15 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <div className="glass rounded-3xl border border-white/8 p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">Aprenda na prática</p>
-              <p className="mt-3 font-display text-xl font-bold text-white">Lives, gravações, ferramentas e treinamentos com preço de assinante.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">{tr("Aprenda na prática")}</p>
+              <p className="mt-3 font-display text-xl font-bold text-white">{tr("Lives, gravações, ferramentas e treinamentos com preço de assinante.")}</p>
               <Link href="/cursos" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                Conhecer a assinatura
+                {tr("Conhecer a assinatura")}
               </Link>
             </div>
             {(outros ?? []).length > 0 && (
               <div className="mt-8">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Leia também</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{tr("Leia também")}</p>
                 <ul className="mt-4 divide-y divide-white/5">
                   {(outros ?? []).map((o: any) => (
                     <li key={o.id} className="py-3">

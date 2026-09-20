@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { tamanhoLegivel, extensao } from "@/lib/materiais";
 import ContagemLiberacao from "@/components/ContagemLiberacao";
@@ -39,20 +40,20 @@ export default function Biblioteca({
       <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-900/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
           <div className="flex min-w-0 items-center gap-4">
-            <Link href="/conta" aria-label="Minha conta">
+            <Link href="/conta" aria-label={tr("Minha conta")}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Drive Data Academy" className="h-8 w-auto" />
+              <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-8 w-auto" />
             </Link>
             <span className="truncate text-sm font-medium text-slate-300">{titulo}</span>
           </div>
-          <Link href="/conta/cursos" className="text-sm text-slate-400 transition-colors hover:text-white">← Cursos</Link>
+          <Link href="/conta/cursos" className="text-sm text-slate-400 transition-colors hover:text-white">{tr("← Cursos")}</Link>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-6 pb-20 pt-10">
         <div className="grid items-center gap-8 md:grid-cols-[1fr_20rem]">
           <div>
-            <p className="text-sm text-slate-400">Biblioteca · incluída na assinatura</p>
+            <p className="text-sm text-slate-400">{tr("Biblioteca · incluída na assinatura")}</p>
             <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">{titulo}</h1>
             <p className="mt-3 max-w-xl text-slate-400">
               {liberado
@@ -62,20 +63,19 @@ export default function Biblioteca({
             </p>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/banners/cases-reais-prontos.png" alt="Cases reais prontos, disponíveis para download" className="hidden aspect-video w-full rounded-2xl border border-white/10 object-cover md:block" />
+          <img src="/banners/cases-reais-prontos.png" alt={tr("Cases reais prontos, disponíveis para download")} className="hidden aspect-video w-full rounded-2xl border border-white/10 object-cover md:block" />
         </div>
 
         {/* Enquanto a carência corre, a pessoa navega pela biblioteca inteira e
             vê exatamente quando o download abre. */}
         {!liberado && liberaEm && (
           <div className="mt-10 rounded-2xl border border-amber-300/25 bg-amber-300/[0.06] p-6">
-            <p className="text-sm font-semibold text-amber-200">Seus downloads abrem em</p>
+            <p className="text-sm font-semibold text-amber-200">{tr("Seus downloads abrem em")}</p>
             <div className="mt-3">
               <ContagemLiberacao liberaEm={liberaEm} agoraInicial={agoraInicial} />
             </div>
             <p className="mt-4 max-w-2xl text-sm text-slate-300/90">
-              O download dos arquivos libera {DIAS_CARENCIA} dias depois da assinatura, em {dataLiberacao}. Até lá você
-              navega pela biblioteca inteira e vê a prévia de cada material, para já escolher por onde começar.
+              {tr("O download dos arquivos libera")} {DIAS_CARENCIA} dias depois da assinatura, em {dataLiberacao}{tr(". Até lá você navega pela biblioteca inteira e vê a prévia de cada material, para já escolher por onde começar.")}
             </p>
           </div>
         )}
@@ -85,11 +85,11 @@ export default function Biblioteca({
             <section key={m.id} aria-labelledby={`mod-${m.id}`}>
               <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-white/10 pb-3">
                 <h2 id={`mod-${m.id}`} className="font-display text-xl font-semibold text-white">{m.title}</h2>
-                {m.locked && <span className="text-sm text-amber-300/90">Libera em {m.releaseLabel}</span>}
+                {m.locked && <span className="text-sm text-amber-300/90">{tr("Libera em")} {m.releaseLabel}</span>}
               </div>
 
               {m.locked ? (
-                <p className="py-6 text-sm text-slate-500">Os arquivos deste módulo aparecem na data de liberação.</p>
+                <p className="py-6 text-sm text-slate-500">{tr("Os arquivos deste módulo aparecem na data de liberação.")}</p>
               ) : (
                 m.lessons.map((a) => {
                   const arquivos = arquivosPorAula[a.id] ?? [];
@@ -99,7 +99,7 @@ export default function Biblioteca({
                       {a.content && <p className="mt-1 max-w-2xl whitespace-pre-line text-sm text-slate-400">{a.content}</p>}
 
                       {arquivos.length === 0 ? (
-                        <p className="mt-3 text-sm text-slate-500">Os arquivos desta seção estão sendo preparados.</p>
+                        <p className="mt-3 text-sm text-slate-500">{tr("Os arquivos desta seção estão sendo preparados.")}</p>
                       ) : (
                         <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                           {arquivos.map((f) => {
@@ -133,7 +133,7 @@ export default function Biblioteca({
                                         <span className="ml-auto font-semibold text-brand-green group-hover:underline">{f.file_name ? "Baixar" : "Abrir link"}</span>
                                       ) : (
                                         <span className="ml-auto inline-flex items-center gap-2 text-amber-300/90">
-                                          <span className="font-semibold">Libera em</span>
+                                          <span className="font-semibold">{tr("Libera em")}</span>
                                           {liberaEm && <ContagemLiberacao liberaEm={liberaEm} agoraInicial={agoraInicial} compacto />}
                                         </span>
                                       )}

@@ -46,7 +46,7 @@ export default async function CertificadosPage() {
               <div className="p-6">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">{tr("Certificado")}</p>
                 <h3 className="mt-2 font-display text-lg font-bold text-white">{c.course_title}</h3>
-                <p className="mt-1 text-sm text-slate-400">Emitido em {fmt(c.created_at)}</p>
+                <p className="mt-1 text-sm text-slate-400">{tr("Emitido em")} {fmt(c.created_at)}</p>
                 <p className="mt-3 font-mono text-xs text-slate-500">{c.code}</p>
                 <span className="mt-4 inline-block text-sm font-medium text-brand-green">{tr("Ver certificado →")}</span>
               </div>

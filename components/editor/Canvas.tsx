@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as RPointerEvent, type MouseEvent as RMouseEvent } from "react";
 import { useEditor, elementosAtivos } from "@/lib/editor/store";
 import { iconeSvg, svgDeInner } from "@/lib/editor/icones";
@@ -134,6 +136,7 @@ function EditableText({ el, onDone }: { el: SceneElement; onDone: () => void }) 
 }
 
 function ConteudoEl({ el, foco = null }: { el: SceneElement; foco?: string | null }) {
+  const tr = usarTraducao();
   const cor = corViva(el);
   // clicar numa parte do componente seleciona o elemento (solo) e ativa a parte na direita
   const selParte = (p: string) => (ev: RMouseEvent) => { ev.stopPropagation(); const st = useEditor.getState(); st.selecionar(el.id, false, true); st.setParte(p); };
@@ -525,7 +528,7 @@ function ConteudoEl({ el, foco = null }: { el: SceneElement; foco?: string | nul
     );
   }
   if (el.type === "funil") {
-    const etapas = el.etapas && el.etapas.length ? el.etapas : [{ rotulo: "Etapa", valor: 1 }];
+    const etapas = el.etapas && el.etapas.length ? el.etapas : [{ rotulo: tr("Etapa"), valor: 1 }];
     const max = Math.max(...etapas.map((e2) => e2.valor), 1);
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "stretch", justifyContent: "center", gap: 4, width: "100%", height: "100%" }}>
@@ -618,6 +621,7 @@ export default function Canvas({
   snap?: boolean;
   grid?: boolean;
 }) {
+  const tr = usarTraducao();
   const doc = useEditor((s) => s.doc);
   const els = useEditor(elementosAtivos);
   const selectedIds = useEditor((s) => s.selectedIds);
@@ -825,7 +829,7 @@ export default function Canvas({
         </span>
         <div
           onPointerDown={startCardResize}
-          title="Arraste para redimensionar o canvas"
+          title={tr("Arraste para redimensionar o canvas")}
           className="absolute z-10 flex items-center justify-center rounded-md border border-viz bg-surface shadow"
           style={{ right: -7, bottom: -7, width: 16, height: 16, cursor: "nwse-resize" }}
         >
@@ -888,7 +892,7 @@ export default function Canvas({
 
           {els.length === 0 && (
             <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none", color: "rgba(148,163,184,.6)", fontSize: 13, textAlign: "center", padding: 16 }}>
-              Canvas vazio — arraste componentes da esquerda ou use um bloco pronto
+              {tr("Canvas vazio — arraste componentes da esquerda ou use um bloco pronto")}
             </div>
           )}
         </div>

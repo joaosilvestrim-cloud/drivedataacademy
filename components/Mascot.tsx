@@ -1,9 +1,12 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 
 // Mascote/assistente DriveData. Usa /assistente.png; se faltar, cai num SVG.
 export default function Mascot({ className = "h-12 w-12" }: { className?: string }) {
+  const tr = usarTraducao();
   const [err, setErr] = useState(false);
   if (err) {
     return (
@@ -20,5 +23,5 @@ export default function Mascot({ className = "h-12 w-12" }: { className?: string
     );
   }
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src="/assistente.png" alt="Assistente DriveData" className={`object-contain ${className}`} onError={() => setErr(true)} />;
+  return <img src="/assistente.png" alt={tr("Assistente DriveData")} className={`object-contain ${className}`} onError={() => setErr(true)} />;
 }

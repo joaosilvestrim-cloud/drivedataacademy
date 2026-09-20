@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { svgDeInner } from "@/lib/editor/icones";
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export default function IconePicker({ valorAtual, cor, stroke, onPick }: Props) {
+  const tr = usarTraducao();
   const [icones, setIcones] = useState<Record<string, string> | null>(null);
   const [busca, setBusca] = useState("");
   const [cat, setCat] = useState("todos");
@@ -51,7 +54,7 @@ export default function IconePicker({ valorAtual, cor, stroke, onPick }: Props) 
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar ícone… ex.: 'foguete', 'coração', 'gráfico'"
+          placeholder={tr("Buscar ícone… ex.: 'foguete', 'coração', 'gráfico'")}
           className="w-full rounded-md border border-border bg-surface py-1.5 pl-8 pr-7 text-xs focus:border-viz focus:outline-none"
         />
         {busca && (
@@ -62,7 +65,7 @@ export default function IconePicker({ valorAtual, cor, stroke, onPick }: Props) 
       {/* categorias — faixa de rolagem horizontal (economiza altura) */}
       {!busca && (
         <div className="-mx-0.5 flex gap-1 overflow-x-auto px-0.5 pb-1 [scrollbar-width:thin]">
-          <button onClick={() => setCat("todos")} className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${cat === "todos" ? "bg-viz text-white" : "bg-background text-muted hover:text-foreground"}`}>Todos</button>
+          <button onClick={() => setCat("todos")} className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${cat === "todos" ? "bg-viz text-white" : "bg-background text-muted hover:text-foreground"}`}>{tr("Todos")}</button>
           {CATEGORIAS_ICONE.map((c) => (
             <button key={c.id} onClick={() => setCat(c.id)} className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${cat === c.id ? "bg-viz text-white" : "bg-background text-muted hover:text-foreground"}`}>{c.label}</button>
           ))}
@@ -71,9 +74,9 @@ export default function IconePicker({ valorAtual, cor, stroke, onPick }: Props) 
 
       {/* grid */}
       {!icones ? (
-        <p className="py-6 text-center text-xs text-muted">Carregando ícones…</p>
+        <p className="py-6 text-center text-xs text-muted">{tr("Carregando ícones…")}</p>
       ) : visiveis.length === 0 ? (
-        <p className="py-6 text-center text-xs text-muted">Nenhum ícone encontrado.</p>
+        <p className="py-6 text-center text-xs text-muted">{tr("Nenhum ícone encontrado.")}</p>
       ) : (
         <>
           <div className="grid max-h-64 grid-cols-6 gap-1 overflow-y-auto rounded-md border border-border bg-background/40 p-1.5">

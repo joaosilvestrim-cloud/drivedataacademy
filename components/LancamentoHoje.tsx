@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { createAdminClient } from "@/lib/supabase/admin";
 import Cronometro from "@/components/Cronometro";
 import CupomDestaque from "@/components/CupomDestaque";
@@ -82,11 +83,11 @@ export default async function LancamentoHoje() {
             className="group inline-flex rounded-2xl bg-gradient-to-r from-brand-green via-brand-teal to-brand-blue p-[2px] shadow-[0_18px_44px_-20px_rgba(52,232,160,0.85)] transition-transform duration-300 hover:scale-[1.02]"
           >
             <span className="inline-flex items-center gap-3 rounded-[14px] bg-ink-900 px-8 py-4 text-base font-bold text-white transition-colors duration-300 group-hover:bg-transparent group-hover:text-ink-900 sm:text-lg">
-              Faça parte da Academy
+              {tr("Faça parte da Academy")}
               <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
             </span>
           </a>
-          <p className="mt-3 text-sm text-slate-400">Comunidade, lives, gravações e biblioteca de materiais no mesmo lugar.</p>
+          <p className="mt-3 text-sm text-slate-400">{tr("Comunidade, lives, gravações e biblioteca de materiais no mesmo lugar.")}</p>
 
           {/* Cupom de lançamento: sai sozinho da home quando vence. */}
           <CupomDestaque />
@@ -96,9 +97,9 @@ export default async function LancamentoHoje() {
           </p>
           <h1 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
             {estreia ? (
-              <>A Academy estreia hoje, <span className="text-brand-green">ao vivo.</span></>
+              <>{tr("A Academy estreia hoje,")} <span className="text-brand-green">{tr("ao vivo.")}</span></>
             ) : (
-              <>Aula aberta, <span className="text-brand-green">ao vivo</span>, toda semana.</>
+              <>{tr("Aula aberta,")} <span className="text-brand-green">{tr("ao vivo")}</span>{tr(", toda semana.")}</>
             )}
           </h1>
           <p className="mt-5 max-w-lg text-lg text-slate-300/90">
@@ -124,7 +125,7 @@ export default async function LancamentoHoje() {
                   className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-green"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-                  Assistir no YouTube
+                  {tr("Assistir no YouTube")}
                 </a>
               )}
             </div>
@@ -159,7 +160,7 @@ export default async function LancamentoHoje() {
 
       {grade.length > 0 && (
         <div className="mt-14">
-          <h2 className="font-display text-lg font-semibold text-white">Na grade</h2>
+          <h2 className="font-display text-lg font-semibold text-white">{tr("Na grade")}</h2>
           <ol className="mt-3 border-t border-white/10">
             {grade.map((e) => (
               <li key={e.id} className="grid grid-cols-[5.5rem_1fr] items-baseline gap-x-5 gap-y-1 border-b border-white/10 py-4 sm:grid-cols-[7rem_4rem_1fr_auto]">
@@ -171,10 +172,10 @@ export default async function LancamentoHoje() {
                 </span>
                 {e.url ? (
                   <a href={e.url} target="_blank" rel="noreferrer" className="col-span-2 text-sm text-slate-300 underline decoration-white/20 underline-offset-4 transition-colors hover:text-brand-green hover:decoration-brand-green sm:col-span-1">
-                    Lembrar no YouTube
+                    {tr("Lembrar no YouTube")}
                   </a>
                 ) : (
-                  <span className="col-span-2 text-sm text-slate-600 sm:col-span-1">link em breve</span>
+                  <span className="col-span-2 text-sm text-slate-600 sm:col-span-1">{tr("link em breve")}</span>
                 )}
               </li>
             ))}

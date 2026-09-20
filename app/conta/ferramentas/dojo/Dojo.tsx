@@ -250,7 +250,7 @@ export default function Dojo({ semente }: { semente: number }) {
               </div>
               <div>
                 <label className="block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400" htmlFor="dojo-formula">
-                  A fórmula {trilha === "dax" ? "(DAX)" : "(Excel)"}
+                  {tr("A fórmula")} {trilha === "dax" ? "(DAX)" : "(Excel)"}
                 </label>
                 <textarea
                   id="dojo-formula"
@@ -288,10 +288,10 @@ export default function Dojo({ semente }: { semente: number }) {
 
               <div className="mt-3 flex flex-wrap gap-4 text-xs">
                 <span className={veredito.valorOk ? "text-brand-green" : "text-red-300"}>
-                  {veredito.valorOk ? "✓" : "✕"} número
+                  {veredito.valorOk ? "✓" : "✕"} {tr("número")}
                 </span>
                 <span className={veredito.formulaOk ? "text-brand-green" : "text-red-300"}>
-                  {veredito.formulaOk ? "✓" : "✕"} fórmula
+                  {veredito.formulaOk ? "✓" : "✕"} {tr("fórmula")}
                 </span>
               </div>
 
@@ -300,7 +300,7 @@ export default function Dojo({ semente }: { semente: number }) {
               ))}
 
               {!veredito.valorOk && veredito.formulaOk && (
-                <p className="mt-2 text-sm text-slate-300">Com a fórmula certa, o número da sua base é {formatar(veredito.esperado, desafio.formato)}.</p>
+                <p className="mt-2 text-sm text-slate-300">{tr("Com a fórmula certa, o número da sua base é")} {formatar(veredito.esperado, desafio.formato)}.</p>
               )}
 
               {veredito.acertou ? (

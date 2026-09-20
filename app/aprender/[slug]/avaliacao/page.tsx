@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -38,7 +39,7 @@ export default async function AvaliacaoPage({
     <div className="min-h-screen bg-ink-900">
       <header className="border-b border-white/10 px-6 py-3">
         <div className="mx-auto flex max-w-3xl items-center gap-3">
-          <Link href={`/aprender/${params.slug}`} className="text-sm text-slate-400 hover:text-white">← Voltar ao curso</Link>
+          <Link href={`/aprender/${params.slug}`} className="text-sm text-slate-400 hover:text-white">{tr("← Voltar ao curso")}</Link>
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-6 py-10">{children}</main>
@@ -83,9 +84,9 @@ export default async function AvaliacaoPage({
         </div>
         <div className="mt-6 flex items-center gap-3">
           {attempt.passed ? (
-            <Link href={`/aprender/${params.slug}`} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Voltar ao curso</Link>
+            <Link href={`/aprender/${params.slug}`} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">{tr("Voltar ao curso")}</Link>
           ) : (
-            <Link href={`/aprender/${params.slug}/avaliacao`} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Tentar novamente</Link>
+            <Link href={`/aprender/${params.slug}/avaliacao`} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">{tr("Tentar novamente")}</Link>
           )}
         </div>
       </Shell>
@@ -97,9 +98,9 @@ export default async function AvaliacaoPage({
     return (
       <Shell>
         <div className="rounded-2xl border border-brand-green/30 bg-brand-green/10 p-6 text-center">
-          <p className="font-display text-2xl font-bold text-white">Você já foi aprovado</p>
+          <p className="font-display text-2xl font-bold text-white">{tr("Você já foi aprovado")}</p>
           <p className="mt-1 text-brand-green">Nota: {bestPassed.score}%</p>
-          <Link href={`/aprender/${params.slug}/avaliacao?attempt=${bestPassed.id}`} className="mt-4 inline-block text-sm text-slate-300 hover:underline">Ver gabarito</Link>
+          <Link href={`/aprender/${params.slug}/avaliacao?attempt=${bestPassed.id}`} className="mt-4 inline-block text-sm text-slate-300 hover:underline">{tr("Ver gabarito")}</Link>
         </div>
       </Shell>
     );
@@ -111,8 +112,8 @@ export default async function AvaliacaoPage({
     return (
       <Shell>
         <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-6 text-center">
-          <p className="font-display text-xl font-bold text-white">Tentativas esgotadas</p>
-          <p className="mt-2 text-sm text-amber-200">Você usou as {quiz.max_attempts} tentativas. Aguarde {quiz.cooldown_hours}h para tentar de novo e revise o conteúdo.</p>
+          <p className="font-display text-xl font-bold text-white">{tr("Tentativas esgotadas")}</p>
+          <p className="mt-2 text-sm text-amber-200">{tr("Você usou as")} {quiz.max_attempts} tentativas. Aguarde {quiz.cooldown_hours}{tr("h para tentar de novo e revise o conteúdo.")}</p>
         </div>
       </Shell>
     );
@@ -124,10 +125,10 @@ export default async function AvaliacaoPage({
   return (
     <Shell>
       <h1 className="font-display text-2xl font-bold text-white">{quiz.title}</h1>
-      <p className="mt-1 text-sm text-slate-400">Nota mínima: {quiz.pass_score}% · Tentativas restantes: {attemptsLeft || quiz.max_attempts}</p>
+      <p className="mt-1 text-sm text-slate-400">{tr("Nota mínima:")} {quiz.pass_score}% · Tentativas restantes: {attemptsLeft || quiz.max_attempts}</p>
 
       {qs.length === 0 ? (
-        <p className="mt-6 text-slate-400">Esta avaliação ainda não tem perguntas.</p>
+        <p className="mt-6 text-slate-400">{tr("Esta avaliação ainda não tem perguntas.")}</p>
       ) : (
         <form action={gradeQuiz} className="mt-6 space-y-4">
           <input type="hidden" name="slug" value={params.slug} />
@@ -146,7 +147,7 @@ export default async function AvaliacaoPage({
               </div>
             </div>
           ))}
-          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Enviar respostas</button>
+          <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Enviar respostas")}</button>
         </form>
       )}
     </Shell>

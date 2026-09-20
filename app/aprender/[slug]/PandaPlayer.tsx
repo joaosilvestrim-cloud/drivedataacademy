@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef } from "react";
 import { markLessonDone } from "./actions";
 
@@ -27,6 +29,7 @@ export default function PandaPlayer({
   courseId: string;
   slug: string;
 }) {
+  const tr = usarTraducao();
   const marked = useRef(false);
   const watched = useRef(0);
   const lastT = useRef<number | null>(null);
@@ -111,7 +114,7 @@ export default function PandaPlayer({
   if (!src) {
     return (
       <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] px-6 text-center text-sm text-slate-500">
-        Cole o link de compartilhamento (ou o código de incorporar) do Panda nesta aula.
+        {tr("Cole o link de compartilhamento (ou o código de incorporar) do Panda nesta aula.")}
       </div>
     );
   }
@@ -123,7 +126,7 @@ export default function PandaPlayer({
           ref={frame}
           className="absolute inset-0 h-full w-full"
           src={src}
-          title="Aula"
+          title={tr("Aula")}
           allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
           allowFullScreen
         />

@@ -248,7 +248,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
         {filtrando && (
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
             <span>
-              <span className="font-semibold text-white">{filtrados.length}</span> de {membros.length}{" "}
+              <span className="font-semibold text-white">{filtrados.length}</span> {tr("de")} {membros.length}{" "}
               {membros.length === 1 ? "aluno" : "alunos"}
             </span>
             <button
@@ -287,7 +287,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
                   {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">{tr("(você)")}</span>}
                 </p>
                 {m.headline && <p className="truncate text-xs text-slate-400">{m.headline}</p>}
-                <p className="text-[0.7rem] text-slate-500">na comunidade {tempo(m.since)}</p>
+                <p className="text-[0.7rem] text-slate-500">{tr("na comunidade")} {tempo(m.since)}</p>
               </div>
             </div>
 

@@ -1,9 +1,12 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import { submitNps } from "./actions";
 
 export default function NpsPrompt({ courseId, slug }: { courseId: string; slug: string }) {
+  const tr = usarTraducao();
   const [score, setScore] = useState<number | null>(null);
 
   const color = (n: number) =>
@@ -11,8 +14,8 @@ export default function NpsPrompt({ courseId, slug }: { courseId: string; slug: 
 
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <p className="text-sm font-semibold text-white">De 0 a 10, o quanto você recomendaria este curso?</p>
-      <p className="mt-1 text-xs text-slate-400">Sua nota nos ajuda a melhorar os treinamentos.</p>
+      <p className="text-sm font-semibold text-white">{tr("De 0 a 10, o quanto você recomendaria este curso?")}</p>
+      <p className="mt-1 text-xs text-slate-400">{tr("Sua nota nos ajuda a melhorar os treinamentos.")}</p>
 
       <form action={submitNps} className="mt-4">
         <input type="hidden" name="course_id" value={courseId} />
@@ -31,12 +34,12 @@ export default function NpsPrompt({ courseId, slug }: { courseId: string; slug: 
             </button>
           ))}
         </div>
-        <div className="mt-1 flex justify-between text-[0.65rem] text-slate-500"><span>Não recomendaria</span><span>Recomendaria muito</span></div>
+        <div className="mt-1 flex justify-between text-[0.65rem] text-slate-500"><span>{tr("Não recomendaria")}</span><span>{tr("Recomendaria muito")}</span></div>
 
         {score !== null && (
           <div className="mt-4 space-y-3">
-            <textarea name="comment" rows={2} placeholder="Quer deixar um comentário? (opcional)" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Enviar avaliação</button>
+            <textarea name="comment" rows={2} placeholder={tr("Quer deixar um comentário? (opcional)")} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Enviar avaliação")}</button>
           </div>
         )}
       </form>

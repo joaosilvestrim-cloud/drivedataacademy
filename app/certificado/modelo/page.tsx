@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import CertificateView from "@/components/CertificateView";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -24,11 +25,11 @@ export default async function CertModeloPage({ searchParams }: { searchParams: {
       <div className="certificate-page-inner mx-auto max-w-6xl">
         <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-green">Modelo de certificado</p>
-            <h1 className="font-display text-xl font-bold text-white">Pré-visualização</h1>
-            <p className="mt-1 text-sm text-slate-400">Exemplo com dados fictícios. O certificado real usa o nome do aluno e o título do curso.</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-green">{tr("Modelo de certificado")}</p>
+            <h1 className="font-display text-xl font-bold text-white">{tr("Pré-visualização")}</h1>
+            <p className="mt-1 text-sm text-slate-400">{tr("Exemplo com dados fictícios. O certificado real usa o nome do aluno e o título do curso.")}</p>
           </div>
-          <Link href="/admin/cursos" className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300 hover:border-brand-green/50 hover:text-brand-green">← Cursos</Link>
+          <Link href="/admin/cursos" className="rounded-lg border border-white/10 px-4 py-2 text-sm text-slate-300 hover:border-brand-green/50 hover:text-brand-green">{tr("← Cursos")}</Link>
         </div>
 
         <CertificateView

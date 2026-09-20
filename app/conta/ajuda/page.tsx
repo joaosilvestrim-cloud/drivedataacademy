@@ -59,7 +59,7 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
       {/* Meus chamados */}
       <div className="mt-10 flex items-center justify-between">
         <h2 className="font-display text-lg font-bold text-white">{tr("Meus atendimentos")}</h2>
-        <span className="text-xs text-slate-500">{(tickets ?? []).length} no total</span>
+        <span className="text-xs text-slate-500">{(tickets ?? []).length} {tr("no total")}</span>
       </div>
       <div className="mt-4 space-y-2">
         {(tickets ?? []).length === 0 && (

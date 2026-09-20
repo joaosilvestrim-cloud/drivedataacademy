@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, type ReactNode } from "react";
 import {
   Copy, ClipboardPaste, CopyPlus, BringToFront, SendToBack,
@@ -27,6 +29,7 @@ function Item({ icon, label, atalho, onClick, danger }: { icon: ReactNode; label
 }
 
 export default function ContextMenu({ menu, onClose }: { menu: MenuCtx | null; onClose: () => void }) {
+  const tr = usarTraducao();
   const selectedIds = useEditor((s) => s.selectedIds);
   const el = useEditor((s) => (menu ? elementosAtivos(s).find((e) => e.id === menu.id) : undefined));
   const temColado = useEditor((s) => !!s.elementoCopiado);
@@ -60,28 +63,28 @@ export default function ContextMenu({ menu, onClose }: { menu: MenuCtx | null; o
       className="fixed z-50 w-52 rounded-xl border border-border bg-surface p-1 shadow-2xl"
       style={{ left: x, top: y }}
     >
-      <Item icon={<CopyPlus className="h-4 w-4" />} label="Duplicar" atalho="Ctrl+D" onClick={run(() => st.duplicarSelecionado())} />
-      <Item icon={<Copy className="h-4 w-4" />} label="Copiar" atalho="Ctrl+C" onClick={run(() => st.copiarElemento(el.id))} />
-      <Item icon={<ClipboardPaste className="h-4 w-4" />} label="Colar" atalho="Ctrl+V" onClick={run(() => st.colarElemento())} />
+      <Item icon={<CopyPlus className="h-4 w-4" />} label={tr("Duplicar")} atalho="Ctrl+D" onClick={run(() => st.duplicarSelecionado())} />
+      <Item icon={<Copy className="h-4 w-4" />} label={tr("Copiar")} atalho="Ctrl+C" onClick={run(() => st.copiarElemento(el.id))} />
+      <Item icon={<ClipboardPaste className="h-4 w-4" />} label={tr("Colar")} atalho="Ctrl+V" onClick={run(() => st.colarElemento())} />
       {temColado ? null : null}
       <div className="my-1 h-px bg-border" />
-      <Item icon={<BringToFront className="h-4 w-4" />} label="Trazer para frente" onClick={run(() => st.zOrder(el.id, "frente"))} />
-      <Item icon={<SendToBack className="h-4 w-4" />} label="Enviar para trás" onClick={run(() => st.zOrder(el.id, "tras"))} />
+      <Item icon={<BringToFront className="h-4 w-4" />} label={tr("Trazer para frente")} onClick={run(() => st.zOrder(el.id, "frente"))} />
+      <Item icon={<SendToBack className="h-4 w-4" />} label={tr("Enviar para trás")} onClick={run(() => st.zOrder(el.id, "tras"))} />
       <div className="my-1 h-px bg-border" />
       {multi && (
         <>
-          <Item icon={<Group className="h-4 w-4" />} label="Agrupar" atalho="Ctrl+G" onClick={run(() => st.agrupar())} />
-          <Item icon={<Ungroup className="h-4 w-4" />} label="Desagrupar" onClick={run(() => st.desagrupar())} />
+          <Item icon={<Group className="h-4 w-4" />} label={tr("Agrupar")} atalho="Ctrl+G" onClick={run(() => st.agrupar())} />
+          <Item icon={<Ungroup className="h-4 w-4" />} label={tr("Desagrupar")} onClick={run(() => st.desagrupar())} />
         </>
       )}
       {!multi && agrupado && (
-        <Item icon={<Ungroup className="h-4 w-4" />} label="Desagrupar" onClick={run(() => st.desagrupar())} />
+        <Item icon={<Ungroup className="h-4 w-4" />} label={tr("Desagrupar")} onClick={run(() => st.desagrupar())} />
       )}
       <Item icon={el.bloqueado ? <Unlock className="h-4 w-4" /> : <Lock className="h-4 w-4" />} label={el.bloqueado ? "Desbloquear" : "Bloquear"} onClick={run(() => st.toggleBloqueio(el.id))} />
-      <Item icon={<EyeOff className="h-4 w-4" />} label="Ocultar" onClick={run(() => st.toggleVisivel(el.id))} />
-      <Item icon={<Star className="h-4 w-4" />} label="Salvar como favorito" onClick={run(() => { const n = window.prompt("Nome do componente favorito:", el.nome); if (n) st.salvarFavorito(n, el); })} />
+      <Item icon={<EyeOff className="h-4 w-4" />} label={tr("Ocultar")} onClick={run(() => st.toggleVisivel(el.id))} />
+      <Item icon={<Star className="h-4 w-4" />} label={tr("Salvar como favorito")} onClick={run(() => { const n = window.prompt("Nome do componente favorito:", el.nome); if (n) st.salvarFavorito(n, el); })} />
       <div className="my-1 h-px bg-border" />
-      <Item icon={<Trash2 className="h-4 w-4" />} label="Excluir" atalho="Del" danger onClick={run(() => st.removerSelecionados())} />
+      <Item icon={<Trash2 className="h-4 w-4" />} label={tr("Excluir")} atalho="Del" danger onClick={run(() => st.removerSelecionados())} />
     </div>
   );
 }

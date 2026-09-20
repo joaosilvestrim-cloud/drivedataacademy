@@ -68,10 +68,10 @@ export default function Forja() {
 
   const [cal, setCal] = useState<OpcoesCalendario>({
     tabela: "dCalendario",
-    coluna: "Data",
+    coluna: tr("Data"),
     origem: "fato",
     fatoTabela: "fVendas",
-    fatoColuna: "Data",
+    fatoColuna: tr("Data"),
     de: anoAtual - 2,
     ate: anoAtual + 1,
     inicioAnoFiscal: 1,

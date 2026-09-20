@@ -123,7 +123,7 @@ function Card({ item }: { item: Item }) {
               {uploading ? "Enviando arquivo..." : "Anexar arquivo"}
             </button>
             <input ref={fileRef} type="file" onChange={onFile} className="hidden" />
-            <span className="text-xs text-slate-500">.pbix, PDF, imagem, planilha. Até {MAX_MB} MB.</span>
+            <span className="text-xs text-slate-500">{tr(".pbix, PDF, imagem, planilha. Até")} {MAX_MB} MB.</span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button onClick={send} disabled={busy} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-60">

@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
@@ -33,17 +34,24 @@ const mono = IBM_Plex_Mono({
   fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
-export const metadata: Metadata = {
-  title: "Drive Data Academy — Domine dados e IA para decidir melhor",
-  description:
-    "A escola de dados da DriveData. Formação prática em Power BI, Análise de Dados e Inteligência Artificial aplicada a negócios — para profissionais e times.",
-  openGraph: {
-    title: "Drive Data Academy",
-    description:
-      "Formação prática em Power BI, Análise de Dados e IA aplicada a negócios. Aprenda a transformar dados em decisões.",
-    type: "website",
-  },
-};
+/* Função, e não constante: constante de módulo é avaliada uma vez, quando o
+   arquivo carrega, fora de qualquer requisição. O tr() ali não enxergaria o
+   cookie e o título da aba ficaria em português para sempre. */
+export function generateMetadata(): Metadata {
+  return {
+    title: tr("Drive Data Academy — Domine dados e IA para decidir melhor"),
+    description: tr(
+      "A escola de dados da DriveData. Formação prática em Power BI, Análise de Dados e Inteligência Artificial aplicada a negócios — para profissionais e times.",
+    ),
+    openGraph: {
+      title: tr("Drive Data Academy"),
+      description: tr(
+        "Formação prática em Power BI, Análise de Dados e IA aplicada a negócios. Aprenda a transformar dados em decisões.",
+      ),
+      type: "website",
+    },
+  };
+}
 
 export default function RootLayout({
   children,

@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,6 +13,7 @@ const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
 
 export default function EntrarPage() {
+  const tr = usarTraducao();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,17 +47,17 @@ export default function EntrarPage() {
         <div className="w-full max-w-sm">
           <Link href="/" className="mx-auto mb-8 block w-fit">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Drive Data Academy" className="h-10 w-auto" />
+            <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-10 w-auto" />
           </Link>
           <div className="glass-strong rounded-3xl border border-white/10 p-8">
-            <h1 className="font-display text-2xl font-bold text-white">Entrar</h1>
-            <p className="mt-1 text-sm text-slate-400">Acesse seus cursos e certificados.</p>
+            <h1 className="font-display text-2xl font-bold text-white">{tr("Entrar")}</h1>
+            <p className="mt-1 text-sm text-slate-400">{tr("Acesse seus cursos e certificados.")}</p>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-3">
-              <input required type="email" placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
-              <CampoSenha required autoComplete="current-password" placeholder="Senha" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+              <input required type="email" placeholder={tr("E-mail")} value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
+              <CampoSenha required autoComplete="current-password" placeholder={tr("Senha")} value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
               <div className="text-right">
-                <Link href="/esqueci-senha" className="text-xs text-slate-400 hover:text-brand-green">Esqueci minha senha</Link>
+                <Link href="/esqueci-senha" className="text-xs text-slate-400 hover:text-brand-green">{tr("Esqueci minha senha")}</Link>
               </div>
               {error && <p className="text-xs text-red-400">{error}</p>}
               <button
@@ -67,9 +70,9 @@ export default function EntrarPage() {
             </form>
 
             <p className="mt-5 text-center text-sm text-slate-400">
-              Ainda não tem conta?{" "}
+              {tr("Ainda não tem conta?")}{" "}
               <Link href="/criar-conta" className="font-medium text-brand-green hover:underline">
-                Criar conta
+                {tr("Criar conta")}
               </Link>
             </p>
           </div>

@@ -112,7 +112,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           <div key={c.nome} className="rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4">
             <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{c.nome}</p>
             <p className={`mt-1 font-display text-xl font-bold tabular-nums ${c.tom}`}>{moeda(c.valor)}</p>
-            {c.linhas !== null && <p className="text-[0.7rem] text-slate-500">{c.linhas} lançamentos</p>}
+            {c.linhas !== null && <p className="text-[0.7rem] text-slate-500">{c.linhas} {tr("lançamentos")}</p>}
           </div>
         ))}
       </div>
@@ -231,7 +231,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
                 </tbody>
               </table>
             </div>
-            {lista.length > 80 && <p className="px-3 py-2 text-xs text-slate-500">Mostrando 80 de {lista.length}. Isole um grupo para reduzir a lista.</p>}
+            {lista.length > 80 && <p className="px-3 py-2 text-xs text-slate-500">{tr("Mostrando 80 de")} {lista.length}{tr(". Isole um grupo para reduzir a lista.")}</p>}
           </div>
         )}
       </div>
@@ -272,7 +272,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
             </p>
             {veredito.acertouValor && veredito.acertouClasse && (
               <p className="mt-3 text-xs text-slate-500">
-                Você chegou lá com {quebras} {quebras === 1 ? "quebra" : "quebras"} por dimensão. Sênior resolve em duas ou três: total, dimensão certa, linha.
+                {tr("Você chegou lá com")} {quebras} {quebras === 1 ? "quebra" : "quebras"} {tr("por dimensão. Sênior resolve em duas ou três: total, dimensão certa, linha.")}
               </p>
             )}
           </div>

@@ -68,7 +68,7 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
           <>
             <p className="text-sm font-medium text-white">{tr("Enviar o diagnóstico?")}</p>
             <p className="mt-1 text-sm text-slate-400">
-              {faltam > 0 ? `Ainda faltam ${faltam} perguntas. ` : ""}Você responde uma vez só, então não dá para refazer depois.
+              {faltam > 0 ? `Ainda faltam ${faltam} perguntas. ` : ""}{tr("Você responde uma vez só, então não dá para refazer depois.")}
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <button onClick={send} disabled={busy} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-60">

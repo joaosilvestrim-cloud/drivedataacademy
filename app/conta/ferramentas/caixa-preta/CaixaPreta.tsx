@@ -167,7 +167,7 @@ export default function CaixaPreta() {
             <span className="mt-1 block text-[0.7rem] text-slate-500">{corpus.assunto} · {corpus.texto.length.toLocaleString("pt-BR")} caracteres</span>
           </label>
           <label>
-            <span className={rotulo}>Fusões do tokenizador: {fusoes}</span>
+            <span className={rotulo}>{tr("Fusões do tokenizador:")} {fusoes}</span>
             <input type="range" min={10} max={500} step={10} value={fusoes} onChange={(e) => setFusoes(Number(e.target.value))} className="mt-3 w-full accent-[#34e8a0]" />
             <span className="mt-1 block text-[0.7rem] text-slate-500">{tr("Cada fusão junta o par de pedaços mais comum. Menos fusões, tokens menores.")}</span>
           </label>
@@ -204,7 +204,7 @@ export default function CaixaPreta() {
             <div className="mt-4 rounded-3xl border border-brand-blue/25 bg-brand-blue/[0.06] p-5">
               <p className="font-display text-base font-bold text-white">{tr("O mesmo texto, outro corpus")}</p>
               <p className="mt-1 text-sm text-slate-300">
-                {tr("Treinado em")} <b className="text-white">{corpus.nome}</b>{tr(", o seu texto custa")} <b className="text-brand-green">{stats.tokens} tokens</b>{tr(". Treinado em")} <b className="text-white">{comparacao.nome}</b>{tr(", custa")} <b className="text-amber-300">{comparacao.tokens}</b>.
+                {tr("Treinado em")} <b className="text-white">{corpus.nome}</b>{tr(", o seu texto custa")} <b className="text-brand-green">{stats.tokens} {tr("tokens")}</b>{tr(". Treinado em")} <b className="text-white">{comparacao.nome}</b>{tr(", custa")} <b className="text-amber-300">{comparacao.tokens}</b>.
               </p>
               <p className="mt-2 text-sm text-slate-400">
                 {tr("O tokenizador não é neutro: ele é barato no assunto em que foi treinado e caro fora dele. É por isso que português custa mais token que inglês nos modelos grandes, e por que texto técnico do seu domínio consome mais contexto do que você espera.")}
@@ -267,7 +267,7 @@ export default function CaixaPreta() {
 
             <div data-tour="cp-saida" className="mt-4 overflow-hidden rounded-3xl border border-white/8 bg-[#070d14]">
               <div className="flex items-center justify-between gap-3 border-b border-white/8 px-4 py-2.5">
-                <span className="font-mono text-xs text-slate-400">saída · {gerados.length} tokens gerados</span>
+                <span className="font-mono text-xs text-slate-400">{tr("saída ·")} {gerados.length} tokens gerados</span>
                 <span className={`rounded-full border px-2 py-0.5 text-[0.65rem] ${origem.geral ? "border-red-500/40 bg-red-500/10 text-red-300" : "border-brand-green/40 bg-brand-green/10 text-brand-green"}`}>
                   {origem.geral ? "contexto desconhecido" : `contexto de ${origem.tamanho} token${origem.tamanho > 1 ? "s" : ""}`}
                 </span>

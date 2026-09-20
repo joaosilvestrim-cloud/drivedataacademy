@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 
@@ -18,6 +20,7 @@ export default function Modal({
   wide?: boolean;
   children: ReactNode;
 }) {
+  const tr = usarTraducao();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,7 +68,7 @@ export default function Modal({
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-3">
           <h2 className="text-sm font-semibold">{titulo}</h2>
-          <button onClick={onClose} aria-label="Fechar" className="text-muted hover:text-foreground">
+          <button onClick={onClose} aria-label={tr("Fechar")} className="text-muted hover:text-foreground">
             <X className="h-4 w-4" />
           </button>
         </div>

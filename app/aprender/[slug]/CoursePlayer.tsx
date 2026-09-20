@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
@@ -26,9 +28,9 @@ export default function CoursePlayer({
   initialId: string;
   doneIds: string[];
   quiz: { title: string } | null;
-  commentsByLesson: Record<string, Comment[]>;
-  commentNames: Record<string, string>;
+  commentsByLesson: Record<string, Comment[]>; commentNames: Record<string, string>;
 }) {
+  const tr = usarTraducao();
   const [activeId, setActiveId] = useState(initialId);
   const [done, setDone] = useState<Set<string>>(new Set(doneIds));
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -132,12 +134,12 @@ export default function CoursePlayer({
     <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
       <div className="min-w-0">
         {!current ? (
-          <div className="rounded-2xl border border-dashed border-white/10 px-6 py-20 text-center text-slate-400">Este curso ainda não tem aulas publicadas.</div>
+          <div className="rounded-2xl border border-dashed border-white/10 px-6 py-20 text-center text-slate-400">{tr("Este curso ainda não tem aulas publicadas.")}</div>
         ) : (
           <>
             {current.type === "materiais" ? (
               <div className="overflow-hidden rounded-2xl border border-white/10 bg-ink-900">
-                <img src="/banners/cases-reais-prontos.png" alt="Cases reais prontos, disponíveis para download" className="block aspect-video w-full object-cover" />
+                <img src="/banners/cases-reais-prontos.png" alt={tr("Cases reais prontos, disponíveis para download")} className="block aspect-video w-full object-cover" />
               </div>
             ) : current.video_provider === "panda" && current.video_id ? (
               <ProtectedPlayer>
@@ -156,17 +158,17 @@ export default function CoursePlayer({
                 <div className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{current.content || "—"}</div>
               </article>
             ) : (
-              <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] text-slate-500">Aula em preparação.</div>
+              <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] text-slate-500">{tr("Aula em preparação.")}</div>
             )}
 
-            <p className="mt-5 text-xs font-medium uppercase tracking-wide text-brand-green">Aula {idx + 1} de {flatIds.length}</p>
+            <p className="mt-5 text-xs font-medium uppercase tracking-wide text-brand-green">{tr("Aula")} {idx + 1} de {flatIds.length}</p>
             <h1 className="mt-1 font-display text-2xl font-bold text-white">{current.title}</h1>
 
             {current.type === "materiais" && (
               <div className="mt-5">
                 {current.content && <p className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-300">{current.content}</p>}
                 {(current.arquivos || []).length === 0 ? (
-                  <p className="mt-4 rounded-2xl border border-dashed border-white/10 px-5 py-8 text-center text-sm text-slate-500">Os arquivos desta aula estão sendo preparados.</p>
+                  <p className="mt-4 rounded-2xl border border-dashed border-white/10 px-5 py-8 text-center text-sm text-slate-500">{tr("Os arquivos desta aula estão sendo preparados.")}</p>
                 ) : (
                   <ul className="mt-4 divide-y divide-white/5 rounded-2xl border border-white/8 bg-white/[0.02]">
                     {current.arquivos.map((a) => {
@@ -200,7 +202,7 @@ export default function CoursePlayer({
 
             {materials.length > 0 && (
               <div className="mt-5 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-                <p className="text-sm font-semibold text-white">Materiais de apoio</p>
+                <p className="text-sm font-semibold text-white">{tr("Materiais de apoio")}</p>
                 <ul className="mt-3 space-y-2">
                   {materials.map((mat, i) => (
                     <li key={i}>
@@ -215,9 +217,9 @@ export default function CoursePlayer({
             )}
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              {prevId ? <button onClick={() => select(prevId)} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-white/30 hover:text-white">← Aula anterior</button> : <span />}
+              {prevId ? <button onClick={() => select(prevId)} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-white/30 hover:text-white">{tr("← Aula anterior")}</button> : <span />}
               <div className="flex items-center gap-2">
-                {nextId && <button onClick={() => select(nextId)} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-white/30 hover:text-white">Próxima aula →</button>}
+                {nextId && <button onClick={() => select(nextId)} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-white/30 hover:text-white">{tr("Próxima aula →")}</button>}
                 <button onClick={complete} disabled={pending} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-70">
                   {done.has(current.id) ? (nextId ? "Concluída · avançar" : "Concluída") : nextId ? "Concluir e avançar" : "Marcar como concluída"}
                 </button>
@@ -225,32 +227,32 @@ export default function CoursePlayer({
             </div>
 
             <div className="mt-8">
-              <h2 className="font-display text-lg font-bold text-white">Comentários</h2>
+              <h2 className="font-display text-lg font-bold text-white">{tr("Comentários")}</h2>
               <form action={addComment} className="mt-3 space-y-2">
                 <input type="hidden" name="slug" value={slug} />
                 <input type="hidden" name="lesson_id" value={current.id} />
                 <input type="hidden" name="course_id" value={courseId} />
-                <textarea name="body" required rows={2} placeholder="Comente ou tire uma dúvida sobre esta aula..." className="w-full resize-y rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+                <textarea name="body" required rows={2} placeholder={tr("Comente ou tire uma dúvida sobre esta aula...")} className="w-full resize-y rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
                 <div className="flex items-center gap-3">
-                  <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">Comentar</button>
-                  <span className="text-xs text-slate-500">Comentários passam por aprovação antes de aparecer.</span>
+                  <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">{tr("Comentar")}</button>
+                  <span className="text-xs text-slate-500">{tr("Comentários passam por aprovação antes de aparecer.")}</span>
                 </div>
               </form>
 
               <div className="mt-5 space-y-3">
-                {comments.length === 0 && <p className="text-sm text-slate-500">Seja o primeiro a comentar.</p>}
+                {comments.length === 0 && <p className="text-sm text-slate-500">{tr("Seja o primeiro a comentar.")}</p>}
                 {comments.map((c) => (
                   <div key={c.id} className="flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
                     <Avatar name={commentNames[c.user_id] || "Aluno"} size="sm" />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-slate-500">
                         {commentNames[c.user_id] || "Aluno"}
-                        {c.status === "pending" && <span className="ml-2 rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-amber-300">em análise</span>}
+                        {c.status === "pending" && <span className="ml-2 rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-amber-300">{tr("em análise")}</span>}
                       </p>
                       <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.body}</p>
                       {c.admin_reply && (
                         <div className="mt-2 rounded-xl border border-brand-blue/25 bg-brand-blue/[0.06] p-3">
-                          <p className="text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">Resposta da equipe DriveData</p>
+                          <p className="text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">{tr("Resposta da equipe DriveData")}</p>
                           <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.admin_reply}</p>
                         </div>
                       )}
@@ -267,7 +269,7 @@ export default function CoursePlayer({
       <div>
         <div className="lg:hidden">
           <button onClick={() => setMobileOpen((o) => !o)} className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white">
-            Conteúdo do curso
+            {tr("Conteúdo do curso")}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={`transition-transform ${mobileOpen ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
           {mobileOpen && <div className="mt-3">{Sidebar}</div>}

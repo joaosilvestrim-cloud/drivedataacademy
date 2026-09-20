@@ -1,4 +1,6 @@
 'use client';
+
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
 import {useEffect,useMemo,useRef} from 'react';
 import {Canvas,useFrame,useThree} from '@react-three/fiber';
 import * as THREE from 'three';
@@ -23,7 +25,8 @@ function Controls({reset,reduced}:{reset:number;reduced:boolean}) {
   useFrame(()=>controls.current?.update());return null;
 }
 export default function FlowScene({selected,onSelect,counts,time,reset,reduced}:{selected:number;onSelect:(n:number)=>void;counts:number[];time:number;reset:number;reduced:boolean}) {
-  return <Canvas dpr={[1,1.5]} camera={{position:[4,9,13],fov:42}} frameloop={reduced?'demand':'always'} fallback={<p>Use a visão 2D para explorar este fluxo.</p>}>
+  const tr = usarTraducao();
+  return <Canvas dpr={[1,1.5]} camera={{position:[4,9,13],fov:42}} frameloop={reduced?'demand':'always'} fallback={<p>{tr("Use a visão 2D para explorar este fluxo.")}</p>}>
     <color attach="background" args={['#081522']}/><fog attach="fog" args={['#081522',28,65]}/>
     <ambientLight intensity={1.7}/><pointLight position={[0,9,2]} intensity={70} color="#9dcaff"/><directionalLight position={[-5,10,7]} intensity={2}/>
     <Controls reset={reset} reduced={reduced}/><gridHelper args={[44,44,'#204050','#122a3a']} position={[0,-.1,0]}/>

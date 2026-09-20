@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useState } from "react";
 import { createMatricula, previewCupom, type MatriculaResult, type PreviaCupom } from "./actions";
 
@@ -35,6 +37,7 @@ export default function MatriculaForm({
   anual?: number;
   desconto?: number;
 }) {
+  const tr = usarTraducao();
   const [result, setResult] = useState<MatriculaResult | null>(null);
   // Sem anual configurado a escolha nem aparece e tudo segue como mensal.
   const [plano, setPlano] = useState<"mensal" | "anual">(anual > 0 ? "anual" : "mensal");
@@ -93,14 +96,14 @@ export default function MatriculaForm({
         <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-brand-green/15 text-brand-green">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </div>
-        <p className="mt-4 font-display text-2xl font-bold text-white">Pedido registrado</p>
-        <p className="mt-1 text-sm text-slate-300">Falta só pagar. Veja o que acontece a seguir:</p>
+        <p className="mt-4 font-display text-2xl font-bold text-white">{tr("Pedido registrado")}</p>
+        <p className="mt-1 text-sm text-slate-300">{tr("Falta só pagar. Veja o que acontece a seguir:")}</p>
 
         <ol className="mt-6 space-y-3 text-left">
           {[
-            { t: "Pague na página do Asaas", d: pix ? "Copie o código Pix ou leia o QR Code no app do seu banco." : "Informe os dados do cartão na página segura do Asaas." },
-            { t: "Receba o código de acesso", d: <>Enviamos para <b className="text-white">{indo.email}</b> assim que o pagamento confirmar. Olhe também o lixo eletrônico.</> },
-            { t: "Crie sua senha", d: "Clique em Criar minha senha no e-mail, digite o código e escolha a senha." },
+            { t: tr("Pague na página do Asaas"), d: pix ? "Copie o código Pix ou leia o QR Code no app do seu banco." : "Informe os dados do cartão na página segura do Asaas." },
+            { t: tr("Receba o código de acesso"), d: <>{tr("Enviamos para")} <b className="text-white">{indo.email}</b> {tr("assim que o pagamento confirmar. Olhe também o lixo eletrônico.")}</> },
+            { t: tr("Crie sua senha"), d: "Clique em Criar minha senha no e-mail, digite o código e escolha a senha." },
           ].map((s, i) => (
             <li key={i} className="flex gap-3 rounded-xl border border-white/8 bg-white/[0.03] p-3">
               <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue text-xs font-bold text-ink-900">{i + 1}</span>
@@ -113,9 +116,9 @@ export default function MatriculaForm({
         </ol>
 
         <a href={indo.url} className="mt-6 block w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-          Ir para o pagamento agora
+          {tr("Ir para o pagamento agora")}
         </a>
-        <p className="mt-2 text-xs text-slate-500">Abrindo sozinho em {Math.max(segundos, 0)}s.</p>
+        <p className="mt-2 text-xs text-slate-500">{tr("Abrindo sozinho em")} {Math.max(segundos, 0)}s.</p>
       </div>
     );
   }
@@ -125,10 +128,10 @@ export default function MatriculaForm({
     const msg = encodeURIComponent(`Olá! Quero assinar a ${turmaNome}.`);
     return (
       <div className="rounded-2xl border border-brand-green/30 bg-brand-green/10 p-6 text-center">
-        <p className="text-lg font-semibold text-white">Recebemos seu pedido!</p>
-        <p className="mt-2 text-sm text-slate-300">Fale com a gente pelo WhatsApp pra finalizar a assinatura. Sua conta é criada assim que o pagamento é confirmado.</p>
+        <p className="text-lg font-semibold text-white">{tr("Recebemos seu pedido!")}</p>
+        <p className="mt-2 text-sm text-slate-300">{tr("Fale com a gente pelo WhatsApp pra finalizar a assinatura. Sua conta é criada assim que o pagamento é confirmado.")}</p>
         {digits && (
-          <a href={`https://wa.me/${digits}?text=${msg}`} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">Falar no WhatsApp</a>
+          <a href={`https://wa.me/${digits}?text=${msg}`} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">{tr("Falar no WhatsApp")}</a>
         )}
       </div>
     );
@@ -145,7 +148,7 @@ export default function MatriculaForm({
           <div className="grid grid-cols-2 gap-3">
             {([
               { k: "anual" as const, titulo: "Anual", valor: brl(anual), nota: `${desconto}% OFF · pagamento único` },
-              { k: "mensal" as const, titulo: "Mensal", valor: `${brl(mensal)}/mês`, nota: "no cartão · cancele quando quiser" },
+              { k: "mensal" as const, titulo: "Mensal", valor: `${brl(mensal)}/mês`, nota: tr("no cartão · cancele quando quiser") },
             ]).map((p) => {
               const ativo = plano === p.k;
               return (
@@ -155,7 +158,7 @@ export default function MatriculaForm({
                 >
                   <input type="radio" name="plano_ui" value={p.k} checked={ativo} onChange={() => { setPlano(p.k); setCupom(null); setErroCupom(""); }} className="sr-only" />
                   {p.k === "anual" && (
-                    <span className="absolute -top-2.5 right-2 rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-2 py-0.5 text-[0.6rem] font-bold uppercase text-ink-900">Mais vantajoso</span>
+                    <span className="absolute -top-2.5 right-2 rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-2 py-0.5 text-[0.6rem] font-bold uppercase text-ink-900">{tr("Mais vantajoso")}</span>
                   )}
                   <span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">{p.titulo}</span>
                   <span className="block font-display text-lg font-bold text-white">{p.valor}</span>
@@ -168,8 +171,8 @@ export default function MatriculaForm({
         {plano === "anual" ? (
           <div className="flex flex-wrap items-center gap-2">
             {([
-              { k: "pix" as const, rotulo: "Pix", nota: "confirma na hora" },
-              { k: "cartao" as const, rotulo: "Cartão de crédito", nota: "à vista" },
+              { k: "pix" as const, rotulo: "Pix", nota: tr("confirma na hora") },
+              { k: "cartao" as const, rotulo: tr("Cartão de crédito"), nota: tr("à vista") },
             ]).map((f) => {
               const ativo = forma === f.k;
               return (
@@ -184,43 +187,43 @@ export default function MatriculaForm({
             })}
           </div>
         ) : (
-          <p className="text-xs text-slate-500">O mensal é cobrado no cartão de crédito, todo mês, até você cancelar.</p>
+          <p className="text-xs text-slate-500">{tr("O mensal é cobrado no cartão de crédito, todo mês, até você cancelar.")}</p>
         )}
       </Etapa>
 
       <Etapa n={2} titulo="Seus dados">
         <div>
-          <label htmlFor="mat-name" className={rotulo}>Nome completo</label>
-          <input id="mat-name" name="name" required autoComplete="name" placeholder="Como vai aparecer no certificado" className={field} />
+          <label htmlFor="mat-name" className={rotulo}>{tr("Nome completo")}</label>
+          <input id="mat-name" name="name" required autoComplete="name" placeholder={tr("Como vai aparecer no certificado")} className={field} />
         </div>
         <div>
-          <label htmlFor="mat-email" className={rotulo}>E-mail</label>
-          <input id="mat-email" name="email" type="email" required autoComplete="email" placeholder="voce@email.com" className={field} />
-          <span className={dica}>Use o e-mail que você mais abre. É para ele que enviamos o código de acesso, e ele vira o seu login.</span>
+          <label htmlFor="mat-email" className={rotulo}>{tr("E-mail")}</label>
+          <input id="mat-email" name="email" type="email" required autoComplete="email" placeholder={tr("voce@email.com")} className={field} />
+          <span className={dica}>{tr("Use o e-mail que você mais abre. É para ele que enviamos o código de acesso, e ele vira o seu login.")}</span>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label htmlFor="mat-cpf" className={rotulo}>CPF</label>
             <input id="mat-cpf" name="cpf" required inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" className={field} />
-            <span className={dica}>Exigido pelo Asaas para emitir a cobrança.</span>
+            <span className={dica}>{tr("Exigido pelo Asaas para emitir a cobrança.")}</span>
           </div>
           <div>
-            <label htmlFor="mat-phone" className={rotulo}>WhatsApp <span className="font-normal text-slate-500">(opcional)</span></label>
+            <label htmlFor="mat-phone" className={rotulo}>{tr("WhatsApp")} <span className="font-normal text-slate-500">(opcional)</span></label>
             <input id="mat-phone" name="phone" inputMode="tel" autoComplete="tel" placeholder="(11) 90000-0000" className={field} />
-            <span className={dica}>Para avisos das lives.</span>
+            <span className={dica}>{tr("Para avisos das lives.")}</span>
           </div>
         </div>
 
         <details className="rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2">
-          <summary className="cursor-pointer text-sm text-slate-300">Endereço <span className="text-slate-500">(opcional)</span></summary>
+          <summary className="cursor-pointer text-sm text-slate-300">{tr("Endereço")} <span className="text-slate-500">(opcional)</span></summary>
           <div className="mt-3 space-y-3 pb-1">
             <div className="grid grid-cols-3 gap-3">
               <input name="cep" inputMode="numeric" aria-label="CEP" placeholder="CEP" className={field} />
-              <input name="endereco" aria-label="Endereço" placeholder="Endereço" className={`${field} col-span-2`} />
+              <input name="endereco" aria-label={tr("Endereço")} placeholder={tr("Endereço")} className={`${field} col-span-2`} />
             </div>
             <div className="grid grid-cols-3 gap-3">
-              <input name="numero" aria-label="Número" placeholder="Número" className={field} />
-              <input name="bairro" aria-label="Bairro" placeholder="Bairro" className={`${field} col-span-2`} />
+              <input name="numero" aria-label={tr("Número")} placeholder={tr("Número")} className={field} />
+              <input name="bairro" aria-label={tr("Bairro")} placeholder={tr("Bairro")} className={`${field} col-span-2`} />
             </div>
           </div>
         </details>
@@ -229,18 +232,18 @@ export default function MatriculaForm({
       <Etapa n={3} titulo="Cupom e confirmação">
         {/* Cupom. O desconto mostrado vem do servidor e é conferido de novo ao pagar. */}
         <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3">
-          <label htmlFor="cupom-codigo" className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Cupom de desconto <span className="normal-case tracking-normal text-slate-500">(opcional)</span></label>
+          <label htmlFor="cupom-codigo" className="block text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Cupom de desconto")} <span className="normal-case tracking-normal text-slate-500">(opcional)</span></label>
           {cupom ? (
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm text-slate-200">
                 <span className="font-mono font-semibold text-brand-green">{cupom.codigo}</span> aplicado: {cupom.rotulo}.{" "}
                 {plano === "anual"
-                  ? <>Você paga <b className="text-white">{brl(cupom.final)}</b> em vez de {brl(cupom.original)}.</>
+                  ? <>{tr("Você paga")} <b className="text-white">{brl(cupom.final)}</b> {tr("em vez de")} {brl(cupom.original)}.</>
                   : cupom.recorrente
-                  ? <>Você paga <b className="text-white">{brl(cupom.final)}/mês</b> em vez de {brl(cupom.original)}.</>
-                  : <>A 1ª mensalidade sai por <b className="text-white">{brl(cupom.final)}</b>, depois {brl(cupom.original)}/mês.</>}
+                  ? <>{tr("Você paga")} <b className="text-white">{brl(cupom.final)}{tr("/mês")}</b> {tr("em vez de")} {brl(cupom.original)}.</>
+                  : <>{tr("A 1ª mensalidade sai por")} <b className="text-white">{brl(cupom.final)}</b>, depois {brl(cupom.original)}{tr("/mês.")}</>}
               </p>
-              <button type="button" onClick={() => { setCupom(null); setCupomTexto(""); }} className="text-xs text-slate-400 underline underline-offset-2 hover:text-white">remover</button>
+              <button type="button" onClick={() => { setCupom(null); setCupomTexto(""); }} className="text-xs text-slate-400 underline underline-offset-2 hover:text-white">{tr("remover")}</button>
             </div>
           ) : (
             <div className="mt-2 flex gap-2">
@@ -248,7 +251,7 @@ export default function MatriculaForm({
                 id="cupom-codigo"
                 value={cupomTexto}
                 onChange={(e) => { setCupomTexto(e.target.value.toUpperCase()); setErroCupom(""); }}
-                placeholder="Tem um cupom? Digite aqui"
+                placeholder={tr("Tem um cupom? Digite aqui")}
                 autoComplete="off"
                 className={`${field} uppercase`}
               />
@@ -288,7 +291,7 @@ export default function MatriculaForm({
           {loading ? "Gerando pagamento..." : "Continuar para o pagamento"}
         </button>
         <p className="text-center text-xs text-slate-500">
-          Depois de pagar, você recebe por e-mail um código para criar a senha. Não precisa criar conta antes.
+          {tr("Depois de pagar, você recebe por e-mail um código para criar a senha. Não precisa criar conta antes.")}
         </p>
       </Etapa>
     </form>

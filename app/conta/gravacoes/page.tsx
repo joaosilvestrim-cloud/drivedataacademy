@@ -48,7 +48,7 @@ export default async function GravacoesPage() {
         <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
           <p className="font-medium text-white">{tr("Nenhuma gravação publicada ainda")}</p>
           <p className="mt-2 text-sm text-slate-400">
-            Assim que o time subir a gravação de um encontro, ela aparece aqui.{" "}
+            {tr("Assim que o time subir a gravação de um encontro, ela aparece aqui.")}{" "}
             <Link href="/conta/agenda" className="text-brand-green underline underline-offset-4">{tr("Ver a agenda")}</Link>
           </p>
         </div>

@@ -22,8 +22,7 @@ export default async function BibliotecaPage() {
       <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Biblioteca")}</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-white">{((await trocasDoAdmin()).biblioteca?.nome || "").trim() || "Referência de bolso"}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
-        {ITENS.length} padrões de DAX, SQL e Power Query que resolvem o dia a dia. Cada um responde três coisas: quando
-        usar, o código para colar e a armadilha em que a maioria cai. Sem enrolação e sem precisar assistir a nada.
+        {ITENS.length} {tr("padrões de DAX, SQL e Power Query que resolvem o dia a dia. Cada um responde três coisas: quando usar, o código para colar e a armadilha em que a maioria cai. Sem enrolação e sem precisar assistir a nada.")}
       </p>
 
       <Biblioteca />

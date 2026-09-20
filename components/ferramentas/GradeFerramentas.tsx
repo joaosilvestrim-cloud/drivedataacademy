@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useMemo, useState } from "react";
 import CartaoFerramenta, { type Ferramenta } from "./CartaoFerramenta";
 
@@ -16,6 +18,7 @@ import CartaoFerramenta, { type Ferramenta } from "./CartaoFerramenta";
    que entrei aqui". */
 
 export default function GradeFerramentas({ ferramentas }: { ferramentas: Ferramenta[] }) {
+  const tr = usarTraducao();
   const [filtro, setFiltro] = useState("todas");
 
   const categorias = useMemo(() => {
@@ -27,7 +30,7 @@ export default function GradeFerramentas({ ferramentas }: { ferramentas: Ferrame
   const novidades = ferramentas.filter((f) => f.novo).length;
 
   const abas = [
-    { chave: "todas", rotulo: "Todas", quantas: ferramentas.length },
+    { chave: "todas", rotulo: tr("Todas"), quantas: ferramentas.length },
     ...(novidades ? [{ chave: "novidades", rotulo: "Novidades", quantas: novidades }] : []),
     ...categorias.map(([c, n]) => ({ chave: c, rotulo: c, quantas: n })),
   ];
@@ -38,7 +41,7 @@ export default function GradeFerramentas({ ferramentas }: { ferramentas: Ferrame
 
   return (
     <>
-      <nav aria-label="Filtrar ferramentas por tipo" className="mt-6 flex flex-wrap gap-2">
+      <nav aria-label={tr("Filtrar ferramentas por tipo")} className="mt-6 flex flex-wrap gap-2">
         {abas.map((a) => {
           const ativa = filtro === a.chave;
           return (
@@ -73,7 +76,7 @@ export default function GradeFerramentas({ ferramentas }: { ferramentas: Ferrame
 
       {visiveis.length === 0 && (
         <p className="mt-6 rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-sm text-slate-500">
-          Nenhuma ferramenta nesta categoria por enquanto.
+          {tr("Nenhuma ferramenta nesta categoria por enquanto.")}
         </p>
       )}
     </>

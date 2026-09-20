@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { assinarUploadDeImagem } from "@/app/admin/(dashboard)/upload-actions";
@@ -27,6 +29,7 @@ export default function UploadDeImagem({
   /** Assinatura tem fundo transparente: a prévia mostra em xadrez claro. */
   transparente?: boolean;
 }) {
+  const tr = usarTraducao();
   const [url, setUrl] = useState(initialUrl || "");
   const [subindo, setSubindo] = useState(false);
   const [erro, setErro] = useState("");
@@ -62,7 +65,7 @@ export default function UploadDeImagem({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={url} alt="" className={`h-full w-full ${transparente ? "object-contain p-1" : "object-cover"}`} />
           ) : (
-            <span className="text-caption text-ds-text-3">sem imagem</span>
+            <span className="text-caption text-ds-text-3">{tr("sem imagem")}</span>
           )}
         </div>
 
@@ -79,10 +82,10 @@ export default function UploadDeImagem({
             name={name}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="ou cole o endereço de uma imagem"
+            placeholder={tr("ou cole o endereço de uma imagem")}
             className="w-full rounded-ctl border border-ds-line bg-ds-surface px-3 py-2 text-body-sm text-ds-text outline-none transition-colors placeholder:text-ds-text-3 focus:border-ds-accent"
           />
-          {subindo && <p className="text-caption text-ds-accent">Subindo a imagem...</p>}
+          {subindo && <p className="text-caption text-ds-accent">{tr("Subindo a imagem...")}</p>}
           {erro && <p className="text-caption text-ds-danger" role="alert">{erro}</p>}
           {!subindo && !erro && descricao && <p className="text-caption text-ds-text-3">{descricao}</p>}
         </div>

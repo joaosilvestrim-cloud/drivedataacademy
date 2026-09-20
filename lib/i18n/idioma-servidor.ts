@@ -11,3 +11,16 @@ export const idiomaAtual = cache((): Idioma => {
     return IDIOMA_PADRAO;
   }
 });
+
+/* Se a escolha já foi feita neste navegador.
+
+   Serve para a área do aluno saber quando pode usar o perfil como palpite:
+   com cookie, quem manda é a escolha desta sessão; sem cookie, vale o que a
+   pessoa escolheu da última vez, em qualquer aparelho. */
+export const temCookieDeIdioma = cache((): boolean => {
+  try {
+    return !!idiomaValido(cookies().get("lang")?.value ?? null) && !!cookies().get("lang")?.value;
+  } catch {
+    return false;
+  }
+});

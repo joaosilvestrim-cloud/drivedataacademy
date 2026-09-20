@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { Plus, Copy, Trash2, FileStack, ArrowLeftRight, FlipHorizontal, GalleryHorizontal, Layers as LayersIcon, type LucideIcon } from "lucide-react";
 import { useEditor } from "@/lib/editor/store";
@@ -26,6 +28,7 @@ function Range({ label, valor, min, max, step, onChange, suf = "" }: { label: st
 
 /** Botão de transição ENTRE as páginas — abre a configuração completa num popover. */
 function TransicaoInline() {
+  const tr = usarTraducao();
   const transicao = useEditor((s) => s.doc.transicao);
   const setTransicao = useEditor((s) => s.setTransicao);
   const [aberto, setAberto] = useState(false);
@@ -47,14 +50,14 @@ function TransicaoInline() {
     <div ref={ref} className="relative shrink-0">
       <button
         onClick={() => setAberto((v) => !v)}
-        title="Configurar a transição entre as páginas"
+        title={tr("Configurar a transição entre as páginas")}
         className={`flex items-center gap-1 rounded-full border border-dashed px-2 py-1 text-[10px] font-medium transition-colors ${ativo ? "border-viz bg-viz/10 text-viz-dark" : "border-viz/40 text-muted hover:text-viz-dark"}`}
       >
         <ArrowLeftRight className="h-3 w-3" /> {ativo ? atual.curto : "Transição"}
       </button>
       {aberto && (
         <div className="absolute bottom-9 left-1/2 z-40 w-56 -translate-x-1/2 rounded-xl border border-border bg-surface p-2 shadow-2xl">
-          <p className="px-1 pb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted">Transição entre páginas</p>
+          <p className="px-1 pb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted">{tr("Transição entre páginas")}</p>
           <div className="grid grid-cols-2 gap-1">
             {OPCOES.map((o) => {
               const Ic = o.icon;
@@ -69,20 +72,20 @@ function TransicaoInline() {
           {ehFlip && (
             <div className="mt-2 border-t border-border pt-1.5">
               <div className="flex items-center justify-between gap-2 px-1 py-0.5">
-                <span className="text-[11px] text-muted">Vira</span>
+                <span className="text-[11px] text-muted">{tr("Vira")}</span>
                 <div className="flex gap-0.5 rounded-md bg-background p-0.5">
-                  <button onClick={() => setTransicao({ auto: false })} className={`rounded px-2 py-0.5 text-[11px] ${!transicao.auto ? "bg-surface shadow-sm" : "text-muted"}`}>No hover</button>
-                  <button onClick={() => setTransicao({ auto: true })} className={`rounded px-2 py-0.5 text-[11px] ${transicao.auto ? "bg-surface shadow-sm" : "text-muted"}`}>Sozinho</button>
+                  <button onClick={() => setTransicao({ auto: false })} className={`rounded px-2 py-0.5 text-[11px] ${!transicao.auto ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("No hover")}</button>
+                  <button onClick={() => setTransicao({ auto: true })} className={`rounded px-2 py-0.5 text-[11px] ${transicao.auto ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Sozinho")}</button>
                 </div>
               </div>
-              <Range label="Velocidade" valor={transicao.duracao} min={0.2} max={2} step={0.1} onChange={(duracao) => setTransicao({ duracao })} suf="s" />
+              <Range label={tr("Velocidade")} valor={transicao.duracao} min={0.2} max={2} step={0.1} onChange={(duracao) => setTransicao({ duracao })} suf="s" />
               {transicao.auto && <Range label="Tempo/lado" valor={transicao.intervalo} min={1} max={10} step={0.5} onChange={(intervalo) => setTransicao({ intervalo })} suf="s" />}
             </div>
           )}
           {ehSlideshow && (
             <div className="mt-2 border-t border-border pt-1.5">
-              <Range label="Tempo/página" valor={transicao.intervalo} min={1} max={10} step={0.5} onChange={(intervalo) => setTransicao({ intervalo })} suf="s" />
-              <Range label="Velocidade" valor={transicao.duracao} min={0.2} max={2} step={0.1} onChange={(duracao) => setTransicao({ duracao })} suf="s" />
+              <Range label={tr("Tempo/página")} valor={transicao.intervalo} min={1} max={10} step={0.5} onChange={(intervalo) => setTransicao({ intervalo })} suf="s" />
+              <Range label={tr("Velocidade")} valor={transicao.duracao} min={0.2} max={2} step={0.1} onChange={(duracao) => setTransicao({ duracao })} suf="s" />
             </div>
           )}
         </div>
@@ -92,6 +95,7 @@ function TransicaoInline() {
 }
 
 export default function PageTabs() {
+  const tr = usarTraducao();
   const paginas = useEditor((s) => s.doc.paginas);
   const ativa = useEditor((s) => Math.min(s.paginaAtiva, s.doc.paginas.length - 1));
   const setPaginaAtiva = useEditor((s) => s.setPaginaAtiva);
@@ -128,7 +132,7 @@ export default function PageTabs() {
           {paginas.length > 1 && (
             <button
               onClick={(e) => { e.stopPropagation(); if (confirm(`Excluir "${p.nome}"?`)) removerPagina(i); }}
-              title="Excluir página"
+              title={tr("Excluir página")}
               className="text-muted opacity-0 hover:text-red-600 group-hover:opacity-100"
             >
               <Trash2 className="h-3 w-3" />
@@ -142,22 +146,22 @@ export default function PageTabs() {
   return (
     <div className="mt-2 flex items-center gap-1.5 rounded-lg border border-border bg-surface px-2 py-1.5">
       <FileStack className="h-4 w-4 shrink-0 text-muted" />
-      <span className="shrink-0 text-[11px] font-medium text-muted">Páginas</span>
+      <span className="shrink-0 text-[11px] font-medium text-muted">{tr("Páginas")}</span>
 
       <div className="flex items-center gap-1">{tabItens}</div>
 
       <div className="ml-auto flex shrink-0 items-center gap-1">
         {!cheio && (
           <>
-            <button onClick={duplicarPagina} title="Duplicar página atual" className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted hover:text-foreground">
+            <button onClick={duplicarPagina} title={tr("Duplicar página atual")} className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs text-muted hover:text-foreground">
               <Copy className="h-3.5 w-3.5" />
             </button>
-            <button onClick={adicionarPagina} title="Adicionar o verso (2ª página)" className="flex items-center gap-1 rounded-md border border-viz bg-viz/10 px-2 py-1 text-xs font-medium text-viz-dark">
-              <Plus className="h-3.5 w-3.5" /> Verso
+            <button onClick={adicionarPagina} title={tr("Adicionar o verso (2ª página)")} className="flex items-center gap-1 rounded-md border border-viz bg-viz/10 px-2 py-1 text-xs font-medium text-viz-dark">
+              <Plus className="h-3.5 w-3.5" /> {tr("Verso")}
             </button>
           </>
         )}
-        {cheio && <span className="text-[10px] text-muted">máx. 2 páginas</span>}
+        {cheio && <span className="text-[10px] text-muted">{tr("máx. 2 páginas")}</span>}
       </div>
     </div>
   );

@@ -32,7 +32,18 @@ def env():
 
 ENV = env()
 GROQ = ENV.get("GROQ_API_KEY", "")
-MODELO = ENV.get("GROQ_MODEL") or "openai/gpt-oss-120b"
+# A cota da Groq é por modelo e por dia (TPD). Traduzir a plataforma inteira
+# gasta mais do que um modelo sozinho aguenta, então a lista existe: quando um
+# esgota o dia, o trabalho continua no seguinte em vez de parar.
+MODELOS = [m.strip() for m in (os.environ.get("GROQ_MODEL") or ENV.get("GROQ_MODEL") or
+           "openai/gpt-oss-120b,openai/gpt-oss-20b,qwen/qwen3.8-27b").split(",") if m.strip()]
+esgotados = set()
+
+def modelo_atual():
+    for m in MODELOS:
+        if m not in esgotados:
+            return m
+    return None
 
 GLOSSARIO = (
     "This is a Brazilian data/BI school (DriveData Academy). Keep product and brand names exactly: "
@@ -48,6 +59,11 @@ GLOSSARIO = (
 # ------------------------------------------------------------------ extração
 # Texto puro entre tags: <p ...>Texto</p>, sem { } < > dentro.
 TEXTO_TAG = re.compile(r">(\s*[^<>{}\n][^<>{}]*?)<", re.S)
+# A mesma frase, mas encostada numa expressão: `>Ainda não tem conta?{" "}` e
+# `{" "}entre na plataforma<`. Uma das pontas é chave, a outra continua sendo
+# tag: nunca as duas chaves, senão um `} else {` de código entraria aqui.
+TEXTO_ANTES = re.compile(r">(\s*[^<>{}\n][^<>{}]*?)\{", re.S)
+TEXTO_DEPOIS = re.compile(r"\}(\s*[^<>{}\n][^<>{}]*?)<", re.S)
 # Atributos que aparecem para quem usa.
 ATRIBUTO = re.compile(r'\b(placeholder|title|aria-label|alt|label|rotulo|lede|context|description)="([^"{}\n]{2,})"')
 
@@ -64,10 +80,19 @@ def texto_valido(t: str) -> bool:
     if not re.search(r"[A-Za-zÀ-ÿ]{2}", limpo):
         return False
     # sinais de que é código e não fala humana
-    CODIGO = r"""(className|https?://|[{}<>$`"[\]]|=>|===|!==|\|\||&&|\(\)|\.length|\)\s*:|\?\s*\(\s*$|\.\w+\(|eslint|;\s*$|;\s*[})]|\breturn\b|\bconst\b|\bfunction\b|/\*|\*/)"""
+    CODIGO = r"""(className|https?://|[{}<>$`"[\]]|=>|===|!==|\|\||&&|\(\)|\.length|\)\s*:|\?\s*\(\s*$|\.\w+\(|eslint|;\s*$|;\s*[})]|;\s*(let|const|var|if|for|while|function)\b|\breturn\b|\bconst\b|\bfunction\b|/\*|\*/)"""
     if re.search(CODIGO, limpo):
         return False
     if re.fullmatch(r"[\d\s.,:%/-]+", limpo):
+        return False
+    # Pedaços de TypeScript que se disfarçam de frase por estarem entre um
+    # ">" e um "<" que na verdade são de genérico, e não de tag:
+    #   ">; commentNames: Record<"   ">: cupom.recorrente ?<"   "> a.at <"
+    if ";" in limpo and not re.search(r"[À-ÿ]", limpo):
+        return False
+    if re.match(r"^[:?]\s", limpo) or re.search(r"\s\?\s*$", limpo):
+        return False
+    if re.fullmatch(r"[\w.]+", limpo) and "." in limpo:
         return False
     # precisa de ao menos uma letra acentuada, uma palavra comum em português
     # ou duas palavras: evita capturar "id", "ok", "sm", "px-2"
@@ -80,6 +105,20 @@ def texto_valido(t: str) -> bool:
     # palavra mesmo (só letras, 4 ou mais) e não sigla técnica em caixa alta,
     # que fica igual nos três idiomas: DAX, SQL, CSV.
     return bool(re.fullmatch(r"[A-Za-zÀ-ÿ]{4,}", limpo)) and limpo != limpo.upper()
+
+def texto_valido_encostado(t: str) -> bool:
+    """Regra mais dura, para a frase que encosta numa chave.
+
+    Ali o regex também pega genérico de TypeScript (`) as Record<`), comentário
+    e pedaço de expressão, porque `}` e `<` aparecem em código o tempo todo.
+    Então exige-se cara de prosa e nada de parêntese, igual ou ponto e vírgula.
+    Frase curta demais para passar por aqui não perde nada: ela é fragmento."""
+    limpo = normalizar(t)
+    if not texto_valido(limpo) or limpo.startswith("//"):
+        return False
+    if re.search(r"[=;()]", limpo):
+        return False
+    return bool(re.search(r"[À-ÿ]", limpo) or PALAVRA_DE_GENTE.search(limpo))
 
 # Conteúdo que mora em arquivo de dados (.ts), não em tela: os verbetes da
 # Biblioteca, os desafios do Dojo, as dicas do mascote. Aqui a frase não está
@@ -123,10 +162,13 @@ def extrair(caminhos):
     achadas = {}
     for c in caminhos:
         texto = open(c, encoding="utf-8").read()
-        for m in TEXTO_TAG.finditer(texto):
-            t = m.group(1)
-            if texto_valido(t):
-                achadas.setdefault(normalizar(t), []).append(os.path.relpath(c, RAIZ))
+        for padrao, valido in ((TEXTO_TAG, texto_valido),
+                               (TEXTO_ANTES, texto_valido_encostado),
+                               (TEXTO_DEPOIS, texto_valido_encostado)):
+            for m in padrao.finditer(texto):
+                t = m.group(1)
+                if valido(t):
+                    achadas.setdefault(normalizar(t), []).append(os.path.relpath(c, RAIZ))
         for m in ATRIBUTO.finditer(texto):
             t = m.group(2)
             if texto_valido(t):
@@ -171,7 +213,7 @@ def aplicar_literais(caminhos, mapa):
     que ficar de fora é listado, para resolver à mão."""
     for c in caminhos:
         texto = open(c, encoding="utf-8").read()
-        cliente = texto.lstrip().startswith('"use client"')
+        cliente = ehCliente(texto)
         trocas = 0
         pendente = []
 
@@ -223,6 +265,9 @@ def aplicar_literais(caminhos, mapa):
         print(f"   {os.path.relpath(c, RAIZ)}: {trocas}")
 
 # ------------------------------------------------------------------ tradução
+class CotaDoDia(Exception):
+    """O modelo gastou a cota do dia. Trocar de modelo, não esperar."""
+
 def http(url, dados, cabecalhos, tentativas=6):
     for n in range(tentativas):
         req = urllib.request.Request(url, dados, {"User-Agent": "curl/8", **cabecalhos}, method="POST")
@@ -230,7 +275,11 @@ def http(url, dados, cabecalhos, tentativas=6):
             with urllib.request.urlopen(req, timeout=300) as r:
                 return json.loads(r.read().decode("utf-8"))
         except urllib.error.HTTPError as e:
-            corpo = e.read().decode("utf-8", "ignore")[:300]
+            corpo = e.read().decode("utf-8", "ignore")[:400]
+            # Cota do dia estourada: esperar não resolve, porque ela volta de
+            # madrugada. Quem sinaliza isso é o próprio corpo do erro.
+            if e.code == 429 and "per day" in corpo:
+                raise CotaDoDia(corpo)
             if e.code in (429, 500, 502, 503) and n < tentativas - 1:
                 espera = float(e.headers.get("retry-after") or 0) or min(90, 12 * (n + 1))
                 print(f"   limite do servidor ({e.code}), esperando {int(espera)}s")
@@ -251,11 +300,20 @@ def traduzir_lote(frases, idioma_nome):
         "line, nothing else. Never merge or split lines. Keep it as short as the original: it goes in buttons and labels.\n"
         f"{GLOSSARIO}\n\n{entrada}"
     )
-    r = http("https://api.groq.com/openai/v1/chat/completions",
-             json.dumps({"model": MODELO, "temperature": 0.2, "reasoning_effort": "low",
-                         "max_completion_tokens": 8000,
-                         "messages": [{"role": "user", "content": pedido}]}).encode(),
-             {"Authorization": "Bearer " + GROQ, "Content-Type": "application/json"})
+    while True:
+        modelo = modelo_atual()
+        if not modelo:
+            raise RuntimeError("todos os modelos gastaram a cota do dia; volte amanhã ou assine o tier pago")
+        try:
+            r = http("https://api.groq.com/openai/v1/chat/completions",
+                     json.dumps({"model": modelo, "temperature": 0.2, "reasoning_effort": "low",
+                                 "max_completion_tokens": 8000,
+                                 "messages": [{"role": "user", "content": pedido}]}).encode(),
+                     {"Authorization": "Bearer " + GROQ, "Content-Type": "application/json"})
+            break
+        except CotaDoDia:
+            print(f"   {modelo} gastou a cota do dia, seguindo no próximo modelo")
+            esgotados.add(modelo)
     saida = r["choices"][0]["message"].get("content") or ""
     voltou = {}
     for m in re.finditer(r"^\s*(\d+)\s*\|\s*(.+?)\s*$", saida, re.M):
@@ -291,7 +349,11 @@ def traduzir():
     mapa = carregar_geradas()
     faltam = [f for f in pendentes if f not in mapa]
     print(f"{len(faltam)} frases novas de {len(pendentes)} extraídas")
-    lote = 25
+    # Lote pequeno de propósito: o limite da Groq é por token por minuto, e um
+    # lote grande estoura o minuto inteiro numa requisição só, o que rende
+    # esperas de cinco minutos. Doze frases cabem no orçamento e o trabalho
+    # anda contínuo.
+    lote = int(os.environ.get("I18N_LOTE") or 12)
     for k in range(0, len(faltam), lote):
         pedaco = faltam[k:k + lote]
         for sigla, nome in (("en", "English"), ("es", "Latin American Spanish")):
@@ -324,14 +386,19 @@ def traduzir():
 # declarado na margem do arquivo, coluna zero. O que está indentado é função
 # de dentro (um onClick, um map) e enxerga o tr do componente que a contém.
 DEFINICAO = re.compile(
-    r"^(?:export\s+)?(?:default\s+)?function\s+([A-Za-z_]\w*)\s*[(<]"
+    r"^(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s+([A-Za-z_]\w*)\s*[(<]"
     r"|^(?:export\s+)?(?:const|let)\s+([A-Za-z_]\w*)\s*(?::[^=\n]*)?=\s*(?:async\s*)?[(<]",
     re.M,
 )
 
+def ehCliente(texto: str) -> bool:
+    """Metade do projeto escreve 'use client' com aspas simples. Confundir os
+    dois lados troca o tr do hook pelo do servidor, e aí o build quebra."""
+    return bool(re.match(r'''\s*(?:/\*.*?\*/\s*)*["']use client["']''', texto, re.S))
+
 def ligar_hook(texto: str, nome_arquivo: str) -> str:
     if "usarTraducao" not in texto:
-        texto = re.sub(r'("use client";\n)',
+        texto = re.sub(r'((?:"use client"|\'use client\');\r?\n)',
                        r'\1\nimport { usarTraducao } from "@/lib/i18n/usarTraducao";\n',
                        texto, count=1)
 
@@ -398,19 +465,26 @@ def abertura_do_corpo(texto: str, desde: int, limite: int) -> int:
         i += 1
     else:
         return -1
-    # depois do último parêntese ainda pode vir `: Tipo` e `=>` antes do corpo
+    # Depois do último parêntese pode vir `=>` e pode vir `: Tipo`.
     resto = texto[i + 1:limite]
-    m = re.match(r"[^{;=<>]*(?:=>)?\s*\{", resto, re.S)
-    return i + 1 + m.end() - 1 if m else -1
+    # Sem anotação de retorno, o corpo é a primeira chave. Vale também para a
+    # função escrita numa linha só, onde a chave não termina a linha.
+    m = re.match(r"\s*(?:=>\s*)?\{", resto, re.S)
+    if m:
+        return i + 1 + m.end() - 1
+    # Com anotação, `): Promise<{ ok: boolean }> {` tem uma chave que não é o
+    # corpo. A do corpo é a que fecha a linha.
+    m = re.search(r"\{[ \t]*\r?\n", resto)
+    return i + 1 + m.start() if m else -1
 
 def aplicar(caminhos, mapa):
     for c in caminhos:
         texto = open(c, encoding="utf-8").read()
-        cliente = texto.lstrip().startswith('"use client"')
+        cliente = ehCliente(texto)
         original = texto
         trocas = 0
 
-        def troca_tag(m):
+        def troca_tag(m, abre=">", fecha="<"):
             nonlocal trocas
             bruto = m.group(1)
             chave = normalizar(bruto)
@@ -419,9 +493,11 @@ def aplicar(caminhos, mapa):
             trocas += 1
             antes = bruto[: len(bruto) - len(bruto.lstrip())]
             depois = bruto[len(bruto.rstrip()):]
-            return f">{antes}{{tr({json.dumps(chave, ensure_ascii=False)})}}{depois}<"
+            return f"{abre}{antes}{{tr({json.dumps(chave, ensure_ascii=False)})}}{depois}{fecha}"
 
         texto = TEXTO_TAG.sub(troca_tag, texto)
+        texto = TEXTO_ANTES.sub(lambda m: troca_tag(m, ">", "{"), texto)
+        texto = TEXTO_DEPOIS.sub(lambda m: troca_tag(m, "}", "<"), texto)
 
         def troca_attr(m):
             nonlocal trocas

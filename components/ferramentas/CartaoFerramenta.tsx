@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useRef, useState } from "react";
 
 /* Cartão das ferramentas, com os efeitos que o mouse pede.
@@ -33,6 +35,7 @@ export type Ferramenta = {
 };
 
 export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: number }) {
+  const tr = usarTraducao();
   const ref = useRef<HTMLDivElement>(null);
   const [luz, setLuz] = useState({ x: 50, y: 50, dentro: false });
   const usavel = t.available && !!t.href;
@@ -78,17 +81,17 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
 
           {t.novo ? (
             <span className="relative overflow-hidden rounded-full px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${t.from}, ${t.to})` }}>
-              {t.tag}
+              {tr(t.tag)}
               {/* Brilho que atravessa o selo de tempos em tempos. */}
               <span aria-hidden="true" className="absolute inset-0 -translate-x-full animate-brilho bg-gradient-to-r from-transparent via-white/70 to-transparent motion-reduce:hidden" />
             </span>
           ) : (
-            <span className={`rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase ${t.available ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{t.tag}</span>
+            <span className={`rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase ${t.available ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{tr(t.tag)}</span>
           )}
         </div>
 
-        <h2 className="mt-4 font-display text-lg font-bold text-white">{t.name}</h2>
-        <p className="mt-1 flex-1 text-sm text-slate-400">{t.desc}</p>
+        <h2 className="mt-4 font-display text-lg font-bold text-white">{tr(t.name)}</h2>
+        <p className="mt-1 flex-1 text-sm text-slate-400">{tr(t.desc)}</p>
 
         {usavel ? (
           <span
@@ -101,7 +104,7 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
             </svg>
           </span>
         ) : (
-          <span className="mt-4 inline-flex w-fit items-center rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-500">Em breve</span>
+          <span className="mt-4 inline-flex w-fit items-center rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-500">{tr("Em breve")}</span>
         )}
       </div>
     </>

@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useId, useRef, useState } from "react";
 import styles from "./roadmap.module.css";
 import Cronometro from "@/components/Cronometro";
@@ -49,15 +51,17 @@ function linkCalendario(e: EventoRoadmap, agoraInicial: number): string {
 }
 
 function Banner({ event, miniature = false }: { event: EventoRoadmap; miniature?: boolean }) {
+  const tr = usarTraducao();
   const [failed, setFailed] = useState(false);
   return event.cover_url && !failed ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={event.cover_url} alt={miniature ? "" : `Banner: ${event.title}`} draggable={false}
       onError={() => setFailed(true)} loading={miniature ? "lazy" : "eager"} />
-  ) : <span className={styles.noBanner}><span>{diaMes(event.starts_at)}</span><strong>{event.title}</strong><small>DriveData Academy</small></span>;
+  ) : <span className={styles.noBanner}><span>{diaMes(event.starts_at)}</span><strong>{event.title}</strong><small>{tr("DriveData Academy")}</small></span>;
 }
 
 export default function RoadmapInterativo({ eventos, agoraInicial }: { eventos: EventoRoadmap[]; agoraInicial: number }) {
+  const tr = usarTraducao();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [playing, setPlaying] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(true);
@@ -135,10 +139,10 @@ export default function RoadmapInterativo({ eventos, agoraInicial }: { eventos: 
     gesture.current = null; stage.current?.style.removeProperty("--drag");
   };
   return (
-    <section ref={root} className={styles.roadmap} aria-label="Roadmap de encontros" aria-roledescription="carrossel"
+    <section ref={root} className={styles.roadmap} aria-label={tr("Roadmap de encontros")} aria-roledescription="carrossel"
       onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} onFocusCapture={() => setPlaying(false)}>
       <div className={styles.toolbar}>
-        <div><span className={styles.eyebrow}>Na agenda</span><span className={styles.count}>{String(ativo + 1).padStart(2,"0")} <span>/ {String(eventos.length).padStart(2,"0")}</span></span></div>
+        <div><span className={styles.eyebrow}>{tr("Na agenda")}</span><span className={styles.count}>{String(ativo + 1).padStart(2,"0")} <span>/ {String(eventos.length).padStart(2,"0")}</span></span></div>
         {eventos.length > 1 && !reducedMotion && <button type="button" onClick={() => setPlaying(!playing)} aria-pressed={playing} className={styles.play}>
           <span aria-hidden="true">{playing ? "Ⅱ" : "▷"}</span>{playing ? "Pausar slides" : "Reproduzir slides"}
         </button>}
@@ -162,9 +166,9 @@ export default function RoadmapInterativo({ eventos, agoraInicial }: { eventos: 
         })}
       </div>
       <div className={styles.controls}>
-        <button type="button" aria-label="Encontro anterior" disabled={eventos.length < 2} onClick={() => select(ativo - 1)}>←</button>
+        <button type="button" aria-label={tr("Encontro anterior")} disabled={eventos.length < 2} onClick={() => select(ativo - 1)}>←</button>
         <span>{diaMes(e.starts_at)} <span>· {e.kind === "mentoria" ? "Mentoria" : "Live"}</span></span>
-        <button type="button" aria-label="Próximo encontro" disabled={eventos.length < 2} onClick={() => select(ativo + 1)}>→</button>
+        <button type="button" aria-label={tr("Próximo encontro")} disabled={eventos.length < 2} onClick={() => select(ativo + 1)}>→</button>
       </div>
       <div className={styles.progress} aria-hidden="true"><span key={`${e.id}-${running}`} data-running={running} /></div>
       <div id={`${uid}-detail`} className={styles.detail} role="tabpanel" aria-labelledby={`${uid}-tab-${e.id}`} tabIndex={0}>
@@ -175,11 +179,11 @@ export default function RoadmapInterativo({ eventos, agoraInicial }: { eventos: 
         </div>
         <div className={styles.actions}>
           <Cronometro inicio={e.starts_at} duracaoMin={e.duration_min} compacto agoraInicial={agoraInicial} />
-          <a href={linkCalendario(e, agoraInicial)} download={`${e.title.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.ics`}>Salvar no calendário <span aria-hidden="true">↗</span></a>
-          {e.url && /^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(e.url) && <a href={e.url} target="_blank" rel="noreferrer">Abrir no YouTube ↗</a>}
+          <a href={linkCalendario(e, agoraInicial)} download={`${e.title.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.ics`}>{tr("Salvar no calendário")} <span aria-hidden="true">↗</span></a>
+          {e.url && /^https:\/\/(www\.)?(youtube\.com|youtu\.be)\//i.test(e.url) && <a href={e.url} target="_blank" rel="noreferrer">{tr("Abrir no YouTube ↗")}</a>}
         </div>
       </div>
-      <div className={styles.filmstrip} role="tablist" aria-label="Escolher encontro" onKeyDown={keyboard}>
+      <div className={styles.filmstrip} role="tablist" aria-label={tr("Escolher encontro")} onKeyDown={keyboard}>
         {eventos.map((event,index) => <button type="button" key={event.id} ref={el => { thumbnails.current[index] = el; }}
           role="tab" id={`${uid}-tab-${event.id}`} aria-selected={index === ativo} aria-controls={`${uid}-detail`}
           aria-label={`${diaMes(event.starts_at)}: ${event.title}`} tabIndex={index === ativo ? 0 : -1} onClick={() => select(index)}>
@@ -187,7 +191,7 @@ export default function RoadmapInterativo({ eventos, agoraInicial }: { eventos: 
           <span>{diaMes(event.starts_at)}</span>
         </button>)}
       </div>
-      <p className={styles.footer}>Deslize os banners ou escolha um encontro. A agenda acompanha os novos cadastros automaticamente.</p>
+      <p className={styles.footer}>{tr("Deslize os banners ou escolha um encontro. A agenda acompanha os novos cadastros automaticamente.")}</p>
     </section>
   );
 }

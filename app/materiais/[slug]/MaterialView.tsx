@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useState } from "react";
 import { submitLead } from "./actions";
 
@@ -21,6 +23,7 @@ const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
 
 export default function MaterialView({ material, utm }: { material: Material; utm: Utm }) {
+  const tr = usarTraducao();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<{ fileUrl: string | null; emailed: boolean } | null>(null);
@@ -53,13 +56,13 @@ export default function MaterialView({ material, utm }: { material: Material; ut
     <main className="relative mx-auto flex min-h-screen max-w-5xl flex-col px-6 py-10">
       <a href="/" className="w-fit transition-transform hover:scale-[1.03]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="Drive Data Academy" className="h-10 w-auto" />
+        <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-10 w-auto" />
       </a>
 
       <div className="mt-10 grid flex-1 items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
         {/* Conteúdo */}
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">Material gratuito</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{tr("Material gratuito")}</p>
           <h1 className="mt-3 font-display text-3xl font-bold leading-tight sm:text-4xl">{material.title}</h1>
           {material.subtitle && <p className="mt-4 text-lg text-slate-300/90">{material.subtitle}</p>}
           {material.cover_url && (
@@ -85,7 +88,7 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                       <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <h2 className="mt-4 font-display text-2xl font-bold text-white">Tudo certo! 🎉</h2>
+                  <h2 className="mt-4 font-display text-2xl font-bold text-white">{tr("Tudo certo! 🎉")}</h2>
                   <p className="mt-2 text-sm text-slate-300">
                     {done.emailed
                       ? "Enviamos o material para o seu e-mail. Confira a caixa de entrada (e o spam)."
@@ -98,7 +101,7 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                       rel="noreferrer"
                       className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
                     >
-                      Acessar o material
+                      {tr("Acessar o material")}
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -107,14 +110,14 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                 </div>
               ) : (
                 <>
-                  <h2 className="font-display text-xl font-bold text-white">Receba o material gratuito</h2>
-                  <p className="mt-1 text-sm text-slate-400">Preencha e enviamos para o seu e-mail.</p>
+                  <h2 className="font-display text-xl font-bold text-white">{tr("Receba o material gratuito")}</h2>
+                  <p className="mt-1 text-sm text-slate-400">{tr("Preencha e enviamos para o seu e-mail.")}</p>
                   <form onSubmit={handleSubmit} className="mt-5 space-y-3">
-                    <input name="name" required placeholder="Seu nome" className={field} />
-                    <input name="email" type="email" required placeholder="Seu melhor e-mail" className={field} />
-                    {material.ask_phone && <input name="phone" type="tel" placeholder="Telefone / WhatsApp" className={field} />}
-                    {material.ask_company && <input name="company" placeholder="Empresa" className={field} />}
-                    {material.ask_role && <input name="role" placeholder="Cargo" className={field} />}
+                    <input name="name" required placeholder={tr("Seu nome")} className={field} />
+                    <input name="email" type="email" required placeholder={tr("Seu melhor e-mail")} className={field} />
+                    {material.ask_phone && <input name="phone" type="tel" placeholder={tr("Telefone / WhatsApp")} className={field} />}
+                    {material.ask_company && <input name="company" placeholder={tr("Empresa")} className={field} />}
+                    {material.ask_role && <input name="role" placeholder={tr("Cargo")} className={field} />}
                     {error && <p className="text-xs text-red-400">{error}</p>}
                     <button
                       type="submit"
@@ -124,7 +127,7 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                       {loading ? "Enviando..." : material.cta_text || "Quero receber"}
                     </button>
                     <p className="text-center text-xs text-slate-500">
-                      Seus dados estão seguros. Sem spam.
+                      {tr("Seus dados estão seguros. Sem spam.")}
                     </p>
                   </form>
                 </>

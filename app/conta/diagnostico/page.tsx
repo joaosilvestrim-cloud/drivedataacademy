@@ -62,8 +62,7 @@ export default async function DiagnosticoPage() {
       <div className="max-w-2xl">
         {header}
         <p className="mt-2 text-sm text-slate-400">
-          Respondido em {new Date(attempt.completed_at).toLocaleDateString("pt-BR")}. O diagnóstico é feito uma vez, porque
-          serve como ponto de partida do seu mapa.
+          {tr("Respondido em")} {new Date(attempt.completed_at).toLocaleDateString("pt-BR")}{tr(". O diagnóstico é feito uma vez, porque serve como ponto de partida do seu mapa.")}
         </p>
         <div className="mt-6 space-y-2">
           {linhas.map(([competency, r]) => (
@@ -100,7 +99,7 @@ export default async function DiagnosticoPage() {
     <div className="max-w-2xl">
       {header}
       <p className="mt-2 text-sm leading-relaxed text-slate-400">
-        São {questions.length} perguntas rápidas. Elas dão o ponto de partida do seu mapa de competências.
+        {tr("São")} {questions.length} perguntas rápidas. Elas dão o ponto de partida do seu mapa de competências.
         Acertos viram evidência real; o que você não souber agora fica apenas como espaço para aprender.
         Você responde uma vez só.
       </p>

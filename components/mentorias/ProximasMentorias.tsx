@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { Radio } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -96,24 +97,24 @@ export default async function ProximasMentorias({
         <div className="relative px-6 py-8 sm:px-10 sm:py-10">
           <div className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${s.titulo}`}>
             <h2 id="proximas-mentorias" className="font-display text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
-              Próximas lives e mentorias
+              {tr("Próximas lives e mentorias")}
             </h2>
             <span className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-4 py-1.5">
               <span aria-hidden className={`block h-2 w-2 rounded-full bg-red-500 ${s.ponto}`} />
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">Ao vivo</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">{tr("Ao vivo")}</span>
             </span>
           </div>
 
           {/* Cronômetro da próxima transmissão, correndo em segundos. */}
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4">
             <span className="text-sm text-slate-400">
-              Próxima: <span className="font-semibold text-slate-100">{mentorias[0].title}</span>
+              {tr("Próxima:")} <span className="font-semibold text-slate-100">{mentorias[0].title}</span>
             </span>
             <Cronometro inicio={mentorias[0].starts_at} duracaoMin={mentorias[0].duration_min} agoraInicial={agora} />
             {mentorias[0].url && (
               <a href={mentorias[0].url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-500">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.2a3 3 0 00-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 001 7.2 31 31 0 00.5 12a31 31 0 00.5 4.8 3 3 0 002.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 002.1-2.1 31 31 0 00.5-4.8 31 31 0 00-.5-4.8zM9.8 15.1V8.9L15.2 12z" /></svg>
-                Abrir no YouTube
+                {tr("Abrir no YouTube")}
               </a>
             )}
           </div>
@@ -153,7 +154,7 @@ export default async function ProximasMentorias({
                       {dataCurta(m.starts_at)} · {hora(m.starts_at)}
                     </time>
                     {/* A mais próxima é a que interessa agora. */}
-                    {i === 0 && <span className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-cyan/80">Próxima</span>}
+                    {i === 0 && <span className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-cyan/80">{tr("Próxima")}</span>}
                   </p>
                   <span className={`ml-2 inline-block rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider ${m.kind === "mentoria" ? "bg-brand-blue/15 text-brand-teal" : "bg-red-500/15 text-red-300"}`}>
                     {m.kind === "mentoria" ? "Mentoria" : "Live"}

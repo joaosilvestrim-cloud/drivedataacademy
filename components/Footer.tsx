@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useT } from "@/lib/i18n/LanguageProvider";
 import { usePathname } from "next/navigation";
 import { NAV_HREFS, resolverAncora } from "./Navbar";
@@ -42,6 +44,7 @@ function SocialIcon({ type }: { type: string }) {
 }
 
 export default function Footer() {
+  const tr = usarTraducao();
   const t = useT();
   const pathname = usePathname();
   const assinaturaAberta = useAssinaturaAberta();
@@ -53,7 +56,7 @@ export default function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Drive Data Academy" className="h-11 w-auto" />
+            <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-11 w-auto" />
             <p className="mt-5 max-w-xs text-sm text-slate-400">{t.footer.desc}</p>
 
             <div className="mt-6 space-y-3">
@@ -101,7 +104,7 @@ export default function Footer() {
               ))}
               <li>
                 <a href="/votacao" className="text-sm text-slate-400 transition-colors hover:text-brand-green">
-                  Enquete dos temas
+                  {tr("Enquete dos temas")}
                 </a>
               </li>
             </ul>

@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useState } from "react";
 
 /* Faixa do cupom de lançamento, com a contagem regressiva até o vencimento.
@@ -40,6 +42,7 @@ export default function CupomContagem({
   expiraEm: string;
   agoraInicial: number;
 }) {
+  const tr = usarTraducao();
   const alvo = Date.parse(expiraEm);
   const [agora, setAgora] = useState(agoraInicial);
   const [copiado, setCopiado] = useState(false);
@@ -78,7 +81,7 @@ export default function CupomContagem({
         <button
           type="button"
           onClick={copiar}
-          title="Copiar o código"
+          title={tr("Copiar o código")}
           className="font-mono text-base font-bold tracking-wide text-white transition-colors hover:text-brand-green"
         >
           CUPOM: {codigo}
@@ -88,7 +91,7 @@ export default function CupomContagem({
 
       <span className="flex flex-col gap-1.5">
         <span className="text-xs text-slate-400">
-          Validade {prazo} · <span className="text-slate-500">termina em</span>
+          Validade {prazo} · <span className="text-slate-500">{tr("termina em")}</span>
         </span>
         <span className="inline-flex items-end gap-1.5" role="timer" aria-label={`O cupom ${codigo} vence em ${falta}`}>
           {blocos.map((b, i) => (
@@ -103,7 +106,7 @@ export default function CupomContagem({
       </span>
 
       <span className="text-xs text-slate-400" aria-live="polite">
-        {copiado ? <span className="text-brand-green">código copiado</span> : "use no checkout"}
+        {copiado ? <span className="text-brand-green">{tr("código copiado")}</span> : "use no checkout"}
       </span>
     </div>
   );

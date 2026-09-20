@@ -137,7 +137,7 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
               <p className="text-xs font-semibold uppercase tracking-wide text-brand-teal">{tr("Simulação")}</p>
               <div className="mt-2 flex flex-wrap gap-6">
                 <div><p className="text-xs text-slate-400">{tr("Receita mensal dos clientes")}</p><p className="font-display text-xl font-bold text-white">{brl(sim.receita)}</p></div>
-                <div><p className="text-xs text-slate-400">{tr("Sua recorrência (exemplo)")}</p><p className="font-display text-xl font-bold text-brand-green">{brl(sim.recorrencia)}/mês</p></div>
+                <div><p className="text-xs text-slate-400">{tr("Sua recorrência (exemplo)")}</p><p className="font-display text-xl font-bold text-brand-green">{brl(sim.recorrencia)}{tr("/mês")}</p></div>
               </div>
               <p className="mt-2 text-[0.7rem] text-slate-500">{tr("Exemplo ilustrativo. Os percentuais reais são combinados na parceria.")}</p>
             </div>

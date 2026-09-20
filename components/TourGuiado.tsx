@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useCallback, useEffect, useState } from "react";
 
 /* Tour guiado, usado pelas três ferramentas.
@@ -16,6 +18,7 @@ export type PassoTour = { alvo: string; titulo: string; texto: string };
 
 
 export default function TourGuiado({ passos: PASSOS, chave, aberto, aoFechar }: { passos: PassoTour[]; chave: string; aberto: boolean; aoFechar: () => void }) {
+  const tr = usarTraducao();
   const [passo, setPasso] = useState(0);
   const [area, setArea] = useState<DOMRect | null>(null);
 
@@ -108,8 +111,8 @@ export default function TourGuiado({ passos: PASSOS, chave, aberto, aoFechar }: 
         <p style={{ margin: 0, fontSize: 12, letterSpacing: ".12em", color: "#34e8a0", fontWeight: 700 }}>
           PASSO {passo + 1} DE {PASSOS.length}
         </p>
-        <h3 style={{ margin: "8px 0 6px", fontSize: 19, fontWeight: 700, color: "#fff" }}>{atual.titulo}</h3>
-        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "#cbd5e1" }}>{atual.texto}</p>
+        <h3 style={{ margin: "8px 0 6px", fontSize: 19, fontWeight: 700, color: "#fff" }}>{tr(atual.titulo)}</h3>
+        <p style={{ margin: 0, fontSize: 14, lineHeight: 1.6, color: "#cbd5e1" }}>{tr(atual.texto)}</p>
 
         <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 10 }}>
           <button
@@ -121,11 +124,11 @@ export default function TourGuiado({ passos: PASSOS, chave, aberto, aoFechar }: 
           </button>
           {passo > 0 && (
             <button type="button" onClick={() => setPasso((p) => p - 1)} style={{ color: "#94a3b8", fontSize: 13 }}>
-              voltar
+              {tr("voltar")}
             </button>
           )}
           <button type="button" onClick={() => fechar(true)} style={{ marginLeft: "auto", color: "#64748b", fontSize: 13 }}>
-            pular tour
+            {tr("pular tour")}
           </button>
         </div>
       </div>

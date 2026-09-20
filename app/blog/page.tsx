@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import Background from "@/components/Background";
 import Navbar from "@/components/Navbar";
@@ -33,9 +34,9 @@ export default async function BlogPage() {
       <Navbar />
       <main className="relative mx-auto max-w-7xl px-6 pb-24 pt-32 sm:pt-40">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">Blog</p>
-          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-6xl">Conhecimento que <span className="text-gradient-blue">circula</span></h1>
-          <p className="mt-5 text-lg text-slate-300/90">O que está mudando em dados, BI e IA, e o que fazer com isso no seu trabalho.</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{tr("Blog")}</p>
+          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-6xl">{tr("Conhecimento que")} <span className="text-gradient-blue">{tr("circula")}</span></h1>
+          <p className="mt-5 text-lg text-slate-300/90">{tr("O que está mudando em dados, BI e IA, e o que fazer com isso no seu trabalho.")}</p>
         </div>
 
         {destaque && (
@@ -79,7 +80,7 @@ export default async function BlogPage() {
         </div>
 
         {lista.length === 0 && (
-          <p className="mt-14 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center text-slate-400">Os primeiros artigos estão a caminho.</p>
+          <p className="mt-14 rounded-3xl border border-dashed border-white/10 px-6 py-16 text-center text-slate-400">{tr("Os primeiros artigos estão a caminho.")}</p>
         )}
       </main>
       <Footer />

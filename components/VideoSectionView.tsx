@@ -1,10 +1,13 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import Reveal from "./Reveal";
 import VideoCarousel from "./VideoCarousel";
 import { useT } from "@/lib/i18n/LanguageProvider";
 
 export default function VideoSectionView({ ids }: { ids: string[] }) {
+  const tr = usarTraducao();
   const t = useT();
 
   return (
@@ -50,7 +53,7 @@ export default function VideoSectionView({ ids }: { ids: string[] }) {
           </p>
           <div className="rounded-2xl border border-white/10 bg-white px-6 py-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/microsoft-partner.png" alt="Microsoft Partner" className="h-10 w-auto" />
+            <img src="/microsoft-partner.png" alt={tr("Microsoft Partner")} className="h-10 w-auto" />
           </div>
         </div>
       </Reveal>

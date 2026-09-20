@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import type { CSSProperties } from "react";
 import styles from "./certificate.module.css";
 
@@ -38,7 +39,7 @@ export default function CertificateView({studentName,courseTitle,workload,dateLa
   const nameSize = studentName.length > 70 ? 2.5 : studentName.length > 45 ? 3 : studentName.length > 28 ? 3.8 : 4.65;
   const courseSize = courseTitle.length > 115 ? 1.65 : courseTitle.length > 75 ? 1.95 : courseTitle.length > 42 ? 2.35 : 2.95;
   const validationUrl = verificationUrl || `https://${host}/certificado/${encodeURIComponent(code)}`;
-  return <div className={styles.viewport} role="region" aria-label="Certificado DriveData Academy" tabIndex={0}>
+  return <div className={styles.viewport} role="region" aria-label={tr("Certificado DriveData Academy")} tabIndex={0}>
     <style>{`@media print {
       html,body{margin:0!important;padding:0!important;min-height:0!important;background:#071320!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
       .no-print{display:none!important}
@@ -50,12 +51,12 @@ export default function CertificateView({studentName,courseTitle,workload,dateLa
       <header className={styles.brand}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/certificate-mark.png" alt="" />
-        <div><strong>DriveData</strong><span>ACADEMY</span></div>
+        <div><strong>{tr("DriveData")}</strong><span>ACADEMY</span></div>
       </header>
-      <div className={styles.headerMeta} aria-hidden="true"><span>FORMAÇÃO EM DADOS E IA</span><small>DRIVEDATA / CERTIFICAÇÃO</small></div>
+      <div className={styles.headerMeta} aria-hidden="true"><span>{tr("FORMAÇÃO EM DADOS E IA")}</span><small>{tr("DRIVEDATA / CERTIFICAÇÃO")}</small></div>
       <p className={styles.overline}>{headline}</p>
       <h1 className={styles.title}>CERTIFICADO</h1>
-      <p className={styles.certify}>Certificamos que</p>
+      <p className={styles.certify}>{tr("Certificamos que")}</p>
       <p className={styles.name}>{studentName}</p>
       <div className={styles.rule} aria-hidden="true" />
       <p className={styles.achievement}>{achievementLabel}</p>
@@ -63,16 +64,16 @@ export default function CertificateView({studentName,courseTitle,workload,dateLa
       <div className={styles.chip} aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/certificate-mark.png" alt="" />
-        <span>DRIVEDATA ACADEMY</span>
+        <span>{tr("DRIVEDATA ACADEMY")}</span>
       </div>
       <dl className={styles.metadata}>
-        {workload && <div><dt>Carga horária</dt><dd className={styles.hours}>{workload}</dd></div>}
-        <div><dt>Emitido em</dt><dd>{dateLabel}</dd></div>
-        <div><dt>Código de autenticidade</dt><dd className={styles.code}>{code}</dd></div>
+        {workload && <div><dt>{tr("Carga horária")}</dt><dd className={styles.hours}>{workload}</dd></div>}
+        <div><dt>{tr("Emitido em")}</dt><dd>{dateLabel}</dd></div>
+        <div><dt>{tr("Código de autenticidade")}</dt><dd className={styles.code}>{code}</dd></div>
       </dl>
       <footer className={styles.authentication}>
         <div className={styles.signatures}>
-          {(assinaturas.length ? assinaturas : [{nome:"DriveData Academy",cargo:null,url:null}]).map((signer,i)=><div className={styles.signature} key={`${signer.nome}-${i}`}>
+          {(assinaturas.length ? assinaturas : [{nome:tr("DriveData Academy"),cargo:null,url:null}]).map((signer,i)=><div className={styles.signature} key={`${signer.nome}-${i}`}>
             <div className={styles.signatureImage}>
               {signer.url && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -84,9 +85,9 @@ export default function CertificateView({studentName,courseTitle,workload,dateLa
           </div>)}
         </div>
         <div className={styles.validation}>
-          <div><strong>VALIDAÇÃO</strong><p>{status === "preview" ? "Modelo demonstrativo. Sem validade." : qrSvg ? "Escaneie para verificar o certificado." : "Consulte o código de autenticidade."}</p></div>
-          {qrSvg ? <a href={validationUrl} aria-label="Verificar autenticidade do certificado" className={styles.qr} dangerouslySetInnerHTML={{__html:qrSvg}} />
-          : <div className={styles.qrPlaceholder}>{status === "preview" ? <>PRÉVIA<br/>DO MODELO</> : <>VALIDAÇÃO<br/>PELO CÓDIGO</>}</div>}
+          <div><strong>{tr("VALIDAÇÃO")}</strong><p>{status === "preview" ? "Modelo demonstrativo. Sem validade." : qrSvg ? "Escaneie para verificar o certificado." : "Consulte o código de autenticidade."}</p></div>
+          {qrSvg ? <a href={validationUrl} aria-label={tr("Verificar autenticidade do certificado")} className={styles.qr} dangerouslySetInnerHTML={{__html:qrSvg}} />
+          : <div className={styles.qrPlaceholder}>{status === "preview" ? <>{tr("PRÉVIA")}<br/>{tr("DO MODELO")}</> : <>{tr("VALIDAÇÃO")}<br/>{tr("PELO CÓDIGO")}</>}</div>}
         </div>
       </footer>
       <div className={styles.documentFooter}><span>{status === "preview" ? "MODELO DEMONSTRATIVO / SEM VALIDADE" : status === "revoked" ? "CERTIFICADO REVOGADO" : status === "expired" ? "CERTIFICADO EXPIRADO" : "DRIVEDATA ACADEMY / CERTIFICAÇÃO"}</span><span>{host}</span></div>

@@ -469,7 +469,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
             <span className="relative flex h-2 w-2 shrink-0"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" /></span>
             <span>
               <b className="font-bold text-red-100">{porCanal[channel.id].aguardando}</b>{" "}
-              {porCanal[channel.id].aguardando === 1 ? "mensagem de aluno está esperando" : "mensagens de alunos estão esperando"} resposta da equipe neste canal.
+              {porCanal[channel.id].aguardando === 1 ? "mensagem de aluno está esperando" : "mensagens de alunos estão esperando"} {tr("resposta da equipe neste canal.")}
             </span>
           </div>
         )}
@@ -496,7 +496,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
           {q && visiveis.length === 0 && messages.length > 0 && (
             <div className="grid h-full place-items-center px-6 text-center text-slate-500">
               <div>
-                <p className="text-sm">Nenhuma mensagem com “{busca.trim()}” neste canal.</p>
+                <p className="text-sm">{tr("Nenhuma mensagem com “")}{busca.trim()}” neste canal.</p>
                 <button type="button" onClick={() => setBusca("")} className="mt-3 rounded border border-white/10 px-4 py-1.5 text-xs text-slate-300 hover:border-white/30 hover:text-white">
                   {tr("Limpar busca")}
                 </button>
@@ -510,7 +510,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
               <span className="grid h-16 w-16 place-items-center rounded-full text-ink-900 shadow-lg" style={{ backgroundImage: `linear-gradient(135deg, ${cFrom}, ${cTo})` }}>
                 <ChIcon slug={channel.slug} size={30} />
               </span>
-              <h2 className="mt-4 font-display text-3xl font-bold text-white">Bem-vindo ao #{channel.name}</h2>
+              <h2 className="mt-4 font-display text-3xl font-bold text-white">{tr("Bem-vindo ao #")}{channel.name}</h2>
               <p className="mt-1.5 max-w-2xl text-base text-slate-400">
                 {channel.description || "Este é o começo do canal. Puxe assunto: a conversa aqui começa com você."}
               </p>

@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef, useState } from "react";
 
 declare global {
@@ -33,6 +35,7 @@ const REVEAL_DELAY = 3400;
 const FALLBACK_REVEAL = 7000;
 
 export default function VideoCarousel({ ids }: { ids: string[] }) {
+  const tr = usarTraducao();
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const hostRef = useRef<HTMLDivElement>(null);
@@ -152,7 +155,7 @@ export default function VideoCarousel({ ids }: { ids: string[] }) {
           <>
             <button
               onClick={prev}
-              aria-label="Vídeo anterior"
+              aria-label={tr("Vídeo anterior")}
               className="absolute left-2 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-ink-900/70 text-white backdrop-blur transition-colors hover:border-brand-green/60 hover:text-brand-green sm:-left-5"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -161,7 +164,7 @@ export default function VideoCarousel({ ids }: { ids: string[] }) {
             </button>
             <button
               onClick={next}
-              aria-label="Próximo vídeo"
+              aria-label={tr("Próximo vídeo")}
               className="absolute right-2 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-ink-900/70 text-white backdrop-blur transition-colors hover:border-brand-green/60 hover:text-brand-green sm:-right-5"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">

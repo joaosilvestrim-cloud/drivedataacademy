@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { textos } from "@/lib/i18n/textos";
@@ -16,6 +18,7 @@ export type Destino = { label: string; href: string; grupo: string; busca?: stri
 const semAcento = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 
 export default function PaletaDeComandos({ destinos, idioma = IDIOMA_PADRAO }: { destinos: Destino[]; idioma?: Idioma }) {
+  const tr = usarTraducao();
   const t = textos(idioma);
   const [aberta, setAberta] = useState(false);
   const [busca, setBusca] = useState("");
@@ -89,7 +92,7 @@ export default function PaletaDeComandos({ destinos, idioma = IDIOMA_PADRAO }: {
               >
                 <span className="min-w-0 flex-1 truncate">{d.label}</span>
                 <span className="shrink-0 text-[0.68rem] text-slate-500">{d.grupo}</span>
-                {i === marcado && <span className="shrink-0 text-[0.65rem] text-slate-500">enter</span>}
+                {i === marcado && <span className="shrink-0 text-[0.65rem] text-slate-500">{tr("enter")}</span>}
               </button>
             </li>
           ))}

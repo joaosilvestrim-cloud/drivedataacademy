@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useState } from "react";
 
 /* Contagem regressiva até o início de um evento, rodando a cada segundo.
@@ -34,6 +36,7 @@ export default function Cronometro({
   compacto?: boolean;
   agoraInicial: number;
 }) {
+  const tr = usarTraducao();
   const alvo = new Date(inicio).getTime();
   const fim = alvo + (duracaoMin || 90) * 60000;
   const [agora, setAgora] = useState(agoraInicial);
@@ -45,7 +48,7 @@ export default function Cronometro({
   }, []);
 
   if (agora >= fim) {
-    return <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Encerrada</span>;
+    return <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{tr("Encerrada")}</span>;
   }
 
   if (agora >= alvo) {
@@ -55,7 +58,7 @@ export default function Cronometro({
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75 motion-reduce:animate-none" />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
         </span>
-        Ao vivo agora
+        {tr("Ao vivo agora")}
       </span>
     );
   }

@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import {
   Type, Heading1, Heading2, Text, Hash, Sigma, Tag, Quote,
@@ -161,19 +163,21 @@ type MostrarPreview = (it: Item | null, rect?: DOMRect | null) => void;
 const PreviewCtx = createContext<MostrarPreview>(() => {});
 
 function HoverPreview({ it, rect }: { it: Item; rect: DOMRect }) {
+  const tr = usarTraducao();
   const srcDoc = useMemo(() => buildPreview(docPreview(it)), [it]);
   let left = rect.right + 10;
   if (left + PREV_W > window.innerWidth - 8) left = Math.max(8, rect.left - PREV_W - 10);
   const top = Math.max(60, Math.min(rect.top + rect.height / 2 - PREV_H / 2, window.innerHeight - PREV_H - 40));
   return (
     <div style={{ position: "fixed", left, top, width: PREV_W, zIndex: 60 }} className="pointer-events-none overflow-hidden rounded-xl border border-viz/40 bg-[#0b1220] shadow-2xl">
-      <iframe title={`Prévia de ${it.rotulo}`} sandbox="" srcDoc={srcDoc} style={{ width: PREV_W, height: PREV_H, background: "transparent", border: 0 }} />
-      <div className="border-t border-white/10 px-2 py-1 text-center text-[10px] font-medium text-slate-300">{it.rotulo}</div>
+      <iframe title={`${tr("Prévia de")} ${tr(it.rotulo)}`} sandbox="" srcDoc={srcDoc} style={{ width: PREV_W, height: PREV_H, background: "transparent", border: 0 }} />
+      <div className="border-t border-white/10 px-2 py-1 text-center text-[10px] font-medium text-slate-300">{tr(it.rotulo)}</div>
     </div>
   );
 }
 
 function Botao({ it }: { it: Item }) {
+  const tr = usarTraducao();
   const adicionar = useEditor((s) => s.adicionar);
   const adicionarPreset = useEditor((s) => s.adicionarPreset);
   const adicionarTexto = useEditor((s) => s.adicionarTexto);
@@ -191,11 +195,11 @@ function Botao({ it }: { it: Item }) {
       }}
       onMouseEnter={(e) => mostrarPreview(it, e.currentTarget.getBoundingClientRect())}
       onMouseLeave={() => mostrarPreview(null)}
-      title={it.rotulo}
+      title={tr(it.rotulo)}
       className="flex flex-col items-center justify-center gap-1 rounded-lg border border-border bg-background py-2.5 transition-colors hover:border-viz hover:bg-viz/5"
     >
       <Icon className="h-4 w-4 text-viz-dark" strokeWidth={1.8} />
-      <span className="text-[10px] leading-tight text-muted">{it.rotulo}</span>
+      <span className="text-[10px] leading-tight text-muted">{tr(it.rotulo)}</span>
     </button>
   );
 }
@@ -220,12 +224,13 @@ function Grupo({ titulo, rotulos, defaultOpen = true }: { titulo: string; rotulo
 const BLOCO_POR_NOME: Record<string, (typeof BLOCOS)[number]> = Object.fromEntries(BLOCOS.map((b) => [b.nome, b]));
 
 function BlocosSec() {
+  const tr = usarTraducao();
   const [aberto, setAberto] = useState(true);
   const adicionarBloco = useEditor((s) => s.adicionarBloco);
   return (
     <div className="rounded-lg border border-viz/30 bg-viz/5 p-2">
       <button onClick={() => setAberto((v) => !v)} className="flex w-full items-center justify-between text-[11px] font-bold uppercase tracking-wider text-viz-dark">
-        <span className="flex items-center gap-1"><Boxes className="h-3 w-3" /> Blocos prontos</span>
+        <span className="flex items-center gap-1"><Boxes className="h-3 w-3" /> {tr("Blocos prontos")}</span>
         <ChevronDown className={`h-3 w-3 transition-transform ${aberto ? "" : "-rotate-90"}`} />
       </button>
       {aberto && (
@@ -255,6 +260,7 @@ function BlocosSec() {
 }
 
 export default function Toolbox() {
+  const tr = usarTraducao();
   const [busca, setBusca] = useState("");
   const [preview, setPreview] = useState<{ it: Item; rect: DOMRect } | null>(null);
   const favoritos = useEditor((s) => s.favoritos);
@@ -275,18 +281,18 @@ export default function Toolbox() {
     <div className="flex flex-col gap-3">
       <div className="relative">
         <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted" />
-        <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar componente" className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs focus:border-viz focus:outline-none" />
+        <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder={tr("Buscar componente")} className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs focus:border-viz focus:outline-none" />
       </div>
 
       {resultados ? (
         <div className="grid grid-cols-3 gap-1.5">
-          {resultados.length ? resultados.map((it) => <Botao key={it.rotulo} it={it} />) : <p className="col-span-3 py-4 text-center text-xs text-muted">Nada encontrado.</p>}
+          {resultados.length ? resultados.map((it) => <Botao key={it.rotulo} it={it} />) : <p className="col-span-3 py-4 text-center text-xs text-muted">{tr("Nada encontrado.")}</p>}
         </div>
       ) : (
         <>
           {recentes.length > 0 && (
             <div>
-              <h3 className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-muted">Recentes</h3>
+              <h3 className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-muted">{tr("Recentes")}</h3>
               <div className="grid grid-cols-3 gap-1.5">
                 {recentes.map((r) => POR_ROTULO[r] && <Botao key={r} it={POR_ROTULO[r]} />)}
               </div>
@@ -295,7 +301,7 @@ export default function Toolbox() {
 
           <div>
             <h3 className="mb-1.5 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-viz-dark">
-              <Zap className="h-3 w-3" /> Rápidos
+              <Zap className="h-3 w-3" /> {tr("Rápidos")}
             </h3>
             <div className="grid grid-cols-3 gap-1.5">
               {RAPIDOS.map((r) => POR_ROTULO[r] && <Botao key={r} it={POR_ROTULO[r]} />)}
@@ -307,13 +313,13 @@ export default function Toolbox() {
           {favoritos.length > 0 && (
             <div className="border-t border-border pt-3">
               <h3 className="mb-1.5 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-foreground">
-                <Star className="h-3 w-3" /> Favoritos
+                <Star className="h-3 w-3" /> {tr("Favoritos")}
               </h3>
               <div className="flex flex-col gap-1">
                 {favoritos.map((f) => (
                   <div key={f.id} className="group flex items-center gap-1.5 rounded-md border border-border bg-background px-2 py-1.5">
                     <button onClick={() => adicionarFavorito(f)} className="flex-1 truncate text-left text-xs text-foreground hover:text-viz-dark">{f.nome}</button>
-                    <button onClick={() => removerFavorito(f.id)} title="Remover" className="text-muted opacity-0 hover:text-red-600 group-hover:opacity-100"><X className="h-3 w-3" /></button>
+                    <button onClick={() => removerFavorito(f.id)} title={tr("Remover")} className="text-muted opacity-0 hover:text-red-600 group-hover:opacity-100"><X className="h-3 w-3" /></button>
                   </div>
                 ))}
               </div>

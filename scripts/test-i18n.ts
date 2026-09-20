@@ -10,6 +10,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { GERADAS } from "../lib/i18n/frases-geradas";
 import { frase } from "../lib/i18n/frases";
+import { ITENS, filtrar } from "../lib/biblioteca";
 
 let erros = 0;
 let checagens = 0;
@@ -42,7 +43,9 @@ for (const k of chaves) {
   // ("Todas as ferramentas" vira "All tools") e a razão não diz nada.
   if (k.length < 40) continue;
   for (const idioma of ["en", "es"] as const) {
-    const razao = GERADAS[k][idioma].length / k.length;
+    // Pela tradução que a tela usa de fato: correção revisada à mão vence a
+    // automática, e é a corrigida que precisa estar no tamanho certo.
+    const razao = frase(k, idioma).length / k.length;
     ok(razao > 0.5 && razao < 2, `tamanho fora da curva (${idioma}): ${k.slice(0, 50)}`);
   }
 }
@@ -60,9 +63,13 @@ function tsx(dir: string): string[] {
     return statSync(p).isDirectory() ? tsx(p) : p.endsWith(".tsx") ? [p] : [];
   });
 }
-const USO = /\btr\((["'])((?:[^"'\\]|\\.)*)\1\)/g;
+// O tr() das telas e o f() dos e-mails são a mesma coisa com nome diferente:
+// os dois procuram a frase pelo português, no mesmo dicionário.
+const USO = /\b(?:tr|f)\((["'])((?:[^"'\\]|\\.)*)\1\)/g;
 const faltando: string[] = [];
-for (const arquivo of tsx("app/conta")) {
+const TELAS = ["app/conta", "app/aprender", "app/cursos", "app/materiais", "app/certificado", "components/conta"];
+const arquivos = [...TELAS.flatMap((d) => tsx(d)), "lib/email.ts"];
+for (const arquivo of arquivos) {
   const texto = readFileSync(arquivo, "utf8");
   for (const m of texto.matchAll(USO)) {
     const chave = m[2].replace(/\\"/g, '"').replace(/\\'/g, "'");
@@ -70,6 +77,23 @@ for (const arquivo of tsx("app/conta")) {
   }
 }
 ok(faltando.length === 0, `tr() sem tradução:\n    ${faltando.slice(0, 10).join("\n    ")}`);
+
+/* 6. A busca da Biblioteca acha pelo texto traduzido.
+      Sem isso, quem lê em inglês digita a palavra que está na tela e o acervo
+      inteiro parece vazio. */
+{
+  const traduzir = (s: string) => frase(s, "en");
+  const acumulado = ITENS.find((i) => i.titulo === "Acumulado no ano");
+  ok(!!acumulado, "verbete de referência existe");
+  if (acumulado) {
+    const emIngles = traduzir(acumulado.titulo);
+    ok(emIngles !== acumulado.titulo, "o verbete tem tradução");
+    ok(filtrar(ITENS, emIngles, "todas", "", traduzir).some((i) => i.id === acumulado.id), "busca em inglês acha o verbete");
+    ok(filtrar(ITENS, emIngles, "todas", "").length === 0, "sem tradutor, a mesma busca não acha nada");
+    // Nome de função não muda de idioma: continua achável nos três.
+    ok(filtrar(ITENS, "TOTALYTD", "todas", "", traduzir).length > 0, "busca por função ainda funciona");
+  }
+}
 
 console.log(`\n${checagens - erros}/${checagens} checagens passaram`);
 process.exit(erros ? 1 : 0);

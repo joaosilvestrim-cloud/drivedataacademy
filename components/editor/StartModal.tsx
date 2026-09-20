@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useState } from "react";
 import { Blocks, Sigma, Code2, X } from "lucide-react";
 import { useEditor } from "@/lib/editor/store";
@@ -22,6 +24,7 @@ const PRESETS = [
 ];
 
 export default function StartModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tr = usarTraducao();
   const atualizarCard = useEditor((s) => s.atualizarCard);
   const setPaleta = useEditor((s) => s.setPaleta);
   const paletaAtual = useEditor((s) => s.doc.paleta);
@@ -55,10 +58,10 @@ export default function StartModal({ open, onClose }: { open: boolean; onClose: 
     <Modal open={open} onClose={onClose} titulo="Novo visual" wide>
       {verComo && (
         <div className="relative border-b border-border bg-viz/5 px-5 py-4">
-          <button onClick={dispensarComo} aria-label="Não mostrar novamente" title="Não mostrar novamente" className="absolute right-3 top-3 text-muted hover:text-foreground">
+          <button onClick={dispensarComo} aria-label={tr("Não mostrar novamente")} title={tr("Não mostrar novamente")} className="absolute right-3 top-3 text-muted hover:text-foreground">
             <X className="h-3.5 w-3.5" />
           </button>
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-viz-dark">Como funciona</h3>
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-viz-dark">{tr("Como funciona")}</h3>
           <div className="grid gap-3 sm:grid-cols-3">
             {COMO.map((c, i) => (
               <div key={c.titulo} className="flex gap-2.5">
@@ -66,8 +69,8 @@ export default function StartModal({ open, onClose }: { open: boolean; onClose: 
                   <c.icon className="h-3.5 w-3.5" />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold">{i + 1}. {c.titulo}</p>
-                  <p className="mt-0.5 text-[11px] leading-snug text-muted">{c.texto}</p>
+                  <p className="text-xs font-semibold">{i + 1}. {tr(c.titulo)}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-muted">{tr(c.texto)}</p>
                 </div>
               </div>
             ))}
@@ -76,8 +79,8 @@ export default function StartModal({ open, onClose }: { open: boolean; onClose: 
       )}
       <div className="border-b border-border px-5 pb-4 pt-5">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">Paleta de cores</h3>
-          <span className="text-[11px] text-muted">Temas completos ficam no painel à direita</span>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">{tr("Paleta de cores")}</h3>
+          <span className="text-[11px] text-muted">{tr("Temas completos ficam no painel à direita")}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {PALETAS.map((p) => {
@@ -96,7 +99,7 @@ export default function StartModal({ open, onClose }: { open: boolean; onClose: 
       <div className="grid gap-5 p-5 sm:grid-cols-2">
         {/* Presets */}
         <div>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Tamanhos comuns</h3>
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{tr("Tamanhos comuns")}</h3>
           <div className="grid grid-cols-2 gap-2">
             {PRESETS.map((p) => (
               <button
@@ -116,31 +119,31 @@ export default function StartModal({ open, onClose }: { open: boolean; onClose: 
 
         {/* Calculadora */}
         <div className="rounded-xl border border-border bg-background p-4">
-          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">Calcular pelo dashboard</h3>
-          <p className="mb-3 text-xs text-muted">Informe o tamanho da sua página e em quantos cards quer dividir.</p>
+          <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted">{tr("Calcular pelo dashboard")}</h3>
+          <p className="mb-3 text-xs text-muted">{tr("Informe o tamanho da sua página e em quantos cards quer dividir.")}</p>
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
-              <Campo rotulo="Largura da página" valor={dashW} onChange={setDashW} />
-              <Campo rotulo="Altura da página" valor={dashH} onChange={setDashH} />
+              <Campo rotulo={tr("Largura da página")} valor={dashW} onChange={setDashW} />
+              <Campo rotulo={tr("Altura da página")} valor={dashH} onChange={setDashH} />
             </div>
             <div className="flex gap-2">
-              <Campo rotulo="Colunas" valor={cols} onChange={(v) => setCols(Math.max(1, v))} />
-              <Campo rotulo="Linhas" valor={rows} onChange={(v) => setRows(Math.max(1, v))} />
-              <Campo rotulo="Espaço" valor={gap} onChange={(v) => setGap(Math.max(0, v))} />
+              <Campo rotulo={tr("Colunas")} valor={cols} onChange={(v) => setCols(Math.max(1, v))} />
+              <Campo rotulo={tr("Linhas")} valor={rows} onChange={(v) => setRows(Math.max(1, v))} />
+              <Campo rotulo={tr("Espaço")} valor={gap} onChange={(v) => setGap(Math.max(0, v))} />
             </div>
             <div className="rounded-lg border border-viz/30 bg-viz/5 p-3 text-center">
-              <p className="text-xs text-muted">Tamanho sugerido do card</p>
+              <p className="text-xs text-muted">{tr("Tamanho sugerido do card")}</p>
               <p className="font-mono text-lg font-bold text-viz-dark">{cardW} × {cardH}px</p>
             </div>
             <button onClick={() => aplicar(cardW, cardH)} className="rounded-lg bg-viz py-2.5 text-sm font-medium text-white transition-colors hover:bg-viz-dark">
-              Usar esse tamanho
+              {tr("Usar esse tamanho")}
             </button>
           </div>
         </div>
       </div>
       <div className="border-t border-border px-5 py-3 text-center">
         <button onClick={onClose} className="text-sm text-muted hover:text-foreground">
-          Pular e usar o tamanho atual
+          {tr("Pular e usar o tamanho atual")}
         </button>
       </div>
     </Modal>

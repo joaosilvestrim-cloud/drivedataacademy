@@ -189,7 +189,7 @@ export default async function ContaHome() {
           {full && <> · <span className="text-ds-accent">{tr("assinatura ativa")}</span></>}
         </p>
         <h1 className="mt-2.5 text-balance font-display text-title font-semibold text-ds-text">
-          Olá{firstName ? `, ${firstName}` : ""}
+          {tr("Olá")}{firstName ? `, ${firstName}` : ""}
         </h1>
         <p className="mt-1.5 max-w-xl text-body text-ds-text-2">{leitura}</p>
       </header>
@@ -223,7 +223,7 @@ export default async function ContaHome() {
         items={[
           { label: "Treinamentos", value: courses.length },
           { label: tr("Em andamento"), value: emAndamento.length },
-          { label: "Concluídos", value: concluidos },
+          { label: tr("Concluídos"), value: concluidos },
           { label: "Certificados", value: certCount ?? 0 },
           { label: "Competências", value: resumo.developed, hint: resumo.advanced ? `${resumo.advanced} no avançado` : undefined },
         ]}
@@ -408,7 +408,7 @@ export default async function ContaHome() {
 
       {COMMUNITY_WHATSAPP_URL && (
         <p className="border-t border-ds-line pt-5 text-body-sm text-ds-text-3">
-          Avisos das lives saem primeiro no{" "}
+          {tr("Avisos das lives saem primeiro no")}{" "}
           <a
             href={COMMUNITY_WHATSAPP_URL}
             target="_blank"

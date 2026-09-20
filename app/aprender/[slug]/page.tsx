@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { listaTraduzida } from "@/lib/i18n/conteudo";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -154,9 +155,9 @@ export default async function PlayerPage({
       <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-900/80 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3">
           <div className="flex min-w-0 items-center gap-4">
-            <Link href="/conta" aria-label="Minha conta">
+            <Link href="/conta" aria-label={tr("Minha conta")}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Drive Data Academy" className="h-8 w-auto" />
+              <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-8 w-auto" />
             </Link>
             <span className="truncate text-sm font-medium text-slate-300">{course.title}</span>
           </div>
@@ -174,15 +175,15 @@ export default async function PlayerPage({
           <form action={issueCertificate} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand-green/30 bg-brand-green/10 p-4">
             <input type="hidden" name="course_id" value={course.id} />
             <input type="hidden" name="slug" value={course.slug} />
-            <p className="text-sm font-medium text-white">Você concluiu o curso. Emita seu certificado.</p>
-            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Emitir certificado</button>
+            <p className="text-sm font-medium text-white">{tr("Você concluiu o curso. Emita seu certificado.")}</p>
+            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Emitir certificado")}</button>
           </form>
         </div>
       )}
 
       {pct === 100 && (searchParams.nps === "ok" ? (
         <div className="mx-auto max-w-7xl px-6 pt-6">
-          <div className="rounded-2xl border border-brand-green/25 bg-brand-green/[0.06] px-5 py-3 text-sm font-medium text-brand-green">Obrigado pela sua avaliação!</div>
+          <div className="rounded-2xl border border-brand-green/25 bg-brand-green/[0.06] px-5 py-3 text-sm font-medium text-brand-green">{tr("Obrigado pela sua avaliação!")}</div>
         </div>
       ) : !npsRow ? (
         <div className="mx-auto max-w-7xl px-6 pt-6">
@@ -210,20 +211,20 @@ export default async function PlayerPage({
 
         {course.certificate_enabled !== false && modules.length > 1 && completedModules.length > 0 && (
           <div className="mt-8 max-w-3xl rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-            <p className="text-sm font-semibold text-white">Certificados por módulo</p>
-            <p className="mt-1 text-xs text-slate-400">Emita o certificado de cada módulo concluído.</p>
+            <p className="text-sm font-semibold text-white">{tr("Certificados por módulo")}</p>
+            <p className="mt-1 text-xs text-slate-400">{tr("Emita o certificado de cada módulo concluído.")}</p>
             <ul className="mt-4 space-y-2">
               {completedModules.map((m: any) => (
                 <li key={m.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
                   <span className="text-sm text-slate-200">{m.title}</span>
                   {m.code ? (
-                    <Link href={`/certificado/${m.code}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-brand-teal hover:border-brand-teal/50">Ver certificado</Link>
+                    <Link href={`/certificado/${m.code}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-brand-teal hover:border-brand-teal/50">{tr("Ver certificado")}</Link>
                   ) : (
                     <form action={issueModuleCertificate}>
                       <input type="hidden" name="course_id" value={course.id} />
                       <input type="hidden" name="module_id" value={m.id} />
                       <input type="hidden" name="slug" value={course.slug} />
-                      <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-1.5 text-xs font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Emitir certificado</button>
+                      <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-1.5 text-xs font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Emitir certificado")}</button>
                     </form>
                   )}
                 </li>

@@ -1,18 +1,25 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useMemo, useState } from "react";
 import { Copy, Check, Download, ExternalLink } from "lucide-react";
 import { useEditor } from "@/lib/editor/store";
 import { generateDax } from "@/lib/editor/generateDax";
 import Modal from "./Modal";
 
-const PASSOS = [
-  <>No Power BI, adicione o visual <strong>HTML Content</strong> (Obter mais visuais → AppSource → busque &quot;HTML Content&quot;).</>,
-  <>Crie uma <strong>nova medida</strong> na sua tabela e cole a DAX copiada aqui.</>,
-  <>Arraste essa medida para o campo <strong>Values</strong> do visual HTML Content.</>,
+/* Os passos viram função porque o texto depende do idioma, e o idioma só
+   existe dentro do componente. Como constante, eles seriam montados uma vez,
+   em português, e ficariam assim para sempre. */
+const passosDe = (tr: (s: string) => string) => [
+  <>{tr("No Power BI, adicione o visual")} <strong>{tr("HTML Content")}</strong> ({tr("Obter mais visuais")} → AppSource → {tr("busque")} &quot;HTML Content&quot;).</>,
+  <>{tr("Crie uma")} <strong>{tr("nova medida")}</strong> {tr("na sua tabela e cole a DAX copiada aqui.")}</>,
+  <>{tr("Arraste essa medida para o campo")} <strong>{tr("Values")}</strong> {tr("do visual HTML Content.")}</>,
 ];
 
 export default function CodeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const tr = usarTraducao();
+  const PASSOS = passosDe(tr);
   const doc = useEditor((s) => s.doc);
   const dax = useMemo(() => generateDax(doc), [doc]);
   const [copiado, setCopiado] = useState(false);
@@ -39,9 +46,9 @@ export default function CodeModal({ open, onClose }: { open: boolean; onClose: (
       <div className="flex max-h-[calc(90vh-3rem)] flex-col p-4">
         <div className="mb-3 rounded-xl border border-border bg-background p-3">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Como usar no Power BI</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">{tr("Como usar no Power BI")}</p>
             <a href="https://appsource.microsoft.com/product/power-bi-visuals/wa200002486" target="_blank" rel="noopener" className="flex items-center gap-1 text-[11px] font-medium text-viz-dark hover:underline">
-              HTML Content no AppSource <ExternalLink className="h-3 w-3" />
+              {tr("HTML Content no AppSource")} <ExternalLink className="h-3 w-3" />
             </a>
           </div>
           <ol className="flex flex-col gap-1.5">

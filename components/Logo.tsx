@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 type Props = {
   size?: number;
   withWordmark?: boolean;
@@ -52,15 +54,16 @@ export function LogoMark({ size = 34, glow = false }: { size?: number; glow?: bo
 }
 
 export default function Logo({ size = 34, withWordmark = true, className = "", glow = false }: Props) {
+  const tr = usarTraducao();
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
       <LogoMark size={size} glow={glow} />
       {withWordmark && (
         <span className="font-display text-xl font-bold leading-none tracking-tight">
-          <span className="text-white">Drive</span>
-          <span className="text-gradient-blue">Data</span>
+          <span className="text-white">{tr("Drive")}</span>
+          <span className="text-gradient-blue">{tr("Data")}</span>
           <span className="ml-1.5 align-middle text-[0.62rem] font-semibold uppercase tracking-[0.32em] text-brand-green/90">
-            Academy
+            {tr("Academy")}
           </span>
         </span>
       )}

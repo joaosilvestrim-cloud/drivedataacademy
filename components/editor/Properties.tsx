@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ChevronDown, AlignLeft, AlignCenter, AlignRight,
@@ -180,6 +182,7 @@ function NumBox({ rotulo, valor, onChange, onStart }: { rotulo: string; valor: n
 }
 
 function PropsCard() {
+  const tr = usarTraducao();
   const card = useEditor((s) => s.doc.card);
   const paleta = useEditor((s) => s.doc.paleta) ?? [];
   const atualizarCard = useEditor((s) => s.atualizarCard);
@@ -199,7 +202,7 @@ function PropsCard() {
   return (
     <>
       <Secao titulo="Tema (design system)">
-        <p className="text-[11px] text-muted">Aplica paleta, fundo, tipografia e estilo de uma vez.</p>
+        <p className="text-[11px] text-muted">{tr("Aplica paleta, fundo, tipografia e estilo de uma vez.")}</p>
         <div className="grid grid-cols-2 gap-2">
           {TEMAS.map((t) => {
             const Ic = TEMA_ICON[t.nome] ?? Moon;
@@ -221,20 +224,20 @@ function PropsCard() {
       </Secao>
 
       <Secao titulo="Tipografia do tema">
-        <Linha rotulo="Fonte">
+        <Linha rotulo={tr("Fonte")}>
           <select value={tema.fonte} onChange={(e) => setTema({ fonte: e.target.value })} className="rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none">
             {FONTES.map((f) => (<option key={f.label} value={f.v} style={{ fontFamily: f.v || "inherit" }}>{f.label}</option>))}
           </select>
         </Linha>
-        <button onClick={aplicarFonteATodos} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">Aplicar fonte aos textos</button>
-        <Linha rotulo="Título"><Num valor={tema.tamTitulo} onChange={(v) => setTema({ tamTitulo: v })} min={12} max={72} suf="px" /></Linha>
-        <Linha rotulo="Subtítulo"><Num valor={tema.tamSubtitulo} onChange={(v) => setTema({ tamSubtitulo: v })} min={10} max={48} suf="px" /></Linha>
-        <Linha rotulo="Corpo"><Num valor={tema.tamCorpo} onChange={(v) => setTema({ tamCorpo: v })} min={8} max={32} suf="px" /></Linha>
-        <p className="text-[11px] text-muted">Os componentes Título/Subtítulo/Texto usam estes tamanhos.</p>
+        <button onClick={aplicarFonteATodos} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("Aplicar fonte aos textos")}</button>
+        <Linha rotulo={tr("Título")}><Num valor={tema.tamTitulo} onChange={(v) => setTema({ tamTitulo: v })} min={12} max={72} suf="px" /></Linha>
+        <Linha rotulo={tr("Subtítulo")}><Num valor={tema.tamSubtitulo} onChange={(v) => setTema({ tamSubtitulo: v })} min={10} max={48} suf="px" /></Linha>
+        <Linha rotulo={tr("Corpo")}><Num valor={tema.tamCorpo} onChange={(v) => setTema({ tamCorpo: v })} min={8} max={32} suf="px" /></Linha>
+        <p className="text-[11px] text-muted">{tr("Os componentes Título/Subtítulo/Texto usam estes tamanhos.")}</p>
       </Secao>
 
       <Secao titulo="Paleta">
-        <p className="text-[11px] text-muted">Edite as cores do tema (clique para trocar).</p>
+        <p className="text-[11px] text-muted">{tr("Edite as cores do tema (clique para trocar).")}</p>
         <div className="flex flex-wrap gap-1.5">
           {paleta.map((c, i) => (
             <input
@@ -247,7 +250,7 @@ function PropsCard() {
             />
           ))}
         </div>
-        <p className="text-[11px] font-medium text-muted">Sugestões</p>
+        <p className="text-[11px] font-medium text-muted">{tr("Sugestões")}</p>
         <div className="grid grid-cols-4 gap-1.5">
           {PALETAS.map((p) => (
             <button key={p.nome} onClick={() => setPaleta([...p.cores])} title={p.nome} className="flex h-7 overflow-hidden rounded-md border border-border hover:border-viz">
@@ -256,25 +259,25 @@ function PropsCard() {
           ))}
         </div>
         <button onClick={aplicarPaletaCard} className="rounded-md bg-viz py-2 text-xs font-medium text-white hover:bg-viz-dark">
-          Aplicar paleta ao fundo
+          {tr("Aplicar paleta ao fundo")}
         </button>
       </Secao>
 
       <Secao titulo="Tamanho do card">
         <div className="flex gap-2">
-          <NumBox rotulo="Largura" valor={card.w} onChange={(w) => atualizarCard({ w })} />
-          <NumBox rotulo="Altura" valor={card.h} onChange={(h) => atualizarCard({ h })} />
+          <NumBox rotulo={tr("Largura")} valor={card.w} onChange={(w) => atualizarCard({ w })} />
+          <NumBox rotulo={tr("Altura")} valor={card.h} onChange={(h) => atualizarCard({ h })} />
         </div>
         <div className="flex flex-wrap gap-1.5">
           {CARD_PRESETS.map((p) => (<button key={p.label} onClick={() => atualizarCard({ w: p.w, h: p.h })} className="rounded-md border border-border px-2 py-1 text-xs text-muted hover:border-viz hover:text-foreground">{p.label}</button>))}
         </div>
-        <Linha rotulo="Cantos"><Num valor={card.borderRadius} onChange={(borderRadius) => atualizarCard({ borderRadius })} min={0} max={60} suf="px" /></Linha>
+        <Linha rotulo={tr("Cantos")}><Num valor={card.borderRadius} onChange={(borderRadius) => atualizarCard({ borderRadius })} min={0} max={60} suf="px" /></Linha>
       </Secao>
 
       <Secao titulo="Fundo do card">
         <Linha rotulo="Cor"><ColorPicker compact valor={card.fundo} onChange={(fundo) => atualizarCard({ fundo })} /></Linha>
         <button onClick={() => setGradCard((v) => !v)} className="flex w-full items-center justify-between rounded-md border border-border px-2 py-1 text-[11px] font-medium text-muted hover:text-foreground">
-          Gradiente
+          {tr("Gradiente")}
           <ChevronDown className={`h-3 w-3 transition-transform ${gradCard ? "" : "-rotate-90"}`} />
         </button>
         {gradCard && (
@@ -284,28 +287,28 @@ function PropsCard() {
               <ColorPicker compact valor={gB} onChange={setGB} />
             </div>
             <div className="mt-1.5 flex items-center justify-between gap-2">
-              <span className="text-[11px] text-muted">Ângulo</span>
+              <span className="text-[11px] text-muted">{tr("Ângulo")}</span>
               <Num valor={ang} onChange={setAng} min={0} max={360} suf="°" />
             </div>
             <button onClick={() => atualizarCard({ fundo: `linear-gradient(${ang}deg,${gA},${gB})` })} className="mt-1.5 w-full rounded-md border border-viz bg-viz/10 py-1 text-[11px] font-medium text-viz-dark hover:bg-viz/20">
-              Aplicar gradiente
+              {tr("Aplicar gradiente")}
             </button>
           </div>
         )}
       </Secao>
 
       <Secao titulo="Borda e sombra" inicial={false}>
-        <Linha rotulo="Cor da borda"><ColorPicker compact valor={card.borderColor ?? "#06B6D4"} onChange={(borderColor) => atualizarCard({ borderColor })} /></Linha>
-        <Linha rotulo="Espessura"><Num valor={card.borderWidth ?? 0} onChange={(borderWidth) => atualizarCard({ borderWidth })} min={0} max={12} suf="px" /></Linha>
-        <Linha rotulo="Sombra"><Num valor={card.sombra ?? 0} onChange={(sombra) => atualizarCard({ sombra })} min={0} max={60} suf="px" /></Linha>
+        <Linha rotulo={tr("Cor da borda")}><ColorPicker compact valor={card.borderColor ?? "#06B6D4"} onChange={(borderColor) => atualizarCard({ borderColor })} /></Linha>
+        <Linha rotulo={tr("Espessura")}><Num valor={card.borderWidth ?? 0} onChange={(borderWidth) => atualizarCard({ borderWidth })} min={0} max={12} suf="px" /></Linha>
+        <Linha rotulo={tr("Sombra")}><Num valor={card.sombra ?? 0} onChange={(sombra) => atualizarCard({ sombra })} min={0} max={60} suf="px" /></Linha>
       </Secao>
 
       <div className="px-4 py-3">
         <button onClick={() => { if (confirm("Remover todos os elementos desta página?")) esvaziarPagina(); }} className="w-full rounded-md border border-red-200 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">
-          Esvaziar página
+          {tr("Esvaziar página")}
         </button>
       </div>
-      <p className="px-4 pb-3 text-xs text-muted">Ajustes do canvas/documento. Para editar um objeto, use a aba <b>Objeto</b>.</p>
+      <p className="px-4 pb-3 text-xs text-muted">{tr("Ajustes do canvas/documento. Para editar um objeto, use a aba")} <b>{tr("Objeto")}</b>.</p>
     </>
   );
 }
@@ -357,6 +360,7 @@ const FORMA_FORMATOS: { nome: string; estilo: EstiloPatch }[] = [
 
 /** Editor por PARTES dos medidores: chips (Arco/Valor/Trilho…) + controles da parte ativa. */
 function PropsMedidor({ el }: { el: SceneElement }) {
+  const tr = usarTraducao();
   const commit = useEditor((s) => s.commit);
   const patchEstilo = useEditor((s) => s.patchEstilo);
   const patchElemento = useEditor((s) => s.patchElemento);
@@ -383,26 +387,26 @@ function PropsMedidor({ el }: { el: SceneElement }) {
 
   return (
     <div ref={ref} className={`rounded-xl transition-shadow ${flash ? "ring-2 ring-red-400" : ""}`}>
-    <Secao titulo={`Aparência — ${partes.find((p) => p.k === ativa)?.label ?? ""}`}>
-      <p className="text-[11px] text-muted">Clique numa parte do componente no canvas (fica com borda vermelha), ou escolha aqui:</p>
+    <Secao titulo={`${tr("Aparência")} — ${tr(partes.find((p) => p.k === ativa)?.label ?? "")}`}>
+      <p className="text-[11px] text-muted">{tr("Clique numa parte do componente no canvas (fica com borda vermelha), ou escolha aqui:")}</p>
       <div className="flex flex-wrap gap-1">
         {partes.map((p) => (
-          <button key={p.k} onClick={() => setParte(p.k)} className={`rounded-md border px-2.5 py-1 text-xs font-medium ${ativa === p.k ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted hover:border-viz/50"}`}>{p.label}</button>
+          <button key={p.k} onClick={() => setParte(p.k)} className={`rounded-md border px-2.5 py-1 text-xs font-medium ${ativa === p.k ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted hover:border-viz/50"}`}>{tr(p.label)}</button>
         ))}
       </div>
 
       {(ativa === "arco" || ativa === "barra" || ativa === "marcador") && (
         <>
           <Linha rotulo="Cor"><ColorPicker compact valor={el.estilo.cor} onStart={commit} onChange={(cor) => patchEstilo(el.id, { cor })} /></Linha>
-          {(ativa === "arco") && <Linha rotulo="Espessura"><Num valor={el.estilo.espessura ?? (ESP_PADRAO[el.type] ?? 4)} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={1} max={16} step={0.5} suf="px" /></Linha>}
-          {(ativa === "barra") && <Linha rotulo="Cantos"><Num valor={el.estilo.borderRadius} onStart={commit} onChange={(borderRadius) => patchEstilo(el.id, { borderRadius })} min={0} max={40} suf="px" /></Linha>}
-          {(ativa === "arco" || ativa === "barra") && <Linha rotulo="Animar entrada"><input type="checkbox" checked={el.estilo.animarFill} onChange={(ev) => cEstilo({ animarFill: ev.target.checked })} className="h-4 w-4 accent-viz" /></Linha>}
+          {(ativa === "arco") && <Linha rotulo={tr("Espessura")}><Num valor={el.estilo.espessura ?? (ESP_PADRAO[el.type] ?? 4)} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={1} max={16} step={0.5} suf="px" /></Linha>}
+          {(ativa === "barra") && <Linha rotulo={tr("Cantos")}><Num valor={el.estilo.borderRadius} onStart={commit} onChange={(borderRadius) => patchEstilo(el.id, { borderRadius })} min={0} max={40} suf="px" /></Linha>}
+          {(ativa === "arco" || ativa === "barra") && <Linha rotulo={tr("Animar entrada")}><input type="checkbox" checked={el.estilo.animarFill} onChange={(ev) => cEstilo({ animarFill: ev.target.checked })} className="h-4 w-4 accent-viz" /></Linha>}
         </>
       )}
 
       {ativa === "valor" && (
         <>
-          <Linha rotulo="Tamanho"><Num valor={el.estilo.fontSize} onStart={commit} onChange={(fontSize) => patchEstilo(el.id, { fontSize })} min={8} max={72} suf="px" /></Linha>
+          <Linha rotulo={tr("Tamanho")}><Num valor={el.estilo.fontSize} onStart={commit} onChange={(fontSize) => patchEstilo(el.id, { fontSize })} min={8} max={72} suf="px" /></Linha>
           <Linha rotulo="Cor"><ColorPicker compact valor={el.type === "cartao" ? el.estilo.cor : el.estilo.corValor || el.estilo.cor} onStart={commit} onChange={(c) => patchEstilo(el.id, el.type === "cartao" ? { cor: c } : { corValor: c })} /></Linha>
         </>
       )}
@@ -414,9 +418,9 @@ function PropsMedidor({ el }: { el: SceneElement }) {
       {ativa === "fundo" && (
         <>
           <Linha rotulo="Cor"><ColorPicker compact valor={el.estilo.fundo} onStart={commit} onChange={(fundo) => patchEstilo(el.id, { fundo })} /></Linha>
-          <Linha rotulo="Cantos"><Num valor={el.estilo.borderRadius} onStart={commit} onChange={(borderRadius) => patchEstilo(el.id, { borderRadius })} min={0} max={40} suf="px" /></Linha>
-          <Linha rotulo="Borda"><Num valor={el.estilo.borderWidth} onStart={commit} onChange={(borderWidth) => patchEstilo(el.id, { borderWidth })} min={0} max={8} suf="px" /></Linha>
-          {el.estilo.borderWidth > 0 && <Linha rotulo="Cor da borda"><ColorPicker compact valor={el.estilo.borderColor} onStart={commit} onChange={(borderColor) => patchEstilo(el.id, { borderColor })} /></Linha>}
+          <Linha rotulo={tr("Cantos")}><Num valor={el.estilo.borderRadius} onStart={commit} onChange={(borderRadius) => patchEstilo(el.id, { borderRadius })} min={0} max={40} suf="px" /></Linha>
+          <Linha rotulo={tr("Borda")}><Num valor={el.estilo.borderWidth} onStart={commit} onChange={(borderWidth) => patchEstilo(el.id, { borderWidth })} min={0} max={8} suf="px" /></Linha>
+          {el.estilo.borderWidth > 0 && <Linha rotulo={tr("Cor da borda")}><ColorPicker compact valor={el.estilo.borderColor} onStart={commit} onChange={(borderColor) => patchEstilo(el.id, { borderColor })} /></Linha>}
         </>
       )}
 
@@ -430,7 +434,7 @@ function PropsMedidor({ el }: { el: SceneElement }) {
       {ativa === "titulo" && (
         <>
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Texto</span>
+            <span className="text-xs text-muted">{tr("Texto")}</span>
             <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
           </label>
           <Linha rotulo="Cor"><ColorPicker compact valor={el.estilo.corTitulo || "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
@@ -440,42 +444,43 @@ function PropsMedidor({ el }: { el: SceneElement }) {
       {ativa === "gauge" && (
         <>
           <Linha rotulo="Cor"><ColorPicker compact valor={el.estilo.corIcone || "#06B6D4"} onStart={commit} onChange={(corIcone) => patchEstilo(el.id, { corIcone })} /></Linha>
-          <Linha rotulo="Espessura"><Num valor={el.estilo.espessura ?? 4} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={1} max={12} step={0.5} suf="px" /></Linha>
+          <Linha rotulo={tr("Espessura")}><Num valor={el.estilo.espessura ?? 4} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={1} max={12} step={0.5} suf="px" /></Linha>
         </>
       )}
 
       {ativa === "escala" && (
-        <Linha rotulo="Máximo"><Num valor={el.maximo ?? 100} onStart={commit} onChange={(m) => patchElemento(el.id, { maximo: Math.max(1, Math.round(m)) })} min={1} max={10000} step={10} /></Linha>
+        <Linha rotulo={tr("Máximo")}><Num valor={el.maximo ?? 100} onStart={commit} onChange={(m) => patchElemento(el.id, { maximo: Math.max(1, Math.round(m)) })} min={1} max={10000} step={10} /></Linha>
       )}
 
       {ativa === "faixas" && (
         <>
           {el.type === "bullet" ? (
-            <Linha rotulo="Cor base"><ColorPicker compact valor={el.estilo.cor} onStart={commit} onChange={(cor) => patchEstilo(el.id, { cor })} /></Linha>
+            <Linha rotulo={tr("Cor base")}><ColorPicker compact valor={el.estilo.cor} onStart={commit} onChange={(cor) => patchEstilo(el.id, { cor })} /></Linha>
           ) : (
             <>
               {(el.faixas ?? []).map((f, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <span className="w-8 shrink-0 text-[11px] text-muted">até</span>
+                  <span className="w-8 shrink-0 text-[11px] text-muted">{tr("até")}</span>
                   <input type="number" value={f.ate} onFocus={commit} onChange={(ev) => { const fs = [...(el.faixas ?? [])]; fs[i] = { ...fs[i], ate: Number(ev.target.value) || 0 }; patchElemento(el.id, { faixas: fs }); }} className="w-16 rounded-md border border-border bg-surface px-1.5 py-1 font-mono text-xs focus:border-viz focus:outline-none" />
                   <div className="flex-1"><ColorPicker compact valor={f.cor} onStart={commit} onChange={(cor) => { const fs = [...(el.faixas ?? [])]; fs[i] = { ...fs[i], cor }; patchElemento(el.id, { faixas: fs }); }} /></div>
                   <button disabled={(el.faixas ?? []).length <= 1} onClick={() => setFaixas((el.faixas ?? []).filter((_, j) => j !== i))} className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
                 </div>
               ))}
-              <button onClick={() => setFaixas([...(el.faixas ?? []), { ate: el.maximo ?? 100, cor: "#EF4444" }])} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">+ Faixa</button>
-              {el.type === "velocimetro" && <Linha rotulo="Espessura"><Num valor={el.estilo.espessura ?? 9} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={2} max={20} suf="px" /></Linha>}
+              <button onClick={() => setFaixas([...(el.faixas ?? []), { ate: el.maximo ?? 100, cor: "#EF4444" }])} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Faixa")}</button>
+              {el.type === "velocimetro" && <Linha rotulo={tr("Espessura")}><Num valor={el.estilo.espessura ?? 9} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={2} max={20} suf="px" /></Linha>}
             </>
           )}
-          {(el.type === "velocimetro" || el.type === "termometro" || el.type === "bullet") && <Linha rotulo="Máximo"><Num valor={el.maximo ?? 100} onStart={commit} onChange={(m) => patchElemento(el.id, { maximo: Math.max(1, Math.round(m)) })} min={1} max={10000} step={10} /></Linha>}
+          {(el.type === "velocimetro" || el.type === "termometro" || el.type === "bullet") && <Linha rotulo={tr("Máximo")}><Num valor={el.maximo ?? 100} onStart={commit} onChange={(m) => patchElemento(el.id, { maximo: Math.max(1, Math.round(m)) })} min={1} max={10000} step={10} /></Linha>}
         </>
       )}
-      <Linha rotulo="Opacidade"><Num valor={el.estilo.opacidade} onStart={commit} onChange={(opacidade) => patchEstilo(el.id, { opacidade })} min={0} max={1} step={0.05} /></Linha>
+      <Linha rotulo={tr("Opacidade")}><Num valor={el.estilo.opacidade} onStart={commit} onChange={(opacidade) => patchEstilo(el.id, { opacidade })} min={0} max={1} step={0.05} /></Linha>
     </Secao>
     </div>
   );
 }
 
 function PropsElemento({ el }: { el: SceneElement }) {
+  const tr = usarTraducao();
   const card = useEditor((s) => s.doc.card);
   const commit = useEditor((s) => s.commit);
   const patchElemento = useEditor((s) => s.patchElemento);
@@ -549,12 +554,12 @@ function PropsElemento({ el }: { el: SceneElement }) {
       <MiniPreview el={el} />
 
       <div className="flex gap-1 border-b border-border px-3 py-2">
-        <button onClick={() => zOrder(el.id, "frente")} title="Trazer para frente" className={acaoBtn}><BringToFront className="h-4 w-4" /></button>
-        <button onClick={() => zOrder(el.id, "tras")} title="Enviar para trás" className={acaoBtn}><SendToBack className="h-4 w-4" /></button>
-        <button onClick={() => copiarEstilo(el.id)} title="Copiar estilo" className={acaoBtn}><Copy className="h-4 w-4" /></button>
-        <button onClick={() => colarEstilo(el.id)} disabled={!temEstiloCopiado} title="Colar estilo" className={`${acaoBtn} ${temEstiloCopiado ? "" : "opacity-40"}`}><ClipboardPaste className="h-4 w-4" /></button>
-        <button onClick={() => { commit(); patchEstilo(el.id, criarElemento(el.type).estilo); }} title="Restaurar estilo padrão" className={acaoBtn}><RotateCcw className="h-4 w-4" /></button>
-        <button onClick={salvarFav} title="Salvar como favorito" className={acaoBtn}><Star className="h-4 w-4" /></button>
+        <button onClick={() => zOrder(el.id, "frente")} title={tr("Trazer para frente")} className={acaoBtn}><BringToFront className="h-4 w-4" /></button>
+        <button onClick={() => zOrder(el.id, "tras")} title={tr("Enviar para trás")} className={acaoBtn}><SendToBack className="h-4 w-4" /></button>
+        <button onClick={() => copiarEstilo(el.id)} title={tr("Copiar estilo")} className={acaoBtn}><Copy className="h-4 w-4" /></button>
+        <button onClick={() => colarEstilo(el.id)} disabled={!temEstiloCopiado} title={tr("Colar estilo")} className={`${acaoBtn} ${temEstiloCopiado ? "" : "opacity-40"}`}><ClipboardPaste className="h-4 w-4" /></button>
+        <button onClick={() => { commit(); patchEstilo(el.id, criarElemento(el.type).estilo); }} title={tr("Restaurar estilo padrão")} className={acaoBtn}><RotateCcw className="h-4 w-4" /></button>
+        <button onClick={salvarFav} title={tr("Salvar como favorito")} className={acaoBtn}><Star className="h-4 w-4" /></button>
       </div>
 
       <Secao titulo="Estilo rápido" inicial={false}>
@@ -569,7 +574,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
       </Secao>
 
       <Secao titulo="Camada" inicial={false}>
-        <Linha rotulo="Nome">
+        <Linha rotulo={tr("Nome")}>
           <input value={el.nome} onChange={(e) => patchElemento(el.id, { nome: e.target.value })} onFocus={commit} className="w-40 rounded-md border border-border bg-surface px-2 py-1 text-sm focus:border-viz focus:outline-none" />
         </Linha>
       </Secao>
@@ -585,10 +590,10 @@ function PropsElemento({ el }: { el: SceneElement }) {
         </div>
         <div className="flex justify-between gap-0.5 rounded-md bg-background p-0.5">
           {([["esq", AlignLeft], ["centroH", AlignCenter], ["dir", AlignRight], ["topo", AlignStartHorizontal], ["centroV", AlignCenterHorizontal], ["base", AlignEndHorizontal]] as const).map(([m, Ic]) => (
-            <button key={m} onClick={() => alinhar(el.id, m)} title="Alinhar" className="flex-1 rounded p-1 text-muted hover:bg-surface hover:text-foreground"><Ic className="mx-auto h-3.5 w-3.5" /></button>
+            <button key={m} onClick={() => alinhar(el.id, m)} title={tr("Alinhar")} className="flex-1 rounded p-1 text-muted hover:bg-surface hover:text-foreground"><Ic className="mx-auto h-3.5 w-3.5" /></button>
           ))}
         </div>
-        <Linha rotulo="Rotação"><Num valor={el.estilo.rotation} onStart={commit} onChange={(rotation) => patchEstilo(el.id, { rotation })} min={-180} max={180} suf="°" /></Linha>
+        <Linha rotulo={tr("Rotação")}><Num valor={el.estilo.rotation} onStart={commit} onChange={(rotation) => patchEstilo(el.id, { rotation })} min={-180} max={180} suf="°" /></Linha>
       </Secao>
 
       {ehBadge && (
@@ -598,7 +603,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
               <button key={p.nome} onClick={() => { commit(); patchEstilo(el.id, p.estilo); }} className="flex items-center justify-center rounded-full border border-border px-2 py-1 text-[11px] font-medium hover:border-viz" style={{ background: p.estilo.fundo, color: p.estilo.cor }}>{p.nome}</button>
             ))}
           </div>
-          <p className="text-[11px] text-muted">Presets rápidos — dá pra ajustar cor/texto depois.</p>
+          <p className="text-[11px] text-muted">{tr("Presets rápidos — dá pra ajustar cor/texto depois.")}</p>
         </Secao>
       )}
 
@@ -609,7 +614,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
               <button key={p.nome} onClick={() => { commit(); patchEstilo(el.id, p.estilo); }} className="rounded-md border border-border px-2 py-1.5 text-[11px] font-medium text-muted hover:border-viz hover:text-foreground">{p.nome}</button>
             ))}
           </div>
-          <p className="text-[11px] text-muted">Para Círculo/Ponto, deixe largura e altura iguais.</p>
+          <p className="text-[11px] text-muted">{tr("Para Círculo/Ponto, deixe largura e altura iguais.")}</p>
         </Secao>
       )}
 
@@ -621,14 +626,14 @@ function PropsElemento({ el }: { el: SceneElement }) {
             stroke={el.estilo.iconeStroke ?? 2}
             onPick={(nome, inner) => { commit(); patchElemento(el.id, { iconePaths: inner }); patchBinding(el.id, { valor: nome }); }}
           />
-          <Campo rotulo="Forma">
+          <Campo rotulo={tr("Forma")}>
             <div className="flex gap-0.5 rounded-md bg-background p-0.5">
               {([["Nenhum", 0, Ban, true], ["Círculo", 999, Circle, false], ["Arredondado", 14, Squircle, false], ["Quadrado", 4, SquareIc, false]] as const).map(([lbl, r, Ic, semFundo]) => (
                 <button key={lbl} title={lbl} onClick={() => { commit(); patchEstilo(el.id, semFundo ? { borderRadius: r, fundo: "transparent" } : { borderRadius: r }); }} className={`flex flex-1 items-center justify-center rounded py-1.5 ${el.estilo.borderRadius === r ? "bg-surface text-viz-dark shadow-sm" : "text-muted hover:text-foreground"}`}><Ic className="h-4 w-4" /></button>
               ))}
             </div>
           </Campo>
-          <Campo rotulo="Peso do traço">
+          <Campo rotulo={tr("Peso do traço")}>
             <div className="flex gap-0.5 rounded-md bg-background p-0.5">
               {([["Fino", 1], ["Médio", 1.5], ["Normal", 2], ["Forte", 2.75]] as const).map(([lbl, w]) => (
                 <button key={lbl} onClick={() => cEstilo({ iconeStroke: w })} className={`flex-1 rounded py-1 text-[11px] ${(el.estilo.iconeStroke ?? 2) === w ? "bg-surface shadow-sm" : "text-muted hover:text-foreground"}`}>{lbl}</button>
@@ -648,8 +653,8 @@ function PropsElemento({ el }: { el: SceneElement }) {
             </div>
           )}
           <div className="flex gap-0.5 rounded-md bg-background p-0.5">
-            <button onClick={() => patchBinding(el.id, { dinamico: false })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!el.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>Fixo</button>
-            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>Dinâmico</button>
+            <button onClick={() => patchBinding(el.id, { dinamico: false })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!el.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Fixo")}</button>
+            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>{tr("Dinâmico")}</button>
           </div>
           {el.binding.dinamico ? (
             <input value={el.binding.ref} onFocus={commit} onChange={(e) => patchBinding(el.id, { ref: e.target.value })} placeholder={ehMedidor || ehPictograma ? "[Atingimento %]" : ehImagem ? "[URL_Imagem]" : "[Minha Medida]"} className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
@@ -659,36 +664,36 @@ function PropsElemento({ el }: { el: SceneElement }) {
           {el.binding.dinamico && TIPOS_FORMATAVEIS.has(el.type) && (
             <FormatoSel binding={el.binding} commit={commit} onChange={(p) => patchBinding(el.id, p)} />
           )}
-          {(ehMedidor || ehPictograma || ehWaffle) && <p className="text-[11px] text-muted">Número de 0 a 100.</p>}
+          {(ehMedidor || ehPictograma || ehWaffle) && <p className="text-[11px] text-muted">{tr("Número de 0 a 100.")}</p>}
           {ehRating && (
             <>
-              <Linha rotulo="Nº de estrelas"><Num valor={el.quantidade ?? 5} onStart={commit} onChange={(q) => patchElemento(el.id, { quantidade: Math.round(q) })} min={1} max={10} /></Linha>
-              <p className="text-[11px] text-muted">A nota vai de 0 até o nº de estrelas (ex.: 4,2 de 5).</p>
+              <Linha rotulo={tr("Nº de estrelas")}><Num valor={el.quantidade ?? 5} onStart={commit} onChange={(q) => patchElemento(el.id, { quantidade: Math.round(q) })} min={1} max={10} /></Linha>
+              <p className="text-[11px] text-muted">{tr("A nota vai de 0 até o nº de estrelas (ex.: 4,2 de 5).")}</p>
             </>
           )}
           {temMaximo && !ehMedidorFamilia && (
             <>
-              <Linha rotulo="Máximo da escala"><Num valor={el.maximo ?? 100} onStart={commit} onChange={(m) => patchElemento(el.id, { maximo: Math.max(1, Math.round(m)) })} min={1} max={10000} step={10} /></Linha>
-              <p className="text-[11px] text-muted">O valor vai de 0 até o máximo.</p>
+              <Linha rotulo={tr("Máximo da escala")}><Num valor={el.maximo ?? 100} onStart={commit} onChange={(m) => patchElemento(el.id, { maximo: Math.max(1, Math.round(m)) })} min={1} max={10000} step={10} /></Linha>
+              <p className="text-[11px] text-muted">{tr("O valor vai de 0 até o máximo.")}</p>
             </>
           )}
           {(ehMedidor || ehVelocimetro || ehTermometro) && !ehMedidorFamilia && (
-            <Linha rotulo="Animar entrada"><input type="checkbox" checked={el.estilo.animarFill} onChange={(e) => cEstilo({ animarFill: e.target.checked })} className="h-4 w-4 accent-viz" /></Linha>
+            <Linha rotulo={tr("Animar entrada")}><input type="checkbox" checked={el.estilo.animarFill} onChange={(e) => cEstilo({ animarFill: e.target.checked })} className="h-4 w-4 accent-viz" /></Linha>
           )}
           {ehBotao && (
             <label className="flex flex-col gap-1">
-              <span className="text-xs text-muted">URL ao clicar</span>
+              <span className="text-xs text-muted">{tr("URL ao clicar")}</span>
               <input value={el.href ?? ""} onFocus={commit} onChange={(e) => patchElemento(el.id, { href: e.target.value })} placeholder="https://..." className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
             </label>
           )}
           {ehPictograma && (
-            <Linha rotulo="Qtd. de ícones"><Num valor={el.quantidade ?? 10} onStart={commit} onChange={(q) => patchElemento(el.id, { quantidade: Math.round(q) })} min={1} max={20} /></Linha>
+            <Linha rotulo={tr("Qtd. de ícones")}><Num valor={el.quantidade ?? 10} onStart={commit} onChange={(q) => patchElemento(el.id, { quantidade: Math.round(q) })} min={1} max={20} /></Linha>
           )}
           {ehImagem && (
-            <Linha rotulo="Ajuste">
+            <Linha rotulo={tr("Ajuste")}>
               <div className="flex gap-0.5 rounded-md bg-background p-0.5">
-                <button onClick={() => { commit(); patchElemento(el.id, { contain: true }); }} className={`rounded px-2 py-1 text-xs ${el.contain ? "bg-surface shadow-sm" : "text-muted"}`}>Conter</button>
-                <button onClick={() => { commit(); patchElemento(el.id, { contain: false }); }} className={`rounded px-2 py-1 text-xs ${!el.contain ? "bg-surface shadow-sm" : "text-muted"}`}>Preencher</button>
+                <button onClick={() => { commit(); patchElemento(el.id, { contain: true }); }} className={`rounded px-2 py-1 text-xs ${el.contain ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Conter")}</button>
+                <button onClick={() => { commit(); patchElemento(el.id, { contain: false }); }} className={`rounded px-2 py-1 text-xs ${!el.contain ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Preencher")}</button>
               </div>
             </Linha>
           )}
@@ -704,45 +709,45 @@ function PropsElemento({ el }: { el: SceneElement }) {
       {ehTabela && (
         <Secao titulo="Tabela">
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Tabela do Power BI</span>
-            <input value={el.tabela ?? ""} onFocus={commit} onChange={(e) => patchElemento(el.id, { tabela: e.target.value })} placeholder="Vendas" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
+            <span className="text-xs text-muted">{tr("Tabela do Power BI")}</span>
+            <input value={el.tabela ?? ""} onFocus={commit} onChange={(e) => patchElemento(el.id, { tabela: e.target.value })} placeholder={tr("Vendas")} className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
           </label>
-          <Linha rotulo="Tamanho da fonte"><Num valor={el.estilo.fontSize} onStart={commit} onChange={(fontSize) => patchEstilo(el.id, { fontSize })} min={8} max={28} suf="px" /></Linha>
-          <p className="text-xs font-medium text-muted">Colunas</p>
+          <Linha rotulo={tr("Tamanho da fonte")}><Num valor={el.estilo.fontSize} onStart={commit} onChange={(fontSize) => patchEstilo(el.id, { fontSize })} min={8} max={28} suf="px" /></Linha>
+          <p className="text-xs font-medium text-muted">{tr("Colunas")}</p>
           {(el.colunas ?? []).map((c, i) => (
             <div key={i} className="flex items-center gap-1">
               <input value={c.coluna} onFocus={commit} onChange={(e) => { const cols = [...(el.colunas ?? [])]; cols[i] = { ...cols[i], coluna: e.target.value }; patchElemento(el.id, { colunas: cols }); }} placeholder="Vendas[Coluna]" className="w-1/2 rounded-md border border-border bg-surface px-2 py-1 font-mono text-[11px] focus:border-viz focus:outline-none" />
-              <input value={c.rotulo} onFocus={commit} onChange={(e) => { const cols = [...(el.colunas ?? [])]; cols[i] = { ...cols[i], rotulo: e.target.value }; patchElemento(el.id, { colunas: cols }); }} placeholder="Rótulo" className="w-1/2 rounded-md border border-border bg-surface px-2 py-1 text-[11px] focus:border-viz focus:outline-none" />
+              <input value={c.rotulo} onFocus={commit} onChange={(e) => { const cols = [...(el.colunas ?? [])]; cols[i] = { ...cols[i], rotulo: e.target.value }; patchElemento(el.id, { colunas: cols }); }} placeholder={tr("Rótulo")} className="w-1/2 rounded-md border border-border bg-surface px-2 py-1 text-[11px] focus:border-viz focus:outline-none" />
               <button disabled={(el.colunas ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { colunas: (el.colunas ?? []).filter((_, j) => j !== i) }); }} title={(el.colunas ?? []).length <= 1 ? "A tabela precisa de ao menos 1 coluna" : "Remover coluna"} className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
             </div>
           ))}
-          <button onClick={() => { commit(); patchElemento(el.id, { colunas: [...(el.colunas ?? []), { coluna: (el.tabela ?? "Tabela") + "[Coluna]", rotulo: "Coluna" }] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">+ Coluna</button>
-          <p className="text-[11px] text-muted">A DAX gera as linhas via CONCATENATEX sobre essa tabela.</p>
+          <button onClick={() => { commit(); patchElemento(el.id, { colunas: [...(el.colunas ?? []), { coluna: (el.tabela ?? "Tabela") + "[Coluna]", rotulo: "Coluna" }] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Coluna")}</button>
+          <p className="text-[11px] text-muted">{tr("A DAX gera as linhas via CONCATENATEX sobre essa tabela.")}</p>
         </Secao>
       )}
 
       {ehSparkline && (
         <Secao titulo="Mini-gráfico">
           <div className="flex gap-0.5 rounded-md bg-background p-0.5">
-            <button onClick={() => patchBinding(el.id, { dinamico: false })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!el.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>Valores fixos</button>
-            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>Da tabela</button>
+            <button onClick={() => patchBinding(el.id, { dinamico: false })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!el.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Valores fixos")}</button>
+            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>{tr("Da tabela")}</button>
           </div>
           {el.binding.dinamico ? (
             <>
               <label className="flex flex-col gap-1">
-                <span className="text-xs text-muted">Tabela do Power BI</span>
-                <input value={el.tabela ?? ""} onFocus={commit} onChange={(e) => patchElemento(el.id, { tabela: e.target.value })} placeholder="Vendas" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
+                <span className="text-xs text-muted">{tr("Tabela do Power BI")}</span>
+                <input value={el.tabela ?? ""} onFocus={commit} onChange={(e) => patchElemento(el.id, { tabela: e.target.value })} placeholder={tr("Vendas")} className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="text-xs text-muted">Coluna de valor</span>
+                <span className="text-xs text-muted">{tr("Coluna de valor")}</span>
                 <input value={el.binding.ref} onFocus={commit} onChange={(e) => patchBinding(el.id, { ref: e.target.value })} placeholder="Vendas[Valor]" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
               </label>
-              <p className="text-[11px] text-muted">Uma barra por linha (altura = valor ÷ maior valor), gerada por CONCATENATEX — o mesmo conceito da tabela.</p>
+              <p className="text-[11px] text-muted">{tr("Uma barra por linha (altura = valor ÷ maior valor), gerada por CONCATENATEX — o mesmo conceito da tabela.")}</p>
             </>
           ) : (
             <>
               <label className="flex flex-col gap-1">
-                <span className="text-xs text-muted">Valores (0–100, separados por vírgula)</span>
+                <span className="text-xs text-muted">{tr("Valores (0–100, separados por vírgula)")}</span>
                 <input
                   value={(el.barras ?? []).join(", ")}
                   onFocus={commit}
@@ -751,7 +756,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
                   className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none"
                 />
               </label>
-              <p className="text-[11px] text-muted">Alturas fixas (decorativo).</p>
+              <p className="text-[11px] text-muted">{tr("Alturas fixas (decorativo).")}</p>
             </>
           )}
         </Secao>
@@ -762,27 +767,27 @@ function PropsElemento({ el }: { el: SceneElement }) {
           {(el.itens ?? []).map((t, i) => (
             <div key={i} className="flex items-center gap-1">
               <input value={t} onFocus={commit} onChange={(e) => { const arr = [...(el.itens ?? [])]; arr[i] = e.target.value; patchElemento(el.id, { itens: arr }); }} className="flex-1 rounded-md border border-border bg-surface px-2 py-1 text-[13px] focus:border-viz focus:outline-none" />
-              <button disabled={(el.itens ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { itens: (el.itens ?? []).filter((_, j) => j !== i) }); }} title="Remover item" className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
+              <button disabled={(el.itens ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { itens: (el.itens ?? []).filter((_, j) => j !== i) }); }} title={tr("Remover item")} className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
             </div>
           ))}
-          <button onClick={() => { commit(); patchElemento(el.id, { itens: [...(el.itens ?? []), "Novo item"] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">+ Item</button>
-          <p className="mt-1 text-xs font-medium text-muted">Ícone dos itens</p>
+          <button onClick={() => { commit(); patchElemento(el.id, { itens: [...(el.itens ?? []), "Novo item"] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Item")}</button>
+          <p className="mt-1 text-xs font-medium text-muted">{tr("Ícone dos itens")}</p>
           <IconePicker valorAtual={el.iconeNome} cor="#0E7490" stroke={2} onPick={(nome, inner) => { commit(); patchElemento(el.id, { iconeNome: nome, iconeNomePaths: inner }); }} />
         </Secao>
       )}
 
       {(ehVelocimetro || ehTermometro) && !ehMedidorFamilia && (
         <Secao titulo="Faixas de cor">
-          <p className="text-[11px] text-muted">Cada faixa preenche até o valor indicado (verde/amarelo/vermelho).</p>
+          <p className="text-[11px] text-muted">{tr("Cada faixa preenche até o valor indicado (verde/amarelo/vermelho).")}</p>
           {(el.faixas ?? []).map((f, i) => (
             <div key={i} className="flex items-center gap-2">
-              <span className="text-[11px] text-muted">até</span>
+              <span className="text-[11px] text-muted">{tr("até")}</span>
               <input type="number" value={f.ate} onFocus={commit} onChange={(ev) => { const fs = [...(el.faixas ?? [])]; fs[i] = { ...fs[i], ate: Number(ev.target.value) || 0 }; patchElemento(el.id, { faixas: fs }); }} className="w-16 rounded-md border border-border bg-surface px-1.5 py-1 font-mono text-xs focus:border-viz focus:outline-none" />
               <div className="flex-1"><ColorPicker compact valor={f.cor} onStart={commit} onChange={(cor) => { const fs = [...(el.faixas ?? [])]; fs[i] = { ...fs[i], cor }; patchElemento(el.id, { faixas: fs }); }} /></div>
-              <button disabled={(el.faixas ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { faixas: (el.faixas ?? []).filter((_, j) => j !== i) }); }} title="Remover faixa" className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
+              <button disabled={(el.faixas ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { faixas: (el.faixas ?? []).filter((_, j) => j !== i) }); }} title={tr("Remover faixa")} className="text-muted hover:text-red-600 disabled:opacity-30">×</button>
             </div>
           ))}
-          <button onClick={() => { commit(); patchElemento(el.id, { faixas: [...(el.faixas ?? []), { ate: el.maximo ?? 100, cor: "#EF4444" }] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">+ Faixa</button>
+          <button onClick={() => { commit(); patchElemento(el.id, { faixas: [...(el.faixas ?? []), { ate: el.maximo ?? 100, cor: "#EF4444" }] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Faixa")}</button>
         </Secao>
       )}
 
@@ -795,7 +800,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
             rows={3}
             className="w-full resize-y rounded-md border border-border bg-surface px-2 py-1.5 text-sm leading-relaxed focus:border-viz focus:outline-none"
           />
-          <p className="text-[11px] text-muted">Escreva o texto e insira as medidas entre chaves. Disponíveis: {(el.medidas ?? []).map((m) => `{${m.chave}}`).join("  ") || "(nenhuma)"}</p>
+          <p className="text-[11px] text-muted">{tr("Escreva o texto e insira as medidas entre chaves. Disponíveis:")} {(el.medidas ?? []).map((m) => `{${m.chave}}`).join("  ") || "(nenhuma)"}</p>
         </Secao>
       )}
 
@@ -808,13 +813,13 @@ function PropsElemento({ el }: { el: SceneElement }) {
       {ehComparativo && (
         <Secao titulo="Título e cores">
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Título</span>
+            <span className="text-xs text-muted">{tr("Título")}</span>
             <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
           </label>
-          <Linha rotulo="Cor do título"><ColorPicker compact valor={el.estilo.corTitulo ?? "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
-          <Linha rotulo="Cor do valor"><ColorPicker compact valor={el.estilo.corValor ?? el.estilo.cor} onStart={commit} onChange={(corValor) => patchEstilo(el.id, { corValor })} /></Linha>
-          <Linha rotulo="Cor da barra"><ColorPicker compact valor={el.estilo.corIcone ?? "#06B6D4"} onStart={commit} onChange={(corIcone) => patchEstilo(el.id, { corIcone })} /></Linha>
-          <p className="text-[11px] text-muted">A barra usa o Atingimento % (0–100). O valor e a meta são as medidas acima.</p>
+          <Linha rotulo={tr("Cor do título")}><ColorPicker compact valor={el.estilo.corTitulo ?? "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
+          <Linha rotulo={tr("Cor do valor")}><ColorPicker compact valor={el.estilo.corValor ?? el.estilo.cor} onStart={commit} onChange={(corValor) => patchEstilo(el.id, { corValor })} /></Linha>
+          <Linha rotulo={tr("Cor da barra")}><ColorPicker compact valor={el.estilo.corIcone ?? "#06B6D4"} onStart={commit} onChange={(corIcone) => patchEstilo(el.id, { corIcone })} /></Linha>
+          <p className="text-[11px] text-muted">{tr("A barra usa o Atingimento % (0–100). O valor e a meta são as medidas acima.")}</p>
         </Secao>
       )}
 
@@ -822,20 +827,20 @@ function PropsElemento({ el }: { el: SceneElement }) {
         <Secao titulo="Chip">
           <IconePicker valorAtual={el.iconeNome} cor="#0E7490" stroke={2} onPick={(nome, inner) => { commit(); patchElemento(el.id, { iconeNome: nome, iconeNomePaths: inner }); }} />
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Rótulo</span>
-            <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} placeholder="ex.: vendas" className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
+            <span className="text-xs text-muted">{tr("Rótulo")}</span>
+            <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} placeholder={tr("ex.: vendas")} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
           </label>
-          <Linha rotulo="Cor do ícone"><ColorPicker compact valor={el.estilo.corIcone ?? "#06B6D4"} onStart={commit} onChange={(corIcone) => patchEstilo(el.id, { corIcone })} /></Linha>
-          <Linha rotulo="Cor do rótulo"><ColorPicker compact valor={el.estilo.corTitulo ?? "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
-          <p className="text-[11px] text-muted">O valor fica em <b>Conteúdo</b> e o fundo da pílula em <b>Cores</b>.</p>
+          <Linha rotulo={tr("Cor do ícone")}><ColorPicker compact valor={el.estilo.corIcone ?? "#06B6D4"} onStart={commit} onChange={(corIcone) => patchEstilo(el.id, { corIcone })} /></Linha>
+          <Linha rotulo={tr("Cor do rótulo")}><ColorPicker compact valor={el.estilo.corTitulo ?? "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
+          <p className="text-[11px] text-muted">{tr("O valor fica em")} <b>{tr("Conteúdo")}</b> {tr("e o fundo da pílula em")} <b>{tr("Cores")}</b>.</p>
         </Secao>
       )}
 
       {ehFiltros && (
         <Secao titulo="Filtros">
           <MedidasEditor el={el} bloqueado={false} rotuloEditavel addLabel="Adicionar filtro" />
-          <Linha rotulo="Cor do rótulo"><ColorPicker compact valor={el.estilo.corTitulo ?? "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
-          <p className="text-[11px] text-muted">Cada filtro vira uma pílula "Rótulo: valor". Ligue cada um à medida do slicer (ex.: <b>SELECTEDVALUE</b>). Cor do valor e da pílula ficam em <b>Cores</b>.</p>
+          <Linha rotulo={tr("Cor do rótulo")}><ColorPicker compact valor={el.estilo.corTitulo ?? "#94A3B8"} onStart={commit} onChange={(corTitulo) => patchEstilo(el.id, { corTitulo })} /></Linha>
+          <p className="text-[11px] text-muted">Cada filtro vira uma pílula "Rótulo: valor". Ligue cada um à medida do slicer (ex.: <b>SELECTEDVALUE</b>{tr("). Cor do valor e da pílula ficam em")} <b>{tr("Cores")}</b>.</p>
         </Secao>
       )}
 
@@ -843,13 +848,13 @@ function PropsElemento({ el }: { el: SceneElement }) {
         <Secao titulo="Etapas do funil">
           {(el.etapas ?? []).map((et, i) => (
             <div key={i} className="flex items-center gap-1.5">
-              <input value={et.rotulo} onFocus={commit} onChange={(ev) => { const es = [...(el.etapas ?? [])]; es[i] = { ...es[i], rotulo: ev.target.value }; patchElemento(el.id, { etapas: es }); }} placeholder="Etapa" className="min-w-0 flex-1 rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none" />
+              <input value={et.rotulo} onFocus={commit} onChange={(ev) => { const es = [...(el.etapas ?? [])]; es[i] = { ...es[i], rotulo: ev.target.value }; patchElemento(el.id, { etapas: es }); }} placeholder={tr("Etapa")} className="min-w-0 flex-1 rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none" />
               <input type="number" value={et.valor} onFocus={commit} onChange={(ev) => { const es = [...(el.etapas ?? [])]; es[i] = { ...es[i], valor: Number(ev.target.value) || 0 }; patchElemento(el.id, { etapas: es }); }} className="w-16 rounded-md border border-border bg-surface px-1.5 py-1 font-mono text-xs focus:border-viz focus:outline-none" />
-              <button disabled={(el.etapas ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { etapas: (el.etapas ?? []).filter((_, j) => j !== i) }); }} title="Remover etapa" className="shrink-0 text-muted hover:text-red-600 disabled:opacity-30">×</button>
+              <button disabled={(el.etapas ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { etapas: (el.etapas ?? []).filter((_, j) => j !== i) }); }} title={tr("Remover etapa")} className="shrink-0 text-muted hover:text-red-600 disabled:opacity-30">×</button>
             </div>
           ))}
-          <button onClick={() => { commit(); patchElemento(el.id, { etapas: [...(el.etapas ?? []), { rotulo: "Nova etapa", valor: 100 }] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">+ Etapa</button>
-          <Linha rotulo="Mostrar conversão"><input type="checkbox" checked={!!el.mostrarConversao} onChange={(ev) => { commit(); patchElemento(el.id, { mostrarConversao: ev.target.checked }); }} className="h-4 w-4 accent-viz" /></Linha>
+          <button onClick={() => { commit(); patchElemento(el.id, { etapas: [...(el.etapas ?? []), { rotulo: "Nova etapa", valor: 100 }] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Etapa")}</button>
+          <Linha rotulo={tr("Mostrar conversão")}><input type="checkbox" checked={!!el.mostrarConversao} onChange={(ev) => { commit(); patchElemento(el.id, { mostrarConversao: ev.target.checked }); }} className="h-4 w-4 accent-viz" /></Linha>
           <p className="text-[11px] text-muted">A largura da barra é proporcional ao valor. "Conversão" mostra a % em relação à etapa anterior.</p>
         </Secao>
       )}
@@ -865,13 +870,13 @@ function PropsElemento({ el }: { el: SceneElement }) {
             <div key={i} className="flex items-center gap-1.5">
               <span className="w-4 shrink-0 text-center text-[11px] text-muted">{i + 1}</span>
               <input value={t} onFocus={commit} onChange={(ev) => { const it = [...(el.itens ?? [])]; it[i] = ev.target.value; patchElemento(el.id, { itens: it }); }} className="min-w-0 flex-1 rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none" />
-              <button disabled={(el.itens ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { itens: (el.itens ?? []).filter((_, j) => j !== i) }); }} title="Remover passo" className="shrink-0 text-muted hover:text-red-600 disabled:opacity-30">×</button>
+              <button disabled={(el.itens ?? []).length <= 1} onClick={() => { commit(); patchElemento(el.id, { itens: (el.itens ?? []).filter((_, j) => j !== i) }); }} title={tr("Remover passo")} className="shrink-0 text-muted hover:text-red-600 disabled:opacity-30">×</button>
             </div>
           ))}
-          <button onClick={() => { commit(); patchElemento(el.id, { itens: [...(el.itens ?? []), "Novo passo"] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">+ Passo</button>
+          <button onClick={() => { commit(); patchElemento(el.id, { itens: [...(el.itens ?? []), "Novo passo"] }); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Passo")}</button>
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs text-muted">Bolinha: {el.iconeNome ? "ícone" : "número"}</span>
-            {el.iconeNome && <button onClick={() => { commit(); patchElemento(el.id, { iconeNome: undefined, iconeNomePaths: undefined }); }} className="rounded-md border border-border px-2 py-1 text-[11px] font-medium text-muted hover:text-foreground">Voltar p/ números</button>}
+            {el.iconeNome && <button onClick={() => { commit(); patchElemento(el.id, { iconeNome: undefined, iconeNomePaths: undefined }); }} className="rounded-md border border-border px-2 py-1 text-[11px] font-medium text-muted hover:text-foreground">{tr("Voltar p/ números")}</button>}
           </div>
           <IconePicker valorAtual={el.iconeNome} cor="#0E7490" stroke={2} onPick={(nome, inner) => { commit(); patchElemento(el.id, { iconeNome: nome, iconeNomePaths: inner }); }} />
         </Secao>
@@ -880,10 +885,10 @@ function PropsElemento({ el }: { el: SceneElement }) {
       {ehKpiCompleto && (
         <Secao titulo="KPI completo">
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Título</span>
+            <span className="text-xs text-muted">{tr("Título")}</span>
             <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
           </label>
-          <Campo rotulo="Variação (seta)">
+          <Campo rotulo={tr("Variação (seta)")}>
             <div className="flex gap-1">
               {([["up", ArrowUp, "Melhor"], ["down", ArrowDown, "Pior"], ["neutral", Minus, "Neutro"]] as const).map(([d, Ic, lbl]) => (
                 <button key={d} onClick={() => { commit(); patchElemento(el.id, { direcao: d }); }} className={`flex flex-1 items-center justify-center gap-1 rounded-md border py-1.5 text-xs ${(el.direcao ?? "up") === d ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted"}`}><Ic className="h-3.5 w-3.5" /> {lbl}</button>
@@ -891,38 +896,38 @@ function PropsElemento({ el }: { el: SceneElement }) {
             </div>
           </Campo>
           <MedidasEditor el={el} bloqueado />
-          <Campo rotulo="Mini-barras (valores)">
+          <Campo rotulo={tr("Mini-barras (valores)")}>
             <input value={(el.barras ?? []).join(", ")} onFocus={commit} onChange={(ev) => patchElemento(el.id, { barras: ev.target.value.split(",").map((n) => Number(n.trim()) || 0).filter((_, i) => i < 16) })} placeholder="40, 60, 45, 70" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
           </Campo>
-          <p className="text-[11px] text-muted">Valor em <b>Conteúdo</b>; cores em <b>Cores</b> (as barras usam a cor principal).</p>
+          <p className="text-[11px] text-muted">{tr("Valor em")} <b>{tr("Conteúdo")}</b>{tr("; cores em")} <b>{tr("Cores")}</b> {tr("(as barras usam a cor principal).")}</p>
         </Secao>
       )}
 
       {ehAreaMini && (
         <Secao titulo="Mini linha">
-          <Campo rotulo="Valores (separados por vírgula)">
+          <Campo rotulo={tr("Valores (separados por vírgula)")}>
             <input value={(el.barras ?? []).join(", ")} onFocus={commit} onChange={(ev) => patchElemento(el.id, { barras: ev.target.value.split(",").map((n) => Number(n.trim()) || 0).filter((_, i) => i < 32) })} placeholder="30, 50, 40, 65, 55" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
           </Campo>
-          <p className="text-[11px] text-muted">Gráfico decorativo (não vem de medida). A cor da linha/área está em <b>Cores</b>.</p>
+          <p className="text-[11px] text-muted">{tr("Gráfico decorativo (não vem de medida). A cor da linha/área está em")} <b>{tr("Cores")}</b>.</p>
         </Secao>
       )}
 
       {ehWaffle && (
         <Secao titulo="Waffle">
-          <Campo rotulo="Formato das células">
+          <Campo rotulo={tr("Formato das células")}>
             <div className="flex gap-0.5 rounded-md bg-background p-0.5">
               {([["Quadrado", 3], ["Redondo", 999]] as const).map(([lbl, r]) => (
                 <button key={lbl} onClick={() => cEstilo({ borderRadius: r })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.estilo.borderRadius === r ? "bg-surface shadow-sm" : "text-muted"}`}>{lbl}</button>
               ))}
             </div>
           </Campo>
-          <p className="text-[11px] text-muted">Preenche de baixo pra cima pela % (em <b>Conteúdo</b>). Cores em <b>Cores</b>.</p>
+          <p className="text-[11px] text-muted">{tr("Preenche de baixo pra cima pela % (em")} <b>{tr("Conteúdo")}</b>{tr("). Cores em")} <b>{tr("Cores")}</b>.</p>
         </Secao>
       )}
 
       {ehAnelKpi && (
         <Secao titulo="Anel">
-          <Campo rotulo="Formato">
+          <Campo rotulo={tr("Formato")}>
             <div className="flex gap-0.5 rounded-md bg-background p-0.5">
               {([["anel", "Anel"], ["semi", "Semicírculo"]] as const).map(([f, lbl]) => (
                 <button key={f} onClick={() => { commit(); patchElemento(el.id, { formato: f }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${(el.formato ?? "anel") === f ? "bg-surface shadow-sm" : "text-muted"}`}>{lbl}</button>
@@ -930,25 +935,25 @@ function PropsElemento({ el }: { el: SceneElement }) {
             </div>
           </Campo>
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Rótulo (abaixo do número)</span>
-            <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} placeholder="ex.: Meta" className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
+            <span className="text-xs text-muted">{tr("Rótulo (abaixo do número)")}</span>
+            <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} placeholder={tr("ex.: Meta")} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
           </label>
-          <Linha rotulo="Espessura"><Num valor={el.estilo.espessura ?? 4} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={1} max={12} step={0.5} /></Linha>
-          <p className="text-[11px] text-muted">Valor (%) em <b>Conteúdo</b>; cor do anel em <b>Cores</b>.</p>
+          <Linha rotulo={tr("Espessura")}><Num valor={el.estilo.espessura ?? 4} onStart={commit} onChange={(espessura) => patchEstilo(el.id, { espessura })} min={1} max={12} step={0.5} /></Linha>
+          <p className="text-[11px] text-muted">{tr("Valor (%) em")} <b>{tr("Conteúdo")}</b>{tr("; cor do anel em")} <b>{tr("Cores")}</b>.</p>
         </Secao>
       )}
 
       {ehComparaAB && (
         <Secao titulo="Comparativo A/B">
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Rótulo do lado A</span>
-            <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} placeholder="ex.: Atual" className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
+            <span className="text-xs text-muted">{tr("Rótulo do lado A")}</span>
+            <input value={el.titulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { titulo: ev.target.value })} placeholder={tr("ex.: Atual")} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
           </label>
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-muted">Rótulo do lado B</span>
-            <input value={(el.medidas ?? []).find((m) => m.chave === "b")?.rotulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { medidas: (el.medidas ?? []).map((m) => (m.chave === "b" ? { ...m, rotulo: ev.target.value } : m)) })} placeholder="ex.: Anterior" className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
+            <span className="text-xs text-muted">{tr("Rótulo do lado B")}</span>
+            <input value={(el.medidas ?? []).find((m) => m.chave === "b")?.rotulo ?? ""} onFocus={commit} onChange={(ev) => patchElemento(el.id, { medidas: (el.medidas ?? []).map((m) => (m.chave === "b" ? { ...m, rotulo: ev.target.value } : m)) })} placeholder={tr("ex.: Anterior")} className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-viz focus:outline-none" />
           </label>
-          <p className="text-[11px] text-muted">Lado A = <b>Conteúdo</b>. Medida do lado B abaixo:</p>
+          <p className="text-[11px] text-muted">{tr("Lado A =")} <b>{tr("Conteúdo")}</b>{tr(". Medida do lado B abaixo:")}</p>
           <MedidasEditor el={el} bloqueado />
         </Secao>
       )}
@@ -967,8 +972,8 @@ function PropsElemento({ el }: { el: SceneElement }) {
 
       {ehAnimavelEntrada && (
         <Secao titulo="Animação">
-          <Linha rotulo="Animar entrada"><input type="checkbox" checked={!!el.estilo.animarFill} onChange={(e) => cEstilo({ animarFill: e.target.checked })} className="h-4 w-4 accent-viz" /></Linha>
-          <p className="text-[11px] text-muted">Enche/cresce/desenha quando o visual aparece (vale no Power BI).</p>
+          <Linha rotulo={tr("Animar entrada")}><input type="checkbox" checked={!!el.estilo.animarFill} onChange={(e) => cEstilo({ animarFill: e.target.checked })} className="h-4 w-4 accent-viz" /></Linha>
+          <p className="text-[11px] text-muted">{tr("Enche/cresce/desenha quando o visual aparece (vale no Power BI).")}</p>
         </Secao>
       )}
 
@@ -979,7 +984,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
         {!ehImagem && !ehMedidor && (
           <>
             <button onClick={() => setGradAberto((v) => !v)} className="flex w-full items-center justify-between rounded-md border border-border px-2 py-1 text-[11px] font-medium text-muted hover:text-foreground">
-              Fundo em gradiente
+              {tr("Fundo em gradiente")}
               <ChevronDown className={`h-3 w-3 transition-transform ${gradAberto ? "" : "-rotate-90"}`} />
             </button>
             {gradAberto && (
@@ -989,21 +994,21 @@ function PropsElemento({ el }: { el: SceneElement }) {
                   <ColorPicker compact valor={gB} onChange={setGB} />
                 </div>
                 <div className="mt-1.5 flex items-center justify-between gap-2">
-                  <span className="text-[11px] text-muted">Ângulo</span>
+                  <span className="text-[11px] text-muted">{tr("Ângulo")}</span>
                   <Num valor={gAng} onChange={setGAng} min={0} max={360} suf="°" />
                 </div>
-                <button onClick={() => { commit(); patchEstilo(el.id, { fundo: `linear-gradient(${gAng}deg,${gA},${gB})` }); }} className="mt-1.5 w-full rounded-md border border-viz bg-viz/10 py-1 text-[11px] font-medium text-viz-dark hover:bg-viz/20">Aplicar gradiente</button>
+                <button onClick={() => { commit(); patchEstilo(el.id, { fundo: `linear-gradient(${gAng}deg,${gA},${gB})` }); }} className="mt-1.5 w-full rounded-md border border-viz bg-viz/10 py-1 text-[11px] font-medium text-viz-dark hover:bg-viz/20">{tr("Aplicar gradiente")}</button>
               </div>
             )}
           </>
         )}
-        <Linha rotulo="Opacidade"><Num valor={el.estilo.opacidade} onStart={commit} onChange={(opacidade) => patchEstilo(el.id, { opacidade })} min={0} max={1} step={0.05} /></Linha>
+        <Linha rotulo={tr("Opacidade")}><Num valor={el.estilo.opacidade} onStart={commit} onChange={(opacidade) => patchEstilo(el.id, { opacidade })} min={0} max={1} step={0.05} /></Linha>
       </Secao>
       )}
 
       {!ehForma && (
         <Secao titulo="Cor condicional" inicial={false}>
-          <Linha rotulo="Mudar cor pelo valor">
+          <Linha rotulo={tr("Mudar cor pelo valor")}>
             <input
               type="checkbox"
               checked={!!el.corCond?.ativo}
@@ -1017,9 +1022,9 @@ function PropsElemento({ el }: { el: SceneElement }) {
             return (
               <>
                 <label className="flex flex-col gap-1">
-                  <span className="text-xs text-muted">Cor baseada na medida</span>
+                  <span className="text-xs text-muted">{tr("Cor baseada na medida")}</span>
                   <input value={cc.ref} onFocus={commit} onChange={(ev) => patchElemento(el.id, { corCond: { ...cc, ref: ev.target.value } })} placeholder={el.binding.ref || "[Valor]"} className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
-                  <span className="text-[10px] text-muted">Deixe vazio para usar a medida do próprio elemento. Ex.: <b>[Atingimento %]</b>.</span>
+                  <span className="text-[10px] text-muted">{tr("Deixe vazio para usar a medida do próprio elemento. Ex.:")} <b>[Atingimento %]</b>.</span>
                 </label>
 
                 <div className="flex flex-wrap gap-1">
@@ -1036,7 +1041,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
                     <div key={i} className="flex flex-col gap-1.5 rounded-md border border-border/70 bg-background/40 p-1.5">
                       <div className="flex items-center gap-1.5">
                         {ultimo ? (
-                          <span className="flex-1 text-[11px] font-medium text-muted">senão (demais casos)</span>
+                          <span className="flex-1 text-[11px] font-medium text-muted">{tr("senão (demais casos)")}</span>
                         ) : (
                           <>
                             <span className="shrink-0 text-[11px] text-muted">se</span>
@@ -1052,14 +1057,14 @@ function PropsElemento({ el }: { el: SceneElement }) {
                             )}
                           </>
                         )}
-                        <button disabled={arr.length <= 1} onClick={() => { commit(); setRegras(arr.filter((_, j) => j !== i)); }} title="Remover regra" className="shrink-0 px-1 text-muted hover:text-red-600 disabled:opacity-30">×</button>
+                        <button disabled={arr.length <= 1} onClick={() => { commit(); setRegras(arr.filter((_, j) => j !== i)); }} title={tr("Remover regra")} className="shrink-0 px-1 text-muted hover:text-red-600 disabled:opacity-30">×</button>
                       </div>
                       <ColorPicker compact valor={r.cor} onStart={commit} onChange={(cor) => patchR({ cor })} />
                     </div>
                   );
                 })}
-                <button onClick={() => { commit(); const rs = [...(cc.regras ?? [])]; rs.splice(Math.max(0, rs.length - 1), 0, { op: ">=", ate: 50, cor: "#F59E0B" }); setRegras(rs); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">+ Regra</button>
-                <p className="text-[11px] text-muted">As regras são checadas de cima para baixo (a primeira que bate vence). Vira um SWITCH na DAX.</p>
+                <button onClick={() => { commit(); const rs = [...(cc.regras ?? [])]; rs.splice(Math.max(0, rs.length - 1), 0, { op: ">=", ate: 50, cor: "#F59E0B" }); setRegras(rs); }} className="rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground">{tr("+ Regra")}</button>
+                <p className="text-[11px] text-muted">{tr("As regras são checadas de cima para baixo (a primeira que bate vence). Vira um SWITCH na DAX.")}</p>
               </>
             );
           })()}
@@ -1067,42 +1072,42 @@ function PropsElemento({ el }: { el: SceneElement }) {
       )}
 
       <Secao titulo="Borda e sombra" inicial={false}>
-        <Linha rotulo="Cantos"><Num valor={el.estilo.borderRadius} onStart={commit} onChange={(borderRadius) => patchEstilo(el.id, { borderRadius })} min={0} max={999} suf="px" /></Linha>
-        <Linha rotulo="Borda"><Num valor={el.estilo.borderWidth} onStart={commit} onChange={(borderWidth) => patchEstilo(el.id, { borderWidth })} min={0} max={12} suf="px" /></Linha>
+        <Linha rotulo={tr("Cantos")}><Num valor={el.estilo.borderRadius} onStart={commit} onChange={(borderRadius) => patchEstilo(el.id, { borderRadius })} min={0} max={999} suf="px" /></Linha>
+        <Linha rotulo={tr("Borda")}><Num valor={el.estilo.borderWidth} onStart={commit} onChange={(borderWidth) => patchEstilo(el.id, { borderWidth })} min={0} max={12} suf="px" /></Linha>
         {el.estilo.borderWidth > 0 && (
           <>
-            <Linha rotulo="Estilo">
+            <Linha rotulo={tr("Estilo")}>
               <div className="flex gap-0.5 rounded-md bg-background p-0.5">
                 {(["solid", "dashed", "dotted"] as const).map((b) => (<button key={b} onClick={() => cEstilo({ borderStyle: b })} className={`rounded px-2 py-1 text-xs ${(el.estilo.borderStyle || "solid") === b ? "bg-surface shadow-sm" : "text-muted"}`}>{b === "solid" ? "──" : b === "dashed" ? "- -" : "···"}</button>))}
               </div>
             </Linha>
-            <Linha rotulo="Cor da borda"><ColorPicker compact valor={el.estilo.borderColor} onStart={commit} onChange={(borderColor) => patchEstilo(el.id, { borderColor })} /></Linha>
+            <Linha rotulo={tr("Cor da borda")}><ColorPicker compact valor={el.estilo.borderColor} onStart={commit} onChange={(borderColor) => patchEstilo(el.id, { borderColor })} /></Linha>
           </>
         )}
-        <Linha rotulo="Sombra"><Num valor={el.estilo.sombra} onStart={commit} onChange={(sombra) => patchEstilo(el.id, { sombra })} min={0} max={48} suf="px" /></Linha>
-        {el.estilo.sombra > 0 && <Linha rotulo="Cor da sombra"><ColorPicker compact valor={el.estilo.sombraColor ?? "#000000"} onStart={commit} onChange={(sombraColor) => patchEstilo(el.id, { sombraColor })} /></Linha>}
-        <Linha rotulo="Espaçamento"><Num valor={el.estilo.padding ?? 0} onStart={commit} onChange={(padding) => patchEstilo(el.id, { padding })} min={0} max={40} suf="px" /></Linha>
+        <Linha rotulo={tr("Sombra")}><Num valor={el.estilo.sombra} onStart={commit} onChange={(sombra) => patchEstilo(el.id, { sombra })} min={0} max={48} suf="px" /></Linha>
+        {el.estilo.sombra > 0 && <Linha rotulo={tr("Cor da sombra")}><ColorPicker compact valor={el.estilo.sombraColor ?? "#000000"} onStart={commit} onChange={(sombraColor) => patchEstilo(el.id, { sombraColor })} /></Linha>}
+        <Linha rotulo={tr("Espaçamento")}><Num valor={el.estilo.padding ?? 0} onStart={commit} onChange={(padding) => patchEstilo(el.id, { padding })} min={0} max={40} suf="px" /></Linha>
       </Secao>
 
       {temTexto && (
         <Secao titulo="Tipografia">
-          <Linha rotulo="Fonte">
+          <Linha rotulo={tr("Fonte")}>
             <select value={el.estilo.fontFamily} onChange={(e) => cEstilo({ fontFamily: e.target.value })} className="rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none">
               {FONTES.map((f) => (<option key={f.label} value={f.v} style={{ fontFamily: f.v || "inherit" }}>{f.label}</option>))}
             </select>
           </Linha>
-          <Linha rotulo="Tamanho"><Num valor={el.estilo.fontSize} onStart={commit} onChange={(fontSize) => patchEstilo(el.id, { fontSize })} min={8} max={120} suf="px" /></Linha>
-          <Linha rotulo="Peso"><Num valor={el.estilo.fontWeight} onStart={commit} onChange={(fontWeight) => patchEstilo(el.id, { fontWeight })} min={300} max={800} step={100} /></Linha>
-          <Linha rotulo="Espaçamento"><Num valor={el.estilo.letterSpacing} onStart={commit} onChange={(letterSpacing) => patchEstilo(el.id, { letterSpacing })} min={-2} max={12} step={0.5} suf="px" /></Linha>
-          <Linha rotulo="Entrelinha"><Num valor={el.estilo.lineHeight ?? 1.15} onStart={commit} onChange={(lineHeight) => patchEstilo(el.id, { lineHeight })} min={0.8} max={2.5} step={0.05} /></Linha>
-          <Linha rotulo="Brilho (glow)"><Num valor={el.estilo.glow} onStart={commit} onChange={(glow) => patchEstilo(el.id, { glow })} min={0} max={30} suf="px" /></Linha>
-          <Linha rotulo="Maiúsculas"><input type="checkbox" checked={el.estilo.uppercase} onChange={(e) => cEstilo({ uppercase: e.target.checked })} className="h-4 w-4 accent-viz" /></Linha>
-          <Linha rotulo="Horizontal">
+          <Linha rotulo={tr("Tamanho")}><Num valor={el.estilo.fontSize} onStart={commit} onChange={(fontSize) => patchEstilo(el.id, { fontSize })} min={8} max={120} suf="px" /></Linha>
+          <Linha rotulo={tr("Peso")}><Num valor={el.estilo.fontWeight} onStart={commit} onChange={(fontWeight) => patchEstilo(el.id, { fontWeight })} min={300} max={800} step={100} /></Linha>
+          <Linha rotulo={tr("Espaçamento")}><Num valor={el.estilo.letterSpacing} onStart={commit} onChange={(letterSpacing) => patchEstilo(el.id, { letterSpacing })} min={-2} max={12} step={0.5} suf="px" /></Linha>
+          <Linha rotulo={tr("Entrelinha")}><Num valor={el.estilo.lineHeight ?? 1.15} onStart={commit} onChange={(lineHeight) => patchEstilo(el.id, { lineHeight })} min={0.8} max={2.5} step={0.05} /></Linha>
+          <Linha rotulo={tr("Brilho (glow)")}><Num valor={el.estilo.glow} onStart={commit} onChange={(glow) => patchEstilo(el.id, { glow })} min={0} max={30} suf="px" /></Linha>
+          <Linha rotulo={tr("Maiúsculas")}><input type="checkbox" checked={el.estilo.uppercase} onChange={(e) => cEstilo({ uppercase: e.target.checked })} className="h-4 w-4 accent-viz" /></Linha>
+          <Linha rotulo={tr("Horizontal")}>
             <div className="flex gap-0.5 rounded-md bg-background p-0.5">
               {([["left", AlignLeft], ["center", AlignCenter], ["right", AlignRight]] as const).map(([a, Ic]) => (<button key={a} onClick={() => cEstilo({ align: a })} className={`rounded px-2 py-1 ${el.estilo.align === a ? "bg-surface text-foreground shadow-sm" : "text-muted"}`}><Ic className="h-3.5 w-3.5" /></button>))}
             </div>
           </Linha>
-          <Linha rotulo="Vertical">
+          <Linha rotulo={tr("Vertical")}>
             <div className="flex gap-0.5 rounded-md bg-background p-0.5">
               {([["start", AlignVerticalJustifyStart], ["center", AlignVerticalJustifyCenter], ["end", AlignVerticalJustifyEnd]] as const).map(([a, Ic]) => (<button key={a} onClick={() => cEstilo({ alignV: a })} className={`rounded px-2 py-1 ${(el.estilo.alignV ?? "center") === a ? "bg-surface text-foreground shadow-sm" : "text-muted"}`}><Ic className="h-3.5 w-3.5" /></button>))}
             </div>
@@ -1116,20 +1121,21 @@ function PropsElemento({ el }: { el: SceneElement }) {
         </div>
         {el.animacao.tipo !== "none" && (
           <>
-            <Linha rotulo="Duração"><Num valor={el.animacao.duracao} onStart={commit} onChange={(duracao) => patchAnimacao(el.id, { duracao })} min={0.1} max={4} step={0.1} suf="s" /></Linha>
-            <Linha rotulo="Atraso"><Num valor={el.animacao.delay} onStart={commit} onChange={(delay) => patchAnimacao(el.id, { delay })} min={0} max={3} step={0.1} suf="s" /></Linha>
+            <Linha rotulo={tr("Duração")}><Num valor={el.animacao.duracao} onStart={commit} onChange={(duracao) => patchAnimacao(el.id, { duracao })} min={0.1} max={4} step={0.1} suf="s" /></Linha>
+            <Linha rotulo={tr("Atraso")}><Num valor={el.animacao.delay} onStart={commit} onChange={(delay) => patchAnimacao(el.id, { delay })} min={0} max={3} step={0.1} suf="s" /></Linha>
           </>
         )}
       </Secao>
 
       <div className="px-4 py-3">
-        <button onClick={remover} className="w-full rounded-md border border-red-200 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Excluir elemento</button>
+        <button onClick={remover} className="w-full rounded-md border border-red-200 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">{tr("Excluir elemento")}</button>
       </div>
     </>
   );
 }
 
 function PropsMulti({ count }: { count: number }) {
+  const tr = usarTraducao();
   const alinharSelecao = useEditor((s) => s.alinharSelecao);
   const distribuir = useEditor((s) => s.distribuir);
   const agrupar = useEditor((s) => s.agrupar);
@@ -1138,7 +1144,7 @@ function PropsMulti({ count }: { count: number }) {
   return (
     <>
       <Secao titulo={`${count} elementos selecionados`}>
-        <p className="text-[11px] text-muted">Alinhar todos ao card:</p>
+        <p className="text-[11px] text-muted">{tr("Alinhar todos ao card:")}</p>
         <div className="flex justify-between gap-0.5 rounded-md bg-background p-0.5">
           {([["esq", AlignLeft], ["centroH", AlignCenter], ["dir", AlignRight], ["topo", AlignStartHorizontal], ["centroV", AlignCenterHorizontal], ["base", AlignEndHorizontal]] as const).map(([m, Ic]) => (
             <button key={m} onClick={() => alinharSelecao(m)} className="flex-1 rounded p-1 text-muted hover:bg-surface hover:text-foreground"><Ic className="mx-auto h-3.5 w-3.5" /></button>
@@ -1146,19 +1152,19 @@ function PropsMulti({ count }: { count: number }) {
         </div>
         {count >= 3 && (
           <>
-            <p className="text-[11px] text-muted">Distribuir espaçamento:</p>
+            <p className="text-[11px] text-muted">{tr("Distribuir espaçamento:")}</p>
             <div className="flex gap-2">
-              <button onClick={() => distribuir("h")} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground"><AlignHorizontalDistributeCenter className="h-3.5 w-3.5" /> Horizontal</button>
-              <button onClick={() => distribuir("v")} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground"><AlignVerticalDistributeCenter className="h-3.5 w-3.5" /> Vertical</button>
+              <button onClick={() => distribuir("h")} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground"><AlignHorizontalDistributeCenter className="h-3.5 w-3.5" /> {tr("Horizontal")}</button>
+              <button onClick={() => distribuir("v")} className="flex flex-1 items-center justify-center gap-1.5 rounded-md border border-border py-1.5 text-xs font-medium text-muted hover:text-foreground"><AlignVerticalDistributeCenter className="h-3.5 w-3.5" /> {tr("Vertical")}</button>
             </div>
           </>
         )}
         <div className="flex gap-2">
-          <button onClick={agrupar} className="flex-1 rounded-md border border-border py-1.5 text-xs font-medium hover:bg-background">Agrupar (Ctrl+G)</button>
-          <button onClick={desagrupar} className="flex-1 rounded-md border border-border py-1.5 text-xs font-medium hover:bg-background">Desagrupar</button>
+          <button onClick={agrupar} className="flex-1 rounded-md border border-border py-1.5 text-xs font-medium hover:bg-background">{tr("Agrupar (Ctrl+G)")}</button>
+          <button onClick={desagrupar} className="flex-1 rounded-md border border-border py-1.5 text-xs font-medium hover:bg-background">{tr("Desagrupar")}</button>
         </div>
-        <button onClick={remover} className="rounded-md border border-red-200 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">Excluir selecionados</button>
-        <p className="text-[11px] text-muted">Shift + clique adiciona/remove da seleção.</p>
+        <button onClick={remover} className="rounded-md border border-red-200 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50">{tr("Excluir selecionados")}</button>
+        <p className="text-[11px] text-muted">{tr("Shift + clique adiciona/remove da seleção.")}</p>
       </Secao>
     </>
   );
@@ -1166,11 +1172,12 @@ function PropsMulti({ count }: { count: number }) {
 
 // Seletor de formatação numérica de uma medida dinâmica (gera FORMAT na DAX).
 function FormatoSel({ binding, onChange, commit }: { binding: Binding; onChange: (p: Partial<Binding>) => void; commit: () => void }) {
+  const tr = usarTraducao();
   const f = binding.formato ?? "auto";
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-2">
-        <span className="shrink-0 text-[11px] text-muted">Formato</span>
+        <span className="shrink-0 text-[11px] text-muted">{tr("Formato")}</span>
         <select value={f} onChange={(e) => { commit(); onChange({ formato: e.target.value as FormatoNum }); }} className="min-w-0 flex-1 rounded-md border border-border bg-surface px-2 py-1 text-xs focus:border-viz focus:outline-none">
           {FORMATOS.map((o) => <option key={o.id} value={o.id}>{o.rotulo}</option>)}
         </select>
@@ -1178,9 +1185,9 @@ function FormatoSel({ binding, onChange, commit }: { binding: Binding; onChange:
       {f === "custom" && (
         <input value={binding.mascara ?? ""} onFocus={commit} onChange={(e) => onChange({ mascara: e.target.value })} placeholder="#.##0,00" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
       )}
-      {f === "percent" && <p className="text-[10px] text-muted">Para medidas em fração: 0,85 vira 85%.</p>}
-      {f === "percentPronto" && <p className="text-[10px] text-muted">Para medidas já em escala: 85 vira 85%.</p>}
-      {f === "custom" && <p className="text-[10px] text-muted">Máscara do Power BI, ex.: <span className="font-mono">#.##0,00</span> ou <span className="font-mono">0%</span>.</p>}
+      {f === "percent" && <p className="text-[10px] text-muted">{tr("Para medidas em fração: 0,85 vira 85%.")}</p>}
+      {f === "percentPronto" && <p className="text-[10px] text-muted">{tr("Para medidas já em escala: 85 vira 85%.")}</p>}
+      {f === "custom" && <p className="text-[10px] text-muted">{tr("Máscara do Power BI, ex.:")} <span className="font-mono">#.##0,00</span> {tr("ou")} <span className="font-mono">0%</span>.</p>}
     </div>
   );
 }
@@ -1189,6 +1196,7 @@ function FormatoSel({ binding, onChange, commit }: { binding: Binding; onChange:
 // bloqueado = chaves fixas (comparativo) sem add/remover.
 // rotuloEditavel = mostra o rótulo editável (filtros) em vez do token {chave}.
 function MedidasEditor({ el, bloqueado, rotuloEditavel = false, addLabel = "Adicionar medida", comCor = false }: { el: SceneElement; bloqueado: boolean; rotuloEditavel?: boolean; addLabel?: string; comCor?: boolean }) {
+  const tr = usarTraducao();
   const patchElemento = useEditor((s) => s.patchElemento);
   const commit = useEditor((s) => s.commit);
   const medidas = el.medidas ?? [];
@@ -1211,21 +1219,21 @@ function MedidasEditor({ el, bloqueado, rotuloEditavel = false, addLabel = "Adic
             {bloqueado ? (
               <span className="text-xs font-medium">{m.rotulo || m.chave}</span>
             ) : rotuloEditavel ? (
-              <input value={m.rotulo ?? ""} onFocus={commit} onChange={(ev) => patchM(i, { rotulo: ev.target.value })} placeholder="Rótulo (ex.: Região)" className="min-w-0 flex-1 rounded border border-border bg-surface px-1.5 py-1 text-xs focus:border-viz focus:outline-none" />
+              <input value={m.rotulo ?? ""} onFocus={commit} onChange={(ev) => patchM(i, { rotulo: ev.target.value })} placeholder={tr("Rótulo (ex.: Região)")} className="min-w-0 flex-1 rounded border border-border bg-surface px-1.5 py-1 text-xs focus:border-viz focus:outline-none" />
             ) : (
-              <span className="flex items-center gap-1 text-xs text-muted">token
+              <span className="flex items-center gap-1 text-xs text-muted">{tr("token")}
                 <span className="font-mono text-muted">{"{"}</span>
                 <input value={m.chave} onFocus={commit} onChange={(ev) => patchM(i, { chave: ev.target.value.replace(/[^a-zA-Z0-9_]/g, "") })} className="w-16 rounded border border-border bg-surface px-1 py-0.5 font-mono text-xs focus:border-viz focus:outline-none" />
                 <span className="font-mono text-muted">{"}"}</span>
               </span>
             )}
             {!bloqueado && (
-              <button onClick={() => { commit(); set(medidas.filter((_, j) => j !== i)); }} title="Remover" className="ml-auto shrink-0 text-muted hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
+              <button onClick={() => { commit(); set(medidas.filter((_, j) => j !== i)); }} title={tr("Remover")} className="ml-auto shrink-0 text-muted hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
             )}
           </div>
           <div className="flex gap-0.5 rounded-md bg-background p-0.5">
-            <button onClick={() => { commit(); patchBind(i, { dinamico: false }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!m.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>Fixo</button>
-            <button onClick={() => { commit(); patchBind(i, { dinamico: true }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${m.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>Dinâmico</button>
+            <button onClick={() => { commit(); patchBind(i, { dinamico: false }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!m.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Fixo")}</button>
+            <button onClick={() => { commit(); patchBind(i, { dinamico: true }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${m.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>{tr("Dinâmico")}</button>
           </div>
           {m.binding.dinamico ? (
             <input value={m.binding.ref} onFocus={commit} onChange={(ev) => patchBind(i, { ref: ev.target.value })} placeholder="[Minha Medida]" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
@@ -1237,7 +1245,7 @@ function MedidasEditor({ el, bloqueado, rotuloEditavel = false, addLabel = "Adic
           )}
           {comCor && (
             <div className="flex items-center gap-2">
-              <span className="shrink-0 text-[11px] text-muted">Cor no texto</span>
+              <span className="shrink-0 text-[11px] text-muted">{tr("Cor no texto")}</span>
               <ColorPicker compact valor={m.cor || "#22C55E"} onStart={commit} onChange={(cor) => patchM(i, { cor })} />
             </div>
           )}
@@ -1251,6 +1259,7 @@ function MedidasEditor({ el, bloqueado, rotuloEditavel = false, addLabel = "Adic
 }
 
 export default function Properties() {
+  const tr = usarTraducao();
   const selectedIds = useEditor((s) => s.selectedIds);
   const selectedId = useEditor((s) => s.selectedId);
   const el = useEditor((s) => elementosAtivos(s).find((e) => e.id === s.selectedId));
@@ -1276,7 +1285,7 @@ export default function Properties() {
       {aba === "objeto" && temObjeto && (
         <div className="flex items-center gap-2 border-b border-border px-4 py-2">
           {HeaderIc && <span className="flex h-6 w-6 items-center justify-center rounded-md bg-viz/10 text-viz-dark"><HeaderIc className="h-3.5 w-3.5" /></span>}
-          <h2 className="text-sm font-semibold">{multi ? `Seleção (${selectedIds.length})` : meta?.label}</h2>
+          <h2 className="text-sm font-semibold">{multi ? `Seleção (${selectedIds.length})` : meta?.label ? tr(meta.label) : ""}</h2>
         </div>
       )}
 
@@ -1289,9 +1298,9 @@ export default function Properties() {
           <PropsElemento el={el} />
         ) : (
           <div className="px-4 py-8 text-center text-xs text-muted">
-            Selecione um objeto no canvas para editá-lo.
+            {tr("Selecione um objeto no canvas para editá-lo.")}
             <br />
-            <button onClick={() => setAba("fundo")} className="mt-2 rounded-md border border-border px-3 py-1.5 font-medium text-foreground hover:bg-background">Editar o Fundo</button>
+            <button onClick={() => setAba("fundo")} className="mt-2 rounded-md border border-border px-3 py-1.5 font-medium text-foreground hover:bg-background">{tr("Editar o Fundo")}</button>
           </div>
         )}
       </div>

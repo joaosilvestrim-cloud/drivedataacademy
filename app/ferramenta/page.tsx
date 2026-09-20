@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -26,11 +27,11 @@ export default async function FerramentaPage() {
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v10H4zM2 19h20M9 9l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
           <h1 className="font-display text-2xl font-bold text-white">{nome}</h1>
-          <p className="mt-2 text-slate-300">Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.</p>
-          <p className="mt-3 text-sm text-slate-400"><span className="font-semibold text-brand-green">Incluída na assinatura da Academy.</span> Assine e use a ferramenta e todos os cursos.</p>
-          <Link href="/matricula" className="mt-6 inline-block w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">Assinar a Academy</Link>
+          <p className="mt-2 text-slate-300">{tr("Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.")}</p>
+          <p className="mt-3 text-sm text-slate-400"><span className="font-semibold text-brand-green">{tr("Incluída na assinatura da Academy.")}</span> {tr("Assine e use a ferramenta e todos os cursos.")}</p>
+          <Link href="/matricula" className="mt-6 inline-block w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Assinar a Academy")}</Link>
           <Link href="/ferramenta/assinar" className="mt-3 block text-sm text-brand-teal hover:underline">ou assinar só a ferramenta ({price}/mês)</Link>
-          <Link href="/conta" className="mt-3 block text-sm text-slate-400 hover:text-white">Voltar ao portal</Link>
+          <Link href="/conta" className="mt-3 block text-sm text-slate-400 hover:text-white">{tr("Voltar ao portal")}</Link>
         </div>
       </main>
     );
@@ -43,11 +44,11 @@ export default async function FerramentaPage() {
         <div className="flex items-center gap-3">
           <Link href="/conta/ferramentas" className="flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted hover:text-foreground">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            Voltar ao sistema
+            {tr("Voltar ao sistema")}
           </Link>
           <span className="font-display text-sm font-bold text-foreground">{nome}</span>
         </div>
-        <span className="hidden text-xs text-muted sm:block">Power BI · cards HTML/SVG + DAX</span>
+        <span className="hidden text-xs text-muted sm:block">{tr("Power BI · cards HTML/SVG + DAX")}</span>
       </header>
 
       <div className="min-h-0 flex-1">

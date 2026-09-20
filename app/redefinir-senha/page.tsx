@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -15,6 +17,7 @@ const field =
    O código abre a sessão (verifyOtp) e, na mesma ação, a senha nova é salva.
    Não depende de link de uso único, que filtros de e-mail costumam gastar. */
 function Formulario() {
+  const tr = usarTraducao();
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState(params.get("email") || "");
@@ -79,44 +82,45 @@ function Formulario() {
 
   return (
     <div className="glass-strong rounded-3xl border border-white/10 p-8">
-      <h1 className="font-display text-2xl font-bold text-white">Defina sua senha</h1>
-      <p className="mt-1 text-sm text-slate-400">Primeiro acesso ou troca de senha: digite o código do e-mail e escolha a sua senha.</p>
+      <h1 className="font-display text-2xl font-bold text-white">{tr("Defina sua senha")}</h1>
+      <p className="mt-1 text-sm text-slate-400">{tr("Primeiro acesso ou troca de senha: digite o código do e-mail e escolha a sua senha.")}</p>
       {aviso && <p role="status" className="mt-4 rounded-xl border border-brand-green/30 bg-brand-green/10 px-3 py-2 text-xs text-brand-green">{aviso}</p>}
       <form onSubmit={handleSubmit} className="mt-5 space-y-3">
-        <label htmlFor="senha-email" className="sr-only">E-mail</label>
-        <input id="senha-email" required type="email" autoComplete="email" placeholder="Seu e-mail" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
-        <label htmlFor="senha-codigo" className="sr-only">Código do e-mail</label>
+        <label htmlFor="senha-email" className="sr-only">{tr("E-mail")}</label>
+        <input id="senha-email" required type="email" autoComplete="email" placeholder={tr("Seu e-mail")} value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
+        <label htmlFor="senha-codigo" className="sr-only">{tr("Código do e-mail")}</label>
         <input
           id="senha-codigo"
           required
           inputMode="numeric"
           autoComplete="one-time-code"
-          placeholder="Código do e-mail"
+          placeholder={tr("Código do e-mail")}
           value={codigo}
           onChange={(e) => setCodigo(e.target.value.replace(/[^\d\s]/g, "").slice(0, 12))}
           className={`${field} font-mono tracking-[0.3em]`}
         />
-        <label htmlFor="senha-nova" className="sr-only">Nova senha</label>
-        <CampoSenha id="senha-nova" required autoComplete="new-password" placeholder="Nova senha (mínimo 6 caracteres)" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+        <label htmlFor="senha-nova" className="sr-only">{tr("Nova senha")}</label>
+        <CampoSenha id="senha-nova" required autoComplete="new-password" placeholder={tr("Nova senha (mínimo 6 caracteres)")} value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
         {error && <p role="alert" className="text-xs text-red-400">{error}</p>}
         <button type="submit" disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
           {loading ? "Salvando..." : "Salvar e entrar"}
         </button>
       </form>
       <p className="mt-5 text-center text-sm text-slate-400">
-        Não chegou ou expirou?{" "}
+        {tr("Não chegou ou expirou?")}{" "}
         <button type="button" onClick={reenviar} disabled={espera > 0} className="font-medium text-brand-green hover:underline disabled:cursor-not-allowed disabled:text-slate-500 disabled:no-underline">
           {espera > 0 ? `Enviar de novo em ${espera}s` : "Enviar novo código"}
         </button>
       </p>
       <p className="mt-2 text-center text-sm text-slate-400">
-        <Link href="/entrar" className="font-medium text-brand-green hover:underline">Voltar ao login</Link>
+        <Link href="/entrar" className="font-medium text-brand-green hover:underline">{tr("Voltar ao login")}</Link>
       </p>
     </div>
   );
 }
 
 export default function RedefinirSenhaPage() {
+  const tr = usarTraducao();
   return (
     <>
       <Background />
@@ -124,7 +128,7 @@ export default function RedefinirSenhaPage() {
         <div className="w-full max-w-sm">
           <Link href="/" className="mx-auto mb-8 block w-fit">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Drive Data Academy" className="h-10 w-auto" />
+            <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-10 w-auto" />
           </Link>
           <Suspense fallback={<div className="glass-strong h-96 rounded-3xl border border-white/10" />}>
             <Formulario />

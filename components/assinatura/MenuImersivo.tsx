@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Pause, Play } from "lucide-react";
@@ -31,50 +33,51 @@ const n = (k: number) => String(k + 1).padStart(2, "0");
 const B = ({ q }: { q: number }) => <>{Array.from({ length: q }, (_, i) => <b key={i} />)}</>;
 
 function Cenas() {
+  const tr = usarTraducao();
   return (
     <div className="dd-core-perspective">
       <div className="dd-core-object">
         <div className="dd-scene dd-scene-live" data-scene="0" aria-hidden="true">
           <div className="dd-vinyl"><div className="dd-vinyl-label">ON<br /><b>AIR</b></div></div>
-          <div className="dd-live-ticket"><span>ENCONTROS</span><strong>AO VIVO</strong><div className="dd-waveform"><B q={15} /></div></div>
+          <div className="dd-live-ticket"><span>ENCONTROS</span><strong>{tr("AO VIVO")}</strong><div className="dd-waveform"><B q={15} /></div></div>
         </div>
         <div className="dd-scene dd-scene-replay" data-scene="1" aria-hidden="true" hidden>
-          <div className="dd-reel dd-reel-back"><span>SEU ACERVO</span></div><div className="dd-reel dd-reel-mid"><span>WORKSHOPS</span></div>
-          <div className="dd-reel dd-reel-front"><span>GRAVAÇÕES</span><strong>RE:<br />PLAY</strong><div className="dd-filmstrip"><B q={8} /></div></div>
+          <div className="dd-reel dd-reel-back"><span>{tr("SEU ACERVO")}</span></div><div className="dd-reel dd-reel-mid"><span>WORKSHOPS</span></div>
+          <div className="dd-reel dd-reel-front"><span>{tr("GRAVAÇÕES")}</span><strong>RE:<br />PLAY</strong><div className="dd-filmstrip"><B q={8} /></div></div>
         </div>
         <div className="dd-scene dd-scene-lab" data-scene="2" aria-hidden="true" hidden>
           <div className="dd-lab-base"><span>LAB</span></div><div className="dd-lab-column dd-col-a" /><div className="dd-lab-column dd-col-b" /><div className="dd-lab-column dd-col-c" /><div className="dd-lab-orbit" />
-          <div className="dd-lab-label">DADOS<br /><b>EM AÇÃO.</b></div>
+          <div className="dd-lab-label">DADOS<br /><b>{tr("EM AÇÃO.")}</b></div>
         </div>
         <div className="dd-scene dd-scene-books" data-scene="3" aria-hidden="true" hidden>
           <div className="dd-book dd-book-back"><span>03</span><b>APLICAR</b></div><div className="dd-book dd-book-mid"><span>02</span><b>PRATICAR</b></div>
-          <div className="dd-book dd-book-front"><span>01 / DRIVEDATA</span><strong>VÁ<br />ALÉM.</strong><small>TREINAMENTOS</small></div>
+          <div className="dd-book dd-book-front"><span>{tr("01 / DRIVEDATA")}</span><strong>{tr("VÁ")}<br />{tr("ALÉM.")}</strong><small>TREINAMENTOS</small></div>
         </div>
         <div className="dd-scene dd-scene-material" data-scene="4" aria-hidden="true" hidden>
           <div className="dd-sheet dd-sheet-back" /><div className="dd-sheet dd-sheet-mid" />
-          <div className="dd-sheet dd-sheet-front"><span>DO ARQUIVO AO PROJETO</span><strong>CASE<br />ABERTO.</strong><div className="dd-paper-bars"><B q={5} /></div><small>POWER BI · MATERIAIS</small></div>
+          <div className="dd-sheet dd-sheet-front"><span>{tr("DO ARQUIVO AO PROJETO")}</span><strong>CASE<br />ABERTO.</strong><div className="dd-paper-bars"><B q={5} /></div><small>{tr("POWER BI · MATERIAIS")}</small></div>
         </div>
         <div className="dd-scene dd-scene-certificate" data-scene="5" aria-hidden="true" hidden>
-          <div className="dd-credential"><div className="dd-credential-top">DRIVEDATA <span>ACADEMY</span></div><div className="dd-credential-line" /><span className="dd-credential-label">COMPETÊNCIAS</span><strong>Você<br />chegou<br />até aqui.</strong><div className="dd-credential-seal">DD</div><small>CERTIFICADO</small></div>
+          <div className="dd-credential"><div className="dd-credential-top">DRIVEDATA <span>ACADEMY</span></div><div className="dd-credential-line" /><span className="dd-credential-label">{tr("COMPETÊNCIAS")}</span><strong>{tr("Você")}<br />{tr("chegou")}<br />{tr("até aqui.")}</strong><div className="dd-credential-seal">DD</div><small>CERTIFICADO</small></div>
         </div>
         <div className="dd-scene dd-scene-community" data-scene="6" aria-hidden="true" hidden>
-          <div className="dd-word-orbit" /><div className="dd-word dd-word-a">TROCAR.</div><div className="dd-word dd-word-b">CRIAR.</div><div className="dd-word dd-word-c">CRESCER.</div><div className="dd-word-center">JUNTO.</div>
+          <div className="dd-word-orbit" /><div className="dd-word dd-word-a">TROCAR.</div><div className="dd-word dd-word-b">{tr("CRIAR.")}</div><div className="dd-word dd-word-c">CRESCER.</div><div className="dd-word-center">JUNTO.</div>
         </div>
         <div className="dd-scene dd-scene-ranking" data-scene="7" aria-hidden="true" hidden>
           <div className="dd-podium dd-podium-two"><span>2</span></div><div className="dd-podium dd-podium-one"><span>1</span></div><div className="dd-podium dd-podium-three"><span>3</span></div>
-          <div className="dd-ranking-type">FAÇA A<br /><b>DIFERENÇA.</b></div>
+          <div className="dd-ranking-type">{tr("FAÇA A")}<br /><b>{tr("DIFERENÇA.")}</b></div>
         </div>
         <div className="dd-scene dd-scene-talent" data-scene="8" aria-hidden="true" hidden>
           <div className="dd-gallery dd-gallery-back"><span>SKILLS</span><div className="dd-gallery-orb" /></div>
-          <div className="dd-gallery dd-gallery-front"><span>SEU PRÓXIMO CAPÍTULO</span><strong>EM<br />VITRINE.</strong><div className="dd-gallery-art"><B q={3} /></div><small>PROJETOS · TALENTOS</small></div>
+          <div className="dd-gallery dd-gallery-front"><span>{tr("SEU PRÓXIMO CAPÍTULO")}</span><strong>{tr("EM")}<br />VITRINE.</strong><div className="dd-gallery-art"><B q={3} /></div><small>{tr("PROJETOS · TALENTOS")}</small></div>
         </div>
         <div className="dd-scene dd-scene-mentoring" data-scene="9" aria-hidden="true" hidden>
-          <div className="dd-lens dd-lens-back"><span>DESAFIO</span></div><div className="dd-lens dd-lens-front"><span>DIREÇÃO</span></div>
+          <div className="dd-lens dd-lens-back"><span>DESAFIO</span></div><div className="dd-lens dd-lens-front"><span>{tr("DIREÇÃO")}</span></div>
           <div className="dd-mentoring-type">OUTRO<br /><b>OLHAR.</b></div>
         </div>
         <div className="dd-scene dd-scene-partners" data-scene="10" aria-hidden="true" hidden>
           <div className="dd-link-ring dd-link-one" /><div className="dd-link-ring dd-link-two" />
-          <div className="dd-partner-type">IDEIAS QUE<br /><b>SE ENCONTRAM.</b></div>
+          <div className="dd-partner-type">{tr("IDEIAS QUE")}<br /><b>{tr("SE ENCONTRAM.")}</b></div>
         </div>
       </div>
     </div>
@@ -82,6 +85,7 @@ function Cenas() {
 }
 
 export default function MenuImersivo() {
+  const tr = usarTraducao();
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -104,13 +108,13 @@ export default function MenuImersivo() {
       selected = i;
       const d = ITENS[i];
       buttons.forEach((b, j) => b.setAttribute("aria-pressed", String(j === i)));
-      q(".dd-detail-overline").textContent = `${n(i)} / ${d.group}`;
-      q(".dd-detail h2").textContent = d.title;
-      q(".dd-detail-tag").textContent = d.tag;
-      q(".dd-detail-body p").textContent = d.desc;
-      q(".dd-detail-chips").replaceChildren(...d.chips.map((x) => { const s = document.createElement("span"); s.textContent = x; return s; }));
+      q(".dd-detail-overline").textContent = `${n(i)} / ${tr(d.group)}`;
+      q(".dd-detail h2").textContent = tr(d.title);
+      q(".dd-detail-tag").textContent = tr(d.tag);
+      q(".dd-detail-body p").textContent = tr(d.desc);
+      q(".dd-detail-chips").replaceChildren(...d.chips.map((x) => { const s = document.createElement("span"); s.textContent = tr(x); return s; }));
       q(".dd-core-caption>span").textContent = n(i);
-      q(".dd-core-caption strong").textContent = d.title;
+      q(".dd-core-caption strong").textContent = tr(d.title);
       root!.querySelectorAll<HTMLElement>(".dd-scene").forEach((scene, j) => {
         scene.getAnimations().forEach((a) => a.cancel());
         scene.hidden = j !== i;
@@ -281,48 +285,48 @@ export default function MenuImersivo() {
 
   const primeiro = ITENS[0];
   const Botao = ({ i }: { i: number }) => (
-    <button type="button" className="dd-node" aria-pressed={i === 0} aria-label={ITENS[i].title}>
+    <button type="button" className="dd-node" aria-pressed={i === 0} aria-label={tr(ITENS[i].title)}>
       <span className="dd-node-number" aria-hidden="true">{n(i)}</span>
-      <span className="dd-node-label">{ITENS[i].title}</span>
+      <span className="dd-node-label">{tr(ITENS[i].title)}</span>
     </button>
   );
 
   return (
-    <div id="dd-universe" className="dd-full" ref={rootRef} aria-label="Benefícios da assinatura" data-motion="on">
+    <div id="dd-universe" className="dd-full" ref={rootRef} aria-label={tr("Benefícios da assinatura")} data-motion="on">
       <main>
         <div className="dd-intro">
           <div className="dd-hero">
-            <h1 className="dd-h1">Conhecimento em<br /><em>outra dimensão.</em></h1>
-            <p className="dd-lead">Uma assinatura abre a agenda ao vivo, as gravações, a comunidade e as ferramentas. E coloca os treinamentos completos ao seu alcance, com preço de assinante.</p>
+            <h1 className="dd-h1">{tr("Conhecimento em")}<br /><em>{tr("outra dimensão.")}</em></h1>
+            <p className="dd-lead">{tr("Uma assinatura abre a agenda ao vivo, as gravações, a comunidade e as ferramentas. E coloca os treinamentos completos ao seu alcance, com preço de assinante.")}</p>
             <div className="dd-ctas">
-              <Link href="/matricula" className="dd-cta-primary">Quero assinar <ArrowUpRight aria-hidden="true" /></Link>
-              <Link href="/entrar" className="dd-cta-secondary">Já sou assinante</Link>
+              <Link href="/matricula" className="dd-cta-primary">{tr("Quero assinar")} <ArrowUpRight aria-hidden="true" /></Link>
+              <Link href="/entrar" className="dd-cta-secondary">{tr("Já sou assinante")}</Link>
             </div>
           </div>
           <div className="dd-intro-side">
-            <p>Selecione um item.<br />Descubra o que ele oferece.</p>
+            <p>{tr("Selecione um item.")}<br />{tr("Descubra o que ele oferece.")}</p>
             <button type="button" className="dd-motion" aria-pressed="false">
               <i className="dd-ic-pause" aria-hidden="true"><Pause /></i><i className="dd-ic-play" aria-hidden="true" hidden><Play /></i>
-              <span>Pausar movimento</span>
+              <span>{tr("Pausar movimento")}</span>
             </button>
           </div>
         </div>
-        <section className="dd-space" aria-label="Explore os benefícios da assinatura">
+        <section className="dd-space" aria-label={tr("Explore os benefícios da assinatura")}>
           <canvas className="dd-cosmos" aria-hidden="true" />
-          <div className="dd-rail dd-left" aria-label="Aprender e praticar">{[0, 1, 2, 3, 4].map((i) => <Botao key={i} i={i} />)}</div>
-          <div className="dd-core" aria-label="Núcleo visual do ecossistema">
+          <div className="dd-rail dd-left" aria-label={tr("Aprender e praticar")}>{[0, 1, 2, 3, 4].map((i) => <Botao key={i} i={i} />)}</div>
+          <div className="dd-core" aria-label={tr("Núcleo visual do ecossistema")}>
             <Cenas />
-            <div className="dd-core-caption"><span>01</span><strong>{primeiro.title}</strong></div>
+            <div className="dd-core-caption"><span>01</span><strong>{tr(primeiro.title)}</strong></div>
           </div>
-          <div className="dd-rail dd-right" aria-label="Conectar e crescer">{[5, 6, 7, 8, 9, 10].map((i) => <Botao key={i} i={i} />)}</div>
+          <div className="dd-rail dd-right" aria-label={tr("Conectar e crescer")}>{[5, 6, 7, 8, 9, 10].map((i) => <Botao key={i} i={i} />)}</div>
         </section>
-        <section className="dd-detail" aria-live="polite" aria-atomic="true" aria-label="Detalhes do item selecionado">
-          <div className="dd-detail-heading"><span className="dd-detail-overline">01 / {primeiro.group}</span><h2>{primeiro.title}</h2><span className="dd-detail-tag">{primeiro.tag}</span></div>
-          <div className="dd-detail-body"><p>{primeiro.desc}</p><div className="dd-detail-chips">{primeiro.chips.map((c) => <span key={c}>{c}</span>)}</div></div>
+        <section className="dd-detail" aria-live="polite" aria-atomic="true" aria-label={tr("Detalhes do item selecionado")}>
+          <div className="dd-detail-heading"><span className="dd-detail-overline">01 / {tr(primeiro.group)}</span><h2>{tr(primeiro.title)}</h2><span className="dd-detail-tag">{tr(primeiro.tag)}</span></div>
+          <div className="dd-detail-body"><p>{tr(primeiro.desc)}</p><div className="dd-detail-chips">{primeiro.chips.map((c) => <span key={c}>{tr(c)}</span>)}</div></div>
         </section>
         <footer className="dd-footer">
-          <span>Explore os 11 benefícios da assinatura.</span>
-          <Link href="/matricula">Conhecer a assinatura <ArrowUpRight aria-hidden="true" /></Link>
+          <span>{tr("Explore os 11 benefícios da assinatura.")}</span>
+          <Link href="/matricula">{tr("Conhecer a assinatura")} <ArrowUpRight aria-hidden="true" /></Link>
         </footer>
       </main>
     </div>

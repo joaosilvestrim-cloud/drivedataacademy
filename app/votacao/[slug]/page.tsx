@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -13,7 +14,7 @@ const dia = (iso: string) =>
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const { votacao } = await carregarVotacao(createAdminClient(), params.slug);
-  if (!votacao) return { title: "Votação · DriveData Academy" };
+  if (!votacao) return { title: tr("Votação · DriveData Academy") };
   return {
     title: `${votacao.title} · DriveData Academy`,
     description: votacao.description || "Escolha os próximos temas da DriveData Academy.",
@@ -43,13 +44,13 @@ export default async function VotacaoPage({
     <main className="min-h-screen bg-ink-900 px-6 py-14">
       <div className="mx-auto max-w-2xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <Link href="/" aria-label="DriveData Academy">
+          <Link href="/" aria-label={tr("DriveData Academy")}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="DriveData Academy" className="h-9 w-auto" />
+            <img src="/logo.png" alt={tr("DriveData Academy")} className="h-9 w-auto" />
           </Link>
           {/* Quem chega pelo menu do aluno precisa de um caminho de volta. */}
           <Link href="/conta" className="text-sm text-slate-400 transition-colors hover:text-white">
-            ← Voltar para a plataforma
+            {tr("← Voltar para a plataforma")}
           </Link>
         </div>
 
@@ -73,12 +74,12 @@ export default async function VotacaoPage({
 
         {votou && (
           <p className="mt-8 rounded-2xl border border-brand-green/30 bg-brand-green/10 px-5 py-4 text-brand-green" role="status">
-            Voto registrado. Obrigado por ajudar a montar a agenda.
+            {tr("Voto registrado. Obrigado por ajudar a montar a agenda.")}
           </p>
         )}
 
         {mostrarResultado ? (
-          <section className="mt-10 flex flex-col gap-5" aria-label="Resultado parcial">
+          <section className="mt-10 flex flex-col gap-5" aria-label={tr("Resultado parcial")}>
             {resultado.map((o) => (
               <div key={o.id}>
                 <div className="flex items-baseline justify-between gap-4">
@@ -93,13 +94,13 @@ export default async function VotacaoPage({
             ))}
             {!fechada && (
               <p className="mt-2 text-sm text-slate-500">
-                Mudou de ideia? Vote de novo com o mesmo e-mail que a resposta é substituída.{" "}
-                <Link href={`/votacao/${votacao.slug}`} className="text-brand-green underline underline-offset-4">Votar de novo</Link>.
+                {tr("Mudou de ideia? Vote de novo com o mesmo e-mail que a resposta é substituída.")}{" "}
+                <Link href={`/votacao/${votacao.slug}`} className="text-brand-green underline underline-offset-4">{tr("Votar de novo")}</Link>.
               </p>
             )}
           </section>
         ) : fechada ? (
-          <p className="mt-10 text-slate-400">Esta votação está encerrada. Obrigado a quem participou.</p>
+          <p className="mt-10 text-slate-400">{tr("Esta votação está encerrada. Obrigado a quem participou.")}</p>
         ) : (
           <form action={votar} className="mt-10 flex flex-col gap-6">
             <input type="hidden" name="slug" value={votacao.slug} />
@@ -111,7 +112,7 @@ export default async function VotacaoPage({
             )}
 
             <fieldset className="flex flex-col gap-3">
-              <legend className="sr-only">Opções</legend>
+              <legend className="sr-only">{tr("Opções")}</legend>
               {opcoes.map((o) => (
                 <label
                   key={o.id}
@@ -133,30 +134,30 @@ export default async function VotacaoPage({
 
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-slate-200">Nome <span className="text-brand-green">*</span></span>
+                <span className="text-sm font-medium text-slate-200">{tr("Nome")} <span className="text-brand-green">*</span></span>
                 <input name="name" required autoComplete="name" className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors focus:border-brand-green" />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-slate-200">E-mail <span className="text-brand-green">*</span></span>
+                <span className="text-sm font-medium text-slate-200">{tr("E-mail")} <span className="text-brand-green">*</span></span>
                 <input name="email" type="email" required autoComplete="email" className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors focus:border-brand-green" />
               </label>
             </div>
-            <p className="-mt-3 text-xs text-slate-500">Um voto por e-mail. Serve só para não contar duas vezes.</p>
+            <p className="-mt-3 text-xs text-slate-500">{tr("Um voto por e-mail. Serve só para não contar duas vezes.")}</p>
 
             {votacao.allow_suggestion && (
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-slate-200">Tem outro tema em mente?</span>
+                <span className="text-sm font-medium text-slate-200">{tr("Tem outro tema em mente?")}</span>
                 <textarea
                   name="suggestion"
                   rows={3}
                   className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors focus:border-brand-green"
                 />
-                <span className="text-xs text-slate-500">Opcional. Lemos todas.</span>
+                <span className="text-xs text-slate-500">{tr("Opcional. Lemos todas.")}</span>
               </label>
             )}
 
             <button type="submit" className="rounded-xl bg-brand-green px-6 py-3.5 font-semibold text-ink-900 transition-colors hover:bg-white">
-              Enviar meu voto
+              {tr("Enviar meu voto")}
             </button>
           </form>
         )}

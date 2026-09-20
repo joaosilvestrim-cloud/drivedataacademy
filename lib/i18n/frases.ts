@@ -23,6 +23,14 @@ const CORRECOES: Record<string, Partial<Par>> = {
   // "Revisar" é revisar de novo; o botão manda conferir a resposta.
   "Conferir": { es: "Comprobar" },
   "Destaque": { es: "Destacado" },
+  // O modelo resumiu estas duas em estilo de telegrama e perdeu a segunda
+  // metade da ideia, que é justamente a parte útil.
+  "De um lado o extrato do sistema, do outro o que o painel mostra. A diferença entre eles é o tamanho da encrenca. Só isso, ainda não diz onde ela mora.": {
+    en: "On one side the system statement, on the other what the dashboard shows. The gap between them is the size of the trouble. That alone doesn't say where it lives.",
+  },
+  "Diga o nome da sua medida e marque o que precisa: acumulado no ano, comparação com o ano anterior, média móvel. Sai tudo escrito em cima dela.": {
+    en: "Give your measure a name and tick what you need: year to date, same period last year, moving average. It all comes out written on top of it.",
+  },
 };
 
 export function frase(texto: string, idioma: Idioma): string {

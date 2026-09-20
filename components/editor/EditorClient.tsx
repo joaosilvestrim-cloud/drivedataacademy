@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Undo2, Redo2, Magnet, Grid3x3, Minus, Plus, Sun, Moon, Eye, Code2, Share2, Save, Ruler, Blocks, Layers as LayersIcon, LayoutTemplate, Monitor } from "lucide-react";
@@ -24,6 +26,7 @@ interface Props {
 }
 
 export default function EditorClient({ inicial, auth }: Props) {
+  const tr = usarTraducao();
   const router = useRouter();
   const nome = useEditor((s) => s.doc.nome);
   const setNome = useEditor((s) => s.setNome);
@@ -188,52 +191,52 @@ export default function EditorClient({ inicial, auth }: Props) {
       {/* Aviso: editor é melhor no desktop */}
       <div className="flex items-center gap-2 border-b border-amber-300 bg-amber-50 px-4 py-2 text-xs text-amber-900 lg:hidden">
         <Monitor className="h-4 w-4 shrink-0 text-amber-600" />
-        <span>O editor funciona melhor no computador — no celular o canvas fica limitado.</span>
+        <span>{tr("O editor funciona melhor no computador — no celular o canvas fica limitado.")}</span>
       </div>
       {/* Barra de controles */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-surface px-4 py-2">
         <div className="flex items-center gap-2">
-          <input value={nome} onChange={(e) => setNome(e.target.value)} aria-label="Nome do visual" className="w-40 rounded-md border border-border bg-surface px-2.5 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
+          <input value={nome} onChange={(e) => setNome(e.target.value)} aria-label={tr("Nome do visual")} className="w-40 rounded-md border border-border bg-surface px-2.5 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
           <div className="flex gap-0.5">
-            <button onClick={undo} disabled={!podeUndo} title="Desfazer (Ctrl+Z)" aria-label="Desfazer" className={`rounded-md border border-border p-1.5 ${podeUndo ? "text-muted hover:text-foreground" : "text-border"}`}><Undo2 className={ico} /></button>
-            <button onClick={redo} disabled={!podeRedo} title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer" className={`rounded-md border border-border p-1.5 ${podeRedo ? "text-muted hover:text-foreground" : "text-border"}`}><Redo2 className={ico} /></button>
+            <button onClick={undo} disabled={!podeUndo} title={tr("Desfazer (Ctrl+Z)")} aria-label={tr("Desfazer")} className={`rounded-md border border-border p-1.5 ${podeUndo ? "text-muted hover:text-foreground" : "text-border"}`}><Undo2 className={ico} /></button>
+            <button onClick={redo} disabled={!podeRedo} title={tr("Refazer (Ctrl+Shift+Z)")} aria-label={tr("Refazer")} className={`rounded-md border border-border p-1.5 ${podeRedo ? "text-muted hover:text-foreground" : "text-border"}`}><Redo2 className={ico} /></button>
           </div>
-          <button onClick={() => setSnap((v) => !v)} title="Alinhar à grade" aria-label="Alinhar à grade" aria-pressed={snap} className={`rounded-md border p-1.5 ${snap ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted hover:text-foreground"}`}><Magnet className={ico} /></button>
-          <button onClick={() => setGrade((v) => !v)} title="Mostrar grade" aria-label="Mostrar grade" aria-pressed={grade} className={`rounded-md border p-1.5 ${grade ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted hover:text-foreground"}`}><Grid3x3 className={ico} /></button>
+          <button onClick={() => setSnap((v) => !v)} title={tr("Alinhar à grade")} aria-label={tr("Alinhar à grade")} aria-pressed={snap} className={`rounded-md border p-1.5 ${snap ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted hover:text-foreground"}`}><Magnet className={ico} /></button>
+          <button onClick={() => setGrade((v) => !v)} title={tr("Mostrar grade")} aria-label={tr("Mostrar grade")} aria-pressed={grade} className={`rounded-md border p-1.5 ${grade ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted hover:text-foreground"}`}><Grid3x3 className={ico} /></button>
           <div className="flex items-center gap-0.5 rounded-md bg-background p-0.5">
-            <button onClick={() => setZoom((z) => Math.max(0.25, +(z - 0.25).toFixed(2)))} aria-label="Diminuir zoom" className="p-1 text-muted hover:text-foreground"><Minus className={ico} /></button>
-            <button onClick={() => setZoom(1)} title="Restaurar zoom (100%)" aria-label="Restaurar zoom para 100%" className="w-9 text-center font-mono text-xs text-muted hover:text-foreground">{Math.round(zoom * 100)}%</button>
-            <button onClick={() => setZoom((z) => Math.min(3, +(z + 0.25).toFixed(2)))} aria-label="Aumentar zoom" className="p-1 text-muted hover:text-foreground"><Plus className={ico} /></button>
+            <button onClick={() => setZoom((z) => Math.max(0.25, +(z - 0.25).toFixed(2)))} aria-label={tr("Diminuir zoom")} className="p-1 text-muted hover:text-foreground"><Minus className={ico} /></button>
+            <button onClick={() => setZoom(1)} title={tr("Restaurar zoom (100%)")} aria-label={tr("Restaurar zoom para 100%")} className="w-9 text-center font-mono text-xs text-muted hover:text-foreground">{Math.round(zoom * 100)}%</button>
+            <button onClick={() => setZoom((z) => Math.min(3, +(z + 0.25).toFixed(2)))} aria-label={tr("Aumentar zoom")} className="p-1 text-muted hover:text-foreground"><Plus className={ico} /></button>
           </div>
           <div className="flex items-center gap-1 rounded-md border border-border px-1.5 py-1">
-            <input type="number" value={card.w} onChange={(e) => atualizarCard({ w: Math.max(120, Number(e.target.value) || 0) })} title="Largura do canvas" className="w-12 bg-transparent text-center font-mono text-xs focus:outline-none" />
+            <input type="number" value={card.w} onChange={(e) => atualizarCard({ w: Math.max(120, Number(e.target.value) || 0) })} title={tr("Largura do canvas")} className="w-12 bg-transparent text-center font-mono text-xs focus:outline-none" />
             <span className="text-[10px] text-muted">×</span>
-            <input type="number" value={card.h} onChange={(e) => atualizarCard({ h: Math.max(80, Number(e.target.value) || 0) })} title="Altura do canvas" className="w-12 bg-transparent text-center font-mono text-xs focus:outline-none" />
+            <input type="number" value={card.h} onChange={(e) => atualizarCard({ h: Math.max(80, Number(e.target.value) || 0) })} title={tr("Altura do canvas")} className="w-12 bg-transparent text-center font-mono text-xs focus:outline-none" />
           </div>
-          <button onClick={() => setVerStart(true)} className={tbtn} title="Presets e calculadora"><Ruler className={ico} /></button>
+          <button onClick={() => setVerStart(true)} className={tbtn} title={tr("Presets e calculadora")}><Ruler className={ico} /></button>
         </div>
 
         <div className="flex items-center gap-2">
           {msg ? (
             <span className={msg === "Salvo!" ? "text-sm text-viz-dark" : "text-sm text-red-600"}>{msg}</span>
           ) : naoSalvo && auth.logado ? (
-            <span className="flex items-center gap-1.5 text-xs text-amber-600" title="Há alterações não salvas">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> Não salvo
+            <span className="flex items-center gap-1.5 text-xs text-amber-600" title={tr("Há alterações não salvas")}>
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> {tr("Não salvo")}
             </span>
           ) : null}
-          <button onClick={() => setFundo((f) => (f === "escuro" ? "claro" : "escuro"))} title="Fundo do canvas" aria-label={`Fundo do canvas (${fundo})`} className="rounded-md border border-border p-1.5 text-muted hover:text-foreground">
+          <button onClick={() => setFundo((f) => (f === "escuro" ? "claro" : "escuro"))} title={tr("Fundo do canvas")} aria-label={`Fundo do canvas (${fundo})`} className="rounded-md border border-border p-1.5 text-muted hover:text-foreground">
             {fundo === "escuro" ? <Moon className={ico} /> : <Sun className={ico} />}
           </button>
-          <button onClick={() => setVerPreview(true)} className={tbtn}><Eye className={ico} /> Visualizar</button>
-          <button onClick={() => setVerCodigo(true)} className={tbtn}><Code2 className={ico} /> Código</button>
+          <button onClick={() => setVerPreview(true)} className={tbtn}><Eye className={ico} /> {tr("Visualizar")}</button>
+          <button onClick={() => setVerCodigo(true)} className={tbtn}><Code2 className={ico} /> {tr("Código")}</button>
           {auth.premium && (
             <button onClick={() => setVerPublicar(true)} className="flex items-center gap-1.5 rounded-md border border-amber-300 bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-800 hover:bg-amber-100">
-              <Share2 className={ico} /> Publicar
+              <Share2 className={ico} /> {tr("Publicar")}
             </button>
           )}
           {auth.admin && (
-            <button onClick={() => setVerTemplate(true)} title="Salvar o visual atual como template (admin)" className="flex items-center gap-1.5 rounded-md border border-viz/40 bg-viz/10 px-2.5 py-1.5 text-xs font-medium text-viz-dark hover:bg-viz/20">
-              <LayoutTemplate className={ico} /> Template
+            <button onClick={() => setVerTemplate(true)} title={tr("Salvar o visual atual como template (admin)")} className="flex items-center gap-1.5 rounded-md border border-viz/40 bg-viz/10 px-2.5 py-1.5 text-xs font-medium text-viz-dark hover:bg-viz/20">
+              <LayoutTemplate className={ico} /> {tr("Template")}
             </button>
           )}
           <button onClick={salvar} disabled={salvando} className={`relative flex items-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-medium text-white transition-colors disabled:opacity-60 ${naoSalvo && auth.logado ? "bg-amber-500 hover:bg-amber-600" : "bg-viz hover:bg-viz-dark"}`}>

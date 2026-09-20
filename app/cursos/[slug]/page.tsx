@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { listaTraduzida, comTraducao, traducoesDe } from "@/lib/i18n/conteudo";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -75,17 +76,17 @@ export default async function CoursePage({ params, searchParams }: { params: { s
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
           <div>
             {emBreve && (
-              <p className="mb-3 inline-block rounded-full bg-amber-400/90 px-3 py-1 text-[0.7rem] font-semibold text-ink-900">Em breve</p>
+              <p className="mb-3 inline-block rounded-full bg-amber-400/90 px-3 py-1 text-[0.7rem] font-semibold text-ink-900">{tr("Em breve")}</p>
             )}
             {course.level && <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{course.level}</p>}
             <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">{course.title}</h1>
             {course.subtitle && <p className="mt-3 text-lg text-slate-300/90">{course.subtitle}</p>}
             {course.description && <p className="mt-5 whitespace-pre-line text-slate-300/90">{course.description}</p>}
-            {course.instructor_name && <p className="mt-5 text-sm text-slate-400">Com <strong className="text-white">{course.instructor_name}</strong></p>}
+            {course.instructor_name && <p className="mt-5 text-sm text-slate-400">{tr("Com")} <strong className="text-white">{course.instructor_name}</strong></p>}
 
             {/* Currículo */}
             <div className="mt-10">
-              <h2 className="font-display text-lg font-bold text-white">Conteúdo do curso</h2>
+              <h2 className="font-display text-lg font-bold text-white">{tr("Conteúdo do curso")}</h2>
               <p className="mt-1 text-sm text-slate-500">{modules.length} módulo(s) · {lessonCount} aula(s)</p>
               <div className="mt-4 space-y-3">
                 {modules.map((m: any, mi: number) => (
@@ -103,7 +104,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                           <span className="flex items-center gap-2">
                             <span className="text-slate-500">▶</span>
                             {l.title}
-                            {l.is_preview && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">grátis</span>}
+                            {l.is_preview && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">{tr("grátis")}</span>}
                           </span>
                           {l.duration && <span className="shrink-0 text-xs text-slate-500">{l.duration}</span>}
                         </li>
@@ -127,10 +128,10 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                 )}
                 {/* Preço: o do assinante em destaque, o cheio riscado ao lado. */}
                 {incluso ? (
-                  <p className="font-display text-2xl font-bold text-white">Incluído na assinatura</p>
+                  <p className="font-display text-2xl font-bold text-white">{tr("Incluído na assinatura")}</p>
                 ) : aVenda ? (
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Preço para assinantes</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Preço para assinantes")}</p>
                     <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                       <span className="font-display text-3xl font-bold text-white">{brl(precoAss!)}</span>
                       {desconto > 0 && <span className="text-sm text-slate-500 line-through">{brl(precoCheio)}</span>}
@@ -138,12 +139,12 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                     </div>
                     {parcelasPossiveis(precoAss!) > 1 && (
                       <p className="mt-1 text-sm text-slate-400">
-                        no Pix à vista ou em até {parcelasPossiveis(precoAss!)}x de {brl(precoAss! / parcelasPossiveis(precoAss!))} no cartão
+                        {tr("no Pix à vista ou em até")} {parcelasPossiveis(precoAss!)}x de {brl(precoAss! / parcelasPossiveis(precoAss!))} {tr("no cartão")}
                       </p>
                     )}
                   </div>
                 ) : (
-                  <p className="font-display text-2xl font-bold text-white">Exclusivo para assinantes</p>
+                  <p className="font-display text-2xl font-bold text-white">{tr("Exclusivo para assinantes")}</p>
                 )}
 
                 {searchParams?.erro && (
@@ -159,48 +160,48 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                     </Link>
                   ) : emBreve ? (
                     <button disabled className="w-full cursor-not-allowed rounded-xl border border-amber-400/30 bg-amber-400/10 px-6 py-3.5 text-sm font-semibold text-amber-300">
-                      Em breve
+                      {tr("Em breve")}
                     </button>
                   ) : !user ? (
                     <Link href="/entrar" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                      Entre para comprar
+                      {tr("Entre para comprar")}
                     </Link>
                   ) : !assinaturaAtiva ? (
                     <Link href="/matricula" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                      Assine para comprar com desconto
+                      {tr("Assine para comprar com desconto")}
                     </Link>
                   ) : incluso ? (
                     <form action={enrollFree}>
                       <input type="hidden" name="slug" value={course.slug} />
                       <button className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                        Liberar no meu acesso
+                        {tr("Liberar no meu acesso")}
                       </button>
                     </form>
                   ) : aVenda ? (
                     <form action={comprarCurso} className="space-y-3">
                       <input type="hidden" name="slug" value={course.slug} />
                       <div className="space-y-1.5">
-                        <label htmlFor="compra-cpf" className="block text-sm font-medium text-slate-300">CPF para a cobrança</label>
+                        <label htmlFor="compra-cpf" className="block text-sm font-medium text-slate-300">{tr("CPF para a cobrança")}</label>
                         <input id="compra-cpf" name="cpf" required inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
                       </div>
                       <div className="space-y-1.5">
-                        <label htmlFor="compra-pagamento" className="block text-sm font-medium text-slate-300">Forma de pagamento</label>
+                        <label htmlFor="compra-pagamento" className="block text-sm font-medium text-slate-300">{tr("Forma de pagamento")}</label>
                         <select id="compra-pagamento" name="pagamento" defaultValue="pix" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-green/60 [&>option]:bg-ink-900">
-                          <option value="pix">Pix à vista · {brl(precoAss!)}</option>
-                          <option value="cartao-1">Cartão de crédito à vista · {brl(precoAss!)}</option>
+                          <option value="pix">{tr("Pix à vista ·")} {brl(precoAss!)}</option>
+                          <option value="cartao-1">{tr("Cartão de crédito à vista ·")} {brl(precoAss!)}</option>
                           {Array.from({ length: parcelasPossiveis(precoAss!) - 1 }, (_, i) => i + 2).map((n) => (
-                            <option key={n} value={`cartao-${n}`}>Cartão em {n}x de {brl(precoAss! / n)}</option>
+                            <option key={n} value={`cartao-${n}`}>{tr("Cartão em")} {n}x de {brl(precoAss! / n)}</option>
                           ))}
                         </select>
-                        <p className="text-xs text-slate-500">Parcelado sem juros. O acesso libera na confirmação da primeira parcela.</p>
+                        <p className="text-xs text-slate-500">{tr("Parcelado sem juros. O acesso libera na confirmação da primeira parcela.")}</p>
                       </div>
                       <button className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
-                        Comprar por {brl(precoAss!)}
+                        {tr("Comprar por")} {brl(precoAss!)}
                       </button>
                     </form>
                   ) : (
                     <button disabled className="w-full cursor-not-allowed rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-semibold text-slate-400">
-                      Venda em breve
+                      {tr("Venda em breve")}
                     </button>
                   )}
                 </div>
@@ -220,12 +221,12 @@ export default async function CoursePage({ params, searchParams }: { params: { s
 
                 {/* O que você recebe */}
                 <div className="mt-6 space-y-2.5 border-t border-white/10 pt-5">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Este curso inclui</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Este curso inclui")}</p>
                   {[
-                    soArquivos ? { icon: "📁", label: "Arquivos prontos para download" } : { icon: "🎬", label: carga ? `${lessonCount} aula(s) · ${carga} de conteúdo` : `${lessonCount} aula(s) em vídeo` },
-                    { icon: "♾️", label: "Acesso vitalício ao conteúdo" },
-                    ...(course.certificate_enabled !== false ? [{ icon: "🎓", label: "Certificado de conclusão" }] : []),
-                    { icon: "💬", label: "Comunidade de alunos" },
+                    soArquivos ? { icon: "📁", label: tr("Arquivos prontos para download") } : { icon: "🎬", label: carga ? `${lessonCount} aula(s) · ${carga} de conteúdo` : `${lessonCount} aula(s) em vídeo` },
+                    { icon: "♾️", label: tr("Acesso vitalício ao conteúdo") },
+                    ...(course.certificate_enabled !== false ? [{ icon: "🎓", label: tr("Certificado de conclusão") }] : []),
+                    { icon: "💬", label: tr("Comunidade de alunos") },
                   ].map((it) => (
                     <div key={it.label} className="flex items-center gap-2.5 text-sm text-slate-300">
                       <span>{it.icon}</span>

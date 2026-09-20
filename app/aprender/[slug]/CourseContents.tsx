@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import Link from "next/link";
 
@@ -19,6 +21,7 @@ export default function CourseContents({
   currentId?: string;
   quiz: { title: string } | null;
 }) {
+  const tr = usarTraducao();
   const [open, setOpen] = useState(false);
   const done = new Set(doneIds);
 
@@ -99,7 +102,7 @@ export default function CourseContents({
           onClick={() => setOpen((o) => !o)}
           className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white"
         >
-          Conteúdo do curso
+          {tr("Conteúdo do curso")}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={`transition-transform ${open ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </button>
         {open && <div className="mt-3">{List}</div>}

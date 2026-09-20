@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 
 const LinkedInIcon = () => (
@@ -7,6 +9,7 @@ const LinkedInIcon = () => (
 );
 
 export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { shareUrl: string; courseTitle: string; code: string; dateISO: string }) {
+  const tr = usarTraducao();
   const [preparing, setPreparing] = useState(false);
   async function printCertificate() {
     setPreparing(true);
@@ -24,7 +27,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
     new URLSearchParams({
       startTask: "CERTIFICATION_NAME",
       name: courseTitle || "Certificado DriveData Academy",
-      organizationName: "DriveData Academy",
+      organizationName: tr("DriveData Academy"),
       issueYear: String(d.getFullYear()),
       issueMonth: String(d.getMonth() + 1),
       certUrl: shareUrl,
@@ -43,7 +46,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
           className="inline-flex items-center gap-2 rounded-xl bg-[#0a66c2] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
         >
           <LinkedInIcon />
-          Adicionar ao LinkedIn
+          {tr("Adicionar ao LinkedIn")}
         </a>
         <button
           onClick={printCertificate}
@@ -59,7 +62,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
           className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-brand-green/50 hover:text-brand-green"
         >
           <LinkedInIcon />
-          Compartilhar
+          {tr("Compartilhar")}
         </a>
       </div>
       <p className="mt-3 text-center text-xs text-slate-500">

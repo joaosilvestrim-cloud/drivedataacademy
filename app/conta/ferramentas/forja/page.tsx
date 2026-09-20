@@ -37,11 +37,11 @@ export default async function ForjaPage() {
         <div>
           <p className="text-sm font-semibold text-brand-green">{tr("Sai do Raio-X e chega aqui")}</p>
           <p className="mt-1 text-sm text-slate-400">
-            Se o{" "}
+            {tr("Se o")}{" "}
             <Link href="/conta/ferramentas/raio-x" className="text-brand-teal underline decoration-white/20 underline-offset-4">
               Raio-X
             </Link>{" "}
-            apontou que falta calendário no seu modelo, este é o conserto.
+            {tr("apontou que falta calendário no seu modelo, este é o conserto.")}
           </p>
         </div>
       </section>

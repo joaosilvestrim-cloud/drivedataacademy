@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useT } from "@/lib/i18n/LanguageProvider";
@@ -25,6 +27,7 @@ export function resolverAncora(href: string, pathname: string | null) {
 }
 
 export default function Navbar() {
+  const tr = usarTraducao();
   const t = useT();
   const pathname = usePathname();
   const assinaturaAberta = useAssinaturaAberta();
@@ -49,7 +52,7 @@ export default function Navbar() {
       >
         <a href={resolverAncora("#inicio", pathname)} className="transition-transform hover:scale-[1.03]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Drive Data Academy" className="h-12 w-auto sm:h-14" />
+          <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-12 w-auto sm:h-14" />
         </a>
 
         <ul className="hidden items-center gap-0.5 lg:flex">
@@ -59,7 +62,7 @@ export default function Navbar() {
                 <a
                   href={assinaturaAberta ? l.href : undefined}
                   aria-disabled={assinaturaAberta ? undefined : true}
-                  title={assinaturaAberta ? undefined : "Liberamos nos próximos dias"}
+                  title={assinaturaAberta ? undefined : tr("Liberamos nos próximos dias")}
                   className={`relative inline-flex items-baseline gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-semibold transition-colors after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full ${
                     pathname === DESTAQUE ? "after:bg-brand-green" : "after:bg-transparent"
                   } ${assinaturaAberta ? "text-white hover:text-brand-green" : "cursor-default text-white/80"}`}
@@ -91,7 +94,7 @@ export default function Navbar() {
           <button
             onClick={() => setOpen((o) => !o)}
             className="ml-1 grid h-9 w-9 place-items-center rounded-full border border-white/10 lg:hidden"
-            aria-label="Menu"
+            aria-label={tr("Menu")}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" />
