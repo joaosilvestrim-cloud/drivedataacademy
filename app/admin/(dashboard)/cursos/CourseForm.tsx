@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/primitives";
 import { Field, TextareaField, CheckboxField, SelectField, FormSection, FormActions } from "@/components/ui/form";
 import { saveCourse } from "./actions";
-import CoverUpload from "./CoverUpload";
+import UploadDeImagem from "@/components/admin/UploadDeImagem";
 import { descontoCurso } from "@/lib/precoCurso";
 
 type Course = {
@@ -77,7 +77,7 @@ export default function CourseForm({ course, cargaCalculada }: { course?: Course
         />
         {/* Envio de capa: tem upload assinado e estado próprio, não é o FileField
             do Design System. Fica para um sublote específico, markup preservado. */}
-        <CoverUpload initialUrl={course?.cover_url} />
+        <UploadDeImagem name="cover_url" label="Imagem de capa" prefixo="curso" initialUrl={course?.cover_url} descricao="Recomendado 1600x900 (16:9)." />
       </FormSection>
 
       <FormSection

@@ -3,6 +3,7 @@ import { Button, Badge } from "@/components/ui/primitives";
 import { PageHeader, ErrorState, EmptyState, Alert } from "@/components/ui/layout";
 import { Field, TextareaField, SelectField, CheckboxField, FormActions } from "@/components/ui/form";
 import GravacaoField from "./GravacaoField";
+import UploadDeImagem from "@/components/admin/UploadDeImagem";
 import { saveLive, deleteLive } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -99,13 +100,12 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
           defaultValue={live?.url ?? ""}
           description="YouTube, Meet ou outro."
         />
-        <Field
-          scope={scope}
+        <UploadDeImagem
           name="cover_url"
           label="Capa"
-          type="url"
-          defaultValue={live?.cover_url ?? ""}
-          description="Endereço de uma imagem. Opcional."
+          prefixo="live"
+          initialUrl={live?.cover_url ?? ""}
+          descricao="O banner do encontro, em 16:9 (1600x900). Aparece na agenda e na faixa de próximos eventos."
         />
       </div>
 
@@ -161,13 +161,13 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
             placeholder="Docente"
           />
         </div>
-        <Field
-          scope={scope}
+        <UploadDeImagem
           name="certificate_signature_url"
           label="Imagem da assinatura"
-          type="url"
-          defaultValue={live?.certificate_signature_url ?? ""}
-          description="Endereço de uma imagem com fundo transparente. Opcional."
+          prefixo="assinatura"
+          transparente
+          initialUrl={live?.certificate_signature_url ?? ""}
+          descricao="PNG com fundo transparente, só o traço da assinatura. Opcional."
         />
         {editando && live?.certificate_enabled && (
           <p className="text-body-sm text-ds-text-3">
