@@ -8,7 +8,7 @@
    Nada aqui é decorativo: se um item não resolve um problema real de terça de
    manhã, ele não entra. */
 
-export type Linguagem = "dax" | "sql" | "m";
+export type Linguagem = "dax" | "sql" | "m" | "oracle" | "protheus";
 
 export type Item = {
   id: string;
@@ -29,6 +29,8 @@ export const NOME_LINGUAGEM: Record<Linguagem, string> = {
   dax: "DAX",
   sql: "SQL",
   m: "Power Query",
+  oracle: "Oracle",
+  protheus: "Protheus",
 };
 
 /** Busca sem frescura: ignora acento e procura em tudo que é texto do verbete. */

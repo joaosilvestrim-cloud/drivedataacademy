@@ -46,6 +46,7 @@ const ICONS: Record<string, string> = {
   gravacoes: "M23 7l-7 5 7 5V7zM1 5h15v14H1zM6 9.5v5l4-2.5-4-2.5z",
   sugestao: "M12 3a6 6 0 00-4 10.5V16h8v-2.5A6 6 0 0012 3zM9 19h6M10 22h4",
   biblioteca: "M4 5a2 2 0 012-2h6v18H6a2 2 0 01-2-2zM12 3h6a2 2 0 012 2v14a2 2 0 01-2 2h-6M7 7h2M7 11h2",
+  portfolio: "M4 7h16v13H4zM9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M4 12h16",
 };
 
 const GROUPS: { title: string | null; items: { label: string; href: string; icon: string; exact?: boolean; emBreve?: boolean }[] }[] = [
@@ -68,6 +69,7 @@ const GROUPS: { title: string | null; items: { label: string; href: string; icon
       { label: "Comunidade", href: "/conta/comunidade", icon: "community" },
       { label: "Ranking", href: "/conta/ranking", icon: "ranking" },
       { label: "Vitrine", href: "/conta/vitrine", icon: "vitrine" },
+      { label: "Portfólio", href: "/conta/portfolio", icon: "portfolio" },
       { label: "Enquete", href: "/votacao", icon: "votacao" },
       { label: "Sugestões", href: "/conta/sugestoes", icon: "sugestao" },
       // Mentoria individual ainda não abriu. Fica visível, para a turma saber

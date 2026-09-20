@@ -14,12 +14,14 @@ import TourBiblioteca, { tourBibliotecaJaVisto } from "@/components/biblioteca/T
    Tudo roda no navegador. O acervo inteiro vem junto com a página, então a
    busca é instantânea e funciona até com a internet oscilando. */
 
-const LINGUAGENS: (Linguagem | "todas")[] = ["todas", "dax", "sql", "m"];
+const LINGUAGENS: (Linguagem | "todas")[] = ["todas", "dax", "sql", "m", "oracle", "protheus"];
 
 const COR: Record<Linguagem, { chip: string; borda: string; texto: string }> = {
   dax: { chip: "bg-amber-400/15 text-amber-200", borda: "border-amber-400/40", texto: "text-amber-200" },
   sql: { chip: "bg-sky-400/15 text-sky-200", borda: "border-sky-400/40", texto: "text-sky-200" },
   m: { chip: "bg-emerald-400/15 text-emerald-200", borda: "border-emerald-400/40", texto: "text-emerald-200" },
+  oracle: { chip: "bg-red-400/15 text-red-200", borda: "border-red-400/40", texto: "text-red-200" },
+  protheus: { chip: "bg-violet-400/15 text-violet-200", borda: "border-violet-400/40", texto: "text-violet-200" },
 };
 
 const NIVEL: Record<Item["nivel"], string> = {

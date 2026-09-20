@@ -19,6 +19,7 @@ export const NOMES_PADRAO: Record<string, NomeFerramenta> = {
   "caixa-preta": { nome: "Caixa-Preta", desc: "Monte um modelo de linguagem no seu navegador e veja como a IA escolhe cada palavra. Token, probabilidade, temperatura e alucinação, ao vivo. Sem API." },
   arena: { nome: "Arena SQL", desc: "Desafios de SQL sobre uma base gerada só para você, com correção na hora. Quando erra, a Arena diz exatamente onde você tropeçou." },
   forja: { nome: "Forja DAX", desc: "Gera a tabela de calendário e as medidas de tempo com o nome das suas tabelas, com ano fiscal e feriados nacionais calculados. É só colar no Power BI." },
+  dojo: { nome: "Treino de DAX e Excel", desc: "A mesma base, as mesmas perguntas, duas ferramentas. Você responde com o número e com a fórmula, e a correção confere as duas coisas." },
   biblioteca: { nome: "Biblioteca de referência", desc: "Padrões de DAX, SQL e Power Query com quando usar, o código para colar e a armadilha em que a maioria cai." },
   "dataflow-lab": { nome: "DataFlow Lab", desc: "Importe CSVs, trate dados e execute SQL. Explore as transformações em 3D, reproduza cada etapa e compare resultados." },
   "decision-lab": { nome: "Decision Lab", desc: "Assuma uma empresa interativa em 3D. Decida preços, estoque e equipe, simule 30 dias e aprenda com os resultados da sua estratégia." },

@@ -47,16 +47,26 @@ async function imagensParaModerar(admin: SupabaseClient): Promise<number> {
   return count ?? 0;
 }
 
+// Projeto de aluno esperando revisão: enquanto ninguém olha, ele fica parado.
+async function projetosParaRevisar(admin: SupabaseClient): Promise<number> {
+  const { count } = await admin
+    .from("portfolio_projects")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "revisao");
+  return count ?? 0;
+}
+
 async function seguro(fn: () => Promise<number>): Promise<number> {
   try { return await fn(); } catch { return 0; }
 }
 
 export async function contarPendencias(admin: SupabaseClient): Promise<Pendencias> {
-  const [suporte, desafios, pagamentos, imagens] = await Promise.all([
+  const [suporte, desafios, pagamentos, imagens, portfolio] = await Promise.all([
     seguro(() => chamadosAbertos(admin)),
     seguro(() => desafiosParaCorrigir(admin)),
     seguro(() => pagosSemAcesso(admin)),
     seguro(() => imagensParaModerar(admin)),
+    seguro(() => projetosParaRevisar(admin)),
   ]);
-  return { "/admin/suporte": suporte, "/admin/desafios": desafios, "/admin/operacao": pagamentos, "/admin/comunidade": imagens };
+  return { "/admin/suporte": suporte, "/admin/desafios": desafios, "/admin/operacao": pagamentos, "/admin/comunidade": imagens, "/admin/portfolio": portfolio };
 }

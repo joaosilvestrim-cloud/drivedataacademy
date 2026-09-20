@@ -9,6 +9,8 @@
 import { DAX } from "../lib/biblioteca/dax";
 import { SQL } from "../lib/biblioteca/sql";
 import { M } from "../lib/biblioteca/m";
+import { ORACLE } from "../lib/biblioteca/oracle";
+import { PROTHEUS } from "../lib/biblioteca/protheus";
 import { ITENS, filtrar, tagsDe, semAcento, NOME_LINGUAGEM } from "../lib/biblioteca";
 
 let ok = 0;
@@ -25,16 +27,18 @@ function titulo(t: string) { console.log(`\n${t}`); }
 /* ------------------------------------------------------------ o acervo */
 titulo("Acervo");
 
-checa("tem os três arquivos somados", ITENS.length === DAX.length + SQL.length + M.length);
-checa("tem pelo menos 60 verbetes", ITENS.length >= 60, `tem ${ITENS.length}`);
+checa("tem todos os arquivos somados", ITENS.length === DAX.length + SQL.length + M.length + ORACLE.length + PROTHEUS.length);
+checa("tem pelo menos 90 verbetes", ITENS.length >= 90, `tem ${ITENS.length}`);
 checa("DAX tem pelo menos 25", DAX.length >= 25, `tem ${DAX.length}`);
 checa("SQL tem pelo menos 15", SQL.length >= 15, `tem ${SQL.length}`);
 checa("Power Query tem pelo menos 15", M.length >= 15, `tem ${M.length}`);
+checa("Oracle tem pelo menos 15", ORACLE.length >= 15, `tem ${ORACLE.length}`);
+checa("Protheus tem pelo menos 15", PROTHEUS.length >= 15, `tem ${PROTHEUS.length}`);
 
 const ids = ITENS.map((i) => i.id);
 checa("nenhum id repetido", new Set(ids).size === ids.length, [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))].join(", "));
 
-for (const [lista, prefixo, lingua] of [[DAX, "dax-", "dax"], [SQL, "sql-", "sql"], [M, "m-", "m"]] as const) {
+for (const [lista, prefixo, lingua] of [[DAX, "dax-", "dax"], [SQL, "sql-", "sql"], [M, "m-", "m"], [ORACLE, "ora-", "oracle"], [PROTHEUS, "pro-", "protheus"]] as const) {
   checa(`ids de ${lingua} começam com ${prefixo}`, lista.every((i) => i.id.startsWith(prefixo)), lista.filter((i) => !i.id.startsWith(prefixo)).map((i) => i.id).join(", "));
   checa(`linguagem de ${lingua} está certa`, lista.every((i) => i.linguagem === lingua), lista.filter((i) => i.linguagem !== lingua).map((i) => i.id).join(", "));
 }
@@ -146,12 +150,14 @@ checa("tags vêm da mais usada para a menos usada", tags.every((t, i) => i === 0
 checa("a contagem da tag bate com o filtro", tags.every(([t, n]) => filtrar(ITENS, "", "todas", t).length === n));
 checa("nenhuma tag órfã com contagem zero", tags.every(([, n]) => n > 0));
 
-// Tag que aparece em um verbete só não ajuda a navegar: ou vira duas, ou some.
+/* Tag que aparece em um verbete só quase nunca ajuda a navegar. A exceção é
+   módulo de ERP ("compras", "estoque"): ali a tag é o mapa do Protheus, mesmo
+   com um verbete. Por isso o teto é 6, e não zero. */
 const tagsSolitarias = tags.filter(([, n]) => n === 1);
-checa("no máximo 4 tags usadas uma única vez", tagsSolitarias.length <= 4, tagsSolitarias.map(([t]) => t).join(", "));
+checa("no máximo 6 tags usadas uma única vez", tagsSolitarias.length <= 6, tagsSolitarias.map(([t]) => t).join(", "));
 
 // Cada linguagem precisa render tag por si, senão a coluna de filtros some ao trocar de aba.
-for (const l of ["dax", "sql", "m"] as const) {
+for (const l of ["dax", "sql", "m", "oracle", "protheus"] as const) {
   checa(`${NOME_LINGUAGEM[l]} tem tags próprias`, tagsDe(filtrar(ITENS, "", l, "")).length >= 4);
 }
 
@@ -161,7 +167,7 @@ titulo("Cobertura");
 // Cobrir é o aluno achar pela busca de verdade, e não o termo existir em algum campo escondido.
 const cobre = (termo: string) => filtrar(ITENS, termo, "todas", "").length > 0;
 
-for (const termo of ["ano anterior", "acumulado", "media movel", "ranking", "divide", "duplicata", "calendario", "junção", "nulo", "desdinamiz", "percentual", "ticket"]) {
+for (const termo of ["ano anterior", "acumulado", "media movel", "ranking", "divide", "duplicata", "calendario", "junção", "nulo", "desdinamiz", "percentual", "ticket", "D_E_L_E_T_", "filial", "SX3", "rownum", "nvl", "listagg", "SE1", "estoque"]) {
   checa(`cobre "${termo}"`, cobre(termo));
 }
 

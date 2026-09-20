@@ -27,6 +27,7 @@ const ICONS: Record<string, string> = {
   tool: "M4 5h16v10H4zM2 19h20M9 9l2 2 4-4",
   universe: "M12 3a9 9 0 100 18 9 9 0 000-18M3 12h18M12 3c4 4 4 14 0 18-4-4-4-14 0-18",
   system: "M4 4h16v6H4zM4 14h16v6H4zM8 7h.01M8 17h.01M12 7h4M12 17h4",
+  vitrine: "M4 7h16v13H4zM9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M4 12h16",
 };
 
 /* O menu é organizado pela tarefa, não pela tabela do banco.
@@ -74,6 +75,7 @@ const GROUPS: Grupo[] = [
       { label: "Comunidade", href: "/admin/comunidade", icon: "community", busca: "chat moderacao" },
       { label: "Comentários das aulas", href: "/admin/comentarios", icon: "blog" },
       { label: "Votações", href: "/admin/votacoes", icon: "analytics", busca: "enquete" },
+      { label: "Portfólio dos alunos", href: "/admin/portfolio", icon: "vitrine", busca: "projetos vitrine" },
     ],
   },
   {
