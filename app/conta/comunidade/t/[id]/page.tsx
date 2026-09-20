@@ -1,3 +1,4 @@
+import { comTraducao, traducoesDe } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -45,7 +46,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
   if (!thread) notFound();
 
   const [{ data: channel }, { data: rawPosts }] = await Promise.all([
-    admin.from("forum_channels").select("slug, name").eq("id", thread.channel_id).maybeSingle(),
+    admin.from("forum_channels").select("id, slug, name").eq("id", thread.channel_id).maybeSingle(),
     admin.from("forum_posts").select("id, user_id, body, is_answer, created_at").eq("thread_id", thread.id),
   ]);
 

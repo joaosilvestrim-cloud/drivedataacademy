@@ -25,6 +25,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "(your vote)",
     "es": "(tu voto)"
   },
+  "(sua resposta)": {
+    "en": "(your answer)",
+    "es": "(sua resposta)"
+  },
   "(você)": {
     "en": "(you)",
     "es": "(tú)"
@@ -189,6 +193,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "03 · Order filter",
     "es": "03 · Filtro de pedidos"
   },
+  "04 JUNÇÃO": {
+    "en": "04 JOIN",
+    "es": "04 JUNTA"
+  },
   "04 · Junção": {
     "en": "04 · Join",
     "es": "04 · Unión"
@@ -213,9 +221,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "10% discount",
     "es": "10% de descuento"
   },
+  "12 MESES DE DESCOBERTAS": {
+    "en": "12 MONTHS OF DISCOVERIES",
+    "es": "12 MESES DE DESCUBRIMIENTOS"
+  },
   "12 MESES · OU MÊS A MÊS": {
     "en": "12 MONTHS · OR MONTH TO MONTH",
     "es": "12 MESES · O MES A MES"
+  },
+  "18/09/2026 às 23:59": {
+    "en": "18/09/2026 at 23:59",
+    "es": "18/09/2026 a las 23:59"
   },
   "1º no ranking": {
     "en": "1st in ranking",
@@ -256,6 +272,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "4º ao 10º · Esmeralda": {
     "en": "4th to 10th · Emerald",
     "es": "4º al 10º · Esmeralda"
+  },
+  "6 ciclos de 5 dias": {
+    "en": "6 cycles of 5 days",
+    "es": "6 ciclos de 5 días"
   },
   "68/100 em DAX": {
     "en": "68/100 in DAX",
@@ -305,6 +325,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The DAX Forge generates the date table with fiscal year and holidays, already with your table names.",
     "es": "La Forja DAX genera la tabla de fechas con año fiscal y festivos, ya con el nombre de tus tablas."
   },
+  "A aba Desafios permite experimentar um exercício fictício.": {
+    "en": "The Challenges tab lets you try a fictional exercise.",
+    "es": "La pestaña Desafíos permite experimentar un ejercicio ficticio."
+  },
   "A agenda tem as lives e mentorias dos próximos meses. Algumas emitem certificado de participação.": {
     "en": "The schedule has live sessions and mentorships for the coming months. Some issue a participation certificate.",
     "es": "La agenda tiene los en vivo y mentorías de los próximos meses. Algunas emiten certificado de participación."
@@ -316,6 +340,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "A análise acontece no navegador. Você escolhe se deseja salvar o laudo, que contém nomes e o mapa estrutural. Se esses metadados forem confidenciais, mantenha a análise local. Nenhuma fórmula ou linha de dados é enviada no salvamento.": {
     "en": "The analysis runs in the browser. You choose whether to save the report, which contains names and the structural map. If this metadata is confidential, keep the analysis local. No formula or data row is sent on save.",
     "es": "El análisis ocurre en el navegador. Tú eliges si guardar el informe, que contiene nombres y el mapa estructural. Si esos metadatos son confidenciales, mantén el análisis local. Ninguna fórmula o fila de datos se envía al guardar."
+  },
+  "A análise foi interrompida. Tente novamente com um arquivo menor ou exportado como .pbit.": {
+    "en": "The analysis was interrupted. Try again with a smaller file or exported as .pbit.",
+    "es": "El análisis fue interrumpido. Intente nuevamente con un archivo más pequeño o exportado como .pbit."
   },
   "A armadilha": {
     "en": "The trap",
@@ -345,9 +373,37 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The bar uses the % Achievement (0–100). The value and target are the measures above.",
     "es": "La barra usa el Acierto % (0–100). El valor y la meta son las medidas arriba."
   },
+  "A base de comparação de quase todo painel.": {
+    "en": "The comparison base for almost every dashboard.",
+    "es": "La base de comparación de casi todo panel."
+  },
   "A base é sua": {
     "en": "The base is yours.",
     "es": "La base es tuya."
+  },
+  "A causa está certa, o valor não": {
+    "en": "The cause is right, the value is not.",
+    "es": "La causa está correcta, el valor no."
+  },
+  "A chave que duplica": {
+    "en": "The key that duplicates",
+    "es": "La clave que duplica"
+  },
+  "A compra chega neste ciclo.": {
+    "en": "The purchase arrives in this cycle.",
+    "es": "La compra llega en este ciclo."
+  },
+  "A compra chegará no início do próximo ciclo.": {
+    "en": "The purchase will arrive at the start of the next cycle.",
+    "es": "La compra llegará al inicio del próximo ciclo."
+  },
+  "A compra fica disponível antes das vendas deste ciclo.": {
+    "en": "The purchase becomes available before the sales of this cycle.",
+    "es": "La compra estará disponible antes de las ventas de este ciclo."
+  },
+  "A compra é paga agora e chega no início do próximo ciclo.": {
+    "en": "The purchase is paid now and arrives at the start of the next cycle.",
+    "es": "La compra se paga ahora y llega al inicio del próximo ciclo."
   },
   "A comunidade é exclusiva para alunos com acesso ativo.": {
     "en": "The community is exclusive to students with active access.",
@@ -369,9 +425,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The query is slow and you need to know why.",
     "es": "La consulta tarda y necesitas saber por qué."
   },
+  "A consulta excedeu 8 segundos. Simplifique o SQL ou reduza os dados.": {
+    "en": "The query exceeded 8 seconds. Simplify the SQL or reduce the data.",
+    "es": "La consulta excedió 8 segundos. Simplifica el SQL o reduce los datos."
+  },
   "A consulta rodou, mas não devolveu nenhuma linha.": {
     "en": "The query ran but returned no rows.",
     "es": "La consulta se ejecutó, pero no devolvió ninguna fila."
+  },
+  "A consulta rodou, mas não voltou nada": {
+    "en": "The query ran, but returned nothing.",
+    "es": "La consulta se ejecutó, pero no devolvió nada."
   },
   "A conta na plataforma é criada automaticamente assim que sua assinatura é confirmada. É só assinar e você recebe um e-mail para definir a senha.": {
     "en": "The platform account is created automatically once your subscription is confirmed. Just subscribe and you’ll get an email to set your password.",
@@ -405,6 +469,34 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The date is stored as AAAAMMDD text, so text comparison already works chronologically.",
     "es": "La fecha se almacena como texto AAAAMMDD, así que la comparación de texto ya funciona como orden cronológica."
   },
+  "A demanda está estável. Seu desafio é vender com margem e preservar o atendimento.": {
+    "en": "Demand is stable. Your challenge is to sell with margin and preserve service.",
+    "es": "La demanda está estable. Tu desafío es vender con margen y preservar el servicio."
+  },
+  "A diferença fica inteira em um grupo que existe de um lado só. Antes de caçar defeito, confirme se os dois lados estão falando do mesmo universo.": {
+    "en": "The difference stays whole in a group that exists on one side only. Before hunting for defects, confirm both sides are talking about the same universe.",
+    "es": "La diferencia queda íntegra en un grupo que existe solo de un lado. Antes de buscar defecto, confirma que ambos lados hablan del mismo universo."
+  },
+  "A diferença pequena que o auditor não aceita": {
+    "en": "The small difference the auditor does not accept.",
+    "es": "La diferencia pequeña que el auditor no acepta."
+  },
+  "A diferença é pequena e não se concentra em nenhum grupo. Parece desprezível, mas cresce com o volume e some quando você compara sem arredondar.": {
+    "en": "The difference is small and not concentrated in any group. It seems negligible, but grows with volume and disappears when you compare without rounding.",
+    "es": "La diferencia es pequeña y no se concentra en ningún grupo. Parece despreciable, pero crece con el volumen y desaparece cuando comparas sin redondear."
+  },
+  "A diferença é pequena e o time quer ignorar. O auditor não quer, e pediu a explicação.": {
+    "en": "The difference is small and the team wants to ignore it. The auditor does not, and asked for an explanation.",
+    "es": "La diferencia es pequeña y el equipo quiere ignorarla. El auditor no quiere, y pidió la explicación."
+  },
+  "A diretora de uma filial ligou dizendo que o número dela sumiu do painel. O extrato do ERP veio completo.": {
+    "en": "The branch director called saying her number disappeared from the dashboard. The ERP statement came complete.",
+    "es": "La directora de una sucursal llamó diciendo que su número desapareció del panel. El extracto del ERP llegó completo."
+  },
+  "A diretoria só quer vendas aprovadas no relatório. Deixe passar apenas os pedidos com status aprovado.": {
+    "en": "The board only wants approved sales in the report. Let only orders with approved status pass.",
+    "es": "La dirección solo quiere ventas aprobadas en el informe. Deja pasar solo los pedidos con estado aprobado."
+  },
   "A empresa fecha o ano em junho, e não em dezembro.": {
     "en": "The company closes the year in June, not December.",
     "es": "La empresa cierra el año en junio, y no en diciembre."
@@ -413,9 +505,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The company responds.",
     "es": "La empresa responde."
   },
+  "A equipe acadêmica ainda não publicou um caminho para este catálogo.": {
+    "en": "The academic team has not yet published a path for this catalog.",
+    "es": "El equipo académico aún no publicó un camino para este catálogo."
+  },
   "A equipe ainda está montando a estrutura de conhecimento. Volte em breve.": {
     "en": "The team is still building the knowledge structure. Come back soon.",
     "es": "El equipo aún está armando la estructura de conocimiento. Vuelve pronto."
+  },
+  "A equipe precisa concluir a instalação da estrutura de conhecimento no banco. Seu histórico acadêmico continua preservado.": {
+    "en": "The team needs to finish installing the knowledge structure in the database. Your academic history is preserved.",
+    "es": "El equipo necesita completar la instalación de la estructura de conocimiento en la base de datos. Tu historial académico sigue preservado."
   },
   "A equipe publica novos desafios conforme as turmas avançam.": {
     "en": "The team publishes new challenges as classes progress.",
@@ -433,9 +533,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The knowledge structure is still being built.",
     "es": "La estructura de conocimiento aún está en construcción."
   },
+  "A estrutura do Knowledge Universe ainda precisa ser instalada no banco.": {
+    "en": "The Knowledge Universe structure still needs to be installed in the database.",
+    "es": "La estructura de Knowledge Universe aún necesita ser instalada en la base de datos."
+  },
   "A evidência já entrou no seu universo de conhecimento.": {
     "en": "The evidence has already entered your knowledge universe.",
     "es": "La evidencia ya entró en tu universo de conocimiento."
+  },
+  "A execução anterior continua disponível abaixo.": {
+    "en": "The previous run is still available below.",
+    "es": "La ejecución anterior sigue disponible abajo."
   },
   "A falha foi do nosso lado, não do seu. Tente de novo em alguns instantes. Nada do que você já fez foi perdido.": {
     "en": "The fault was on our side, not yours. Try again in a few moments. Nothing you’ve done was lost.",
@@ -445,9 +553,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The tool is included in the Academy subscription. Or subscribe only to the tool for",
     "es": "La herramienta está incluida en la suscripción de Academy. O suscríbete solo a la herramienta por"
   },
+  "A filial sumiu do painel": {
+    "en": "The branch disappeared from the dashboard",
+    "es": "La sucursal desapareció del panel"
+  },
   "A fórmula": {
     "en": "The formula",
     "es": "La fórmula"
+  },
+  "A hierarquia ou os pré-requisitos possuem um ciclo.": {
+    "en": "The hierarchy or prerequisites have a cycle.",
+    "es": "La jerarquía o los prerequisitos tienen un ciclo."
   },
   "A janela vai do começo da série até a linha atual.": {
     "en": "The window runs from the start of the series to the current row.",
@@ -457,9 +573,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "A full join keeps months that exist on only one side, which is exactly where the mismatch usually is.",
     "es": "La unión completa mantiene los meses que existen solo en un lado, que es justamente donde suele estar la divergencia."
   },
+  "A junção está criando linhas do nada. Descubra por que e faça o número de linhas parar de crescer.": {
+    "en": "The join is creating rows out of nothing. Find out why and stop the row count from growing.",
+    "es": "La unión está creando líneas de la nada. Descubre por qué y haz que el número de líneas deje de crecer."
+  },
+  "A junção parou de multiplicar: entra e sai a mesma quantidade.": {
+    "en": "The join stopped multiplying: same amount in and out.",
+    "es": "La unión dejó de multiplicar: entra y sale la misma cantidad."
+  },
   "A junção por nome não encontra par e você jura que o nome é igual.": {
     "en": "The join on name finds no match and you swear the names are identical.",
     "es": "La unión por nombre no encuentra pareja y juras que el nombre es igual."
+  },
+  "A junção ultrapassou 10.000 linhas. Remova duplicidades ou reduza a base.": {
+    "en": "The join exceeded 10,000 rows. Remove duplicates or reduce the base.",
+    "es": "La unión superó las 10.000 líneas. Elimina duplicados o reduce la base."
   },
   "A junção à esquerda mantém toda linha de movimento, mesmo quando o cadastro não tem o cliente.": {
     "en": "A left join keeps every movement row, even when the record lacks the client.",
@@ -468,6 +596,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "A junção à esquerda mantém todo pedido, e o filtro por nulo isola quem não encontrou par.": {
     "en": "A left join keeps every order, and the null filter isolates those without a match.",
     "es": "La unión izquierda mantiene todo pedido, y el filtro por nulo aísla a quien no encontró pareja."
+  },
+  "A leitura demorou mais de um minuto. Tente exportar o relatório como .pbit ou dividir o arquivo.": {
+    "en": "The read took over a minute. Try exporting the report as .pbit or splitting the file.",
+    "es": "La lectura tardó más de un minuto. Intenta exportar el informe como .pbit o dividir el archivo."
   },
   "A letra ao lado do cabeçalho é a coluna no Excel; a linha 1 é o cabeçalho, então os dados começam na 2.": {
     "en": "The letter next to the header is the Excel column; row 1 is the header, so data starts at 2.",
@@ -513,6 +645,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Manual tagging organizes the review. The score only changes after a new analysis.",
     "es": "El marcado manual organiza la revisión. La nota solo cambia tras un nuevo análisis."
   },
+  "A margem das vendas não cobriu os custos deste ciclo. Compare preço, custo dos produtos e despesas.": {
+    "en": "Sales margin didn't cover this cycle's costs. Compare price, product cost, and expenses.",
+    "es": "El margen de ventas no cubrió los costos de este ciclo. Compara precio, costo de los productos y gastos."
+  },
   "A medida já existe. Falta mudar o contexto de filtro dela.": {
     "en": "The measure already exists. You need to change its filter context.",
     "es": "La medida ya existe. Falta cambiar su contexto de filtro."
@@ -537,6 +673,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Multiplication is row‑by‑row. There’s a function that sums the expression calculated per row.",
     "es": "La multiplicación es fila a fila. Existe una función que suma la expresión calculada en cada fila."
   },
+  "A média que interessa é a média dos totais por cliente, não a média dos itens nem a dos pedidos. Calcule os totais primeiro e tire a média deles.": {
+    "en": "The average that matters is the average of totals per customer, not the average of items or orders. Calculate the totals first, then average them.",
+    "es": "El promedio que importa es el de los totales por cliente, no el de los artículos ni el de los pedidos. Calcula los totales primero y saca el promedio de ellos."
+  },
   "A nota resume as regras aplicáveis. Não certifica os números de negócio nem mede o tempo de execução.": {
     "en": "The score summarizes the applicable rules. It does not certify business numbers nor measure execution time.",
     "es": "La nota resume las reglas aplicables. No certifica los números de negocio ni mide el tiempo de ejecución."
@@ -548,6 +688,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "A nota, e o que ela quer dizer": {
     "en": "The rating, and what it means",
     "es": "La nota, y lo que quiere decir"
+  },
+  "A operação ficou sem reserva.": {
+    "en": "The operation ran out of reserve.",
+    "es": "La operación quedó sin reserva."
   },
   "A origem ganha colunas novas de vez em quando e a consulta quebra.": {
     "en": "The source gets new columns occasionally and the query breaks.",
@@ -577,6 +721,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The platform: screens, navigation, something that doesn’t work well",
     "es": "La plataforma: pantallas, navegación, algo que no funciona bien"
   },
+  "A presença ainda não abriu": {
+    "en": "Presence hasn't opened yet",
+    "es": "La presencia aún no se abrió"
+  },
   "A primeira sugestão que você mandar aparece nesta lista, com a resposta do time.": {
     "en": "The first suggestion you send appears in this list, with the team’s reply.",
     "es": "La primera sugerencia que envíes aparece en esta lista, con la respuesta del equipo."
@@ -593,9 +741,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The flow revenue is saved in your project; the data, not. Download the results before leaving. No file is sent to the server. CSV export neutralizes spreadsheet formulas.",
     "es": "La receta del flujo queda guardada en tu proyecto; los datos, no. Descarga los resultados antes de salir. Ningún archivo se envía al servidor. La exportación CSV neutraliza fórmulas de hoja de cálculo."
   },
+  "A receita está em itens, a data e o status estão em pedidos, e a categoria está em produtos. São três tabelas na mesma consulta.": {
+    "en": "Revenue is in items, date and status are in orders, and category is in products. Three tables in the same query.",
+    "es": "La facturación está en ítems, la fecha y el estado están en pedidos, y la categoría está en productos. Son tres tablas en la misma consulta."
+  },
   "A resposta certa é calculada na sua base, na hora. Por isso cada aluno tem números próprios e a resposta do colega não serve.": {
     "en": "The correct answer is calculated in your data, instantly. So each student has their own numbers and a colleague’s answer doesn’t apply.",
     "es": "La respuesta correcta se calcula en tu base, al momento. Por eso cada alumno tiene números propios y la respuesta del compañero no sirve."
+  },
+  "A senha precisa ter pelo menos 6 caracteres.": {
+    "en": "Password must be at least 6 characters.",
+    "es": "La contraseña debe tener al menos 6 caracteres."
   },
   "A soma some ou a coluna calculada dá erro por causa de nulo.": {
     "en": "The sum disappears or the calculated column errors because of null.",
@@ -613,9 +769,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The table of each step",
     "es": "La tabla de cada etapa"
   },
+  "A tabela de calendário": {
+    "en": "The calendar table",
+    "es": "La tabla de calendario"
+  },
+  "A tabela de calendário do modelo. O CPF 12345678909 não é um número para a IA.": {
+    "en": "The model's calendar table. CPF 12345678909 is not a number for the AI.",
+    "es": "La tabla de calendario del modelo. El CPF 12345678909 no es un número para la IA."
+  },
   "A tabela de calendário e as medidas de tempo do seu modelo, escritas com o nome das suas tabelas e prontas para colar. Com ano fiscal, feriados nacionais de verdade e um comentário em cada decisão, para você entender o que está colando.": {
     "en": "The calendar table and time measures of your model, written with your table names and ready to paste. Includes fiscal year, real national holidays and a comment on each decision, so you understand what you’re pasting.",
     "es": "La tabla de calendario y las medidas de tiempo de tu modelo, escritas con el nombre de tus tablas y listas para pegar. Con año fiscal, feriados nacionales reales y un comentario en cada decisión, para que entiendas lo que pegas."
+  },
+  "A tabela precisa de ao menos 1 coluna": {
+    "en": "The table needs at least 1 column",
+    "es": "La tabla necesita al menos 1 columna"
   },
   "A tabela tem várias versões do mesmo registro e você quer a última.": {
     "en": "The table has multiple versions of the same record and you want the latest.",
@@ -713,9 +881,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Open the assistant above and send your question. If it alerts the team, the support appears in this list.",
     "es": "Abre el asistente arriba y envía tu duda. Si activa al equipo, la atención aparece en esta lista."
   },
+  "Abra o relatório, compare estratégias e tente uma abordagem diferente.": {
+    "en": "Open the report, compare strategies, and try a different approach.",
+    "es": "Abre el informe, compara estrategias e intenta un enfoque diferente."
+  },
+  "Abra o seu universo": {
+    "en": "Open your universe",
+    "es": "Abre tu universo"
+  },
   "Abra os achados do diagnóstico e escolha “Adicionar ao plano”.": {
     "en": "Open the diagnostic findings and choose “Add to plan”.",
     "es": "Abre los hallazgos del diagnóstico y elige “Agregar al plan”."
+  },
+  "Abrindo o banco...": {
+    "en": "Opening the database...",
+    "es": "Abriendo la base..."
   },
   "Abrindo sozinho em": {
     "en": "Opening alone in",
@@ -740,6 +920,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Abrir a caixa": {
     "en": "Open box",
     "es": "Abrir la caja"
+  },
+  "Abrir cardápio": {
+    "en": "Open menu",
+    "es": "Abrir menú"
   },
   "Abrir gravação ↗": {
     "en": "Open recording ↗",
@@ -772,6 +956,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Abrir o catálogo": {
     "en": "Open catalog",
     "es": "Abrir el catálogo"
+  },
+  "Abrir o mapa 3D": {
+    "en": "Open the 3D map",
+    "es": "Abrir el mapa 3D"
+  },
+  "Abrir os lançamentos deste recorte": {
+    "en": "Open the entries for this slice",
+    "es": "Abrir los movimientos de este recorte"
   },
   "Abrir relatório": {
     "en": "Open report",
@@ -813,6 +1005,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Demo access",
     "es": "Acceso de demostración"
   },
+  "Acesso imediato.": {
+    "en": "Immediate access.",
+    "es": "Acceso inmediato."
+  },
   "Acesso vitalício ao conteúdo": {
     "en": "Lifetime access to content",
     "es": "Acceso vitalicio al contenido"
@@ -849,9 +1045,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Year‑to‑date total",
     "es": "Acumulado del año"
   },
+  "Acumulado no ano (YTD)": {
+    "en": "Year-to-date total.",
+    "es": "Acumulado en el año (YTD)"
+  },
   "Acumulado no ano fiscal": {
     "en": "Fiscal‑year total",
     "es": "Acumulado del año fiscal"
+  },
+  "Acumulado no mês (MTD)": {
+    "en": "Month-to-date total.",
+    "es": "Acumulado en el mes (MTD)"
   },
   "Adicionar": {
     "en": "Add",
@@ -860,6 +1064,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Adicionar ao LinkedIn": {
     "en": "Add to LinkedIn",
     "es": "Agregar a LinkedIn"
+  },
+  "Adicionar ao plano": {
+    "en": "Add to plan",
+    "es": "Agregar al plan"
   },
   "Adicionar o verso (2ª página)": {
     "en": "Add the back (2nd page)",
@@ -877,6 +1085,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Live agenda",
     "es": "Agenda en vivo"
   },
+  "Agenda ao vivo, gravações, comunidade, ferramentas e certificados. E os treinamentos completos com preço de assinante.": {
+    "en": "Live schedule, recordings, community, tools and certificates. Plus full trainings at subscriber price.",
+    "es": "Agenda en vivo, grabaciones, comunidad, herramientas y certificados. Y los entrenamientos completos con precio de suscriptor."
+  },
   "Agenda de lives": {
     "en": "Live schedule",
     "es": "Agenda de en vivo"
@@ -892,6 +1104,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Agora você tem acesso à": {
     "en": "Now you have access to",
     "es": "Ahora tienes acceso a"
+  },
+  "Agregação e filtro": {
+    "en": "Aggregation and filter",
+    "es": "Agregación y filtro"
   },
   "Agregação, junção, nulo, tempo, subconsulta e função de janela. Pode fazer em qualquer ordem. O visto verde marca o que você já resolveu.": {
     "en": "Aggregation, join, null, time, subquery and window function. You can do it in any order. The green tick marks what you have already solved.",
@@ -937,6 +1153,22 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Group only by month number sums different years in same row, and the chart looks nice but wrong.",
     "es": "Agrupar solo por número de mes suma años diferentes en la misma fila, y el gráfico queda bonito y equivocado."
   },
+  "Ainda não": {
+    "en": "Not yet",
+    "es": "Aún no"
+  },
+  "Ainda não atingida": {
+    "en": "Not yet reached",
+    "es": "Aún no alcanzada"
+  },
+  "Ainda não há alunos na vitrine.": {
+    "en": "No students in the directory yet.",
+    "es": "Aún no hay alumnos en el directorio."
+  },
+  "Ainda não iniciada": {
+    "en": "Not started yet",
+    "es": "Aún no iniciada"
+  },
   "Ainda não tem conta?": {
     "en": "Don't have an account yet?",
     "es": "¿Aún no tienes cuenta?"
@@ -944,6 +1176,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Ainda não tem projeto publicado aqui": {
     "en": "No project published here yet",
     "es": "Aún no hay proyecto publicado aquí"
+  },
+  "Ainda não. Experimente outra opção.": {
+    "en": "Not yet. Try another option.",
+    "es": "Aún no. Prueba otra opción."
   },
   "Ajuda da assinatura": {
     "en": "Subscription help",
@@ -973,6 +1209,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Align",
     "es": "Alinear"
   },
+  "Alinhar expectativas e comunicar decisões.": {
+    "en": "Align expectations and communicate decisions.",
+    "es": "Alinear expectativas y comunicar decisiones."
+  },
   "Alinhar todos ao card:": {
     "en": "Align all to the card:",
     "es": "Alinear todo al card:"
@@ -980,6 +1220,18 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Alinhar à grade": {
     "en": "Align to grid",
     "es": "Alinear a la cuadrícula"
+  },
+  "Alisa sazonalidade e ruído de calendário.": {
+    "en": "Seasonal and calendar noise analysis.",
+    "es": "Alisa la sazón y el ruido del calendario."
+  },
+  "Alta: começa a arriscar.": {
+    "en": "High: start taking risks.",
+    "es": "Alta: comienza a arriesgar."
+  },
+  "Alterações ainda não executadas": {
+    "en": "Changes not yet executed",
+    "es": "Cambios aún no ejecutados"
   },
   "Altura": {
     "en": "Height",
@@ -1001,6 +1253,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Students spoke after the last team reply. The number disappears when a team member answers in the channel.",
     "es": "Los alumnos hablaron después de la última respuesta del equipo. El número desaparece cuando alguien del equipo responde en el canal."
   },
+  "Alvo inválido": {
+    "en": "Invalid target",
+    "es": "Objetivo inválido"
+  },
   "Amostra rápida ou ranking com corte.": {
     "en": "Quick sample or ranking with cut‑off.",
     "es": "Muestra rápida o ranking con corte."
@@ -1008,6 +1264,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Analisar meu relatório": {
     "en": "Analyze my report",
     "es": "Analiza mi informe"
+  },
+  "Analisar outra versão": {
+    "en": "Analyze another version",
+    "es": "Analizar otra versión"
   },
   "Analise seu .pbix ou .pbit, explore o mapa das páginas e transforme pontos de atenção em um plano de revisão. Compare versões do mesmo projeto, com leitura local do arquivo.": {
     "en": "Analyze your .pbix or .pbit, explore the page map, and turn pain points into a review plan. Compare versions of the same project, with local file reading.",
@@ -1041,6 +1301,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Previous",
     "es": "Anterior"
   },
+  "Antes da primeira decisão": {
+    "en": "Before the first decision",
+    "es": "Antes de la primera decisión"
+  },
   "Antes da transformação": {
     "en": "Before the transformation",
     "es": "Antes de la transformación"
@@ -1056,6 +1320,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Anual à vista no Pix ou cartão, ou mensal no cartão.": {
     "en": "Annual upfront via Pix or card, or monthly by card.",
     "es": "Anual al contado en Pix o tarjeta, o mensual en tarjeta."
+  },
+  "Análise cancelada. O resultado anterior foi mantido.": {
+    "en": "Analysis cancelled. The previous result was kept.",
+    "es": "Análisis cancelado. El resultado anterior se mantuvo."
   },
   "Análise no navegador": {
     "en": "Analysis in browser",
@@ -1117,6 +1385,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Apply plan · advance 5 days",
     "es": "Aplicar plan · avanzar 5 días"
   },
+  "Aplique seu primeiro plano para observar a procura e as vendas.": {
+    "en": "Apply your first plan to see demand and sales.",
+    "es": "Aplica tu primer plan para observar la demanda y las ventas."
+  },
   "Aponte para suas medidas": {
     "en": "Point to your measures",
     "es": "Apunta a tus medidas"
@@ -1128,6 +1400,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Aprender e praticar": {
     "en": "Learn and practice",
     "es": "Aprender y practicar"
+  },
+  "Aprender no seu ritmo": {
+    "en": "Learn at your own pace",
+    "es": "Aprende a tu ritmo"
   },
   "Apresentação": {
     "en": "Presentation",
@@ -1161,13 +1437,45 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Here you demonstrate in practice what you learned. The team corrects and the evidence enters your Knowledge Universe. Without evaluated practice, a skill never exceeds 79 points.",
     "es": "Aquí demuestras en la práctica lo que aprendiste. El equipo corrige y la evidencia entra en tu Knowledge Universe. Sin práctica evaluada, una competencia no supera 79 puntos."
   },
+  "Aqui você vê o mapa. Estrela apagada não quer dizer que você não sabe: quer dizer que ainda não há registro na plataforma.": {
+    "en": "Here you see the map. A dimmed star doesn’t mean you don’t know: it means there’s no record yet on the platform.",
+    "es": "Aquí ves el mapa. Una estrella apagada no significa que no sepas: significa que aún no hay registro en la plataforma."
+  },
+  "Arena SQL": {
+    "en": "Arena SQL",
+    "es": "Arena SQL"
+  },
   "Arquivo atual:": {
     "en": "Current file:",
     "es": "Archivo actual:"
   },
+  "Arquivo de partida incompatível.": {
+    "en": "Incompatible launch file.",
+    "es": "Archivo de partida incompatible."
+  },
+  "Arquivo de projetos incompatível.": {
+    "en": "Incompatible project file.",
+    "es": "Archivo de proyectos incompatible."
+  },
+  "Arquivo de projetos invalido.": {
+    "en": "Invalid project file.",
+    "es": "Archivo de proyectos inválido."
+  },
+  "Arquivo muito grande. O limite e 200 KB.": {
+    "en": "File too large. The limit is 200 KB.",
+    "es": "Archivo muy grande. El límite es 200 KB."
+  },
+  "Arquivo muito grande. O limite é 200 KB.": {
+    "en": "File too large. The limit is 200 KB.",
+    "es": "Archivo muy grande. El límite es 200 KB."
+  },
   "Arquivo → Exportar → Modelo do Power BI (.pbit)": {
     "en": "File → Export → Power BI model (.pbit)",
     "es": "Archivo → Exportar → Modelo de Power BI (.pbit)"
+  },
+  "Arquivos prontos para baixar, abrir no seu computador e adaptar ao seu projeto.": {
+    "en": "Files ready to download, open on your computer and adapt to your project.",
+    "es": "Archivos listos para descargar, abrir en tu computadora y adaptar a tu proyecto."
   },
   "Arquivos prontos para download": {
     "en": "Files ready for download",
@@ -1189,6 +1497,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Drag to rotate · Scroll to zoom",
     "es": "Arrastra para girar · Desliza para acercar"
   },
+  "Arraste para girar · role para aproximar · clique nas estações": {
+    "en": "Drag to rotate · scroll to zoom · click the stations",
+    "es": "Arrastra para girar · desplaza para acercar · haz clic en las estaciones"
+  },
   "Arraste para girar · use as setas do teclado": {
     "en": "Drag to rotate · use the keyboard arrows",
     "es": "Arrastra para girar · usa las flechas del teclado"
@@ -1208,6 +1520,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Arraste seu arquivo aqui ou escolha no computador.": {
     "en": "Drag your file here or choose from computer.",
     "es": "Arrastra tu archivo aquí o elige en la computadora."
+  },
+  "Arredondamento por linha": {
+    "en": "Row rounding",
+    "es": "Redondeo por fila"
+  },
+  "As decisões e seus efeitos estão no registro abaixo.": {
+    "en": "The decisions and their effects are in the record below.",
+    "es": "Las decisiones y sus efectos están en el registro abajo."
   },
   "As decisões ficam disponíveis no presente. Este modo permite investigar o que já aconteceu.": {
     "en": "Decisions are available in the present. This mode lets you investigate what already happened.",
@@ -1237,9 +1557,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The missions apply to the example case. Upload it to record.",
     "es": "Las misiones valen sobre el caso de ejemplo. Cárgalo para registrar."
   },
+  "As partes obrigam-se a": {
+    "en": "The parties agree to",
+    "es": "Las partes se obligan a"
+  },
   "As pequenas estrelas ao fundo compõem o cenário. Elas não representam notas ou atividades.": {
     "en": "The little stars in the background make up the scene. They do not represent grades or activities.",
     "es": "Las pequeñas estrellas al fondo componen el escenario. No representan notas ni actividades."
+  },
+  "As primeiras linhas batem, mas o conjunto não fecha.": {
+    "en": "The first rows match, but the set does not close.",
+    "es": "Las primeras filas coinciden, pero el conjunto no cuadra."
+  },
+  "As receitas cobriram os custos reconhecidos até aqui.": {
+    "en": "The revenues covered the costs recognized so far.",
+    "es": "Los ingresos cubrieron los costos reconocidos hasta aquí."
   },
   "As regras do cenário": {
     "en": "The rules of the scene",
@@ -1321,6 +1653,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Monthly subscription. Cancel anytime. Access is granted after the first payment.",
     "es": "Suscripción mensual. Cancela cuando quieras. El acceso se libera tras el primer pago."
   },
+  "Assine a Academy para entrar na comunidade, usar as ferramentas e comprar treinamentos com preço de assinante.": {
+    "en": "Subscribe to Academy to join the community, use the tools and buy trainings at subscriber price.",
+    "es": "Suscríbete a la Academy para entrar en la comunidad, usar las herramientas y comprar entrenamientos con precio de suscriptor."
+  },
   "Assine a DriveData Academy": {
     "en": "Subscribe to DriveData Academy",
     "es": "Suscríbete a DriveData Academy"
@@ -1373,6 +1709,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Watch →",
     "es": "Ver →"
   },
+  "Associação de curso inválida.": {
+    "en": "Invalid course association.",
+    "es": "Asociación de curso inválida."
+  },
   "Assuma a Aurora Market. Recupere o resultado em 30 dias sem perder seus clientes.": {
     "en": "Take over Aurora Market. Recover the result in 30 days without losing your customers.",
     "es": "Asume Aurora Market. Recupera el resultado en 30 días sin perder tus clientes."
@@ -1397,6 +1737,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Library shortcut",
     "es": "Atajo de la Biblioteca"
   },
+  "Atenção: chaves repetidas multiplicaram registros.": {
+    "en": "Warning: duplicate keys multiplied records.",
+    "es": "Atención: claves repetidas multiplicaron registros."
+  },
+  "Atenção: chegará após o encerramento da missão.": {
+    "en": "Note: will arrive after the mission ends.",
+    "es": "Atención: llegará después del cierre de la misión."
+  },
   "Atingimento da meta": {
     "en": "Goal achievement",
     "es": "Alcance de la meta"
@@ -1404,6 +1752,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Ativa o relacionamento inativo só durante este cálculo.": {
     "en": "Activates the inactive relationship only during this calculation.",
     "es": "Activa la relación inactiva solo durante este cálculo."
+  },
+  "Ative o filtro da etapa 03 e compare a coluna status.": {
+    "en": "Enable step 03 filter and compare the status column.",
+    "es": "Activa el filtro de la etapa 03 y compara la columna estado."
+  },
+  "Atrai clientes com retorno decrescente. Verifique se há estoque e equipe.": {
+    "en": "Attract customers with decreasing return. Check stock and staff.",
+    "es": "Atrae clientes con retorno decreciente. Verifica si hay stock y equipo."
   },
   "Atraso": {
     "en": "Delay",
@@ -1453,6 +1809,18 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Zoom in",
     "es": "Aumentar zoom"
   },
+  "Automatizar análises e transformar dados com programação.": {
+    "en": "Automate analyses and transform data with code.",
+    "es": "Automatizar análisis y transformar datos con programación."
+  },
+  "Avaliação corrigida": {
+    "en": "Corrected assessment",
+    "es": "Evaluación corregida"
+  },
+  "Avaliações e certificados antigos usam suas datas registradas. Quando não conhecemos as datas do progresso antigo, ele aparece a partir da importação. Por isso, a linha do tempo pode não mostrar toda a sua trajetória anterior.": {
+    "en": "Old assessments and certificates use their recorded dates. When we don’t know old progress dates, they appear from import. Thus the timeline may not show your full prior path.",
+    "es": "Evaluaciones y certificados antiguos usan sus fechas registradas. Cuando no conocemos las fechas del progreso antiguo, aparecen a partir de la importación. Por eso, la línea del tiempo puede no mostrar todo su trayecto anterior."
+  },
   "Avançado": {
     "en": "Advanced",
     "es": "Avanzado"
@@ -1465,9 +1833,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "BETWEEN with day 31 cuts everything after midnight of that day, and closing loses a sales day.",
     "es": "BETWEEN con el día 31 corta todo lo que ocurrió después de la medianoche de ese día, y el cierre pierde un día de venta."
   },
+  "BOLETIM DO PRÓXIMO CICLO": {
+    "en": "NEXT CYCLE BULLETIN",
+    "es": "BOLETÍN DEL PRÓXIMO CICLO"
+  },
   "Bairro": {
     "en": "Neighborhood",
     "es": "Barrio"
+  },
+  "Baixa: escolhe o provável. Texto sem graça e mais seguro.": {
+    "en": "Low: picks the likely. Bland and safer text.",
+    "es": "Baja: elige lo probable. Texto sin gracia y más seguro."
   },
   "Baixar HTML": {
     "en": "Download HTML",
@@ -1484,6 +1860,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Banco de verdade, no seu navegador": {
     "en": "Real database, in your browser",
     "es": "Base real, en tu navegador"
+  },
+  "Bateu com o esperado": {
+    "en": "Matched the expected",
+    "es": "Coincidió con lo esperado"
   },
   "Bem-vindo ao #": {
     "en": "Welcome to #",
@@ -1585,6 +1965,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "AVAILABLE BOX",
     "es": "CAJA DISPONIBLE"
   },
+  "CALCULATE avalia uma expressão em um contexto de filtro modificado. Essa é a base de medidas como participação no total e comparações entre períodos.": {
+    "en": "CALCULATE evaluates an expression in a modified filter context. It underlies measures like total share and period comparisons.",
+    "es": "CALCULATE evalúa una expresión en un contexto de filtro modificado. Esta es la base de medidas como participación en el total y comparaciones entre períodos."
+  },
   "CALCULATE é a única função que muda o contexto de filtro. O filtro simples dentro dela vira um FILTER na tabela inteira.": {
     "en": "CALCULATE is the only function that changes filter context. The simple filter inside becomes a FILTER on the whole table.",
     "es": "CALCULATE es la única función que cambia el contexto de filtro. El filtro simple dentro de ella se vuelve un FILTER en toda la tabla."
@@ -1600,6 +1984,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "CLIENTES SATISFEITOS": {
     "en": "SATISFIED CLIENTS",
     "es": "CLIENTES SATISFECHOS"
+  },
+  "COBERTURA DO RELATÓRIO": {
+    "en": "REPORT COVERAGE",
+    "es": "COBERTURA DEL INFORME"
   },
   "COMPETÊNCIAS": {
     "en": "SKILLS",
@@ -1673,6 +2061,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Step CSV",
     "es": "CSV de la etapa"
   },
+  "CSV inválido: há um campo com aspas não fechadas.": {
+    "en": "Invalid CSV: a field has unclosed quotes.",
+    "es": "CSV inválido: hay un campo con comillas sin cerrar."
+  },
   "CT2 tem lançamento de partida dobrada: somar a coluna de valor sem separar débito e crédito dá o dobro do movimento.": {
     "en": "CT2 has double‑entry posting: summing the value column without separating debit and credit doubles the movement.",
     "es": "CT2 tiene lanzamiento de partida doble: sumar la columna de valor sin separar débito y crédito da el doble del movimiento."
@@ -1692,6 +2084,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Cada competência vai de 0 a 100 e soma cinco tipos de evidência:": {
     "en": "Each skill ranges 0‑100 and adds five evidence types:",
     "es": "Cada competencia va de 0 a 100 y suma cinco tipos de evidencia:"
+  },
+  "Cada escolha deixa uma lição.": {
+    "en": "Every choice leaves a lesson.",
+    "es": "Cada elección deja una lección."
   },
   "Cada estação é uma etapa real do seu fluxo. Gire com o mouse, aproxime com a roda e clique em uma estação para inspecionar. Se preferir, troque para 2D no canto.": {
     "en": "Each station is a real step of your flow. Rotate with the mouse, zoom with the wheel and click a station to inspect. If you prefer, switch to 2D in the corner.",
@@ -1733,13 +2129,29 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Each piece becomes bytes. Accents and emojis take more than one, and that’s where Portuguese gets costly.",
     "es": "Cada fragmento se vuelve bytes. Acentos y emojis ocupan más de uno, y ahí el portugués se vuelve caro."
   },
+  "Cadastre ao menos uma área e uma competência.": {
+    "en": "Register at least one area and one skill.",
+    "es": "Registre al menos un área y una competencia."
+  },
+  "Cadastro inválido.": {
+    "en": "Invalid registration.",
+    "es": "Registro inválido."
+  },
   "Caixa": {
     "en": "Box",
     "es": "Caja"
   },
+  "Caixa ao final": {
+    "en": "Final box",
+    "es": "Caja al final"
+  },
   "Caixa disponível": {
     "en": "Available box",
     "es": "Caja disponible"
+  },
+  "Caixa e estoque iniciais. Nenhuma decisão aplicada.": {
+    "en": "Initial box and stock. No decision applied.",
+    "es": "Caja y stock iniciales. Ninguna decisión aplicada."
   },
   "Calcular pelo dashboard": {
     "en": "Calculate from the dashboard",
@@ -1761,6 +2173,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Layers",
     "es": "Capas"
   },
+  "Caminho configurado pela equipe acadêmica. Cada etapa pede domínio evidenciado de 60/100.": {
+    "en": "Path set by the academic team. Each step requires proven mastery of 60/100.",
+    "es": "Ruta configurada por el equipo académico. Cada etapa requiere dominio evidenciado de 60/100."
+  },
   "Caminho cravado na fórmula aponta para a sua máquina, e a atualização agendada não encontra nada.": {
     "en": "Path hard‑coded in the formula points to your machine, and the scheduled refresh finds nothing.",
     "es": "La ruta incrustada en la fórmula apunta a tu máquina, y la actualización programada no encuentra nada."
@@ -1768,6 +2184,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Caminho e servidor em parâmetro": {
     "en": "Path and server as parameters",
     "es": "Ruta y servidor en parámetro"
+  },
+  "Caminho inválido.": {
+    "en": "Invalid path.",
+    "es": "Ruta inválida."
   },
   "Caminhos de representação": {
     "en": "Representation paths",
@@ -1785,6 +2205,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Text channels",
     "es": "Canales de texto"
   },
+  "Canais por assunto": {
+    "en": "Channels by topic",
+    "es": "Canales por tema"
+  },
+  "Canal": {
+    "en": "Channel",
+    "es": "Canal"
+  },
   "Cancelar": {
     "en": "Cancel",
     "es": "Cancelar"
@@ -1797,6 +2225,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Empty canvas — drag components from the left or use a ready block",
     "es": "Lienzo vacío — arrastra componentes de la izquierda o usa un bloque listo"
   },
+  "Capacidade da equipe": {
+    "en": "Team capacity",
+    "es": "Capacidad del equipo"
+  },
   "Capacidade e estoque limitam o que a divulgação pode gerar.": {
     "en": "Capacity and inventory limit what promotion can generate.",
     "es": "La capacidad y el stock limitan lo que la difusión puede generar."
@@ -1804,6 +2236,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Caracteres": {
     "en": "Characters",
     "es": "Caracteres"
+  },
+  "Cards, velocímetros, storytelling, gráficos. Arraste, edite e pronto.": {
+    "en": "Cards, speedometers, storytelling, charts. Drag, edit and done.",
+    "es": "Tarjetas, velocímetros, storytelling, gráficos. Arrastra, edita y listo."
   },
   "Cardápio": {
     "en": "Menu",
@@ -1828,6 +2264,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Cargo ou área": {
     "en": "Position or area",
     "es": "Cargo o área"
+  },
+  "Carnaval": {
+    "en": "Carnival",
+    "es": "Carnaval"
+  },
+  "Carnaval (segunda)": {
+    "en": "Carnival (Monday)",
+    "es": "Carnaval (segunda)"
   },
   "Carnaval, Sexta-feira Santa e Corpus Christi andam com a Páscoa. A Forja calcula a Páscoa de cada ano e monta a lista, então &quot;dia útil&quot; passa a ser dia útil de verdade.": {
     "en": "Carnival, Good Friday and Corpus Christi run with Easter. The Forge calculates Easter each year and builds the list, so “business day” becomes a real business day.",
@@ -1889,6 +2333,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Real cases, Power BI files and accelerators to download within the trainings and adapt to your project.",
     "es": "Casos reales, archivos de Power BI y aceleradores para descargar dentro de los entrenamientos y adaptar a tu proyecto."
   },
+  "Catálogo muito grande.": {
+    "en": "Catalog too large.",
+    "es": "Catálogo muy grande."
+  },
   "Causa": {
     "en": "Cause",
     "es": "Causa"
@@ -1896,6 +2344,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Central de Ajuda": {
     "en": "Help Center",
     "es": "Centro de ayuda"
+  },
+  "Central de dados": {
+    "en": "Data hub",
+    "es": "Central de datos"
   },
   "Centralizar": {
     "en": "Centralize",
@@ -1925,6 +2377,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "DriveData Academy Certificate",
     "es": "Certificado DriveData Academy"
   },
+  "Certificado de Conclusão": {
+    "en": "Completion Certificate",
+    "es": "Certificado de Conclusión"
+  },
+  "Certificado de Participação": {
+    "en": "Participation Certificate",
+    "es": "Certificado de Participación"
+  },
   "Certificado de conclusão": {
     "en": "Completion Certificate",
     "es": "Certificado de conclusión"
@@ -1940,6 +2400,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Certificado não encontrado": {
     "en": "Certificate not found",
     "es": "Certificado no encontrado"
+  },
+  "Certificado válido": {
+    "en": "Valid Certificate",
+    "es": "Certificado válido"
   },
   "Certificados por módulo": {
     "en": "Certificates by module",
@@ -1993,9 +2457,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Customers who purchased",
     "es": "Clientes que compraron"
   },
+  "Clientes sem tratamento. Chaves repetidas podem multiplicar pedidos na junção.": {
+    "en": "Untreated customers. Duplicate keys can multiply rows in joins.",
+    "es": "Clientes sin tratamiento. Claves repetidas pueden multiplicar pedidos en la unión."
+  },
   "Clique em": {
     "en": "Click on",
     "es": "Haz clic en"
+  },
+  "Clique em Criar minha senha no e-mail, digite o código e escolha a senha.": {
+    "en": "Click 'Create my password' in the email, enter the code and set the password.",
+    "es": "Haz clic en Crear mi contraseña en el correo, ingresa el código y elige la contraseña."
   },
   "Clique em um pedido para seguir o caminho dele pelas etapas.": {
     "en": "Click on a request to follow its path through the stages.",
@@ -2029,6 +2501,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Click a part of the component on the canvas (it gets a red border), or choose here:",
     "es": "Haz clic en una parte del componente en el lienzo (queda con borde rojo), o elige aquí:"
   },
+  "Clique para rastrear este pedido": {
+    "en": "Click to track this order",
+    "es": "Haz clic para rastrear este pedido"
+  },
+  "Cobrança única. Acesso por 12 meses a partir da confirmação.": {
+    "en": "One‑time charge. Access for 12 months from confirmation.",
+    "es": "Cobro único. Acceso por 12 meses a partir de la confirmación."
+  },
   "Colar": {
     "en": "Paste",
     "es": "Pegar"
@@ -2040,6 +2520,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Cole aqui seu LinkedIn/currículo...": {
     "en": "Paste your LinkedIn/resume here...",
     "es": "Pega aquí tu LinkedIn/currículum..."
+  },
+  "Cole mais detalhes (seu LinkedIn ou currículo).": {
+    "en": "Paste more details (your LinkedIn or resume).",
+    "es": "Pega más detalles (tu LinkedIn o currículum)."
   },
   "Cole o link de compartilhamento (ou o código de incorporar) do Panda nesta aula.": {
     "en": "Paste the sharing link (or embed code) from Panda into this lesson.",
@@ -2141,13 +2625,25 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Comments are approved before appearing.",
     "es": "Los comentarios pasan por aprobación antes de aparecer."
   },
+  "Comercial e financeiro estão brigando por causa de um número. Cada um mostra um total diferente para o mesmo mês.": {
+    "en": "Sales and finance are fighting over a number. Each shows a different total for the same month.",
+    "es": "Comercial y financiero están discutiendo por un número. Cada uno muestra un total diferente para el mismo mes."
+  },
   "Começar": {
     "en": "Start",
     "es": "Comenzar"
   },
+  "Começar a usar": {
+    "en": "Start using",
+    "es": "Empezar a usar"
+  },
   "Começar agora": {
     "en": "Start now",
     "es": "Comenzar ahora"
+  },
+  "Começar o diagnóstico": {
+    "en": "Start the diagnosis",
+    "es": "Empezar el diagnóstico"
   },
   "Começar o treino": {
     "en": "Start the training",
@@ -2164,6 +2660,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Como assinante, este workshop está incluso. Ele aparece na sua Agenda e o link libera no horário.": {
     "en": "As a subscriber, this workshop is included. It appears in your Agenda and the link unlocks at the scheduled time.",
     "es": "Como suscriptor, este taller está incluido. Aparece en tu Agenda y el enlace se abre en horario."
+  },
+  "Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você.": {
+    "en": "As a subscriber, you pick the training and pay the subscriber price once. The course stays with you.",
+    "es": "Como suscriptor, eliges la capacitación y pagas el precio de suscriptor una sola vez. El curso queda contigo."
   },
   "Como começar": {
     "en": "How to start",
@@ -2188,6 +2688,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Como ganhar pontos": {
     "en": "How to earn points",
     "es": "Cómo ganar puntos"
+  },
+  "Como ganho pontos na comunidade?": {
+    "en": "How do I earn points in the community?",
+    "es": "¿Cómo gano puntos en la comunidad?"
   },
   "Como interpretar o diagnóstico e proteger os metadados": {
     "en": "How to interpret the diagnosis and protect metadata",
@@ -2297,17 +2801,53 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Compare strategies",
     "es": "Comparar estrategias"
   },
+  "Compare os resultados e veja o efeito de cada escolha.": {
+    "en": "Compare results and see the effect of each choice.",
+    "es": "Compara los resultados y ve el efecto de cada elección."
+  },
+  "Compare versões diferentes do mesmo projeto, com as mesmas dimensões avaliadas e a mesma versão de regras.": {
+    "en": "Compare different versions of the same project, with the same evaluated dimensions and rule version.",
+    "es": "Compara versiones diferentes del mismo proyecto, con las mismas dimensiones evaluadas y la misma versión de reglas."
+  },
+  "Compartilhando para crescer": {
+    "en": "Sharing to grow",
+    "es": "Compartiendo para crecer"
+  },
   "Compartilhar": {
     "en": "Share",
     "es": "Compartir"
+  },
+  "Competência duplicada.": {
+    "en": "Duplicate skill.",
+    "es": "Competencia duplicada."
+  },
+  "Competência inexistente no catálogo publicado.": {
+    "en": "Skill not found in the published catalog.",
+    "es": "Competencia inexistente en el catálogo publicado."
+  },
+  "Competência pai inexistente.": {
+    "en": "Parent skill not found.",
+    "es": "Competencia padre inexistente."
   },
   "Completar perfil": {
     "en": "Complete profile",
     "es": "Completar perfil"
   },
+  "Complete seu nome": {
+    "en": "Enter your name",
+    "es": "Complete su nombre"
+  },
   "Compra de estoque": {
     "en": "Stock purchase",
     "es": "Compra de inventario"
+  },
+  "Compra de estoque reduz caixa imediatamente; só os produtos vendidos entram no custo do resultado.": {
+    "en": "Stock purchase reduces cash immediately; only sold products count in cost of results.",
+    "es": "La compra de inventario reduce la caja inmediatamente; solo los productos vendidos ingresan al costo del resultado."
+  },
+  "Compra normal paga agora e disponível no início do próximo ciclo.": {
+    "en": "Regular purchase paid now and available at start of next cycle.",
+    "es": "Compra normal paga ahora y disponible al inicio del próximo ciclo."
   },
   "Comprar não é vender.": {
     "en": "Buying is not selling.",
@@ -2329,6 +2869,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Proof of the competencies you developed, with hours and your name.",
     "es": "Comprobación de las competencias que desarrollaste, con carga horaria y tu nombre."
   },
+  "Comunicar descobertas por meio de gráficos e hierarquia visual.": {
+    "en": "Communicate findings through charts and visual hierarchy.",
+    "es": "Comunicar hallazgos mediante gráficos y jerarquía visual."
+  },
   "Comunidade": {
     "en": "Community",
     "es": "Comunidad"
@@ -2349,9 +2893,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Complete a course to issue yours.",
     "es": "Completa un curso para emitir el tuyo."
   },
+  "Concluir e avançar": {
+    "en": "Finish and continue",
+    "es": "Concluir y avanzar"
+  },
   "Concluir um curso contribui, mas não significa dominar o assunto.": {
     "en": "Completing a course helps, but doesn’t mean you’ve mastered it.",
     "es": "Completar un curso ayuda, pero no significa dominar el tema."
+  },
+  "Conclusão certificada": {
+    "en": "Certified completion",
+    "es": "Conclusión certificada"
+  },
+  "Concluída · avançar": {
+    "en": "Completed · continue",
+    "es": "Concluida · avanzar"
   },
   "Concluído": {
     "en": "Completed",
@@ -2361,6 +2917,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Completed",
     "es": "Completados"
   },
+  "Concorrência em promoção": {
+    "en": "Promotion competition",
+    "es": "Competencia en promoción"
+  },
   "Condição exclusiva de assinante": {
     "en": "Exclusive subscriber condition",
     "es": "Condición exclusiva de suscriptor"
@@ -2368,6 +2928,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Conectar e crescer": {
     "en": "Connect and grow",
     "es": "Conectar y crecer"
+  },
+  "Conectar objetivos, entregas, recursos e resultados.": {
+    "en": "Connect goals, deliveries, resources and results.",
+    "es": "Conectar objetivos, entregas, recursos y resultados."
   },
   "Conectar pedidos aos clientes": {
     "en": "Link orders to customers",
@@ -2393,6 +2957,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Set up page transition",
     "es": "Configurar la transición entre las páginas"
   },
+  "Configuração inválida do projeto.": {
+    "en": "Invalid project configuration.",
+    "es": "Configuración inválida del proyecto."
+  },
   "Confirmado": {
     "en": "Confirmed",
     "es": "Confirmado"
@@ -2400,6 +2968,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Confirmar e simular 5 dias": {
     "en": "Confirm and simulate 5 days",
     "es": "Confirmar y simular 5 días"
+  },
+  "Confirme o envio.": {
+    "en": "Confirm submission.",
+    "es": "Confirme el envío."
   },
   "Confirme o pagamento e libere em Admin → Vendas → Acessos.": {
     "en": "Confirm payment and release in Admin → Sales → Accesses.",
@@ -2412,6 +2984,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Confirme sua presença na live e receba o certificado de participação.": {
     "en": "Confirm your live attendance and receive the participation certificate.",
     "es": "Confirme su presencia en vivo y reciba el certificado de participación."
+  },
+  "Confraternização Universal": {
+    "en": "Universal celebration",
+    "es": "Confraternización Universal"
   },
   "Conhecer a assinatura": {
     "en": "View subscription",
@@ -2449,9 +3025,29 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Learn more",
     "es": "Conoce más"
   },
+  "Conheça suas competências e acompanhe como seu conhecimento evolui.": {
+    "en": "Discover your skills and track how your knowledge evolves.",
+    "es": "Conozca sus competencias y siga cómo evoluciona su conocimiento."
+  },
   "Conquista": {
     "en": "Win",
     "es": "Logro"
+  },
+  "Consciência Negra": {
+    "en": "Black Awareness",
+    "es": "Consciência Negra"
+  },
+  "Construindo a base": {
+    "en": "Building the foundation",
+    "es": "Construyendo la base"
+  },
+  "Construir modelos analíticos confiáveis, testados e documentados.": {
+    "en": "Build reliable, tested and documented analytical models.",
+    "es": "Construir modelos analíticos confiables, probados y documentados."
+  },
+  "Consulta executada sobre a tabela fluxo após a junção.": {
+    "en": "Query run on the flow table after the join.",
+    "es": "Consulta ejecutada sobre la tabla flujo después de la unión."
   },
   "Consulta grande sem derrubar o ERP": {
     "en": "Large query without crashing the ERP",
@@ -2460,6 +3056,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Consulta pesada em produção trava a tela do usuário do ERP. Se existir base de réplica, extraia de lá.": {
     "en": "Heavy production query freezes ERP user screen. If replica DB exists, extract from it.",
     "es": "Consulta pesada en producción congela la pantalla del usuario del ERP. Si hay base réplica, extrae de allí."
+  },
+  "Consultar, combinar e transformar dados relacionais.": {
+    "en": "Query, combine and transform relational data.",
+    "es": "Consultar, combinar y transformar datos relacionales."
+  },
+  "Consulte o código de autenticidade.": {
+    "en": "Check the authenticity code.",
+    "es": "Consulte el código de autenticidad."
   },
   "Conta com suas palavras": {
     "en": "Account in your words",
@@ -2537,9 +3141,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Course content",
     "es": "Contenido del curso"
   },
+  "Conteúdo estudado": {
+    "en": "Studied content",
+    "es": "Contenido estudiado"
+  },
+  "Continuar para o pagamento": {
+    "en": "Proceed to payment",
+    "es": "Continuar al pago"
+  },
   "Continuar →": {
     "en": "Continue →",
     "es": "Continuar →"
+  },
+  "Contrato jurídico": {
+    "en": "Legal contract",
+    "es": "Contrato jurídico"
   },
   "Conversar com o assistente": {
     "en": "Chat with the assistant",
@@ -2565,6 +3181,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Copy the code",
     "es": "Copiar el código"
   },
+  "Copiar para a planilha": {
+    "en": "Copy to spreadsheet",
+    "es": "Copiar a la hoja"
+  },
   "Copie e volte ao trabalho": {
     "en": "Copy and get back to work",
     "es": "Copia y vuelve al trabajo"
@@ -2572,6 +3192,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Copie o DAX": {
     "en": "Copy the DAX",
     "es": "Copia el DAX"
+  },
+  "Copie o código Pix ou leia o QR Code no app do seu banco.": {
+    "en": "Copy the Pix code or scan the QR Code in your banking app.",
+    "es": "Copie el código Pix o lea el QR en la app de su banco."
   },
   "Cor base": {
     "en": "Base color",
@@ -2609,6 +3233,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Icon color",
     "es": "Color del ícono"
   },
+  "Cor inválida.": {
+    "en": "Invalid color.",
+    "es": "Color inválido."
+  },
   "Cor no texto": {
     "en": "Text color",
     "es": "Color en el texto"
@@ -2621,13 +3249,33 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Body",
     "es": "Cuerpo"
   },
+  "Corpus Christi": {
+    "en": "Corpus Christi",
+    "es": "Corpus Christi"
+  },
   "Corpus de treino": {
     "en": "Training corpus",
     "es": "Corpus de entrenamiento"
   },
+  "Cortar com LIMIT devolve os três melhores do geral, não os três de cada categoria. Você precisa numerar dentro de cada grupo.": {
+    "en": "Cut with LIMIT returns the three best overall, not three per category. You must number within each group.",
+    "es": "Cortar con LIMIT devuelve los tres mejores del general, no los tres de cada categoría. Necesitas numerar dentro de cada grupo."
+  },
+  "Corte de data ou fuso": {
+    "en": "Date or timezone cut",
+    "es": "Corte de fecha o zona horaria"
+  },
   "Crescimento mês a mês direto no SQL, sem levar para a ferramenta.": {
     "en": "Month‑over‑month growth directly in SQL, without moving to the tool.",
     "es": "Crecimiento mes a mes directo en SQL, sin pasar a la herramienta."
+  },
+  "Crescimento mês a mês.": {
+    "en": "Month‑over‑month growth.",
+    "es": "Crecimiento mes a mes."
+  },
+  "Crescimento na mesma janela, um ano antes.": {
+    "en": "Growth in the same window, one year earlier.",
+    "es": "Crecimiento en la misma ventana, un año antes."
   },
   "Cresça com a gente": {
     "en": "Grow with us",
@@ -2636,6 +3284,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Criar conta": {
     "en": "Create account",
     "es": "Crear cuenta"
+  },
+  "Criar medidas, dominar contextos de filtro e realizar análises temporais.": {
+    "en": "Create measures, master filter contexts and perform time analyses.",
+    "es": "Crear medidas, dominar contextos de filtro y realizar análisis temporales."
   },
   "Criar ou trocar senha": {
     "en": "Create or change password",
@@ -2652,6 +3304,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.": {
     "en": "Create HTML/SVG cards for Power BI and ready DAX measure, no code.",
     "es": "Crea tarjetas en HTML/SVG para Power BI y genera la medida DAX lista, sin escribir código."
+  },
+  "Crie páginas e transições para storytelling dentro do próprio visual.": {
+    "en": "Create pages and transitions for storytelling within the visual.",
+    "es": "Crea páginas y transiciones para storytelling dentro del propio visual."
   },
   "Crie sua senha": {
     "en": "Create your password",
@@ -2673,6 +3329,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Create visuals in HTML and SVG",
     "es": "Crea visuales en HTML y SVG"
   },
+  "Créditos fora do intervalo.": {
+    "en": "Credits out of range.",
+    "es": "Créditos fuera del intervalo."
+  },
   "Ctrl + Enter": {
     "en": "Ctrl + Enter",
     "es": "Ctrl + Enter"
@@ -2688,6 +3348,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Cupom de desconto": {
     "en": "Discount coupon",
     "es": "Cupón de descuento"
+  },
+  "Cupom e confirmação": {
+    "en": "Coupon and confirmation",
+    "es": "Cupón y confirmación"
   },
   "Cursos": {
     "en": "Courses",
@@ -2705,6 +3369,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Inventory, cash or customer base curve that doesn’t reset each year.",
     "es": "Curva de inventario, de caja o de base de clientes, que no reinicia en el año."
   },
+  "Custo dos produtos vendidos": {
+    "en": "Cost of goods sold",
+    "es": "Costo de los productos vendidos"
+  },
+  "Custo médio por produto": {
+    "en": "Average cost per product",
+    "es": "Costo medio por producto"
+  },
   "Custo também é conta de linha: quantidade vezes custo unitário.": {
     "en": "Cost is also a row calculation: quantity times unit cost.",
     "es": "Costo también es cuenta de fila: cantidad por costo unitario."
@@ -2720,6 +3392,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Código": {
     "en": "Code",
     "es": "Código"
+  },
+  "Código DAX": {
+    "en": "DAX Code",
+    "es": "Código DAX"
   },
   "Código com zero à esquerda": {
     "en": "Code with leading zero.",
@@ -2744,6 +3420,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Código do país": {
     "en": "Country code",
     "es": "Código del país"
+  },
+  "Código inválido ou expirado. Peça um novo código abaixo.": {
+    "en": "Invalid or expired code. Request a new code below.",
+    "es": "Código inválido o expirado. Solicita un nuevo código abajo."
   },
   "Código o Google já tem. O que falta é alguém dizer por que aquele padrão quebra na sua base. Todo verbete traz o erro que a maioria comete.": {
     "en": "Google already has the code. What’s missing is someone to explain why that pattern breaks in your database. Each entry shows the mistake most people make.",
@@ -2853,9 +3533,17 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "DRIVEDATA ACADEMY",
     "es": "DRIVEDATA ACADEMY"
   },
+  "DRIVEDATA ACADEMY / CERTIFICAÇÃO": {
+    "en": "DRIVEDATA ACADEMY / CERTIFICATION",
+    "es": "DRIVEDATA ACADEMY / CERTIFICACIÓN"
+  },
   "DRIVEDATA ACADEMY · COMUNIDADE": {
     "en": "DRIVEDATA ACADEMY · COMMUNITY",
     "es": "DRIVEDATA ACADEMY · COMUNIDAD"
+  },
+  "Da análise à engenharia de dados": {
+    "en": "From analysis to data engineering",
+    "es": "Del análisis a la ingeniería de datos"
   },
   "Da tabela": {
     "en": "From the table",
@@ -2868,6 +3556,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Dado com ciclo trava a consulta. Se pode haver laço, use CONNECT BY NOCYCLE.": {
     "en": "Cyclic data hangs the query. If loops are possible, use CONNECT BY NOCYCLE.",
     "es": "Dato con ciclo bloquea la consulta. Si puede haber bucle, usa CONNECT BY NOCYCLE."
+  },
+  "Dados": {
+    "en": "Data",
+    "es": "Datos"
+  },
+  "Dados da partida inválidos.": {
+    "en": "Invalid match data.",
+    "es": "Datos de la partida inválidos."
   },
   "Daqui pra frente seu mapa cresce com aulas, avaliações e desafios entregues.": {
     "en": "From now on your map grows with lessons, assessments and delivered challenges.",
@@ -2885,6 +3581,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Date criteria work as a range: ≥ first day and < first day of next month.",
     "es": "Fecha en criterio funciona por rango: mayor o igual al primer día y menor al primer día del mes siguiente."
   },
+  "Data inválida": {
+    "en": "Invalid date",
+    "es": "Fecha inválida"
+  },
+  "Data inválida no projeto.": {
+    "en": "Invalid date in the project.",
+    "es": "Fecha inválida en el proyecto."
+  },
   "Data no Protheus é texto": {
     "en": "Date in Protheus is text.",
     "es": "Fecha en Protheus es texto"
@@ -2901,6 +3605,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "DataFlow",
     "es": "DataFlow"
   },
+  "DataFlow Lab": {
+    "en": "DataFlow Lab",
+    "es": "DataFlow Lab"
+  },
+  "DataFlow Lab · Demonstração": {
+    "en": "DataFlow Lab · Demo",
+    "es": "DataFlow Lab · Demostración"
+  },
   "De": {
     "en": "From",
     "es": "De"
@@ -2913,9 +3625,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "From when to when",
     "es": "De cuándo hasta cuándo"
   },
+  "De quanto é a diferença entre os dois lados?": {
+    "en": "What is the difference between the two sides?",
+    "es": "¿Cuánto es la diferencia entre los dos lados?"
+  },
   "De um lado o extrato do sistema, do outro o que o painel mostra. A diferença entre eles é o tamanho da encrenca. Só isso, ainda não diz onde ela mora.": {
     "en": "System statement vs dashboard view. Difference shows mess size.",
     "es": "De un lado el extracto del sistema, del otro lo que muestra el panel. La diferencia entre ellos es el tamaño del problema. Eso es todo, aún no indica dónde vive."
+  },
+  "Decision Lab": {
+    "en": "Decision Lab",
+    "es": "Decision Lab"
+  },
+  "Decisão inválida.": {
+    "en": "Invalid decision.",
+    "es": "Decisión inválida."
   },
   "Declarar o que você quer deixa a consulta imune a coluna nova, e a opção no fim evita o erro quando uma some.": {
     "en": "Declare what you want makes the query immune to new columns, and the final option avoids errors when one disappears.",
@@ -2952,6 +3676,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Demonstração em breve": {
     "en": "Demo coming soon",
     "es": "Demostración próximamente"
+  },
+  "Demonstração salva neste navegador.": {
+    "en": "Demo saved in this browser.",
+    "es": "Demostración guardada en este navegador."
   },
   "Demonstração visual com participantes fictícios. Clique nas medalhas para girar e explorar os dois lados.": {
     "en": "Visual demo with fictional participants. Click medals to rotate and explore both sides.",
@@ -3009,6 +3737,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Ungroup",
     "es": "Desagrupar"
   },
+  "Desbloqueio duplicado ou inexistente.": {
+    "en": "Duplicate or non‑existent unlock.",
+    "es": "Desbloqueo duplicado o inexistente."
+  },
   "Descobrir o nome da tabela": {
     "en": "Find out the table name",
     "es": "Descubrir el nombre de la tabla"
@@ -3029,6 +3761,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Description",
     "es": "Descripción"
   },
+  "Descrição inválida.": {
+    "en": "Invalid description.",
+    "es": "Descripción inválida."
+  },
   "Descubra o que ele oferece.": {
     "en": "Discover what it offers.",
     "es": "Descubre lo que ofrece."
@@ -3036,6 +3772,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Desdinamizar listando as colunas quebra em abril, quando entra a coluna nova. A versão outras colunas não quebra.": {
     "en": "De‑dynamicizing by listing columns breaks in April when a new column appears. The “other columns” version doesn’t break.",
     "es": "Desdinamizar listando las columnas rompe en abril, cuando entra la columna nueva. La versión otras columnas no rompe."
+  },
+  "Desenvolver pipelines e infraestrutura para produtos de dados.": {
+    "en": "Build pipelines and infrastructure for data products.",
+    "es": "Desarrollar pipelines e infraestructura para productos de datos."
   },
   "Desfazer": {
     "en": "Undo",
@@ -3081,9 +3821,21 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Details that avoid surprise",
     "es": "Detalles que evitan sorpresas"
   },
+  "Devolução contada duas vezes": {
+    "en": "Refund counted twice",
+    "es": "Devolución contada dos veces"
+  },
   "Dezenas de presets prontos": {
     "en": "Dozens of ready presets",
     "es": "Decenas de presets listos"
+  },
+  "Dezenas de templates e componentes": {
+    "en": "Dozens of templates and components",
+    "es": "Decenas de plantillas y componentes"
+  },
+  "Dia do Trabalho": {
+    "en": "Labor Day",
+    "es": "Día del Trabajo"
   },
   "Diagnóstico": {
     "en": "Diagnosis",
@@ -3129,6 +3881,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Enter the code",
     "es": "Escribir el código"
   },
+  "Digite a palavra-chave dita na transmissão.": {
+    "en": "Enter the keyword spoken during the broadcast.",
+    "es": "Escribe la palabra clave dicha en la transmisión."
+  },
+  "Digite o código que chegou no seu e-mail.": {
+    "en": "Enter the code sent to your email.",
+    "es": "Escribe el código que llegó a tu correo."
+  },
   "Digite o código, escolha a senha e a área do aluno já abre para você.": {
     "en": "Enter code, choose password and student area opens for you.",
     "es": "Escribe el código, elige la contraseña y el área del alumno ya se abre para ti."
@@ -3156,6 +3916,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Distribuir espaçamento:": {
     "en": "Distribute spacing:",
     "es": "Distribuir espaciado:"
+  },
+  "Dita durante a transmissão. Prova que você estava assistindo.": {
+    "en": "Spoken during the broadcast. Proof you were watching.",
+    "es": "Dicha durante la transmisión. Prueba de que estabas viendo."
   },
   "Divide a receita pela quantidade de pedidos distintos, e não pela quantidade de linhas.": {
     "en": "Divides revenue by the number of distinct orders, not by the number of rows.",
@@ -3192,6 +3956,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Dois meses atrás": {
     "en": "Two months ago",
     "es": "Dos meses atrás"
+  },
+  "Dois totais para o mesmo mês": {
+    "en": "Two totals for the same month",
+    "es": "Dos totales para el mismo mes"
   },
   "Drive": {
     "en": "Drive",

@@ -125,20 +125,28 @@ def texto_valido_encostado(t: str) -> bool:
 # entre tags, está num campo do objeto. O tr() entra depois, no componente que
 # mostra o campo, então este modo só junta as frases para traduzir.
 CAMPO = re.compile(
-    r'\b(titulo|subtitulo|quando|explicacao|armadilha|enunciado|dica|porque|recado|'
-    r'nome|descricao|resumo|texto|rotulo|pergunta|resposta|legenda|acao|final|desc)\s*:\s*"((?:[^"\\]|\\.)*)"'
+    r"""\b(titulo|subtitulo|quando|explicacao|armadilha|enunciado|dica|porque|recado|"""
+    r"""nome|descricao|resumo|texto|rotulo|pergunta|resposta|legenda|acao|final|desc|"""
+    # Os laboratórios têm o nome do campo em inglês, mas o texto dentro é
+    # português e aparece na tela igual ao resto.
+    r"""name|headline|title|label|hint|note|summary|goal|brief|caption|message)"""
+    r"""\s*:\s*(["'])((?:(?!\2)[^\\]|\\.)*)\2"""
 )
+
+def _valor_da_aspas(bruto: str) -> str | None:
+    """O literal como o JavaScript o leria, com as escapadas resolvidas."""
+    try:
+        return json.loads('"' + bruto.replace('"', '\\"') + '"')
+    except json.JSONDecodeError:
+        return None
 
 def extrair_campos(caminhos):
     achadas = {}
     for c in caminhos:
         texto = open(c, encoding="utf-8").read()
         for m in CAMPO.finditer(texto):
-            try:
-                valor = json.loads('"' + m.group(2) + '"')
-            except json.JSONDecodeError:
-                continue
-            if texto_valido(valor):
+            valor = _valor_da_aspas(m.group(3))
+            if valor is not None and texto_valido(valor):
                 achadas.setdefault(normalizar(valor), []).append(os.path.relpath(c, RAIZ))
     return achadas
 
@@ -204,6 +212,90 @@ def extrair_literais(caminhos):
             if texto_valido(valor) and frase_de_gente(normalizar(valor)):
                 achadas.setdefault(normalizar(valor), []).append(os.path.relpath(c, RAIZ))
     return achadas
+
+# Prosa solta no meio do código: o rótulo do ternário de um botão
+# (`{salvando ? "Salvando..." : "Salvar"}`), a mensagem de erro, o texto que
+# entra num estado. Nenhum dos outros padrões pega esses, porque não estão
+# entre tags nem num campo de objeto conhecido.
+# Dois regexes, um por tipo de aspa: a versão com grupo de referência para
+# trás volta a explodir em backtracking num arquivo grande, e aqui os arquivos
+# grandes são justamente os laboratórios.
+PROSA_DUPLA = re.compile(r'"((?:[^"\
+]|\.){4,})"')
+PROSA_SIMPLES = re.compile(r"'((?:[^'\
+]|\.){4,})'")
+PROSAS = (PROSA_DUPLA, PROSA_SIMPLES)
+
+# O que vem logo antes da aspa e denuncia que não é texto de tela.
+ANTES_TECNICO = re.compile(
+    r"(?:className|class|href|src|key|id|type|role|name|rel|target|method|"
+    r"import|from|require|console\.\w+|useState<[^>]*>)\s*[=(:]\s*$"
+)
+
+def prosa_valida(bruto: str) -> bool:
+    valor = _valor_da_aspas(bruto)
+    if valor is None:
+        return False
+    limpo = normalizar(valor)
+    return texto_valido(limpo) and frase_de_gente(limpo)
+
+def extrair_prosa(caminhos):
+    achadas = {}
+    for c in caminhos:
+        texto = open(c, encoding="utf-8").read()
+        for padrao in PROSAS:
+            for m in padrao.finditer(texto):
+                if ANTES_TECNICO.search(texto[max(0, m.start() - 40):m.start()]):
+                    continue
+                if not prosa_valida(m.group(1)):
+                    continue
+                achadas.setdefault(normalizar(_valor_da_aspas(m.group(1))), []).append(os.path.relpath(c, RAIZ))
+    return achadas
+
+def aplicar_prosa(caminhos, mapa):
+    """Envolve com tr() a prosa solta, onde o tr alcança.
+
+    Mais arriscado que os outros modos, porque aqui a aspa pode ser qualquer
+    coisa. As defesas: a frase precisa ter cara de português, não pode vir
+    logo depois de uma chave técnica, e precisa já estar no dicionário — ou
+    seja, alguém a viu na etapa de extração."""
+    for c in caminhos:
+        texto = open(c, encoding="utf-8").read()
+        cliente = ehCliente(texto)
+        trocas = 0
+        faixas = []
+        for d in DEFINICAO.finditer(texto):
+            abre = abertura_do_corpo(texto, d.end() - 1, len(texto))
+            if abre >= 0:
+                faixas.append((abre, fim_do_bloco(texto, abre), bool((d.group(1) or d.group(2))[:1].isupper())))
+
+        def troca(m):
+            nonlocal trocas
+            antes = texto[max(0, m.start() - 40):m.start()]
+            if ANTES_TECNICO.search(antes) or antes.rstrip().endswith(("tr(", "f(")):
+                return m.group(0)
+            valor = _valor_da_aspas(m.group(1))
+            if valor is None:
+                return m.group(0)
+            chave = normalizar(valor)
+            if chave not in mapa or not prosa_valida(m.group(1)):
+                return m.group(0)
+            if not any(i < m.start() < f and comp for i, f, comp in faixas):
+                return m.group(0)
+            trocas += 1
+            return f"tr({json.dumps(chave, ensure_ascii=False)})"
+
+        novo = texto
+        for padrao in PROSAS:
+            novo = padrao.sub(troca, novo)
+        if not trocas:
+            continue
+        if cliente:
+            novo = ligar_hook(novo, os.path.relpath(c, RAIZ))
+        elif "traduzir-servidor" not in novo:
+            novo = 'import { tr } from "@/lib/i18n/traduzir-servidor";\n' + novo
+        open(c, "w", encoding="utf-8", newline="\n").write(novo)
+        print(f"   {os.path.relpath(c, RAIZ)}: {trocas}")
 
 def aplicar_literais(caminhos, mapa):
     """Envolve com tr() a frase que está numa constante, e não entre tags.
@@ -278,7 +370,9 @@ def http(url, dados, cabecalhos, tentativas=6):
             corpo = e.read().decode("utf-8", "ignore")[:400]
             # Cota do dia estourada: esperar não resolve, porque ela volta de
             # madrugada. Quem sinaliza isso é o próprio corpo do erro.
-            if e.code == 429 and "per day" in corpo:
+            # "per day" é cota do dia; "too large" é teto por minuto do
+            # modelo. Nos dois casos esperar não resolve: troca-se de modelo.
+            if e.code == 429 and ("per day" in corpo or "too large" in corpo):
                 raise CotaDoDia(corpo)
             if e.code in (429, 500, 502, 503) and n < tentativas - 1:
                 espera = float(e.headers.get("retry-after") or 0) or min(90, 12 * (n + 1))
@@ -307,7 +401,10 @@ def traduzir_lote(frases, idioma_nome):
         try:
             r = http("https://api.groq.com/openai/v1/chat/completions",
                      json.dumps({"model": modelo, "temperature": 0.2, "reasoning_effort": "low",
-                                 "max_completion_tokens": 8000,
+                                 # Proporcional ao lote: pedir 8000 estourava o
+                                 # limite de saída por minuto de alguns modelos,
+                                 # e esse 429 não passa esperando.
+                                 "max_completion_tokens": min(4000, 200 + 90 * len(frases)),
                                  "messages": [{"role": "user", "content": pedido}]}).encode(),
                      {"Authorization": "Bearer " + GROQ, "Content-Type": "application/json"})
             break

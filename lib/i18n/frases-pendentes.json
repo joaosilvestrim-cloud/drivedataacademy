@@ -1,0 +1,1945 @@
+{
+  "(sua resposta)": [
+    "app\\aprender\\[slug]\\avaliacao\\page.tsx"
+  ],
+  "04 JUNÇÃO": [
+    "components\\dataflow\\FlowScene.tsx"
+  ],
+  "12 MESES DE DESCOBERTAS": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "18/09/2026 às 23:59": [
+    "components\\CupomContagem.tsx"
+  ],
+  "6 ciclos de 5 dias": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "A aba Desafios permite experimentar um exercício fictício.": [
+    "components\\knowledge\\UniverseGuide.tsx"
+  ],
+  "A análise foi interrompida. Tente novamente com um arquivo menor ou exportado como .pbit.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "A base de comparação de quase todo painel.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "A causa está certa, o valor não": [
+    "lib\\conciliacao\\motor.ts"
+  ],
+  "A chave que duplica": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "A compra chega neste ciclo.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "A compra chegará no início do próximo ciclo.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "A compra fica disponível antes das vendas deste ciclo.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "A compra é paga agora e chega no início do próximo ciclo.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "A consulta excedeu 8 segundos. Simplifique o SQL ou reduza os dados.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "A consulta rodou, mas não voltou nada": [
+    "lib\\arena\\motor.ts"
+  ],
+  "A demanda está estável. Seu desafio é vender com margem e preservar o atendimento.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "A diferença fica inteira em um grupo que existe de um lado só. Antes de caçar defeito, confirme se os dois lados estão falando do mesmo universo.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "A diferença pequena que o auditor não aceita": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "A diferença é pequena e não se concentra em nenhum grupo. Parece desprezível, mas cresce com o volume e some quando você compara sem arredondar.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "A diferença é pequena e o time quer ignorar. O auditor não quer, e pediu a explicação.": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "A diretora de uma filial ligou dizendo que o número dela sumiu do painel. O extrato do ERP veio completo.": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "A diretoria só quer vendas aprovadas no relatório. Deixe passar apenas os pedidos com status aprovado.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "A equipe acadêmica ainda não publicou um caminho para este catálogo.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "A equipe precisa concluir a instalação da estrutura de conhecimento no banco. Seu histórico acadêmico continua preservado.": [
+    "app\\(knowledge)\\universo\\page.tsx"
+  ],
+  "A estrutura do Knowledge Universe ainda precisa ser instalada no banco.": [
+    "lib\\knowledge\\server.ts"
+  ],
+  "A execução anterior continua disponível abaixo.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "A filial sumiu do painel": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "A hierarquia ou os pré-requisitos possuem um ciclo.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "A junção está criando linhas do nada. Descubra por que e faça o número de linhas parar de crescer.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "A junção parou de multiplicar: entra e sai a mesma quantidade.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "A junção ultrapassou 10.000 linhas. Remova duplicidades ou reduza a base.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "A leitura demorou mais de um minuto. Tente exportar o relatório como .pbit ou dividir o arquivo.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "A margem das vendas não cobriu os custos deste ciclo. Compare preço, custo dos produtos e despesas.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "A média que interessa é a média dos totais por cliente, não a média dos itens nem a dos pedidos. Calcule os totais primeiro e tire a média deles.": [
+    "lib\\arena\\familias.ts"
+  ],
+  "A operação ficou sem reserva.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "A presença ainda não abriu": [
+    "app\\presenca\\page.tsx"
+  ],
+  "A receita está em itens, a data e o status estão em pedidos, e a categoria está em produtos. São três tabelas na mesma consulta.": [
+    "lib\\arena\\familias.ts"
+  ],
+  "A senha precisa ter pelo menos 6 caracteres.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "A tabela de calendário": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "A tabela de calendário do modelo. O CPF 12345678909 não é um número para a IA.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "A tabela precisa de ao menos 1 coluna": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Abra o relatório, compare estratégias e tente uma abordagem diferente.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Abra o seu universo": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Abrindo o banco...": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Abrir cardápio": [
+    "app\\conta\\page.tsx"
+  ],
+  "Abrir o mapa 3D": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Abrir os lançamentos deste recorte": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Acesso imediato.": [
+    "app\\cursos\\[slug]\\page.tsx"
+  ],
+  "Acumulado no ano (YTD)": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Acumulado no mês (MTD)": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Adicionar ao plano": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Agenda ao vivo, gravações, comunidade, ferramentas e certificados. E os treinamentos completos com preço de assinante.": [
+    "app\\matricula\\page.tsx"
+  ],
+  "Agregação e filtro": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Ainda não": [
+    "lib\\arena\\motor.ts",
+    "lib\\conciliacao\\motor.ts"
+  ],
+  "Ainda não atingida": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Ainda não há alunos na vitrine.": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Ainda não iniciada": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Ainda não. Experimente outra opção.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Alinhar expectativas e comunicar decisões.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Alisa sazonalidade e ruído de calendário.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Alta: começa a arriscar.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Alterações ainda não executadas": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Alvo inválido": [
+    "lib\\knowledge\\engine.ts"
+  ],
+  "Analisar outra versão": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Antes da primeira decisão": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Análise cancelada. O resultado anterior foi mantido.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Aplique seu primeiro plano para observar a procura e as vendas.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Aprender no seu ritmo": [
+    "components\\assinatura\\MenuImersivo.tsx"
+  ],
+  "Aqui você vê o mapa. Estrela apagada não quer dizer que você não sabe: quer dizer que ainda não há registro na plataforma.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Arena SQL": [
+    "lib\\ferramentas-nomes.ts"
+  ],
+  "Arquivo de partida incompatível.": [
+    "lib\\decision-lab\\storage.ts"
+  ],
+  "Arquivo de projetos incompatível.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Arquivo de projetos invalido.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Arquivo muito grande. O limite e 200 KB.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Arquivo muito grande. O limite é 200 KB.": [
+    "lib\\dataflow\\storage.ts",
+    "lib\\decision-lab\\storage.ts"
+  ],
+  "Arquivos prontos para baixar, abrir no seu computador e adaptar ao seu projeto.": [
+    "app\\aprender\\[slug]\\Biblioteca.tsx"
+  ],
+  "Arraste para girar · role para aproximar · clique nas estações": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Arredondamento por linha": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "As decisões e seus efeitos estão no registro abaixo.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "As partes obrigam-se a": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "As primeiras linhas batem, mas o conjunto não fecha.": [
+    "lib\\arena\\motor.ts"
+  ],
+  "As receitas cobriram os custos reconhecidos até aqui.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Assine a Academy para entrar na comunidade, usar as ferramentas e comprar treinamentos com preço de assinante.": [
+    "app\\conta\\page.tsx"
+  ],
+  "Associação de curso inválida.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Atenção: chaves repetidas multiplicaram registros.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Atenção: chegará após o encerramento da missão.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Ative o filtro da etapa 03 e compare a coluna status.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "Atrai clientes com retorno decrescente. Verifique se há estoque e equipe.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Automatizar análises e transformar dados com programação.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Avaliação corrigida": [
+    "lib\\knowledge\\demo.ts",
+    "lib\\knowledge\\project.ts"
+  ],
+  "Avaliações e certificados antigos usam suas datas registradas. Quando não conhecemos as datas do progresso antigo, ele aparece a partir da importação. Por isso, a linha do tempo pode não mostrar toda a sua trajetória anterior.": [
+    "components\\knowledge\\UniverseGuide.tsx"
+  ],
+  "BOLETIM DO PRÓXIMO CICLO": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Baixa: escolhe o provável. Texto sem graça e mais seguro.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Bateu com o esperado": [
+    "lib\\arena\\motor.ts"
+  ],
+  "CALCULATE avalia uma expressão em um contexto de filtro modificado. Essa é a base de medidas como participação no total e comparações entre períodos.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "COBERTURA DO RELATÓRIO": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "CSV inválido: há um campo com aspas não fechadas.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Cada escolha deixa uma lição.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Cadastre ao menos uma área e uma competência.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Cadastro inválido.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Caixa ao final": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Caixa e estoque iniciais. Nenhuma decisão aplicada.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Caminho configurado pela equipe acadêmica. Cada etapa pede domínio evidenciado de 60/100.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Caminho inválido.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Canais por assunto": [
+    "components\\assinatura\\MenuImersivo.tsx"
+  ],
+  "Canal": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Capacidade da equipe": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Cards, velocímetros, storytelling, gráficos. Arraste, edite e pronto.": [
+    "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Carnaval": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Carnaval (segunda)": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Catálogo muito grande.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Central de dados": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Certificado de Conclusão": [
+    "components\\CertificateView.tsx"
+  ],
+  "Certificado de Participação": [
+    "app\\certificado\\[code]\\page.tsx"
+  ],
+  "Certificado válido": [
+    "app\\certificado\\[code]\\page.tsx"
+  ],
+  "Clientes sem tratamento. Chaves repetidas podem multiplicar pedidos na junção.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Clique em Criar minha senha no e-mail, digite o código e escolha a senha.": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Clique para rastrear este pedido": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Cobrança única. Acesso por 12 meses a partir da confirmação.": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Cole mais detalhes (seu LinkedIn ou currículo).": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Comercial e financeiro estão brigando por causa de um número. Cada um mostra um total diferente para o mesmo mês.": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "Começar a usar": [
+    "components\\TourGuiado.tsx"
+  ],
+  "Começar o diagnóstico": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você.": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Como ganho pontos na comunidade?": [
+    "components\\AssistantButton.tsx"
+  ],
+  "Compare os resultados e veja o efeito de cada escolha.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Compare versões diferentes do mesmo projeto, com as mesmas dimensões avaliadas e a mesma versão de regras.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Compartilhando para crescer": [
+    "components\\ranking\\RankingPodium.tsx"
+  ],
+  "Competência duplicada.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Competência inexistente no catálogo publicado.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Competência pai inexistente.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Complete seu nome": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Compra de estoque reduz caixa imediatamente; só os produtos vendidos entram no custo do resultado.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Compra normal paga agora e disponível no início do próximo ciclo.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Comunicar descobertas por meio de gráficos e hierarquia visual.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Concluir e avançar": [
+    "app\\aprender\\[slug]\\CoursePlayer.tsx"
+  ],
+  "Conclusão certificada": [
+    "lib\\knowledge\\project.ts"
+  ],
+  "Concluída · avançar": [
+    "app\\aprender\\[slug]\\CoursePlayer.tsx"
+  ],
+  "Concorrência em promoção": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Conectar objetivos, entregas, recursos e resultados.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Configuração inválida do projeto.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Confirme o envio.": [
+    "app\\presenca\\page.tsx"
+  ],
+  "Confraternização Universal": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Conheça suas competências e acompanhe como seu conhecimento evolui.": [
+    "components\\knowledge\\ProfilePreview.tsx"
+  ],
+  "Consciência Negra": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Construindo a base": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Construir modelos analíticos confiáveis, testados e documentados.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Consulta executada sobre a tabela fluxo após a junção.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Consultar, combinar e transformar dados relacionais.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Consulte o código de autenticidade.": [
+    "components\\CertificateView.tsx"
+  ],
+  "Conteúdo estudado": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Continuar para o pagamento": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Contrato jurídico": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "Copiar para a planilha": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Copie o código Pix ou leia o QR Code no app do seu banco.": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Cor inválida.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Corpus Christi": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Cortar com LIMIT devolve os três melhores do geral, não os três de cada categoria. Você precisa numerar dentro de cada grupo.": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Corte de data ou fuso": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Crescimento mês a mês.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Crescimento na mesma janela, um ano antes.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Criar medidas, dominar contextos de filtro e realizar análises temporais.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Crie páginas e transições para storytelling dentro do próprio visual.": [
+    "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Créditos fora do intervalo.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Cupom e confirmação": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Custo dos produtos vendidos": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Custo médio por produto": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Código DAX": [
+    "components\\editor\\CodeModal.tsx"
+  ],
+  "Código inválido ou expirado. Peça um novo código abaixo.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "DRIVEDATA ACADEMY / CERTIFICAÇÃO": [
+    "components\\CertificateView.tsx"
+  ],
+  "Da análise à engenharia de dados": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Dados": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Dados da partida inválidos.": [
+    "lib\\decision-lab\\storage.ts"
+  ],
+  "Data inválida": [
+    "lib\\knowledge\\engine.ts"
+  ],
+  "Data inválida no projeto.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "DataFlow Lab": [
+    "lib\\ferramentas-nomes.ts"
+  ],
+  "DataFlow Lab · Demonstração": [
+    "app\\(dataflow)\\dataflow-lab\\demo\\page.tsx"
+  ],
+  "De quanto é a diferença entre os dois lados?": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "Decision Lab": [
+    "lib\\ferramentas-nomes.ts"
+  ],
+  "Decisão inválida.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Demonstração salva neste navegador.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Desbloqueio duplicado ou inexistente.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Descrição inválida.": [
+    "lib\\knowledge\\catalog.ts",
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Desenvolver pipelines e infraestrutura para produtos de dados.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Devolução contada duas vezes": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Dezenas de templates e componentes": [
+    "app\\ferramenta\\assinar\\page.tsx"
+  ],
+  "Dia do Trabalho": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Digite a palavra-chave dita na transmissão.": [
+    "app\\presenca\\page.tsx"
+  ],
+  "Digite o código que chegou no seu e-mail.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Dita durante a transmissão. Prova que você estava assistindo.": [
+    "app\\presenca\\page.tsx"
+  ],
+  "Dois totais para o mesmo mês": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "DriveData Academy · aulas abertas no YouTube": [
+    "components\\LancamentoHoje.tsx"
+  ],
+  "Duas noites de aula aberta no YouTube, com quem entrega projeto de dados todo dia. Sem inscrição: é só entrar no horário.": [
+    "components\\LancamentoHoje.tsx"
+  ],
+  "Dá para trocar o voto quando quiser.": [
+    "app\\conta\\EnquetePoll.tsx"
+  ],
+  "Dê um nome ao seu visual.": [
+    "components\\editor\\PublishModal.tsx"
+  ],
+  "Dê um nome ao template.": [
+    "components\\editor\\TemplateModal.tsx"
+  ],
+  "Dê uma olhada em tudo que tem aqui. O download abre quando a contagem terminar.": [
+    "app\\aprender\\[slug]\\Biblioteca.tsx"
+  ],
+  "E-mail ou senha inválidos.": [
+    "app\\entrar\\page.tsx"
+  ],
+  "EVENTO DESTE PERÍODO": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Em descoberta": [
+    "lib\\knowledge\\engine.ts"
+  ],
+  "Em qual curso eu estou?": [
+    "components\\AssistantButton.tsx"
+  ],
+  "Em uma medida DAX, qual função permite modificar o contexto de filtro de uma expressão?": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Entrega expressa entrou neste ciclo com acréscimo de 15% no custo de compra.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Entrega inválida.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Entregue um desafio": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Enviamos o certificado para cá.": [
+    "app\\presenca\\page.tsx"
+  ],
+  "Enviamos o código para o seu e-mail. Confira também o lixo eletrônico.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Enviamos o material para o seu e-mail. Confira a caixa de entrada (e o spam).": [
+    "app\\materiais\\[slug]\\MaterialView.tsx"
+  ],
+  "Enviamos um código novo. Use sempre o último que chegou.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Enviando arquivo...": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Enviar código": [
+    "app\\esqueci-senha\\page.tsx"
+  ],
+  "Enviar novo código": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Enviar para revisão": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Equilibre crescimento, caixa e atendimento.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Escaneie para verificar o certificado.": [
+    "components\\CertificateView.tsx"
+  ],
+  "Escolha a coluna de deduplicação dos clientes.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Escolha a coluna do filtro de pedidos.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Escolha os próximos temas da DriveData Academy.": [
+    "app\\votacao\\[slug]\\page.tsx"
+  ],
+  "Escolha um .pbix ou .pbit válido de até 300 MB. Para reduzir o tamanho, exporte como .pbit.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Escolha um treinamento no cardápio e ele passa a aparecer aqui.": [
+    "app\\conta\\page.tsx"
+  ],
+  "Escolha uma imagem.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Escolha uma opção.": [
+    "app\\votacao\\[slug]\\page.tsx"
+  ],
+  "Escolha uma senha diferente da anterior.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Esconder a dica": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Esconder os lançamentos": [
+    "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
+  ],
+  "Escopo diferente": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Escreva uma consulta": [
+    "lib\\arena\\motor.ts"
+  ],
+  "Essa entrega será após o fim da missão.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Esta compra chegará após o dia 30. O valor ficou comprometido em estoque em trânsito.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Esta missão já foi concluída. Comece uma nova estratégia.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Estamos preparando as aulas. Avisamos assim que abrir.": [
+    "app\\cursos\\[slug]\\page.tsx"
+  ],
+  "Estação de trabalho": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "Este é o começo do canal. Puxe assunto: a conversa aqui começa com você.": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Estilo do badge": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Estilo rápido": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Estrategista": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Estratégias com níveis ou durações diferentes não são comparações diretas.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Estruturar planilhas, fórmulas e análises reproduzíveis.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Etapas do funil": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Evidência adicionada à demonstração": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Evidência registrada no seu Knowledge Universe.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Excluir este projeto? Não dá para desfazer.": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Execute o fluxo antes de rastrear.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Execute o fluxo para ver as colunas.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Exercício aprovado": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Exercício demonstrativo · Contexto de filtro": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Explorador": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Explorar diagnóstico": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Explore transformações de dados, SQL e pipelines em 3D com reprodução temporal.": [
+    "app\\(dataflow)\\dataflow-lab\\page.tsx"
+  ],
+  "Explore treinamentos e novas atividades práticas.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Explore uma demonstração do universo de competências em 3D e acompanhe a evolução no tempo.": [
+    "app\\(knowledge)\\universo\\demo\\page.tsx"
+  ],
+  "Explore uma empresa virtual, tome decisões e aprenda com suas consequências.": [
+    "app\\(decision)\\decision-lab\\page.tsx"
+  ],
+  "Faixas de cor": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Falar com uma pessoa": [
+    "components\\AssistantButton.tsx"
+  ],
+  "Falha ao registrar evidência.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Falha de conexão.": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Falta dinheiro no painel": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "Faça o diagnóstico": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Fechamento do mês": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Fechar seleção": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Fechou": [
+    "lib\\conciliacao\\motor.ts"
+  ],
+  "Filial": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Filtro": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Filtro correto: 20 pedidos aprovados de 24.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "Filtro de status diferente": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Filtro desativado: o pedido seguiu.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "Fluxo corrigido: 20 pedidos válidos, sem multiplicação.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "Forja DAX": [
+    "lib\\ferramentas-nomes.ts"
+  ],
+  "Fundamentos de IA": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Fundo do card": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Função de janela": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Gera cards em HTML e SVG para o Power BI": [
+    "app\\ferramenta\\assinar\\page.tsx"
+  ],
+  "Gerando pagamento...": [
+    "app\\ferramenta\\assinar\\AssinarForm.tsx",
+    "app\\matricula\\MatriculaForm.tsx",
+    "app\\workshop\\[id]\\WorkshopBuyForm.tsx"
+  ],
+  "Gestor": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Gestão": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Gestão de projetos": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Grupo inválido.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Histórico e comparação": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Histórico muito extenso. Entre em contato com o suporte para otimizar seu universo.": [
+    "lib\\knowledge\\server.ts"
+  ],
+  "Hoje às": [
+    "components\\LancamentoHoje.tsx"
+  ],
+  "Hora de refletir sobre sua estratégia": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Identificador inválido.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Identificar incertezas e planejar respostas.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Informe cabeçalhos únicos e preenchidos, com até 80 caracteres.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Informe os dados do cartão na página segura do Asaas.": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Inspirando a comunidade": [
+    "components\\ranking\\RankingPodium.tsx"
+  ],
+  "Inteligência artificial": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Investigue o faturamento fantasma em um laboratório interativo de dados.": [
+    "app\\(dataflow)\\dataflow-lab\\demo\\page.tsx"
+  ],
+  "Início do mês": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Ir para o fim": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "Itens da lista": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Janela de tempo": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Junção": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Junção desativada. A tabela fluxo contém somente os pedidos filtrados.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Junção desativada: o pedido seguiu sozinho.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "Lançamentos do fim do mês caíram no mês seguinte por causa do horário.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Limpeza": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Linha não encontrada.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "Linhas perdidas na junção": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Lista inválida ou acima do limite.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Live no YouTube": [
+    "components\\LancamentoHoje.tsx"
+  ],
+  "Lives e mentorias com quem faz dados de verdade. Sem inscrição: é só entrar no horário.": [
+    "components\\LancamentoHoje.tsx"
+  ],
+  "MARCO DA EVOLUÇÃO DEMONSTRATIVA": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "MARCO DO SEU APRENDIZADO": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "META AINDA NÃO ATINGIDA": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "MISSÃO CONCLUÍDA": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "MODELO DEMONSTRATIVO / SEM VALIDADE": [
+    "components\\CertificateView.tsx"
+  ],
+  "Mais curtidos": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Mais reserva de caixa e metas mais suaves para experimentar.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Mantenha ao menos um projeto.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Mantenha o conhecimento ativo": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Marcar como concluída": [
+    "app\\aprender\\[slug]\\CoursePlayer.tsx"
+  ],
+  "Marque cada elemento como dinâmico e ligue direto à sua medida do Power BI.": [
+    "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Medalhas do ranking · DriveData Academy": [
+    "app\\(ranking)\\ranking\\medalhas\\page.tsx"
+  ],
+  "Medida DAX pronta para copiar, sem escrever código": [
+    "app\\ferramenta\\assinar\\page.tsx"
+  ],
+  "Meia-vida inválida": [
+    "lib\\knowledge\\engine.ts"
+  ],
+  "Menos caixa e metas exigentes nas tres frentes.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Meta no dia 30: pelo menos 70/100": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Minha Medida = ...": [
+    "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
+  ],
+  "Minha estratégia": [
+    "lib\\decision-lab\\storage.ts"
+  ],
+  "Misture os ovos": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "Mochila para notebook": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "Modelo demonstrativo. Sem validade.": [
+    "components\\CertificateView.tsx"
+  ],
+  "Mouse sem fio": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "Muito alta: escolhe o improvável e delira com confiança.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Média móvel de 3 meses": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Mês": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Mês fiscal": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Na demonstração, você acompanha a evolução de um aluno fictício.": [
+    "components\\knowledge\\UniverseGuide.tsx"
+  ],
+  "Nao consegui ler os projetos salvos. Eles nao serao sobrescritos ate voce salvar um novo.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Nao consegui rastrear esta linha.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Nenhum aluno encontrado com esses termos. Tente outra busca ou limpe o filtro.": [
+    "app\\conta\\vitrine\\VitrineClient.tsx"
+  ],
+  "Nenhum catálogo publicado.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Nenhum ponto corresponde aos filtros.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Nenhum ponto de atenção nas regras aplicadas. Confira a cobertura: isso não certifica todos os aspectos do relatório.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Nenhuma live com certificado no momento": [
+    "app\\presenca\\page.tsx"
+  ],
+  "Nesta versão, a equipe registra essas evidências; você as consulta na aba Desafios.": [
+    "components\\knowledge\\UniverseGuide.tsx"
+  ],
+  "No histórico": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Nome de coluna inválido no projeto.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Nome de projeto inválido.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Nome do componente favorito:": [
+    "components\\editor\\ContextMenu.tsx",
+    "components\\editor\\Properties.tsx"
+  ],
+  "Nome do dia": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Nova conexão consolidada.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Não avaliado": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Não consegui abrir o banco no navegador.": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Não consegui carregar o banco de dados do navegador.": [
+    "app\\conta\\ferramentas\\arena\\Arena.tsx"
+  ],
+  "Não consegui enviar o arquivo.": [
+    "app\\conta\\desafios\\ChallengeList.tsx"
+  ],
+  "Não consegui processar.": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Não consegui responder agora.": [
+    "components\\AssistantButton.tsx"
+  ],
+  "Não consegui salvar.": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Não consegui salvar. Tente de novo.": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Não consegui subir a foto. Tente uma imagem menor.": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Não consegui subir a imagem:": [
+    "app\\conta\\portfolio\\Portfolio.tsx"
+  ],
+  "Não foi possível aplicar o plano.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Não foi possível carregar o histórico. Tente novamente.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Não foi possível carregar o universo. Tente novamente em instantes.": [
+    "lib\\knowledge\\server.ts"
+  ],
+  "Não foi possível carregar seu universo": [
+    "app\\(knowledge)\\universo\\page.tsx"
+  ],
+  "Não foi possível enviar agora.": [
+    "app\\esqueci-senha\\page.tsx",
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Não foi possível executar.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Não foi possível guardar a alteração do plano. Tente novamente.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Não foi possível iniciar o SQL local. Recarregue a página e tente novamente.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Não foi possível ler a partida salva. Ela não será sobrescrita. Exporte esta sessão antes de sair ou importe um arquivo válido.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Não foi possível salvar": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Não foi possível salvar a senha. Tente de novo.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Nível inválido.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "O CPF do cliente é": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "O CSV precisa conter pelo menos um registro.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "O SQL agrega os registros, então uma linha individual deixa de existir aqui. Se a junção multiplicou, a soma vem inflada.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "O ano fecha, o mês não": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O banco recusou a consulta": [
+    "lib\\arena\\motor.ts"
+  ],
+  "O cabeçalho da venda.": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "O caixa interrompeu a operação.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "O caixa não cobre compras e custos deste ciclo. Reduza a compra, divulgação ou equipe.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "O calendário acompanha a sua tabela de fatos. Os anos acima valem para a lista de feriados.": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "O calendário vai de 1º de janeiro do primeiro ano a 31 de dezembro do último.": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "O catálogo.": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "O comércio local ganha visibilidade: a procura sobe 12%.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "O contexto faz a diferença": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "O controller diz que o faturamento do painel está menor que o do sistema. Ele mandou o extrato do ERP para você comparar.": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O editor está vazio.": [
+    "lib\\arena\\motor.ts"
+  ],
+  "O extrato do sistema trouxe o mesmo lançamento mais de uma vez.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O faturamento do mês veio inflado. Elimine a multiplicação de pedidos e mantenha apenas vendas aprovadas.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "O faturamento fantasma": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "O financeiro reclamou: o painel de vendas mostra mais faturamento do que o realizado do mês. A contabilidade mandou o extrato oficial.": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O limite do arquivo é 200 KB.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "O mês imediatamente anterior ao contexto.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "O navegador nao permitiu salvar. Use Exportar projetos.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "O navegador não permitiu salvar. Use Exportar partida para guardar seu progresso.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "O painel está contando lançamento que o sistema origem não considera, como cancelado.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O painel está fechando abaixo do sistema e ninguém sabe dizer por quê. As devoluções do mês foram altas.": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O painel está maior que o realizado": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O painel está menor que o ERP": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O painel fica menor e a diferença se concentra em uma filial ou produto que sumiu do painel. É junção interna comendo linha sem avisar.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O painel fica menor exatamente pelo valor das devoluções do período. Confira se o abatimento já não vinha pronto da origem.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O painel perdeu lançamentos porque a chave não existia na tabela de dimensão.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O pedido já havia sido removido no filtro.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "O prazo deste certificado terminou": [
+    "app\\presenca\\page.tsx"
+  ],
+  "O que foi vendido em cada pedido.": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "O relacionamento entre": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "O salvamento foi interrompido. Tente novamente; a mesma versão não será duplicada.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "O total da origem fica maior, e a diferença some quando você conta os ids distintos. Procure id repetido: é a primeira coisa a conferir sempre.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O total do ano fecha certinho, mas o fechamento de um mês específico está errado, e o seguinte também.": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O total do ano fecha, mas o mês não. Quebre por mês: a diferença aparece negativa em um mês e positiva no seguinte, com o mesmo valor.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O total do período fecha. De quanto é o valor que trocou de mês?": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "O valor devolvido foi abatido na origem e abatido de novo no painel.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "O valor está certo, a causa não": [
+    "lib\\conciliacao\\motor.ts"
+  ],
+  "Onde fica meu certificado?": [
+    "components\\AssistantButton.tsx"
+  ],
+  "Ordem do mês": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Organizar dimensões, fatos e relacionamentos para análises consistentes.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Organizar trabalho iterativo com inspeção e adaptação.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Os 30 dias terminaram.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Os custos e despesas superaram as receitas.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Os pesos das competências de cada curso devem somar 100%.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Os pesos das dimensões devem somar 100.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Os pré-requisitos desta competência foram atendidos.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Os treinamentos são vendidos só para assinantes, com preço especial.": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Partida ativa não encontrada.": [
+    "lib\\decision-lab\\storage.ts"
+  ],
+  "Partidas importadas e verificadas.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Partidas salvas neste navegador, nesta conta.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Pausar evolução": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Pausar reprodução": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Pedaço de uma letra acentuada: o modelo trabalha em bytes, não em letras": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "Pedidos de origem": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Pedidos sem cliente são preservados com campos vazios.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Plano atualizado nesta sessão. Salve o diagnóstico ou exporte para conservar sua revisão.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Plano mensal · cartão": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Plano salvo. Os ajustes serão confirmados por uma nova análise.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Posição e tamanho": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Posição inválida.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Power BI do Zero ao Avançado": [
+    "app\\certificado\\modelo\\page.tsx"
+  ],
+  "Power BI e DAX": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "Preencha o e-mail para receber um código.": [
+    "app\\redefinir-senha\\page.tsx"
+  ],
+  "Preencha os textos dentro do limite permitido.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Preencher com IA": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Preparando a análise local": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Pressão nos fornecedores": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Preço e divulgação": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Preço médio": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Preços maiores aumentam a receita por unidade, mas reduzem a procura.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Primeira estratégia": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Proclamação da República": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Procure a função que avalia uma expressão após alterar os filtros.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Produto": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Profissionais de dados": [
+    "components\\assinatura\\MenuImersivo.tsx"
+  ],
+  "Projeto ativo não encontrado.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Projeto criado.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Projeto excluido.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Projeto inválido ou repetido.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Projeto inválido.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Projetos importados.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Prontinho! Confira os campos e salve.": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Pronto para começar": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Pré-requisito inexistente.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Pré-requisito muito profundo.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Próxima live": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Próxima mentoria": [
+    "app\\conta\\agenda\\page.tsx"
+  ],
+  "Próximas Mentorias": [
+    "components\\mentorias\\ProximasMentorias.tsx"
+  ],
+  "Publicar na comunidade": [
+    "components\\editor\\PublishModal.tsx"
+  ],
+  "Publique seu visual, veja os melhores e reaproveite o que a comunidade criou.": [
+    "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Páscoa": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Qualidade fora do intervalo.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Quarta-feira de Cinzas": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Quase. Sei exatamente onde você tropeçou": [
+    "lib\\arena\\motor.ts"
+  ],
+  "Quebre por status. A diferença vai aparecer inteira em um status que só existe de um lado. É o erro mais comum de relatório de vendas.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Quem compra acima da média": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Quem compra. Nem todo cliente tem pedido.": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "Quinta-Feira, 11 De Setembro": [
+    "app\\conta\\page.tsx"
+  ],
+  "RELATÓRIO E MODELO": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "RELATÓRIO FINAL": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "RELATÓRIO PARCIAL": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Receita aplicada. Os dados nao sao salvos: importe seu CSV ou use o caso de exemplo.": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Receita mês a mês": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Receita por categoria": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Receitas de cozinha": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "Registrado no universo": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Registrar no meu universo": [
+    "components\\dataflow\\DataFlowLab.tsx",
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Registro duplicado na origem": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Relatório da estratégia": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Relação inválida.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Remover do plano": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Remover todos os elementos desta página?": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Renomeie a coluna __origem para rastrear.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "Renova todo mês. Cancele quando quiser.": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Repetidor de sinal": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "Reproduzir execução": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Reproduzir minha evolução": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Reprodução pausada": [
+    "app\\aprender\\[slug]\\ProtectedPlayer.tsx"
+  ],
+  "Resultado acumulado": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Revise os valores da decisão.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Revisão aprovada": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Ribeirão Preto": [
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "Rótulo: valor": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "SELECT regiao, COUNT(*) AS pedidos, ROUND(SUM(valor), 2) AS faturamento FROM fluxo GROUP BY regiao ORDER BY faturamento DESC": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "SEU HISTÓRICO DE APRENDIZAGEM": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Salvamento indisponível": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Salvar como template": [
+    "components\\editor\\TemplateModal.tsx"
+  ],
+  "Salvar diagnóstico": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Satisfação dos clientes": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Saída da etapa": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Se um cliente sem pedido some da sua lista, a junção está cortando ele. E cuidado com o que você conta: contar linha não é a mesma coisa que contar pedido.": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Se você agrupar só pelo número do mês, janeiro de um ano cai em cima de janeiro do outro.": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Seguiu como uma linha única.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "Selecione chaves válidas para conectar pedidos e clientes.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Selecione um elemento para localizar seus achados. O mapa mostra a estrutura, não os gráficos reais.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Selecione uma estação para inspecionar": [
+    "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Selecione uma área existente.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Sem evidências": [
+    "lib\\knowledge\\engine.ts"
+  ],
+  "Sem validação": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Semana de maior procura": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Semente invalida na partida.": [
+    "lib\\decision-lab\\storage.ts"
+  ],
+  "Seu caminho de aprendizagem": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Seu material está pronto para download abaixo.": [
+    "app\\materiais\\[slug]\\MaterialView.tsx"
+  ],
+  "Seu navegador não conseguiu iniciar a análise. Recarregue a página e tente novamente.": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Seu universo está pronto para receber as primeiras evidências de aprendizagem.": [
+    "components\\knowledge\\ProfilePreview.tsx"
+  ],
+  "Seu universo está sendo preparado": [
+    "app\\(knowledge)\\universo\\page.tsx"
+  ],
+  "Seus dados acadêmicos · Histórico importado identificado nas evidências · Mudanças de configuração são versionadas.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Sexta-feira Santa": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "Simulação educacional com regras fixas. Os resultados não constituem uma previsão de negócio real.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Soma corrida, sem reiniciar no ano.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Soma do início do ano até a data em contexto.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Soma do início do mês até a data em contexto.": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Some os itens primeiro e só depois desconte. E veja o que acontece quando você subtrai um valor que está vazio.": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Status": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Sua assinatura dá desconto: cada treinamento sai pelo preço de assinante, pago uma vez só.": [
+    "app\\conta\\page.tsx"
+  ],
+  "Sua assinatura não está ativa no momento.": [
+    "app\\conta\\page.tsx"
+  ],
+  "Sua entrega está na fila de correção. A gente te avisa por e-mail assim que revisar.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Sua estratégia está em construção.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Suas primeiras evidências aparecem conforme você avança nas aulas.": [
+    "app\\conta\\page.tsx"
+  ],
+  "Sumiu na junção.": [
+    "lib\\dataflow\\trace.ts"
+  ],
+  "Suporte de monitor": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "São 25 perguntas rápidas. Servem só para dar um ponto de partida ao seu mapa. Você responde uma vez, então faça com calma.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "São Paulo": [
+    "lib\\arena\\gerador.ts",
+    "lib\\conciliacao\\gerador.ts"
+  ],
+  "Só os aprovados": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "Tamanho do card": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Teclado mecânico": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "Tente atualizar a página em instantes. Se o problema continuar, entre em contato com o suporte.": [
+    "app\\(knowledge)\\universo\\page.tsx"
+  ],
+  "Texto de exemplo": [
+    "components\\editor\\Toolbox.tsx"
+  ],
+  "Texto do botão": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Tipo de evidência inválido.": [
+    "lib\\knowledge\\practical.ts"
+  ],
+  "Tipografia do tema": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Toda a procura foi atendida. A satisfação ganhou 4 pontos, antes do ajuste por preço.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Todos os pedidos mantidos, inclusive os cancelados.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Top 3 de cada categoria": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Traduzir objetivos em um plano executável.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Transformar dados em relatórios claros e decisões fundamentadas.": [
+    "lib\\knowledge\\demo.ts"
+  ],
+  "Transformar dados, Editor avançado": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "Treinamentos da Academy": [
+    "app\\conta\\page.tsx"
+  ],
+  "Treinamentos são vendidos só para assinantes, com preço especial.": [
+    "app\\conta\\page.tsx",
+    "app\\cursos\\[slug]\\page.tsx"
+  ],
+  "Tudo pronto para começar.": [
+    "app\\conta\\page.tsx"
+  ],
+  "Título e cores": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Um cliente aparece duas vezes na tabela de clientes. Veja a etapa 02.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "Um clique e você copia a medida DAX para colar no Power BI. Sem escrever código.": [
+    "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Um concorrente lançou descontos. A procura pela sua loja cai 12% neste ciclo.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Um evento no bairro aumenta a procura em 22%. Planeje estoque e atendimento.": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Um lado arredonda cada linha e o outro arredonda só no total.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Um lado inclui uma filial, canal ou período que o outro não inclui.": [
+    "lib\\conciliacao\\tipos.ts"
+  ],
+  "Uma entrega aguardando correção": [
+    "app\\conta\\page.tsx"
+  ],
+  "Uma nova gestão": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Uma tela visual para prototipar e construir o visual do zero, do seu jeito.": [
+    "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Uma trajetória demonstrativa. Cada etapa pede domínio evidenciado de 60/100.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Universo demonstrativo · Perfil fictício · Nenhum dado acadêmico é alterado.": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Use um CSV de até 1 MB.": [
+    "lib\\dataflow\\engine.ts"
+  ],
+  "Valor de filtro inválido.": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "Valor líquido do pedido": [
+    "lib\\arena\\familias.ts"
+  ],
+  "Valor numérico fora do intervalo permitido.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "Variação contra o ano anterior (%)": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Variação contra o mês anterior (%)": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Vitrine do bairro": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "Você ainda não tem acesso": [
+    "app\\conta\\page.tsx"
+  ],
+  "Você já pode começar": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Você já respondeu. Ele deu o ponto de partida do seu mapa.": [
+    "app\\conta\\universo\\page.tsx"
+  ],
+  "Você já tem este treinamento.": [
+    "app\\cursos\\[slug]\\page.tsx"
+  ],
+  "Você precisa das duas correções ao mesmo tempo: a chave repetida e o status.": [
+    "lib\\dataflow\\missions.ts"
+  ],
+  "Você recuperou o equilíbrio.": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Você vai para a página segura do Asaas. O acesso libera assim que o pagamento confirmar.": [
+    "app\\cursos\\[slug]\\page.tsx"
+  ],
+  "Votação encerrada.": [
+    "app\\votacao\\[slug]\\page.tsx"
+  ],
+  "Zero: sempre o campeão. Repetitivo e previsível.": [
+    "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
+  ],
+  "alguns apontam para cliente que não está na base": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "antes depois atual anterior lado a lado versus": [
+    "components\\editor\\Toolbox.tsx"
+  ],
+  "arquivo disponível": [
+    "app\\aprender\\[slug]\\Biblioteca.tsx",
+    "components\\AvisoMateriaisLiberados.tsx"
+  ],
+  "arquivos disponíveis": [
+    "app\\aprender\\[slug]\\Biblioteca.tsx",
+    "components\\AvisoMateriaisLiberados.tsx"
+  ],
+  "atingidas até agora": [
+    "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "ativo": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "até aqui": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "aumenta a receita por unidade, mas reduz": [
+    "lib\\decision-lab\\engine.ts"
+  ],
+  "canal": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "categoria": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "cidade": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "cláusulas e prazos": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "como funciona": [
+    "components\\editor\\StartModal.tsx"
+  ],
+  "concluiu com êxito o curso": [
+    "components\\CertificateView.tsx"
+  ],
+  "data": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "desconto": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "dia útil": [
+    "lib\\forja\\feriados.ts"
+  ],
+  "e passa a ser": [
+    "lib\\arena\\motor.ts"
+  ],
+  "em minutos": [
+    "app\\conta\\page.tsx"
+  ],
+  "frete": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "itens": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "linha do tempo passos etapas jornada": [
+    "components\\editor\\Toolbox.tsx"
+  ],
+  "membros do canal": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "mensagem de aluno aguarda": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "mensagem de aluno está esperando": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "mensagem nova que você ainda não viu": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "mensagens de alunos aguardam": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "mensagens de alunos estão esperando": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "mensagens novas que você ainda não viu": [
+    "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
+  ],
+  "modo de preparo": [
+    "lib\\caixapreta\\corpora.ts"
+  ],
+  "modo determinístico": [
+    "lib\\caixapreta\\modelo.ts"
+  ],
+  "moeda com duas casas": [
+    "app\\conta\\ferramentas\\forja\\Forja.tsx"
+  ],
+  "no 1º mês": [
+    "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "nome": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "novo por aqui": [
+    "app\\conta\\vitrine\\VitrineClient.tsx",
+    "app\\conta\\vitrine\\[id]\\page.tsx"
+  ],
+  "não salvo": [
+    "components\\editor\\EditorClient.tsx"
+  ],
+  "não vistas": [
+    "app\\conta\\comunidade\\[channel]\\page.tsx"
+  ],
+  "o modelo conhece esta situação": [
+    "lib\\caixapreta\\modelo.ts"
+  ],
+  "o preço praticado na venda": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "o que costuma vir depois": [
+    "lib\\caixapreta\\modelo.ts"
+  ],
+  "o que mudou changelog": [
+    "app\\conta\\ContaShell.tsx"
+  ],
+  "participou da transmissão ao vivo": [
+    "app\\certificado\\[code]\\page.tsx"
+  ],
+  "pedidos": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "preco": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "preço de tabela, não o vendido": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "produtos": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "quando usar": [
+    "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
+  ],
+  "quantidade": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "relatório e modelo": [
+    "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "segmento": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "sem filtro": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "sem junção": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "sem limpeza": [
+    "lib\\dataflow\\storage.ts"
+  ],
+  "status": [
+    "lib\\arena\\gerador.ts"
+  ],
+  "use no checkout": [
+    "components\\CupomContagem.tsx"
+  ],
+  "vender na página de matrícula": [
+    "components\\LaunchBanner.tsx"
+  ],
+  "· Histórico importado": [
+    "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "À venda": [
+    "app\\conta\\cursos\\page.tsx"
+  ],
+  "Área duplicada.": [
+    "lib\\knowledge\\catalog.ts"
+  ],
+  "É dia útil": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "É exatamente assim que sai no certificado.": [
+    "app\\presenca\\page.tsx"
+  ],
+  "É feriado": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "É fim de semana": [
+    "lib\\forja\\gerar.ts"
+  ],
+  "Ícone do pictograma": [
+    "components\\editor\\Properties.tsx"
+  ],
+  "Últimos cinco dias. Compras normais chegarão depois da missão; cuide do caixa.": [
+    "lib\\decision-lab\\engine.ts"
+  ]
+}

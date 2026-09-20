@@ -1,3 +1,4 @@
+import { comTraducao, listaTraduzida, traducoesDe } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -19,8 +20,9 @@ function data(iso: string | null) {
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const pub = createPublicClient();
-  const { data: p } = await pub.from("posts").select("title, excerpt, cover_url").eq("slug", params.slug).eq("published", true).maybeSingle();
-  if (!p) return { title: "Artigo · DriveData Academy" };
+  const { data: bruto } = await pub.from("posts").select("id, title, excerpt, cover_url").eq("slug", params.slug).eq("published", true).maybeSingle();
+  if (!bruto) return { title: "Artigo · DriveData Academy" };
+  const p = comTraducao(bruto as any, await traducoesDe("posts", [(bruto as any).id]));
   return {
     title: `${p.title} · DriveData Academy`,
     description: p.excerpt || undefined,
@@ -30,16 +32,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function ArtigoPage({ params }: { params: { slug: string } }) {
   const pub = createPublicClient();
-  const { data: post } = await pub.from("posts").select(CAMPOS).eq("slug", params.slug).eq("published", true).maybeSingle();
-  if (!post) notFound();
+  const { data: postRaw } = await pub.from("posts").select(CAMPOS).eq("slug", params.slug).eq("published", true).maybeSingle();
+  if (!postRaw) notFound();
+  const post = comTraducao(postRaw as any, await traducoesDe("posts", [(postRaw as any).id]));
 
-  const { data: outros } = await pub
+  const { data: outrosRaw } = await pub
     .from("posts")
     .select("id, slug, title, category, cover_url, published_at")
     .eq("published", true)
     .neq("id", post.id)
     .order("published_at", { ascending: false })
     .limit(3);
+  const outros = await listaTraduzida("posts", (outrosRaw ?? []) as any[]);
 
   const html = markdownParaHtml(post.content || "");
   const minutos = minutosDeLeitura(post.content || "");

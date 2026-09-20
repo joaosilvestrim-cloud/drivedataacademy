@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { notFound, redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity, loadProfiles, displayName, seloDaCasa } from "@/lib/community";
@@ -16,7 +17,10 @@ export default async function ChannelChat({ params }: { params: { channel: strin
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/conta");
 
-  const { data: channels } = await admin.from("forum_channels").select("id, slug, name, description").order("position");
+  const { data: canaisRaw } = await admin.from("forum_channels").select("id, slug, name, description").order("position");
+  // O nome do canal é texto do time, não do código: sai traduzido quando
+  // alguém traduziu no /admin/traducoes, e em português enquanto não.
+  const channels = await listaTraduzida("forum_channels", (canaisRaw ?? []) as any[]);
   const channel = (channels ?? []).find((c: any) => c.slug === params.channel);
   if (!channel) notFound();
 

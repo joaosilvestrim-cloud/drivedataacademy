@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import Background from "@/components/Background";
@@ -25,7 +26,9 @@ export default async function BlogPage() {
     .eq("published", true)
     .order("published_at", { ascending: false });
 
-  const lista = posts ?? [];
+  // O artigo é texto do time, então a tradução vem do banco. Artigo sem
+  // tradução continua em português, e o blog segue funcionando.
+  const lista = await listaTraduzida("posts", (posts ?? []) as any[]);
   const [destaque, ...resto] = lista;
 
   return (

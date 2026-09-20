@@ -3,6 +3,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { IDIOMA_PADRAO, type Idioma } from "./idioma";
 import { idiomaAtual } from "./idioma-servidor";
 
+export { TRADUZIVEIS, type TabelaTraduzivel } from "./conteudo-tabelas";
+import { TRADUZIVEIS, type TabelaTraduzivel } from "./conteudo-tabelas";
+
 /* Tradução do conteúdo que mora no banco.
 
    O texto da interface está no dicionário do código, porque é fixo. Curso,
@@ -12,16 +15,6 @@ import { idiomaAtual } from "./idioma-servidor";
    Quem não tem tradução não tem linha. A tela cai no português, que é a
    fonte da verdade, em vez de mostrar campo vazio. */
 
-/** As tabelas e os campos que valem a pena traduzir. */
-export const TRADUZIVEIS = {
-  courses: ["title", "subtitle", "description", "level"],
-  course_modules: ["title"],
-  lessons: ["title", "content"],
-  live_events: ["title", "description"],
-  materials: ["title", "subtitle", "description", "cta_text"],
-} as const;
-
-export type TabelaTraduzivel = keyof typeof TRADUZIVEIS;
 
 type Linha = { registro: string; campo: string; texto: string };
 

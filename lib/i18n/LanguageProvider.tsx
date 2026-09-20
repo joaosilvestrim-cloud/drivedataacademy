@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { dict, DEFAULT_LANG, LANGS, type Lang } from "./dictionaries";
 
 type Ctx = {
@@ -24,6 +25,8 @@ export function LanguageProvider({ children, inicial }: { children: React.ReactN
   // este `inicial` chega diferente. Acertar o estado aqui, durante o render,
   // e não num efeito: assim os filhos já nascem no idioma novo, em vez de
   // aparecerem em português por um quadro.
+  const router = useRouter();
+  const [, comecar] = useTransition();
   const [inicialAnterior, setInicialAnterior] = useState(inicial);
   if (inicial && inicial !== inicialAnterior) {
     setInicialAnterior(inicial);
@@ -47,11 +50,15 @@ export function LanguageProvider({ children, inicial }: { children: React.ReactN
     setLangState(l);
     try {
       localStorage.setItem("lang", l);
-      document.cookie = `lang=${l};path=/;max-age=31536000`;
+      document.cookie = `lang=${l};path=/;max-age=31536000;samesite=lax`;
       document.documentElement.lang = l === "pt" ? "pt-BR" : l;
     } catch {
       /* noop */
     }
+    /* Metade da página é renderizada no servidor, e o servidor só descobre o
+       idioma novo na próxima requisição. Sem este refresh, quem troca para
+       inglês vê o menu virar e o miolo continuar em português. */
+    comecar(() => router.refresh());
   };
 
   return (

@@ -1,4 +1,5 @@
 import { tr } from "@/lib/i18n/traduzir-servidor";
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import Cronometro from "@/components/Cronometro";
 import CupomDestaque from "@/components/CupomDestaque";
@@ -55,7 +56,10 @@ export default async function LancamentoHoje() {
       .order("starts_at")
       .limit(10);
     const fim = (e: Evento) => new Date(e.starts_at).getTime() + (e.duration_min || 60) * 60e3;
-    eventos = (data ?? []).filter((e) => fim(e) >= Date.now()).slice(0, 6);
+    const vivos = (data ?? []).filter((e) => fim(e) >= Date.now()).slice(0, 6);
+    // Esta faixa é a primeira coisa que aparece na home, inclusive para quem
+    // chega de fora do Brasil: o título da live acompanha o idioma.
+    eventos = await listaTraduzida("live_events", vivos as any[]);
   } catch {
     eventos = [];
   }
