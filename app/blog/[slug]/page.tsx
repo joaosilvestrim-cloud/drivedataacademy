@@ -21,7 +21,7 @@ function data(iso: string | null) {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const pub = createPublicClient();
   const { data: bruto } = await pub.from("posts").select("id, title, excerpt, cover_url").eq("slug", params.slug).eq("published", true).maybeSingle();
-  if (!bruto) return { title: "Artigo · DriveData Academy" };
+  if (!bruto) return { title: `${tr("Artigo")} · DriveData Academy` };
   const p = comTraducao(bruto as any, await traducoesDe("posts", [(bruto as any).id]));
   return {
     title: `${p.title} · DriveData Academy`,

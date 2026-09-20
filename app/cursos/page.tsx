@@ -12,7 +12,7 @@ export const revalidate = 60;
 
 export function generateMetadata() {
   return {
-  title: "Assinatura · DriveData Academy",
+  title: `${tr("Assinatura")} · DriveData Academy`,
   description: tr("Lives, gravações, comunidade, ferramentas, certificados e treinamentos com preço de assinante. Tudo num lugar só."),
 };
 }

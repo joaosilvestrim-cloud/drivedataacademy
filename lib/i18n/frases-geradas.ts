@@ -1533,6 +1533,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Row rounding",
     "es": "Redondeo por fila"
   },
+  "Artigo": {
+    "en": "Article",
+    "es": "Artículo"
+  },
   "As decisões e seus efeitos estão no registro abaixo.": {
     "en": "The decisions and their effects are in the record below.",
     "es": "Las decisiones y sus efectos están en el registro abajo."
