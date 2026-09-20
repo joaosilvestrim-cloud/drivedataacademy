@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -44,7 +45,8 @@ export default async function AgendaPage() {
     );
   }
 
-  const { data: lives } = await admin.from("live_events").select("*").eq("published", true).order("starts_at");
+  const { data: livesRaw } = await admin.from("live_events").select("*").eq("published", true).order("starts_at");
+  const lives = await listaTraduzida("live_events", (livesRaw ?? []) as any[]);
   const now = Date.now();
   const endOf = (l: any) => new Date(l.starts_at).getTime() + (l.duration_min || 60) * 60000;
   const upcoming = (lives ?? []).filter((l: any) => endOf(l) >= now);

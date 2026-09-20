@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { hasFullAccess } from "@/lib/access";
 
@@ -63,9 +64,11 @@ export const proximosEventos = cache(async (): Promise<EventoFaixa[]> => {
       .order("starts_at", { ascending: true })
       .limit(8);
     const agora = Date.now();
-    return (data ?? [])
-      .filter((e: any) => Date.parse(e.starts_at) + (Number(e.duration_min) || 120) * 60_000 > agora)
-      .map((e: any) => ({ id: e.id, title: e.title, starts_at: e.starts_at, kind: e.kind }));
+    const vivos = (data ?? []).filter((e: any) => Date.parse(e.starts_at) + (Number(e.duration_min) || 120) * 60_000 > agora);
+    // A faixa fica no topo de toda tela do aluno, então o título do evento
+    // sai no idioma dela quando existe tradução.
+    const traduzidos = await listaTraduzida("live_events", vivos as any[]);
+    return traduzidos.map((e: any) => ({ id: e.id, title: e.title, starts_at: e.starts_at, kind: e.kind }));
   } catch {
     return [];
   }

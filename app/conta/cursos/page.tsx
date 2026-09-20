@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -43,7 +44,9 @@ export default async function CursosCardapio() {
   ]);
 
   const meus = new Set((matriculas ?? []).map((m: any) => m.course_id));
-  const todos = (cursos ?? []) as Curso[];
+  // Título e subtítulo saem no idioma da pessoa quando alguém traduziu no
+  // admin; o que ninguém traduziu continua em português.
+  const todos = await listaTraduzida("courses", (cursos ?? []) as Curso[]);
   const seus = todos.filter((c) => meus.has(c.id));
   const cardapio = todos.filter((c) => !meus.has(c.id));
 

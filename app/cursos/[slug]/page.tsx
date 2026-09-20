@@ -1,3 +1,4 @@
+import { listaTraduzida, comTraducao, traducoesDe } from "@/lib/i18n/conteudo";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import Background from "@/components/Background";
@@ -29,10 +30,20 @@ export default async function CoursePage({ params, searchParams }: { params: { s
 
   if (!course) notFound();
 
-  const [{ data: mods }, { data: lessons }] = await Promise.all([
+  const [{ data: modsRaw }, { data: lessonsRaw }] = await Promise.all([
     pub.from("course_modules").select("id, title").eq("course_id", course.id).order("position"),
     pub.from("lessons").select("id, module_id, title, duration, is_preview, type").eq("course_id", course.id).order("position"),
   ]);
+
+  /* Esta é a página de venda do treinamento, então é a que mais precisa da
+     tradução: quem chega em inglês decide aqui se assina. */
+  const [traduzido, mods, lessons] = await Promise.all([
+    traducoesDe("courses", [course.id]),
+    listaTraduzida("course_modules", (modsRaw ?? []) as any[]),
+    listaTraduzida("lessons", (lessonsRaw ?? []) as any[]),
+  ]);
+  Object.assign(course, comTraducao(course as any, traduzido));
+
   const modules = (mods ?? []).map((m: any) => ({ ...m, lessons: (lessons ?? []).filter((l: any) => l.module_id === m.id) }));
   const lessonCount = (lessons ?? []).length;
   // Curso feito só de aulas de materiais: é uma biblioteca de arquivos, não um curso em vídeo.

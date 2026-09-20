@@ -1,3 +1,4 @@
+import { listaTraduzida, comTraducao, traducoesDe } from "@/lib/i18n/conteudo";
 import { notFound } from "next/navigation";
 import Background from "@/components/Background";
 import { createPublicClient } from "@/lib/supabase/public";
@@ -15,12 +16,14 @@ export default async function MaterialPage({
   const supabase = createPublicClient();
   const { data: material } = await supabase
     .from("materials")
-    .select("title, slug, subtitle, description, cover_url, cta_text, ask_phone, ask_company, ask_role")
+    .select("id, title, slug, subtitle, description, cover_url, cta_text, ask_phone, ask_company, ask_role")
     .eq("slug", params.slug)
     .eq("published", true)
     .maybeSingle();
 
   if (!material) notFound();
+
+  Object.assign(material, comTraducao(material as any, await traducoesDe("materials", [(material as any).id])));
 
   const str = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v || "");
   const utm = {

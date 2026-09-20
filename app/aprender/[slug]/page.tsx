@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { demoAtual } from "@/lib/demo";
@@ -33,11 +34,20 @@ export default async function PlayerPage({
 
   if (!(await canAccessCourse(admin, user.id, course.id))) redirect(`/cursos/${params.slug}`);
 
-  const [{ data: mods }, { data: lessons }, { data: prog }] = await Promise.all([
+  const [{ data: modsRaw }, { data: lessonsRaw }, { data: prog }] = await Promise.all([
     admin.from("course_modules").select("id, title, available_at").eq("course_id", course.id).order("position"),
     admin.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, materials").eq("course_id", course.id).order("position"),
     admin.from("lesson_progress").select("lesson_id").eq("user_id", user.id).eq("course_id", course.id).eq("completed", true),
   ]);
+
+  /* O vídeo continua falado em português; o que troca de idioma aqui é o
+     texto ao redor: nome do curso, do módulo e da aula, e a aula escrita. */
+  const [cursoTraduzido, mods, lessons] = await Promise.all([
+    listaTraduzida("courses", [course as any]).then((l) => l[0]),
+    listaTraduzida("course_modules", (modsRaw ?? []) as any[]),
+    listaTraduzida("lessons", (lessonsRaw ?? []) as any[]),
+  ]);
+  course.title = cursoTraduzido.title;
   const { data: quiz } = await admin.from("quizzes").select("id, title").eq("course_id", course.id).eq("published", true).maybeSingle();
   const { data: certs } = await admin.from("certificates").select("code, module_id").eq("user_id", user.id).eq("course_id", course.id);
   const { data: npsRow } = await admin.from("course_nps").select("score").eq("course_id", course.id).eq("user_id", user.id).maybeSingle();

@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -34,7 +35,7 @@ export default async function GravacoesPage() {
     .not("recording_url", "is", null)
     .order("starts_at", { ascending: false });
 
-  const gravacoes = (lives ?? []).filter((l) => (l.recording_url || "").trim());
+  const gravacoes = await listaTraduzida("live_events", (lives ?? []).filter((l) => (l.recording_url || "").trim()));
 
   return (
     <div>

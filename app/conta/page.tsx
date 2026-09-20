@@ -1,3 +1,4 @@
+import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
 import { ArrowRight, ChevronRight } from "lucide-react";
@@ -137,7 +138,7 @@ export default async function ContaHome() {
   const doneCounts: Record<string, number> = {};
   if (cursosMatriculados) {
     const [{ data: cs }, { data: ls }, { data: pr }] = cursosMatriculados;
-    courses = cs ?? [];
+    courses = await listaTraduzida("courses", (cs ?? []) as any[]);
     for (const l of ls ?? []) lessonTotals[l.course_id] = (lessonTotals[l.course_id] || 0) + 1;
     for (const p of pr ?? []) doneCounts[p.course_id] = (doneCounts[p.course_id] || 0) + 1;
   }
@@ -155,7 +156,7 @@ export default async function ContaHome() {
   const emAndamento = withPct.filter((c) => c.pct > 0 && c.pct < 100);
   const retomar = emAndamento[0] || withPct.find((c) => c.pct === 0) || null;
   const enrolledSet = new Set(courseIds);
-  const catalogo = (catalogData ?? []).filter((c: any) => !enrolledSet.has(c.id));
+  const catalogo = await listaTraduzida("courses", (catalogData ?? []).filter((c: any) => !enrolledSet.has(c.id)) as any[]);
 
   // Uma ação principal, decidida em cascata pelo estado real do aluno.
   const passo = !full
