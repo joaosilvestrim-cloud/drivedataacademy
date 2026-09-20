@@ -70,9 +70,7 @@ const GROUPS: { title: string | null; items: ItemMenu[] }[] = [
   {
     title: "Praticar",
     items: [
-      { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool", busca: "raio-x forja arena caixa-preta drivecanvas" },
-      { label: "Treino de DAX e Excel", href: "/conta/ferramentas/dojo", icon: "challenge", busca: "dojo exercicio formula" },
-      { label: "Biblioteca", href: "/conta/biblioteca", icon: "biblioteca", busca: "dax sql power query oracle protheus codigo" },
+      { label: "Ferramentas", href: "/conta/ferramentas", icon: "tool", busca: "raio-x forja arena caixa-preta drivecanvas treino dojo biblioteca universo" },
       { label: "Novidades", href: "/conta/novidades", icon: "challenge", busca: "o que mudou changelog" },
     ],
   },
@@ -100,10 +98,25 @@ const GROUPS: { title: string | null; items: ItemMenu[] }[] = [
   },
 ];
 
-/** A mesma lista, achatada, para a busca rápida do Ctrl+K. */
-const DESTINOS: Destino[] = GROUPS.flatMap((g) =>
-  g.items.filter((i) => !i.emBreve).map((i) => ({ label: i.label, href: i.href, grupo: g.title ?? "Início", busca: i.busca }))
-);
+/* Ferramenta não ocupa linha no menu, mas continua a uma tecla de distância:
+   a busca rápida conhece cada uma pelo nome e pelo apelido. */
+const FERRAMENTAS_NA_BUSCA: Destino[] = [
+  { label: "Biblioteca de referência", href: "/conta/ferramentas/biblioteca", grupo: "Ferramentas", busca: "dax sql power query oracle protheus codigo verbete" },
+  { label: "Treino de DAX e Excel", href: "/conta/ferramentas/dojo", grupo: "Ferramentas", busca: "dojo exercicio formula planilha" },
+  { label: "Raio-X do Dashboard", href: "/conta/ferramentas/raio-x", grupo: "Ferramentas", busca: "pbix revisao relatorio" },
+  { label: "Arena SQL", href: "/conta/ferramentas/arena", grupo: "Ferramentas", busca: "sql consulta desafio" },
+  { label: "Forja DAX", href: "/conta/ferramentas/forja", grupo: "Ferramentas", busca: "calendario medidas tempo" },
+  { label: "O número não bate", href: "/conta/ferramentas/conciliacao", grupo: "Ferramentas", busca: "conciliacao divergencia" },
+  { label: "Caixa-Preta", href: "/conta/ferramentas/caixa-preta", grupo: "Ferramentas", busca: "ia modelo token" },
+  { label: "DriveCanvas", href: "/ferramenta", grupo: "Ferramentas", busca: "visuais html svg cards" },
+  { label: "Knowledge Universe 4D", href: "/conta/universo", grupo: "Ferramentas", busca: "universo competencias 3d" },
+];
+
+/** A mesma lista, achatada, mais as ferramentas, para a busca rápida do Ctrl+K. */
+const DESTINOS: Destino[] = [
+  ...GROUPS.flatMap((g) => g.items.filter((i) => !i.emBreve).map((i) => ({ label: i.label, href: i.href, grupo: g.title ?? "Início", busca: i.busca }))),
+  ...FERRAMENTAS_NA_BUSCA,
+];
 
 type Aviso = { n: number; urgente: boolean };
 

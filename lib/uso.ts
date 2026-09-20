@@ -16,7 +16,7 @@ export const FERRAMENTAS: { chave: string; nome: string; prefixos: string[] }[] 
   { chave: "arena", nome: "Arena SQL", prefixos: ["/conta/ferramentas/arena"] },
   { chave: "forja", nome: "Forja DAX", prefixos: ["/conta/ferramentas/forja"] },
   { chave: "dojo", nome: "Treino de DAX e Excel", prefixos: ["/conta/ferramentas/dojo"] },
-  { chave: "biblioteca", nome: "Biblioteca de referência", prefixos: ["/conta/biblioteca"] },
+  { chave: "biblioteca", nome: "Biblioteca de referência", prefixos: ["/conta/ferramentas/biblioteca", "/conta/biblioteca"] },
   { chave: "portfolio", nome: "Portfólio dos alunos", prefixos: ["/conta/portfolio"] },
   { chave: "dataflow-lab", nome: "DataFlow Lab", prefixos: ["/dataflow-lab"] },
   { chave: "decision-lab", nome: "Decision Lab", prefixos: ["/decision-lab"] },

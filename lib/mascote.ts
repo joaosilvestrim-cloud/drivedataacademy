@@ -17,7 +17,8 @@ export const DICAS: Extract<Balao, { tipo: "dica" }>[] = [
   { tipo: "dica", titulo: "Calendário pronto em 1 minuto", texto: "A Forja DAX gera a tabela de datas com ano fiscal e feriados, já com o nome das suas tabelas.", href: "/conta/ferramentas/forja", acao: "Forjar calendário" },
   { tipo: "dica", titulo: "Treine SQL sem medo", texto: "Na Arena SQL a base é gerada só para você, e quando você erra eu digo exatamente onde.", href: "/conta/ferramentas/arena", acao: "Entrar na Arena" },
   { tipo: "dica", titulo: "O número não bate?", texto: "Tem uma ferramenta inteira para treinar a cena mais comum da profissão: achar por que o painel diverge.", href: "/conta/ferramentas/conciliacao", acao: "Pegar um chamado" },
-  { tipo: "dica", titulo: "Esqueceu a sintaxe?", texto: "A Biblioteca tem 62 padrões de DAX, SQL e Power Query com a armadilha de cada um. Aperte / para buscar.", href: "/conta/biblioteca", acao: "Abrir a Biblioteca" },
+  { tipo: "dica", titulo: "Esqueceu a sintaxe?", texto: "A Biblioteca tem 96 padrões de DAX, SQL, Power Query, Oracle e Protheus, cada um com a armadilha que o pessoal cai. Aperte / para buscar.", href: "/conta/ferramentas/biblioteca", acao: "Abrir a Biblioteca" },
+  { tipo: "dica", titulo: "Treine a fórmula, não só a teoria", texto: "No treino de DAX e Excel você responde com o número e com a fórmula, sobre uma base que é só sua. A correção mostra o atalho que quebra depois.", href: "/conta/ferramentas/dojo", acao: "Começar o treino" },
   { tipo: "dica", titulo: "Como a IA escolhe cada palavra", texto: "Na Caixa-Preta você monta um modelo de linguagem no navegador e vê a probabilidade de cada token.", href: "/conta/ferramentas/caixa-preta", acao: "Abrir a caixa" },
   { tipo: "dica", titulo: "Perdeu a live?", texto: "Toda gravação fica em Gravações, para assistir quando der. Está incluído na assinatura.", href: "/conta/gravacoes", acao: "Ver gravações" },
   { tipo: "dica", titulo: "Próximo encontro", texto: "A agenda tem as lives e mentorias dos próximos meses. Algumas emitem certificado de participação.", href: "/conta/agenda", acao: "Abrir a agenda" },
@@ -27,7 +28,7 @@ export const DICAS: Extract<Balao, { tipo: "dica" }>[] = [
   { tipo: "dica", titulo: "Certificado na mão", texto: "Terminou um curso? O certificado aparece na hora, com código para qualquer um validar.", href: "/conta/certificados", acao: "Meus certificados" },
   { tipo: "dica", titulo: "Tem ideia pra Academy?", texto: "Sugestões vão direto para o time, e as mais votadas entram no roadmap.", href: "/conta/sugestoes", acao: "Mandar sugestão" },
   // Contextuais: só aparecem na tela onde fazem sentido.
-  { tipo: "dica", titulo: "Atalho da Biblioteca", texto: "Use as setas para andar na lista e o botão Copiar para levar o código direto para o Power BI.", href: "/conta/biblioteca", acao: "Entendi", so: "/conta/biblioteca" },
+  { tipo: "dica", titulo: "Atalho da Biblioteca", texto: "Use as setas para andar na lista e o botão Copiar para levar o código direto para o Power BI.", href: "/conta/ferramentas/biblioteca", acao: "Entendi", so: "/conta/ferramentas/biblioteca" },
   { tipo: "dica", titulo: "Dica de ranking", texto: "Mensagem conta ponto até 5 por dia. Depois disso, o que sobe é ajudar: reação e solução.", href: "/conta/ranking", acao: "Ver ranking", so: "/conta/comunidade" },
 ];
 
