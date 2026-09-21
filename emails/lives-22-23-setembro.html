@@ -63,7 +63,17 @@
                 </tr>
                 <tr>
                   <td style="padding:20px 22px 22px;">
-                    <p style="margin:0 0 8px;font-family:'Courier New',monospace;font-size:12px;letter-spacing:.1em;color:#15c47e;">TERÇA · 22/09 · 19:30 · 1H30</p>
+                    <!-- Selo de urgência: esta é a aula de amanhã. Em tabela,
+                         e não em span, porque o Outlook não pinta fundo de
+                         span. Sai do e-mail depois que a aula acontecer. -->
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 12px;">
+                      <tr>
+                        <td style="background:#15c47e;border-radius:8px;padding:6px 12px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;color:#04140d;text-transform:uppercase;">
+                          É amanhã às 19h30
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin:0 0 8px;font-family:'Courier New',monospace;font-size:12px;letter-spacing:.1em;color:#15c47e;">TERÇA · 22/09 · 1H30</p>
                     <p style="margin:0 0 10px;color:#ffffff;font-size:20px;line-height:1.25;font-weight:700;">Códigos HTML no Power BI</p>
                     <p style="margin:0 0 18px;color:#cbd5e1;font-size:14px;line-height:1.65;">
                       Aprenda a encontrar, adaptar e usar códigos da internet nos seus dashboards:
