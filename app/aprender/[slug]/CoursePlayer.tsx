@@ -66,51 +66,114 @@ export default function CoursePlayer({
   const comments = commentsByLesson[activeId] || [];
   const materials = current?.materials || [];
 
+  /* Tira o "01 - " do titulo. O passo ja esta numerado no marcador ao lado, e
+     repetir o numero rouba a largura do nome da aula, que e o que o aluno le.
+     So corta quando o padrao existe, entao curso que nao usa essa convencao
+     fica intacto. */
+  const semNumero = (titulo: string) => titulo.replace(/^\s*\d{1,2}\s*[-–—]\s*/, "");
+
+  const feitas = flatIds.filter((id) => done.has(id)).length;
+  const pct = flatIds.length ? Math.round((feitas / flatIds.length) * 100) : 0;
+
   const Sidebar = useMemo(() => (
-    <div className="rounded-2xl border border-white/8 bg-white/[0.02]">
+    <div className="overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]">
+      {/* Onde o aluno esta no curso inteiro. Antes isso so existia como um
+          "0/11" miudo dentro de cada modulo, e nao somava o curso. */}
+      <div className="border-b border-white/5 px-4 py-4">
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="text-sm font-semibold text-white">{tr("Seu progresso")}</p>
+          <p className="font-mono text-xs tabular-nums text-slate-400">
+            <span className="text-brand-green">{feitas}</span>/{flatIds.length}
+          </p>
+        </div>
+        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-white/8">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-brand-green to-brand-blue transition-[width] duration-500"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      </div>
+
       {modules.map((m) => {
         const total = m.lessons.length;
         const completed = m.lessons.filter((l) => done.has(l.id)).length;
         return (
           <div key={m.id} className="border-b border-white/5 last:border-0">
-            <div className="flex items-center justify-between gap-2 px-4 pt-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{m.title}</p>
+            <div className="flex items-center justify-between gap-2 px-4 pb-1 pt-4">
+              <p className="min-w-0 truncate text-sm font-semibold text-white">{m.title}</p>
               {m.locked ? (
                 <span className="inline-flex shrink-0 items-center gap-1 text-[0.7rem] text-amber-300/80">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M6 10V8a6 6 0 1112 0v2M5 10h14v10H5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 10V8a6 6 0 1112 0v2M5 10h14v10H5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   {m.releaseLabel}
                 </span>
               ) : (
-                <span className="shrink-0 text-[0.7rem] text-slate-500">{completed}/{total}</span>
+                <span className="shrink-0 font-mono text-[0.7rem] tabular-nums text-slate-500">{completed}/{total}</span>
               )}
             </div>
-            <ul className="p-2">
+            <ul className="px-2 pb-2">
               {m.lessons.map((l, li) => {
                 const active = l.id === activeId;
                 const isDone = done.has(l.id);
+                const ultima = li === m.lessons.length - 1;
+                /* O trilho liga um passo ao outro. Curso e sequencia, e a lista
+                   nao mostrava isso: eram onze linhas soltas. Verde no trecho
+                   ja vencido, apagado no que falta. */
+                const trilho = !ultima ? (
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute left-6 top-[2.125rem] -bottom-2.5 w-px -translate-x-1/2 ${isDone ? "bg-brand-green/35" : "bg-white/10"}`}
+                  />
+                ) : null;
+
                 if (m.locked) {
                   return (
-                    <li key={l.id}>
-                      <div className="flex cursor-not-allowed items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-slate-500">
-                        <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-white/15 text-slate-600">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M6 10V8a6 6 0 1112 0v2M5 10h14v10H5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    <li key={l.id} className="relative">
+                      {trilho}
+                      <div className="flex cursor-not-allowed gap-3 rounded-lg py-2.5 pl-3 pr-2.5 text-sm text-slate-500">
+                        <span className="relative z-10 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/12 bg-ink-900 text-slate-600">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 10V8a6 6 0 1112 0v2M5 10h14v10H5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         </span>
-                        <span className="flex-1 truncate">{l.title}</span>
+                        <span className="min-w-0 flex-1 leading-snug">{semNumero(l.title)}</span>
                       </div>
                     </li>
                   );
                 }
                 return (
-                  <li key={l.id}>
+                  <li key={l.id} className="relative">
+                    {trilho}
                     <button
                       onClick={() => select(l.id)}
-                      className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm transition-colors ${active ? "bg-white/10 font-medium text-white" : "text-slate-300 hover:bg-white/5"}`}
+                      aria-current={active ? "true" : undefined}
+                      className={`relative flex w-full gap-3 rounded-lg py-2.5 pl-3 pr-2.5 text-left transition-colors ${active ? "bg-white/[0.07]" : "hover:bg-white/[0.04]"}`}
                     >
-                      <span className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border text-[0.65rem] ${isDone ? "border-brand-green bg-brand-green text-ink-900" : active ? "border-brand-green/60 text-brand-green" : "border-white/20 text-slate-500"}`}>
-                        {isDone ? <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg> : li + 1}
+                      {/* Marca da aula aberta: uma barra na borda, nao um
+                          brilho. O olho acha na hora e nada pisca. */}
+                      {active ? <span aria-hidden="true" className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-brand-green" /> : null}
+                      <span
+                        className={`relative z-10 grid h-6 w-6 shrink-0 place-items-center rounded-full border text-[0.7rem] font-semibold tabular-nums transition-colors ${
+                          isDone
+                            ? "border-brand-green bg-brand-green text-ink-900"
+                            : active
+                              ? "border-brand-green bg-ink-900 text-brand-green"
+                              : "border-white/15 bg-ink-900 text-slate-500"
+                        }`}
+                      >
+                        {isDone ? (
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        ) : (
+                          li + 1
+                        )}
                       </span>
-                      <span className="flex-1 truncate">{l.title}</span>
-                      {l.duration && <span className="shrink-0 text-xs text-slate-500">{l.duration}</span>}
+                      <span className="min-w-0 flex-1">
+                        {/* Duas linhas em vez de cortar no meio: "Megaprojetos
+                            que eu vivi Simandou & S11D" perdia o fim da frase. */}
+                        <span className={`block text-sm leading-snug ${active ? "font-medium text-white" : isDone ? "text-slate-400" : "text-slate-300"}`}>
+                          {semNumero(l.title)}
+                        </span>
+                        {l.duration ? (
+                          <span className="mt-1 block font-mono text-[0.7rem] tabular-nums text-slate-500">{l.duration}</span>
+                        ) : null}
+                      </span>
                     </button>
                   </li>
                 );
@@ -121,14 +184,16 @@ export default function CoursePlayer({
       })}
       {quiz && (
         <div className="border-t border-white/5 p-2">
-          <Link href={`/aprender/${slug}/avaliacao`} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-brand-green hover:bg-white/5">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            {quiz.title}
+          <Link href={`/aprender/${slug}/avaliacao`} className="flex items-center gap-3 rounded-lg py-2.5 pl-3 pr-2.5 text-sm font-medium text-brand-green transition-colors hover:bg-white/[0.04]">
+            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-brand-green/40">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </span>
+            <span className="min-w-0 flex-1 leading-snug">{quiz.title}</span>
           </Link>
         </div>
       )}
     </div>
-  ), [modules, done, activeId, quiz, slug]);
+  ), [modules, done, activeId, quiz, slug, flatIds, feitas, pct, tr]);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
