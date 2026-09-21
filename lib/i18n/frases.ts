@@ -17,6 +17,13 @@ type Par = { en: string; es: string };
 /* Correções manuais: tudo que a máquina traduziu de um jeito que a gente não
    usaria. Vence o arquivo gerado. */
 const CORRECOES: Record<string, Partial<Par>> = {
+  // Dica embaixo do player. "Legendas" e "engrenagem" precisam bater com o
+  // que o menu do Panda escreve em cada idioma, senão o aluno procura um
+  // botão que não existe com esse nome.
+  "Esta aula tem legenda. No player, clique na engrenagem, abra Legendas e escolha o idioma.": {
+    en: "This lesson has subtitles. In the player, click the gear, open Subtitles and pick your language.",
+    es: "Esta clase tiene subtítulos. En el reproductor, haz clic en el engranaje, abre Subtítulos y elige tu idioma.",
+  },
   "Ferramentas": { en: "Tools", es: "Herramientas" },
   "Gravações": { en: "Recordings", es: "Grabaciones" },
   "Vitrine": { en: "Directory", es: "Directorio" },

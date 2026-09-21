@@ -37,7 +37,7 @@ export default async function PlayerPage({
 
   const [{ data: modsRaw }, { data: lessonsRaw }, { data: prog }] = await Promise.all([
     admin.from("course_modules").select("id, title, available_at").eq("course_id", course.id).order("position"),
-    admin.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, materials").eq("course_id", course.id).order("position"),
+    admin.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, materials, subtitle_langs").eq("course_id", course.id).order("position"),
     admin.from("lesson_progress").select("lesson_id").eq("user_id", user.id).eq("course_id", course.id).eq("completed", true),
   ]);
 
@@ -110,6 +110,7 @@ export default async function PlayerPage({
       content: l.content ?? null,
       materials: (l.materials as any) || [],
       arquivos: arquivosPorAula[l.id] ?? [],
+      subtitle_langs: l.subtitle_langs ?? null,
     };
   }
   const flatIds = (flat as any[]).map((l) => l.id);

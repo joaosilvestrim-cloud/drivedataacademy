@@ -1,25 +1,35 @@
-"""Legendas em português, inglês e espanhol para os vídeos do Panda.
+"""Legendas em português, inglês e espanhol para as aulas.
+
+A origem pode ser um vídeo já no Panda (pelo id) ou um arquivo aqui do
+computador (mp4, mkv, mov, mp3...). O resto do caminho é o mesmo.
 
 Para cada vídeo:
-  1. puxa o áudio direto do streaming do Panda (ffmpeg, sem baixar o vídeo);
+  1. puxa o áudio: do arquivo local, ou direto do streaming do Panda
+     (ffmpeg, sem baixar o vídeo);
   2. transcreve em português com o Whisper large-v3 do Groq;
   3. junta os pedacinhos do Whisper em legendas de verdade (até 2 linhas, ~6s);
   4. traduz para inglês e espanhol em lotes, com contexto e glossário técnico,
      conferindo que volta exatamente uma tradução por legenda;
-  5. grava pt.vtt, en.vtt e es.vtt em legendas/<id>/ para revisão;
+  5. grava pt.vtt, en.vtt e es.vtt em legendas/<id ou nome do arquivo>/;
   6. com --enviar, sobe as três no Panda pela API (precisa de PANDA_API_KEY).
+     Arquivo local não tem para onde subir: fica só o .vtt para revisão.
 
 Cada etapa fica salva em disco, então rodar de novo continua de onde parou e
 não gasta transcrição duas vezes.
 
 Uso:
-  python scripts/legendas.py <id-do-video> [<id> ...]      gera para esses vídeos
+  python scripts/legendas.py <id-do-video> [<id> ...]      vídeos que já estão no Panda
+  python scripts/legendas.py aula.mp4 [outra.mp4 ...]      arquivos aqui do computador
+  python scripts/legendas.py --pasta C:\caminhoulas      todos os vídeos de uma pasta
+  python scripts/legendas.py --curso <slug>                  só as aulas de um curso
+  python scripts/legendas.py --cursos                       lista os slugs dos cursos
   python scripts/legendas.py --todas                        todas as aulas e gravações do banco
   python scripts/legendas.py --todas --enviar               gera e sobe no Panda
   python scripts/legendas.py --listar                       só mostra o que existe no banco
 """
 
-import json, os, re, subprocess, sys, time, urllib.request, urllib.error, base64, math
+from http.client import HTTPException  # o def http() daqui embaixo apaga o módulo 'http'
+import json, os, re, subprocess, sys, time, unicodedata, urllib.request, urllib.error, base64, math
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SAIDA = os.path.join(RAIZ, "legendas")
@@ -35,7 +45,20 @@ def env():
 
 ENV = env()
 GROQ = ENV.get("GROQ_API_KEY", "")
-MODELO = ENV.get("GROQ_MODEL") or "openai/gpt-oss-120b"
+# O avatar dos alunos tem cota própria. Legenda é lote grande e demorado, e se
+# rodasse no mesmo modelo deixaria o aluno sem assistente no meio do dia.
+ASSISTENTE = ENV.get("GROQ_MODEL") or "openai/gpt-oss-120b"
+MODELOS = [m.strip() for m in (ENV.get("GROQ_MODEL_TRADUCAO") or "openai/gpt-oss-20b,qwen/qwen3.8-27b").split(",")
+           if m.strip() and m.strip() != ASSISTENTE]
+_atual = [0]
+
+def modelo_atual():
+    return MODELOS[_atual[0] % len(MODELOS)]
+
+def trocar_modelo():
+    """Estourou a cota de um: segue no próximo da lista."""
+    _atual[0] += 1
+    print(f"      cota cheia, mudando para {modelo_atual()}")
 PANDA = ENV.get("PANDA_API_KEY", "")
 
 IDIOMAS = {
@@ -49,11 +72,68 @@ GLOSSARIO = (
     "Power BI terms (use the official English/Spanish UI names): medida = measure / medida; coluna calculada = calculated column / columna calculada; "
     "tabela fato = fact table / tabla de hechos; tabela dimensão = dimension table / tabla de dimensiones; relacionamento = relationship / relación; "
     "segmentação de dados = slicer / segmentación; visual = visual / objeto visual; modelo semântico = semantic model / modelo semántico; "
-    "painel = dashboard / panel; relatório = report / informe."
+    "painel = dashboard / panel; relatório = report / informe; "
+    "arquitetura medalhão = medallion architecture / arquitectura de medallón; "
+    "camada bronze, prata e ouro = bronze, silver and gold layer / capa bronce, plata y oro."
 )
 
+# Extensões que o ffmpeg abre sem drama. Serve para separar "isso é um arquivo
+# que o João jogou na pasta" de "isso é um id de vídeo do Panda".
+VIDEO_LOCAL = re.compile(r"\.(mp4|mkv|mov|m4v|webm|avi|mp3|m4a|wav|aac|flac|ogg)$", re.I)
+
+# O Whisper erra menos quando sabe de antemão o vocabulário da casa: esse texto
+# vai junto de cada transcrição, só para enviesar a escuta.
+VOCABULARIO = (
+    "Aula da DriveData Academy sobre Power BI, DAX, Power Query, SQL, Microsoft Fabric, Excel. "
+    "Arquitetura medalhão: camada bronze, camada prata, camada ouro. "
+    "ETL, dashboard, modelo semântico, medida, coluna calculada, tabela fato, tabela dimensão, "
+    "relacionamento, segmentação de dados, DriveCanvas."
+)
+
+# E o punhado de palavras que ele erra mesmo assim, sempre do mesmo jeito.
+# Sai daqui em português, então o erro não se propaga para o inglês e o espanhol.
+CORRECOES = [
+    ("medalhal", "medalhão"), ("medalhao", "medalhão"), ("medalhão", "medalhão"),
+    ("Drive Data", "DriveData"), ("Drive Canvas", "DriveCanvas"),
+    ("Power Bi", "Power BI"), ("PowerBI", "Power BI"), ("power bi", "Power BI"),
+    ("dax", "DAX"), ("sql", "SQL"), ("kpi", "KPI"), ("etl", "ETL"),
+    # O próprio VOCABULARIO puxa o Whisper para "DriveData" e ele gruda no
+    # "Academy" que vem depois.
+    ("DriveData Aacademy", "DriveData Academy"), ("Aacademy", "Academy"),
+    ("mercatrônica", "mecatrônica"), ("mercatronica", "mecatrônica"),
+]
+
+def corrigir(texto):
+    for errado, certo in CORRECOES:
+        if errado.lower() in texto.lower():
+            texto = re.sub(re.escape(errado), certo, texto, flags=re.I)
+    return texto
+
 # Frases que o Whisper inventa em trecho de silêncio ou música.
-ALUCINACOES = re.compile(r"(legendas? (pela|por) comunidade|amara\.org|obrigad[oa] por assistir|inscreva-se no canal|legenda adriana zanotto)", re.I)
+ALUCINACOES = re.compile(r"(legendas? (pela|por) comunidade|amara\.org|obrigad[oa] por assistir|inscreva-se no canal|legenda adriana zanotto|acompanhe o v[ií]deo em)", re.I)
+
+def so_endereco(texto):
+    """Legenda que é só um site é invenção do Whisper em cima de silêncio ou
+    música. Ele chutou 'www.drivecantv.com.br' e 'www.drivecancas.com.br' em
+    trechos de 10 segundos sem fala nenhuma."""
+    limpo = texto.strip().strip(".,!?").lower()
+    return limpo.startswith(("www.", "http")) and " " not in limpo
+
+def enchimento(texto, segundos):
+    """Outras duas marcas de invenção, as duas vindas de trecho sem fala.
+
+    A primeira é texto curto ocupando muito tempo: 15 segundos com menos de 60
+    caracteres dá 4 caracteres por segundo. Quem fala de verdade faz uns 13,
+    e mesmo pausado não chega perto disso. O corte já foi em 100 caracteres e
+    levou fala real junto, do tipo "com id, name, email, cidade, state, eita,
+    saiu tudo junto", que é alguém lendo devagar na tela.
+
+    A segunda é a chamada de site que ele cola no fim do vídeo. Apareceu como
+    'Acompanhe o curso em www.drivecantv.com.br' num silêncio de 30 segundos."""
+    t = texto.lower()
+    if segundos >= 15 and len(texto) < 60:
+        return True
+    return "acompanhe o" in t and ("www." in t or " o v " in t)
 
 
 # ------------------------------------------------------------------ utilidades
@@ -71,7 +151,7 @@ def http(url, dados=None, cabecalhos=None, metodo=None, tentativas=6):
                 time.sleep(espera)
                 continue
             raise RuntimeError(f"HTTP {e.code}: {corpo}")
-        except urllib.error.URLError:
+        except (urllib.error.URLError, ConnectionError, TimeoutError, HTTPException):
             if n < tentativas - 1:
                 time.sleep(10)
                 continue
@@ -94,6 +174,14 @@ def quebrar_linhas(texto, largura=42):
     corte = min(espacos, key=lambda i: abs(i - meio))
     return texto[:corte] + "\n" + texto[corte + 1:]
 
+def apelido(caminho):
+    """Nome de pasta a partir do arquivo. 'Aula 03 - Introdução.mp4' vira
+    'aula-03-introducao', que é o que aparece em legendas/ e no nome dos .vtt."""
+    base = os.path.splitext(os.path.basename(caminho))[0].lower()
+    base = unicodedata.normalize("NFKD", base).encode("ascii", "ignore").decode()
+    base = re.sub(r"[^a-z0-9]+", "-", base).strip("-")
+    return base or "video"
+
 def escrever_vtt(caminho, legendas, textos):
     with open(caminho, "w", encoding="utf-8", newline="\n") as f:
         f.write("WEBVTT\n\n")
@@ -102,18 +190,61 @@ def escrever_vtt(caminho, legendas, textos):
 
 
 # ------------------------------------------------------------------ etapas
-def extrair_audio(video_id, host, pasta):
+def extrair_audio(origem, host, pasta):
+    """origem é o caminho de um arquivo aqui, ou o id de um vídeo do Panda.
+    Nos dois casos sai o mesmo audio.mp3 mono de 16 kHz, que é tudo que o
+    Whisper precisa e o que faz uma aula de 1h30 caber em poucos megabytes."""
     audio = os.path.join(pasta, "audio.mp3")
     if os.path.exists(audio) and os.path.getsize(audio) > 10000:
         return audio
-    m3u8 = f"https://{host}/{video_id}/playlist.m3u8"
-    print("   extraindo áudio do streaming...")
-    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", m3u8, "-vn", "-ac", "1", "-ar", "16000", "-b:a", "32k", audio], check=True)
+    if os.path.exists(origem):
+        entrada = origem
+        print("   extraindo áudio do arquivo...")
+    else:
+        entrada = f"https://{host}/{origem}/playlist.m3u8"
+        print("   extraindo áudio do streaming...")
+    subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", entrada, "-vn", "-ac", "1", "-ar", "16000", "-b:a", "32k", audio], check=True)
     return audio
 
 def duracao(audio):
     saida = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", audio], capture_output=True, text=True).stdout
     return float(saida.strip() or 0)
+
+MIN_BURACO = 8.0
+
+def buracos(segmentos, total):
+    """Trechos sem legenda que valem uma segunda tentativa.
+
+    O Whisper às vezes troca meio minuto de fala por uma frase inventada. O
+    filtro derruba a frase e sobra um buraco no meio da aula. Recortado sozinho,
+    o mesmo trecho volta certo, então é isso que a gente faz: pede de novo só o
+    buraco, com 2 segundos de folga de cada lado para não cortar palavra."""
+    fila, fim = [], 0.0
+    for s in sorted(segmentos, key=lambda x: x["ini"]):
+        if s["ini"] - fim >= MIN_BURACO:
+            fila.append((fim, s["ini"]))
+        fim = max(fim, s["fim"])
+    if total - fim >= MIN_BURACO:
+        fila.append((fim, total))
+    saida = []
+    for a, b in fila:
+        ini = max(0.0, a - 2)
+        saida.append((ini, min(total, b + 2) - ini, f"de novo o trecho {int(a)}s-{int(b)}s", (a, b)))
+    return saida
+
+def sem_sobra(segmentos):
+    """Rede de segurança contra frase repetida na emenda de dois pedidos.
+
+    Só cai o que está inteiro dentro do anterior. Encostar não basta: a regra
+    antiga derrubava tudo que começasse antes do fim do vizinho, e um segmento
+    longo levava junto a fala seguinte. Foi assim que sumiram 14 segundos da
+    aula 09 e 19 da 11."""
+    saida = []
+    for s in sorted(segmentos, key=lambda x: (x["ini"], x["fim"])):
+        if saida and s["fim"] <= saida[-1]["fim"] + 0.3:
+            continue
+        saida.append(s)
+    return saida
 
 def transcrever(audio, pasta):
     """Whisper do Groq aceita até ~25 MB por envio: vídeo longo vai em partes de 20 min."""
@@ -123,14 +254,23 @@ def transcrever(audio, pasta):
     total = duracao(audio)
     parte = 20 * 60
     segmentos = []
-    for k in range(math.ceil(total / parte)):
-        inicio = k * parte
+    # Fila de trechos a transcrever. Começa com o vídeo fatiado em 20 minutos,
+    # que é o que cabe num envio. Terminada a primeira volta, os buracos entram
+    # na fila e são pedidos de novo, cada um sozinho.
+    fatias = math.ceil(total / parte)
+    janelas = [(k * parte, parte, f"parte {k + 1} de {fatias}", None) for k in range(fatias)]
+    # Às vezes o pedido do buraco também volta inventado e o buraco continua
+    # lá. Então a busca se repete, e cada trecho tem direito a duas tentativas.
+    proxima_busca, tentados = fatias, {}
+    k = 0
+    while k < len(janelas):
+        inicio, tamanho, rotulo, limites = janelas[k]
         pedaco = os.path.join(pasta, f"parte{k}.mp3")
-        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", str(inicio), "-t", str(parte), "-i", audio, "-c", "copy", pedaco], check=True)
-        print(f"   transcrevendo parte {k + 1} de {math.ceil(total / parte)}...")
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-ss", str(inicio), "-t", str(tamanho), "-i", audio, "-c", "copy", pedaco], check=True)
+        print(f"   transcrevendo {rotulo}...")
         limite = "----fronteira" + str(int(time.time() * 1000))
         corpo = b""
-        for nome, valor in (("model", "whisper-large-v3"), ("language", "pt"), ("response_format", "verbose_json"), ("temperature", "0")):
+        for nome, valor in (("model", "whisper-large-v3"), ("language", "pt"), ("response_format", "verbose_json"), ("temperature", "0"), ("prompt", VOCABULARIO)):
             corpo += f"--{limite}\r\nContent-Disposition: form-data; name=\"{nome}\"\r\n\r\n{valor}\r\n".encode()
         corpo += f"--{limite}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"parte.mp3\"\r\nContent-Type: audio/mpeg\r\n\r\n".encode()
         corpo += open(pedaco, "rb").read() + f"\r\n--{limite}--\r\n".encode()
@@ -138,10 +278,24 @@ def transcrever(audio, pasta):
                  {"Authorization": "Bearer " + GROQ, "Content-Type": f"multipart/form-data; boundary={limite}"}, "POST")
         for s in r.get("segments", []):
             texto = s["text"].strip()
-            if not texto or ALUCINACOES.search(texto) or s.get("no_speech_prob", 0) > 0.8:
+            if (not texto or ALUCINACOES.search(texto) or so_endereco(texto)
+                    or enchimento(texto, s["end"] - s["start"]) or s.get("no_speech_prob", 0) > 0.8):
                 continue
-            segmentos.append({"ini": s["start"] + inicio, "fim": s["end"] + inicio, "texto": texto})
+            ini, fim = s["start"] + inicio, s["end"] + inicio
+            # O pedido de buraco leva 2 segundos de folga de cada lado só para
+            # não cortar palavra. O que cai na folga já existe, então fica fora.
+            if limites and not (limites[0] - 0.5 <= (ini + fim) / 2 <= limites[1] + 0.5):
+                continue
+            segmentos.append({"ini": ini, "fim": fim, "texto": corrigir(texto)})
         os.remove(pedaco)
+        k += 1
+        if k == proxima_busca:
+            novos = [j for j in buracos(segmentos, total) if tentados.get(int(j[3][0]), 0) < 2]
+            for j in novos:
+                tentados[int(j[3][0])] = tentados.get(int(j[3][0]), 0) + 1
+            janelas += novos
+            proxima_busca = len(janelas)
+    segmentos = sem_sobra(segmentos)
     json.dump(segmentos, open(arquivo, "w", encoding="utf-8"), ensure_ascii=False)
     return segmentos
 
@@ -211,10 +365,21 @@ def pedir_traducao(itens, contexto, idioma):
         + (f"Previous subtitles, context only, do not translate: {' / '.join(contexto)}\n" if contexto else "")
         + "\n" + entrada
     )
-    r = http("https://api.groq.com/openai/v1/chat/completions",
-             json.dumps({"model": MODELO, "temperature": 0.2, "reasoning_effort": "low", "max_completion_tokens": 6000,
-                         "messages": [{"role": "user", "content": pedido}]}).encode(),
-             {"Authorization": "Bearer " + GROQ, "Content-Type": "application/json"}, "POST")
+    # Teto proporcional ao lote. Fixo em 6000 o qwen recusava, porque ele limita
+    # tokens de saída por minuto e não por pedido.
+    teto = min(6000, 200 + 90 * len(itens))
+    for tentativa in range(len(MODELOS)):
+        try:
+            r = http("https://api.groq.com/openai/v1/chat/completions",
+                     json.dumps({"model": modelo_atual(), "temperature": 0.2, "reasoning_effort": "low",
+                                 "max_completion_tokens": teto,
+                                 "messages": [{"role": "user", "content": pedido}]}).encode(),
+                     {"Authorization": "Bearer " + GROQ, "Content-Type": "application/json"}, "POST")
+            break
+        except RuntimeError as e:
+            if "rate limit" not in str(e).lower() or tentativa == len(MODELOS) - 1:
+                raise
+            trocar_modelo()
     saida = r["choices"][0]["message"].get("content") or ""
     pedidos = {n for n, _ in itens}
     voltou = {}
@@ -272,26 +437,85 @@ def traduzir(legendas, sigla, pasta):
         time.sleep(3)  # respeita o limite por minuto da conta do Groq
     return feito
 
+_catalogo = {}
+
+def id_da_api(video_id):
+    """O Panda tem dois ids para o mesmo vídeo.
+
+    O que aparece na URL do player, no '?v=', é o que está gravado no nosso
+    banco dentro do iframe. Já o endpoint de legenda quer o id interno da API,
+    que é outro. Sem essa tradução o envio volta 'Video not found' nos 11.
+
+    A lista vem uma vez só e fica em memória."""
+    if not _catalogo:
+        pagina = 1  # página 0 faz o Panda devolver 500: vira OFFSET negativo lá dentro
+        while True:
+            r = http(f"https://api-v2.pandavideo.com.br/videos?limit=100&page={pagina}",
+                     cabecalhos={"Authorization": PANDA, "accept": "application/json"})
+            achados = r.get("videos") or []
+            for v in achados:
+                m = re.search(r"[?&]v=([0-9a-f-]{36})", v.get("video_player") or "")
+                if m:
+                    _catalogo[m.group(1)] = v["id"]
+            pagina += 1
+            if not achados or len(_catalogo) >= (r.get("total") or 0) or pagina > 50:
+                break
+        print(f"   catálogo do Panda: {len(_catalogo)} vídeos")
+    return _catalogo.get(video_id)
+
 def enviar(video_id, pasta):
     registro = os.path.join(pasta, "enviado.json")
     enviados = json.load(open(registro, encoding="utf-8")) if os.path.exists(registro) else []
+    alvo = id_da_api(video_id)
+    if not alvo:
+        print(f"   esse vídeo não está na conta dessa chave de API, pulando")
+        return
     for sigla, rotulo, srclang in (("pt", "Português", "pt-br"), ("en", IDIOMAS["en"]["rotulo"], "en"), ("es", IDIOMAS["es"]["rotulo"], "es")):
         if sigla in enviados:
             continue
         conteudo = base64.b64encode(open(os.path.join(pasta, f"{sigla}.vtt"), "rb").read()).decode()
-        http(f"https://api-v2.pandavideo.com.br/subtitles/{video_id}",
+        http(f"https://api-v2.pandavideo.com.br/subtitles/{alvo}",
              json.dumps({"label": rotulo, "srclang": srclang, "file": f"data:text/vtt;name={sigla}.vtt;base64,{conteudo}"}).encode(),
              {"Authorization": PANDA, "accept": "application/json", "content-type": "application/json"}, "POST")
         enviados.append(sigla)
         json.dump(enviados, open(registro, "w", encoding="utf-8"))
         print(f"   enviado ao Panda: {rotulo}")
+    if enviados:
+        marcar_no_banco(video_id, sorted(enviados))
 
-def processar(video_id, host, titulo, subir):
-    pasta = os.path.join(SAIDA, video_id)
+def marcar_no_banco(video_id, siglas):
+    """Anota no banco que esse vídeo ganhou legenda, e em quais idiomas.
+
+    É o que faz a dica aparecer embaixo do player só nas aulas que têm. O
+    script é a única fonte que sabe o que realmente subiu no Panda.
+
+    O id que está no banco é o do player, dentro do iframe ou da URL da
+    gravação, então a busca é por trecho e não por igualdade."""
+    url, chave = ENV.get("NEXT_PUBLIC_SUPABASE_URL"), ENV.get("SUPABASE_SERVICE_ROLE_KEY")
+    if not (url and chave):
+        return
+    cab = {"apikey": chave, "Authorization": "Bearer " + chave,
+           "Content-Type": "application/json", "Prefer": "return=minimal"}
+    corpo = json.dumps({"subtitle_langs": siglas}).encode()
+    for tabela, campo in (("lessons", "video_id"), ("live_events", "recording_url")):
+        try:
+            http(f"{url}/rest/v1/{tabela}?{campo}=like.*{video_id}*", corpo, cab, "PATCH", tentativas=2)
+        except RuntimeError as e:
+            if "subtitle_langs" in str(e):
+                print("   a migration 20260921_legendas.sql ainda não rodou: subi as faixas, mas não marquei no banco")
+                return
+            raise
+
+def processar(origem, host, titulo, subir):
+    """A pasta de saída é o id do vídeo, ou o nome do arquivo quando a aula
+    veio de fora. Assim dá para achar o .vtt pelo nome da aula."""
+    local = os.path.exists(origem)
+    chave = apelido(origem) if local else origem
+    pasta = os.path.join(SAIDA, chave)
     os.makedirs(pasta, exist_ok=True)
-    json.dump({"titulo": titulo, "host": host}, open(os.path.join(pasta, "info.json"), "w", encoding="utf-8"), ensure_ascii=False)
-    print(f"\n== {titulo or video_id}")
-    audio = extrair_audio(video_id, host, pasta)
+    json.dump({"titulo": titulo, "host": host, "origem": origem}, open(os.path.join(pasta, "info.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    print(f"\n== {titulo or chave}")
+    audio = extrair_audio(origem, host, pasta)
     legendas = montar_legendas(transcrever(audio, pasta))
     if not legendas:
         print("   sem fala detectada, pulando")
@@ -299,20 +523,33 @@ def processar(video_id, host, titulo, subir):
     escrever_vtt(os.path.join(pasta, "pt.vtt"), legendas, [l["texto"] for l in legendas])
     for sigla in IDIOMAS:
         escrever_vtt(os.path.join(pasta, f"{sigla}.vtt"), legendas, traduzir(legendas, sigla, pasta))
-    print(f"   pronto: {len(legendas)} legendas em pt, en e es")
+    print(f"   pronto: {len(legendas)} legendas em pt, en e es  ->  {pasta}")
     if subir:
-        if not PANDA:
+        if local:
+            print("   arquivo local não tem id no Panda: suba o vídeo primeiro e depois rode com o id.")
+        elif not PANDA:
             print("   PANDA_API_KEY vazia no .env.local: gerei os arquivos, mas não subi.")
         else:
-            enviar(video_id, pasta)
+            enviar(origem, pasta)
 
 
 # ------------------------------------------------------------------ vídeos do banco
-def videos_do_banco():
+def videos_do_banco(curso=None):
+    """Sem curso, pega tudo: aulas do Panda e gravações de live. Com o slug de
+    um curso, só as aulas dele, que é como a gente legenda uma turma por vez."""
     url, chave = ENV["NEXT_PUBLIC_SUPABASE_URL"], ENV["SUPABASE_SERVICE_ROLE_KEY"]
     cab = {"apikey": chave, "Authorization": "Bearer " + chave}
-    aulas = http(f"{url}/rest/v1/lessons?select=title,video_id,video_provider&video_provider=eq.panda", cabecalhos=cab)
-    lives = http(f"{url}/rest/v1/live_events?select=title,recording_url&recording_url=not.is.null", cabecalhos=cab)
+    if curso:
+        achados = http(f"{url}/rest/v1/courses?select=id&slug=eq.{curso}", cabecalhos=cab)
+        if not achados:
+            sys.exit(f"não achei o curso '{curso}'. Rode --cursos para ver os slugs.")
+        modulos = http(f"{url}/rest/v1/course_modules?select=id&course_id=eq.{achados[0]['id']}", cabecalhos=cab)
+        ids = ",".join(m["id"] for m in modulos)
+        aulas = http(f"{url}/rest/v1/lessons?select=title,video_id,video_provider&video_provider=eq.panda&module_id=in.({ids})&order=title", cabecalhos=cab) if ids else []
+        lives = []
+    else:
+        aulas = http(f"{url}/rest/v1/lessons?select=title,video_id,video_provider&video_provider=eq.panda", cabecalhos=cab)
+        lives = http(f"{url}/rest/v1/live_events?select=title,recording_url&recording_url=not.is.null", cabecalhos=cab)
     vistos, lista = set(), []
     for titulo, bruto in [(a["title"], a["video_id"]) for a in aulas] + [(l["title"], l["recording_url"]) for l in lives]:
         m = re.search(r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})", bruto or "", re.I)
@@ -329,16 +566,26 @@ if __name__ == "__main__":
     if not GROQ:
         sys.exit("GROQ_API_KEY vazia no .env.local")
     subir = "--enviar" in args
-    if "--listar" in args or "--todas" in args:
-        lista = videos_do_banco()
+    if "--cursos" in args:
+        url, chave = ENV["NEXT_PUBLIC_SUPABASE_URL"], ENV["SUPABASE_SERVICE_ROLE_KEY"]
+        for c in http(f"{url}/rest/v1/courses?select=slug,title&order=title", cabecalhos={"apikey": chave, "Authorization": "Bearer " + chave}):
+            print(f"{c['slug']:45s} {c['title']}")
+        sys.exit(0)
+    curso = args[args.index("--curso") + 1] if "--curso" in args else None
+    if curso or "--listar" in args or "--todas" in args:
+        lista = videos_do_banco(curso)
         if "--listar" in args:
             for vid, host, titulo in lista:
                 pronto = os.path.exists(os.path.join(SAIDA, vid, "es.vtt"))
                 print(f"{'ok ' if pronto else '   '} {vid}  {titulo}")
             print(f"\n{len(lista)} vídeos únicos")
             sys.exit(0)
+    elif "--pasta" in args:
+        raiz = args[args.index("--pasta") + 1]
+        lista = [(os.path.join(raiz, n), "", n) for n in sorted(os.listdir(raiz)) if VIDEO_LOCAL.search(n)]
     else:
         lista = [(a, HOST_PADRAO, "") for a in args if re.fullmatch(r"[0-9a-f-]{36}", a)]
+        lista += [(os.path.abspath(a), "", os.path.basename(a)) for a in args if VIDEO_LOCAL.search(a)]
     if not lista:
         sys.exit(__doc__)
     for vid, host, titulo in lista:

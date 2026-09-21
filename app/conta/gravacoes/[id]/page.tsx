@@ -6,6 +6,7 @@ import { canUseCommunity } from "@/lib/community";
 import { resolverVideo } from "@/lib/video";
 import { demoAtual } from "@/lib/demo";
 import ProtectedPlayer from "@/app/aprender/[slug]/ProtectedPlayer";
+import AvisoLegendas from "@/components/AvisoLegendas";
 import { usuarioAtual } from "@/lib/sessao";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +30,7 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
 
   const { data: ev } = await admin
     .from("live_events")
-    .select("id, title, description, starts_at, duration_min, kind, recording_url, published")
+    .select("id, title, description, starts_at, duration_min, kind, recording_url, published, subtitle_langs")
     .eq("id", params.id)
     .maybeSingle();
   if (!ev || !ev.published || !ev.recording_url) notFound();
@@ -52,6 +53,9 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
               </div>
             </div>
           </ProtectedPlayer>
+        ) : null}
+        {src ? (
+          <AvisoLegendas idiomas={ev.subtitle_langs} />
         ) : (
           <a href={ev.recording_url} target="_blank" rel="noreferrer" className="inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">
             {tr("Abrir gravação ↗")}

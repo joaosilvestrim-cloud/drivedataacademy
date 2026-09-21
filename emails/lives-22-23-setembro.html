@@ -63,9 +63,11 @@
                 </tr>
                 <tr>
                   <td style="padding:20px 22px 22px;">
-                    <!-- Selo de urgência: esta é a aula de amanhã. Em tabela,
-                         e não em span, porque o Outlook não pinta fundo de
-                         span. Sai do e-mail depois que a aula acontecer. -->
+                    <!-- TROCAR CONFORME O DIA DO DISPARO: se a aula for hoje,
+                         o selo vira "É HOJE ÀS 19H30" e a linha de baixo vira
+                         "SEGUNDA · 21/09". Em tabela, e não em span, porque o
+                         Outlook não pinta fundo de span. Sai do e-mail depois
+                         que a aula acontecer. -->
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 12px;">
                       <tr>
                         <td style="background:#15c47e;border-radius:8px;padding:6px 12px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;color:#04140d;text-transform:uppercase;">
@@ -166,9 +168,26 @@
 
         </table>
 
-        <p style="margin:18px 0 0;color:#64748b;font-size:12px;font-family:Arial,Helvetica,sans-serif;">
-          &copy; DriveData Academy &middot; academy.drivedata.com.br
-        </p>
+        <!-- Rodapé exigido pela moderação da SendPulse: dizer por que a
+             pessoa está recebendo, e o link de descadastro. O {{unsubscribe_url}}
+             é substituído pela SendPulse no disparo. Sem ele a campanha não sai. -->
+        <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+          <tr>
+            <td class="pad" style="padding:20px 32px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;">
+              <p style="margin:0 0 10px;color:#94a3b8;font-size:12px;line-height:1.7;">
+                Você recebeu este e-mail porque se cadastrou em um material, aula ao vivo ou curso
+                da DriveData. Guardamos seu contato desde então para avisar das aulas abertas.
+              </p>
+              <p style="margin:0 0 14px;font-size:13px;line-height:1.6;">
+                <a href="{{unsubscribe_url}}" style="color:#cbd5e1;text-decoration:underline;">Não quero mais receber estes e-mails</a>
+              </p>
+              <p style="margin:0;color:#64748b;font-size:12px;line-height:1.6;">
+                &copy; DriveData Academy &middot;
+                <a href="https://academy.drivedata.com.br" style="color:#64748b;text-decoration:underline;">academy.drivedata.com.br</a>
+              </p>
+            </td>
+          </tr>
+        </table>
 
       </td>
     </tr>

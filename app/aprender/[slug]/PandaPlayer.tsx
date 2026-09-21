@@ -4,6 +4,7 @@ import { usarTraducao } from "@/lib/i18n/usarTraducao";
 
 import { useEffect, useRef } from "react";
 import { markLessonDone } from "./actions";
+import AvisoLegendas from "@/components/AvisoLegendas";
 
 // Resolve a URL de embed a partir de iframe/URL/ID colado.
 function resolveSrc(raw: string, host: string | null): string | null {
@@ -22,12 +23,14 @@ export default function PandaPlayer({
   lessonId,
   courseId,
   slug,
+  legendas,
 }: {
   videoId: string;
   host: string | null;
   lessonId: string;
   courseId: string;
   slug: string;
+  legendas?: string[] | null;
 }) {
   const tr = usarTraducao();
   const marked = useRef(false);
@@ -120,17 +123,20 @@ export default function PandaPlayer({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-      <div className="relative aspect-video">
-        <iframe
-          ref={frame}
-          className="absolute inset-0 h-full w-full"
-          src={src}
-          title={tr("Aula")}
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowFullScreen
-        />
+    <>
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
+        <div className="relative aspect-video">
+          <iframe
+            ref={frame}
+            className="absolute inset-0 h-full w-full"
+            src={src}
+            title={tr("Aula")}
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+          />
+        </div>
       </div>
-    </div>
+      <AvisoLegendas idiomas={legendas} />
+    </>
   );
 }

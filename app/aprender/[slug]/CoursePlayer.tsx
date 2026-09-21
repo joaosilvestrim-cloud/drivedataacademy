@@ -10,7 +10,7 @@ import ProtectedPlayer from "./ProtectedPlayer";
 import { markLessonDone, addComment } from "./actions";
 import { tamanhoLegivel, extensao } from "@/lib/materiais";
 
-type Lesson = { id: string; title: string; duration: string | null; type: string; video_provider: string | null; video_id: string | null; yt: string | null; content: string | null; materials: { title: string; url: string }[]; arquivos: Arquivo[] };
+type Lesson = { id: string; title: string; duration: string | null; type: string; video_provider: string | null; video_id: string | null; yt: string | null; content: string | null; materials: { title: string; url: string }[]; arquivos: Arquivo[]; subtitle_langs: string[] | null };
 type Arquivo = { id: string; title: string; description: string | null; file_name: string | null; file_size: number | null; external_url: string | null };
 type SideLesson = { id: string; title: string; duration: string | null };
 type Module = { id: string; title: string; locked: boolean; releaseLabel: string | null; lessons: SideLesson[] };
@@ -143,7 +143,7 @@ export default function CoursePlayer({
               </div>
             ) : current.video_provider === "panda" && current.video_id ? (
               <ProtectedPlayer>
-                <PandaPlayer key={current.id} videoId={current.video_id} host={pandaHost} lessonId={current.id} courseId={courseId} slug={slug} />
+                <PandaPlayer key={current.id} videoId={current.video_id} host={pandaHost} lessonId={current.id} courseId={courseId} slug={slug} legendas={current.subtitle_langs} />
               </ProtectedPlayer>
             ) : current.yt ? (
               <ProtectedPlayer>
