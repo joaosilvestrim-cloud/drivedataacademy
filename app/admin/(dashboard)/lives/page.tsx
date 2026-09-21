@@ -119,6 +119,14 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
       {/* Presença por QR code: quem assiste confirma em /presenca e recebe o
           certificado na hora. A palavra-chave dita ao vivo é a prova. */}
       <div className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
+        {/* O mesmo alerta da lista, agora dentro do formulário, onde a pessoa
+            pode resolver na hora. */}
+        {live?.certificate_enabled && !String(live?.attendance_code || "").trim() && (
+          <Alert tone="danger" title="Esta live entrega certificado sem prova de presença">
+            A palavra-chave está em branco, então qualquer pessoa com o link do QR code emite o
+            certificado sem ter assistido. Escreva uma palavra abaixo e diga ela durante a transmissão.
+          </Alert>
+        )}
         <CheckboxField
           scope={scope}
           name="certificate_enabled"
@@ -290,6 +298,11 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
           <div className="flex flex-col">
             {lives.map((l) => {
               const pago = Number(l.price) > 0;
+              /* Certificado ligado e palavra-chave em branco: qualquer pessoa
+                 com o link emite o certificado sem ter assistido. O aviso fica
+                 na lista, e não só dentro do formulário, porque é aqui que se
+                 confere a grade inteira de uma vez. */
+              const semPalavra = !!l.certificate_enabled && !String(l.attendance_code || "").trim();
               return (
                 <details key={l.id} className="group border-b border-ds-line-soft">
                   <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-x-4 gap-y-1 py-3.5 transition-colors duration-fast ease-ds hover:bg-ds-raised/50">
@@ -297,6 +310,7 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
                       <span className="truncate text-body-sm font-medium text-ds-text">{l.title || "Sem título"}</span>
                       {l.kind === "mentoria" && <Badge tone="info">mentoria</Badge>}
                       {!l.published && <Badge tone="attention">rascunho</Badge>}
+                      {semPalavra && <Badge tone="danger">sem palavra-chave</Badge>}
                     </span>
                     <span className="flex shrink-0 items-baseline gap-3 text-caption text-ds-text-3">
                       <span className="tabular-nums">{fmt(l.starts_at)}</span>
