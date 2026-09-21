@@ -534,6 +534,29 @@ def processar(origem, host, titulo, subir):
 
 
 # ------------------------------------------------------------------ vídeos do banco
+def nao_legendar():
+    """Ids que ficam de fora, um por linha em legendas/nao-legendar.txt.
+
+    Nem todo video do catalogo e aula. Gravacao de reuniao interna, por
+    exemplo, gasta cota de transcricao e nao serve para ninguem em tres
+    idiomas. Como e uma decisao de conteudo e nao de codigo, mora num arquivo
+    que qualquer um edita sem mexer aqui.
+
+    O que vem depois de '#' na linha e comentario."""
+    caminho = os.path.join(SAIDA, "nao-legendar.txt")
+    if not os.path.exists(caminho):
+        return {}
+    fora = {}
+    for linha in open(caminho, encoding="utf-8"):
+        linha = linha.strip()
+        if not linha or linha.startswith("#"):
+            continue
+        vid, _, motivo = linha.partition("#")
+        vid = vid.strip()
+        if vid:
+            fora[vid] = motivo.strip() or "na lista de fora"
+    return fora
+
 def videos_do_banco(curso=None):
     """Sem curso, pega tudo: aulas do Panda e gravações de live. Com o slug de
     um curso, só as aulas dele, que é como a gente legenda uma turma por vez."""
@@ -558,7 +581,11 @@ def videos_do_banco(curso=None):
         h = re.search(r"player-(vz-[a-z0-9-]+\.tv\.pandavideo\.com\.br)", bruto or "")
         vistos.add(m.group(1))
         lista.append((m.group(1), "b-" + h.group(1) if h else HOST_PADRAO, titulo))
-    return lista
+    fora = nao_legendar()
+    for vid, motivo in fora.items():
+        if vid in vistos:
+            print(f"   fora da fila: {motivo}")
+    return [x for x in lista if x[0] not in fora]
 
 
 if __name__ == "__main__":
