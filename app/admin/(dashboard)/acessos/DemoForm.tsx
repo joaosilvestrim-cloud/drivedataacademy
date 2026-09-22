@@ -21,10 +21,13 @@ export default function DemoForm({ demos }: { demos: Demo[] }) {
       <form action={criarDemonstracao} className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_170px_auto]">
         <input name="email" type="email" required placeholder="email@pessoa.com" className={field} />
         <input name="name" placeholder="Nome (opcional)" className={field} />
-        <select name="horas" defaultValue="72" className={`${field} [&>option]:bg-ink-900`}>
+        {/* 7 dias e o padrao combinado do produto: e o prazo que da para a
+            pessoa montar um visual de verdade no DriveCanvas e voltar mais de
+            uma vez. Os outros ficam na lista para o caso pontual. */}
+        <select name="horas" defaultValue="168" className={`${field} [&>option]:bg-ink-900`}>
           <option value="24">1 dia</option>
           <option value="72">3 dias</option>
-          <option value="168">7 dias</option>
+          <option value="168">7 dias (padrão)</option>
           <option value="336">14 dias</option>
         </select>
         <button className="rounded-xl bg-gradient-to-r from-amber-300 to-brand-green px-5 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
