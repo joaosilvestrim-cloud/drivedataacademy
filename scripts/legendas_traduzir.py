@@ -73,7 +73,15 @@ def aplicar(pasta, sigla, arquivo):
         if m and m.group(2):
             traduzidas[int(m.group(1))] = m.group(2)
 
-    faltam = [i for i in range(1, len(blocos) + 1) if i not in traduzidas]
+    # Linha com "-" sai do vtt. O Whisper inventa frase em cima de silêncio, do
+    # tipo "Acompanhe o vídeo para saber mais sobre o DriveCanvas" no meio de
+    # uma aula de Snowflake. Traduzir isso seria carimbar a invenção em mais
+    # dois idiomas; melhor a legenda não existir naquele segundo.
+    cortadas = {i for i, t in traduzidas.items() if t.strip() == "-"}
+    for i in cortadas:
+        del traduzidas[i]
+
+    faltam = [i for i in range(1, len(blocos) + 1) if i not in traduzidas and i not in cortadas]
     sobram = [i for i in traduzidas if i > len(blocos)]
     if faltam or sobram:
         recado = []
@@ -84,11 +92,15 @@ def aplicar(pasta, sigla, arquivo):
         sys.exit(f"{arquivo}: " + "; ".join(recado) + f" (o pt.vtt tem {len(blocos)})")
 
     destino = os.path.join(pasta, f"{sigla}.vtt")
+    saiu = 0
     with open(destino, "w", encoding="utf-8", newline="\n") as f:
         f.write("WEBVTT\n\n")
         for i, (tempo, _) in enumerate(blocos, 1):
-            f.write(f"{i}\n{tempo}\n{quebrar_linhas(traduzidas[i])}\n\n")
-    print(f"{destino}: {len(blocos)} legendas")
+            if i in cortadas:
+                continue
+            saiu += 1
+            f.write(f"{saiu}\n{tempo}\n{quebrar_linhas(traduzidas[i])}\n\n")
+    print(f"{destino}: {saiu} legendas" + (f", {len(cortadas)} cortadas" if cortadas else ""))
 
 
 def pendentes():

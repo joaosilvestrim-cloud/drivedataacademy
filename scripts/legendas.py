@@ -227,6 +227,31 @@ def extrair_audio(origem, host, pasta):
     subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", entrada, "-vn", "-ac", "1", "-ar", "16000", "-b:a", "32k", audio], check=True)
     return audio
 
+def mudo(audio):
+    """Verdadeiro quando o arquivo nao tem fala nenhuma.
+
+    A aula "Boas-vindas ao curso" tem 2m24 de silencio absoluto, -91 dB do
+    inicio ao fim, e o Whisper devolveu cinco vezes "Acompanhe a producao de
+    dados em nosso site www.drive.com.br". Sem audio ele inventa, sempre.
+
+    -50 dB de media e bem abaixo de qualquer fala, ate sussurro, entao aula de
+    verdade nunca cai aqui."""
+    saida = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", audio, "-af", "volumedetect", "-f", "null", "-"],
+                           capture_output=True, text=True).stderr
+    m = re.search(r"mean_volume:\s*(-?[\d.]+) dB", saida)
+    return bool(m) and float(m.group(1)) < -50
+
+def repetida(segmentos, vezes=3):
+    """Tira o texto que aparece identico varias vezes.
+
+    Nao e jeito de falar: quando o Whisper entra em loop ele repete a mesma
+    frase palavra por palavra, e foi assim nos cinco blocos do video mudo."""
+    conta = {}
+    for s in segmentos:
+        chave = " ".join(s["texto"].lower().split())
+        conta[chave] = conta.get(chave, 0) + 1
+    return [s for s in segmentos if conta[" ".join(s["texto"].lower().split())] < vezes]
+
 def duracao(audio):
     saida = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", audio], capture_output=True, text=True).stdout
     return float(saida.strip() or 0)
@@ -317,7 +342,7 @@ def transcrever(audio, pasta):
                 tentados[int(j[3][0])] = tentados.get(int(j[3][0]), 0) + 1
             janelas += novos
             proxima_busca = len(janelas)
-    segmentos = sem_sobra(segmentos)
+    segmentos = sem_sobra(repetida(segmentos))
     json.dump(segmentos, open(arquivo, "w", encoding="utf-8"), ensure_ascii=False)
     return segmentos
 
@@ -554,6 +579,9 @@ def processar(origem, host, titulo, subir, so_transcrever=False):
     json.dump({"titulo": titulo, "host": host, "origem": origem}, open(os.path.join(pasta, "info.json"), "w", encoding="utf-8"), ensure_ascii=False)
     print(f"\n== {titulo or chave}")
     audio = extrair_audio(origem, host, pasta)
+    if mudo(audio):
+        print("   sem audio nenhum, nao tem o que legendar")
+        return
     legendas = montar_legendas(transcrever(audio, pasta))
     if not legendas:
         print("   sem fala detectada, pulando")
