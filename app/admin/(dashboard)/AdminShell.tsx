@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
+import MarcarVisto from "./MarcarVisto";
 import FeedbackSalvamento from "./FeedbackSalvamento";
 
 const ICONS: Record<string, string> = {
@@ -270,7 +271,7 @@ export default function AdminShell({ email, children, badges: inicial }: { email
     async function atualizar() {
       if (document.hidden) return;
       try {
-        const r = await fetch(`/api/admin/pendencias?em=${encodeURIComponent(pathname)}`, { cache: "no-store" });
+        const r = await fetch("/api/admin/pendencias", { cache: "no-store" });
         if (r.ok && vivo) setBadges(await r.json());
       } catch { /* sem rede: mantém o último valor */ }
     }
@@ -338,7 +339,16 @@ export default function AdminShell({ email, children, badges: inicial }: { email
 
       {/* Conteúdo */}
       <main className="lg:pl-60">
-        <div className="mx-auto max-w-6xl px-6 py-8">{children}</div>
+        <div className="mx-auto max-w-6xl px-6 py-8">
+          {/* Só aparece na tela que tem aviso. Some quando a pessoa diz que viu,
+              não quando ela passa por aqui. */}
+          {badges[pathname] > 0 && (
+            <div className="mb-5 flex justify-end">
+              <MarcarVisto quantos={badges[pathname]} />
+            </div>
+          )}
+          {children}
+        </div>
       </main>
 
       {/* Retorno de salvamento de todos os formulários do admin. */}
