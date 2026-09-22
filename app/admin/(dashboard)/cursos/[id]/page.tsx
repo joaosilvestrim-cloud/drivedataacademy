@@ -25,10 +25,14 @@ export default async function EditCoursePage({ params, searchParams }: { params:
     supabase.from("lessons").select("id, module_id, title, type, video_id, video_provider, content, duration, is_preview, materials").eq("course_id", course.id).order("position"),
   ]);
 
-  // Arquivos das aulas do tipo "materiais", agrupados por aula.
-  const idsMateriais = (lessons ?? []).filter((l: any) => l.type === "materiais").map((l: any) => l.id);
-  const { data: arquivos } = idsMateriais.length
-    ? await supabase.from("ready_materials").select("id, lesson_id, title, description, file_name, file_size, external_url").in("lesson_id", idsMateriais).order("position")
+  /* Anexos das aulas, agrupados por aula.
+
+     Busca de TODAS, não só das do tipo "materiais". Enquanto filtrava por
+     tipo, o upload numa aula de vídeo gravava certo no banco e a tela seguia
+     dizendo "Nenhum arquivo ainda", o que parece que o envio falhou. */
+  const idsAulas = (lessons ?? []).map((l: any) => l.id);
+  const { data: arquivos } = idsAulas.length
+    ? await supabase.from("ready_materials").select("id, lesson_id, title, description, file_name, file_size, external_url").in("lesson_id", idsAulas).order("position")
     : { data: [] as any[] };
   const arquivosPorAula: Record<string, any[]> = {};
   for (const a of arquivos ?? []) (arquivosPorAula[a.lesson_id] ||= []).push(a);
