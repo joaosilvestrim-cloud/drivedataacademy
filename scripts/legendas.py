@@ -137,18 +137,36 @@ def enchimento(texto, segundos):
 
 
 # ------------------------------------------------------------------ utilidades
-def http(url, dados=None, cabecalhos=None, metodo=None, tentativas=6):
+class Estourou(RuntimeError):
+    """429. Carrega o tempo que o servidor pediu, para quem chamou decidir."""
+    def __init__(self, mensagem, segundos):
+        super().__init__(mensagem)
+        self.segundos = segundos
+
+def http(url, dados=None, cabecalhos=None, metodo=None, tentativas=6, espera=120, insistir_429=True):
+    """espera e o timeout de uma tentativa, em segundos.
+
+    O padrao era 600 para tudo, o que so faz sentido para subir 20 minutos de
+    audio. Numa chamada de traducao, que responde em segundos, um socket
+    pendurado custava 10 minutos, e com as 6 tentativas virava uma hora parado.
+    Aconteceu de verdade: uma aula de 37 minutos levou 4 horas e meia."""
     for n in range(tentativas):
         req = urllib.request.Request(url, dados, {"User-Agent": "curl/8", **(cabecalhos or {})}, method=metodo)
         try:
-            with urllib.request.urlopen(req, timeout=600) as r:
+            with urllib.request.urlopen(req, timeout=espera) as r:
                 return json.loads(r.read().decode("utf-8") or "null")
         except urllib.error.HTTPError as e:
             corpo = e.read().decode("utf-8", "ignore")[:400]
+            if e.code == 429 and not insistir_429:
+                # Traducao tem modelo reserva. Ficar esperando aqui e pior do
+                # que devolver na hora e deixar quem chamou trocar de modelo:
+                # antes o script gastava 6 tentativas de 200s no modelo cheio
+                # antes de sequer tentar o outro.
+                raise Estourou(f"HTTP 429: {corpo}", float(e.headers.get("retry-after") or 0) or 60)
             if e.code in (429, 500, 502, 503) and n < tentativas - 1:
-                espera = float(e.headers.get("retry-after") or 0) or min(90, 15 * (n + 1))
-                print(f"      limite do servidor ({e.code}), esperando {int(espera)}s...")
-                time.sleep(espera)
+                pausa = float(e.headers.get("retry-after") or 0) or min(90, 15 * (n + 1))
+                print(f"      limite do servidor ({e.code}), esperando {int(pausa)}s...")
+                time.sleep(pausa)
                 continue
             raise RuntimeError(f"HTTP {e.code}: {corpo}")
         except (urllib.error.URLError, ConnectionError, TimeoutError, HTTPException):
@@ -275,7 +293,8 @@ def transcrever(audio, pasta):
         corpo += f"--{limite}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"parte.mp3\"\r\nContent-Type: audio/mpeg\r\n\r\n".encode()
         corpo += open(pedaco, "rb").read() + f"\r\n--{limite}--\r\n".encode()
         r = http("https://api.groq.com/openai/v1/audio/transcriptions", corpo,
-                 {"Authorization": "Bearer " + GROQ, "Content-Type": f"multipart/form-data; boundary={limite}"}, "POST")
+                 {"Authorization": "Bearer " + GROQ, "Content-Type": f"multipart/form-data; boundary={limite}"}, "POST",
+                 espera=600)
         for s in r.get("segments", []):
             texto = s["text"].strip()
             if (not texto or ALUCINACOES.search(texto) or so_endereco(texto)
@@ -368,18 +387,34 @@ def pedir_traducao(itens, contexto, idioma):
     # Teto proporcional ao lote. Fixo em 6000 o qwen recusava, porque ele limita
     # tokens de saída por minuto e não por pedido.
     teto = min(6000, 200 + 90 * len(itens))
-    for tentativa in range(len(MODELOS)):
-        try:
-            r = http("https://api.groq.com/openai/v1/chat/completions",
-                     json.dumps({"model": modelo_atual(), "temperature": 0.2, "reasoning_effort": "low",
-                                 "max_completion_tokens": teto,
-                                 "messages": [{"role": "user", "content": pedido}]}).encode(),
-                     {"Authorization": "Bearer " + GROQ, "Content-Type": "application/json"}, "POST")
+
+    def uma_vez():
+        return http("https://api.groq.com/openai/v1/chat/completions",
+                    json.dumps({"model": modelo_atual(), "temperature": 0.2, "reasoning_effort": "low",
+                                "max_completion_tokens": teto,
+                                "messages": [{"role": "user", "content": pedido}]}).encode(),
+                    {"Authorization": "Bearer " + GROQ, "Content-Type": "application/json"}, "POST",
+                    insistir_429=False)
+
+    # Primeiro tenta todos os modelos. So espera quando todos estao cheios, e
+    # espera o menor tempo que algum deles pediu.
+    r = None
+    for rodada in range(4):
+        menor = None
+        for _ in range(len(MODELOS)):
+            try:
+                r = uma_vez()
+                break
+            except Estourou as e:
+                menor = e.segundos if menor is None else min(menor, e.segundos)
+                trocar_modelo()
+        if r is not None:
             break
-        except RuntimeError as e:
-            if "rate limit" not in str(e).lower() or tentativa == len(MODELOS) - 1:
-                raise
-            trocar_modelo()
+        pausa = min(120, menor or 60)
+        print(f"      todos os modelos cheios, esperando {int(pausa)}s...")
+        time.sleep(pausa)
+    if r is None:
+        raise RuntimeError("todos os modelos de traducao cheios depois de 4 rodadas")
     saida = r["choices"][0]["message"].get("content") or ""
     pedidos = {n for n, _ in itens}
     voltou = {}
