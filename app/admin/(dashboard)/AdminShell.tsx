@@ -63,6 +63,7 @@ const GROUPS: Grupo[] = [
       { label: "Cursos", href: "/admin/cursos", icon: "courses", busca: "aulas modulos video" },
       { label: "Lives e gravações", href: "/admin/lives", icon: "live", busca: "agenda mentoria panda" },
       { label: "Presenças", href: "/admin/presencas", icon: "live", busca: "qr code palavra-chave" },
+      { label: "Telão da live", href: "/admin/telao", icon: "live", busca: "qr code transmissao projetar certificado demo" },
       { label: "Desafios", href: "/admin/desafios", icon: "courses" },
       { label: "DriveCanvas", href: "/admin/ferramenta", icon: "tool", busca: "ferramenta de visuais" },
       { label: "Knowledge Universe 4D", href: "/admin/universo", icon: "universe" },

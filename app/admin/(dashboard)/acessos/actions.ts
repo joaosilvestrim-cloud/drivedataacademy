@@ -190,3 +190,47 @@ export async function encerrarDemonstracao(formData: FormData) {
   revalidatePath("/admin/acessos");
   redirect("/admin/acessos?ok=" + encodeURIComponent("Demonstração encerrada."));
 }
+
+/* Campanha de demonstração: a que a pessoa libera sozinha pelo QR code.
+
+   O slug sai do título porque ele vira endereço e ninguém quer digitar um
+   uuid num QR. Se o título repetir, entra um sufixo curto: dois eventos
+   chamados "Live de quinta" não podem brigar pelo mesmo link. */
+export async function criarCampanhaDemo(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+
+  const titulo = ((formData.get("titulo") as string) || "").trim();
+  if (!titulo) redirect("/admin/acessos?error=" + encodeURIComponent("Dê um nome à campanha."));
+
+  const base = titulo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "demo";
+
+  const admin = createAdminClient();
+  let slug = base;
+  for (let n = 2; n < 40; n++) {
+    const { data } = await admin.from("demo_invites").select("id").eq("slug", slug).maybeSingle();
+    if (!data) break;
+    slug = `${base}-${n}`;
+  }
+
+  const dias = Math.min(90, Math.max(1, Number(formData.get("dias") || 7)));
+  const limite = Number(formData.get("limite") || 0) || null;
+  const palavra = ((formData.get("palavra") as string) || "").trim() || null;
+
+  const { error } = await admin.from("demo_invites").insert({ slug, titulo, palavra, dias, limite, ativo: true });
+  if (error) redirect("/admin/acessos?error=" + encodeURIComponent(error.message));
+
+  revalidatePath("/admin/acessos");
+  redirect("/admin/acessos?ok=" + encodeURIComponent(`Campanha criada: /demo/${slug}`));
+}
+
+export async function alternarCampanhaDemo(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+  const id = formData.get("id") as string;
+  const ativo = (formData.get("ativo") as string) === "1";
+  await createAdminClient().from("demo_invites").update({ ativo }).eq("id", id);
+  revalidatePath("/admin/acessos");
+  redirect("/admin/acessos?ok=" + encodeURIComponent(ativo ? "Campanha reaberta." : "Campanha encerrada."));
+}

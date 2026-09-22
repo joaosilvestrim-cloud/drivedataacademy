@@ -8,6 +8,7 @@ import GrantForm from "./GrantForm";
 import CreateStudentForm from "./CreateStudentForm";
 import GrantCoursesForm from "./GrantCoursesForm";
 import DemoForm, { type Demo } from "./DemoForm";
+import CampanhaDemo, { type Campanha } from "./CampanhaDemo";
 import { revokeMembership, reactivateMembership } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -48,6 +49,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
   let orders: any[] = [];
   let courses: { id: string; title: string }[] = [];
   let demos: Demo[] = [];
+  let campanhas: Campanha[] = [];
   try {
     const admin = createAdminClient();
     const [{ data: mem, error: memErr }, { data: userData }, { data: profs }, { data: ord }, { data: cs }] = await Promise.all([
@@ -59,6 +61,9 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
     ]);
     // Demonstrações: se a tabela ainda não existir, a lista só fica vazia.
     const { data: dem } = await admin.from("demo_access").select("user_id, expires_at, note").order("expires_at", { ascending: false }).limit(30);
+    // Campanhas de QR code, com a contagem de leads de cada uma.
+    const { data: camp } = await admin.from("demo_invites").select("id, slug, titulo, palavra, dias, ativo, limite").order("created_at", { ascending: false }).limit(20);
+    const { data: leads } = await admin.from("demo_signups").select("invite_id").limit(5000);
     if (memErr) throw new Error(memErr.message);
     courses = cs ?? [];
 
@@ -82,6 +87,9 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
       expires_at: d.expires_at,
       ativo: new Date(d.expires_at).getTime() > now,
     }));
+    const porCampanha: Record<string, number> = {};
+    for (const l of leads ?? []) if (l.invite_id) porCampanha[l.invite_id] = (porCampanha[l.invite_id] ?? 0) + 1;
+    campanhas = (camp ?? []).map((c: any) => ({ ...c, inscritos: porCampanha[c.id] ?? 0 }));
   } catch (e) {
     return (
       <div>
@@ -119,6 +127,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
         <GrantForm />
         <GrantCoursesForm courses={courses} />
         <DemoForm demos={demos} />
+        <CampanhaDemo campanhas={campanhas} />
       </div>
 
       {/* Alunos com acesso. A tabela some no celular e vira lista estruturada:
