@@ -20,9 +20,10 @@ não gasta transcrição duas vezes.
 Uso:
   python scripts/legendas.py <id-do-video> [<id> ...]      vídeos que já estão no Panda
   python scripts/legendas.py aula.mp4 [outra.mp4 ...]      arquivos aqui do computador
-  python scripts/legendas.py --pasta C:\caminhoulas      todos os vídeos de uma pasta
+  python scripts/legendas.py --pasta <pasta>                todos os vídeos de uma pasta
   python scripts/legendas.py --curso <slug>                  só as aulas de um curso
   python scripts/legendas.py --cursos                       lista os slugs dos cursos
+  python scripts/legendas.py --todas --so-transcrever       so o pt.vtt, sem traduzir
   python scripts/legendas.py --todas                        todas as aulas e gravações do banco
   python scripts/legendas.py --todas --enviar               gera e sobe no Panda
   python scripts/legendas.py --listar                       só mostra o que existe no banco
@@ -81,25 +82,27 @@ GLOSSARIO = (
 # que o João jogou na pasta" de "isso é um id de vídeo do Panda".
 VIDEO_LOCAL = re.compile(r"\.(mp4|mkv|mov|m4v|webm|avi|mp3|m4a|wav|aac|flac|ogg)$", re.I)
 
-# O Whisper erra menos quando sabe de antemão o vocabulário da casa: esse texto
-# vai junto de cada transcrição, só para enviesar a escuta.
-VOCABULARIO = (
-    "Aula da DriveData Academy sobre Power BI, DAX, Power Query, SQL, Microsoft Fabric, Excel. "
-    "Arquitetura medalhão: camada bronze, camada prata, camada ouro. "
-    "ETL, dashboard, modelo semântico, medida, coluna calculada, tabela fato, tabela dimensão, "
-    "relacionamento, segmentação de dados, DriveCanvas."
-)
+# Aqui existia um VOCABULARIO, um texto mandado junto de cada transcrição para
+# enviesar a escuta do Whisper. Saiu, e não volta.
+#
+# O prompt do Whisper não é uma dica: ele entra como se fosse o começo da fala.
+# Com os nomes da casa dentro, o modelo passou a escrever "DriveCanvas" e
+# "Acompanhe o vídeo" em cima de silêncio e, pior, no lugar de palavra real.
+# Uma aula de Snowflake ganhou "Atenção, o DriveCanvas é um dos melhores
+# produtos da marca". No teste lado a lado, o mesmo trecho sem prompt nenhum
+# voltou certo e ainda com as frases cortadas no lugar certo: 14 legendas
+# contra 8 blocos grudados.
+#
+# Nome próprio se conserta aqui embaixo, no CORRECOES, que é determinístico e
+# não inventa.
 
-# E o punhado de palavras que ele erra mesmo assim, sempre do mesmo jeito.
+# O punhado de palavras que o Whisper erra sempre do mesmo jeito.
 # Sai daqui em português, então o erro não se propaga para o inglês e o espanhol.
 CORRECOES = [
     ("medalhal", "medalhão"), ("medalhao", "medalhão"), ("medalhão", "medalhão"),
     ("Drive Data", "DriveData"), ("Drive Canvas", "DriveCanvas"),
     ("Power Bi", "Power BI"), ("PowerBI", "Power BI"), ("power bi", "Power BI"),
     ("dax", "DAX"), ("sql", "SQL"), ("kpi", "KPI"), ("etl", "ETL"),
-    # O próprio VOCABULARIO puxa o Whisper para "DriveData" e ele gruda no
-    # "Academy" que vem depois.
-    ("DriveData Aacademy", "DriveData Academy"), ("Aacademy", "Academy"),
     ("mercatrônica", "mecatrônica"), ("mercatronica", "mecatrônica"),
 ]
 
@@ -288,7 +291,7 @@ def transcrever(audio, pasta):
         print(f"   transcrevendo {rotulo}...")
         limite = "----fronteira" + str(int(time.time() * 1000))
         corpo = b""
-        for nome, valor in (("model", "whisper-large-v3"), ("language", "pt"), ("response_format", "verbose_json"), ("temperature", "0"), ("prompt", VOCABULARIO)):
+        for nome, valor in (("model", "whisper-large-v3"), ("language", "pt"), ("response_format", "verbose_json"), ("temperature", "0")):
             corpo += f"--{limite}\r\nContent-Disposition: form-data; name=\"{nome}\"\r\n\r\n{valor}\r\n".encode()
         corpo += f"--{limite}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"parte.mp3\"\r\nContent-Type: audio/mpeg\r\n\r\n".encode()
         corpo += open(pedaco, "rb").read() + f"\r\n--{limite}--\r\n".encode()
@@ -541,7 +544,7 @@ def marcar_no_banco(video_id, siglas):
                 return
             raise
 
-def processar(origem, host, titulo, subir):
+def processar(origem, host, titulo, subir, so_transcrever=False):
     """A pasta de saída é o id do vídeo, ou o nome do arquivo quando a aula
     veio de fora. Assim dá para achar o .vtt pelo nome da aula."""
     local = os.path.exists(origem)
@@ -556,6 +559,12 @@ def processar(origem, host, titulo, subir):
         print("   sem fala detectada, pulando")
         return
     escrever_vtt(os.path.join(pasta, "pt.vtt"), legendas, [l["texto"] for l in legendas])
+    if so_transcrever:
+        # A traducao sai daqui e vai para o Claude, que nao tem teto diario.
+        # O modelo de chat da Groq limita 200 mil tokens por dia e era isso que
+        # segurava o lote: transcrever tem cota por hora, que renova sozinha.
+        print(f"   {len(legendas)} legendas em portugues, pronto para traduzir")
+        return
     for sigla in IDIOMAS:
         escrever_vtt(os.path.join(pasta, f"{sigla}.vtt"), legendas, traduzir(legendas, sigla, pasta))
     print(f"   pronto: {len(legendas)} legendas em pt, en e es  ->  {pasta}")
@@ -628,6 +637,7 @@ if __name__ == "__main__":
     if not GROQ:
         sys.exit("GROQ_API_KEY vazia no .env.local")
     subir = "--enviar" in args
+    so_transcrever = "--so-transcrever" in args
     if "--cursos" in args:
         url, chave = ENV["NEXT_PUBLIC_SUPABASE_URL"], ENV["SUPABASE_SERVICE_ROLE_KEY"]
         for c in http(f"{url}/rest/v1/courses?select=slug,title&order=title", cabecalhos={"apikey": chave, "Authorization": "Bearer " + chave}):
@@ -652,6 +662,6 @@ if __name__ == "__main__":
         sys.exit(__doc__)
     for vid, host, titulo in lista:
         try:
-            processar(vid, host, titulo, subir)
+            processar(vid, host, titulo, subir, so_transcrever)
         except Exception as e:
             print(f"   ERRO em {vid}: {e}")
