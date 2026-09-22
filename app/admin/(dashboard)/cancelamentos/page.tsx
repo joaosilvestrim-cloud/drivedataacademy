@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { MOTIVOS } from "@/lib/assinatura";
+import { MOTIVOS } from "@/lib/assinatura-motivos";
 
 export const dynamic = "force-dynamic";
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { usarTraducao } from "@/lib/i18n/usarTraducao";
 import { cancelarAssinatura } from "./actions";
-import { MOTIVOS } from "@/lib/assinatura";
+import { MOTIVOS } from "@/lib/assinatura-motivos";
 
 /* Formulário de cancelamento.
 

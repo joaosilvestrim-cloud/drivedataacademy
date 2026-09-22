@@ -129,17 +129,3 @@ export async function cancelarNoAsaas(subscriptionId: string): Promise<{ ok: boo
     return { ok: false, resposta: `sem resposta do Asaas: ${String(e?.message || e).slice(0, 200)}` };
   }
 }
-
-/* Os motivos da tela. Ficam aqui, e não no componente, porque a action precisa
-   validar contra a mesma lista: motivo que não está aqui não entra no banco. */
-export const MOTIVOS = [
-  { id: "preco", label: "Está caro para o meu momento" },
-  { id: "tempo", label: "Não estou conseguindo usar" },
-  { id: "conteudo", label: "O conteúdo não é o que eu esperava" },
-  { id: "aprendi", label: "Já aprendi o que precisava" },
-  { id: "tecnico", label: "Tive problemas técnicos na plataforma" },
-  { id: "empresa", label: "Vou usar por outra empresa ou conta" },
-  { id: "outro", label: "Outro motivo" },
-] as const;
-
-export const MOTIVOS_VALIDOS = new Set(MOTIVOS.map((m) => m.id));

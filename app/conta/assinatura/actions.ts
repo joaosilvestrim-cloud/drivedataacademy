@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { avisarTime } from "@/lib/notificacoes";
 import { sendHtmlEmail } from "@/lib/email";
-import { assinaturaDoAluno, cancelarNoAsaas, MOTIVOS, MOTIVOS_VALIDOS } from "@/lib/assinatura";
+import { assinaturaDoAluno, cancelarNoAsaas } from "@/lib/assinatura";
+import { MOTIVOS, MOTIVOS_VALIDOS } from "@/lib/assinatura-motivos";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
