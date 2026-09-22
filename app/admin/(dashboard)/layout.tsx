@@ -8,9 +8,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");
 
-  // Pendências por item do menu (chamados abertos, desafios, pagos sem acesso).
-  // O menu continua atualizando sozinho depois, por /api/admin/pendencias.
-  const pendencias = await contarPendencias(createAdminClient());
+  // Badges do menu: o que está na fila do time e o que chegou de novo desde a
+  // última vez que ESTA pessoa olhou cada tela. O menu continua atualizando
+  // sozinho depois, por /api/admin/pendencias.
+  const pendencias = await contarPendencias(createAdminClient(), user.id);
 
   return <AdminShell email={user.email ?? ""} badges={pendencias}>{children}</AdminShell>;
 }

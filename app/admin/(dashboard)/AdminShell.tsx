@@ -104,6 +104,7 @@ const GROUPS: Grupo[] = [
       { label: "Pagamentos e e-mails", href: "/admin/operacao", icon: "billing", busca: "asaas pix boleto cobranca pedido" },
       { label: "Assinatura e planos", href: "/admin/turma", icon: "launch", busca: "preco mensal anual" },
       { label: "Cupons", href: "/admin/cupons", icon: "billing", busca: "desconto" },
+      { label: "Cancelamentos", href: "/admin/cancelamentos", icon: "billing", busca: "churn cancelar assinatura motivo saida" },
       { label: "Workshops", href: "/admin/workshops", icon: "live" },
     ],
   },
@@ -269,7 +270,7 @@ export default function AdminShell({ email, children, badges: inicial }: { email
     async function atualizar() {
       if (document.hidden) return;
       try {
-        const r = await fetch("/api/admin/pendencias", { cache: "no-store" });
+        const r = await fetch(`/api/admin/pendencias?em=${encodeURIComponent(pathname)}`, { cache: "no-store" });
         if (r.ok && vivo) setBadges(await r.json());
       } catch { /* sem rede: mantém o último valor */ }
     }
