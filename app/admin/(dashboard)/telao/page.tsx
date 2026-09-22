@@ -23,14 +23,24 @@ async function qr(url: string) {
 export default async function TelaoPage({ searchParams }: { searchParams: { live?: string; demo?: string } }) {
   const admin = createAdminClient();
 
-  const [{ data: lives }, { data: campanhas }] = await Promise.all([
+  const [{ data: livesBruto }, { data: campanhas }] = await Promise.all([
     admin.from("live_events").select("id, title, starts_at, attendance_code, certificate_enabled")
-      .eq("certificate_enabled", true).order("starts_at", { ascending: false }).limit(12),
+      .eq("certificate_enabled", true).order("starts_at", { ascending: false }).limit(40),
     admin.from("demo_invites").select("id, slug, titulo, palavra, dias, ativo")
       .eq("ativo", true).order("created_at", { ascending: false }).limit(12),
   ]);
 
-  const live = (lives ?? []).find((l) => l.id === searchParams.live) ?? (lives ?? [])[0] ?? null;
+  /* A live da vez é a mais PRÓXIMA de agora, não a mais distante no futuro.
+
+     Ordenar por data decrescente colocava a live de novembro em primeiro e o
+     telão abria com o QR errado na noite da transmissão. Quem abre esta tela
+     está no ar agora, ou minutos antes. */
+  const agora = Date.now();
+  const lives = (livesBruto ?? []).slice().sort(
+    (a, b) => Math.abs(Date.parse(a.starts_at) - agora) - Math.abs(Date.parse(b.starts_at) - agora),
+  );
+
+  const live = lives.find((l) => l.id === searchParams.live) ?? lives[0] ?? null;
   const demo = (campanhas ?? []).find((c) => c.slug === searchParams.demo) ?? (campanhas ?? [])[0] ?? null;
 
   const [qrLive, qrDemo, inscritos] = await Promise.all([
@@ -66,12 +76,12 @@ export default async function TelaoPage({ searchParams }: { searchParams: { live
         <p className="text-xs text-slate-500">Compartilhe esta tela na transmissão. Os números atualizam ao recarregar.</p>
       </div>
 
-      {(lives ?? []).length > 1 || (campanhas ?? []).length > 1 ? (
+      {lives.length > 1 || (campanhas ?? []).length > 1 ? (
         <div className="mb-8 flex flex-wrap gap-4 text-xs print:hidden">
-          {(lives ?? []).length > 1 && (
+          {lives.length > 1 && (
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-slate-500">Live:</span>
-              {(lives ?? []).map((l) => (
+              {lives.map((l) => (
                 <Link key={l.id} href={`/admin/telao?live=${l.id}&demo=${demo?.slug ?? ""}`}
                   className={`rounded-lg px-2.5 py-1 ${l.id === live?.id ? "bg-white/10 text-white" : "text-slate-400 hover:text-white"}`}>
                   {l.title.slice(0, 26)}
