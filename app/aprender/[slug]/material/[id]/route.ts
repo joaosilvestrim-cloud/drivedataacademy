@@ -8,7 +8,7 @@ import { demoAtual } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 
-/* Entrega de um arquivo de aula de materiais. Confere sessão e acesso ao curso
+/* Entrega de um arquivo anexado a uma aula, de qualquer tipo. Confere sessão e acesso ao curso
    da aula a cada clique, registra o download e redireciona para um link
    assinado que vale 60 segundos. O endereço do arquivo nunca fica exposto. */
 export async function GET(req: Request, { params }: { params: { slug: string; id: string } }) {

@@ -4,7 +4,8 @@ import { tamanhoLegivel, extensao } from "@/lib/materiais";
 import MaterialUpload from "./MaterialUpload";
 import { salvarMaterialDaAula, excluirMaterialDaAula } from "./actions";
 
-/* Arquivos de uma aula do tipo "materiais". Fica fora do formulário da aula
+/* Arquivos anexados a uma aula, de qualquer tipo. Numa aula de materiais eles
+   são o conteúdo; numa aula de vídeo são o apoio que o aluno baixa. Fica fora do formulário da aula
    porque cada arquivo tem o próprio formulário, e formulário dentro de
    formulário não é HTML válido. */
 
@@ -29,7 +30,7 @@ export default function MateriaisDaAula({
   const scope = `materiais-${lessonId}`;
   return (
     <div className="flex flex-col gap-4 border-t border-ds-line-soft p-4">
-      <p className="text-meta uppercase text-ds-text-3">Arquivos desta aula ({itens.length})</p>
+      <p className="text-meta uppercase text-ds-text-3">Arquivos para download ({itens.length})</p>
 
       {itens.length > 0 ? (
         <ul className="flex flex-col">

@@ -88,10 +88,14 @@ export default async function PlayerPage({
   const completed = allLessons.filter((l: any) => done.has(l.id)).length;
   const pct = total ? Math.round((completed / total) * 100) : 0;
 
-  // Arquivos das aulas do tipo "materiais". O link aponta para a rota protegida, nunca para o Storage.
-  const idsMateriais = allLessons.filter((l: any) => l.type === "materiais").map((l: any) => l.id);
-  const { data: arquivos } = idsMateriais.length
-    ? await admin.from("ready_materials").select("id, lesson_id, title, description, file_name, file_size, external_url, cover_url").in("lesson_id", idsMateriais).eq("published", true).order("position")
+  /* Anexos das aulas. O link aponta para a rota protegida, nunca para o Storage.
+
+     Antes isso buscava só as aulas do tipo "materiais". Aula de vídeo podia
+     ter anexo no banco e ele nunca chegava na tela: o aluno via o arquivo no
+     admin e não via na aula. Agora busca de todas. */
+  const idsAulas = allLessons.map((l: any) => l.id);
+  const { data: arquivos } = idsAulas.length
+    ? await admin.from("ready_materials").select("id, lesson_id, title, description, file_name, file_size, external_url, cover_url").in("lesson_id", idsAulas).eq("published", true).order("position")
     : { data: [] as any[] };
   const arquivosPorAula: Record<string, any[]> = {};
   for (const a of arquivos ?? []) (arquivosPorAula[a.lesson_id] ||= []).push(a);

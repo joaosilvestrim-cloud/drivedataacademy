@@ -265,9 +265,41 @@ export default function CoursePlayer({
               </div>
             )}
 
-            {materials.length > 0 && (
+            {/* Anexos da aula: arquivo que o time subiu, baixado pela rota
+                protegida. Antes só aparecia na aula do tipo "materiais", então
+                anexo de aula de vídeo existia no banco e nunca chegava aqui. */}
+            {current.type !== "materiais" && (current.arquivos || []).length > 0 && (
               <div className="mt-5 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
                 <p className="text-sm font-semibold text-white">{tr("Materiais de apoio")}</p>
+                <ul className="mt-3 divide-y divide-white/5">
+                  {current.arquivos.map((a) => {
+                    const ext = a.file_name ? extensao(a.file_name) : "LINK";
+                    return (
+                      <li key={a.id}>
+                        <a
+                          href={`/aprender/${slug}/material/${a.id}`}
+                          target={a.file_name ? undefined : "_blank"}
+                          rel="noreferrer"
+                          className="group flex items-center gap-3 py-3 transition-colors hover:bg-white/[0.03]"
+                        >
+                          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-green/10 font-mono text-[0.6rem] font-bold text-brand-green">{ext || "ARQ"}</span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm text-white">{a.title}</span>
+                            {a.description && <span className="mt-0.5 line-clamp-1 block text-xs text-slate-500">{a.description}</span>}
+                          </span>
+                          {a.file_size ? <span className="shrink-0 font-mono text-xs tabular-nums text-slate-500">{tamanhoLegivel(a.file_size)}</span> : null}
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0 text-slate-500 group-hover:text-brand-green"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+
+            {materials.length > 0 && (
+              <div className="mt-5 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
+                <p className="text-sm font-semibold text-white">{tr("Links de apoio")}</p>
                 <ul className="mt-3 space-y-2">
                   {materials.map((mat, i) => (
                     <li key={i}>

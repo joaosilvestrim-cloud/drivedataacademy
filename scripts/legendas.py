@@ -24,6 +24,7 @@ Uso:
   python scripts/legendas.py --curso <slug>                  só as aulas de um curso
   python scripts/legendas.py --cursos                       lista os slugs dos cursos
   python scripts/legendas.py --todas --so-transcrever       so o pt.vtt, sem traduzir
+  python scripts/legendas.py --curso <slug> --so-enviar     sobe os .vtt que ja existem
   python scripts/legendas.py --todas                        todas as aulas e gravações do banco
   python scripts/legendas.py --todas --enviar               gera e sobe no Panda
   python scripts/legendas.py --listar                       só mostra o que existe no banco
@@ -569,7 +570,7 @@ def marcar_no_banco(video_id, siglas):
                 return
             raise
 
-def processar(origem, host, titulo, subir, so_transcrever=False):
+def processar(origem, host, titulo, subir, so_transcrever=False, so_enviar=False):
     """A pasta de saída é o id do vídeo, ou o nome do arquivo quando a aula
     veio de fora. Assim dá para achar o .vtt pelo nome da aula."""
     local = os.path.exists(origem)
@@ -578,6 +579,27 @@ def processar(origem, host, titulo, subir, so_transcrever=False):
     os.makedirs(pasta, exist_ok=True)
     json.dump({"titulo": titulo, "host": host, "origem": origem}, open(os.path.join(pasta, "info.json"), "w", encoding="utf-8"), ensure_ascii=False)
     print(f"\n== {titulo or chave}")
+
+    if so_enviar:
+        """Sobe o que ja existe e sai.
+
+        Existe porque a traducao agora e feita a mao, fora do script, e o
+        caminho normal passaria pelo modelo de chat e sobrescreveria os .vtt
+        revisados com uma traducao automatica. Subir nao pode depender de
+        gerar."""
+        faltando = [s for s in ("pt", "en", "es") if not os.path.exists(os.path.join(pasta, f"{s}.vtt"))]
+        if faltando:
+            print(f"   falta {', '.join(faltando)}, nao subi")
+            return
+        if not PANDA:
+            print("   PANDA_API_KEY vazia no .env.local")
+            return
+        if local:
+            print("   arquivo local nao tem id no Panda")
+            return
+        enviar(origem, pasta)
+        return
+
     audio = extrair_audio(origem, host, pasta)
     if mudo(audio):
         print("   sem audio nenhum, nao tem o que legendar")
@@ -666,6 +688,7 @@ if __name__ == "__main__":
         sys.exit("GROQ_API_KEY vazia no .env.local")
     subir = "--enviar" in args
     so_transcrever = "--so-transcrever" in args
+    so_enviar = "--so-enviar" in args
     if "--cursos" in args:
         url, chave = ENV["NEXT_PUBLIC_SUPABASE_URL"], ENV["SUPABASE_SERVICE_ROLE_KEY"]
         for c in http(f"{url}/rest/v1/courses?select=slug,title&order=title", cabecalhos={"apikey": chave, "Authorization": "Bearer " + chave}):
@@ -690,6 +713,6 @@ if __name__ == "__main__":
         sys.exit(__doc__)
     for vid, host, titulo in lista:
         try:
-            processar(vid, host, titulo, subir, so_transcrever)
+            processar(vid, host, titulo, subir, so_transcrever, so_enviar)
         except Exception as e:
             print(f"   ERRO em {vid}: {e}")

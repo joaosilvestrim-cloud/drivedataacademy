@@ -140,7 +140,7 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                         {l.type === "text" ? <TextIcon /> : l.type === "materiais" ? <DownloadIcon /> : <VideoIcon />}
                       </span>
                       <span className="truncate font-medium text-white">{l.title}</span>
-                      {l.type === "materiais" && (
+                      {(l.arquivos ?? []).length > 0 && (
                         <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-slate-400">{(l.arquivos ?? []).length} arquivo(s)</span>
                       )}
                       {l.type === "video" && l.video_id && (
@@ -154,7 +154,9 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                     </span>
                   </summary>
 
-                  {/* Aula de materiais: o envio de arquivos vem primeiro, é o conteúdo da aula. */}
+                  {/* Na aula de materiais os arquivos SÃO a aula, então vêm antes
+                      do formulário. Na aula de vídeo eles são apoio e aparecem
+                      depois, junto do resto. */}
                   {l.type === "materiais" && (
                     <MateriaisDaAula lessonId={l.id} courseId={courseId} itens={l.arquivos ?? []} />
                   )}
@@ -207,11 +209,11 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       <TextareaField
                         scope={`aula-${l.id}`}
                         name="materials"
-                        label="Materiais de apoio"
+                        label="Links de apoio"
                         rows={2}
                         defaultValue={(l.materials ?? []).map((mm) => `${mm.title} | ${mm.url}`).join("\n")}
-                        placeholder="Apostila PDF | https://..."
-                        description="Um por linha, no formato Título | URL. Linha sem barra vira um material chamado Material."
+                        placeholder="Documentação oficial | https://..."
+                        description="Para o que mora fora daqui: documentação, artigo, repositório. Um por linha, no formato Título | URL. Arquivo para o aluno baixar vai no bloco de anexos, logo abaixo."
                       />
                     )}
 
@@ -229,6 +231,15 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                       <Button type="submit" size="sm">Salvar aula</Button>
                     </FormActions>
                   </form>
+
+                  {/* Anexos da aula de vídeo ou texto. Fica fora do <form> de
+                      propósito: o MateriaisDaAula tem upload e formulário
+                      próprios, e form dentro de form o navegador ignora. */}
+                  {l.type !== "materiais" && (
+                    <div className="border-t border-ds-line-soft">
+                      <MateriaisDaAula lessonId={l.id} courseId={courseId} itens={l.arquivos ?? []} />
+                    </div>
+                  )}
                 </details>
               ))}
               {m.lessons.length === 0 && (
