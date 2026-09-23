@@ -13,29 +13,38 @@ type SendMaterialArgs = {
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-// Resolve um remetente válido. Se RESEND_FROM estiver vazio/malformado
-// (ex.: "Nome <onboarding@>"), cai no domínio de teste do Resend.
-/* Normaliza um remetente vindo da Vercel. Aceita "email", "Nome <email>" e
-   também "Nome email", com ou sem aspas em volta. Devolve null se não achar um
-   email válido. Antes, "Nome email" sem os sinais < > caía no remetente de
-   teste do Resend, que só entrega para o dono da conta. */
-function remetenteValido(valor: string | undefined): string | null {
+/* Remetente dos e-mails.
+
+   O NOME que aparece na caixa de entrada nao sai mais de variavel de
+   ambiente. Ele chegou torto na producao uma vez ("riveData Academy", sem o
+   D) e ninguem viu: um nome digitado num painel de deploy nao passa por
+   revisao nenhuma, e quando erra, erra na assinatura de todo e-mail que a
+   plataforma manda. A variavel agora vale so pelo ENDERECO, que e o unico
+   pedaco que precisa mesmo mudar por ambiente.
+
+   RESEND_FROM_NOME existe para o caso de um envio precisar assinar com outro
+   nome. Vazia, vale a marca. */
+const NOME_REMETENTE = "DriveData Academy";
+
+/* Aceita "email", "Nome <email>" e tambem "Nome email", com ou sem aspas em
+   volta, e devolve so o endereco. Antes, "Nome email" sem os sinais < > caia
+   no remetente de teste do Resend, que so entrega para o dono da conta. */
+function enderecoValido(valor: string | undefined): string | null {
   const raw = (valor || "").trim().replace(/^["']|["']$/g, "").trim();
   if (!raw) return null;
-  const email = raw.match(/[^\s<>"']+@[^\s<>"']+\.[^\s<>"']+/)?.[0];
-  if (!email) return null;
-  const nome = raw.replace(email, "").replace(/[<>"']/g, "").trim();
-  return nome ? `${nome} <${email}>` : email;
+  return raw.match(/[^\s<>"']+@[^\s<>"']+\.[^\s<>"']+/)?.[0] ?? null;
 }
 
 function resolveFrom(preferencia?: string): string {
-  // A variável específica vence a geral. Se ela estiver inválida, tenta a geral
-  // antes de cair no remetente de teste.
-  return (
-    (preferencia ? remetenteValido(process.env[preferencia]) : null) ||
-    remetenteValido(process.env.RESEND_FROM) ||
-    "DriveData Academy <onboarding@resend.dev>"
-  );
+  // A variavel especifica vence a geral. Se ela estiver invalida, tenta a
+  // geral antes de cair no dominio de teste do Resend.
+  const endereco =
+    (preferencia ? enderecoValido(process.env[preferencia]) : null) ||
+    enderecoValido(process.env.RESEND_FROM) ||
+    "onboarding@resend.dev";
+
+  const nome = (process.env.RESEND_FROM_NOME || "").replace(/[<>"']/g, "").trim() || NOME_REMETENTE;
+  return `${nome} <${endereco}>`;
 }
 
 // Nome amigável do anexo a partir do título + extensão da URL.
