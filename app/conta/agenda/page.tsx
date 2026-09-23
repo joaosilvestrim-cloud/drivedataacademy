@@ -82,7 +82,21 @@ export default async function AgendaPage() {
             <p className="mt-1 text-sm text-brand-teal">{fmt(next.starts_at)}{next.duration_min ? ` · ${next.duration_min} min` : ""}</p>
             <div className="mt-4"><Cronometro inicio={next.starts_at} duracaoMin={next.duration_min} agoraInicial={now} /></div>
             {next.description && <p className="mt-3 max-w-2xl text-sm text-slate-300">{next.description}</p>}
-            {next.url && (isLiveNow(next) ? (
+            {/* Link restrito primeiro. Esta é rota do middleware, e é o único
+                lugar da plataforma que pode mostrar url_alunos: a home e
+                /cursos são públicas, e lá o endereço do Teams seria o mesmo
+                que deixar a sala destrancada. */}
+            {next.url_alunos ? (
+              <div className="mt-5">
+                <a href={next.url_alunos} target="_blank" rel="noreferrer" className="inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                  {isLiveNow(next) ? tr("Entrar na reunião →") : tr("Abrir a reunião ↗")}
+                </a>
+                <p className="mt-2 text-xs text-slate-500">{tr("Encontro fechado, só para alunos. Não compartilhe este link.")}</p>
+                {next.acesso_alunos && (
+                  <p className="mt-2 whitespace-pre-line font-mono text-xs leading-relaxed text-slate-400">{next.acesso_alunos}</p>
+                )}
+              </div>
+            ) : next.url ? (isLiveNow(next) ? (
               <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Entrar na live →")}</a>
             ) : (
               /youtu/.test(next.url) ? (
@@ -90,7 +104,7 @@ export default async function AgendaPage() {
               ) : (
                 <span className="mt-5 inline-block rounded-xl border border-white/10 px-6 py-3 text-sm font-medium text-slate-400">{tr("O link libera no horário")}</span>
               )
-            ))}
+            )) : null}
             </div>
             {next.cover_url && (
               // eslint-disable-next-line @next/next/no-img-element

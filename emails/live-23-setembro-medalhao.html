@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <!-- Diz aos clientes de e-mail que este layout já é escuro. Sem isso, o modo
+       escuro do Gmail e do Outlook inverte as cores por conta própria e o
+       resultado fica com texto claro sobre fundo claro. -->
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <title>Hoje, 19:30: Arquitetura Medalhão</title>
+  <style>
+    /* O pouco de CSS que vale a pena: o resto é inline, porque Gmail e Outlook
+       descartam folhas de estilo em boa parte dos casos. */
+    @media (max-width:620px){
+      .container{width:100%!important}
+      .pad{padding-left:20px!important;padding-right:20px!important}
+      .h1{font-size:26px!important;line-height:1.2!important}
+      .capa{height:auto!important}
+      .camada td{font-size:13px!important}
+    }
+    a{text-decoration:none}
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#0b1220;">
+  <!-- Linha de prévia: é o texto que aparece na caixa de entrada, ao lado do
+       assunto. Sem ela, o cliente mostra o começo do HTML. -->
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;height:0;width:0;">
+    Hoje às 19:30, ao vivo no YouTube. Sem inscrição: é só entrar no horário.
+    &#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;&#847;&zwnj;&nbsp;
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#0b1220;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+
+        <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:#0f172a;border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;">
+
+          <!-- Cabeçalho -->
+          <tr>
+            <td class="pad" style="padding:32px 32px 8px;">
+              <p style="margin:0 0 6px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:#15c47e;font-weight:700;">DriveData Academy</p>
+              <h1 class="h1" style="margin:0;color:#ffffff;font-size:30px;line-height:1.15;font-weight:700;">Hoje, 19:30:<br>Arquitetura Medalhão.</h1>
+              <p style="margin:16px 0 0;color:#cbd5e1;font-size:15px;line-height:1.6;">
+                Ao vivo no YouTube. Sem inscrição e sem link secreto: é só entrar no horário.
+                Quem assiste ao vivo sai com certificado de participação.
+              </p>
+            </td>
+          </tr>
+
+          <!-- A capa vem do storage em JPEG. O Outlook do Windows não abre WebP
+               e o banner viria quebrado. -->
+          <tr>
+            <td class="pad" style="padding:28px 32px 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:16px;overflow:hidden;">
+                <tr>
+                  <td>
+                    <a href="https://youtube.com/live/Vm1KyrHRAm0">
+                      <img class="capa" src="https://nkxqwxbcuzxklikswjfq.supabase.co/storage/v1/object/public/covers/live-1790005869264-arquitetura-medalhao.jpg"
+                           alt="Arquitetura Medalhão: a jornada do dado bruto ao insight, hoje 23 de setembro às 19:30"
+                           width="536" style="display:block;width:100%;max-width:536px;height:auto;border:0;">
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:20px 22px 22px;">
+                    <p style="margin:0 0 8px;font-family:'Courier New',monospace;font-size:12px;letter-spacing:.1em;color:#15c47e;">AULA 4 &middot; HOJE 23/09 &middot; 19:30 &middot; 1H30</p>
+                    <!-- A arte da capa já traz o título da aula. Repetir aqui
+                         gastaria a linha mais visível do cartão para dizer o
+                         que a pessoa acabou de ler na imagem. -->
+                    <p style="margin:0 0 10px;color:#ffffff;font-size:20px;line-height:1.25;font-weight:700;">Por que separar o dado em camadas</p>
+                    <p style="margin:0 0 18px;color:#cbd5e1;font-size:14px;line-height:1.65;">
+                      Como o dado sai da forma bruta e chega em informação confiável para decidir.
+                      O papel de cada camada e o que essa organização resolve de qualidade,
+                      governança e eficiência dentro do projeto.
+                    </p>
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background:#15c47e;border-radius:12px;">
+                          <a href="https://youtube.com/live/Vm1KyrHRAm0" style="display:inline-block;padding:13px 26px;color:#04140d;font-size:14px;font-weight:700;">Assistir no YouTube &rarr;</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- As três camadas. Cada uma numa linha própria de tabela, com a
+               tarja colorida como célula e não como borda: borda-esquerda
+               colorida é das primeiras coisas que o Outlook descarta. -->
+          <tr>
+            <td class="pad" style="padding:22px 32px 0;">
+              <p style="margin:0 0 12px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#94a3b8;font-weight:700;">O que você vai ver</p>
+
+              <table role="presentation" class="camada" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;">
+                <tr>
+                  <td width="4" style="width:4px;background:#b08d57;border-radius:2px;">&nbsp;</td>
+                  <td style="padding:2px 0 14px 14px;">
+                    <p style="margin:0 0 2px;color:#b08d57;font-size:14px;font-weight:700;">Bronze</p>
+                    <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">O dado como ele chegou, sem tratamento e sem perda.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="4" style="width:4px;background:#c0c8d0;border-radius:2px;">&nbsp;</td>
+                  <td style="padding:2px 0 14px 14px;">
+                    <p style="margin:0 0 2px;color:#c0c8d0;font-size:14px;font-weight:700;">Prata</p>
+                    <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">Limpo, padronizado e com as regras de qualidade aplicadas.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td width="4" style="width:4px;background:#e3b341;border-radius:2px;">&nbsp;</td>
+                  <td style="padding:2px 0 0 14px;">
+                    <p style="margin:0 0 2px;color:#e3b341;font-size:14px;font-weight:700;">Ouro</p>
+                    <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6;">Pronto para o relatório, a análise e a decisão.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Como funciona o certificado. A palavra-chave NÃO entra aqui:
+               ela é dita em voz alta durante a transmissão, e é o que separa
+               quem assistiu de quem só abriu o e-mail. -->
+          <tr>
+            <td class="pad" style="padding:26px 32px 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:rgba(21,196,126,.07);border:1px solid rgba(21,196,126,.3);border-radius:14px;">
+                <tr>
+                  <td style="padding:18px 22px;">
+                    <p style="margin:0 0 6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#15c47e;font-weight:700;">Certificado de participação</p>
+                    <p style="margin:0;color:#cbd5e1;font-size:14px;line-height:1.65;">
+                      Durante a transmissão a gente mostra um QR code e diz uma palavra-chave em voz alta.
+                      Você lê o código, escreve a palavra e o certificado de 1h30 sai na hora, com código
+                      de autenticidade para qualquer pessoa conferir.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Assinatura -->
+          <tr>
+            <td class="pad" style="padding:26px 32px 34px;">
+              <p style="margin:0 0 14px;color:#94a3b8;font-size:14px;line-height:1.6;">
+                As aulas abertas são uma amostra. Dentro da Academy tem a agenda completa, as gravações,
+                a comunidade e as ferramentas.
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="border:1px solid rgba(255,255,255,.22);border-radius:12px;">
+                    <a href="https://academy.drivedata.com.br/matricula" style="display:inline-block;padding:12px 24px;color:#ffffff;font-size:14px;font-weight:600;">Conhecer a Academy</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+
+        <!-- Rodapé exigido pela moderação da SendPulse: dizer por que a
+             pessoa está recebendo, e o link de descadastro. O {{unsubscribe_url}}
+             é substituído pela SendPulse no disparo. Sem ele a campanha não sai. -->
+        <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;">
+          <tr>
+            <td class="pad" style="padding:20px 32px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;">
+              <p style="margin:0 0 10px;color:#94a3b8;font-size:12px;line-height:1.7;">
+                Você recebeu este e-mail porque se cadastrou em um material, aula ao vivo ou curso
+                da DriveData. Guardamos seu contato desde então para avisar das aulas abertas.
+              </p>
+              <p style="margin:0 0 14px;font-size:13px;line-height:1.6;">
+                <a href="{{unsubscribe_url}}" style="color:#cbd5e1;text-decoration:underline;">Não quero mais receber estes e-mails</a>
+              </p>
+              <p style="margin:0;color:#64748b;font-size:12px;line-height:1.6;">
+                &copy; DriveData Academy &middot;
+                <a href="https://academy.drivedata.com.br" style="color:#64748b;text-decoration:underline;">academy.drivedata.com.br</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

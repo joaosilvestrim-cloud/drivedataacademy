@@ -95,10 +95,10 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
         <Field
           scope={scope}
           name="url"
-          label="Link da transmissão"
+          label="Link da transmissão (público)"
           type="url"
           defaultValue={live?.url ?? ""}
-          description="YouTube, Meet ou outro."
+          description="YouTube ou outro link aberto. Aparece na home e em /cursos, que são páginas públicas. Sala com senha não vai aqui."
         />
         <UploadDeImagem
           name="cover_url"
@@ -115,6 +115,34 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
         host={pandaHost}
         verEm={editando && live?.recording_url ? `/conta/gravacoes/${live.id}` : undefined}
       />
+
+      {/* Encontro fechado. Separado do link público de propósito: num Teams ou
+          Zoom o endereço É a credencial, e o campo de cima é lido por página
+          que não pede login. Preenchido aqui, o link só aparece na agenda do
+          aluno, e ele vence o link público quando os dois existem. */}
+      <div className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
+        <p className="text-sm font-semibold text-white">Encontro fechado (só aluno)</p>
+        <p className="-mt-2 text-xs text-slate-400">
+          Para Teams, Zoom ou Meet com senha. Aparece apenas em /conta/agenda, atrás do login.
+          Se preencher, este link substitui o público na agenda.
+        </p>
+        <Field
+          scope={scope}
+          name="url_alunos"
+          label="Link da reunião"
+          type="url"
+          defaultValue={live?.url_alunos ?? ""}
+          description="O endereço de ingresso. Em geral já leva a senha embutida."
+        />
+        <TextareaField
+          scope={scope}
+          name="acesso_alunos"
+          label="Dados de acesso"
+          rows={3}
+          defaultValue={live?.acesso_alunos ?? ""}
+          description="ID da reunião, senha e o que mais for preciso para entrar sem o link. Não use a descrição para isso: ela é pública."
+        />
+      </div>
 
       {/* Presença por QR code: quem assiste confirma em /presenca e recebe o
           certificado na hora. A palavra-chave dita ao vivo é a prova. */}

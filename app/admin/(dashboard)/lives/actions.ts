@@ -38,6 +38,10 @@ export async function saveLive(formData: FormData) {
     starts_at: starts,
     duration_min: Number((formData.get("duration_min") as string) || "0") || null,
     url: ((formData.get("url") as string) || "").trim() || null,
+    // Link e dados de sala fechada. Ficam fora do `url` porque aquele campo é
+    // lido pela home e por /cursos, que não pedem login.
+    url_alunos: ((formData.get("url_alunos") as string) || "").trim() || null,
+    acesso_alunos: ((formData.get("acesso_alunos") as string) || "").trim() || null,
     recording_url: endereçoDoVideo((formData.get("recording_url") as string) || ""),
     cover_url: ((formData.get("cover_url") as string) || "").trim() || null,
     kind: (formData.get("kind") as string) === "mentoria" ? "mentoria" : "live",
