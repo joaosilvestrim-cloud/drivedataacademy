@@ -1,9 +1,10 @@
 import "server-only";
+import { chamarIA } from "@/lib/ia-provedor";
 
-// IA de suporte via Groq (GroqCloud, API compatível com OpenAI).
-// Sem GROQ_API_KEY, retorna null e o chamado fica para o time humano.
-
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+/* IA de suporte. O fornecedor e escolhido em lib/ia-provedor.ts, que tenta os
+   configurados em ordem e cai para o proximo quando um falha. Sem nenhum
+   fornecedor configurado, tudo aqui devolve null e o chamado fica para o time
+   humano, que e o comportamento que sempre existiu. */
 
 /* Regras estáveis da plataforma. Nada que muda com o tempo mora aqui: preços,
    cursos, lives e estado da conta chegam no contexto, montado do banco em
@@ -92,10 +93,6 @@ type ChatMsg = { role: "user" | "assistant"; content: string };
 
 // Conversa (chat) com histórico. Usado pelo widget do assistente.
 export async function chatSupportAI(history: ChatMsg[], context?: string): Promise<string | null> {
-  const key = process.env.GROQ_API_KEY;
-  if (!key) return null;
-  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
-
   const trimmed = history
     .filter((m) => (m.role === "user" || m.role === "assistant") && m.content?.trim())
     .slice(-12)
@@ -104,71 +101,51 @@ export async function chatSupportAI(history: ChatMsg[], context?: string): Promi
   const escalationRule =
     "\n\nIMPORTANTE: se a dúvida depende da conta do aluno ou de ação humana (pagamento não reconhecido, não consegue acessar, reembolso, cobrança, erro/bug, ou algo que você não consegue resolver), responda acolhendo e avisando que vai encaminhar para o time, e adicione EXATAMENTE o marcador [[ESCALAR]] na última linha da sua resposta. Só use o marcador quando realmente precisar de um humano.";
 
-  const messages = [
-    { role: "system", content: SYSTEM_PROMPT + escalationRule + (context ? `\n\n${context}` : "") },
-    ...trimmed,
-  ];
-
-  try {
-    const res = await fetch(GROQ_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, messages, temperature: 0.3, max_tokens: 600 }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data?.choices?.[0]?.message?.content?.trim() || null;
-  } catch {
-    return null;
-  }
+  const r = await chamarIA({
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT + escalationRule + (context ? `\n\n${context}` : "") },
+      ...trimmed,
+    ],
+    temperature: 0.3,
+    max_tokens: 600,
+  });
+  return r?.texto ?? null;
 }
 
-// Extrai dados de trajetória de um texto (LinkedIn/CV colado) via Groq.
+// Extrai dados de trajetória de um texto (LinkedIn/CV colado).
 export async function extractProfile(text: string): Promise<{ headline: string; bio: string; skills: string } | null> {
-  const key = process.env.GROQ_API_KEY;
-  if (!key) return null;
-  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
   const sys = `Você extrai dados de perfil profissional de um texto (currículo ou LinkedIn colado). Responda SOMENTE um JSON válido, sem texto extra, no formato:
 {"headline": "título profissional curto (ex.: Analista de Dados | Power BI)", "bio": "resumo em 2-3 frases da trajetória, em 1ª pessoa", "skills": "principais habilidades separadas por vírgula"}
 Se algo não estiver claro, deduza com bom senso a partir do texto. Não invente empregos específicos que não estejam no texto.`;
+
+  const r = await chamarIA({
+    messages: [{ role: "system", content: sys }, { role: "user", content: text.slice(0, 6000) }],
+    temperature: 0.2,
+    max_tokens: 500,
+    json: true,
+  });
+  if (!r) return null;
+
   try {
-    const res = await fetch(GROQ_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, temperature: 0.2, max_tokens: 500, response_format: { type: "json_object" }, messages: [{ role: "system", content: sys }, { role: "user", content: text.slice(0, 6000) }] }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const raw = data?.choices?.[0]?.message?.content?.trim();
-    if (!raw) return null;
-    const j = JSON.parse(raw);
-    return { headline: String(j.headline || "").slice(0, 160), bio: String(j.bio || "").slice(0, 800), skills: String(j.skills || "").slice(0, 400) };
+    const j = JSON.parse(r.texto);
+    return {
+      headline: String(j.headline || "").slice(0, 160),
+      bio: String(j.bio || "").slice(0, 800),
+      skills: String(j.skills || "").slice(0, 400),
+    };
   } catch {
     return null;
   }
 }
 
 export async function askSupportAI(question: string, context?: string): Promise<string | null> {
-  const key = process.env.GROQ_API_KEY;
-  if (!key) return null;
-  const model = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
-
-  const messages = [
-    { role: "system", content: SYSTEM_PROMPT + (context ? `\n\n${context}` : "") },
-    { role: "user", content: question },
-  ];
-
-  try {
-    const res = await fetch(GROQ_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model, messages, temperature: 0.3, max_tokens: 600 }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const text = data?.choices?.[0]?.message?.content?.trim();
-    return text || null;
-  } catch {
-    return null;
-  }
+  const r = await chamarIA({
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT + (context ? `\n\n${context}` : "") },
+      { role: "user", content: question },
+    ],
+    temperature: 0.3,
+    max_tokens: 600,
+  });
+  return r?.texto ?? null;
 }

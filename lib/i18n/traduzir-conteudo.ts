@@ -1,5 +1,6 @@
 import "server-only";
 import { NOME_DO_IDIOMA, type Idioma } from "./idioma";
+import { provedores, MODELO_PADRAO } from "@/lib/ia-provedor";
 
 /* Traduz texto de curso, aula, live, material e artigo.
 
@@ -8,7 +9,11 @@ import { NOME_DO_IDIOMA, type Idioma } from "./idioma";
    uma pessoa. Tradução de catálogo é texto de venda, e texto de venda merece
    uma lida antes de virar a primeira impressão de alguém. */
 
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+/* Endereço e chave saem da mesma camada do assistente, para que trocar de
+   fornecedor carregue a tradução junto. A rotação de modelo logo abaixo
+   continua sendo daqui: ela existe por causa da cota diária por modelo, que é
+   assunto de orçamento, não de disponibilidade. */
+const PRINCIPAL = provedores()[0] ?? null;
 
 const GLOSSARIO =
   "This is a Brazilian data/BI school (DriveData Academy). Keep product and brand names exactly as written: " +
@@ -25,7 +30,7 @@ const GLOSSARIO =
 
    Então aqui a lista é outra, e o modelo do assistente é removido dela de
    propósito, mesmo que alguém o coloque na variável por engano. */
-const MODELO_DO_ASSISTENTE = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+const MODELO_DO_ASSISTENTE = process.env.IA_MODEL || process.env.GROQ_MODEL || MODELO_PADRAO;
 
 const MODELOS = (process.env.GROQ_MODEL_TRADUCAO || "openai/gpt-oss-20b,qwen/qwen3.8-27b")
   .split(",")
@@ -75,15 +80,15 @@ export async function traduzirTexto(texto: string, idioma: Idioma): Promise<stri
 }
 
 async function traduzirPedaco(texto: string, idioma: Idioma): Promise<string | null> {
-  const key = process.env.GROQ_API_KEY;
-  if (!key || !texto.trim() || idioma === "pt") return null;
+  if (!PRINCIPAL || !texto.trim() || idioma === "pt") return null;
+  const key = PRINCIPAL.chave;
   const destino = idioma === "es" ? "Latin American Spanish" : NOME_DO_IDIOMA[idioma];
 
   for (const model of MODELOS) {
     if (esgotados.has(model)) continue;
     for (let tentativa = 0; tentativa < 4; tentativa++) {
       try {
-        const res = await fetch(GROQ_URL, {
+        const res = await fetch(PRINCIPAL.url, {
           method: "POST",
           headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
           body: JSON.stringify({

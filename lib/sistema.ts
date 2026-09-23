@@ -1,4 +1,5 @@
 import "server-only";
+import { provedores } from "@/lib/ia-provedor";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /* Checagens da saúde da plataforma, usadas em Admin > Sistema. Cada checagem
@@ -64,15 +65,37 @@ export async function checarIntegracoes(): Promise<Check[]> {
     detalhe: `RESEND_FROM_CONTA: ${fromConta}. RESEND_FROM: ${remetente(process.env.RESEND_FROM)}.`,
   });
 
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!groqKey) checks.push({ nome: "Groq (assistente de IA)", ok: false, detalhe: "GROQ_API_KEY ausente. O assistente encaminha tudo para o time." });
-  else {
+  /* IA do assistente. O que importa aqui não é "o Groq está de pé", e sim
+     "existe alguém capaz de responder ao aluno, e existe reserva se cair". */
+  const fornecedores = provedores();
+  if (!fornecedores.length) {
+    checks.push({ nome: "IA do assistente", ok: false, detalhe: "Nenhum fornecedor configurado. O assistente encaminha tudo para o time. Configure IA_BASE_URL + IA_API_KEY, ou GROQ_API_KEY." });
+  } else {
+    const principal = fornecedores[0];
+    const reserva = fornecedores.slice(1).map((f) => f.nome).join(", ");
+    const sufixo = reserva ? ` Reserva: ${reserva}.` : " Sem reserva: se este cair, o assistente para até voltar.";
     try {
-      const r = await comTempo((signal) => fetch("https://api.groq.com/openai/v1/models", { headers: { Authorization: `Bearer ${groqKey}` }, cache: "no-store", signal }));
-      const modelo = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+      const r = await comTempo((signal) =>
+        fetch(principal.url.replace(/\/chat\/completions$/, "/models"), {
+          headers: { Authorization: `Bearer ${principal.chave}` }, cache: "no-store", signal,
+        }),
+      );
       const lista = r.ok ? (((await r.json())?.data ?? []) as any[]).map((m) => m.id) : [];
-      checks.push({ nome: "Groq (assistente de IA)", ok: r.ok && lista.includes(modelo), detalhe: r.ok ? (lista.includes(modelo) ? `Chave válida. Modelo em uso: ${modelo}.` : `Chave válida, mas o modelo ${modelo} não está disponível.`) : `API respondeu ${r.status}.` });
-    } catch { checks.push({ nome: "Groq (assistente de IA)", ok: false, detalhe: "Sem resposta da API em 6 segundos." }); }
+      /* Nem todo fornecedor compatível lista modelos em /models. Lista vazia
+         com resposta 200 não é defeito: só não dá para conferir o modelo. */
+      const temModelo = lista.length === 0 || lista.includes(principal.modelo);
+      checks.push({
+        nome: "IA do assistente",
+        ok: r.ok && temModelo,
+        detalhe: r.ok
+          ? (temModelo
+              ? `${principal.nome}, modelo ${principal.modelo}.${sufixo}`
+              : `${principal.nome} respondeu, mas o modelo ${principal.modelo} não está disponível lá.${sufixo}`)
+          : `${principal.nome} respondeu ${r.status}.${sufixo}`,
+      });
+    } catch {
+      checks.push({ nome: "IA do assistente", ok: false, detalhe: `${principal.nome} não respondeu em 6 segundos.${sufixo}` });
+    }
   }
 
   checks.push({ nome: "Panda (vídeos)", ok: process.env.PANDA_API_KEY ? true : null, detalhe: process.env.PANDA_API_KEY ? "Chave configurada: a duração das aulas é lida automaticamente." : "Sem chave: a duração das aulas do Panda fica em branco." });
