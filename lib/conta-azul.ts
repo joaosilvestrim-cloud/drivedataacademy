@@ -28,11 +28,22 @@ const MARGEM_MS = 120_000;
 
 // ------------------------------------------------------------------ cifra
 
+/* A chave de cifra, em hex ou base64.
+
+   O `trim` não é decoração. Valor colado em painel de deploy vem com espaço
+   ou quebra de linha na ponta mais vezes do que se imagina, e sem ele o erro
+   seria "a chave tem tamanho errado" quando o conteúdo está certo. */
 function chave(): Buffer {
-  const bruta = process.env.CA_TOKEN_KEY || "";
+  const bruta = (process.env.CA_TOKEN_KEY || "").trim();
+  if (!bruta) {
+    throw new Error("CA_TOKEN_KEY está vazia no ambiente. Gere com: openssl rand -hex 32");
+  }
   const b = /^[0-9a-f]{64}$/i.test(bruta) ? Buffer.from(bruta, "hex") : Buffer.from(bruta, "base64");
   if (b.length !== 32) {
-    throw new Error("CA_TOKEN_KEY precisa ter 32 bytes (64 hex ou 44 base64). Gere com: openssl rand -hex 32");
+    throw new Error(
+      `CA_TOKEN_KEY precisa ter 32 bytes (64 hex ou 44 base64), e veio com ${bruta.length} caracteres. ` +
+        "Erro comum: colar a linha inteira do arquivo, com o nome da variável junto. O valor é só o que vem depois do sinal de igual.",
+    );
   }
   return b;
 }
