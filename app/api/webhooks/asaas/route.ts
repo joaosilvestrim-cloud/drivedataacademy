@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendAccessGrantedEmail, sendAccountSetupEmail, sendCoursePurchasedEmail, sendWorkshopEmail } from "@/lib/email";
+import { enviarCobrancaDoWebhook } from "@/lib/conta-azul-venda";
 import { grantOffer } from "@/lib/offers";
 
 async function findUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string): Promise<string | null> {
@@ -120,6 +121,7 @@ export async function POST(req: Request) {
         await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL, order.id);
       }
     }
+    await enviarCobrancaDoWebhook(payment, order.id);
     return NextResponse.json({ ok: true, anual: "active" });
   }
 
@@ -141,6 +143,7 @@ export async function POST(req: Request) {
       const { data: curso } = await admin.from("courses").select("title, slug").eq("id", order.course_id).maybeSingle();
       if (curso && order.email) await sendCoursePurchasedEmail(order.email, order.name || "", curso.title, `${SITE_URL}/aprender/${curso.slug}`);
     }
+    await enviarCobrancaDoWebhook(payment, order.id);
     return NextResponse.json({ ok: true, curso: "enrolled" });
   }
 
@@ -185,6 +188,7 @@ export async function POST(req: Request) {
           await sendAccessGrantedEmail(order.email, order.name || "", SITE_URL, order.id);
         }
       }
+      await enviarCobrancaDoWebhook(payment, order.id);
       return NextResponse.json({ ok: true, sub: "active" });
     }
 
@@ -226,6 +230,7 @@ export async function POST(req: Request) {
         await sendWorkshopEmail(order.email, order.name || "", ev.title, when, ev.url || null);
       }
     }
+    await enviarCobrancaDoWebhook(payment, order.id);
     return NextResponse.json({ ok: true, workshop: true });
   }
 
@@ -250,5 +255,6 @@ export async function POST(req: Request) {
     }
   }
 
+  await enviarCobrancaDoWebhook(payment, order.id);
   return NextResponse.json({ ok: true });
 }

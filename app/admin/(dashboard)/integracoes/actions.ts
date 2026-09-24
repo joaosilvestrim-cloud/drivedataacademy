@@ -39,6 +39,31 @@ export async function salvarConfigCA(formData: FormData) {
   redirect("/admin/integracoes?ok=" + encodeURIComponent(querLigar ? "Salvo. Novos pagamentos viram venda no Conta Azul." : "Salvo. O envio está desligado."));
 }
 
+/* Manda para o Conta Azul o que já foi pago e ainda não virou venda.
+
+   Em lote pequeno de propósito. A API tem limite de vazão, e a pessoa está
+   olhando uma tela: é melhor voltar rápido com um número e deixar clicar de
+   novo do que segurar a requisição até o servidor cortar. Repetir continua de
+   onde parou, porque a idempotência é por cobrança do Asaas. */
+export async function enviarPendentesCA() {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+
+  const { enviarPendentes } = await import("@/lib/conta-azul-venda");
+  let r;
+  try {
+    r = await enviarPendentes(25);
+  } catch (e) {
+    redirect("/admin/integracoes?erro=" + encodeURIComponent((e as Error).message.slice(0, 200)));
+  }
+
+  revalidatePath("/admin/integracoes");
+  const partes = [`${r.enviadas} enviada(s)`];
+  if (r.falhas) partes.push(`${r.falhas} com erro`);
+  if (r.puladas) partes.push(`${r.puladas} sem dado para enviar`);
+  redirect("/admin/integracoes?ok=" + encodeURIComponent(partes.join(", ") + "."));
+}
+
 export async function desconectarContaAzul() {
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");

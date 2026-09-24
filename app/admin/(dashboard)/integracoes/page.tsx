@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { caGet, config } from "@/lib/conta-azul";
-import { desconectarContaAzul, salvarConfigCA } from "./actions";
+import { desconectarContaAzul, salvarConfigCA, enviarPendentesCA } from "./actions";
+import { cobrancasPendentes, type Pendente } from "@/lib/conta-azul-venda";
 
 export const dynamic = "force-dynamic";
 
@@ -174,6 +175,92 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
           </form>
         )}
       </section>
+
+      {conectado && <Pendentes />}
     </div>
+  );
+}
+
+const dinheiro = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+/* O que já foi recebido e ainda não virou venda.
+
+   A lista vem do Asaas, não da nossa tabela de pedidos. A assinatura reusa o
+   mesmo pedido a cada renovação, então o banco daqui só conhece a última
+   cobrança de cada aluno: o histórico mês a mês só existe lá. */
+async function Pendentes() {
+  let lista: Pendente[] = [];
+  let erro: string | null = null;
+  try {
+    lista = await cobrancasPendentes();
+  } catch (e) {
+    erro = (e as Error).message;
+  }
+
+  const prontas = lista.filter((p) => !p.motivo);
+  const travadas = lista.filter((p) => p.motivo);
+
+  return (
+    <section className="glass mt-6 rounded-2xl border border-white/8 p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-white">Já vendido, ainda não enviado</p>
+          <p className="mt-0.5 text-xs text-slate-400">
+            Cobranças pagas no Asaas que ainda não viraram venda no Conta Azul, inclusive as de antes
+            desta integração existir.
+          </p>
+        </div>
+        {prontas.length > 0 && (
+          <form action={enviarPendentesCA}>
+            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+              Enviar {Math.min(prontas.length, 25)}
+            </button>
+          </form>
+        )}
+      </div>
+
+      {erro && (
+        <p className="mt-4 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-xs text-red-200">
+          Não consegui listar: {erro}
+        </p>
+      )}
+
+      {!erro && lista.length === 0 && (
+        <p className="mt-4 text-sm text-slate-400">Nada pendente. Tudo que foi pago já está no Conta Azul.</p>
+      )}
+
+      {prontas.length > 0 && (
+        <ul className="mt-4 divide-y divide-white/5 rounded-xl border border-white/8">
+          {prontas.slice(0, 40).map((p) => (
+            <li key={p.paymentId} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2.5 text-sm">
+              <span className="w-20 shrink-0 font-mono text-xs text-slate-500">{p.pagoEm.slice(0, 10)}</span>
+              <span className="min-w-0 flex-1 truncate text-slate-200">{p.nome}</span>
+              <span className="shrink-0 font-mono text-xs tabular-nums text-slate-300">{dinheiro(p.valor)}</span>
+              {p.erro && <span className="w-full text-xs text-amber-300">tentativa anterior: {p.erro}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {travadas.length > 0 && (
+        <div className="mt-4 rounded-xl border border-amber-400/25 bg-amber-400/5 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-200">
+            {travadas.length} não dá para enviar
+          </p>
+          <p className="mt-1 text-xs text-slate-400">
+            Falta dado no Asaas. Corrigir lá e recarregar esta página resolve.
+          </p>
+          <ul className="mt-3 space-y-1">
+            {travadas.slice(0, 15).map((p) => (
+              <li key={p.paymentId} className="flex flex-wrap gap-x-3 text-xs text-slate-400">
+                <span className="font-mono text-slate-500">{p.pagoEm.slice(0, 10)}</span>
+                <span className="min-w-0 flex-1 truncate text-slate-300">{p.nome}</span>
+                <span className="text-amber-300">{p.motivo}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </section>
   );
 }
