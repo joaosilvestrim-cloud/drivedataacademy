@@ -1,0 +1,26 @@
+.dock { position:relative; width:100px; height:112px; margin-left:auto; isolation:isolate; }
+.launcher { position:relative; display:block; width:100%; height:100%; border-radius:24px; outline-offset:3px; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+.launcher:focus-visible,.pause:focus-visible { outline:2px solid #57efc2; }
+.glow { position:absolute; inset:27% 8% 9%; border-radius:50%; background:radial-gradient(ellipse,#25dbc330,transparent 72%); }
+.platform { position:absolute; bottom:7px; left:12px; width:76px; height:22px; border:1px solid #40e7d97a; border-radius:50%; background:radial-gradient(ellipse,#28d9d530,#071923aa 65%); box-shadow:0 0 16px #27d6d621,inset 0 0 10px #26aee52b; }
+.platform span { position:absolute; inset:3px; border:1px dashed #40e7d980; border-radius:50%; animation:orbit 14s linear infinite; }
+.character { position:absolute; inset:0 0 12px; transform-origin:50% 88%; animation:breathe 6s ease-in-out infinite; filter:drop-shadow(0 3px 4px #020b12a8); pointer-events:none; }
+.frame { position:absolute; inset:0; background-image:url('/mascot-poses.png'); background-size:200% 200%; background-repeat:no-repeat; opacity:0; transition:opacity .28s ease; }
+.frame[data-frame="0"] { background-position:0 0; }
+.frame[data-frame="1"] { background-position:100% 0; }
+.frame[data-frame="2"] { background-position:0 100%; }
+.frame[data-frame="3"] { background-position:100% 100%; }
+.frame[data-active="true"] { opacity:1; }
+.dock[data-pose="1"] .character { animation:greet 3.2s ease-in-out infinite; }
+.dock[data-pose="2"] .character { animation:study 5s ease-in-out infinite; }
+.dock[data-pose="3"] .character { animation:celebrate 3.2s ease-in-out infinite; }
+.online { position:absolute; right:9px; bottom:22px; height:9px; width:9px; border:2px solid #071923; border-radius:50%; background:#43e5b1; }
+.pause { position:absolute; bottom:0; left:0; display:grid; place-items:center; height:26px; width:26px; border:1px solid #486071; border-radius:50%; background:#091722; color:#a1bbca; }
+.pause:hover { color:#62f4ce; border-color:#62f4ce; }
+.dock[data-still="true"] * { animation:none!important; transition:none!important; }
+@keyframes breathe { 0%,100% { transform:translateY(0) rotate(-1deg); } 50% { transform:translateY(-3px) rotate(1deg); } }
+@keyframes greet { 0%,100% { transform:translateY(-1px) rotate(0); } 20%,50% { transform:translateY(-4px) rotate(-5deg); } 35%,65% { transform:translateY(-3px) rotate(3deg); } 80% { transform:translateY(-1px) rotate(0); } }
+@keyframes study { 0%,100% { transform:translateY(0) rotate(0); } 30%,60% { transform:translateY(-2px) rotate(2deg); } 45% { transform:translateY(-1px) rotate(-1deg); } }
+@keyframes celebrate { 0%,55%,100% { transform:translateY(0) rotate(0); } 20% { transform:translateY(-8px) rotate(-5deg); } 35% { transform:translateY(-2px) rotate(3deg); } }
+@keyframes orbit { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion:reduce) { .dock * { animation:none!important; transition:none!important; } }

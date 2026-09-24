@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Mascot from "./Mascot";
+import FloatingMascot from "./FloatingMascot";
 import { montarFila, type Balao } from "@/lib/mascote";
 
 /* Ritmo dos balões: o primeiro aparece logo, fica um tempo e some; o próximo
@@ -30,6 +31,7 @@ const SUGGESTIONS = ["Onde fica meu certificado?", "Em qual curso eu estou?", "C
 export default function AssistantButton() {
   const tr = usarTraducao();
   const [open, setOpen] = useState(false);
+  const [motionPaused, setMotionPaused] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: tr(GREETING) }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,6 +46,14 @@ export default function AssistantButton() {
   const openRef = useRef(false);
   openRef.current = open;
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { setMotionPaused(lerSessao("mascote:pausado") === "1"); }, []);
+
+  function toggleMotion() {
+    const next = !motionPaused;
+    setMotionPaused(next);
+    gravarSessao("mascote:pausado", next ? "1" : "0");
+  }
 
   useEffect(() => {
     if (open && scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -144,9 +154,10 @@ export default function AssistantButton() {
   const fresh = messages.length === 1;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 print:hidden">
+    <div className={`assistant-dock fixed bottom-5 right-5 z-50 print:hidden ${motionPaused ? "assistant-motion-paused" : ""}`}>
+      <style>{`@media (prefers-reduced-motion:reduce){.assistant-dock .animate-float,.assistant-dock .animate-pulse{animation:none!important}}.assistant-motion-paused .animate-float,.assistant-motion-paused .animate-pulse{animation:none!important}`}</style>
       {open && (
-        <div className="mb-3 flex h-[540px] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-ink-800/95 shadow-2xl backdrop-blur">
+        <div id="drivedata-assistant-panel" className="mb-3 flex h-[540px] max-h-[calc(100dvh-164px)] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-ink-800/95 shadow-2xl backdrop-blur">
           {/* Header */}
           <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-r from-brand-green/25 via-brand-teal/10 to-brand-blue/20 px-4 py-3">
             <div className="relative flex items-center gap-3">
@@ -227,7 +238,7 @@ export default function AssistantButton() {
 
       {/* Balão do mascote: convite, dica da plataforma ou piada de tech. */}
       {showHint && !open && !hintDismissed && balao && (
-        <div className="absolute bottom-3 right-[88px] w-64 max-w-[calc(100vw-120px)] animate-float" role="status" aria-live="polite">
+        <div className="absolute bottom-5 right-[108px] w-64 max-w-[calc(100vw-156px)] animate-float" role="status" aria-live="polite">
           <div className="relative rounded-2xl border border-white/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
             <button onClick={calar} aria-label={tr("Não mostrar mais balões nesta sessão")} title={tr("Não mostrar mais nesta sessão")} className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
 
@@ -270,13 +281,9 @@ export default function AssistantButton() {
       )}
 
       {/* Botão flutuante */}
-      <button onClick={() => (open ? setOpen(false) : openChat())} aria-label={tr("Assistente de dúvidas")} className="group relative grid h-[72px] w-[72px] place-items-center rounded-full transition-transform hover:scale-105">
-        {!open && <span className="absolute inset-0 rounded-full bg-brand-green/30 animate-ping" />}
-        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-brand-green/50 to-brand-blue/40 blur-lg" />
-        <span className="absolute inset-1 rounded-full border border-white/15 bg-ink-800/85 backdrop-blur" />
-        <Mascot className={`relative h-[72px] w-[72px] ${open ? "" : "animate-float"} drop-shadow-lg`} />
-        {!open && <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full border-2 border-ink-800 bg-brand-green text-[0.6rem] font-bold text-ink-900">1</span>}
-      </button>
+      <FloatingMascot open={open} onToggle={() => (open ? setOpen(false) : openChat())}
+        hint={showHint && !hintDismissed && !open ? balao?.tipo : undefined} loading={loading}
+        paused={motionPaused} onPause={toggleMotion} />
     </div>
   );
 }
