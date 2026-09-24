@@ -3,6 +3,8 @@
 import { usarTraducao } from "@/lib/i18n/usarTraducao";
 
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import panelStyles from "./assistant-panel.module.css";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Mascot from "./Mascot";
@@ -31,6 +33,8 @@ const SUGGESTIONS = ["Onde fica meu certificado?", "Em qual curso eu estou?", "C
 export default function AssistantButton() {
   const tr = usarTraducao();
   const [open, setOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: tr(GREETING) }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -96,6 +100,11 @@ export default function AssistantButton() {
     setShowHint(false);
   }
 
+  function closeChat() {
+    setOpen(false);
+    document.getElementById("drivedata-assistant-trigger")?.focus({ preventScroll: true });
+  }
+
   async function callApi(convo: Msg[], extra: Record<string, any> = {}) {
     setLoading(true);
     try {
@@ -146,30 +155,38 @@ export default function AssistantButton() {
   const fresh = messages.length === 1;
 
   return (
-    <div className="assistant-dock fixed bottom-5 right-5 z-50 print:hidden">
+    <div className={`assistant-dock fixed bottom-5 right-5 z-50 print:hidden ${panelStyles.stage}`}>
       <style>{`@media (prefers-reduced-motion:reduce){.assistant-dock .animate-float,.assistant-dock .animate-pulse{animation:none!important}}`}</style>
+      <AnimatePresence initial={false}>
       {open && (
-        <div id="drivedata-assistant-panel" className="mb-3 flex h-[540px] max-h-[calc(100dvh-164px)] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-ink-800/95 shadow-2xl backdrop-blur">
+        <motion.section key="assistant-panel" id="drivedata-assistant-panel" role="dialog" aria-label={tr("Assistente DriveData")} className={panelStyles.panel}
+          initial={reduceMotion ? {opacity:0} : {opacity:0,scale:.84,y:28,rotateX:9,filter:"blur(10px)"}}
+          animate={{opacity:1,scale:1,y:0,rotateX:0,filter:"blur(0px)"}}
+          exit={reduceMotion ? {opacity:0} : {opacity:0,scale:.94,y:16,filter:"blur(5px)",transition:{duration:.18}}}
+          transition={{duration:reduceMotion ? .1 : .6,ease:[.16,1,.3,1]}}
+          onAnimationComplete={definition => { if(typeof definition === "object" && !Array.isArray(definition) && definition.opacity === 1) closeRef.current?.focus({preventScroll:true}); }}
+          onKeyDown={event => { if(event.key === "Escape") { event.stopPropagation(); closeChat(); } }}>
           {/* Header */}
-          <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-r from-brand-green/25 via-brand-teal/10 to-brand-blue/20 px-4 py-3">
+          <div className={panelStyles.header}>
             <div className="relative flex items-center gap-3">
-              <Mascot className="h-12 w-12 animate-float drop-shadow" />
+              <div className={panelStyles.portrait}><Mascot realistic className="h-16 w-16 drop-shadow" /></div>
               <div className="flex-1">
-                <p className="font-display text-sm font-bold text-white">{tr("Assistente DriveData")}</p>
-                <p className="flex items-center gap-1.5 text-xs text-slate-200"><span className="h-1.5 w-1.5 rounded-full bg-brand-green animate-pulse" /> {tr("Online agora")}</p>
+                <p className={panelStyles.brand}>DRIVEDATA ACADEMY</p>
+                <p className={panelStyles.title}>{tr("Assistente DriveData")}</p>
+                <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-300"><span className="h-1.5 w-1.5 rounded-full bg-brand-green" /> {tr("Online agora")}</p>
               </div>
-              <button onClick={() => setOpen(false)} aria-label={tr("Fechar")} className="grid h-8 w-8 place-items-center rounded-lg text-slate-300 transition-colors hover:bg-white/10 hover:text-white">✕</button>
+              <button ref={closeRef} onClick={closeChat} aria-label={tr("Fechar")} className={panelStyles.close}>✕</button>
             </div>
           </div>
 
           {/* Mensagens */}
-          <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
+          <div ref={scrollRef} className={`${panelStyles.messages} space-y-4`}>
             {messages.map((m, i) =>
               m.role === "assistant" ? (
                 <div key={i} className="flex items-end gap-2">
-                  <Mascot className="h-7 w-7 shrink-0" />
+                  <Mascot realistic className="h-7 w-7 shrink-0" />
                   <div className="max-w-[82%]">
-                    <div className="rounded-2xl rounded-bl-sm border border-white/8 bg-white/[0.04] px-3.5 py-2.5 text-sm leading-relaxed text-slate-100 whitespace-pre-line">{m.content}</div>
+                    <div className={panelStyles.message}>{m.content}</div>
                     {m.link && (
                       <Link href={m.link.href} onClick={() => setOpen(false)} className="mt-1.5 inline-flex items-center gap-1 rounded-lg border border-brand-teal/40 px-3 py-1.5 text-xs font-medium text-brand-teal hover:bg-brand-teal/10">{m.link.label} →</Link>
                     )}
@@ -184,16 +201,16 @@ export default function AssistantButton() {
 
             {/* Sugestões rápidas */}
             {fresh && !loading && (
-              <div className="ml-9 flex flex-wrap gap-2">
+              <div className={panelStyles.suggestions}>
                 {SUGGESTIONS.map((s) => (
-                  <button key={s} onClick={() => sendText(s)} className="rounded-full border border-white/12 bg-white/[0.03] px-3 py-1.5 text-xs text-slate-200 transition-colors hover:border-brand-green/50 hover:text-white">{s}</button>
+                  <button key={s} onClick={() => sendText(s)} className={panelStyles.suggestion}>{tr(s)}</button>
                 ))}
               </div>
             )}
 
             {loading && (
               <div className="flex items-end gap-2">
-                <Mascot className="h-7 w-7 shrink-0" />
+                <Mascot realistic className="h-7 w-7 shrink-0" />
                 <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm border border-white/8 bg-white/[0.04] px-4 py-3">
                   {[0, 150, 300].map((d) => (
                     <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: `${d}ms` }} />
@@ -204,15 +221,16 @@ export default function AssistantButton() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-white/10 p-3">
-            <div className="flex items-end gap-2">
+          <div className={panelStyles.composer}>
+            <div className={panelStyles.inputRow}>
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKey}
                 rows={1}
                 placeholder={tr("Escreva sua mensagem...")}
-                className="max-h-24 flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
+                aria-label={tr("Escreva sua mensagem...")}
+                className={panelStyles.input}
               />
               <button onClick={() => sendText(input)} disabled={loading || !input.trim()} aria-label={tr("Enviar")} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -225,12 +243,13 @@ export default function AssistantButton() {
               </button>
             </div>
           </div>
-        </div>
+        </motion.section>
       )}
+      </AnimatePresence>
 
       {/* Balão do mascote: convite, dica da plataforma ou piada de tech. */}
       {showHint && !open && !hintDismissed && balao && (
-        <div className="absolute bottom-5 right-[108px] w-64 max-w-[calc(100vw-156px)] animate-float" role="status" aria-live="polite">
+        <div className="absolute bottom-5 right-[116px] w-64 max-w-[calc(100vw-164px)]" role="status" aria-live="polite">
           <div className="relative rounded-2xl border border-white/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
             <button onClick={calar} aria-label={tr("Não mostrar mais balões nesta sessão")} title={tr("Não mostrar mais nesta sessão")} className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
 
@@ -273,7 +292,7 @@ export default function AssistantButton() {
       )}
 
       {/* Botão flutuante */}
-      <FloatingMascot open={open} onToggle={() => (open ? setOpen(false) : openChat())} />
+      <FloatingMascot open={open} onToggle={() => (open ? closeChat() : openChat())} />
     </div>
   );
 }

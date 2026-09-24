@@ -1,11 +1,12 @@
-.dock { position:relative; width:100px; height:112px; margin-left:auto; isolation:isolate; }
+.dock { position:relative; width:108px; height:124px; margin-left:auto; isolation:isolate; perspective:500px; }
 .launcher { position:relative; display:block; width:100%; height:100%; border-radius:24px; outline-offset:3px; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
 .launcher:focus-visible { outline:2px solid #57efc2; }
-.glow { position:absolute; inset:27% 8% 9%; border-radius:50%; background:radial-gradient(ellipse,#25dbc330,transparent 72%); }
+.glow { position:absolute; inset:27% 8% 9%; border-radius:50%; background:radial-gradient(ellipse,#25dbc33b,transparent 72%); }
 .platform { position:absolute; bottom:7px; left:12px; width:76px; height:22px; border:1px solid #40e7d97a; border-radius:50%; background:radial-gradient(ellipse,#28d9d530,#071923aa 65%); box-shadow:0 0 16px #27d6d621,inset 0 0 10px #26aee52b; }
-.platform span { position:absolute; inset:3px; border:1px dashed #40e7d980; border-radius:50%; animation:orbit 14s linear infinite; }
-.character { position:absolute; inset:0 0 12px; transform-origin:50% 88%; animation:dance 1.6s ease-in-out infinite; filter:drop-shadow(0 3px 4px #020b12a8); pointer-events:none; }
-.frame { position:absolute; inset:0; background-image:url('/mascot-poses.png'); background-size:200% 200%; background-repeat:no-repeat; opacity:0; transition:opacity .28s ease; }
+.platform span { position:absolute; inset:3px; border:1px solid #40e7d930; border-radius:50%; }
+.character { position:absolute; inset:0 0 16px; transform-origin:50% 66%; filter:drop-shadow(0 6px 3px #020b12b8) drop-shadow(0 0 5px #20cbd322); pointer-events:none; }
+.dock[data-dancing="true"] .character { animation:sway 1.3s ease-in-out 2; }
+.frame { position:absolute; inset:0; background-image:url('/mascot-realistic-poses.png'); background-size:200% 200%; background-repeat:no-repeat; opacity:0; transition:opacity .13s ease; }
 .frame[data-frame="0"] { background-position:0 0; }
 .frame[data-frame="1"] { background-position:100% 0; }
 .frame[data-frame="2"] { background-position:0 100%; }
@@ -13,15 +14,9 @@
 .frame[data-active="true"] { opacity:1; }
 .online { position:absolute; right:9px; bottom:22px; height:9px; width:9px; border:2px solid #071923; border-radius:50%; background:#43e5b1; }
 .dock[data-still="true"] * { animation:none!important; transition:none!important; }
-@keyframes dance {
-  0%,100% { transform:translate(-5px,-2px) rotate(-10deg) scale(1.02,.98); }
-  12.5% { transform:translate(-2px,-9px) rotate(-5deg) scale(.98,1.02); }
-  25% { transform:translate(5px,0) rotate(10deg) scale(1.03,.97); }
-  37.5% { transform:translate(3px,-7px) rotate(5deg) scale(.98,1.02); }
-  50% { transform:translate(-5px,-1px) rotate(-12deg) scale(1.02,.98); }
-  62.5% { transform:translate(-3px,-10px) rotate(-4deg) scale(.98,1.02); }
-  75% { transform:translate(5px,0) rotate(12deg) scale(1.03,.97); }
-  87.5% { transform:translate(2px,-7px) rotate(4deg) scale(.98,1.02); }
+@keyframes sway {
+  0%,50%,100% { transform:translateX(0) rotate(0); }
+  25% { transform:translateX(-2px) rotate(-2deg); }
+  75% { transform:translateX(2px) rotate(2deg); }
 }
-@keyframes orbit { to { transform:rotate(360deg); } }
 @media (prefers-reduced-motion:reduce) { .dock * { animation:none!important; transition:none!important; } }

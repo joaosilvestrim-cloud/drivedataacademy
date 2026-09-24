@@ -5,7 +5,7 @@ import { usarTraducao } from "@/lib/i18n/usarTraducao";
 import { useState } from "react";
 
 // Mascote/assistente DriveData. Usa /assistente.png; se faltar, cai num SVG.
-export default function Mascot({ className = "h-12 w-12" }: { className?: string }) {
+export default function Mascot({ className = "h-12 w-12", realistic = false }: { className?: string; realistic?: boolean }) {
   const tr = usarTraducao();
   const [err, setErr] = useState(false);
   if (err) {
@@ -22,6 +22,10 @@ export default function Mascot({ className = "h-12 w-12" }: { className?: string
       </svg>
     );
   }
+  if (realistic) return <span role="img" aria-label={tr("Assistente DriveData")} className={`relative inline-block overflow-hidden ${className}`}>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img src="/mascot-realistic-poses.png" alt="" aria-hidden="true" onError={() => setErr(true)} style={{position:"absolute",width:"200%",height:"200%",maxWidth:"none",left:0,top:0}} />
+  </span>;
   // eslint-disable-next-line @next/next/no-img-element
   return <img src="/assistente.png" alt={tr("Assistente DriveData")} className={`object-contain ${className}`} onError={() => setErr(true)} />;
 }
