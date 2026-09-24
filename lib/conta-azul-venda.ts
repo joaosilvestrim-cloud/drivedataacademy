@@ -144,10 +144,12 @@ export async function enviarCobranca(c: CobrancaParaCA): Promise<{ ok: boolean; 
 
   const { data: jaTem } = await admin
     .from("ca_venda")
-    .select("venda_id, erro")
+    .select("venda_id, erro, ignorado")
     .eq("asaas_payment_id", c.paymentId)
     .maybeSingle();
   if (jaTem?.venda_id) return { ok: true, vendaId: jaTem.venda_id };
+  // Dispensada de propósito: teste, estorno, cobrança duplicada pelo gateway.
+  if (jaTem?.ignorado) return { ok: true };
 
   if (!jaTem) {
     const { error } = await admin.from("ca_venda").insert({
@@ -273,7 +275,7 @@ export async function cobrancasPendentes(): Promise<Pendente[]> {
   const [pagamentos, clientes, { data: enviadas }, { data: pedidos }] = await Promise.all([
     asaas<any>("/payments"),
     asaas<any>("/customers"),
-    admin.from("ca_venda").select("asaas_payment_id, venda_id, erro"),
+    admin.from("ca_venda").select("asaas_payment_id, venda_id, erro, ignorado"),
     admin.from("orders").select("id, gateway_id"),
   ]);
 
@@ -284,8 +286,9 @@ export async function cobrancasPendentes(): Promise<Pendente[]> {
   const fora: Pendente[] = [];
   for (const p of pagamentos) {
     if (!PAGO.has(p.status)) continue;
-    const registro = jaFoi.get(p.id);
+    const registro: any = jaFoi.get(p.id);
     if (registro?.venda_id) continue; // já virou venda
+    if (registro?.ignorado) continue; // dispensada de propósito
 
     const c = porCliente.get(p.customer);
     const documento = (c?.cpfCnpj || "").replace(/\D/g, "");
@@ -345,6 +348,25 @@ export async function enviarPendentes(limite = 25): Promise<{ enviadas: number; 
   }
 
   return { enviadas, falhas, puladas };
+}
+
+/* Dispensa uma cobrança para sempre.
+
+   Não apaga nem esconde: grava a linha com o motivo, para quem abrir a tabela
+   daqui a seis meses entender por que aquele dinheiro nunca virou receita. */
+export async function ignorarCobranca(paymentId: string, motivo: string, valor?: number, competencia?: string) {
+  await createAdminClient()
+    .from("ca_venda")
+    .upsert(
+      {
+        asaas_payment_id: paymentId,
+        ignorado: true,
+        motivo_ignorado: motivo.slice(0, 200),
+        ...(valor !== undefined ? { valor } : {}),
+        ...(competencia ? { competencia: competencia.slice(0, 10) } : {}),
+      },
+      { onConflict: "asaas_payment_id" },
+    );
 }
 
 /* O CPF não é guardado na Academy: ele é pedido no checkout, mandado ao Asaas

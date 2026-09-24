@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { caGet, config } from "@/lib/conta-azul";
-import { desconectarContaAzul, salvarConfigCA, enviarPendentesCA } from "./actions";
+import { desconectarContaAzul, salvarConfigCA, enviarPendentesCA, ignorarCobrancaCA } from "./actions";
 import { cobrancasPendentes, type Pendente } from "@/lib/conta-azul-venda";
 
 export const dynamic = "force-dynamic";
@@ -236,6 +236,18 @@ async function Pendentes() {
               <span className="w-20 shrink-0 font-mono text-xs text-slate-500">{p.pagoEm.slice(0, 10)}</span>
               <span className="min-w-0 flex-1 truncate text-slate-200">{p.nome}</span>
               <span className="shrink-0 font-mono text-xs tabular-nums text-slate-300">{dinheiro(p.valor)}</span>
+              <form action={ignorarCobrancaCA} className="shrink-0">
+                <input type="hidden" name="payment_id" value={p.paymentId} />
+                <input type="hidden" name="valor" value={p.valor} />
+                <input type="hidden" name="competencia" value={p.pagoEm.slice(0, 10)} />
+                <input type="hidden" name="motivo" value="Dispensada no painel" />
+                <button
+                  title="Nunca virar venda: teste, estorno, cobranca duplicada"
+                  className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-amber-400/50 hover:text-amber-300"
+                >
+                  Dispensar
+                </button>
+              </form>
               {p.erro && <span className="w-full text-xs text-amber-300">tentativa anterior: {p.erro}</span>}
             </li>
           ))}

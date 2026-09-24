@@ -64,6 +64,30 @@ export async function enviarPendentesCA() {
   redirect("/admin/integracoes?ok=" + encodeURIComponent(partes.join(", ") + "."));
 }
 
+/* Dispensa uma cobranca para sempre.
+
+   Existe porque cobranca paga de verdade no Asaas que nao e venda aparece na
+   lista todo dia ate alguem resolver. Teste, estorno e cobranca duplicada
+   pelo gateway caem aqui. */
+export async function ignorarCobrancaCA(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+
+  const paymentId = ((formData.get("payment_id") as string) || "").trim();
+  if (!paymentId) redirect("/admin/integracoes?erro=" + encodeURIComponent("Cobranca nao informada."));
+
+  const { ignorarCobranca } = await import("@/lib/conta-azul-venda");
+  await ignorarCobranca(
+    paymentId,
+    ((formData.get("motivo") as string) || "").trim() || "Dispensada no painel",
+    Number(formData.get("valor") || 0) || undefined,
+    ((formData.get("competencia") as string) || "").trim() || undefined,
+  );
+
+  revalidatePath("/admin/integracoes");
+  redirect("/admin/integracoes?ok=" + encodeURIComponent("Cobranca dispensada. Nao vira venda."));
+}
+
 export async function desconectarContaAzul() {
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");
