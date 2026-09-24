@@ -7,7 +7,7 @@ import styles from "./floating-mascot.module.css";
 
 // The four poses share one transparent atlas, downloaded only once.
 const SEQUENCE = [0, 1, 3, 2, 3] as const;
-const DURATIONS = [24000, 650, 650, 650, 650];
+const DURATIONS = [12000, 650, 650, 650, 650];
 
 export default function FloatingMascot({ open, onToggle }: {
   open: boolean;
@@ -36,7 +36,7 @@ export default function FloatingMascot({ open, onToggle }: {
     };
   }, []);
 
-  // A brief weight shift every 24 seconds; stay calm while someone is chatting.
+  // Gentle breathing between brief weight shifts; stay calm during a conversation.
   const still = reduced || !visible;
   useEffect(() => {
     if (still || !ready || open) { setStep(0); return; }
@@ -46,7 +46,7 @@ export default function FloatingMascot({ open, onToggle }: {
 
   const pose = still || open ? 0 : SEQUENCE[step];
 
-  return <div className={styles.dock} data-still={still} data-pose={pose} data-dancing={pose !== 0}>
+  return <div className={styles.dock} data-still={still} data-pose={pose} data-dancing={pose !== 0} data-chat-open={open}>
     <button id="drivedata-assistant-trigger" type="button" onClick={onToggle} aria-label={tr("Assistente de dúvidas")} aria-expanded={open} aria-controls="drivedata-assistant-panel"
       className={styles.launcher}>
       <span className={styles.glow} aria-hidden="true" />

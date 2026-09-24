@@ -4,8 +4,9 @@
 .glow { position:absolute; inset:27% 8% 9%; border-radius:50%; background:radial-gradient(ellipse,#25dbc33b,transparent 72%); }
 .platform { position:absolute; bottom:7px; left:12px; width:76px; height:22px; border:1px solid #40e7d97a; border-radius:50%; background:radial-gradient(ellipse,#28d9d530,#071923aa 65%); box-shadow:0 0 16px #27d6d621,inset 0 0 10px #26aee52b; }
 .platform span { position:absolute; inset:3px; border:1px solid #40e7d930; border-radius:50%; }
-.character { position:absolute; inset:0 0 16px; transform-origin:50% 66%; filter:drop-shadow(0 6px 3px #020b12b8) drop-shadow(0 0 5px #20cbd322); pointer-events:none; }
+.character { position:absolute; inset:0 0 16px; transform-origin:50% 88%; animation:breathe 4s ease-in-out infinite; filter:drop-shadow(0 6px 3px #020b12b8) drop-shadow(0 0 5px #20cbd322); pointer-events:none; }
 .dock[data-dancing="true"] .character { animation:sway 1.3s ease-in-out 2; }
+.dock[data-chat-open="true"] .character { animation:none; }
 .frame { position:absolute; inset:0; background-image:url('/mascot-realistic-poses.png'); background-size:200% 200%; background-repeat:no-repeat; opacity:0; transition:opacity .13s ease; }
 .frame[data-frame="0"] { background-position:0 0; }
 .frame[data-frame="1"] { background-position:100% 0; }
@@ -14,6 +15,10 @@
 .frame[data-active="true"] { opacity:1; }
 .online { position:absolute; right:9px; bottom:22px; height:9px; width:9px; border:2px solid #071923; border-radius:50%; background:#43e5b1; }
 .dock[data-still="true"] * { animation:none!important; transition:none!important; }
+@keyframes breathe {
+  0%,100% { transform:translateY(0) rotate(-.6deg); }
+  50% { transform:translateY(-3px) rotate(.6deg); }
+}
 @keyframes sway {
   0%,50%,100% { transform:translateX(0) rotate(0); }
   25% { transform:translateX(-2px) rotate(-2deg); }
