@@ -206,6 +206,24 @@ export async function caGet<T = any>(caminho: string, params: Record<string, any
   }
 }
 
+/* Lista normalizada.
+
+   A API não usa uma forma só. /v1/pessoas devolve {totalItems, items} em
+   camelCase, /v1/categorias devolve {itens_totais, itens} em português, e
+   alguns endpoints devolvem o array direto. Ler a chave errada não dá erro:
+   dá lista vazia, que parece "não achei" e manda quem chamou pelo caminho
+   errado. Foi assim que eu quase concluí que não dava para achar pessoa por
+   CPF, quando dava. */
+export async function caLista<T = any>(
+  caminho: string,
+  params: Record<string, any> = {},
+): Promise<{ itens: T[]; total: number }> {
+  const d: any = await caGet(caminho, params);
+  if (Array.isArray(d)) return { itens: d, total: d.length };
+  const itens = d?.items ?? d?.itens ?? [];
+  return { itens, total: d?.totalItems ?? d?.itens_totais ?? itens.length };
+}
+
 /* Escrita.
 
    SEM RETRY, ao contrário da leitura, e não é esquecimento. A API da Conta
