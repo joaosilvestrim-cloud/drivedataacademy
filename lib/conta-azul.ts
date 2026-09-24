@@ -54,15 +54,25 @@ export function decifrar(guardado: string): string {
 
 // ------------------------------------------------------------------ OAuth
 
+/* Tela de autorização.
+
+   Repare no `/#/`: a tela de login do Conta Azul é uma aplicação de página
+   única, e a rota de autorização mora DEPOIS do hash. É o endereço que o
+   próprio painel deles entrega ao cadastrar a aplicação.
+
+   Isso não é detalhe de estilo. Tudo que vem depois do `#` é fragmento, o
+   navegador não manda para o servidor, e quem escrever o caminho antes do
+   hash, como /oauth2/authorize, recebe uma página em branco sem erro
+   nenhum para explicar. */
 export function urlDeAutorizacao(state: string, redirect: string): string {
   const p = new URLSearchParams({
     response_type: "code",
     client_id: process.env.CONTAAZUL_CLIENT_ID || "",
     redirect_uri: redirect,
-    scope: ESCOPO,
     state,
+    scope: ESCOPO,
   });
-  return `${LOGIN}/oauth2/authorize?${p}`;
+  return `${LOGIN}/#/oauth/authorize?${p}`;
 }
 
 type Resposta = { access_token: string; refresh_token?: string; expires_in?: number };
