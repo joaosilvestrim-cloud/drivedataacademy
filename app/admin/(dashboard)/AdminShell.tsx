@@ -125,6 +125,7 @@ const GROUPS: Grupo[] = [
     title: "Sistema",
     items: [
       { label: "Saúde do sistema", href: "/admin/sistema", icon: "system", busca: "visao integracoes status" },
+      { label: "Integrações", href: "/admin/integracoes", icon: "system", busca: "conta azul erp nota fiscal nfse venda receita oauth" },
       { label: "Assistente IA", href: "/admin/ia", icon: "community", busca: "mascote chat" },
       { label: "Traduções", href: "/admin/traducoes", icon: "system", busca: "idioma ingles espanhol i18n traduzir" },
       { label: "Notificações", href: "/admin/notificacoes", icon: "support", busca: "email aviso" },
