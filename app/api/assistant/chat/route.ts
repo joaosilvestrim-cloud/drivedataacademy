@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { chatSupportAI } from "@/lib/ai";
 import { sendHtmlEmail } from "@/lib/email";
-import { contextoAluno, contextoPlataforma } from "@/lib/assistente-contexto";
+import { contextoAluno, contextoPlataforma, contextoComunidade } from "@/lib/assistente-contexto";
+import { trechosRelevantes, blocoDeTrechos } from "@/lib/aulas-busca";
 import { avisarTime } from "@/lib/notificacoes";
 
 export const runtime = "nodejs";
@@ -77,7 +78,13 @@ export async function POST(req: Request) {
 
   if (clean.length === 0) return NextResponse.json({ reply: "Como posso ajudar?" });
 
-  const ctx = await buildContext(admin, user);
+  /* Antes de responder, procura nas transcricoes das aulas.
+
+     A busca usa a ULTIMA pergunta do aluno, nao a conversa inteira: misturar
+     as mensagens anteriores traz termo de outro assunto e o trecho relevante
+     afunda no meio do ruido. */
+  const ultima = [...clean].reverse().find((m: any) => m.role === "user")?.content || "";
+  const ctx = await buildContext(admin, user, ultima);
   const raw = await chatSupportAI(clean, ctx);
   if (!raw) {
     // sem IA: escala direto para o time
@@ -102,7 +109,24 @@ export async function POST(req: Request) {
 }
 
 // Contexto: dados atuais da plataforma + dados do próprio aluno, lidos do banco agora.
-async function buildContext(admin: ReturnType<typeof createAdminClient>, user: any): Promise<string> {
-  const [plataforma, aluno] = await Promise.all([contextoPlataforma(admin), contextoAluno(admin, user)]);
-  return `${plataforma}\n\n${aluno}`;
+async function buildContext(admin: ReturnType<typeof createAdminClient>, user: any, pergunta = ""): Promise<string> {
+  /* Os cursos que este aluno tem. Vai para a busca e decide o que ela pode
+     devolver: trecho de treinamento nao comprado volta sem o texto, so como
+     ponteiro. Sem isso o assistente viraria o maior vazamento de conteudo
+     pago da plataforma. */
+  const { data: matriculas } = await admin
+    .from("enrollments")
+    .select("course_id")
+    .eq("user_id", user.id)
+    .neq("source", "free");
+  const liberados = (matriculas ?? []).map((m: any) => m.course_id);
+
+  const [plataforma, aluno, entorno, trechos] = await Promise.all([
+    contextoPlataforma(admin),
+    contextoAluno(admin, user),
+    contextoComunidade(admin, user.id),
+    trechosRelevantes(admin, pergunta, liberados),
+  ]);
+  const aulas = blocoDeTrechos(trechos);
+  return [plataforma, aluno, entorno, aulas].filter(Boolean).join("\n\n");
 }

@@ -18,7 +18,18 @@ Você recebe, junto com esta mensagem, dois blocos montados do banco de dados ag
 1. DADOS ATUAIS DA PLATAFORMA: preços, treinamentos, próximas lives e gravações.
 2. DADOS DO ALUNO: assinatura, último pedido, treinamentos, pontos, selos e certificados de quem está perguntando.
 Esses blocos são a fonte da verdade. Preço, data, nome de curso, live ou estado de conta: só use o que estiver neles. Se a informação não estiver lá, diga que não tem esse dado e encaminhe para o time. Nunca complete com suposição.
+3. TRECHOS DAS AULAS, quando a pergunta tem a ver com conteúdo. São pedaços da transcrição real, com o curso, o módulo, o nome da aula e o minuto entre colchetes.
 Para dúvidas técnicas gerais (DAX, SQL, Power BI, modelagem, IA), você pode usar seu conhecimento, deixando claro que é orientação geral.
+
+=== COMO USAR OS TRECHOS DAS AULAS ===
+Quando vierem trechos, eles são a melhor resposta que você tem: saiu da boca do professor, neste curso, para este aluno.
+
+- Responda a dúvida com o que o trecho diz e SEMPRE aponte onde assistir, com o nome da aula e o minuto. Exemplo: "isso está em Snow Pipe - Teórico pt 1, a partir de 12:30".
+- Se vierem vários trechos da mesma aula, cite o primeiro minuto em que o assunto aparece.
+- Se o trecho responder pela metade, responda com o que ele tem e diga que o resto está na aula.
+- Se o bloco disser que o assunto está num treinamento que o aluno NÃO tem, diga só isso: que o tema é coberto e em qual treinamento, e que ele vê em Cursos. Nunca explique o conteúdo dessa aula nem invente o que ela diz.
+- Transcrição é fala, então vem com repetição e frase cortada. Entenda o sentido e escreva direito; não copie o trecho cru.
+- Nunca invente minuto nem nome de aula. Se não veio trecho, não diga que existe aula sobre aquilo.
 
 === COMO A PLATAFORMA FUNCIONA HOJE ===
 
@@ -87,6 +98,7 @@ PERFIL E SUPORTE
 - Se o aluno perguntar da própria conta, use DADOS DO ALUNO. Se o dado não estiver lá, diga onde ele encontra na plataforma.
 - Nunca peça senha, código de acesso, número de cartão ou dados sensíveis.
 - Não use emojis. Tom profissional, próximo e acolhedor.
+- Escreva em texto corrido, sem Markdown. Nada de #, de listas com - ou *, nem de tabela. Para destacar o caminho de um menu, use **dois asteriscos** só no nome do item, assim: vá em **Agenda**.
 - Se depender de ação humana ou você não souber, encaminhe para o time.`;
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
@@ -99,7 +111,8 @@ export async function chatSupportAI(history: ChatMsg[], context?: string): Promi
     .map((m) => ({ role: m.role, content: m.content.slice(0, 2000) }));
 
   const escalationRule =
-    "\n\nIMPORTANTE: se a dúvida depende da conta do aluno ou de ação humana (pagamento não reconhecido, não consegue acessar, reembolso, cobrança, erro/bug, ou algo que você não consegue resolver), responda acolhendo e avisando que vai encaminhar para o time, e adicione EXATAMENTE o marcador [[ESCALAR]] na última linha da sua resposta. Só use o marcador quando realmente precisar de um humano.";
+    "\n\nIMPORTANTE: se a dúvida depende da conta do aluno ou de ação humana (pagamento não reconhecido, não consegue acessar, reembolso, cobrança, erro/bug, ou algo que você não consegue resolver), responda acolhendo e avisando que vai encaminhar para o time, e adicione EXATAMENTE o marcador [[ESCALAR]] na última linha da sua resposta. " +
+    "O marcador abre um chamado de verdade para uma pessoa do time ler. Então: se você RESPONDEU a pergunta, NÃO use o marcador. Nunca use na mesma resposta em que você citou uma aula, um minuto, uma ferramenta ou um caminho de menu. Na dúvida entre responder e escalar, responda: o aluno pode pedir o time depois, e ele tem um botão para isso.";
 
   const r = await chamarIA({
     messages: [
@@ -107,7 +120,7 @@ export async function chatSupportAI(history: ChatMsg[], context?: string): Promi
       ...trimmed,
     ],
     temperature: 0.3,
-    max_tokens: 600,
+    max_tokens: 900,
   });
   return r?.texto ?? null;
 }
@@ -145,7 +158,7 @@ export async function askSupportAI(question: string, context?: string): Promise<
       { role: "user", content: question },
     ],
     temperature: 0.3,
-    max_tokens: 600,
+    max_tokens: 900,
   });
   return r?.texto ?? null;
 }

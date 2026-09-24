@@ -30,6 +30,30 @@ type Msg = { role: "user" | "assistant"; content: string; link?: { href: string;
 const GREETING = "Oi! Sou o assistente da DriveData. Posso ajudar com cursos, certificados, comunidade, ranking e como tudo funciona por aqui. No que posso ajudar?";
 const SUGGESTIONS = ["Onde fica meu certificado?", "Em qual curso eu estou?", "Como ganho pontos na comunidade?"];
 
+/* O modelo escreve Markdown mesmo mandado nao escrever.
+
+   O balao renderiza texto puro, entao "**Agenda**" aparecia com os asteriscos
+   na tela do aluno. Instruir o prompt ajuda mas nao garante: modelo escorrega,
+   e quando escorrega quem ve o defeito e o aluno.
+
+   Entao o negrito passa a ser entendido aqui. Sao duas estrelas, nada alem
+   disso: lista e cabecalho ja saem bem com a quebra de linha que o CSS
+   preserva, e interpretar mais Markdown so criaria jeitos novos de quebrar.
+
+   Uma estrela solta fica como esta, de proposito: aparece em multiplicacao e
+   em SELECT *, e apagar seria pior que mostrar. */
+function comNegrito(texto: string) {
+  return String(texto || "")
+    .split(/(\*\*[^*\n]+\*\*)/g)
+    .map((parte, i) =>
+      parte.length > 4 && parte.startsWith("**") && parte.endsWith("**") ? (
+        <strong key={i} className="font-semibold text-white">{parte.slice(2, -2)}</strong>
+      ) : (
+        <span key={i}>{parte}</span>
+      ),
+    );
+}
+
 export default function AssistantButton() {
   const tr = usarTraducao();
   const [open, setOpen] = useState(false);
@@ -186,7 +210,7 @@ export default function AssistantButton() {
                 <div key={i} className="flex items-end gap-2">
                   <Mascot realistic className="h-7 w-7 shrink-0" />
                   <div className="max-w-[82%]">
-                    <div className={panelStyles.message}>{m.content}</div>
+                    <div className={panelStyles.message}>{comNegrito(m.content)}</div>
                     {m.link && (
                       <Link href={m.link.href} onClick={() => setOpen(false)} className="mt-1.5 inline-flex items-center gap-1 rounded-lg border border-brand-teal/40 px-3 py-1.5 text-xs font-medium text-brand-teal hover:bg-brand-teal/10">{m.link.label} →</Link>
                     )}

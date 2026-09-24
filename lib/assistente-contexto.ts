@@ -60,6 +60,96 @@ export async function contextoPlataforma(admin: SupabaseClient): Promise<string>
   return linhas.join("\n");
 }
 
+/* O entorno: ranking, comunidade, desafios, materiais e ferramentas.
+
+   Tudo aqui o aluno já vê navegando. A diferença é que ele precisava saber
+   que a tela existe para chegar nela, e a maioria não sabia: o balão do
+   mascote virou o lugar onde a plataforma se explica, e metade das perguntas
+   de suporte era "existe X?".
+
+   Separado do contextoPlataforma de propósito. Aquele responde "quanto custa
+   e quando é a live", que é pergunta de quem está decidindo comprar. Este
+   responde "o que eu faço agora", que é pergunta de quem já está dentro. */
+export async function contextoComunidade(admin: SupabaseClient, userId: string): Promise<string> {
+  const [{ data: canais }, { data: pontos }, { data: desafios }, { data: materiais }, { data: ebooks }] = await Promise.all([
+    admin.from("forum_channels").select("name, description").order("position"),
+    admin.from("point_events").select("user_id, points"),
+    admin.from("ku_challenges").select("title, competency, credits").eq("published", true).limit(40),
+    admin.from("ready_materials").select("title, category").eq("published", true).order("position").limit(14),
+    admin.from("ebooks").select("title").eq("published", true).limit(8),
+  ]);
+
+  const linhas: string[] = ["=== O QUE MAIS EXISTE NA PLATAFORMA ==="];
+
+  /* O pódio.
+
+     A equipe fica de fora, mesma regra da tela de ranking: quem trabalha aqui
+     não disputa com aluno. Só o primeiro nome, porque é assim que o ranking
+     aparece e não há motivo para o assistente saber mais que a tela. */
+  const totais: Record<string, number> = {};
+  for (const e of pontos ?? []) totais[e.user_id] = (totais[e.user_id] || 0) + (e.points || 0);
+  const equipe = await idsDaEquipe(admin);
+  const podio = Object.entries(totais)
+    .filter(([id, v]) => !equipe.has(id) && v > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
+
+  if (podio.length) {
+    const { data: nomes } = await admin.from("profiles").select("id, full_name").in("id", podio.map(([id]) => id));
+    const porId = Object.fromEntries((nomes ?? []).map((n: any) => [n.id, (n.full_name || "").split(" ")[0] || "Aluno"]));
+    linhas.push("", "Ranking de alunos (tela Ranking). O primeiro lugar leva prêmio:");
+    podio.forEach(([id, v], i) => {
+      linhas.push(`  ${i + 1}. ${porId[id] || "Aluno"} — ${v} ponto(s)${id === userId ? "  <— é ele mesmo" : ""}`);
+    });
+    linhas.push("  Pontos vêm de: resposta marcada como solução pelo autor do tópico, desafio entregue e aprovado pelo time, e marcos no Knowledge Universe.");
+  }
+
+  if ((canais ?? []).length) {
+    linhas.push("", "Canais da Comunidade:");
+    for (const c of canais ?? []) linhas.push(`  - ${c.name}: ${c.description || ""}`);
+  }
+
+  if ((desafios ?? []).length) {
+    /* Por competência, não a lista inteira: quarenta títulos ocupariam o
+       contexto sem o aluno ter perguntado por nenhum deles. */
+    const porComp: Record<string, number> = {};
+    for (const d of desafios ?? []) porComp[d.competency] = (porComp[d.competency] || 0) + 1;
+    const resumo = Object.entries(porComp).map(([c, n]) => `${c} (${n})`).join(", ");
+    linhas.push("", `Desafios práticos: ${desafios!.length} publicados, corrigidos pelo time e valendo pontos. Por tema: ${resumo}.`);
+    linhas.push("  A página Desafios NÃO está no menu lateral: chega-se por Ver desafios na página inicial, pelo Diagnóstico ou pelo Knowledge Universe.");
+  }
+
+  if ((materiais ?? []).length) {
+    linhas.push("", "Materiais prontos para baixar (Ferramentas > Materiais):");
+    for (const m of materiais ?? []) linhas.push(`  - ${m.title}${m.category ? ` [${m.category}]` : ""}`);
+  }
+
+  if ((ebooks ?? []).length) {
+    linhas.push("", "E-books disponíveis: " + (ebooks ?? []).map((e: any) => e.title).join("; ") + ".");
+  }
+
+  /* As ferramentas são rotas, não linhas de tabela, então a lista mora aqui.
+     Mantida curta e com o que cada uma RESOLVE, porque o aluno não pergunta
+     pelo nome da ferramenta: pergunta pelo problema que tem. */
+  linhas.push(
+    "",
+    "Ferramentas do aluno (menu Aprender > Ferramentas):",
+    "  - Raio-X: sobe um .pbix e recebe revisão de consultor. O arquivo não sai do computador dele.",
+    "  - Forja DAX: gera tabela de calendário com ano fiscal e feriados, já com o nome das tabelas dele.",
+    "  - Arena SQL: treino de SQL com base gerada só para ele e correção que aponta onde errou.",
+    "  - Conciliação: treino de achar por que o painel diverge, que é a cena mais comum da profissão.",
+    "  - Biblioteca: 96 padrões de DAX, SQL, Power Query, Oracle e Protheus, cada um com a armadilha comum.",
+    "  - Dojo: treino de DAX e Excel respondendo com número e fórmula sobre base própria.",
+    "  - Caixa-Preta: monta um modelo de linguagem no navegador e mostra a probabilidade de cada token.",
+    "  - Ferramenta de visuais: cria cards em HTML e SVG para Power BI e devolve a medida DAX pronta.",
+    "  - DataFlow Lab: importa CSV, trata dados e roda SQL, com as transformações em 3D.",
+    "  - Decision Lab: simula uma empresa em 3D decidindo preço, estoque e equipe por 30 dias.",
+    "  - Knowledge Universe: mapa 3D de competências montado do que ele fez aqui. Começa pelo Diagnóstico, de 25 perguntas.",
+  );
+
+  return linhas.join("\n");
+}
+
 /* O que é da pessoa que está perguntando. */
 export async function contextoAluno(admin: SupabaseClient, user: { id: string; email?: string | null }): Promise<string> {
   const [{ data: perfil }, { data: matriculas }, { data: assinaturas }, { data: meusPontos }, { data: todosPontos }, { data: selos }, { count: certs }, { data: pedido }] = await Promise.all([
