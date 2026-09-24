@@ -31,7 +31,6 @@ const SUGGESTIONS = ["Onde fica meu certificado?", "Em qual curso eu estou?", "C
 export default function AssistantButton() {
   const tr = usarTraducao();
   const [open, setOpen] = useState(false);
-  const [motionPaused, setMotionPaused] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: tr(GREETING) }]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,13 +46,6 @@ export default function AssistantButton() {
   openRef.current = open;
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setMotionPaused(lerSessao("mascote:pausado") === "1"); }, []);
-
-  function toggleMotion() {
-    const next = !motionPaused;
-    setMotionPaused(next);
-    gravarSessao("mascote:pausado", next ? "1" : "0");
-  }
 
   useEffect(() => {
     if (open && scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -154,8 +146,8 @@ export default function AssistantButton() {
   const fresh = messages.length === 1;
 
   return (
-    <div className={`assistant-dock fixed bottom-5 right-5 z-50 print:hidden ${motionPaused ? "assistant-motion-paused" : ""}`}>
-      <style>{`@media (prefers-reduced-motion:reduce){.assistant-dock .animate-float,.assistant-dock .animate-pulse{animation:none!important}}.assistant-motion-paused .animate-float,.assistant-motion-paused .animate-pulse{animation:none!important}`}</style>
+    <div className="assistant-dock fixed bottom-5 right-5 z-50 print:hidden">
+      <style>{`@media (prefers-reduced-motion:reduce){.assistant-dock .animate-float,.assistant-dock .animate-pulse{animation:none!important}}`}</style>
       {open && (
         <div id="drivedata-assistant-panel" className="mb-3 flex h-[540px] max-h-[calc(100dvh-164px)] w-[380px] max-w-[calc(100vw-2.5rem)] flex-col overflow-hidden rounded-3xl border border-white/10 bg-ink-800/95 shadow-2xl backdrop-blur">
           {/* Header */}
@@ -281,9 +273,7 @@ export default function AssistantButton() {
       )}
 
       {/* Botão flutuante */}
-      <FloatingMascot open={open} onToggle={() => (open ? setOpen(false) : openChat())}
-        hint={showHint && !hintDismissed && !open ? balao?.tipo : undefined} loading={loading}
-        paused={motionPaused} onPause={toggleMotion} />
+      <FloatingMascot open={open} onToggle={() => (open ? setOpen(false) : openChat())} />
     </div>
   );
 }

@@ -17,8 +17,6 @@ type Par = { en: string; es: string };
 /* Correções manuais: tudo que a máquina traduziu de um jeito que a gente não
    usaria. Vence o arquivo gerado. */
 const CORRECOES: Record<string, Partial<Par>> = {
-  "Pausar animação do mascote": { en: "Pause mascot animation", es: "Pausar animación de la mascota" },
-  "Retomar animação do mascote": { en: "Resume mascot animation", es: "Reanudar animación de la mascota" },
   // Dica embaixo do player. "Legendas" e "engrenagem" precisam bater com o
   // que o menu do Panda escreve em cada idioma, senão o aluno procura um
   // botão que não existe com esse nome.
