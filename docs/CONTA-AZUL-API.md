@@ -55,6 +55,32 @@ A emissão automática que existe no produto só dispara quando o pagamento entr
 pelas Cobranças Conta Azul. O nosso entra pelo Asaas, que é externo, então não
 dispara. O clique de emitir é humano por limitação do fornecedor.
 
+## Os nomes de escrita não são os de leitura
+
+Esta é a armadilha mais cara da API, porque ela não dá erro.
+
+| Leitura devolve | Escrita quer |
+| --- | --- |
+| `documento` | `cpf` ou `cnpj` |
+| `telefone` | `telefone_celular` |
+
+Campo com nome desconhecido é **aceito e descartado**, com 201 na resposta.
+Mandar `documento` na criação cria a pessoa com documento vazio e não avisa
+nada.
+
+Isso custou 15 clientes sem documento na primeira remessa. E o estrago se
+multiplicaria: como a procura de cliente é pelo CPF, e o CPF estava vazio,
+cada mês criaria outra duplicata do mesmo aluno.
+
+Por isso `acharOuCriarPessoa` confere o registro depois de criar. Se o
+documento não entrou, ela falha alto em vez de sujar o cadastro em silêncio.
+
+## Serviço inativo derruba a venda
+
+`POST /v1/venda` recusa com "A venda possui serviços inativos" se o item
+estiver desativado no cadastro. A listagem `/v1/servicos` **não** devolve o
+campo `ativo`, então não dá para conferir antes pela API: só o painel mostra.
+
 ## Criar pessoa
 
 ```
@@ -62,10 +88,10 @@ POST /v1/pessoas
 {
   "tipo_pessoa": "Física",                      // ou "Jurídica", "Estrangeira"
   "nome":        "Maria Oliveira Santos",
-  "documento":   "12345678901",                 // só dígitos
+  "cpf":         "12345678901",                 // na ESCRITA é cpf/cnpj, não documento
   "perfis":      [{ "tipo_perfil": "Cliente" }], // ARRAY de objeto, não de string
   "email":       "maria@exemplo.com",
-  "telefone":    "11999999999"
+  "telefone_celular": "11999999999"
 }
 ```
 

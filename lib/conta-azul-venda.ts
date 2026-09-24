@@ -1,6 +1,6 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { caLista, caPost, config, ligado } from "@/lib/conta-azul";
+import { caGet, caLista, caPost, config, ligado } from "@/lib/conta-azul";
 
 /* Transforma uma cobrança paga do Asaas numa venda no Conta Azul.
 
@@ -116,18 +116,42 @@ export async function acharOuCriarPessoa(c: CobrancaParaCA["cliente"]): Promise<
   const achado = itens.find((p) => (p.documento || "").replace(/\D/g, "") === doc);
   if (achado?.id) return achado.id;
 
+  /* Os nomes de escrita NÃO são os de leitura, e errar não dá erro.
+
+     A API devolve `documento` e `telefone` na leitura, mas na escrita quer
+     `cpf` (ou `cnpj`) e `telefone_celular`. Campo com nome desconhecido é
+     aceito e descartado em silêncio, com 201 na resposta.
+
+     Isso já custou caro: a primeira remessa criou 15 clientes sem documento
+     nenhum. Como a procura é por CPF e o CPF estava vazio, cada nova
+     tentativa criaria outra duplicata do mesmo aluno, para sempre. */
   const criada = await caPost<any>("/v1/pessoas", {
     tipo_pessoa: doc.length === 14 ? "Jurídica" : "Física",
     nome: (c.nome || "").trim().slice(0, 120) || `Aluno ${doc.slice(0, 6)}`,
-    documento: doc,
+    [doc.length === 14 ? "cnpj" : "cpf"]: doc,
     // Array de objeto, não de string. A mensagem de erro da API só revela
     // isso depois de alguns palpites.
     perfis: [{ tipo_perfil: "Cliente" }],
     ...(c.email ? { email: c.email.toLowerCase().slice(0, 120) } : {}),
-    ...(c.telefone ? { telefone: c.telefone.replace(/\D/g, "").slice(0, 15) } : {}),
+    ...(c.telefone ? { telefone_celular: c.telefone.replace(/\D/g, "").slice(0, 15) } : {}),
   });
 
   if (!criada?.id) throw new Error("a Conta Azul criou a pessoa mas não devolveu o id");
+
+  /* Confere que o documento entrou de verdade.
+
+     Vale pelo que custa: uma leitura a mais evita criar um cliente mudo que
+     nunca mais é encontrado e vira duplicata a cada mês. Se um dia a API
+     trocar o nome do campo de novo, a integração para com erro claro em vez
+     de poluir o cadastro em silêncio. */
+  const conferido = await caGet<any>(`/v1/pessoas/${criada.id}`).catch(() => null);
+  if (conferido && !String(conferido.documento || "").replace(/\D/g, "")) {
+    throw new Error(
+      `a Conta Azul criou o cliente ${criada.id} sem gravar o documento. ` +
+        "O campo de escrita pode ter mudado de nome: ver docs/CONTA-AZUL-API.md.",
+    );
+  }
+
   return criada.id;
 }
 
