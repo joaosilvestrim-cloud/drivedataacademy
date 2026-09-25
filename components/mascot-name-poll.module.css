@@ -1,0 +1,73 @@
+.balloon { position: absolute; right: 0; bottom: 142px; width: 460px; max-width: calc(100vw - 40px); transform-origin: calc(100% - 54px) bottom; z-index: 3; }
+.balloon::after { content: ""; position: absolute; bottom: -9px; right: 45px; width: 18px; height: 18px; transform: rotate(45deg); background: #101e2c; border-right: 1px solid #2e797b; border-bottom: 1px solid #2e797b; }
+.card { position: relative; display: flex; flex-direction: column; max-height: calc(100dvh - 180px); overflow: auto; border: 1px solid #2e797b; border-radius: 28px; background: radial-gradient(ellipse at 95% 0%, #143c45 0%, transparent 54%), linear-gradient(155deg, #142335, #0a1522 62%, #101e2c); color: #f4f9fc; box-shadow: 0 26px 90px #0009, 0 0 50px #00e8bf0b; scrollbar-width: thin; scrollbar-color: #345063 transparent; }
+.close { position: absolute; right: 12px; top: 12px; z-index: 1; width: 36px; height: 36px; border-radius: 50%; background: #ffffff0b; color: #bdcdd6; font-size: 26px; line-height: 1; }
+.close:hover { background: #ffffff20; color: white; }
+.header { padding: 26px 26px 17px; }
+.eyebrow { display: block; padding-right: 20px; font-size: 9px; letter-spacing: .2em; font-weight: 700; color: #6bf0d1; }
+.headingRow { display: flex; align-items: center; gap: 8px; margin-top: 17px; }
+.hello { color: #b9ccd6; font-size: 13px; margin-bottom: 5px; }
+.headingRow h2 { font-size: 29px; letter-spacing: -.045em; line-height: 1.08; font-weight: 750; max-width: 285px; }
+.portrait { width: 82px; height: 94px; flex-shrink: 0; filter: drop-shadow(0 7px 14px #3cedc93b); }
+.intro { color: #aabfcf; font-size: 12px; line-height: 1.55; margin-top: 12px; max-width: 335px; }
+.body { padding: 0 20px; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #345063 transparent; }
+.choices { border: 0; padding: 0; margin: 0; display: grid; gap: 7px; min-width: 0; }
+.option { display: flex; position: relative; align-items: center; gap: 13px; padding: 11px 13px; border: 1px solid #ffffff12; border-radius: 14px; background: #ffffff03; cursor: pointer; transition: background .18s, border-color .18s; }
+.option:hover { border-color: #68d4d56b; background: #61cbd50b; }
+.option[data-selected="true"] { background: linear-gradient(100deg, #2ae5b91b, #31abff0e); border-color: #3ce4c3; }
+.option:has(input:focus-visible) { outline: 2px solid #fff; outline-offset: 3px; }
+.option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.number { font-family: monospace; font-size: 10px; color: #688999; font-weight: 400; }
+.option[data-selected="true"] .number { color: #51e7c6; }
+.optionText { flex: 1; min-width: 0; }
+.optionText strong { display: block; font-size: 18px; line-height: 1.2; letter-spacing: -.02em; }
+.optionText small { display: block; font-size: 11px; line-height: 1.45; margin-top: 3px; color: #a2bac9; }
+.radio { flex-shrink: 0; display: grid; place-items: center; border: 1px solid #496574; border-radius: 50%; width: 21px; height: 21px; font-size: 12px; }
+.option[data-selected="true"] .radio { color: #032b29; background: #56edcc; border-color: #56edcc; font-weight: 800; }
+.footer { padding: 16px 20px 19px; text-align: center; }
+.submit { display: flex; justify-content: space-between; align-items: center; gap: 10px; width: 100%; min-height: 46px; padding: 12px 17px; border-radius: 13px; color: #062026; font-size: 13px; font-weight: 750; background: linear-gradient(105deg, #49edbd, #3ebef8); }
+.submit:disabled { opacity: .45; cursor: not-allowed; }
+.submit:not(:disabled):hover { filter: brightness(1.12); }
+.footer p { color: #87a4b5; font-size: 10px; margin-top: 10px; }
+.change { font-size: 12px; color: #81e9d4; min-height: 36px; padding: 9px 12px 0; }
+.error { font-size: 12px; line-height: 1.4; color: #ffb7b7; padding-top: 12px; }
+.results { display: grid; gap: 16px; padding: 8px 5px 0; }
+.resultLabels { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+.resultLabels > span { display: flex; gap: 10px; align-items: center; }
+.resultLabels > b { color: #a2c5d1; font-family: monospace; font-size: 12px; }
+.resultLabels small { font-size: 7px; letter-spacing: .06em; color: #51e7c6; border: 1px solid #51e7c644; border-radius: 4px; padding: 3px 4px; }
+.track { height: 5px; background: #ffffff09; border-radius: 10px; margin-top: 9px; overflow: hidden; }
+.track span { display: block; height: 100%; background: #44788a; border-radius: inherit; transition: width .4s; }
+.result[data-mine="true"] .track span { background: linear-gradient(90deg, #43ebbe, #3db8fa); }
+.total { color: #9bb6c5; font-size: 11px; text-align: center; }
+.invite { position: absolute; bottom: 25px; right: 110px; display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; max-width: calc(100vw - 155px); padding: 8px 13px; border-radius: 20px; border: 1px solid #3be6c45c; background: #102632; color: #d7fff4; font-size: 11px; font-weight: 600; white-space: nowrap; box-shadow: 0 5px 25px #0005; }
+.invite > span { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: #4be6bf; color: #102632; font-weight: 800; }
+.invite:focus-visible, .card button:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+.card { overflow: hidden; }
+.header, .footer { flex-shrink: 0; }
+.headingRow { margin-top: 13px; }
+.portrait { height: 75px; width: 75px; }
+.header { padding-top: 22px; padding-bottom: 14px; }
+.footer { padding-top: 12px; padding-bottom: 14px; }
+@media (max-width: 480px) {
+  .header { padding: 23px 20px 15px; }
+  .headingRow h2 { font-size: 25px; }
+  .portrait { width: 67px; height: 80px; }
+  .body { padding: 0 14px; }
+  .option { gap: 10px; padding: 10px; }
+  .footer { padding: 14px; }
+  .invite { font-size: 10px; padding: 8px 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .option, .track span { transition: none; } }
+@media (min-width: 481px) and (max-height: 800px) {
+  .header { padding: 18px 20px 12px; }
+  .headingRow { margin-top: 10px; }
+  .headingRow h2 { font-size: 26px; }
+  .portrait { height: 60px; width: 60px; }
+  .intro { margin-top: 8px; font-size: 11px; line-height: 1.4; }
+  .choices { gap: 6px; }
+  .option { padding: 7px 12px; gap: 10px; }
+  .optionText strong { font-size: 16px; }
+  .optionText small { font-size: 10px; margin-top: 2px; }
+}
+@media (max-height: 520px) { .card { overflow-y: auto; } .body { overflow: visible; flex-shrink: 0; } }

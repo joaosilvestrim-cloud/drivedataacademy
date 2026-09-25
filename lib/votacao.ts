@@ -1,5 +1,6 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { MASCOT_POLL_SLUG } from "./mascot-poll";
 
 /* Votação pública: o time pergunta, a turma escolhe. Serve para decidir tema
    das próximas lives, horário, formato. O link é aberto, o voto é por e-mail e
@@ -36,7 +37,7 @@ export async function carregarVotacao(admin: SupabaseClient, slug?: string | nul
   const busca = admin.from("polls").select(CAMPOS_VOTACAO);
   const { data } = slug
     ? await busca.eq("slug", slug).maybeSingle()
-    : await busca.eq("published", true).order("created_at", { ascending: false }).limit(1).maybeSingle();
+    : await busca.eq("published", true).neq("slug", MASCOT_POLL_SLUG).order("created_at", { ascending: false }).limit(1).maybeSingle();
 
   const votacao = (data as Votacao) || null;
   if (!votacao) return { votacao: null, opcoes: [] as Opcao[] };

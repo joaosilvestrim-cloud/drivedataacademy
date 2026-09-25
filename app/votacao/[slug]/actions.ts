@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarVotacao, aberta } from "@/lib/votacao";
+import { MASCOT_POLL_SLUG } from "@/lib/mascot-poll";
 
 /* Registro do voto. Sem conta: a enquete é aberta, o e-mail é a identidade.
    Votar de novo com o mesmo e-mail troca a resposta, em vez de dar erro. */
@@ -11,12 +12,15 @@ const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export async function votar(formData: FormData) {
   const slug = (formData.get("slug") as string) || "";
+  // This campaign requires the authenticated identity used by the mascot API.
+  if (slug === MASCOT_POLL_SLUG) redirect("/conta?nome-mascote=1");
   const texto = (campo: string) => ((formData.get(campo) as string) || "").trim();
   const volta = (erro: string) => redirect(`/votacao/${slug}?erro=${encodeURIComponent(erro)}`);
 
   const admin = createAdminClient();
   const { votacao, opcoes } = await carregarVotacao(admin, slug);
   if (!votacao) volta("Não encontrei essa votação.");
+  if (votacao!.slug === MASCOT_POLL_SLUG) redirect("/conta?nome-mascote=1");
   if (!aberta(votacao!)) volta("Esta votação está encerrada.");
 
   const name = texto("name");

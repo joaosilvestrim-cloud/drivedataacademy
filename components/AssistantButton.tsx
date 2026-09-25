@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Mascot from "./Mascot";
 import FloatingMascot from "./FloatingMascot";
+import MascotNamePoll from "./MascotNamePoll";
 import { montarFila, type Balao } from "@/lib/mascote";
 
 /* Ritmo dos balões: o primeiro aparece logo, fica um tempo e some; o próximo
@@ -57,6 +58,8 @@ function comNegrito(texto: string) {
 export default function AssistantButton() {
   const tr = usarTraducao();
   const [open, setOpen] = useState(false);
+  const [pollVisible, setPollVisible] = useState(false);
+  const [pollAvailable, setPollAvailable] = useState(false);
   const reduceMotion = useReducedMotion();
   const closeRef = useRef<HTMLButtonElement>(null);
   const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: tr(GREETING) }]);
@@ -71,7 +74,7 @@ export default function AssistantButton() {
   const pathRef = useRef(pathname);
   pathRef.current = pathname;
   const openRef = useRef(false);
-  openRef.current = open;
+  openRef.current = open || pollVisible;
   const scrollRef = useRef<HTMLDivElement>(null);
 
 
@@ -272,7 +275,7 @@ export default function AssistantButton() {
       </AnimatePresence>
 
       {/* Balão do mascote: convite, dica da plataforma ou piada de tech. */}
-      {showHint && !open && !hintDismissed && balao && (
+      {showHint && !open && !pollAvailable && !hintDismissed && balao && (
         <div className="absolute bottom-5 right-[116px] w-64 max-w-[calc(100vw-164px)]" role="status" aria-live="polite">
           <div className="relative rounded-2xl border border-white/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
             <button onClick={calar} aria-label={tr("Não mostrar mais balões nesta sessão")} title={tr("Não mostrar mais nesta sessão")} className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
@@ -316,6 +319,7 @@ export default function AssistantButton() {
       )}
 
       {/* Botão flutuante */}
+      <MascotNamePoll chatOpen={open} onVisibilityChange={setPollVisible} onAvailabilityChange={setPollAvailable} />
       <FloatingMascot open={open} onToggle={() => (open ? closeChat() : openChat())} />
     </div>
   );

@@ -1,6 +1,7 @@
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { MASCOT_POLL_SLUG } from "@/lib/mascot-poll";
 import type { Metadata } from "next";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { carregarVotacao, apurar, aberta, encerrada, type Voto } from "@/lib/votacao";
@@ -28,6 +29,7 @@ export default async function VotacaoPage({
   params: { slug: string };
   searchParams: { ok?: string; erro?: string };
 }) {
+  if (params.slug === MASCOT_POLL_SLUG) redirect("/conta?nome-mascote=1");
   const admin = createAdminClient();
   const { votacao, opcoes } = await carregarVotacao(admin, params.slug);
   if (!votacao || (!votacao.published && !searchParams.ok)) notFound();

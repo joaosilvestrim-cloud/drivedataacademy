@@ -11,12 +11,14 @@ import { IDIOMA_PADRAO, type Idioma } from "./idioma";
    à mão entra em CORRECOES e vence a automática. */
 
 import { GERADAS } from "./frases-geradas";
+import { MASCOT_POLL_PHRASES } from "./mascot-poll";
 
 type Par = { en: string; es: string };
 
 /* Correções manuais: tudo que a máquina traduziu de um jeito que a gente não
    usaria. Vence o arquivo gerado. */
 const CORRECOES: Record<string, Partial<Par>> = {
+  ...MASCOT_POLL_PHRASES,
   // Dica embaixo do player. "Legendas" e "engrenagem" precisam bater com o
   // que o menu do Panda escreve em cada idioma, senão o aluno procura um
   // botão que não existe com esse nome.
