@@ -4,14 +4,16 @@ import { useState } from "react";
 import { ESTILOS, envelopar, type Estilo } from "@/lib/portfolio-site-html";
 import { conferirSite, despublicarSite, gerarPromptDoSite, salvarSite } from "./actions";
 
-/* Meu site de portfólio: três passos, na ordem em que acontecem.
+/* Meu site de portfólio: quatro passos, na ordem em que acontecem.
 
-   1. A Academy monta o prompt com o que o aluno tem de verdade.
-   2. O aluno leva para a IA que quiser e cola de volta o HTML.
-   3. Publica, e recebe o link para pôr no LinkedIn.
+   1. O aluno publica os projetos, com a IA interna organizando.
+   2. A Academy monta o prompt com o que ele tem de verdade.
+   3. Ele leva para a IA que quiser e cola de volta o HTML.
+   4. Publica, e recebe o link para pôr no LinkedIn.
 
-   A numeração é real: não dá para colar HTML antes de ter o prompt, nem
-   publicar antes de colar. */
+   A numeração é real. O primeiro passo existe porque, sem ele, esta seção
+   no topo da página parecia ser o começo: no primeiro ensaio o João gerou o
+   prompt com zero projetos sem achar onde cadastrá-los. */
 
 export type SiteAtual = { slug: string; publicado: boolean; mostrar_universo: boolean; bloqueado: boolean } | null;
 
@@ -36,7 +38,17 @@ function Passo({ n, titulo, children }: { n: number; titulo: string; children: R
   );
 }
 
-export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; siteUrl: string }) {
+export default function SiteDoPortfolio({
+  atual,
+  siteUrl,
+  projetos,
+  prontos,
+}: {
+  atual: SiteAtual;
+  siteUrl: string;
+  projetos: number;
+  prontos: number;
+}) {
   const [estilo, setEstilo] = useState<Estilo>("painel");
   const [prompt, setPrompt] = useState("");
   const [info, setInfo] = useState<{ incluidos: number; foraPorLacuna: string[]; foraPorPrivado: string[]; certificados: number } | null>(null);
@@ -127,7 +139,23 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
       )}
 
       <div className="mt-6 flex flex-col gap-7">
-        <Passo n={1} titulo="Escolha o estilo e gere o seu prompt">
+        <Passo n={1} titulo="Publique seus projetos">
+          <p className="text-sm text-slate-400">
+            {prontos > 0
+              ? `${prontos} ${prontos === 1 ? "projeto pronto" : "projetos prontos"} para entrar no site${projetos > prontos ? `, e ${projetos - prontos} ainda com lacuna ou só para a turma` : ""}. Quanto mais projetos, de anos diferentes, mais o seu 4D cresce.`
+              : projetos > 0
+                ? "Seus projetos ainda têm lacunas entre colchetes ou estão só para a turma. Complete e marque como público para eles entrarem no site."
+                : "O site é feito dos seus projetos. Cadastre pelo menos um antes de gerar o prompt: conte do seu jeito e a IA organiza nos campos."}
+          </p>
+          <button
+            onClick={() => window.dispatchEvent(new Event("portfolio:novo-projeto"))}
+            className={`mt-3 rounded-xl px-4 py-2 text-sm font-semibold ${prontos > 0 ? "border border-white/15 text-white" : "bg-gradient-to-r from-brand-green to-brand-blue text-ink-900"}`}
+          >
+            {prontos > 0 ? "Publicar outro projeto" : "Publicar meu primeiro projeto"}
+          </button>
+        </Passo>
+
+        <Passo n={2} titulo="Escolha o estilo e gere o seu prompt">
           <div className="flex flex-wrap gap-1.5">
             {(Object.keys(ESTILOS) as Estilo[]).map((e) => (
               <button
@@ -149,6 +177,9 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
               <p>
                 Entraram {info.incluidos} {info.incluidos === 1 ? "projeto" : "projetos"} e {info.certificados} {info.certificados === 1 ? "certificado" : "certificados"} com link de verificação.
               </p>
+              {info.incluidos === 0 && (
+                <p className="mt-1 text-amber-200">Seu prompt saiu sem nenhum projeto, e o site vai sair vazio. Volte ao passo 1.</p>
+              )}
               {info.foraPorLacuna.length > 0 && (
                 <p className="mt-1 text-amber-200">
                   Ficaram de fora porque ainda têm lacunas entre colchetes: {info.foraPorLacuna.join(", ")}. Preencha e gere de novo.
@@ -177,7 +208,7 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
           )}
         </Passo>
 
-        <Passo n={2} titulo="Cole o HTML que a IA devolveu">
+        <Passo n={3} titulo="Cole o HTML que a IA devolveu">
           <textarea
             value={html}
             onChange={(e) => { setHtml(e.target.value); setPrevia(false); setSuspeitos([]); }}
@@ -207,7 +238,7 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
           )}
         </Passo>
 
-        <Passo n={3} titulo="Publique e leve o link para o LinkedIn">
+        <Passo n={4} titulo="Publique e leve o link para o LinkedIn">
           <label className="flex items-start gap-2.5 text-sm text-slate-300">
             <input type="checkbox" checked={mostrarUniverso} onChange={(e) => setMostrarUniverso(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#15c47e]" />
             <span>Mostrar meu Universo 4D na página. As competências acendem a partir dos seus projetos, na ordem em que você os fez.</span>

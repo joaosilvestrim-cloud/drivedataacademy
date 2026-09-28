@@ -138,6 +138,15 @@ export default function Portfolio({
   );
   const [editando, setEditando] = useState<Projeto | "novo" | null>(null);
   const [aberto, setAberto] = useState<Projeto | null>(null);
+
+  /* A seção "Meu site de portfólio" fica acima desta lista e também precisa
+     abrir o formulário de projeto: projeto vem antes do site. As duas são
+     componentes irmãos, então o pedido chega por um evento da janela. */
+  useEffect(() => {
+    const abrir = () => setEditando("novo");
+    window.addEventListener("portfolio:novo-projeto", abrir);
+    return () => window.removeEventListener("portfolio:novo-projeto", abrir);
+  }, []);
   const [busca, setBusca] = useState("");
   const [ordem, setOrdem] = useState<"recentes" | "curtidos">("recentes");
 
