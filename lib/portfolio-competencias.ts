@@ -134,7 +134,7 @@ const EXIGE_TERMO: Record<string, string[]> = {
     const termos = EXIGE_TERMO[id];
     if (termos && !termos.some((t) => ` ${norm(trecho)} `.includes(` ${t} `))) continue;
     vistos.add(id);
-    itens.push({ id, trecho: trecho.slice(0, 220) });
+    itens.push({ id, trecho: cortarNaPalavra(trecho, 220) });
   }
   return itens.slice(0, 10);
 }
@@ -157,4 +157,12 @@ export async function competenciasParaSalvar(
 export async function nomesDasCompetencias(): Promise<Record<string, string>> {
   const catalogo = await catalogoAtual();
   return Object.fromEntries((catalogo?.competencies ?? []).map((c) => [c.id, c.name]));
+}
+
+/* Trecho longo corta na última palavra inteira, com reticências. O corte
+   seco em 220 caracteres deixava "ambiente d" no painel do 4D. */
+function cortarNaPalavra(texto: string, max: number): string {
+  if (texto.length <= max) return texto;
+  const ate = texto.lastIndexOf(" ", max);
+  return `${texto.slice(0, ate > max * 0.6 ? ate : max).replace(/[,;:\s]+$/, "")}…`;
 }
