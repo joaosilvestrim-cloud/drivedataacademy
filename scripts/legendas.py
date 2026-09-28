@@ -538,6 +538,15 @@ def enviar(video_id, pasta):
         if sigla in enviados:
             continue
         conteudo = base64.b64encode(open(os.path.join(pasta, f"{sigla}.vtt"), "rb").read()).decode()
+        # O Panda recusa subir por cima de legenda que ja existe naquele
+        # idioma, com "Subtitles already exist for this lang". Como aqui a
+        # legenda foi refeita de proposito, a antiga sai antes. O DELETE exige
+        # corpo mesmo sem ter o que receber, senao responde "# must be object".
+        try:
+            http(f"https://api-v2.pandavideo.com.br/subtitles/{alvo}/{srclang}", b"{}",
+                 {"Authorization": PANDA, "accept": "application/json", "content-type": "application/json"}, "DELETE")
+        except Exception:
+            pass  # nao existia, que e o caso comum
         http(f"https://api-v2.pandavideo.com.br/subtitles/{alvo}",
              json.dumps({"label": rotulo, "srclang": srclang, "file": f"data:text/vtt;name={sigla}.vtt;base64,{conteudo}"}).encode(),
              {"Authorization": PANDA, "accept": "application/json", "content-type": "application/json"}, "POST")
