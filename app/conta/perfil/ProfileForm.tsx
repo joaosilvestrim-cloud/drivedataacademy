@@ -25,9 +25,7 @@ export default function ProfileForm() {
   const [saved, setSaved] = useState(false);
   const [saveErr, setSaveErr] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [aiText, setAiText] = useState("");
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiMsg, setAiMsg] = useState("");
+  const [avisoFoto, setAvisoFoto] = useState("");
   const avatarRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -76,25 +74,9 @@ export default function ProfileForm() {
       setForm((f) => ({ ...f, avatar_url: url }));
       await persist({ avatar_url: url });
     } catch {
-      setAiMsg(tr("Não consegui subir a foto. Tente uma imagem menor."));
+      setAvisoFoto(tr("Não consegui subir a foto. Tente uma imagem menor."));
     } finally {
       setUploading(false);
-    }
-  }
-
-  async function aiFill() {
-    if (aiText.trim().length < 20) { setAiMsg(tr("Cole mais detalhes (seu LinkedIn ou currículo).")); return; }
-    setAiLoading(true); setAiMsg("");
-    try {
-      const res = await fetch("/api/profile/ai-fill", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: aiText }) });
-      const data = await res.json();
-      if (!res.ok) { setAiMsg(data.error || tr("Não consegui processar.")); return; }
-      setForm((f) => ({ ...f, headline: data.headline || f.headline, bio: data.bio || f.bio, skills: data.skills || f.skills }));
-      setAiMsg(tr("Prontinho! Confira os campos e salve."));
-    } catch {
-      setAiMsg(tr("Falha de conexão."));
-    } finally {
-      setAiLoading(false);
     }
   }
 
@@ -116,21 +98,7 @@ export default function ProfileForm() {
           {form.headline && <p className="truncate text-sm text-brand-teal">{form.headline}</p>}
           <p className="truncate text-sm text-slate-400">{email}</p>
           <button type="button" onClick={() => avatarRef.current?.click()} disabled={uploading} className="mt-1 text-xs text-brand-teal hover:underline disabled:opacity-60">{uploading ? "enviando..." : "trocar foto"}</button>
-        </div>
-      </div>
-
-      {/* Trajetória com IA */}
-      <div className="mt-6 glow-border rounded-2xl">
-        <div className="glass rounded-2xl p-5">
-          <p className="font-display text-base font-bold text-white">{tr("Monte sua trajetória com IA")}</p>
-          <p className="mt-1 text-sm text-slate-400">Cole o texto do seu LinkedIn (seção "Sobre" + experiências) ou do seu currículo. A IA organiza seu título, resumo e habilidades. Você revisa e salva.</p>
-          <textarea value={aiText} onChange={(e) => setAiText(e.target.value)} rows={4} placeholder={tr("Cole aqui seu LinkedIn/currículo...")} className={`${field} mt-3 resize-y`} />
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <button type="button" onClick={aiFill} disabled={aiLoading} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
-              {aiLoading ? "Processando..." : tr("Preencher com IA")}
-            </button>
-            {aiMsg && <span className="text-xs text-slate-400">{aiMsg}</span>}
-          </div>
+          {avisoFoto && <p className="mt-1 text-xs text-red-300">{avisoFoto}</p>}
         </div>
       </div>
 
