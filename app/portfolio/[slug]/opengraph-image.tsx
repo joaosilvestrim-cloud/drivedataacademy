@@ -56,22 +56,28 @@ export default async function Image({ params }: { params: { slug: string } }) {
     .sort((a, b) => (universo?.provas?.[b.id]?.length ?? 0) - (universo?.provas?.[a.id]?.length ?? 0))
     .slice(0, 5);
 
-  // Encaixa as posições do 4D (x, y) numa área de 470 x 470 à direita.
-  const CAIXA = { x: 690, y: 80, w: 470, h: 470 };
+  /* Encaixa as posições do 4D (x, y) numa área à direita. As coordenadas
+     são relativas à área, porque a constelação é desenhada num SVG: a
+     primeira versão usava caixas rotacionadas para as linhas, e o gerador de
+     imagem errava a origem da rotação, deixando linhas soltas pelo cartão. */
+  const CAIXA = { x: 700, y: 60, w: 440, h: 500 };
   const xs = acesas.map((c) => c.position[0]);
   const ys = acesas.map((c) => c.position[1]);
   const [minX, maxX, minY, maxY] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
-  const escala = acesas.length > 1 ? Math.min(CAIXA.w / Math.max(maxX - minX, 1), CAIXA.h / Math.max(maxY - minY, 1)) * 0.78 : 1;
+  const escala = acesas.length > 1 ? Math.min(CAIXA.w / Math.max(maxX - minX, 1), CAIXA.h / Math.max(maxY - minY, 1)) * 0.72 : 1;
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
-  const ponto = (p: number[]) => ({ x: CAIXA.x + CAIXA.w / 2 + (p[0] - cx) * escala, y: CAIXA.y + CAIXA.h / 2 - (p[1] - cy) * escala });
+  const ponto = (p: number[]) => ({ x: CAIXA.w / 2 + (p[0] - cx) * escala, y: CAIXA.h / 2 - (p[1] - cy) * escala });
   const porId = new Map(acesas.map((c) => [c.id, c]));
-  const linhas = Object.keys(universo?.conexoes ?? {})
+  // Arcos, como no 4D: o meio da linha sobe um pouco e se afasta do centro.
+  const arcos = Object.keys(universo?.conexoes ?? {})
     .map((k) => k.split("|"))
     .filter(([a, b]) => porId.has(a) && porId.has(b))
     .map(([a, b]) => {
       const p = ponto(porId.get(a)!.position), q = ponto(porId.get(b)!.position);
-      const dx = q.x - p.x, dy = q.y - p.y;
-      return { x: p.x, y: p.y, len: Math.hypot(dx, dy), ang: (Math.atan2(dy, dx) * 180) / Math.PI, cor: cor(porId.get(a)!.area) };
+      const mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
+      const dx = mx - CAIXA.w / 2, dy = my - CAIXA.h / 2, d = Math.hypot(dx, dy) || 1;
+      const lift = Math.hypot(q.x - p.x, q.y - p.y) * 0.18;
+      return { d: `M ${p.x} ${p.y} Q ${mx + (dx / d) * lift} ${my + (dy / d) * lift - lift * 0.4} ${q.x} ${q.y}`, cor: cor(porId.get(a)!.area) };
     });
 
   const projetos = universo?.projetos ?? 0;
@@ -84,20 +90,25 @@ export default async function Image({ params }: { params: { slug: string } }) {
         ))}
 
         {/* Constelação */}
-        {linhas.map((l, i) => (
-          <div key={`l${i}`} style={{ position: "absolute", left: l.x, top: l.y, width: l.len, height: 2, background: l.cor, opacity: 0.45, transform: `rotate(${l.ang}deg)`, transformOrigin: "0 0" }} />
-        ))}
-        {acesas.map((c) => {
-          const p = ponto(c.position);
-          const provada = (universo?.provas?.[c.id] ?? []).length > 0;
-          const r = provada ? 9 + Math.min(4, universo?.provas?.[c.id]?.length ?? 1) * 3 : 6;
-          return (
-            <div
-              key={c.id}
-              style={{ position: "absolute", left: p.x - r, top: p.y - r, width: r * 2, height: r * 2, borderRadius: 99, background: cor(c.area), opacity: provada ? 1 : 0.5, boxShadow: `0 0 ${r * 2.2}px ${cor(c.area)}` }}
-            />
-          );
-        })}
+        {acesas.length > 0 && (
+          <svg width={CAIXA.w} height={CAIXA.h} viewBox={`0 0 ${CAIXA.w} ${CAIXA.h}`} style={{ position: "absolute", left: CAIXA.x, top: CAIXA.y }}>
+            {arcos.map((a, i) => (
+              <path key={`a${i}`} d={a.d} fill="none" stroke={a.cor} strokeOpacity={0.55} strokeWidth={2} />
+            ))}
+            {acesas.map((c) => {
+              const p = ponto(c.position);
+              const n = (universo?.provas?.[c.id] ?? []).length;
+              const r = n ? 9 + Math.min(4, n) * 3 : 5;
+              return (
+                <g key={c.id}>
+                  <circle cx={p.x} cy={p.y} r={r * 2.6} fill={cor(c.area)} fillOpacity={n ? 0.1 : 0.04} />
+                  <circle cx={p.x} cy={p.y} r={r * 1.6} fill={cor(c.area)} fillOpacity={n ? 0.18 : 0.06} />
+                  <circle cx={p.x} cy={p.y} r={r} fill={cor(c.area)} fillOpacity={n ? 1 : 0.45} />
+                </g>
+              );
+            })}
+          </svg>
+        )}
 
         {/* Texto */}
         <div style={{ position: "absolute", left: 72, top: 72, width: 600, display: "flex", flexDirection: "column" }}>
