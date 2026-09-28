@@ -19,11 +19,14 @@ const Canvas = dynamic(() => import("./UniverseCanvas"), {
   loading: () => <p className="grid h-full place-items-center text-sm text-slate-400">Organizando as constelações...</p>,
 });
 
-const rotulo = (iso: string, passo: "semana" | "mes") =>
-  new Intl.DateTimeFormat("pt-BR", passo === "semana" ? { day: "numeric", month: "short", timeZone: "UTC" } : { month: "short", year: "numeric", timeZone: "UTC" })
-    .format(new Date(iso))
-    .replace(/\./g, "")
-    .replace(" de ", " ");
+// A carreira pode ir por ano, por mês ou, na camada da plataforma, por semana.
+const rotulo = (iso: string, passo: "semana" | "mes" | "ano") =>
+  passo === "ano"
+    ? String(new Date(iso).getUTCFullYear())
+    : new Intl.DateTimeFormat("pt-BR", passo === "semana" ? { day: "numeric", month: "short", timeZone: "UTC" } : { month: "short", year: "numeric", timeZone: "UTC" })
+        .format(new Date(iso))
+        .replace(/\./g, "")
+        .replace(" de ", " ");
 
 export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string; nome: string; aoFechar: () => void }) {
   const [dados, setDados] = useState<Dados | null>(null);
@@ -81,6 +84,10 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
         : [],
     [dados, scores],
   );
+  /* Os projetos que provam uma competência, até o ponto da linha do tempo
+     em que o visitante está. É a resposta para "por que essa esfera acendeu". */
+  const provasAte = (id: string) =>
+    (dados?.provas?.[id] ?? []).filter((p) => !p.at || !atual || p.at <= atual.at.slice(0, 7));
   const comp = dados?.catalog.competencies.find((c) => c.id === selecionada);
   const area = comp ? dados?.catalog.areas.find((a) => a.id === comp.area) : null;
   const sc = comp ? scores[comp.id] : null;
@@ -96,7 +103,7 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
             <span className="hidden sm:inline">Universo de competências de {nome}</span>
           </h2>
           <p className="mt-1 max-w-2xl text-xs text-slate-400 sm:text-sm">
-            Medido pela DriveData Academy a partir do que {primeiro} estudou, praticou e resolveu. Não é autodeclarado.
+            Cada competência acende porque um projeto de {primeiro} a demonstra. Toque numa esfera para ver qual, e aperte play para ver a carreira crescer.
           </p>
         </div>
         <button onClick={aoFechar} className="shrink-0 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-slate-300 hover:text-white" aria-label="Fechar o universo">
@@ -106,7 +113,7 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
 
       <div className="relative min-h-0 flex-1">
         {estado === "carregando" && <p className="grid h-full place-items-center text-sm text-slate-400">Calculando o universo de {primeiro}...</p>}
-        {estado === "vazio" && <p className="grid h-full place-items-center px-6 text-center text-sm text-slate-400">O universo de {primeiro} ainda está se formando. Ele cresce conforme {primeiro} estuda e pratica na Academy.</p>}
+        {estado === "vazio" && <p className="grid h-full place-items-center px-6 text-center text-sm text-slate-400">Os projetos de {primeiro} ainda não acenderam nenhuma competência.</p>}
         {estado === "erro" && <p className="grid h-full place-items-center text-sm text-slate-400">Não foi possível carregar o universo agora.</p>}
 
         {estado === "ok" && dados && (
@@ -130,19 +137,27 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
                   <p className="text-[0.7rem] font-semibold uppercase tracking-wider" style={{ color: area?.color }}>{area?.name}</p>
                   <p className="mt-1 font-display text-lg font-bold">{comp.name}</p>
                   <p className="mt-1 text-xs text-slate-400">{comp.description}</p>
-                  <div className="mt-3 flex items-baseline justify-between text-sm">
-                    <span className="text-slate-300">{sc.level}</span>
-                    <span className="font-mono tabular-nums">{Math.round(sc.score)}/100</span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, sc.score)}%`, background: area?.color }} />
-                  </div>
+                  {/* Sem nota de 0 a 100: aqui a esfera não é prova de aula, é
+                      prova de projeto, e "45/100" leria como uma nota ruim. O
+                      que o visitante precisa ver é o projeto. */}
+                  <p className="mt-3 text-sm text-slate-300">{sc.level}</p>
+                  {provasAte(comp.id).length > 0 && (
+                    <ul className="mt-2 flex flex-col gap-1.5">
+                      {provasAte(comp.id).map((p) => (
+                        <li key={p.titulo} className="flex items-baseline justify-between gap-3 text-sm">
+                          <span className="min-w-0 truncate">{p.titulo}</span>
+                          {p.at && <span className="shrink-0 font-mono text-xs text-slate-400">{rotulo(`${p.at}-15T12:00:00Z`, "mes")}</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   <button onClick={() => setSelecionada(null)} className="mt-3 text-xs text-slate-400 hover:text-white">Ver resumo</button>
                 </>
               ) : (
                 <>
                   <p className="text-sm font-semibold">
-                    {visiveis.length} {visiveis.length === 1 ? "competência demonstrada" : "competências demonstradas"}
+                    {visiveis.length} {visiveis.length === 1 ? "competência" : "competências"}
+                    {dados.projetos ? ` em ${dados.projetos} ${dados.projetos === 1 ? "projeto" : "projetos"}` : ""}
                   </p>
                   <p className="mt-0.5 text-xs text-slate-400">até {atual ? rotulo(atual.at, dados.passo) : ""}. Toque numa esfera para ver o detalhe.</p>
                   <ol className="mt-3 hidden flex-col gap-2 sm:flex">
@@ -155,7 +170,7 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
                               <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: cor }} />
                               <span className="truncate">{c.name}</span>
                             </span>
-                            <span className="shrink-0 font-mono text-xs tabular-nums text-slate-400">{Math.round(scores[c.id].score)}</span>
+                            <span className="shrink-0 font-mono text-xs tabular-nums text-slate-400">{provasAte(c.id).length || "perfil"}</span>
                           </button>
                         </li>
                       );

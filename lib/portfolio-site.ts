@@ -74,7 +74,7 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     admin.from("profiles").select("full_name, headline, bio, skills, linkedin_url, avatar_url").eq("id", userId).maybeSingle(),
     admin
       .from("portfolio_projects")
-      .select("titulo, resumo, problema, resultado, descricao, ferramentas, cover_url, link_url, repo_url, status, publico, destaque, updated_at")
+      .select("titulo, resumo, problema, resultado, descricao, ferramentas, cover_url, link_url, repo_url, status, publico, destaque, updated_at, feito_em")
       .eq("user_id", userId)
       .order("destaque", { ascending: false })
       .order("updated_at", { ascending: false }),
@@ -107,6 +107,7 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
   validos.forEach((p: any, i: number) => {
     blocoProjetos +=
       `\n${i + 1}. ${p.titulo}\n` +
+      linha("   Quando", p.feito_em ? new Date(`${p.feito_em}T12:00:00Z`).toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" }) : null) +
       linha("   Resumo", p.resumo) +
       linha("   Problema", p.problema) +
       linha("   O que mudou", p.resultado) +

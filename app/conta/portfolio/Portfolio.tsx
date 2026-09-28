@@ -525,6 +525,20 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
           </div>
 
           <div>
+            <label className={rotulo} htmlFor="p-quando">{tr("Quando foi feito")}</label>
+            <input
+              id="p-quando"
+              name="feito_em"
+              type="month"
+              defaultValue={projeto?.feito_em ? projeto.feito_em.slice(0, 7) : ""}
+              max={new Date().toISOString().slice(0, 7)}
+              min="1990-01"
+              className={`${campo} mt-1 max-w-[12rem] [color-scheme:dark]`}
+            />
+            <p className="mt-1 text-xs text-slate-500">{tr("Mês e ano bastam. É o que faz a sua carreira aparecer em ordem no Universo 4D do seu site.")}</p>
+          </div>
+
+          <div>
             <span className={rotulo}>{tr("Imagem do projeto")}</span>
             <div className="mt-1 flex items-start gap-4">
               <div className="grid aspect-video w-40 shrink-0 place-items-center overflow-hidden rounded-xl border border-white/10 bg-ink-800">

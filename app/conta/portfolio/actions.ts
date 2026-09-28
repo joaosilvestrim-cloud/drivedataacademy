@@ -26,6 +26,17 @@ async function alunoComAcesso() {
   return { user, admin };
 }
 
+/* "AAAA-MM" do campo de mês vira "AAAA-MM-01". Recusa futuro e antes de
+   1990: projeto de dados de 1985 ou de 2031 é erro de digitação, e bagunçaria
+   a linha do tempo do universo. */
+function mesValido(bruto: string | null): string | null {
+  const m = (bruto || "").match(/^(\d{4})-(\d{2})/);
+  if (!m) return null;
+  const data = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, 1));
+  if (isNaN(data.getTime()) || data.getUTCFullYear() < 1990 || data.getTime() > Date.now()) return null;
+  return `${m[1]}-${m[2]}-01`;
+}
+
 async function meuProjeto(admin: ReturnType<typeof createAdminClient>, id: string, userId: string) {
   const { data } = await admin.from("portfolio_projects").select("*").eq("id", id).maybeSingle();
   if (!data || data.user_id !== userId) return null;
@@ -59,6 +70,7 @@ export async function salvarProjeto(formData: FormData) {
     link_url: linkValido(formData.get("link_url") as string),
     repo_url: linkValido(formData.get("repo_url") as string),
     course_id: (formData.get("course_id") as string) || null,
+    feito_em: mesValido(formData.get("feito_em") as string),
     publico: formData.get("publico") === "on",
     updated_at: new Date().toISOString(),
   };

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { universoPublico } from "@/lib/knowledge/publico";
+import { universoDoPortfolio } from "@/lib/knowledge/publico";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,12 +25,14 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
 
-  const universo = await universoPublico(site.user_id);
-  if (!universo) return NextResponse.json({ vazio: true }, { status: 200 });
+  /* Camada do portfólio: a constelação sai dos projetos do aluno, não do
+     histórico de estudo. Ver lib/knowledge/publico.ts. */
+  const universo = await universoDoPortfolio(admin, site.user_id);
+  if (!universo || !universo.quadros.length) return NextResponse.json({ vazio: true }, { status: 200 });
 
-  // Uma hora de cache na borda. A competência de alguém não muda de minuto em
-  // minuto, e cada cálculo lê o histórico inteiro do aluno.
+  // Cinco minutos de cache na borda: o aluno que acabou de cadastrar um
+  // projeto quer ver a esfera acender logo, não daqui a uma hora.
   return NextResponse.json(universo, {
-    headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" },
+    headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600" },
   });
 }

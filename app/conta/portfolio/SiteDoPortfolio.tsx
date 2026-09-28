@@ -102,7 +102,7 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
     <section className="mt-8 rounded-3xl border border-brand-green/25 bg-gradient-to-b from-brand-green/[0.06] to-transparent p-5 sm:p-7">
       <h2 className="font-display text-2xl font-bold text-white">Meu site de portfólio</h2>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">
-        A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D, que quem visitar pode girar e ver crescer no tempo.
+        A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D: uma constelação das competências que seus projetos provam, que quem visitar pode girar e ver crescer ao longo da sua carreira.
       </p>
 
       {atual?.bloqueado && (
@@ -210,7 +210,7 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
         <Passo n={3} titulo="Publique e leve o link para o LinkedIn">
           <label className="flex items-start gap-2.5 text-sm text-slate-300">
             <input type="checkbox" checked={mostrarUniverso} onChange={(e) => setMostrarUniverso(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#15c47e]" />
-            <span>Mostrar meu Universo 4D na página. Quem visitar vê só o nível de cada competência, nunca o histórico de estudo.</span>
+            <span>Mostrar meu Universo 4D na página. As competências acendem a partir dos seus projetos, na ordem em que você os fez.</span>
           </label>
           <div className="mt-3 flex flex-wrap gap-2">
             <button onClick={() => salvar(true)} disabled={salvando || html.trim().length < 30 || !!atual?.bloqueado} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-40">
