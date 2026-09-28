@@ -37,6 +37,10 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
           <div className="flex-1">
             <h1 className="font-display text-2xl font-bold text-white">{tr("Central de Ajuda")}</h1>
             <p className="mt-1 text-sm text-slate-300">{tr("Fale com o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.")}</p>
+            {/* O prazo aparece antes de a pessoa escrever, nao depois.
+                Quem abre chamado quer saber quando tem resposta, e esperar
+                sem prazo e o que faz o aluno mandar a mesma duvida tres vezes. */}
+            <p className="mt-2 text-sm font-medium text-brand-teal">{tr("O time responde em até 3 dias úteis.")}</p>
             <OpenAssistant auto={searchParams?.novo === "1"} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
               {tr("Conversar com o assistente")}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -65,7 +69,7 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
         {(tickets ?? []).length === 0 && (
           <div className="rounded-2xl border border-dashed border-white/10 px-6 py-14 text-center">
             <p className="font-medium text-white">{tr("Nenhum atendimento por aqui ainda.")}</p>
-            <p className="mt-1 text-sm text-slate-400">{tr("Abra o assistente acima e mande sua dúvida. Se ele acionar o time, o atendimento aparece nesta lista.")}</p>
+            <p className="mt-1 text-sm text-slate-400">{tr("Abra o assistente acima e mande sua dúvida. Se ele acionar o time, o atendimento aparece nesta lista e o time responde em até 3 dias úteis.")}</p>
           </div>
         )}
         {(tickets ?? []).map((t: any) => {

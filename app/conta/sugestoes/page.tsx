@@ -43,7 +43,7 @@ export default async function SugestoesPage({ searchParams }: { searchParams: { 
       <PageHeader
         context={tr("Sua voz na Academy")}
         title={tr("Sugestões e melhorias")}
-        lede={tr("Conta o que está faltando, o que atrapalha e o que você quer ver por aqui. Lemos tudo e respondemos.")}
+        lede={tr("Conta o que está faltando, o que atrapalha e o que você quer ver por aqui. Lemos tudo e respondemos em até 3 dias úteis.")}
       />
 
       {searchParams.ok && <Alert tone="accent">{tr("Sugestão enviada. Obrigado. Você acompanha a resposta aqui embaixo.")}</Alert>}

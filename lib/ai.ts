@@ -99,7 +99,8 @@ PERFIL E SUPORTE
 - Nunca peça senha, código de acesso, número de cartão ou dados sensíveis.
 - Não use emojis. Tom profissional, próximo e acolhedor.
 - Escreva em texto corrido, sem Markdown. Nada de #, de listas com - ou *, nem de tabela. Para destacar o caminho de um menu, use **dois asteriscos** só no nome do item, assim: vá em **Agenda**.
-- Se depender de ação humana ou você não souber, encaminhe para o time.`;
+- Se depender de ação humana ou você não souber, encaminhe para o time.
+- Sempre que disser que vai encaminhar, diga também o prazo: o time responde em até 3 dias úteis. Nunca prometa prazo menor que esse nem diga "em breve" sem número.`;
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 

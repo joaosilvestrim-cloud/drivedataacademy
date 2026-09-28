@@ -70,7 +70,7 @@ export async function POST(req: Request) {
 
   // "Falar com o time": cria o chamado direto, sem formulário.
   if (forceEscalate && !alreadyEscalated) {
-    const note = "Encaminhei sua conversa para o time da DriveData. Eles vão dar sequência por aqui e também respondemos por e-mail.";
+    const note = "Encaminhei sua conversa para o time da DriveData. O time responde em até 3 dias úteis, por aqui e também por e-mail.";
     const id = await ticketFromChat(admin, user, clean.length ? clean : [{ role: "user", content: "Quero falar com o time." }], note);
     await logChat(admin, user, clean, note, true, id);
     return NextResponse.json({ reply: note, escalated: !!id, ticketId: id });
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
   const raw = await chatSupportAI(clean, ctx);
   if (!raw) {
     // sem IA: escala direto para o time
-    const note = "No momento não consegui responder por aqui, então encaminhei para o time da DriveData. Eles respondem em breve.";
+    const note = "No momento não consegui responder por aqui, então encaminhei para o time da DriveData. O time responde em até 3 dias úteis.";
     const id = alreadyEscalated ? null : await ticketFromChat(admin, user, clean, note);
     await logChat(admin, user, clean, note, !!id, id);
     return NextResponse.json({ reply: note, escalated: !!id, ticketId: id, fallback: true });

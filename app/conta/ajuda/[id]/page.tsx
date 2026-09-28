@@ -73,6 +73,14 @@ export default async function TicketPage({ params }: { params: { id: string } })
         })}
       </div>
 
+      {/* O prazo fica na tela do chamado, nao so na Central: e aqui que a
+          pessoa volta para ver se responderam. */}
+      {ticket.status !== "resolved" && (
+        <p className="mt-6 rounded-xl border border-brand-teal/25 bg-brand-teal/5 px-4 py-3 text-sm text-brand-teal">
+          {tr("O time responde em até 3 dias úteis. Você recebe a resposta por aqui e por e-mail.")}
+        </p>
+      )}
+
       {/* Responder */}
       {ticket.status === "resolved" ? (
         <p className="mt-8 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm text-slate-400">{tr("Este chamado foi marcado como resolvido. Precisa de mais ajuda? Abra um novo na Central.")}</p>
