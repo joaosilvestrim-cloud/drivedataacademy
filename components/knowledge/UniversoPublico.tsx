@@ -127,7 +127,15 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
     const novas = dados.catalog.competencies
       .filter((c) => (dados.quadros[quadro].scores[c.id]?.score ?? 0) > 0 && !(antes && (antes[c.id]?.score ?? 0) > 0))
       .map((c) => c.name);
-    return { projetos: [...projetos], novas };
+    /* Projeto que não acende nada novo ainda conta: ele reforça o que já
+       estava aceso. Sem isto, o quadro do PMI em 2025 aparecia mudo, porque
+       Gestão de projetos e Planejamento já tinham acendido antes. */
+    const reforcadas = antes
+      ? dados.catalog.competencies
+          .filter((c) => (antes[c.id]?.score ?? 0) > 0 && (dados.quadros[quadro].scores[c.id]?.score ?? 0) > (antes[c.id]?.score ?? 0))
+          .map((c) => c.name)
+      : [];
+    return { projetos: [...projetos], novas, reforcadas };
   }, [dados, quadro]);
   const visiveis = useMemo(
     () => (dados ? dados.catalog.competencies.filter((c) => (alvo[c.id]?.score ?? 0) > 0).map((c) => c.id) : []),
@@ -173,7 +181,7 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
             <span className="sm:hidden">Universo de {primeiro}</span>
             <span className="hidden sm:inline">Universo de competências de {nome}</span>
           </h2>
-          <p className="mt-1 max-w-2xl text-xs text-slate-400 sm:text-sm">
+          <p className={`mt-1 max-w-2xl text-xs text-slate-400 sm:text-sm ${tocando ? "hidden sm:block" : ""}`}>
             Cada competência acende porque um projeto de {primeiro} a demonstra. Toque numa esfera para ver qual, e aperte play para ver a carreira crescer.
           </p>
         </div>
@@ -211,14 +219,19 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
             )}
             {tocando && legenda && (legenda.projetos.length > 0 || legenda.novas.length > 0) && (
               <div className="pointer-events-none absolute inset-x-3 bottom-3 flex justify-center sm:bottom-6">
-                <div key={`legenda-${quadro}`} className="surgir w-full max-w-xl rounded-2xl border border-white/10 bg-[#0a1428]/85 px-5 py-4 text-center backdrop-blur">
+                <div key={`legenda-${quadro}`} className="surgir w-full max-w-xl rounded-2xl border border-white/10 bg-[#0a1428]/85 px-4 py-2.5 text-center backdrop-blur sm:px-5 sm:py-4">
                   <p className="font-mono text-xs uppercase tracking-widest text-brand-green">{atual ? rotulo(atual.at, dados.passo) : ""}</p>
-                  <p className="mt-1 font-display text-base font-bold sm:text-lg">
+                  <p className="mt-0.5 font-display text-sm font-bold sm:mt-1 sm:text-lg">
                     {legenda.projetos.length ? legenda.projetos.join(" · ") : "Declaradas no perfil"}
                   </p>
                   {legenda.novas.length > 0 && (
                     <p className="mt-1 text-xs text-slate-300 sm:text-sm">
                       acendeu <span className="text-white">{legenda.novas.join(", ")}</span>
+                    </p>
+                  )}
+                  {legenda.reforcadas.length > 0 && (
+                    <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">
+                      reforçou <span className="text-slate-200">{legenda.reforcadas.join(", ")}</span>
                     </p>
                   )}
                 </div>
