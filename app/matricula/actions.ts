@@ -161,7 +161,7 @@ async function createAsaasSubscription(
     const sub = await subRes.json();
     if (!subRes.ok || !sub?.id) return { url: null, erro: motivoAsaas(sub, "Não consegui abrir a assinatura no Asaas.") };
 
-    await admin.from("orders").update({ gateway_id: sub.id, external_reference: `sub:${orderId}` }).eq("id", orderId);
+    await admin.from("orders").update({ gateway_id: sub.id, asaas_subscription_id: sub.id, external_reference: `sub:${orderId}` }).eq("id", orderId);
 
     const payRes = await fetch(`${ASAAS_BASE}/subscriptions/${sub.id}/payments`, { headers });
     const pays = await payRes.json();

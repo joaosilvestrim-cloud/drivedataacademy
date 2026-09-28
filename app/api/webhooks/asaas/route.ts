@@ -153,7 +153,18 @@ export async function POST(req: Request) {
     if (!order) return NextResponse.json({ ok: true, note: "pedido não encontrado" });
 
     if (paidEvents.includes(event)) {
-      await admin.from("orders").update({ status: "paid", gateway_id: payment.id ?? order.gateway_id }).eq("id", order.id);
+      /* gateway_id guarda a ULTIMA cobranca, e e por ele que o webhook
+         reencontra o pedido. O id da assinatura vai para coluna propria: ja
+         foi sobrescrito aqui uma vez, e o preco disso foi cancelamento que
+         nao chegava ao Asaas e cartao que continuava sendo cobrado. */
+      await admin
+        .from("orders")
+        .update({
+          status: "paid",
+          gateway_id: payment.id ?? order.gateway_id,
+          ...(payment.subscription ? { asaas_subscription_id: payment.subscription } : {}),
+        })
+        .eq("id", order.id);
       await registrarCupom(admin, order);
 
       // 1) Conta só nasce AGORA (após o pagamento). Cria se ainda não existir.

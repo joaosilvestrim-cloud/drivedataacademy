@@ -199,7 +199,7 @@ export async function enviarCobranca(c: CobrancaParaCA): Promise<{ ok: boolean; 
     const dia = c.pagoEm.slice(0, 10);
     const valor = Number(c.valor.toFixed(2));
 
-    const venda = await caPost<any>("/v1/venda", {
+    const venda = await criarVenda({
       id_cliente: pessoaId,
       numero,
       situacao: "APROVADO",
@@ -215,15 +215,45 @@ export async function enviarCobranca(c: CobrancaParaCA): Promise<{ ok: boolean; 
       },
     });
 
-    const vendaId = String(venda?.id ?? venda?.id_venda ?? "");
+    const vendaId = String(venda.corpo?.id ?? venda.corpo?.id_venda ?? "");
     await admin
       .from("ca_venda")
-      .update({ venda_id: vendaId || "sem-id", numero, pessoa_id: pessoaId, erro: null })
+      .update({ venda_id: vendaId || "sem-id", numero: venda.numero, pessoa_id: pessoaId, erro: null })
       .eq("asaas_payment_id", c.paymentId);
 
     return { ok: true, vendaId };
   } catch (e) {
     return falhar((e as Error).message);
+  }
+}
+
+/* Cria a venda e se recupera sozinha quando o número colide.
+
+   O contador da Academy não é a única fonte de numeração: a Tamires também
+   cria venda à mão no painel, e quando isso acontece os dois se encontram no
+   mesmo número. A Conta Azul recusa com uma mensagem que, por sorte, diz qual
+   é o próximo livre: "O nº 352 é o próximo disponível".
+
+   Então em vez de falhar, lê o número da mensagem, atualiza o contador e
+   tenta uma vez. Repetir aqui é seguro, ao contrário da regra geral de não
+   repetir POST: um 400 de validação é recusa, não incerteza. Nada entrou do
+   outro lado. */
+async function criarVenda(corpo: any): Promise<{ corpo: any; numero: number }> {
+  try {
+    return { corpo: await caPost<any>("/v1/venda", corpo), numero: corpo.numero };
+  } catch (e) {
+    const msg = (e as Error).message;
+    const sugerido = Number(msg.match(/n[º°o]\s*(\d+)\s*[ée]\s*o\s*pr[óo]ximo/i)?.[1] || 0);
+    if (!sugerido) throw e;
+
+    /* O contador vai para o número sugerido MAIS UM, porque o sugerido é o
+       que esta venda vai ocupar agora. */
+    await createAdminClient()
+      .from("integracao_config")
+      .upsert({ chave: "ca_proximo_numero", valor: String(sugerido + 1), atualizado: new Date().toISOString() }, { onConflict: "chave" });
+
+    console.warn(`[ca] número ${corpo.numero} já usado, o Conta Azul sugeriu ${sugerido}. Reenviando.`);
+    return { corpo: await caPost<any>("/v1/venda", { ...corpo, numero: sugerido }), numero: sugerido };
   }
 }
 

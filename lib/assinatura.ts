@@ -67,7 +67,7 @@ export async function assinaturaDoAluno(admin: SupabaseClient, userId: string): 
      sozinho não guarda valor nem o id do Asaas. */
   const { data: pedidos } = await admin
     .from("orders")
-    .select("id, product, amount, gateway, gateway_id, status, created_at")
+    .select("id, product, amount, gateway, gateway_id, asaas_subscription_id, status, created_at")
     .eq("user_id", userId)
     .eq("status", "paid")
     .in("product", PRODUTOS_ASSINATURA)
@@ -80,8 +80,18 @@ export async function assinaturaDoAluno(admin: SupabaseClient, userId: string): 
   else if (m.turma_id) plano = "turma";
   else plano = "cortesia";
 
+  /* O id da assinatura, com rede de segurança.
+
+     Durante um tempo o webhook sobrescreveu gateway_id com o id da COBRANÇA,
+     e o cancelamento saiu chamando DELETE /subscriptions/pay_..., que devolve
+     404. Pedido antigo ainda carrega esse estrago, então só vale como
+     assinatura o que tem cara de assinatura. */
+  const idAssinatura =
+    (pedido?.asaas_subscription_id as string | null) ||
+    (String(pedido?.gateway_id || "").startsWith("sub_") ? (pedido!.gateway_id as string) : null);
+
   // Só a mensal no Asaas tem o que cancelar lá.
-  const recorrente = plano === "mensal" && pedido?.gateway === "asaas" && !!pedido?.gateway_id;
+  const recorrente = plano === "mensal" && pedido?.gateway === "asaas" && !!idAssinatura;
 
   const { data: cancel } = await admin
     .from("subscription_cancellations")
@@ -100,7 +110,7 @@ export async function assinaturaDoAluno(admin: SupabaseClient, userId: string): 
     valor: pedido?.amount ?? null,
     desde: m.starts_at ?? pedido?.created_at ?? null,
     orderId: pedido?.id ?? null,
-    asaasSubscriptionId: recorrente ? (pedido!.gateway_id as string) : null,
+    asaasSubscriptionId: idAssinatura,
     recorrente,
     cancelamentoPedidoEm: cancel?.created_at ?? null,
   };
