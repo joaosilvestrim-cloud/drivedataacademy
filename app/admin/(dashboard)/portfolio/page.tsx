@@ -5,7 +5,7 @@ import { PageHeader, SectionHeader, EmptyState, Alert } from "@/components/ui/la
 import { LinkFilter } from "@/components/ui/filter";
 import AdminError from "../AdminError";
 import { STATUS, type Projeto } from "@/lib/portfolio";
-import { aprovarProjeto, recusarProjeto, alternarDestaque, despublicarProjeto } from "./actions";
+import { aprovarProjeto, recusarProjeto, alternarDestaque, despublicarProjeto, alternarBloqueioSite } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +50,17 @@ export default async function PortfolioAdmin({ searchParams }: { searchParams: {
     );
   }
 
+  /* Sites de portfólio publicados pelos alunos. Lidos à parte: sem a tabela
+     ainda, a moderação dos projetos continua funcionando. */
+  let sites: any[] = [];
+  try {
+    const admin = createAdminClient();
+    const { data } = await admin.from("portfolio_sites").select("user_id, slug, publicado, bloqueado, atualizado_em").order("atualizado_em", { ascending: false });
+    sites = data ?? [];
+    const faltam = sites.map((s) => s.user_id).filter((id) => !nomes[id]);
+    if (faltam.length) Object.assign(nomes, (await loadProfiles(admin, faltam)).nameById);
+  } catch {}
+
   const contagem: Record<string, number> = { todos: todos.length };
   for (const p of todos) contagem[p.status] = (contagem[p.status] || 0) + 1;
   const lista = f === "todos" ? todos : todos.filter((p) => p.status === f);
@@ -64,6 +75,31 @@ export default async function PortfolioAdmin({ searchParams }: { searchParams: {
 
       {searchParams?.ok && <Alert tone="accent" title="Pronto">{searchParams.ok}</Alert>}
       {searchParams?.error && <Alert tone="danger" title="Não deu certo">{searchParams.error}</Alert>}
+
+      {sites.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <SectionHeader title="Sites dos alunos" meta={`${sites.filter((s) => s.publicado && !s.bloqueado).length} no ar`} />
+          <ul className="flex flex-col divide-y divide-ds-line-soft">
+            {sites.map((s) => (
+              <li key={s.user_id} className="flex flex-wrap items-center justify-between gap-3 py-2.5">
+                <span className="min-w-0">
+                  <span className="text-body-sm text-ds-text">{displayName(nomes, s.user_id)}</span>{" "}
+                  <a href={`/portfolio/${s.slug}`} target="_blank" rel="noopener" className="font-mono text-caption text-ds-text-3 hover:text-ds-text">/portfolio/{s.slug}</a>
+                </span>
+                <span className="flex items-center gap-3">
+                  <Status tone={s.bloqueado ? "danger" : s.publicado ? "accent" : "neutral"}>{s.bloqueado ? "bloqueado" : s.publicado ? "no ar" : "rascunho"}</Status>
+                  <form action={alternarBloqueioSite} className="flex items-center gap-2">
+                    <input type="hidden" name="user_id" value={s.user_id} />
+                    <input type="hidden" name="bloquear" value={s.bloqueado ? "0" : "1"} />
+                    {!s.bloqueado && <input name="motivo" placeholder="motivo" className="w-32 rounded-md border border-ds-line bg-transparent px-2 py-1 text-caption" />}
+                    <Button type="submit" variant="ghost">{s.bloqueado ? "Desbloquear" : "Tirar do ar"}</Button>
+                  </form>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <LinkFilter label="Filtrar projetos por situação" basePath="/admin/portfolio" param="f" options={FILTROS} active={f} counts={contagem} />
 

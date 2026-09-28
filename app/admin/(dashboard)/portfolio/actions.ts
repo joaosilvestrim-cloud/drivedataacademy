@@ -57,3 +57,24 @@ export async function despublicarProjeto(formData: FormData) {
   const { error } = await supabase.from("portfolio_projects").update({ status: "revisao", destaque: false }).eq("id", id);
   voltar(error ? error.message : "Projeto saiu da vitrine e voltou para a fila.", !error);
 }
+
+/* Site de portfólio do aluno: tirar do ar e devolver.
+
+   Bloquear é diferente de o aluno despublicar. O aluno não consegue
+   republicar um site bloqueado, e é isso que dá ao time a última palavra
+   sobre o que roda no domínio da Academy. */
+export async function alternarBloqueioSite(formData: FormData) {
+  const supabase = await admin();
+  const userId = formData.get("user_id") as string;
+  const bloquear = formData.get("bloquear") === "1";
+  const motivo = ((formData.get("motivo") as string) || "").trim() || null;
+  const { data, error } = await supabase
+    .from("portfolio_sites")
+    .update({ bloqueado: bloquear, motivo_bloqueio: bloquear ? motivo : null, ...(bloquear ? { publicado: false } : {}) })
+    .eq("user_id", userId)
+    .select("slug")
+    .maybeSingle();
+  if (data?.slug) revalidatePath(`/portfolio/${data.slug}`);
+  voltar(error ? error.message : bloquear ? "Site tirado do ar." : "Bloqueio removido. O aluno pode publicar de novo.", !error);
+}
+

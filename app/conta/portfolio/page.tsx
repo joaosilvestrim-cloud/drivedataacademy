@@ -6,6 +6,7 @@ import { usuarioAtual } from "@/lib/sessao";
 import { type Projeto } from "@/lib/portfolio";
 import { vitrine } from "@/lib/portfolio-servidor";
 import Portfolio, { type Autor } from "./Portfolio";
+import SiteDoPortfolio, { type SiteAtual } from "./SiteDoPortfolio";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +23,16 @@ export default async function PortfolioPage() {
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/matricula");
 
-  const [{ projetos, erro }, meusRes, curtidasRes, cursosRes] = await Promise.all([
+  const [{ projetos, erro }, meusRes, curtidasRes, cursosRes, siteRes] = await Promise.all([
     vitrine(admin),
     admin.from("portfolio_projects").select("*").eq("user_id", user.id).order("updated_at", { ascending: false }),
     admin.from("portfolio_likes").select("project_id").eq("user_id", user.id),
     admin.from("courses").select("id, title").eq("published", true).order("position"),
+    // Sem a tabela ainda, volta erro e a seção abre como site novo.
+    admin.from("portfolio_sites").select("slug, publicado, mostrar_universo, bloqueado").eq("user_id", user.id).maybeSingle(),
   ]);
+  const siteAtual = (siteRes.data ?? null) as SiteAtual;
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
   const meus = (meusRes.data ?? []) as Projeto[];
   const semTabela = !!erro && /relation|does not exist|schema cache/i.test(erro);
@@ -54,6 +59,8 @@ export default async function PortfolioPage() {
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("Projeto pronto vale mais que certificado em entrevista. Publique o seu com a imagem, o problema que ele resolvia e o resultado. O time revisa e ele entra na vitrine, aqui e na página pública da Academy.")}
       </p>
+
+      {!semTabela && <SiteDoPortfolio atual={siteAtual} siteUrl={siteUrl} />}
 
       {semTabela ? (
         <div className="mt-8 rounded-2xl border border-amber-300/25 bg-amber-300/[0.06] px-5 py-4 text-sm text-amber-100">

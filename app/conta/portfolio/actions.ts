@@ -7,6 +7,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
 import { organizarRelato } from "@/lib/portfolio-ia";
+import { limparHtmlColado, montarPrompt, slugDoNome, slugLivre, type Estilo } from "@/lib/portfolio-site";
+
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
 /* O que o aluno pode fazer com o próprio projeto.
 
@@ -112,4 +115,61 @@ export async function curtirProjeto(id: string) {
   await admin.from("portfolio_projects").update({ curtidas: count ?? 0 }).eq("id", id);
   revalidatePath("/conta/portfolio");
   return { ok: true as const, curtido: !ja, curtidas: count ?? 0 };
+}
+
+/* Site de portfólio: o prompt, o HTML colado e a publicação.
+   O desenho e o isolamento estão explicados em lib/portfolio-site.ts. */
+
+export async function gerarPromptDoSite(estilo: Estilo) {
+  const { user, admin } = await alunoComAcesso();
+  const r = await montarPrompt(admin, user.id, estilo);
+  return { ok: true as const, ...r };
+}
+
+export async function salvarSite(dados: { html: string; publicar: boolean; mostrarUniverso: boolean }) {
+  const { user, admin } = await alunoComAcesso();
+  const limpo = limparHtmlColado(dados.html);
+  if (!limpo.ok) return { ok: false as const, erro: limpo.erro };
+
+  const { data: atual } = await admin.from("portfolio_sites").select("slug, bloqueado").eq("user_id", user.id).maybeSingle();
+  // Bloqueio é do time. Republicar não desfaz, senão o bloqueio não valeria nada.
+  if (atual?.bloqueado) return { ok: false as const, erro: "Seu site foi tirado do ar pelo time. Fale com o suporte pela Central de Ajuda." };
+
+  let slug = atual?.slug;
+  if (!slug) {
+    const { data: perfil } = await admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+    slug = await slugLivre(admin, slugDoNome(perfil?.full_name || (user.email || "").split("@")[0]), user.id);
+  }
+
+  const { error } = await admin.from("portfolio_sites").upsert(
+    {
+      user_id: user.id,
+      slug,
+      html: limpo.html,
+      publicado: dados.publicar,
+      mostrar_universo: dados.mostrarUniverso,
+      atualizado_em: new Date().toISOString(),
+    },
+    { onConflict: "user_id" },
+  );
+  if (error) return { ok: false as const, erro: error.message };
+
+  const url = `${SITE}/portfolio/${slug}`;
+  /* O perfil tem um campo de portfólio que aparece na comunidade. Preenche só
+     se estiver vazio: quem já tinha um site próprio lá escolheu aquele. */
+  if (dados.publicar) {
+    await admin.from("profiles").update({ portfolio_url: url }).eq("id", user.id).or("portfolio_url.is.null,portfolio_url.eq.");
+  }
+
+  revalidatePath(`/portfolio/${slug}`);
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const, slug, url, publicado: dados.publicar };
+}
+
+export async function despublicarSite() {
+  const { user, admin } = await alunoComAcesso();
+  const { data } = await admin.from("portfolio_sites").update({ publicado: false }).eq("user_id", user.id).select("slug").maybeSingle();
+  if (data?.slug) revalidatePath(`/portfolio/${data.slug}`);
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
 }
