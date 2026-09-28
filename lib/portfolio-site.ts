@@ -53,6 +53,8 @@ export async function slugLivre(admin: SupabaseClient, desejado: string, userId:
 
 type Resultado = {
   prompt: string;
+  /** Só os dados do aluno, sem as instruções do prompt. É a régua da conferência de números. */
+  fatos: string;
   incluidos: number;
   foraPorLacuna: string[];
   foraPorPrivado: string[];
@@ -172,6 +174,7 @@ ${blocoCerts ? `## Certificados verificáveis\nEmitidos pela DriveData Academy. 
 ${estiloEscolhido.direcao}
 
 Isto não é um currículo, é a vitrine de alguém que resolve problemas com dados. Os números reais dos projetos são os protagonistas: dê a eles tamanho e destaque.
+Nunca crie número, percentual, prazo ou métrica que não esteja escrito nos fatos acima, nem para completar um layout. Se o layout pede um número e o fato não tem, troque o número por uma frase curta tirada do projeto.
 Evite a cara de template gerado por IA: nada de gradiente roxo e azul, nada de emoji como ícone, nada de tudo centralizado, nada de adjetivo vazio como "apaixonado por dados".
 
 # Estrutura
@@ -183,5 +186,44 @@ ${[blocoCerts ? "Certificados, com o link de verificação." : "", perfil?.linke
   .map((t, i) => `${i + 4}. ${t}\n`)
   .join("")}No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".`;
 
-  return { prompt, incluidos: validos.length, foraPorLacuna, foraPorPrivado, certificados: certificados.length };
+  /* Os fatos, separados das instruções. O prompt tem números próprios (a
+     numeração da estrutura, os 360px da regra de celular), e usar o prompt
+     inteiro como régua deixava passar "4h" só porque existe um "4." na lista
+     de seções. */
+  const fatos = [nome, perfil?.headline, perfil?.bio, skills, blocoProjetos, blocoCerts].filter(Boolean).join("\n");
+
+  return { prompt, fatos, incluidos: validos.length, foraPorLacuna, foraPorPrivado, certificados: certificados.length };
+}
+
+/* Conferência de número inventado no site que a IA devolveu.
+
+   O prompt proíbe, e mesmo assim no teste de ponta a ponta o estilo "Painel
+   de dados" criou "Tempo economizado 4h" e "100% mobile ready" para um
+   projeto sem número nenhum: o layout pedia KPI e a IA preencheu. Nenhuma
+   instrução segura isso em todas as IAs que o aluno pode usar.
+
+   Então a plataforma confere: todo número com cara de resultado (com %, h,
+   x, dias, R$, mil) no texto visível do site precisa existir nos fatos do
+   aluno. Número solto sem unidade fica de fora, porque é quase sempre
+   numeração de seção ("01", "02") e daria alarme falso.
+
+   Não bloqueia a publicação. Avisa, e o aluno decide: pode ser um número que
+   ele sabe e não pôs no projeto. Mas aí o certo é pôr no projeto primeiro. */
+export async function numerosSemOrigem(admin: SupabaseClient, userId: string, html: string): Promise<string[]> {
+  const { fatos: texto } = await montarPrompt(admin, userId, "surpresa");
+  const fatos = new Set((texto.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", ".")));
+
+  const visivel = html
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ");
+
+  const alegacao = /(R\$\s?)?(\d+(?:[.,]\d+)?)\s?(%|(?:horas?|minutos|min|dias?|semanas?|meses|mil|mi|k|x|h)\b)/gi;
+  const achados = new Set<string>();
+  for (const m of visivel.matchAll(alegacao)) {
+    const valor = m[2].replace(",", ".");
+    if (!fatos.has(valor)) achados.add(m[0].trim());
+  }
+  return [...achados].slice(0, 12);
 }

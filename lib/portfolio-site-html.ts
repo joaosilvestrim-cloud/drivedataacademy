@@ -64,7 +64,7 @@ export const ESTILOS = {
   painel: {
     nome: "Painel de dados",
     direcao:
-      "O site é um painel de indicadores. Os números reais dos projetos viram KPIs grandes, cada projeto é um cartão com antes e depois lado a lado. Números em fonte monoespaçada, grid de dashboard, cores sóbrias com uma cor de destaque para o que melhorou.",
+      "O site é um painel de indicadores. Os números que estão escritos nos projetos viram KPIs grandes; projeto sem número mostra o antes e o depois em palavras, num cartão do mesmo tamanho. Nunca crie um KPI para preencher o grid. Números em fonte monoespaçada, grid de dashboard, cores sóbrias com uma cor de destaque para o que melhorou.",
   },
   editorial: {
     nome: "Revista de negócios",

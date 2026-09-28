@@ -7,7 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
 import { organizarRelato } from "@/lib/portfolio-ia";
-import { limparHtmlColado, montarPrompt, slugDoNome, slugLivre, type Estilo } from "@/lib/portfolio-site";
+import { limparHtmlColado, montarPrompt, numerosSemOrigem, slugDoNome, slugLivre, type Estilo } from "@/lib/portfolio-site";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -124,6 +124,14 @@ export async function gerarPromptDoSite(estilo: Estilo) {
   const { user, admin } = await alunoComAcesso();
   const r = await montarPrompt(admin, user.id, estilo);
   return { ok: true as const, ...r };
+}
+
+/** Números com cara de resultado no site que não existem nos fatos do aluno. */
+export async function conferirSite(html: string) {
+  const { user, admin } = await alunoComAcesso();
+  const limpo = limparHtmlColado(html);
+  if (!limpo.ok) return { ok: false as const, erro: limpo.erro, suspeitos: [] as string[] };
+  return { ok: true as const, suspeitos: await numerosSemOrigem(admin, user.id, limpo.html) };
 }
 
 export async function salvarSite(dados: { html: string; publicar: boolean; mostrarUniverso: boolean }) {

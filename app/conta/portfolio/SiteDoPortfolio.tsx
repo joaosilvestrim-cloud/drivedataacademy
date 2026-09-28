@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ESTILOS, envelopar, type Estilo } from "@/lib/portfolio-site-html";
-import { despublicarSite, gerarPromptDoSite, salvarSite } from "./actions";
+import { conferirSite, despublicarSite, gerarPromptDoSite, salvarSite } from "./actions";
 
 /* Meu site de portfólio: três passos, na ordem em que acontecem.
 
@@ -44,6 +44,7 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
   const [copiado, setCopiado] = useState("");
   const [html, setHtml] = useState("");
   const [previa, setPrevia] = useState(false);
+  const [suspeitos, setSuspeitos] = useState<string[]>([]);
   const [mostrarUniverso, setMostrarUniverso] = useState(atual?.mostrar_universo ?? true);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
@@ -69,6 +70,16 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
     } catch {
       setErro("Não consegui copiar. Selecione o texto e copie com Ctrl+C.");
     }
+  }
+
+  /* A pré-visualização também confere número inventado. É o momento certo:
+     o aluno está olhando o site, e o aviso aponta exatamente o que conferir. */
+  async function previsualizar() {
+    setPrevia(true);
+    setSuspeitos([]);
+    const r = await conferirSite(html);
+    if (r.ok) setSuspeitos(r.suspeitos);
+    else setErro(r.erro);
   }
 
   async function salvar(publicar: boolean) {
@@ -169,14 +180,23 @@ export default function SiteDoPortfolio({ atual, siteUrl }: { atual: SiteAtual; 
         <Passo n={2} titulo="Cole o HTML que a IA devolveu">
           <textarea
             value={html}
-            onChange={(e) => { setHtml(e.target.value); setPrevia(false); }}
+            onChange={(e) => { setHtml(e.target.value); setPrevia(false); setSuspeitos([]); }}
             rows={6}
             placeholder="<!doctype html> ... cole o código inteiro, pode vir com o texto que a IA escreveu em volta"
             className={`${campo} font-mono text-xs`}
           />
-          <button onClick={() => setPrevia(true)} disabled={html.trim().length < 30} className="mt-2 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white disabled:opacity-40">
+          <button onClick={previsualizar} disabled={html.trim().length < 30} className="mt-2 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white disabled:opacity-40">
             Pré-visualizar
           </button>
+          {suspeitos.length > 0 && (
+            <div className="mt-3 rounded-xl border border-amber-400/40 bg-amber-400/[0.07] px-3 py-2.5 text-sm text-amber-100">
+              <p className="font-semibold">A IA pôs no site números que não estão nos seus projetos:</p>
+              <p className="mt-1 font-mono text-xs">{suspeitos.join("  ·  ")}</p>
+              <p className="mt-1.5 text-xs text-amber-200/80">
+                Se o número é verdadeiro, ponha no projeto e gere o prompt de novo. Se não é, peça para a IA tirar. Em entrevista, alguém vai perguntar como você mediu.
+              </p>
+            </div>
+          )}
           {previa && (
             <iframe
               title="Pré-visualização do site"
