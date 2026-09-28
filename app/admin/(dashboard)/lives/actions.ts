@@ -54,6 +54,10 @@ export async function saveLive(formData: FormData) {
     certificate_signature_name: ((formData.get("certificate_signature_name") as string) || "").trim() || null,
     certificate_signature_role: ((formData.get("certificate_signature_role") as string) || "").trim() || null,
     certificate_signature_url: ((formData.get("certificate_signature_url") as string) || "").trim() || null,
+    // Mentor convidado: a terceira assinatura do certificado.
+    mentor_nome: ((formData.get("mentor_nome") as string) || "").trim() || null,
+    mentor_cargo: ((formData.get("mentor_cargo") as string) || "").trim() || null,
+    mentor_assinatura_url: ((formData.get("mentor_assinatura_url") as string) || "").trim() || null,
   };
 
   // Até aqui, um erro do banco era engolido e a tela dizia "Salvo" do mesmo

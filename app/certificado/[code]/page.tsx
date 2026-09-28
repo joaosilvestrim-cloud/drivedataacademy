@@ -17,7 +17,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
   const [{ data: cert }, { data: sig }] = await Promise.all([
     admin
       .from("certificates")
-      .select("code, student_name, course_title, workload, created_at, expires_at, revoked, kind, signature_name, signature_role, signature_url")
+      .select("code, student_name, course_title, workload, created_at, expires_at, revoked, kind, signature_name, signature_role, signature_url, mentor_nome, mentor_cargo, mentor_assinatura_url")
       .eq("code", params.code)
       .maybeSingle(),
     admin.from("site_settings").select("key, value").like("key", "cert_signature%"),
@@ -41,10 +41,16 @@ export default async function CertificatePage({ params }: { params: { code: stri
   }
 
   /* Os dois sócios assinam todo certificado. Ficam em site_settings porque é
-     assinatura da escola, não do instrutor da turma. */
+     assinatura da escola, não do instrutor da turma.
+
+     O mentor convidado entra como terceira, e vem do próprio certificado, não
+     da live: o papel emitido guarda quem assinou no dia. Ele aparece mesmo
+     sem a arte da assinatura, com o nome sobre a linha, porque citar quem
+     ensinou importa mais do que ter o rabisco. */
   const assinaturas = [
     { nome: sigMap.cert_signature_name, cargo: sigMap.cert_signature_role, url: sigMap.cert_signature_url },
     { nome: sigMap.cert_signature2_name, cargo: sigMap.cert_signature2_role, url: sigMap.cert_signature2_url },
+    { nome: cert.mentor_nome, cargo: cert.mentor_cargo, url: cert.mentor_assinatura_url },
   ].filter((a) => a.nome);
 
   const expired = cert.expires_at ? new Date(cert.expires_at) < new Date() : false;

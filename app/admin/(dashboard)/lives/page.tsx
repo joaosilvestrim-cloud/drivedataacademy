@@ -205,6 +205,45 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
           initialUrl={live?.certificate_signature_url ?? ""}
           descricao="PNG com fundo transparente, só o traço da assinatura. Opcional."
         />
+
+        {/* Mentor convidado: a TERCEIRA assinatura.
+
+            Separado do bloco de cima de propósito. Aquele diz qual sócio
+            responde pela live; este é quem veio de fora ensinar. Juntar os
+            dois faria o sócio aparecer duas vezes no mesmo papel. */}
+        <div className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
+          <p className="text-sm font-semibold text-white">Mentor convidado</p>
+          <p className="-mt-2 text-xs text-slate-400">
+            Quem veio de fora dar a aula. Preenchido, entra como terceira assinatura no certificado, ao lado
+            das duas da escola. Vale só para os certificados emitidos a partir de agora: os já emitidos
+            guardam quem assinou no dia.
+          </p>
+          <div className="grid gap-4 tablet:grid-cols-2">
+            <Field
+              scope={scope}
+              name="mentor_nome"
+              label="Nome do mentor"
+              defaultValue={live?.mentor_nome ?? ""}
+              placeholder="Tadeu Kwiatkowski Ribeiro"
+              description="Em branco, o certificado sai só com as duas assinaturas da escola."
+            />
+            <Field
+              scope={scope}
+              name="mentor_cargo"
+              label="Cargo do mentor"
+              defaultValue={live?.mentor_cargo ?? ""}
+              placeholder="Líder de Dados e Analytics"
+            />
+          </div>
+          <UploadDeImagem
+            name="mentor_assinatura_url"
+            label="Assinatura do mentor"
+            prefixo="assinatura-mentor"
+            transparente
+            initialUrl={live?.mentor_assinatura_url ?? ""}
+            descricao="PNG com fundo transparente, só o traço. Sem ela o nome aparece do mesmo jeito, sobre a linha."
+          />
+        </div>
         {editando && live?.certificate_enabled && (
           <p className="text-body-sm text-ds-text-3">
             QR code e lista de presença em{" "}

@@ -26,10 +26,13 @@ export type LiveDePresenca = {
   certificate_signature_name: string | null;
   certificate_signature_role: string | null;
   certificate_signature_url: string | null;
+  mentor_nome: string | null;
+  mentor_cargo: string | null;
+  mentor_assinatura_url: string | null;
 };
 
 const CAMPOS =
-  "id, title, description, starts_at, duration_min, attendance_code, certificate_hours, certificate_signature_name, certificate_signature_role, certificate_signature_url";
+  "id, title, description, starts_at, duration_min, attendance_code, certificate_hours, certificate_signature_name, certificate_signature_role, certificate_signature_url, mentor_nome, mentor_cargo, mentor_assinatura_url";
 
 /* A live do momento. Com id explícito, valida esse id. Sem id, pega a mais
    recente que ainda está no prazo; se nenhuma estiver, devolve a próxima só
@@ -116,6 +119,11 @@ export async function emitirCertificadoDeParticipacao(
     signature_name: live.certificate_signature_name,
     signature_role: live.certificate_signature_role,
     signature_url: live.certificate_signature_url,
+    // O convidado tambem congela: se ele trocar de cargo depois, o papel ja
+    // emitido continua dizendo o que dizia no dia.
+    mentor_nome: live.mentor_nome,
+    mentor_cargo: live.mentor_cargo,
+    mentor_assinatura_url: live.mentor_assinatura_url,
   });
   return { code, novo: true };
 }

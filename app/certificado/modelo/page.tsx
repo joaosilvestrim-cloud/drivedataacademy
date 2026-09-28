@@ -41,9 +41,13 @@ export default async function CertModeloPage({ searchParams }: { searchParams: {
           host="academy.drivedata.com.br"
           qrSvg={null}
           status="preview"
+          /* O modelo mostra o caso cheio, com mentor convidado, porque é o
+             layout mais apertado. Quem abre esta tela para conferir precisa
+             ver as três, não as duas do caso fácil. */
           assinaturas={[
             { nome: sigMap.cert_signature_name, cargo: sigMap.cert_signature_role, url: sigMap.cert_signature_url },
             { nome: sigMap.cert_signature2_name, cargo: sigMap.cert_signature2_role, url: sigMap.cert_signature2_url },
+            { nome: "Mentor Convidado", cargo: "Exemplo de terceira assinatura", url: null },
           ].filter((a) => a.nome)}
         />
       </div>
