@@ -123,6 +123,29 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
 
   const estiloEscolhido = ESTILOS[estilo] ?? ESTILOS.surpresa;
 
+  /* O que o aluno não preencheu, dito com todas as letras.
+
+     No primeiro teste de ponta a ponta a conta não tinha título nem texto de
+     apresentação, e o site saiu com "Especialistas em Dados" e um parágrafo
+     inteiro de apresentação. A regra geral "omita o que não existir" não
+     bastou: a estrutura pedia uma abertura com título, e a IA preencheu. Dizer
+     o campo pelo nome, e o que fazer no lugar dele, é o que segura. */
+  const ausentes = [
+    !perfil?.headline && "título profissional",
+    !perfil?.bio && "texto de apresentação (sobre)",
+    !skills && "lista de habilidades",
+    !perfil?.linkedin_url && "LinkedIn",
+    !foto && "foto",
+  ].filter(Boolean) as string[];
+  const blocoAusentes = ausentes.length
+    ? `
+O aluno NÃO preencheu: ${ausentes.join(", ")}. Não escreva nada no lugar deles: nenhum cargo, slogan, frase de apresentação, link ou foto de exemplo. A falta desses campos é informação, não lacuna para você completar.
+`
+    : "";
+  const abertura = perfil?.headline
+    ? "Abertura com o nome, o título profissional e o resumo do projeto principal."
+    : "Abertura com o nome e o resumo do projeto principal, copiado como está. Sem cargo, sem slogan, sem frase de apresentação.";
+
   const prompt = `Você é um designer e desenvolvedor front-end premiado. Crie o site de portfólio profissional de ${nome}, que trabalha com dados.
 
 # Entrega
@@ -141,7 +164,7 @@ O site vai rodar num ambiente isolado e restrito. Se estas regras forem quebrada
 # Conteúdo
 Use exatamente estes fatos. Não invente número, empresa, cargo, cliente, depoimento nem resultado. Se um campo não existir, omita a parte correspondente em vez de preencher com texto de exemplo.
 
-${linha("Nome", nome)}${linha("Título profissional", perfil?.headline)}${linha("Sobre", perfil?.bio)}${linha("Habilidades", skills)}${linha("LinkedIn", perfil?.linkedin_url)}${linha("Foto", foto)}
+${linha("Nome", nome)}${linha("Título profissional", perfil?.headline)}${linha("Sobre", perfil?.bio)}${linha("Habilidades", skills)}${linha("LinkedIn", perfil?.linkedin_url)}${linha("Foto", foto)}${blocoAusentes}
 ## Projetos
 ${blocoProjetos || "\n(nenhum projeto pronto ainda: faça uma seção de projetos com a frase \"Projetos em breve\")\n"}
 ${blocoCerts ? `## Certificados verificáveis\nEmitidos pela DriveData Academy. Mostre cada um com um botão "Verificar" apontando para o link.\n${blocoCerts}` : ""}
@@ -152,7 +175,7 @@ Isto não é um currículo, é a vitrine de alguém que resolve problemas com da
 Evite a cara de template gerado por IA: nada de gradiente roxo e azul, nada de emoji como ícone, nada de tudo centralizado, nada de adjetivo vazio como "apaixonado por dados".
 
 # Estrutura
-1. Abertura com o nome, o título profissional e uma frase de valor tirada dos projetos.
+1. ${abertura}
 2. Projetos, a parte principal: para cada um, o problema, o que foi feito e o que mudou.
 3. Ferramentas que aparecem nos projetos.
 ${[blocoCerts ? "Certificados, com o link de verificação." : "", perfil?.linkedin_url ? "Contato pelo LinkedIn." : ""]

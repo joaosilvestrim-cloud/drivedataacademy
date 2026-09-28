@@ -85,5 +85,9 @@ export async function universoPublico(userId: string): Promise<UniversoPublico |
     at,
     scores: limpar(universe(dados.catalog, dados.events, at)),
   }));
-  return { catalog: dados.catalog, quadros, passo };
+  /* Sem os mappings: é a configuração interna que liga curso a competência,
+     com id de curso e peso. Não é dado pessoal, mas o visitante não precisa,
+     e o canvas não usa. */
+  const { mappings: _interno, ...catalogo } = dados.catalog as Catalog & { mappings?: unknown };
+  return { catalog: catalogo, quadros, passo };
 }

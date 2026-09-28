@@ -90,7 +90,11 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
       <header className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-8">
         <div>
           <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-brand-green">Knowledge Universe 4D</p>
-          <h2 className="mt-1 font-display text-xl font-bold sm:text-2xl">Universo de competências de {nome}</h2>
+          {/* No celular o título curto: a constelação precisa da altura. */}
+          <h2 className="mt-1 font-display text-lg font-bold sm:text-2xl">
+            <span className="sm:hidden">Universo de {primeiro}</span>
+            <span className="hidden sm:inline">Universo de competências de {nome}</span>
+          </h2>
           <p className="mt-1 max-w-2xl text-xs text-slate-400 sm:text-sm">
             Medido pela DriveData Academy a partir do que {primeiro} estudou, praticou e resolveu. Não é autodeclarado.
           </p>
@@ -120,7 +124,7 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
             />
 
             {/* Painel: a competência tocada, ou o resumo quando nada está tocado. */}
-            <aside className="absolute bottom-3 left-3 right-3 max-h-[42%] overflow-y-auto rounded-2xl border border-white/10 bg-[#0a1428]/90 p-4 backdrop-blur sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:w-72">
+            <aside className="absolute bottom-3 left-3 right-3 max-h-[42%] overflow-y-auto rounded-2xl border border-white/10 bg-[#0a1428]/90 p-3 backdrop-blur sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:w-72 sm:p-4">
               {comp && sc ? (
                 <>
                   <p className="text-[0.7rem] font-semibold uppercase tracking-wider" style={{ color: area?.color }}>{area?.name}</p>
@@ -141,7 +145,7 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
                     {visiveis.length} {visiveis.length === 1 ? "competência demonstrada" : "competências demonstradas"}
                   </p>
                   <p className="mt-0.5 text-xs text-slate-400">até {atual ? rotulo(atual.at, dados.passo) : ""}. Toque numa esfera para ver o detalhe.</p>
-                  <ol className="mt-3 flex flex-col gap-2">
+                  <ol className="mt-3 hidden flex-col gap-2 sm:flex">
                     {ranking.map((c) => {
                       const cor = dados.catalog.areas.find((a) => a.id === c.area)?.color;
                       return (
