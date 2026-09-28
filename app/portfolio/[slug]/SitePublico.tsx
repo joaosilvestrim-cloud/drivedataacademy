@@ -31,6 +31,8 @@ export default function SitePublico({
   mostrarUniverso: boolean;
 }) {
   const [universo, setUniverso] = useState(false);
+  // O site entra com um fade quando termina de carregar, em vez de piscar branco.
+  const [carregou, setCarregou] = useState(false);
 
   /* O site do aluno tem um botão "Explorar meu Universo 4D" que aponta para
      esta mesma página com #universo, em target="_top". Como só o fragmento
@@ -73,7 +75,8 @@ export default function SitePublico({
         srcDoc={html}
         sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"
         referrerPolicy="no-referrer"
-        className="min-h-0 w-full flex-1 border-0 bg-white"
+        onLoad={() => setCarregou(true)}
+        className={`min-h-0 w-full flex-1 border-0 transition-opacity duration-500 motion-reduce:transition-none ${carregou ? "opacity-100" : "opacity-0"}`}
       />
 
       {universo && <UniversoPublico slug={slug} nome={nome} aoFechar={fechar} />}

@@ -2,6 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { LACUNA } from "@/lib/portfolio";
 import { nomesDasCompetencias } from "@/lib/portfolio-competencias";
+import { auditarSite } from "@/lib/portfolio-auditoria";
 
 /* Site de portfólio do aluno.
 
@@ -60,6 +61,10 @@ type Resultado = {
   foraPorLacuna: string[];
   foraPorPrivado: string[];
   certificados: number;
+  /** Para a auditoria do site: o que tem que aparecer e o que pode aparecer. */
+  titulos: string[];
+  imagens: string[];
+  linkUniverso: string;
 };
 
 const linha = (rotulo: string, valor?: string | null) => (valor && String(valor).trim() ? `${rotulo}: ${String(valor).trim()}\n` : "");
@@ -261,9 +266,25 @@ Isto não é um currículo, é a vitrine de alguém que resolve problemas com da
 Nunca crie número, percentual, prazo ou métrica que não esteja escrito nos fatos acima, nem para completar um layout. Se o layout pede um número e o fato não tem, use os números reais da carreira ou troque o número por uma frase curta tirada do projeto.
 Evite a cara de template gerado por IA: nada de gradiente roxo e azul, nada de emoji como ícone, nada de tudo centralizado, nada de adjetivo vazio como "apaixonado por dados".
 
+# Padrão de qualidade
+O site vai ser o cartão de visita profissional de ${nome}, aberto a partir do LinkedIn, quase sempre no celular. Trate como trabalho de agência:
+- Tipografia: uma fonte de títulos com personalidade e uma de texto muito legível, ambas do Google Fonts. Títulos grandes no desktop (48 a 72px), texto de 16 a 18px com entrelinha 1.6, linhas de no máximo 70 caracteres.
+- Contraste de texto no nível AA, no tema claro e no escuro.
+- Conteúdo com largura máxima entre 1100 e 1200px, espaçamento generoso e consistente entre as seções.
+- Hover e foco visíveis em todos os links e botões.
+- Animações discretas de entrada, sem esconder conteúdo se o JavaScript falhar.
+- Nada de formulário de contato: o contato é pelo LinkedIn.
+
 # Estrutura
 ${secoes.map((t, i) => `${i + 1}. ${t}`).join("\n")}
-No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".`;
+No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".
+
+# Antes de responder, confira
+- O arquivo está completo, do <!doctype html> ao </html>. Nada de "...", "restante do código" ou "igual ao anterior". Se estiver ficando longo, enxugue o CSS; nunca corte conteúdo.
+- Os ${validos.length} projetos aparecem, cada um com o título exato.
+- Não há texto de exemplo, como "Seu nome", "Lorem ipsum" ou e-mail de exemplo.
+- Não há número, imagem, empresa ou resultado que não esteja nos fatos acima.
+- Tem <meta name="viewport"> e o layout funciona a partir de 360px de largura.`;
 
   /* Os fatos, separados das instruções. O prompt tem números próprios (a
      numeração da estrutura, os 360px da regra de celular), e usar o prompt
@@ -271,7 +292,17 @@ No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".`;
      de seções. Os números da carreira entram: são fatos contados. */
   const fatos = [nome, perfil?.headline, perfil?.bio, skills, blocoProjetos, blocoCerts, numeros.join("\n"), blocoLinhaDoTempo].filter(Boolean).join("\n");
 
-  return { prompt, fatos, incluidos: validos.length, foraPorLacuna, foraPorPrivado, certificados: certificados.length };
+  return {
+    prompt,
+    fatos,
+    incluidos: validos.length,
+    foraPorLacuna,
+    foraPorPrivado,
+    certificados: certificados.length,
+    titulos: validos.map((p: any) => p.titulo),
+    imagens: [foto, ...validos.map((p: any) => p.cover_url)].filter(Boolean) as string[],
+    linkUniverso,
+  };
 }
 
 /* Conferência de número inventado no site que a IA devolveu.
@@ -290,6 +321,10 @@ No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".`;
    ele sabe e não pôs no projeto. Mas aí o certo é pôr no projeto primeiro. */
 export async function numerosSemOrigem(admin: SupabaseClient, userId: string, html: string): Promise<string[]> {
   const { fatos: texto } = await montarPrompt(admin, userId, "surpresa");
+  return numerosForaDosFatos(texto, html);
+}
+
+function numerosForaDosFatos(texto: string, html: string): string[] {
   const fatos = new Set((texto.match(/\d+(?:[.,]\d+)?/g) || []).map((n) => n.replace(",", ".")));
 
   const visivel = html
@@ -305,4 +340,18 @@ export async function numerosSemOrigem(admin: SupabaseClient, userId: string, ht
     if (!fatos.has(valor)) achados.add(m[0].trim());
   }
   return [...achados].slice(0, 12);
+}
+
+/* A auditoria completa do site colado, com o que a plataforma sabe do aluno:
+   os projetos que têm que aparecer, as imagens que são dele e os números que
+   ele de fato tem. Uma consulta só, para a pré-visualização e para o botão
+   de publicar usarem a mesma régua. */
+export async function auditarSiteDoAluno(admin: SupabaseClient, userId: string, html: string) {
+  const r = await montarPrompt(admin, userId, "surpresa");
+  return auditarSite(html, {
+    titulosDosProjetos: r.titulos,
+    imagensPermitidas: r.imagens,
+    numerosSemOrigem: numerosForaDosFatos(r.fatos, html),
+    linkUniverso: r.linkUniverso,
+  });
 }

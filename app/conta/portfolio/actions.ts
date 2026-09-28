@@ -8,7 +8,7 @@ import { canUseCommunity } from "@/lib/community";
 import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
 import { organizarRelato } from "@/lib/portfolio-ia";
 import { competenciasParaSalvar, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
-import { limparHtmlColado, montarPrompt, numerosSemOrigem, slugDoNome, slugLivre, type Estilo } from "@/lib/portfolio-site";
+import { auditarSiteDoAluno, limparHtmlColado, montarPrompt, slugDoNome, slugLivre, type Estilo } from "@/lib/portfolio-site";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -155,18 +155,28 @@ export async function previaDasCompetencias(texto: string) {
   return { ok: true as const, itens: itens.map((i) => ({ ...i, nome: nomes[i.id] || i.id })) };
 }
 
-/** Números com cara de resultado no site que não existem nos fatos do aluno. */
+/** Auditoria do site colado: nota, erros que bloqueiam, avisos e o pedido de correção pronto. */
 export async function conferirSite(html: string) {
   const { user, admin } = await alunoComAcesso();
   const limpo = limparHtmlColado(html);
-  if (!limpo.ok) return { ok: false as const, erro: limpo.erro, suspeitos: [] as string[] };
-  return { ok: true as const, suspeitos: await numerosSemOrigem(admin, user.id, limpo.html) };
+  if (!limpo.ok) return { ok: false as const, erro: limpo.erro };
+  return { ok: true as const, auditoria: await auditarSiteDoAluno(admin, user.id, limpo.html) };
 }
 
 export async function salvarSite(dados: { html: string; publicar: boolean; mostrarUniverso: boolean }) {
   const { user, admin } = await alunoComAcesso();
   const limpo = limparHtmlColado(dados.html);
   if (!limpo.ok) return { ok: false as const, erro: limpo.erro };
+
+  /* Publicar passa pela mesma auditoria da pré-visualização, no servidor.
+     Site cortado, com texto de exemplo ou sem um projeto não vai para o ar,
+     mesmo que alguém pule a pré-visualização. Salvar sem publicar continua
+     livre: é rascunho. */
+  if (dados.publicar) {
+    const auditoria = await auditarSiteDoAluno(admin, user.id, limpo.html);
+    const erros = auditoria.achados.filter((a) => a.nivel === "erro");
+    if (erros.length) return { ok: false as const, erro: `Antes de publicar, corrija: ${erros.map((e) => e.texto).join(" ")}` };
+  }
 
   const { data: atual } = await admin.from("portfolio_sites").select("slug, bloqueado").eq("user_id", user.id).maybeSingle();
   // Bloqueio é do time. Republicar não desfaz, senão o bloqueio não valeria nada.

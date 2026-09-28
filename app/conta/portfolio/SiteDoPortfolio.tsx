@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ESTILOS, envelopar, type Estilo } from "@/lib/portfolio-site-html";
+import type { Auditoria } from "@/lib/portfolio-auditoria";
 import { conferirSite, despublicarSite, gerarPromptDoSite, salvarSite } from "./actions";
 
 /* Meu site de portfólio: quatro passos, na ordem em que acontecem.
@@ -56,7 +57,8 @@ export default function SiteDoPortfolio({
   const [copiado, setCopiado] = useState("");
   const [html, setHtml] = useState("");
   const [previa, setPrevia] = useState(false);
-  const [suspeitos, setSuspeitos] = useState<string[]>([]);
+  const [auditoria, setAuditoria] = useState<Auditoria | null>(null);
+  const [conferindo, setConferindo] = useState(false);
   const [mostrarUniverso, setMostrarUniverso] = useState(atual?.mostrar_universo ?? true);
   const [salvando, setSalvando] = useState(false);
   const [erro, setErro] = useState("");
@@ -88,9 +90,12 @@ export default function SiteDoPortfolio({
      o aluno está olhando o site, e o aviso aponta exatamente o que conferir. */
   async function previsualizar() {
     setPrevia(true);
-    setSuspeitos([]);
+    setAuditoria(null);
+    setErro("");
+    setConferindo(true);
     const r = await conferirSite(html);
-    if (r.ok) setSuspeitos(r.suspeitos);
+    setConferindo(false);
+    if (r.ok) setAuditoria(r.auditoria);
     else setErro(r.erro);
   }
 
@@ -211,21 +216,48 @@ export default function SiteDoPortfolio({
         <Passo n={3} titulo="Cole o HTML que a IA devolveu">
           <textarea
             value={html}
-            onChange={(e) => { setHtml(e.target.value); setPrevia(false); setSuspeitos([]); }}
+            onChange={(e) => { setHtml(e.target.value); setPrevia(false); setAuditoria(null); }}
             rows={6}
             placeholder="<!doctype html> ... cole o código inteiro, pode vir com o texto que a IA escreveu em volta"
             className={`${campo} font-mono text-xs`}
           />
-          <button onClick={previsualizar} disabled={html.trim().length < 30} className="mt-2 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white disabled:opacity-40">
-            Pré-visualizar
+          <button onClick={previsualizar} disabled={html.trim().length < 30 || conferindo} className="mt-2 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white disabled:opacity-40">
+            {conferindo ? "Conferindo o site..." : "Pré-visualizar e conferir"}
           </button>
-          {suspeitos.length > 0 && (
-            <div className="mt-3 rounded-xl border border-amber-400/40 bg-amber-400/[0.07] px-3 py-2.5 text-sm text-amber-100">
-              <p className="font-semibold">A IA pôs no site números que não estão nos seus projetos:</p>
-              <p className="mt-1 font-mono text-xs">{suspeitos.join("  ·  ")}</p>
-              <p className="mt-1.5 text-xs text-amber-200/80">
-                Se o número é verdadeiro, ponha no projeto e gere o prompt de novo. Se não é, peça para a IA tirar. Em entrevista, alguém vai perguntar como você mediu.
-              </p>
+
+          {/* A conferência do site. Erro trava o botão de publicar; aviso
+              não trava. O pedido de correção vai pronto para a mesma
+              conversa da IA, que devolve o site consertado. */}
+          {auditoria && (
+            <div className={`mt-3 rounded-2xl border p-4 ${auditoria.achados.some((a) => a.nivel === "erro") ? "border-red-400/40 bg-red-400/[0.06]" : auditoria.achados.length ? "border-amber-400/40 bg-amber-400/[0.06]" : "border-brand-green/40 bg-brand-green/[0.06]"}`}>
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <p className="font-semibold text-white">
+                  {auditoria.achados.length === 0
+                    ? "Site conferido: pronto para publicar."
+                    : auditoria.achados.some((a) => a.nivel === "erro")
+                      ? "O site precisa de correção antes de ir ao ar."
+                      : "O site pode ir ao ar, mas vale ajustar."}
+                </p>
+                <span className="font-mono text-sm tabular-nums text-slate-300">{auditoria.nota}/100</span>
+              </div>
+              {auditoria.achados.length > 0 && (
+                <>
+                  <ul className="mt-2 flex flex-col gap-1.5 text-sm">
+                    {auditoria.achados.map((a, i) => (
+                      <li key={i} className={a.nivel === "erro" ? "text-red-200" : "text-amber-100"}>
+                        <span className="font-semibold">{a.nivel === "erro" ? "Corrigir: " : "Ajustar: "}</span>
+                        {a.texto}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <button onClick={() => copiar(auditoria.pedidoDeCorrecao, "correcao")} className="rounded-lg bg-white/10 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/15">
+                      {copiado === "correcao" ? "Copiado" : "Copiar pedido de correção"}
+                    </button>
+                    <span className="text-xs text-slate-400">Cole na mesma conversa da IA, ela devolve o site corrigido. Depois cole o novo HTML aqui.</span>
+                  </div>
+                </>
+              )}
             </div>
           )}
           {previa && (
@@ -233,7 +265,7 @@ export default function SiteDoPortfolio({
               title="Pré-visualização do site"
               srcDoc={envelopar(html)}
               sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
-              className="mt-3 h-[480px] w-full rounded-xl border border-white/10 bg-white"
+              className="mt-3 h-[480px] w-full rounded-xl border border-white/10 bg-[#0b1220]"
             />
           )}
         </Passo>
@@ -244,7 +276,7 @@ export default function SiteDoPortfolio({
             <span>Mostrar meu Universo 4D na página. As competências acendem a partir dos seus projetos, na ordem em que você os fez.</span>
           </label>
           <div className="mt-3 flex flex-wrap gap-2">
-            <button onClick={() => salvar(true)} disabled={salvando || html.trim().length < 30 || !!atual?.bloqueado} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-40">
+            <button onClick={() => salvar(true)} disabled={salvando || html.trim().length < 30 || !!atual?.bloqueado || !!auditoria?.achados.some((a) => a.nivel === "erro")} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-40">
               {salvando ? "Publicando..." : publicado?.publicado ? "Publicar nova versão" : "Publicar"}
             </button>
             <button onClick={() => salvar(false)} disabled={salvando || html.trim().length < 30} className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white disabled:opacity-40">
