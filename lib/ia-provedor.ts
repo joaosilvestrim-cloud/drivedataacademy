@@ -89,6 +89,11 @@ export type PedidoIA = {
   /* Teto por chamada. O assistente responde dentro de uma requisição do aluno,
      então esperar um fornecedor pendurado é pior que cair para o próximo. */
   timeoutMs?: number;
+  /* Quanto o modelo pensa antes de responder. Só vai para a família gpt-oss,
+     que é a que aceita "low"; o qwen recusa esse valor com 400. Pensar menos
+     é o que mais economiza token, e no Groq gratuito o limite que estoura
+     primeiro é o de tokens por minuto, não o de requisições. */
+  raciocinio?: "low" | "medium" | "high";
 };
 
 export type RespostaIA = { texto: string; provedor: string; modelo: string };
@@ -115,7 +120,11 @@ export async function chamarIA(pedido: PedidoIA): Promise<RespostaIA | null> {
       const res = await fetch(p.url, {
         method: "POST",
         headers: { Authorization: `Bearer ${p.chave}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ ...corpoBase, model: p.modelo }),
+        body: JSON.stringify({
+          ...corpoBase,
+          model: p.modelo,
+          ...(pedido.raciocinio && p.modelo.startsWith("openai/gpt-oss") ? { reasoning_effort: pedido.raciocinio } : {}),
+        }),
         signal: controle.signal,
         cache: "no-store",
       });
@@ -156,4 +165,63 @@ export async function chamarIA(pedido: PedidoIA): Promise<RespostaIA | null> {
   }
 
   return null;
+}
+
+/* Chamada ao Claude, pela API nativa da Anthropic.
+
+   Fica fora da fila acima porque a API é outra: a fila fala o formato da
+   OpenAI, e o Claude tem o dele (system separado das mensagens, chave no
+   cabeçalho x-api-key). Quem quer o Claude chama esta função primeiro e cai
+   para chamarIA se ela devolver null.
+
+   Devolve null sem chave configurada, com crédito esgotado, com limite
+   estourado ou com a API fora. Nunca lança: quem chama sempre tem um plano B.
+
+   O modelo padrão é o Haiku 4.5, o mais barato e o de maior vazão. Para
+   tarefa de reorganizar texto curto ele basta; ANTHROPIC_MODEL troca sem
+   publicar código. */
+export const MODELO_CLAUDE = "claude-haiku-4-5-20251001";
+
+export async function chamarClaude(pedido: {
+  sistema: string;
+  usuario: string;
+  max_tokens?: number;
+  timeoutMs?: number;
+}): Promise<string | null> {
+  const chave = (process.env.ANTHROPIC_API_KEY || "").trim();
+  if (!chave) return null;
+  const modelo = (process.env.ANTHROPIC_MODEL || "").trim() || MODELO_CLAUDE;
+
+  const controle = new AbortController();
+  const relogio = setTimeout(() => controle.abort(), pedido.timeoutMs ?? 30000);
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "x-api-key": chave,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        model: modelo,
+        max_tokens: pedido.max_tokens ?? 1200,
+        system: pedido.sistema,
+        messages: [{ role: "user", content: pedido.usuario }],
+      }),
+      signal: controle.signal,
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      console.warn(`[ia] claude respondeu ${res.status}, caindo para a reserva`);
+      return null;
+    }
+    const data = await res.json();
+    const texto = (data?.content ?? []).find((c: any) => c?.type === "text")?.text?.trim();
+    return texto || null;
+  } catch (e) {
+    console.warn(`[ia] claude não respondeu: ${(e as Error)?.name || "erro"}`);
+    return null;
+  } finally {
+    clearTimeout(relogio);
+  }
 }

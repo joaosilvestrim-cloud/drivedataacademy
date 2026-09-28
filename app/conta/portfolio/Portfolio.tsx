@@ -7,8 +7,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
 import SeloCasa from "@/components/comunidade/SeloCasa";
-import { FERRAMENTAS_SUGERIDAS, LIMITES, STATUS, type Projeto } from "@/lib/portfolio";
-import { assinarCapaDoProjeto, curtirProjeto, excluirProjeto, salvarProjeto } from "./actions";
+import { FERRAMENTAS_SUGERIDAS, LACUNA, LIMITES, STATUS, type Projeto } from "@/lib/portfolio";
+import { assinarCapaDoProjeto, curtirProjeto, excluirProjeto, organizarComIA, salvarProjeto } from "./actions";
 
 /* Vitrine de portfólio.
 
@@ -366,6 +366,54 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
   // Os dois botões enviam o mesmo formulário: o que muda é a ação, guardada
   // aqui porque estado do React não chega a tempo no envio.
   const acao = useRef<"rascunho" | "enviar">("enviar");
+  const form = useRef<HTMLFormElement>(null);
+  // Organizar com IA. Aberto por padrão em projeto novo, que é quando o campo
+  // em branco trava; fechado na edição, onde o texto já existe.
+  const [relato, setRelato] = useState("");
+  const [organizando, setOrganizando] = useState(false);
+  const [lacunas, setLacunas] = useState(0);
+  const [alerta, setAlerta] = useState<string | null>(null);
+
+  /* Os campos do formulário não são controlados pelo React, então a IA
+     escreve direto neles. Sobrescreve o que houver: o aluno pediu para
+     organizar, e o relato dele é a fonte. */
+  /* Numa live a turma inteira clica no mesmo minuto, e o limite gratuito da
+     IA é por minuto. Em vez de devolver erro para quem chegou depois, a tela
+     espera e tenta de novo, com um intervalo diferente para cada aluno, para
+     as novas tentativas não baterem todas juntas outra vez. */
+  const [espera, setEspera] = useState("");
+  async function organizar() {
+    setOrganizando(true);
+    setErro("");
+    setEspera("");
+    let r = await organizarComIA(relato);
+    for (let tentativa = 1; !r.ok && "ocupado" in r && r.ocupado && tentativa <= 4; tentativa++) {
+      const segundos = 15 + Math.floor(Math.random() * 15);
+      for (let s = segundos; s > 0; s--) {
+        setEspera(`${tr("Muita gente organizando agora. Tento de novo em")} ${s}s`);
+        await new Promise((ok) => setTimeout(ok, 1000));
+      }
+      setEspera(tr("Tentando de novo..."));
+      r = await organizarComIA(relato);
+    }
+    setEspera("");
+    setOrganizando(false);
+    if (!r.ok) { setErro(r.erro); return; }
+    const el = form.current?.elements;
+    const pôr = (nome: string, valor: string) => {
+      const campoAlvo = el?.namedItem(nome) as HTMLInputElement | HTMLTextAreaElement | null;
+      if (campoAlvo && valor) campoAlvo.value = valor;
+    };
+    pôr("titulo", r.campos.titulo);
+    pôr("resumo", r.campos.resumo);
+    pôr("problema", r.campos.problema);
+    pôr("resultado", r.campos.resultado);
+    pôr("descricao", r.campos.descricao);
+    if (r.campos.ferramentas.length) setFerramentas(r.campos.ferramentas);
+    const tudo = Object.values(r.campos).flat().join(" ");
+    setLacunas((tudo.match(new RegExp(LACUNA.source, "g")) || []).length);
+    setAlerta(r.alerta);
+  }
 
   useEffect(() => {
     const esc = (e: KeyboardEvent) => { if (e.key === "Escape") aoFechar(); };
@@ -412,6 +460,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm" onClick={aoFechar}>
       <form
+        ref={form}
         onClick={(e) => e.stopPropagation()}
         onSubmit={enviar}
         className="my-8 w-full max-w-2xl rounded-3xl border border-white/10 bg-ink-900 p-6 shadow-2xl"
@@ -425,6 +474,44 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
         </div>
 
         {projeto && <input type="hidden" name="id" value={projeto.id} />}
+
+        <details open={!projeto} className="group mt-5 rounded-2xl border border-brand-green/25 bg-brand-green/[0.04] p-4">
+          <summary className="cursor-pointer list-none text-sm font-semibold text-white">
+            {tr("Organizar com IA")}
+            <span className="ml-2 text-xs font-normal text-slate-400">{tr("conte do seu jeito, a IA distribui nos campos")}</span>
+          </summary>
+          <div className="mt-3 flex flex-col gap-3">
+            <textarea
+              value={relato}
+              onChange={(e) => setRelato(e.target.value)}
+              rows={5}
+              maxLength={3000}
+              placeholder={tr("Ex: meu gestor juntava as vendas de 12 planilhas toda segunda. Montei um painel no Power BI puxando direto do SQL, com meta por vendedor. Agora a reunião começa com o número pronto.")}
+              className={`${campo} resize-y`}
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={organizar}
+                disabled={organizando || relato.trim().length < 40}
+                className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-40"
+              >
+                {organizando ? tr("Organizando...") : tr("Organizar nos campos")}
+              </button>
+              <p className="text-xs text-slate-400">{espera || tr("A IA não inventa número. O que você não contou vira pergunta entre colchetes.")}</p>
+            </div>
+            {alerta && (
+              <p className="rounded-xl border border-red-400/40 bg-red-400/[0.08] px-3 py-2 text-xs text-red-200">{alerta}</p>
+            )}
+            {lacunas > 0 && (
+              <p className="rounded-xl border border-amber-400/30 bg-amber-400/[0.06] px-3 py-2 text-xs text-amber-200">
+                {lacunas === 1
+                  ? tr("Ficou 1 lacuna entre colchetes. Troque pela informação real antes de enviar.")
+                  : `${tr("Ficaram")} ${lacunas} ${tr("lacunas entre colchetes. Troque pela informação real antes de enviar.")}`}
+              </p>
+            )}
+          </div>
+        </details>
 
         <div className="mt-5 flex flex-col gap-4">
           <div>

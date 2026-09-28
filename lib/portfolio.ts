@@ -77,5 +77,17 @@ export function pendenciasDoProjeto(p: Partial<Projeto>): string[] {
   if (!p.cover_url) faltas.push("uma imagem do projeto");
   if (!(p.ferramentas ?? []).length) faltas.push("pelo menos uma ferramenta usada");
   if (!limpar(p.problema, 500) && !limpar(p.descricao, 500)) faltas.push("o problema que o projeto resolve");
+  /* Lacuna deixada pela IA. Ela marca entre colchetes o fato que só o aluno
+     sabe, como "[quanto tempo levava antes?]", em vez de inventar um número.
+     Número inventado em portfólio é o que derruba a pessoa na entrevista,
+     quando alguém pergunta como ela mediu. Então projeto com lacuna não vai
+     para revisão: vai de volta para o aluno. */
+  const textos = [p.titulo, p.resumo, p.problema, p.resultado, p.descricao].map((t) => t || "").join(" ");
+  if (LACUNA.test(textos)) faltas.push("preencher as lacunas entre colchetes");
   return faltas;
 }
+
+/** Marca de lacuna que a IA deixa onde precisa de um fato que só o aluno tem. */
+/* Até 200 caracteres: a IA às vezes junta duas perguntas no mesmo colchete,
+   e com o limite antigo de 80 essa lacuna passava sem travar o envio. */
+export const LACUNA = /\[[^\]]{2,200}\?\]/;

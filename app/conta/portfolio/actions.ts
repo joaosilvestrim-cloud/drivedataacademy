@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
+import { organizarRelato } from "@/lib/portfolio-ia";
 
 /* O que o aluno pode fazer com o próprio projeto.
 
@@ -91,6 +92,13 @@ export async function excluirProjeto(id: string) {
   revalidatePath("/conta/portfolio");
   revalidatePath("/portfolio");
   return { ok: true as const };
+}
+
+/* Organizar com IA. A regra e o prompt estão em lib/portfolio-ia, onde dá
+   para testar sem passar pelo login. Aqui só se confere o acesso. */
+export async function organizarComIA(relato: string) {
+  await alunoComAcesso();
+  return organizarRelato(relato);
 }
 
 /** Curtida do colega. Clicar de novo tira a curtida. */
