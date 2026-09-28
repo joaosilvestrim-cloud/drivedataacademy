@@ -349,7 +349,7 @@ export default async function ContaHome() {
         )}
       </section>
 
-      <ProximasMentorias className="" />
+      <ProximasMentorias className="" privado />
 
 
       {enquete && (

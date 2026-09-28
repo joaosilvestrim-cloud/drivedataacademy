@@ -24,6 +24,7 @@ type Mentoria = {
   cover_url: string | null;
   kind: string | null;
   url: string | null;
+  url_alunos?: string | null;
   duration_min: number | null;
 };
 
@@ -53,6 +54,7 @@ function partirDescricao(d: string | null) {
 export default async function ProximasMentorias({
   limite = 6,
   cta = { label: "Ver agenda completa", href: "/conta/agenda" },
+  privado = false,
   // A home pública põe a própria margem; a área do aluno já vive dentro de um
   // container, então lá a faixa entra sem moldura.
   className = "relative mx-auto max-w-7xl px-6 py-10",
@@ -62,13 +64,19 @@ export default async function ProximasMentorias({
   /* O destino muda com quem está olhando: aluno vai para a agenda, visitante
      vai para a entrada. O rótulo acompanha, senão o link mente. */
   cta?: { label: string; href: string };
+  /* Liga o link de sala fechada. Nasce DESLIGADO de propósito: esta mesma
+     faixa aparece na home pública e em /cursos, e o endereço de uma reunião
+     do Teams carrega a senha dentro dele. Ligar por engano numa rota aberta
+     seria publicar a sala para a internet. Só passe `privado` em página que
+     o middleware protege. */
+  privado?: boolean;
 }) {
   let mentorias: Mentoria[] = [];
   try {
     const admin = createAdminClient();
     const { data } = await admin
       .from("live_events")
-      .select("id, title, description, starts_at, cover_url, kind, url, duration_min")
+      .select("id, title, description, starts_at, cover_url, kind, url, url_alunos, duration_min")
       .eq("published", true)
       // Tolerância de duas horas: a mentoria que começou agora continua na
       // faixa em vez de sumir no meio da própria transmissão.
@@ -114,7 +122,12 @@ export default async function ProximasMentorias({
               {tr("Próxima:")} <span className="font-semibold text-slate-100">{mentorias[0].title}</span>
             </span>
             <Cronometro inicio={mentorias[0].starts_at} duracaoMin={mentorias[0].duration_min} agoraInicial={agora} />
-            {mentorias[0].url && (
+            {privado && mentorias[0].url_alunos ? (
+              <a href={mentorias[0].url_alunos} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                {tr("Entrar na sala")}
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            ) : mentorias[0].url && (
               <a href={mentorias[0].url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-500">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.2a3 3 0 00-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 001 7.2 31 31 0 00.5 12a31 31 0 00.5 4.8 3 3 0 002.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 002.1-2.1 31 31 0 00.5-4.8 31 31 0 00-.5-4.8zM9.8 15.1V8.9L15.2 12z" /></svg>
                 {tr("Abrir no YouTube")}
