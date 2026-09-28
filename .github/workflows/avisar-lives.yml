@@ -1,0 +1,36 @@
+name: Avisar alunos das lives
+
+# Chama a rota que manda o lembrete da live para os assinantes.
+#
+# O agendador mora aqui, e não em vercel.json, porque o cron da Vercel no plano
+# Hobby só aceita uma execução por dia. Aviso de "começa em 1 hora" precisa de
+# passagens frequentes.
+#
+# Rodar de 15 em 15 minutos não manda nada 96 vezes: a rota é idempotente e o
+# que decide é a tabela live_avisos. As passagens existem só para que a janela
+# de 1 hora seja pega com pouca defasagem. O agendador do GitHub atrasa alguns
+# minutos em horários cheios, e tudo bem: aviso atrasado sai atrasado, não
+# deixa de sair.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: # permite disparar à mão pela aba Actions
+
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar a rota de avisos
+        run: |
+          resposta=$(curl -sS -w "\n%{http_code}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.ACADEMY_URL }}/api/cron/lives")
+          codigo=$(echo "$resposta" | tail -1)
+          echo "$resposta" | sed '$d'
+          # Falha alto: cron silencioso que para de funcionar é pior que cron
+          # que não existe, porque ninguém percebe até a live vazia.
+          if [ "$codigo" != "200" ]; then
+            echo "::error::a rota respondeu $codigo"
+            exit 1
+          fi

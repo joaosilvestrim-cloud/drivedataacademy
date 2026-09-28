@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { srcColado } from "@/lib/video";
+import { enviarAvisosPendentes, type Janela } from "@/lib/avisos-live";
 
 async function admin() {
   const user = await getAdminUser();
@@ -127,4 +128,34 @@ export async function setModuleRelease(formData: FormData) {
   const available_at = toISO((formData.get("available_at") as string) || "");
   await supabase.from("course_modules").update({ available_at }).eq("id", moduleId);
   revalidatePath(`/admin/cursos/${courseId}`);
+}
+
+/* Disparo manual do aviso de live.
+
+   O automatico cobre o caso normal. Este botao existe para o caso de exceção:
+   link que so ficou pronto em cima da hora, ou sala trocada depois do aviso
+   ter saido. Nesses dois casos o registro ja existe e o automatico nao
+   mandaria de novo, entao aqui o `repetir` passa por cima de proposito.
+
+   Nao ha confirmacao na tela porque a acao ja e explicita: o botao diz para
+   quantas pessoas vai antes de ser clicado. */
+export async function avisarLive(formData: FormData) {
+  const supabase = await admin();
+  const id = (formData.get("id") as string) || "";
+  const janela = ((formData.get("janela") as string) || "1h") as Janela;
+  if (!id) redirect("/admin/lives?error=" + encodeURIComponent("Live não informada."));
+
+  try {
+    const feitos = await enviarAvisosPendentes(supabase, { liveId: id, janela, repetir: true });
+    const total = feitos.reduce((s, f) => s + f.enviados, 0);
+    const falhas = feitos.reduce((s, f) => s + f.falhas, 0);
+    revalidatePath("/admin/lives");
+    redirect(
+      "/admin/lives?ok=" +
+        encodeURIComponent(`Aviso enviado para ${total} assinante(s)${falhas ? `, ${falhas} falharam` : ""}.`),
+    );
+  } catch (e: any) {
+    if (e?.digest?.startsWith?.("NEXT_REDIRECT")) throw e;
+    redirect("/admin/lives?error=" + encodeURIComponent(e?.message || "Não consegui enviar."));
+  }
 }

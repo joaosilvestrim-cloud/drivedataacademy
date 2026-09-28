@@ -4,7 +4,8 @@ import { PageHeader, ErrorState, EmptyState, Alert } from "@/components/ui/layou
 import { Field, TextareaField, SelectField, CheckboxField, FormActions } from "@/components/ui/form";
 import GravacaoField from "./GravacaoField";
 import UploadDeImagem from "@/components/admin/UploadDeImagem";
-import { saveLive, deleteLive } from "./actions";
+import { saveLive, deleteLive, avisarLive } from "./actions";
+import { JANELAS } from "@/lib/avisos-live";
 
 export const dynamic = "force-dynamic";
 
@@ -312,9 +313,68 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
   );
 }
 
+/* Estado do aviso automático, e o botão de mandar agora.
+
+   Fica fora do LiveForm porque é outro formulário, e formulário não aninha.
+   Fica dentro da live, e não numa tela própria, porque a pergunta que ele
+   responde ("essa turma já foi avisada?") só existe olhando a live. */
+function AvisoDaLive({ live, enviados }: { live: any; enviados: any[] }) {
+  const futura = new Date(live.starts_at).getTime() > Date.now();
+  const temLink = !!String(live.url_alunos || "").trim();
+
+  if (!live.published || !futura) return null;
+
+  return (
+    <div className="flex flex-col gap-3 rounded-srf border border-ds-line p-4">
+      <p className="text-sm font-semibold text-white">Aviso aos assinantes</p>
+
+      {!temLink ? (
+        <p className="text-xs text-slate-400">
+          Sem link da reunião, nada é enviado. O aviso existe para entregar a sala, e um e-mail
+          que anuncia a live sem dizer como entrar gera mais dúvida do que presença.
+        </p>
+      ) : (
+        <>
+          <p className="-mt-1 text-xs text-slate-400">
+            Sai sozinho um dia antes e de novo uma hora antes, por e-mail, só para quem tem
+            assinatura ativa no momento do disparo.
+          </p>
+          <div className="flex flex-col gap-2">
+            {JANELAS.map((j) => {
+              const feito = enviados.find((e) => e.janela === j.chave);
+              return (
+                <div key={j.chave} className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span className="text-slate-300">{j.rotulo}</span>
+                  <span className="flex items-center gap-3">
+                    {feito?.enviado_em ? (
+                      <span className="text-slate-400">
+                        enviado {fmt(feito.enviado_em)} · {feito.destinatarios ?? 0} pessoa(s)
+                      </span>
+                    ) : (
+                      <span className="text-slate-500">ainda não enviado</span>
+                    )}
+                    <form action={avisarLive}>
+                      <input type="hidden" name="id" value={live.id} />
+                      <input type="hidden" name="janela" value={j.chave} />
+                      <Button type="submit" variant="ghost">
+                        {feito?.enviado_em ? "Reenviar" : "Enviar agora"}
+                      </Button>
+                    </form>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default async function LivesPage({ searchParams }: { searchParams: { ok?: string; error?: string } }) {
   let lives: any[] = [];
   const soldByEvent: Record<string, number> = {};
+  const avisos: Record<string, any[]> = {};
   try {
     const admin = createAdminClient();
     const { data, error } = await admin.from("live_events").select("*").order("starts_at", { ascending: false });
@@ -322,6 +382,9 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
     lives = data ?? [];
     const { data: wOrders } = await admin.from("orders").select("event_id").eq("product", "workshop").eq("status", "paid");
     for (const o of wOrders ?? []) if (o.event_id) soldByEvent[o.event_id] = (soldByEvent[o.event_id] || 0) + 1;
+    // Avisos já enviados, para a lista dizer o que saiu e o que está por sair.
+    const { data: av } = await admin.from("live_avisos").select("live_id, janela, enviado_em, destinatarios");
+    for (const a of av ?? []) (avisos[a.live_id] ??= []).push(a);
   } catch (e) {
     return (
       <div className="flex flex-col gap-8">
@@ -345,7 +408,11 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
         lede="A agenda publicada aqui vira o roadmap que o aluno vê no portal."
       />
 
-      {searchParams?.ok && <Alert tone="accent" title="Salvo">As alterações já estão valendo na agenda do aluno.</Alert>}
+      {searchParams?.ok && (
+        <Alert tone="accent" title={searchParams.ok === "1" ? "Salvo" : "Pronto"}>
+          {searchParams.ok === "1" ? "As alterações já estão valendo na agenda do aluno." : searchParams.ok}
+        </Alert>
+      )}
       {searchParams?.error && <Alert tone="danger" title="Não foi possível salvar">{searchParams.error}</Alert>}
 
       {/* Criar. Aberto por padrão quando ainda não há nenhuma live. */}
@@ -402,8 +469,9 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
                       )}
                     </span>
                   </summary>
-                  <div className="pb-6 pt-4">
+                  <div className="flex flex-col gap-4 pb-6 pt-4">
                     <LiveForm scope={`live-${l.id}`} live={l} sold={soldByEvent[l.id] || 0} pandaHost={pandaHost} />
+                    <AvisoDaLive live={l} enviados={avisos[l.id] || []} />
                   </div>
                 </details>
               );

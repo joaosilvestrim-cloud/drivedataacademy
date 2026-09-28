@@ -279,6 +279,36 @@ export async function sendWorkshopEmail(to: string, name: string, workshopTitle:
   return sendHtmlEmail(to, `${f("Confirmado")}: ${workshopTitle}`, shell(f("Vaga garantida! 🎟️"), body));
 }
 
+/* Lembrete da live para quem tem assinatura ativa.
+
+   Este e-mail carrega o link da sala, e no Teams o link É a credencial: a
+   senha vai dentro dele, no parâmetro `p=`. Por isso ele sai daqui e não da
+   ferramenta de campanha, e só para a lista de assinantes ativos montada no
+   momento do envio. O campo público `url`, que a home e /cursos mostram sem
+   pedir login, nunca entra aqui. */
+export async function sendLiveReminderEmail(
+  to: string,
+  name: string,
+  live: { title: string; quando: string; url: string; acesso?: string | null; descricao?: string | null },
+  janela: "24h" | "1h",
+) {
+  const f = await tradutorDoEmail(to);
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const firstName = esc((name || "").split(" ")[0] || "");
+  const agora = janela === "1h";
+  const chamada = agora ? f("Começa em 1 hora") : f("É amanhã");
+  const body = `
+    <p style="margin:0 0 16px;color:#cbd5e1">${f("Olá")}${firstName ? ", " + firstName : ""}! ${agora ? f("Sua live começa em cerca de 1 hora.") : f("Amanhã tem live ao vivo, e seu acesso já está garantido.")}</p>
+    <p style="margin:0 0 6px;color:#fff;font-size:18px;font-weight:700">${esc(live.title)}</p>
+    <p style="margin:0 0 20px;color:#cbd5e1">${esc(live.quando)}</p>
+    ${live.descricao ? `<p style="margin:0 0 20px;color:#94a3b8;font-size:14px;line-height:1.6">${esc(live.descricao)}</p>` : ""}
+    <a href="${live.url}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">${f("Entrar na sala")}</a>
+    ${live.acesso ? `<p style="margin:16px 0 0;color:#94a3b8;font-size:13px">${esc(live.acesso)}</p>` : ""}
+    <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">${f("Este link é pessoal e vale pela sua assinatura. Não repasse.")}</p>
+    <p style="margin:12px 0 0;color:#64748b;font-size:12px">${f("A agenda completa fica em")} <a href="${site}/conta/agenda" style="color:#15c47e">${f("Minha agenda")}</a>. ${f("Dúvidas? O time responde em até 3 dias úteis.")}</p>`;
+  return sendHtmlEmail(to, `${chamada}: ${live.title}`, shell(chamada, body), "RESEND_FROM_CONTA", { kind: "aviso-live" });
+}
+
 // Certificado de participação na live, emitido pelo formulário do QR code.
 export async function sendLiveCertificateEmail(to: string, name: string, liveTitle: string, code: string) {
   const f = await tradutorDoEmail(to);
