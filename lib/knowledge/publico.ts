@@ -176,6 +176,8 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
         titulo: p.titulo as string,
         at: (p.feito_em ? `${p.feito_em}T12:00:00Z` : p.created_at) as string,
         competencias: [...motivos.keys()],
+        // Só as que o texto prova. São elas que criam linha no 4D.
+        doTexto: [...new Set(lidas.map((c) => c.id))],
         motivos,
       };
     });
@@ -201,10 +203,15 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
   /* Por que duas competências se conectam. O catálogo já traz as relações
      gerais (Power BI puxa DAX), mas o que interessa no portfólio é a relação
      que a carreira do aluno criou: duas competências provadas pelo mesmo
-     projeto ganham uma linha, e o painel diz por qual projeto. */
+     projeto ganham uma linha, e o painel diz por qual projeto.
+
+     Só as competências que o TEXTO prova criam linha. No primeiro teste, um
+     projeto com dez competências (várias só por ferramenta marcada) gerou 45
+     linhas, todas "pelo mesmo projeto": um novelo que não explica nada.
+     Ferramenta marcada acende a esfera, mas não liga. */
   const conexoes: Record<string, string[]> = {};
   for (const p of projetos) {
-    const cs = [...p.competencias].sort();
+    const cs = [...p.doTexto].sort();
     for (let i = 0; i < cs.length; i++) {
       for (let k = i + 1; k < cs.length; k++) (conexoes[`${cs[i]}|${cs[k]}`] ??= []).push(p.titulo);
     }
