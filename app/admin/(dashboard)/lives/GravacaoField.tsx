@@ -21,11 +21,23 @@ export default function GravacaoField({
   defaultValue,
   host,
   verEm,
+  /* A live as vezes e gravada em dois arquivos, quando cai a conexao ou
+     quando ha intervalo. Os campos sao dois de verdade, e nao um so com
+     virgula, porque cada um precisa da propria previa: e olhando o video
+     tocar que a pessoa descobre que colou o iframe errado. */
+  name = "recording_url",
+  titulo = "Gravação",
+  label = "Link ou código do vídeo",
+  descricao = "Aceita o iframe do Panda colado inteiro, o endereço de embed, link do YouTube ou só o id do vídeo. Depois de salvar, assinantes assistem em Gravações.",
 }: {
   scope: string;
   defaultValue: string;
   host: string | null;
   verEm?: string;
+  name?: string;
+  titulo?: string;
+  label?: string;
+  descricao?: string;
 }) {
   const [valor, setValor] = useState(defaultValue || "");
   const video = resolverVideo(valor, host);
@@ -34,17 +46,17 @@ export default function GravacaoField({
     <div className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
       <p className="flex items-center gap-1.5 text-meta uppercase text-ds-text-3">
         <Video size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" />
-        Gravação
+        {titulo}
       </p>
 
       <Field
         scope={scope}
-        name="recording_url"
-        label="Link ou código do vídeo"
+        name={name}
+        label={label}
         value={valor}
         onChange={(e) => setValor(e.target.value)}
         placeholder="Cole o <iframe> do Panda ou o link do YouTube"
-        description="Aceita o iframe do Panda colado inteiro, o endereço de embed, link do YouTube ou só o id do vídeo. Depois de salvar, assinantes assistem em Gravações."
+        description={descricao}
       />
 
       <div>

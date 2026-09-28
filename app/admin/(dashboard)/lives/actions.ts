@@ -43,6 +43,7 @@ export async function saveLive(formData: FormData) {
     url_alunos: ((formData.get("url_alunos") as string) || "").trim() || null,
     acesso_alunos: ((formData.get("acesso_alunos") as string) || "").trim() || null,
     recording_url: endereçoDoVideo((formData.get("recording_url") as string) || ""),
+    recording_url_2: endereçoDoVideo((formData.get("recording_url_2") as string) || ""),
     cover_url: ((formData.get("cover_url") as string) || "").trim() || null,
     kind: (formData.get("kind") as string) === "mentoria" ? "mentoria" : "live",
     price: Number(((formData.get("price") as string) || "").replace(/[^\d,\.]/g, "").replace(",", ".")) || null,

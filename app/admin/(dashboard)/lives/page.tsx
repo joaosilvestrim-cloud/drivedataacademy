@@ -114,7 +114,23 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
         defaultValue={live?.recording_url ?? ""}
         host={pandaHost}
         verEm={editando && live?.recording_url ? `/conta/gravacoes/${live.id}` : undefined}
+        titulo={live?.recording_url_2 ? "Gravação · parte 1" : "Gravação"}
       />
+
+      {/* A parte 2 só aparece depois que a 1 existe. Formulário com campo
+          vazio esperando algo que quase nunca vem é ruído em toda edição, e
+          gravação partida é exceção, não regra. */}
+      {(live?.recording_url || live?.recording_url_2) && (
+        <GravacaoField
+          scope={scope}
+          name="recording_url_2"
+          defaultValue={live?.recording_url_2 ?? ""}
+          host={pandaHost}
+          titulo="Gravação · parte 2 (opcional)"
+          label="Link ou código da segunda parte"
+          descricao="Use quando a live foi gravada em dois arquivos, por queda de conexão ou intervalo. O aluno vê as duas em sequência, identificadas como parte 1 e parte 2."
+        />
+      )}
 
       {/* Encontro fechado. Separado do link público de propósito: num Teams ou
           Zoom o endereço É a credencial, e o campo de cima é lido por página

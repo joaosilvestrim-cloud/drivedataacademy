@@ -30,12 +30,21 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
 
   const { data: ev } = await admin
     .from("live_events")
-    .select("id, title, description, starts_at, duration_min, kind, recording_url, published, subtitle_langs")
+    .select("id, title, description, starts_at, duration_min, kind, recording_url, recording_url_2, published, subtitle_langs")
     .eq("id", params.id)
     .maybeSingle();
-  if (!ev || !ev.published || !ev.recording_url) notFound();
+  if (!ev || !ev.published) notFound();
 
-  const src = resolverVideo(ev.recording_url, process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST)?.src ?? null;
+  /* Uma live as vezes vem em dois arquivos, quando a conexao cai no meio ou
+     quando ha intervalo. Com uma parte so a tela fica identica a de antes: o
+     rotulo "Parte 1" nao aparece, porque numerar coisa unica confunde mais do
+     que ajuda. */
+  const host = process.env.NEXT_PUBLIC_PANDA_PLAYER_HOST;
+  const partes = [ev.recording_url, ev.recording_url_2]
+    .map((url) => String(url || "").trim())
+    .filter(Boolean)
+    .map((url) => ({ url, src: resolverVideo(url, host)?.src ?? null }));
+  if (!partes.length) notFound();
 
   return (
     <div className="max-w-4xl">
@@ -44,23 +53,28 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
       <h1 className="mt-1 font-display text-3xl font-bold text-white">{ev.title}</h1>
       <p className="mt-1 text-sm text-slate-400">{fmt(ev.starts_at)}{ev.duration_min ? ` · ${ev.duration_min} min` : ""}</p>
 
-      <div className="mt-6">
-        {src ? (
-          <ProtectedPlayer>
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
-              <div className="relative aspect-video">
-                <iframe className="absolute inset-0 h-full w-full" src={src} title={ev.title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
-              </div>
-            </div>
-          </ProtectedPlayer>
-        ) : null}
-        {src ? (
-          <AvisoLegendas idiomas={ev.subtitle_langs} />
-        ) : (
-          <a href={ev.recording_url} target="_blank" rel="noreferrer" className="inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">
-            {tr("Abrir gravação ↗")}
-          </a>
-        )}
+      <div className="mt-6 space-y-6">
+        {partes.map((parte, i) => (
+          <div key={i}>
+            {partes.length > 1 && (
+              <p className="mb-2 text-sm font-semibold text-white">{i === 0 ? tr("Parte 1") : tr("Parte 2")}</p>
+            )}
+            {parte.src ? (
+              <ProtectedPlayer>
+                <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
+                  <div className="relative aspect-video">
+                    <iframe className="absolute inset-0 h-full w-full" src={parte.src} title={ev.title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
+                  </div>
+                </div>
+              </ProtectedPlayer>
+            ) : (
+              <a href={parte.url} target="_blank" rel="noreferrer" className="inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">
+                {tr("Abrir gravação ↗")}
+              </a>
+            )}
+          </div>
+        ))}
+        {partes.some((x) => x.src) && <AvisoLegendas idiomas={ev.subtitle_langs} />}
       </div>
 
       {ev.description && <p className="mt-6 whitespace-pre-line text-slate-300">{ev.description}</p>}

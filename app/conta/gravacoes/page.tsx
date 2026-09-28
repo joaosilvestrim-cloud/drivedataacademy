@@ -30,12 +30,12 @@ export default async function GravacoesPage() {
 
   const { data: lives } = await admin
     .from("live_events")
-    .select("id, title, description, starts_at, duration_min, kind, cover_url, recording_url")
+    .select("id, title, description, starts_at, duration_min, kind, cover_url, recording_url, recording_url_2")
     .eq("published", true)
-    .not("recording_url", "is", null)
+    .or("recording_url.not.is.null,recording_url_2.not.is.null")
     .order("starts_at", { ascending: false });
 
-  const gravacoes = await listaTraduzida("live_events", (lives ?? []).filter((l) => (l.recording_url || "").trim()));
+  const gravacoes = await listaTraduzida("live_events", (lives ?? []).filter((l) => (l.recording_url || "").trim() || (l.recording_url_2 || "").trim()));
 
   return (
     <div>
