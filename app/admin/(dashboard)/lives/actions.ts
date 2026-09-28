@@ -60,6 +60,41 @@ export async function saveLive(formData: FormData) {
     mentor_assinatura_url: ((formData.get("mentor_assinatura_url") as string) || "").trim() || null,
   };
 
+  /* O mesmo mentor volta, e a assinatura dele vem junto.
+
+     Sem isto, subir a arte era tarefa de memória: o Bruno dá quatro lives no
+     ano e alguém precisa lembrar de anexar o mesmo PNG nas quatro. Quem
+     esquece só descobre quando o aluno baixa o certificado e falta a
+     assinatura de quem ensinou.
+
+     Casa pelo nome, sem diferença de acento nem de maiúscula, porque na
+     prática o nome é redigitado a cada live e "André" vira "Andre" com
+     facilidade. Copia também o cargo quando ele vier vazio.
+
+     Só preenche o que está em branco: quem digitou algo diferente de
+     propósito manda mais que o histórico. */
+  if (payload.mentor_nome && (!payload.mentor_assinatura_url || !payload.mentor_cargo)) {
+    const chave = (t: string) =>
+      t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+
+    const { data: anteriores } = await supabase
+      .from("live_events")
+      .select("mentor_nome, mentor_cargo, mentor_assinatura_url, starts_at")
+      .not("mentor_nome", "is", null)
+      .order("starts_at", { ascending: false })
+      .limit(60);
+
+    const igual = (anteriores ?? []).filter(
+      (l: any) => chave(l.mentor_nome || "") === chave(payload.mentor_nome!) && l.mentor_assinatura_url,
+    );
+    const fonte = igual[0] ?? (anteriores ?? []).find((l: any) => chave(l.mentor_nome || "") === chave(payload.mentor_nome!));
+
+    if (fonte) {
+      if (!payload.mentor_assinatura_url) payload.mentor_assinatura_url = fonte.mentor_assinatura_url ?? null;
+      if (!payload.mentor_cargo) payload.mentor_cargo = fonte.mentor_cargo ?? null;
+    }
+  }
+
   // Até aqui, um erro do banco era engolido e a tela dizia "Salvo" do mesmo
   // jeito. Quem colava a gravação e não via nada mudar não tinha como saber se
   // o problema era o link ou o sistema.

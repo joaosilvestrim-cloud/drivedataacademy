@@ -241,7 +241,7 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
             prefixo="assinatura-mentor"
             transparente
             initialUrl={live?.mentor_assinatura_url ?? ""}
-            descricao="PNG com fundo transparente, só o traço. Sem ela o nome aparece do mesmo jeito, sobre a linha."
+            descricao="PNG com fundo transparente, só o traço. Sobe uma vez por mentor: nas próximas lives dele o sistema reaproveita sozinho, pelo nome. Sem ela o nome aparece do mesmo jeito, sobre a linha."
           />
         </div>
         {editando && live?.certificate_enabled && (
