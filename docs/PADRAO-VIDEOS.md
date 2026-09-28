@@ -10,6 +10,15 @@ Para auditar a qualquer momento:
 npx tsx scripts/auditar-videos.ts
 ```
 
+Para gerar o que a auditoria apontou:
+
+```bash
+npx tsx scripts/legendar-panda.ts
+```
+
+Sem `--aplicar` ele só mostra o plano e o custo. É o padrão de propósito,
+porque cada rodada gasta dinheiro.
+
 ## Hospedagem
 
 Tudo no **Panda Video**. O player fica embutido na aula por iframe, e é o `?v=`
@@ -24,15 +33,23 @@ o da API, que é outro. Endpoint de legenda usa o da API. Confundir devolve
 **Português e inglês são obrigatórios.** Espanhol é decisão comercial, hoje
 presente em 26 dos 56 vídeos por herança do trabalho inicial.
 
-A geração é pela IA do próprio Panda, nível **Legenda Essencial**:
+A geração é pela IA do próprio Panda, nível **Legenda Essencial**.
 
-| | Custo |
-| --- | --- |
-| Transcrição no idioma original | **gratuita** |
-| Cada idioma adicional | 1 crédito a cada 30 min de vídeo |
+**A cobrança é por trabalho enviado, não por idioma.** Um trabalho custa
+1 crédito a cada 30 minutos de vídeo, arredondado para cima, e leva a
+transcrição mais todas as traduções pedidas junto no campo `to_langs`.
 
-Um crédito é R$ 1, e o tempo arredonda para cima por vídeo. Uma aula de 45
-minutos custa 2 créditos por idioma traduzido.
+Um crédito é R$ 1. Uma aula de 45 minutos custa 2 créditos, com português e
+inglês inclusos, desde que os dois sejam pedidos na mesma chamada.
+
+**A transcrição não é gratuita**, embora o painel do Panda passe essa
+impressão. O painel sempre manda a tradução junto, então a conta aparece uma
+vez só e parece que só a tradução custou. Medido em 28/09: um vídeo de 1
+minuto, só transcrição, consumiu 1 crédito.
+
+A consequência prática é que pedir português e inglês em duas chamadas custa
+o dobro de pedir em uma. É por isso que a geração passou a ser por script, e
+não mais pelo painel.
 
 O motor do Panda cobre o vídeo inteiro mesmo com áudio ruim, o que o Whisper
 local não conseguiu: em seis aulas ele havia comido trechos grandes.
@@ -85,11 +102,30 @@ o que falta. Sugestão, para o que entrar daqui em diante:
 <curso>_<numero>_<assunto>_<teorica|pratica|exercicios>
 ```
 
+## Vídeo fora da plataforma
+
+A conta do Panda guarda material de cliente antigo, arquivos soltos e os
+vídeos de exemplo que vêm com a ferramenta. Nenhum deles precisa de legenda.
+
+A auditoria cruza os vídeos do Panda com o que a plataforma realmente aponta,
+nas aulas e nas gravações de live, e separa o resto numa lista à parte. Sem
+isso a lista de pendências fica com 19 itens onde só 10 importam, e o padrão
+passa a parecer inalcançável.
+
+O cruzamento tem uma armadilha: o Panda dá **dois ids ao mesmo vídeo**. O `id`
+é o da API, usado nos endpoints. O que a plataforma guarda é o outro, o
+`video_external_id`, que é o `?v=` dentro do iframe colado. Comparar o id
+errado faz a auditoria dizer que quase tudo está fora da plataforma.
+
 ## Checklist da aula nova
 
 1. Subir no Panda e confirmar `status: CONVERTED`.
-2. Gerar legenda pela IA do Panda, português mais inglês.
-3. Rodar `scripts/auditar-videos.ts` e confirmar que ela não aparece em
-   nenhuma das três listas.
-4. Rodar `scripts/indexar-aulas.ts`.
-5. Conferir o seletor de idioma abrindo a aula como aluno.
+2. Apontar a aula ou a gravação para o vídeo. Antes disso ele é invisível para
+   o script, de propósito.
+3. Rodar `scripts/legendar-panda.ts`, conferir o custo, e rodar de novo com
+   `--aplicar`.
+4. Esperar cerca de 30 minutos: os trabalhos entram numa fila.
+5. Rodar `scripts/auditar-videos.ts` e confirmar que ela não aparece em
+   nenhuma das listas.
+6. Rodar `scripts/indexar-aulas.ts`.
+7. Conferir o seletor de idioma abrindo a aula como aluno.

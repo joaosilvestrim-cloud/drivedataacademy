@@ -11,10 +11,16 @@
    Por isso a auditoria não pergunta "tem legenda?", pergunta "a legenda vai
    até o fim?".
 
+   E pergunta antes de tudo: "alguém assiste isso?". A conta do Panda guarda
+   vídeo de teste, material de cliente antigo e os exemplos que vêm com a
+   plataforma. Legendar o que ninguém abre é crédito jogado fora, e uma lista
+   de 19 pendências onde só 8 importam faz o padrão parecer inalcançável.
+
    Uso: npx tsx scripts/auditar-videos.ts [--idioma en] */
 
 import fs from "fs";
 import Module from "module";
+import { createClient } from "@supabase/supabase-js";
 
 const resolver = (Module as any)._resolveFilename;
 (Module as any)._resolveFilename = function (req: string, ...rest: any[]) {
@@ -55,9 +61,34 @@ function fimDoVtt(texto: string): number {
   return fim;
 }
 
+/* Os ids de vídeo que a plataforma realmente aponta, vindos das aulas e das
+   gravações de live. O campo guarda o endereço de embed inteiro, então o id
+   sai por expressão regular em vez de comparação direta. */
+async function emUso(): Promise<Map<string, string>> {
+  const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false },
+  });
+  const uuid = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
+  const mapa = new Map<string, string>();
+
+  const { data: aulas } = await db.from("lessons").select("title, video_id");
+  for (const a of aulas ?? []) {
+    for (const id of String(a.video_id || "").match(uuid) ?? []) mapa.set(id, `aula: ${a.title}`);
+  }
+  const { data: lives } = await db.from("live_events").select("title, recording_url, recording_url_2");
+  for (const l of lives ?? []) {
+    for (const campo of [l.recording_url, l.recording_url_2]) {
+      for (const id of String(campo || "").match(uuid) ?? []) mapa.set(id, `gravação: ${l.title}`);
+    }
+  }
+  return mapa;
+}
+
 async function main() {
   const i = process.argv.indexOf("--idioma");
   const idiomas = i > 0 ? [process.argv[i + 1]] : OBRIGATORIOS;
+  const todos = process.argv.includes("--todos");
+  const usados = await emUso();
 
   const videos: any[] = [];
   for (let p = 1; p < 20; p++) {
@@ -67,6 +98,7 @@ async function main() {
     if (lote.length < 100) break;
   }
 
+  const foraDaPlataforma: string[] = [];
   const semLegenda: string[] = [];
   const truncadas: string[] = [];
   const faltaIdioma: string[] = [];
@@ -76,6 +108,18 @@ async function main() {
     const titulo = String(v.title || v.id).replace(/\.mp4$/i, "").slice(0, 46);
     const duracao = Number(v.length || 0);
     if (!duracao) continue;
+
+    /* Os dois ids do Panda. O `id` é o da API, usado nos endpoints. O que a
+       plataforma guarda é o outro, o do player, que vem em
+       `video_external_id` e é o `?v=` dentro do iframe colado. Confundir os
+       dois foi o que fez a primeira versão desta checagem dizer que 50 vídeos
+       estavam fora da plataforma. */
+    const chaves = [v.id, v.video_external_id].filter(Boolean);
+    const onde = chaves.map((k: string) => usados.get(k)).find(Boolean);
+    if (!onde) {
+      foraDaPlataforma.push(`${titulo}  (${Math.round(duracao / 60)} min)`);
+      if (!todos) continue;
+    }
 
     let subs: any[] = [];
     try {
@@ -117,10 +161,15 @@ async function main() {
     for (const x of itens) console.log("  " + x);
   };
 
-  console.log(`vídeos no Panda: ${videos.length}  |  dentro do padrão: ${ok}`);
+  const auditados = videos.length - (todos ? 0 : foraDaPlataforma.length);
+  console.log(`vídeos no Panda: ${videos.length}  |  em uso na plataforma: ${auditados}  |  dentro do padrão: ${ok}`);
   bloco("SEM LEGENDA NENHUMA", semLegenda);
   bloco("LEGENDA TRUNCADA (para antes do fim do vídeo)", truncadas);
   bloco(`FALTA IDIOMA (${idiomas.join(", ")})`, faltaIdioma);
+  bloco("FORA DA PLATAFORMA (nenhuma aula ou gravação aponta para eles)", foraDaPlataforma);
+  if (!todos && foraDaPlataforma.length) {
+    console.log("\n  Estes ficaram de fora da auditoria. Use --todos para cobrá-los também.");
+  }
 }
 
 main().catch((e) => {
