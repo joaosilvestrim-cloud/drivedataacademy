@@ -20,7 +20,13 @@
    uma cobrança que nunca existiu, e a tela de assinatura do aluno não oferece
    cancelar uma recorrência que não existe.
 
-   Uso: npx tsx scripts/criar-assinante.ts <email> ["Nome Completo"] */
+   A assinatura ANUAL nasce diferente da mensal, e nao so no prazo: ela usa
+   source "annual", que e o que a plataforma le para nao oferecer cancelamento
+   de recorrencia e para o acesso valer um ano. Criar um comprador do anual
+   como mensal da 35 dias de acesso e ninguem percebe ate ele perder a conta.
+
+   Uso: npx tsx scripts/criar-assinante.ts <email> ["Nome Completo"]
+                                           [--anual] [--dias N] [--valor 754,92] */
 
 import fs from "fs";
 import Module from "module";
@@ -74,9 +80,24 @@ async function acharUsuario(email: string): Promise<{ id: string; jaEntrou: bool
 }
 
 async function main() {
-  const email = (process.argv[2] || "").trim().toLowerCase();
-  const nome = (process.argv[3] || "").trim();
-  if (!email) return console.log("uso: npx tsx scripts/criar-assinante.ts <email> [\"Nome\"]");
+  const args = process.argv.slice(2);
+  const flag = (nome: string) => {
+    const i = args.indexOf(nome);
+    return i < 0 ? null : args[i + 1] ?? null;
+  };
+  const anual = args.includes("--anual");
+  const soltos = args.filter((a, i) => !a.startsWith("--") && !(i > 0 && args[i - 1].startsWith("--") && args[i - 1] !== "--anual"));
+  const email = (soltos[0] || "").trim().toLowerCase();
+  const nome = (soltos[1] || "").trim();
+  if (!email) return console.log('uso: npx tsx scripts/criar-assinante.ts <email> ["Nome"] [--anual] [--dias N] [--valor 754,92]');
+
+  /* Anual e mensal sao fontes diferentes de acesso, nao o mesmo com prazo
+     maior: a tela de assinatura do aluno le "source" para decidir se mostra
+     cancelar recorrencia, e o anual nao tem recorrencia para cancelar. */
+  const fonte = anual ? "annual" : "subscription";
+  const dias = Number(flag("--dias")) || (anual ? 365 : 35);
+  const valor = Number((flag("--valor") || "0").replace(",", ".")) || 0;
+  console.log(`tipo    : ${anual ? "ANUAL" : "mensal"}, ${dias} dias, valor registrado R$ ${valor.toFixed(2)}`);
 
   // 1. Pedido. Existe para o aluno ter histórico e para o painel de
   //    pagamentos não mostrar um assinante que apareceu do nada.
@@ -85,11 +106,11 @@ async function main() {
     .insert({
       email,
       name: nome || null,
-      product: "subscription",
-      amount: 0,
+      product: anual ? "subscription_annual" : "subscription",
+      amount: valor,
       status: "paid",
       gateway: "manual",
-      external_reference: "manual:assinatura",
+      external_reference: anual ? "manual:assinatura-anual" : "manual:assinatura",
     })
     .select("id")
     .single();
@@ -125,15 +146,16 @@ async function main() {
   // 3. Perfil
   if (nome) await admin.from("profiles").upsert({ id: userId, full_name: nome }, { onConflict: "id" });
 
-  // 4. Acesso. 35 dias é o mesmo prazo que cada pagamento renova no webhook.
-  const ate = new Date(Date.now() + 35 * 864e5).toISOString();
+  // 4. Acesso. 35 dias no mensal é o mesmo prazo que cada pagamento renova no
+  //    webhook. No anual, um ano, igual ao que o webhook grava na compra.
+  const ate = new Date(Date.now() + dias * 864e5).toISOString();
   const { data: existente } = await admin
-    .from("memberships").select("id").eq("user_id", userId).eq("source", "subscription").limit(1).maybeSingle();
+    .from("memberships").select("id").eq("user_id", userId).eq("source", fonte).limit(1).maybeSingle();
   if (existente) {
     await admin.from("memberships").update({ status: "active", plan: "full", expires_at: ate }).eq("id", existente.id);
     console.log("assinatura reativada até", ate.slice(0, 10));
   } else {
-    await admin.from("memberships").insert({ user_id: userId, plan: "full", status: "active", source: "subscription", expires_at: ate });
+    await admin.from("memberships").insert({ user_id: userId, plan: "full", status: "active", source: fonte, expires_at: ate });
     console.log("assinatura criada até", ate.slice(0, 10));
   }
 
