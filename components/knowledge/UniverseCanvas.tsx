@@ -17,6 +17,22 @@ interface Props { catalog: Catalog; scores: Record<string, Score>; visible: stri
 // Salto elástico: passa um pouco do tamanho final e assenta, como algo que acende.
 const elastico = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1);
 
+/* Brilho de estrela: um degradê radial desenhado uma vez e reaproveitado por
+   todas as esferas acesas. Somado ao fundo (blending aditivo), é o que faz a
+   constelação parecer luz e não bolinha. */
+let texturaBrilho: THREE.CanvasTexture | null = null;
+function brilho(): THREE.CanvasTexture {
+  if (texturaBrilho) return texturaBrilho;
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d')!;
+  const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.18, 'rgba(255,255,255,.55)');
+  r.addColorStop(.45, 'rgba(255,255,255,.12)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 128, 128);
+  texturaBrilho = new THREE.CanvasTexture(c); texturaBrilho.colorSpace = THREE.SRGBColorSpace;
+  return texturaBrilho;
+}
+
 /* Faz o conteúdo nascer: de quase zero ao tamanho real, com o salto. Conta o
    tempo a partir de quando monta, e a esfera monta quando a competência
    acende no quadro. */
@@ -42,7 +58,7 @@ function Label({ text, position, color = '#e4edf8', size = 1.65 }: { text: strin
   useEffect(() => () => texture.dispose(), [texture]);
   return <sprite position={position} scale={[size * 2, size * .375, 1]} renderOrder={5}><spriteMaterial map={texture} transparent depthTest={false} /></sprite>;
 }
-function Controls({ selected, catalog, reset, zoom, girando }: Pick<Props, 'selected' | 'catalog' | 'reset' | 'zoom' | 'girando'>) {
+function Controls({ selected, catalog, reset, zoom, girando, cinema, visible }: Pick<Props, 'selected' | 'catalog' | 'reset' | 'zoom' | 'girando' | 'cinema' | 'visible'>) {
   const { camera, gl, invalidate } = useThree();
   const controls = useRef<OrbitControls | null>(null);
   useEffect(() => {
@@ -68,23 +84,58 @@ function Controls({ selected, catalog, reset, zoom, girando }: Pick<Props, 'sele
     const orbit = controls.current; if (!orbit) return;
     orbit.autoRotate = !!girando; orbit.autoRotateSpeed = .55; invalidate();
   }, [girando, invalidate]);
+
+  /* Enquadramento. No modo cinema a câmera vai até a constelação acesa, em
+     vez de ficar no centro do catálogo inteiro: uma carreira concentrada em
+     dados aparecia pequena e encostada num canto. A cada quadro novo ela
+     reenquadra devagar; depois larga o controle para quem está girando. */
+  const desejo = useRef<{ alvo: THREE.Vector3; dist: number } | null>(null);
+  const chaveVisiveis = (visible ?? []).join('|');
+  useEffect(() => {
+    if (!cinema) return;
+    const pts = catalog.competencies.filter(c => (visible ?? []).includes(c.id)).map(c => new THREE.Vector3(...c.position));
+    if (!pts.length) return;
+    const centro = pts.reduce((acc, p) => acc.add(p), new THREE.Vector3()).multiplyScalar(1 / pts.length);
+    const raio = Math.max(2.2, ...pts.map(p => p.distanceTo(centro)));
+    desejo.current = { alvo: centro, dist: THREE.MathUtils.clamp(raio * 2.4 + 5, 8, 30) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cinema, catalog, chaveVisiveis, reset]);
+  useFrame(() => {
+    const orbit = controls.current; const d = desejo.current;
+    if (!orbit || !d) return;
+    orbit.target.lerp(d.alvo, .045);
+    const offset = camera.position.clone().sub(orbit.target);
+    const novo = THREE.MathUtils.lerp(offset.length(), d.dist, .045);
+    offset.setLength(novo); camera.position.copy(orbit.target).add(offset);
+    if (orbit.target.distanceTo(d.alvo) < .01 && Math.abs(novo - d.dist) < .02) desejo.current = null;
+  });
   useFrame((_, delta) => controls.current?.update(delta));
   return null;
 }
 function Connection({ a, b, color, opacity, cinema = false }: { a: Vec3; b: Vec3; color: string; opacity: number; cinema?: boolean }) {
-  // No modo cinema a linha nasce com as duas pontas juntas e se estica até b.
-  const geometry = useMemo(() => new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a), new THREE.Vector3(...(cinema ? a : b))]), [a,b,cinema]);
+  /* No modo cinema a conexão é um arco, não uma reta: o meio sobe em direção
+     à câmera e se afasta do centro. Retas entre áreas distantes cruzavam a
+     constelação inteira; arcos passam por cima e deixam o desenho legível.
+     E o arco se desenha, ponto a ponto, depois que as esferas acendem. */
+  const PONTOS = 40;
+  const geometry = useMemo(() => {
+    if (!cinema) return new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...a), new THREE.Vector3(...b)]);
+    const va = new THREE.Vector3(...a), vb = new THREE.Vector3(...b);
+    const meio = va.clone().add(vb).multiplyScalar(.5);
+    const para = meio.clone().setY(meio.y * .6).normalize().multiplyScalar(va.distanceTo(vb) * .18);
+    meio.add(para).add(new THREE.Vector3(0, 0, va.distanceTo(vb) * .22));
+    const g = new THREE.BufferGeometry().setFromPoints(new THREE.QuadraticBezierCurve3(va, meio, vb).getPoints(PONTOS));
+    g.setDrawRange(0, 0);
+    return g;
+  }, [a, b, cinema]);
   const nasceu = useRef<number | null>(null);
   const pronto = useRef(!cinema);
   useFrame(({ clock }) => {
     if (pronto.current) return;
     if (nasceu.current === null) nasceu.current = clock.elapsedTime;
     // Espera a esfera acender antes de começar a desenhar.
-    const k = Math.min(1, Math.max(0, (clock.elapsedTime - nasceu.current - .35) / .9));
-    const e = 1 - Math.pow(1 - k, 3);
-    const pos = geometry.attributes.position as THREE.BufferAttribute;
-    pos.setXYZ(1, a[0] + (b[0] - a[0]) * e, a[1] + (b[1] - a[1]) * e, a[2] + (b[2] - a[2]) * e);
-    pos.needsUpdate = true;
+    const k = Math.min(1, Math.max(0, (clock.elapsedTime - nasceu.current - .35) / 1.1));
+    geometry.setDrawRange(0, Math.ceil((1 - Math.pow(1 - k, 3)) * (PONTOS + 1)));
     if (k >= 1) pronto.current = true;
   });
   useEffect(() => () => geometry.dispose(), [geometry]);
@@ -112,6 +163,7 @@ function Node({ position, color, score, focused, dim, label, onClick, reduced, c
   return <group position={position}>
     {ignicao && <mesh ref={onda} raycast={() => {}}><sphereGeometry args={[Math.max(.2, radius), 24, 16]} /><meshBasicMaterial color={color} transparent opacity={.55} depthWrite={false} /></mesh>}
     <Aparece ativo={ignicao}>
+    {cinema && score.score > 0 && <sprite scale={[radius * 7.5, radius * 7.5, 1]} raycast={() => {}}><spriteMaterial map={brilho()} color={color} transparent opacity={dim ? .06 : .6} depthWrite={false} blending={THREE.AdditiveBlending} /></sprite>}
     <mesh onClick={e => { e.stopPropagation(); onClick(); }} onPointerOver={e => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }} onPointerOut={() => { document.body.style.cursor = ''; }}>
       <sphereGeometry args={[Math.max(.20, radius), 24, 16]} />
       <meshBasicMaterial color={color} transparent opacity={opacity} wireframe={score.score === 0} />
@@ -121,7 +173,7 @@ function Node({ position, color, score, focused, dim, label, onClick, reduced, c
       <meshBasicMaterial color={color} transparent opacity={dim ? .01 : .035 + .07 * ((score.freshness ?? 0) / 100)} depthWrite={false} />
     </mesh>
     {focused && <mesh><ringGeometry args={[radius + .12, radius + .145, 64]} /><meshBasicMaterial color="#ffffff" transparent opacity={.9} side={THREE.DoubleSide} /></mesh>}
-    {!dim && <Label text={label} position={[0, -radius - .33, 0]} color={score.score ? '#dbe8f5' : '#8393ac'} size={1.25} />}
+    {!dim && <Label text={label} position={[0, -radius - (cinema ? .42 : .33), 0]} color={score.score ? (cinema ? '#f1f6fb' : '#dbe8f5') : '#8393ac'} size={cinema ? 1.75 : 1.25} />}
     </Aparece>
   </group>;
 }
@@ -163,20 +215,20 @@ function Scene(props: Props) {
     <Controls {...props} />
     {[0,1,2].map(layer => <StarLayer key={layer} layer={layer} reduced={reduced} />)}
     {catalog.areas.filter(area => catalog.competencies.some(c => c.area === area.id && visible.includes(c.id))).map(area => <group key={area.id} position={area.position}><Aparece ativo={cinema}>
-      <mesh onClick={e => { e.stopPropagation(); onArea(area.id); }}><sphereGeometry args={[.48,32,24]} /><meshBasicMaterial color={area.color} transparent opacity={.13} /></mesh>
-      <mesh><sphereGeometry args={[.20,24,16]} /><meshBasicMaterial color={area.color} /></mesh>
-      {[.68,.85].map(r => <mesh key={r} rotation={[.25,.25,0]}><ringGeometry args={[r,r+.009,96]} /><meshBasicMaterial color={area.color} transparent opacity={.22} side={THREE.DoubleSide} /></mesh>)}
+      <mesh onClick={e => { e.stopPropagation(); onArea(area.id); }}><sphereGeometry args={[cinema ? .3 : .48,32,24]} /><meshBasicMaterial color={area.color} transparent opacity={cinema ? .07 : .13} /></mesh>
+      <mesh><sphereGeometry args={[cinema ? .09 : .20,24,16]} /><meshBasicMaterial color={area.color} transparent opacity={cinema ? .7 : 1} /></mesh>
+      {(cinema ? [.55] : [.68,.85]).map(r => <mesh key={r} rotation={[.25,.25,0]}><ringGeometry args={[r,r+.009,96]} /><meshBasicMaterial color={area.color} transparent opacity={cinema ? .14 : .22} side={THREE.DoubleSide} /></mesh>)}
       <Label text={area.name.toLocaleUpperCase('pt-BR')} color={area.color} position={[0,.95,0]} size={1.7} />
     </Aparece></group>)}
     {catalog.competencies.filter(c => visible.includes(c.id)).map(c => {
       const area = catalog.areas.find(a => a.id === c.area)!;
-      return <Connection key={`area-${c.id}`} a={area.position} b={c.position} color={area.color} opacity={selected && selectedArea !== c.area ? .018 : .1} cinema={cinema} />;
+      return <Connection key={`area-${c.id}`} a={area.position} b={c.position} color={area.color} opacity={selected && selectedArea !== c.area ? .018 : cinema ? .06 : .1} cinema={false} />;
     })}
     {catalog.relations.filter(r => visible.includes(r.source) && visible.includes(r.target)).map(r => {
       const a = catalog.competencies.find(c => c.id === r.source)!; const b = catalog.competencies.find(c => c.id === r.target)!;
       const active = scores[a.id].score > 0 && scores[b.id].score > 0;
       const focused = r.source === selected || r.target === selected;
-      return <Connection key={`${r.source}-${r.target}`} a={a.position} b={b.position} color={catalog.areas.find(area => area.id === a.area)!.color} opacity={focused ? .75 : selected ? .025 : active ? .16 + r.strength * .1 : .045} cinema={cinema} />;
+      return <Connection key={`${r.source}-${r.target}`} a={a.position} b={b.position} color={catalog.areas.find(area => area.id === a.area)!.color} opacity={focused ? .85 : selected ? .04 : cinema ? .32 + r.strength * .2 : active ? .16 + r.strength * .1 : .045} cinema={cinema} />;
     })}
     {catalog.competencies.filter(c => visible.includes(c.id)).map(c => <Node key={c.id} position={c.position} color={catalog.areas.find(a => a.id === c.area)!.color} label={c.name} score={scores[c.id]} focused={c.id === selected} dim={!!selected && c.id !== selected && !connected.has(c.id)} onClick={() => onSelect(c.id)} reduced={reduced} cinema={cinema} />)}
   </>;

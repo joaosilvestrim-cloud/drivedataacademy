@@ -216,16 +216,14 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
       for (let k = i + 1; k < cs.length; k++) (conexoes[`${cs[i]}|${cs[k]}`] ??= []).push(p.titulo);
     }
   }
-  const existentes = new Set(catalogo.relations.map((r) => [r.source, r.target].sort().join('|')));
-  const relacoes = [
-    ...catalogo.relations,
-    ...Object.entries(conexoes)
-      .filter(([chave]) => !existentes.has(chave))
-      .map(([chave, titulos]) => {
-        const [source, target] = chave.split('|');
-        return { source, target, strength: Math.min(1, 0.55 + 0.15 * titulos.length) };
-      }),
-  ];
+  /* Só as conexões da carreira, sem as relações gerais do catálogo. As
+     gerais (Power BI puxa DAX, SQL puxa modelagem) são mapa de estudo, úteis
+     no /universo; na página pública elas cruzavam a constelação inteira e
+     escondiam as linhas que contam alguma coisa sobre o aluno. */
+  const relacoes = Object.entries(conexoes).map(([chave, titulos]) => {
+    const [source, target] = chave.split('|');
+    return { source, target, strength: Math.min(1, 0.55 + 0.15 * titulos.length) };
+  });
 
   return { catalog: { ...catalogo, relations: relacoes }, quadros, passo, provas, projetos: projetos.length, conexoes };
 }

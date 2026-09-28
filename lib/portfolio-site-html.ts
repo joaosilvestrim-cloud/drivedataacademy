@@ -28,12 +28,30 @@ export const CSP_DO_SITE = [
   "base-uri 'none'",
 ].join("; ");
 
+/* Navegação dentro do site isolado.
+
+   O documento de um iframe srcdoc herda o endereço base da página que o
+   contém. Então o "#sobre" do menu do aluno vira
+   ".../portfolio/nome#sobre": o clique carrega a página inteira da Academy
+   DENTRO do iframe, com uma segunda faixa em cima, e o menu nunca rola até a
+   seção. Foi o que apareceu no site do João, e vale para qualquer site gerado
+   por IA, porque todos usam menu com âncora.
+
+   Este script intercepta o clique em âncora e rola até a seção. O link que
+   aponta para o Universo 4D vira uma navegação da aba de cima, que abre a
+   constelação por cima do site. Roda antes do código do aluno, na fase de
+   captura, então vale mesmo que o site trate os próprios cliques. */
+function scriptDeNavegacao(linkUniverso?: string): string {
+  const u = JSON.stringify(linkUniverso || "").replace(/</g, "\\u003c");
+  return `<script>(function(){var U=${u};document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest("a[href]"):null;if(!a||a.hasAttribute("data-academy"))return;var h=a.getAttribute("href")||"";if(U&&h.indexOf("#universo")>-1){e.preventDefault();var l=document.createElement("a");l.href=U;l.target="_top";l.setAttribute("data-academy","1");document.body.appendChild(l);l.click();l.remove();return;}if(h.charAt(0)!=="#")return;e.preventDefault();var id=decodeURIComponent(h.slice(1));var alvo=id?(document.getElementById(id)||document.getElementsByName(id)[0]):null;if(alvo){alvo.scrollIntoView({behavior:"smooth",block:"start"});}else if(!id){window.scrollTo({top:0,behavior:"smooth"});}},true);})();</script>`;
+}
+
 /* Coloca a política logo depois do <head>, e não antes do <!doctype>.
    Qualquer coisa antes do doctype joga o navegador em modo de
    compatibilidade antigo, e o site do aluno renderiza torto sem ele saber
    por quê. */
-export function envelopar(html: string): string {
-  const meta = `<meta http-equiv="Content-Security-Policy" content="${CSP_DO_SITE}">`;
+export function envelopar(html: string, opcoes: { linkUniverso?: string } = {}): string {
+  const meta = `<meta http-equiv="Content-Security-Policy" content="${CSP_DO_SITE}">` + scriptDeNavegacao(opcoes.linkUniverso);
   if (/<head[^>]*>/i.test(html)) return html.replace(/<head[^>]*>/i, (m) => m + meta);
   if (/<html[^>]*>/i.test(html)) return html.replace(/<html[^>]*>/i, (m) => `${m}<head>${meta}</head>`);
   return `<!doctype html><html><head><meta charset="utf-8">${meta}</head><body>${html}</body></html>`;

@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { envelopar } from "@/lib/portfolio-site";
 import SitePublico from "./SitePublico";
 
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+
 /* Site de portfólio do aluno, com link público.
 
    Um minuto de cache: é o link que o aluno põe no LinkedIn, e um post que
@@ -38,7 +40,7 @@ export default async function PortfolioDoAluno({ params }: { params: { slug: str
   if (!dados) notFound();
   return (
     <SitePublico
-      html={envelopar(dados.site.html)}
+      html={envelopar(dados.site.html, { linkUniverso: dados.site.mostrar_universo ? `${SITE}/portfolio/${params.slug}#universo` : undefined })}
       nome={dados.nome}
       slug={params.slug}
       mostrarUniverso={dados.site.mostrar_universo}
