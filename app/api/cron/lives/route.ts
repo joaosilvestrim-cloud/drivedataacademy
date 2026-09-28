@@ -1,12 +1,20 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { enviarAvisosPendentes } from "@/lib/avisos-live";
+import { cobrarLivesSemAviso, enviarAvisosPendentes } from "@/lib/avisos-live";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
 /* Disparo automático dos avisos de live.
+
+   Dois agendadores chamam esta rota, de propósito. O principal é o GitHub
+   Actions, de 15 em 15 minutos, que é o único capaz de pegar a janela de 30
+   minutos. O segundo é o cron da Vercel, uma vez por dia, em vercel.json: o
+   plano Hobby não aceita mais que isso, e ele não salva o lembrete de 30
+   minutos, mas garante que o de 24h saia mesmo se o GitHub parar. O GitHub
+   desliga sozinho os agendamentos de repositório parado há 60 dias, e esse é
+   o modo de falha silencioso que a redundância cobre.
 
    Pode rodar com qualquer frequência: quem decide o que sai é a tabela
    live_avisos, não a hora da chamada. Rodar duas vezes seguidas não manda
@@ -33,8 +41,11 @@ export async function GET(req: Request) {
   }
 
   try {
-    const feitos = await enviarAvisosPendentes(createAdminClient());
-    return NextResponse.json({ ok: true, avisos: feitos });
+    const admin = createAdminClient();
+    const feitos = await enviarAvisosPendentes(admin);
+    // Live publicada sem link nao avisa ninguem. O time precisa saber antes.
+    const semLink = await cobrarLivesSemAviso(admin);
+    return NextResponse.json({ ok: true, avisos: feitos, livesSemLink: semLink });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message || "falhou" }, { status: 500 });
   }

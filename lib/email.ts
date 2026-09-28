@@ -114,17 +114,40 @@ export async function sendHtmlEmail(to: string, subject: string, html: string, r
   }
 }
 
+/* Moldura de todo e-mail da plataforma.
+
+   O logo entra por URL absoluta, servida pelo próprio site, e não embutido no
+   corpo: anexo embutido cai em spam com mais facilidade e infla cada mensagem.
+   O arquivo é branco sobre transparente, que é o que permite ele viver nesta
+   moldura escura sem uma caixa branca em volta.
+
+   Tudo em tabela e estilo inline de propósito. Cliente de e-mail não tem
+   cascata confiável, e o Outlook ignora praticamente todo layout moderno.
+
+   Sempre com alt: parte dos clientes bloqueia imagem por padrão, e sem ele o
+   e-mail abre com um retângulo vazio no lugar da marca. */
 function shell(title: string, bodyHtml: string): string {
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
   return `<!doctype html><html><body style="margin:0;background:#0b1220;padding:32px 0;font-family:Arial,Helvetica,sans-serif">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
       <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background:#0f172a;border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden">
-        <tr><td style="padding:32px">
-          <p style="margin:0 0 4px;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#15c47e;font-weight:700">DriveData Academy</p>
-          <h1 style="margin:0 0 16px;color:#fff;font-size:22px">${esc(title)}</h1>
+        <tr><td style="padding:28px 32px 0">
+          <a href="${site}" style="text-decoration:none"><img src="${site}/logo.png" width="176" height="46" alt="DriveData Academy" style="display:block;border:0;outline:none;width:176px;height:auto"></a>
+        </td></tr>
+        <!-- Fio de gradiente da marca. É o único enfeite da moldura, e existe
+             para separar o cabeçalho do texto sem gastar uma linha cinza. -->
+        <tr><td style="padding:20px 32px 0">
+          <div style="height:2px;background:linear-gradient(90deg,#15c47e,#2aa9e0);border-radius:2px"></div>
+        </td></tr>
+        <tr><td style="padding:24px 32px 32px">
+          <h1 style="margin:0 0 16px;color:#fff;font-size:22px;line-height:1.3">${esc(title)}</h1>
           ${bodyHtml}
         </td></tr>
       </table>
-      <p style="margin:16px 0 0;color:#64748b;font-size:12px">© DriveData Academy</p>
+      <p style="margin:18px 0 0;color:#64748b;font-size:12px;line-height:1.7">
+        <a href="${site}" style="color:#94a3b8;text-decoration:none">academy.drivedata.com.br</a><br>
+        © DriveData Academy
+      </p>
     </td></tr></table>
   </body></html>`;
 }
@@ -289,19 +312,29 @@ export async function sendWorkshopEmail(to: string, name: string, workshopTitle:
 export async function sendLiveReminderEmail(
   to: string,
   name: string,
-  live: { title: string; quando: string; url: string; acesso?: string | null; descricao?: string | null },
-  janela: "24h" | "1h",
+  live: { title: string; quando: string; url: string; acesso?: string | null; descricao?: string | null; capa?: string | null },
+  janela: "24h" | "3h" | "30min",
 ) {
   const f = await tradutorDoEmail(to);
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
   const firstName = esc((name || "").split(" ")[0] || "");
-  const agora = janela === "1h";
-  const chamada = agora ? f("Começa em 1 hora") : f("É amanhã");
+  /* Cada lembrete fala de um momento diferente. Repetir o mesmo texto tres
+     vezes faz o aluno parar de abrir a partir do segundo. */
+  const chamada = janela === "30min" ? f("Começa em 30 minutos") : janela === "3h" ? f("É hoje à noite") : f("É amanhã");
+  const abertura =
+    janela === "30min"
+      ? f("Sua live começa em instantes. O link já está aberto.")
+      : janela === "3h"
+        ? f("Sua live é hoje. Deixe o link à mão.")
+        : f("Amanhã tem live ao vivo, e seu acesso já está garantido.");
   const body = `
-    <p style="margin:0 0 16px;color:#cbd5e1">${f("Olá")}${firstName ? ", " + firstName : ""}! ${agora ? f("Sua live começa em cerca de 1 hora.") : f("Amanhã tem live ao vivo, e seu acesso já está garantido.")}</p>
-    <p style="margin:0 0 6px;color:#fff;font-size:18px;font-weight:700">${esc(live.title)}</p>
-    <p style="margin:0 0 20px;color:#cbd5e1">${esc(live.quando)}</p>
-    ${live.descricao ? `<p style="margin:0 0 20px;color:#94a3b8;font-size:14px;line-height:1.6">${esc(live.descricao)}</p>` : ""}
+    <p style="margin:0 0 20px;color:#cbd5e1">${f("Olá")}${firstName ? ", " + firstName : ""}! ${abertura}</p>
+    ${live.capa ? `<img src="${live.capa}" width="456" alt="${esc(live.title)}" style="display:block;border:0;outline:none;width:100%;max-width:456px;height:auto;border-radius:12px;margin:0 0 20px">` : ""}
+    <p style="margin:0 0 6px;color:#fff;font-size:18px;font-weight:700;line-height:1.35">${esc(live.title)}</p>
+    <!-- Data com o relógio, porque "quinta 19:30" sem o fuso já gerou aluno
+         entrando uma hora depois. O Intl monta no fuso de São Paulo. -->
+    <p style="margin:0 0 18px;color:#15c47e;font-size:14px;font-weight:700">${esc(live.quando)}</p>
+    ${live.descricao ? `<p style="margin:0 0 22px;color:#94a3b8;font-size:14px;line-height:1.7">${esc(live.descricao).replace(/\n/g, "<br>")}</p>` : ""}
     <a href="${live.url}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">${f("Entrar na sala")}</a>
     ${live.acesso ? `<p style="margin:16px 0 0;color:#94a3b8;font-size:13px">${esc(live.acesso)}</p>` : ""}
     <p style="margin:20px 0 0;color:#94a3b8;font-size:13px;line-height:1.6">${f("Este link é pessoal e vale pela sua assinatura. Não repasse.")}</p>

@@ -11,6 +11,7 @@ export const TIPOS_AVISO = {
   pedido: { titulo: "Novo pedido de assinatura", descricao: "Quando alguém preenche a página de assinatura, antes do pagamento confirmar." },
   chamado_ia: { titulo: "Chamado encaminhado pelo assistente", descricao: "Quando o assistente de IA passa uma conversa para o time." },
   chamado_ajuda: { titulo: "Chamado aberto na Central de Ajuda", descricao: "Quando um aluno abre um chamado pelo menu Ajuda." },
+  live_sem_aviso: { titulo: "Live perto de comecar sem aviso enviado", descricao: "Quando falta pouco para uma live e os alunos nao foram avisados, em geral porque o link da sala nao foi cadastrado." },
   cancelamento: { titulo: "Cancelamento de assinatura", descricao: "Quando um aluno cancela pela própria tela, com o motivo que ele deu. Avisa também quando o Asaas recusa e o cancelamento precisa ser feito à mão." },
 } as const;
 
@@ -24,7 +25,7 @@ export function configPadrao(): ConfigAvisos {
   const primeiro = (process.env.ADMIN_EMAILS || "").split(",")[0]?.trim();
   return {
     destinatarios: primeiro ? [primeiro] : [],
-    ativos: { pedido: true, chamado_ia: true, chamado_ajuda: true, cancelamento: true },
+    ativos: { pedido: true, chamado_ia: true, chamado_ajuda: true, cancelamento: true, live_sem_aviso: true },
   };
 }
 

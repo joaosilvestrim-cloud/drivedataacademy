@@ -142,7 +142,7 @@ export async function setModuleRelease(formData: FormData) {
 export async function avisarLive(formData: FormData) {
   const supabase = await admin();
   const id = (formData.get("id") as string) || "";
-  const janela = ((formData.get("janela") as string) || "1h") as Janela;
+  const janela = ((formData.get("janela") as string) || "30min") as Janela;
   if (!id) redirect("/admin/lives?error=" + encodeURIComponent("Live não informada."));
 
   try {

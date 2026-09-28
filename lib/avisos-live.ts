@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { sendLiveReminderEmail } from "@/lib/email";
+import { sendHtmlEmail, sendLiveReminderEmail } from "@/lib/email";
+import { avisarTime } from "@/lib/notificacoes";
 
 /* Aviso automático das lives para quem tem assinatura ativa.
 
@@ -17,9 +18,19 @@ import { sendLiveReminderEmail } from "@/lib/email";
    Duas janelas, que é o que basta: uma no dia anterior, para a pessoa reservar
    a agenda, e uma perto da hora, para ela lembrar. */
 
+/* Tres lembretes dentro das 24 horas que antecedem a aula, cada um com um
+   trabalho diferente:
+
+   - 24h, na vespera, para a pessoa reservar a agenda;
+   - 3h, no fim da tarde do dia, quando ela ainda consegue reorganizar a noite;
+   - 30min, para abrir o link.
+
+   Mais que isso vira spam e ensina o aluno a ignorar o remetente, que e o
+   custo escondido de lembrete demais. */
 export const JANELAS = [
   { chave: "24h" as const, minutos: 24 * 60, rotulo: "1 dia antes" },
-  { chave: "1h" as const, minutos: 60, rotulo: "1 hora antes" },
+  { chave: "3h" as const, minutos: 3 * 60, rotulo: "3 horas antes" },
+  { chave: "30min" as const, minutos: 30, rotulo: "30 minutos antes" },
 ];
 
 export type Janela = (typeof JANELAS)[number]["chave"];
@@ -75,7 +86,7 @@ export async function enviarAvisosPendentes(
   const agora = Date.now();
   let q = admin
     .from("live_events")
-    .select("id, title, description, starts_at, url_alunos, acesso_alunos, published")
+    .select("id, title, description, starts_at, url_alunos, acesso_alunos, cover_url, published")
     .eq("published", true)
     .not("url_alunos", "is", null)
     .gte("starts_at", new Date(agora - 30 * 60000).toISOString());
@@ -116,6 +127,7 @@ export async function enviarAvisosPendentes(
             url: live.url_alunos!,
             acesso: live.acesso_alunos,
             descricao: live.description,
+            capa: live.cover_url,
           },
           j.chave,
         );
@@ -133,4 +145,45 @@ export async function enviarAvisosPendentes(
     }
   }
   return feitos;
+}
+
+/* Vigia: live perto de comecar e ninguem avisado.
+
+   O automatico so manda quando ha link da sala. Live publicada sem link nao
+   avisa ninguem, e ate aqui isso era silencioso: descobria-se com a sala
+   vazia. Duas das proximas lives estao exatamente nesse estado.
+
+   Roda junto com o disparo e cobra uma vez so por live, usando a mesma tabela
+   como memoria. A janela e de 3 horas porque abaixo disso nao da tempo de
+   fazer nada a respeito. */
+export async function cobrarLivesSemAviso(admin: SupabaseClient): Promise<string[]> {
+  const agora = Date.now();
+  const { data: lives } = await admin
+    .from("live_events")
+    .select("id, title, starts_at, url_alunos")
+    .eq("published", true)
+    .gte("starts_at", new Date(agora).toISOString())
+    .lte("starts_at", new Date(agora + 3 * 3600_000).toISOString());
+
+  const cobradas: string[] = [];
+  for (const live of lives ?? []) {
+    if (String(live.url_alunos || "").trim()) continue;
+
+    // A mesma reserva do envio: se a linha entrou, a cobranca ja saiu.
+    const { error } = await admin.from("live_avisos").insert({ live_id: live.id, janela: "sem-link" });
+    if (error) continue;
+
+    const quandoTexto = quando(live.starts_at);
+    await avisarTime("live_sem_aviso", (para) =>
+      sendHtmlEmail(
+        para,
+        `Live sem link: ${live.title}`,
+        `<p style="font-family:Arial">A live <b>${live.title}</b> comeca em ${quandoTexto} e esta publicada <b>sem link da sala</b>.</p>
+         <p style="font-family:Arial">Nenhum aluno foi avisado, porque o aviso existe para entregar a sala. Cadastre o link em Admin &gt; Lives, no bloco "Encontro fechado", e use o botao "Enviar agora".</p>`,
+      ),
+    );
+    await admin.from("live_avisos").update({ enviado_em: new Date().toISOString(), destinatarios: 0 }).eq("live_id", live.id).eq("janela", "sem-link");
+    cobradas.push(live.title);
+  }
+  return cobradas;
 }
