@@ -29,7 +29,24 @@ const rotulo = (iso: string, passo: "semana" | "mes" | "ano") =>
         .replace(/\./g, "")
         .replace(" de ", " ");
 
-export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string; nome: string; aoFechar: () => void }) {
+/* autoplay e final servem ao momento da publicação: o aluno clica em
+   Publicar, a carreira dele acende sozinha na tela, e no fim aparece o
+   cartão de "está no ar". Na página pública nenhum dos dois é usado. */
+export default function UniversoPublico({
+  slug,
+  nome,
+  aoFechar,
+  autoplay = false,
+  final,
+}: {
+  slug: string;
+  nome: string;
+  aoFechar: () => void;
+  autoplay?: boolean;
+  final?: React.ReactNode;
+}) {
+  const [terminou, setTerminou] = useState(false);
+  const jaTocou = useRef(false);
   const [dados, setDados] = useState<Dados | null>(null);
   const [estado, setEstado] = useState<"carregando" | "ok" | "vazio" | "erro">("carregando");
   const [quadro, setQuadro] = useState(0);
@@ -69,12 +86,19 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
   useEffect(() => {
     if (!tocando || !dados) return;
     if (quadro >= dados.quadros.length - 1) {
-      const t = setTimeout(() => setTocando(false), 2600);
+      const t = setTimeout(() => { setTocando(false); setTerminou(true); }, 2600);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setQuadro((q) => q + 1), quadro < 0 ? 1100 : 2400);
     return () => clearTimeout(t);
   }, [tocando, quadro, dados]);
+
+  useEffect(() => {
+    if (!autoplay || estado !== "ok" || jaTocou.current) return;
+    jaTocou.current = true;
+    setQuadro(-1);
+    setTocando(true);
+  }, [autoplay, estado]);
 
   const atual = quadro >= 0 ? dados?.quadros[quadro] : undefined;
   const alvo = useMemo(() => atual?.scores ?? {}, [atual]);
@@ -315,6 +339,14 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
           </>
         )}
       </div>
+
+      {/* O final da revelação. Sem universo para tocar (aluno sem projeto
+          provado, ou que desligou o 4D), aparece direto. */}
+      {final && (terminou || estado === "vazio" || estado === "erro") && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050b18]/70 p-4 backdrop-blur-sm">
+          <div className="surgir w-full max-w-lg">{final}</div>
+        </div>
+      )}
 
       {/* A quarta dimensão. */}
       {estado === "ok" && dados && dados.quadros.length > 1 && (

@@ -209,13 +209,39 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
      projeto com dez competências (várias só por ferramenta marcada) gerou 45
      linhas, todas "pelo mesmo projeto": um novelo que não explica nada.
      Ferramenta marcada acende a esfera, mas não liga. */
-  const conexoes: Record<string, string[]> = {};
+  /* Quais pares ligar, para a constelação ficar legível.
+
+     Ligar todas as competências de um projeto entre si vira teia: o projeto
+     da Ayumana, com sete competências, gerava sozinho 21 arcos. O desenho que
+     conta a carreira é outro:
+
+     1. Em cada projeto, as competências se ligam ao CENTRO da carreira, a
+        competência que aparece em mais projetos. Para o João, Gestão de
+        projetos, presente nos quatro. A constelação passa a dizer qual é o
+        eixo do profissional.
+     2. E ficam as duplas que se repetem em dois projetos ou mais, porque
+        essas não são acaso: são o jeito de trabalhar da pessoa.
+
+     No perfil do João isso cai de uns 40 arcos para uns 15. */
+  const frequencia = new Map<string, number>();
+  for (const p of projetos) for (const c of p.doTexto) frequencia.set(c, (frequencia.get(c) ?? 0) + 1);
+  const chave = (x: string, y: string) => [x, y].sort().join('|');
+
+  const juntas: Record<string, string[]> = {};
   for (const p of projetos) {
     const cs = [...p.doTexto].sort();
     for (let i = 0; i < cs.length; i++) {
-      for (let k = i + 1; k < cs.length; k++) (conexoes[`${cs[i]}|${cs[k]}`] ??= []).push(p.titulo);
+      for (let k = i + 1; k < cs.length; k++) (juntas[chave(cs[i], cs[k])] ??= []).push(p.titulo);
     }
   }
+
+  const conexoes: Record<string, string[]> = {};
+  for (const p of projetos) {
+    if (p.doTexto.length < 2) continue;
+    const centro = [...p.doTexto].sort((a, b) => (frequencia.get(b) ?? 0) - (frequencia.get(a) ?? 0) || a.localeCompare(b))[0];
+    for (const c of p.doTexto) if (c !== centro) conexoes[chave(centro, c)] = juntas[chave(centro, c)];
+  }
+  for (const [k, titulos] of Object.entries(juntas)) if (titulos.length >= 2) conexoes[k] = titulos;
   /* Só as conexões da carreira, sem as relações gerais do catálogo. As
      gerais (Power BI puxa DAX, SQL puxa modelagem) são mapa de estudo, úteis
      no /universo; na página pública elas cruzavam a constelação inteira e

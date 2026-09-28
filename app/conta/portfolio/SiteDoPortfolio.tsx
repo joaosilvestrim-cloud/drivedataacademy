@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { ESTILOS, envelopar, type Estilo } from "@/lib/portfolio-site-html";
 import type { Auditoria } from "@/lib/portfolio-auditoria";
-import { conferirSite, despublicarSite, gerarPromptDoSite, salvarSite } from "./actions";
+import { conferirSite, despublicarSite, gerarPromptDoSite, postDoLinkedIn, salvarSite } from "./actions";
+import UniversoPublico from "@/components/knowledge/UniversoPublico";
 
 /* Meu site de portfólio: quatro passos, na ordem em que acontecem.
 
@@ -44,11 +45,13 @@ export default function SiteDoPortfolio({
   siteUrl,
   projetos,
   prontos,
+  nome,
 }: {
   atual: SiteAtual;
   siteUrl: string;
   projetos: number;
   prontos: number;
+  nome: string;
 }) {
   const [estilo, setEstilo] = useState<Estilo>("painel");
   const [prompt, setPrompt] = useState("");
@@ -65,6 +68,14 @@ export default function SiteDoPortfolio({
   const [publicado, setPublicado] = useState<{ url: string; publicado: boolean } | null>(
     atual ? { url: `${siteUrl}/portfolio/${atual.slug}`, publicado: atual.publicado } : null,
   );
+  // O momento da publicação: a carreira acende na tela antes do "está no ar".
+  const [revelando, setRevelando] = useState(false);
+  const [post, setPost] = useState("");
+
+  async function carregarPost() {
+    const r = await postDoLinkedIn();
+    if (r.ok) setPost(r.texto);
+  }
 
   async function gerar() {
     setGerando(true);
@@ -106,6 +117,10 @@ export default function SiteDoPortfolio({
     setSalvando(false);
     if (!r.ok) return setErro(r.erro);
     setPublicado({ url: r.url, publicado: r.publicado });
+    if (r.publicado) {
+      carregarPost();
+      setRevelando(true);
+    }
   }
 
   async function tirarDoAr() {
@@ -113,9 +128,47 @@ export default function SiteDoPortfolio({
     setPublicado((p) => (p ? { ...p, publicado: false } : p));
   }
 
-  const linkedin = publicado ? `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(publicado.url)}` : "";
+  /* O LinkedIn abre o compositor já com o texto do post, e o link dentro do
+     texto puxa o cartão com a constelação. Sem texto pronto, cai no
+     compartilhamento simples do link. */
+  const linkedin = publicado
+    ? post
+      ? `https://www.linkedin.com/feed/?shareActive=true&text=${encodeURIComponent(post)}`
+      : `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(publicado.url)}`
+    : "";
+
+  const cartaoNoAr = publicado && (
+    <div className="rounded-3xl border border-brand-green/30 bg-[#0a1428] p-6 text-left shadow-2xl">
+      <p className="font-display text-2xl font-bold text-white">Seu portfólio está no ar</p>
+      <a href={publicado.url} target="_blank" rel="noopener" className="mt-1 block truncate font-mono text-sm text-brand-green hover:underline">{publicado.url}</a>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <a href={linkedin} target="_blank" rel="noopener" className="rounded-xl bg-[#0a66c2] px-4 py-2 text-sm font-semibold text-white">Publicar no LinkedIn</a>
+        <button onClick={() => copiar(publicado.url, "link")} className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
+        <a href={publicado.url} target="_blank" rel="noopener" className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white">Abrir o site</a>
+      </div>
+      {post && (
+        <div className="mt-4">
+          <p className="text-xs text-slate-400">O texto do post, montado com o que você publicou:</p>
+          <textarea readOnly value={post} rows={7} className="mt-1 w-full resize-none rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-slate-200" />
+          <button onClick={() => copiar(post, "post")} className="mt-1 text-xs text-brand-green hover:underline">{copiado === "post" ? "Copiado" : "Copiar o texto"}</button>
+        </div>
+      )}
+      <p className="mt-3 text-xs text-slate-400">Ponha o link também no seu perfil do LinkedIn: Informações de contato → Site, e na seção Em destaque.</p>
+      <button onClick={() => setRevelando(false)} className="mt-4 text-sm text-slate-300 hover:text-white">Voltar</button>
+    </div>
+  );
 
   return (
+    <>
+    {revelando && publicado && (
+      <UniversoPublico
+        slug={publicado.url.split("/portfolio/")[1]}
+        nome={nome}
+        aoFechar={() => setRevelando(false)}
+        autoplay
+        final={cartaoNoAr}
+      />
+    )}
     <section className="mt-8 rounded-3xl border border-brand-green/25 bg-gradient-to-b from-brand-green/[0.06] to-transparent p-5 sm:p-7">
       <h2 className="font-display text-2xl font-bold text-white">Meu site de portfólio</h2>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">
@@ -135,7 +188,8 @@ export default function SiteDoPortfolio({
             <a href={publicado.url} target="_blank" rel="noopener" className="block truncate font-mono text-sm text-brand-green hover:underline">{publicado.url}</a>
           </div>
           <button onClick={() => copiar(publicado.url, "link")} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
-          <a href={linkedin} target="_blank" rel="noopener" className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-white">Compartilhar no LinkedIn</a>
+          <a href={linkedin} target="_blank" rel="noopener" onMouseEnter={() => !post && carregarPost()} className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-white">Publicar no LinkedIn</a>
+          <button onClick={() => setRevelando(true)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white">Ver a revelação</button>
           <button onClick={tirarDoAr} className="text-xs text-slate-500 hover:text-slate-300">Tirar do ar</button>
           <p className="w-full text-xs text-slate-400">
             No LinkedIn, ponha o link em dois lugares: Editar perfil → Informações de contato → Site, e na seção Em destaque do perfil.
@@ -287,5 +341,6 @@ export default function SiteDoPortfolio({
         </Passo>
       </div>
     </section>
+    </>
   );
 }

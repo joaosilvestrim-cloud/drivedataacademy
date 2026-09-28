@@ -8,7 +8,7 @@ import { canUseCommunity } from "@/lib/community";
 import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
 import { organizarRelato } from "@/lib/portfolio-ia";
 import { competenciasParaSalvar, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
-import { auditarSiteDoAluno, limparHtmlColado, montarPrompt, slugDoNome, slugLivre, type Estilo } from "@/lib/portfolio-site";
+import { auditarSiteDoAluno, limparHtmlColado, montarPrompt, slugDoNome, slugLivre, textoDoPostLinkedIn, type Estilo } from "@/lib/portfolio-site";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -219,4 +219,12 @@ export async function despublicarSite() {
   if (data?.slug) revalidatePath(`/portfolio/${data.slug}`);
   revalidatePath("/conta/portfolio");
   return { ok: true as const };
+}
+
+/** Texto do post do LinkedIn para o site publicado, montado só com o que o aluno publicou. */
+export async function postDoLinkedIn() {
+  const { user, admin } = await alunoComAcesso();
+  const { data: site } = await admin.from("portfolio_sites").select("slug, publicado").eq("user_id", user.id).maybeSingle();
+  if (!site?.publicado) return { ok: false as const, erro: "Publique o site primeiro." };
+  return { ok: true as const, texto: await textoDoPostLinkedIn(admin, user.id, `${SITE}/portfolio/${site.slug}`) };
 }

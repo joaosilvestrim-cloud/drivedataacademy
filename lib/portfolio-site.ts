@@ -355,3 +355,43 @@ export async function auditarSiteDoAluno(admin: SupabaseClient, userId: string, 
     linkUniverso: r.linkUniverso,
   });
 }
+
+/* O texto do post do LinkedIn, pronto para colar.
+
+   Mesma regra do resto: só contagem do que o aluno publicou. Quantos
+   projetos, de que ano a que ano, e as competências que mais aparecem
+   comprovadas. Nenhum adjetivo sobre a pessoa, nenhum resultado que ela não
+   escreveu. O link vai no texto porque é dele que o LinkedIn monta o cartão
+   com a constelação. */
+export async function textoDoPostLinkedIn(admin: SupabaseClient, userId: string, url: string): Promise<string> {
+  const [{ data: projetos }, nomes] = await Promise.all([
+    admin.from("portfolio_projects").select("titulo, resumo, problema, resultado, descricao, publico, feito_em, competencias").eq("user_id", userId),
+    nomesDasCompetencias(),
+  ]);
+  const validos = (projetos ?? []).filter(
+    (p: any) => p.titulo && p.publico && !LACUNA.test([p.titulo, p.resumo, p.problema, p.resultado, p.descricao].join(" ")),
+  );
+  const contagem = new Map<string, number>();
+  for (const p of validos as any[]) {
+    for (const c of p.competencias?.itens ?? []) if (nomes[c.id]) contagem.set(nomes[c.id], (contagem.get(nomes[c.id]) ?? 0) + 1);
+  }
+  const principais = [...contagem.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([n]) => n);
+  const anos = (validos as any[]).map((p) => p.feito_em?.slice(0, 4)).filter(Boolean).sort();
+  const periodo = anos.length && anos[0] !== anos[anos.length - 1] ? `, de ${anos[0]} a ${anos[anos.length - 1]}` : "";
+  const n = validos.length;
+
+  const linhas = [
+    "Publiquei meu portfólio na DriveData Academy.",
+    "",
+    n
+      ? `São ${n} ${n === 1 ? "projeto" : "projetos"}${periodo}${principais.length ? `, e as competências que eles comprovam: ${principais.join(", ")}` : ""}.`
+      : "",
+    "",
+    "Cada competência vem com o trecho do projeto que a prova. E dá para ver a minha carreira crescer num universo 4D interativo.",
+    "",
+    url,
+    "",
+    "#portfolio #dados #DriveDataAcademy",
+  ];
+  return linhas.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
