@@ -25,7 +25,8 @@ import type { Catalog, Score } from '@/lib/knowledge/types';
    evidências é zerada antes de sair; na do portfólio ela nem existe. */
 
 export type QuadroPublico = { at: string; scores: Record<string, Score> };
-export type Prova = { titulo: string; at: string | null };
+/** Um projeto que prova a competência, e o porquê: o trecho do projeto, ou a ferramenta usada. */
+export type Prova = { titulo: string; at: string | null; motivo?: string };
 export type UniversoPublico = {
   catalog: Catalog;
   quadros: QuadroPublico[];
@@ -34,6 +35,9 @@ export type UniversoPublico = {
   provas?: Record<string, Prova[]>;
   /** Quantos projetos entraram. */
   projetos?: number;
+  /* Por que duas competências se conectam: os projetos que provam as duas.
+     Chave "a|b", com os ids em ordem alfabética. */
+  conexoes?: Record<string, string[]>;
 };
 
 const MAX_QUADROS = 12;
@@ -143,7 +147,7 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
   const [{ data: linhas }, { data: perfil }] = await Promise.all([
     admin
       .from('portfolio_projects')
-      .select('titulo, resumo, problema, resultado, descricao, ferramentas, feito_em, created_at, publico')
+      .select('titulo, resumo, problema, resultado, descricao, ferramentas, feito_em, created_at, publico, competencias')
       .eq('user_id', userId),
     admin.from('profiles').select('skills').eq('id', userId).maybeSingle(),
   ]);
@@ -152,13 +156,29 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
      que o aluno deixou só para a turma não acende nada na página pública. */
   const projetos = (linhas ?? [])
     .filter((p: any) => p.titulo && p.publico && !LACUNA.test([p.titulo, p.resumo, p.problema, p.resultado, p.descricao].join(' ')))
-    .map((p: any) => ({
-      titulo: p.titulo as string,
-      at: (p.feito_em ? `${p.feito_em}T12:00:00Z` : p.created_at) as string,
-      // Todo projeto com problema e resultado é, antes de tudo, análise
-      // para decisão de negócio: é isso que "Fundamentos de dados" mede.
-      competencias: [...new Set(['fundamentos-dados', ...(p.ferramentas ?? []).flatMap((f: string) => competenciasDe(f, catalogo))])],
-    }));
+    .map((p: any) => {
+      /* De onde vem cada competência do projeto, em ordem de força:
+
+         1. O texto do projeto, lido pela IA ao salvar, com o trecho que prova
+            (lib/portfolio-competencias). É a fonte principal.
+         2. As ferramentas marcadas, com a ferramenta como motivo.
+         3. Projeto antigo, salvo antes da leitura do texto existir: fica com
+            "Fundamentos de dados", como era, porque problema mais resultado é
+            análise para decisão. */
+      const motivos = new Map<string, string>();
+      const lidas: { id: string; trecho: string }[] = Array.isArray(p.competencias?.itens) ? p.competencias.itens : [];
+      for (const c of lidas) if (!motivos.has(c.id)) motivos.set(c.id, `"${c.trecho}"`);
+      for (const f of p.ferramentas ?? []) {
+        for (const id of competenciasDe(f, catalogo)) if (!motivos.has(id)) motivos.set(id, `Usou ${f}`);
+      }
+      if (!p.competencias && !motivos.has('fundamentos-dados')) motivos.set('fundamentos-dados', 'Projeto com problema de negócio e resultado');
+      return {
+        titulo: p.titulo as string,
+        at: (p.feito_em ? `${p.feito_em}T12:00:00Z` : p.created_at) as string,
+        competencias: [...motivos.keys()],
+        motivos,
+      };
+    });
 
   const skills: string[] = Array.isArray(perfil?.skills) ? perfil!.skills : String(perfil?.skills || '').split(',');
   const declaradas = new Set(skills.flatMap((s) => competenciasDe(s, catalogo)));
@@ -175,9 +195,32 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
 
   const provas: Record<string, Prova[]> = {};
   for (const p of projetos) {
-    for (const c of p.competencias) (provas[c] ??= []).push({ titulo: p.titulo, at: p.at.slice(0, 7) });
+    for (const c of p.competencias) (provas[c] ??= []).push({ titulo: p.titulo, at: p.at.slice(0, 7), motivo: p.motivos.get(c) });
   }
-  return { catalog: catalogo, quadros, passo, provas, projetos: projetos.length };
+
+  /* Por que duas competências se conectam. O catálogo já traz as relações
+     gerais (Power BI puxa DAX), mas o que interessa no portfólio é a relação
+     que a carreira do aluno criou: duas competências provadas pelo mesmo
+     projeto ganham uma linha, e o painel diz por qual projeto. */
+  const conexoes: Record<string, string[]> = {};
+  for (const p of projetos) {
+    const cs = [...p.competencias].sort();
+    for (let i = 0; i < cs.length; i++) {
+      for (let k = i + 1; k < cs.length; k++) (conexoes[`${cs[i]}|${cs[k]}`] ??= []).push(p.titulo);
+    }
+  }
+  const existentes = new Set(catalogo.relations.map((r) => [r.source, r.target].sort().join('|')));
+  const relacoes = [
+    ...catalogo.relations,
+    ...Object.entries(conexoes)
+      .filter(([chave]) => !existentes.has(chave))
+      .map(([chave, titulos]) => {
+        const [source, target] = chave.split('|');
+        return { source, target, strength: Math.min(1, 0.55 + 0.15 * titulos.length) };
+      }),
+  ];
+
+  return { catalog: { ...catalogo, relations: relacoes }, quadros, passo, provas, projetos: projetos.length, conexoes };
 }
 
 /* ---------------------------------------------------------------------

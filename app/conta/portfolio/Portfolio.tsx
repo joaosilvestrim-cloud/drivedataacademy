@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
 import SeloCasa from "@/components/comunidade/SeloCasa";
 import { FERRAMENTAS_SUGERIDAS, LACUNA, LIMITES, STATUS, type Projeto } from "@/lib/portfolio";
-import { assinarCapaDoProjeto, curtirProjeto, excluirProjeto, organizarComIA, salvarProjeto } from "./actions";
+import { assinarCapaDoProjeto, curtirProjeto, excluirProjeto, organizarComIA, previaDasCompetencias, salvarProjeto } from "./actions";
 
 /* Vitrine de portfólio.
 
@@ -382,6 +382,22 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
   const [organizando, setOrganizando] = useState(false);
   const [lacunas, setLacunas] = useState(0);
   const [alerta, setAlerta] = useState<string | null>(null);
+  // O que o projeto acende no 4D. Começa com o que já foi lido, se houver.
+  const [provadas, setProvadas] = useState<{ id: string; nome: string; trecho: string }[] | null>(null);
+  const [lendo, setLendo] = useState(false);
+
+  /* Lê o texto que está nos campos agora, não o que foi salvo: é para o
+     aluno ver a constelação mudar enquanto escreve. */
+  async function lerCompetencias() {
+    const el = form.current?.elements;
+    const v = (n: string) => ((el?.namedItem(n) as HTMLInputElement | null)?.value || "").trim();
+    const texto = [v("titulo"), v("resumo"), v("problema"), v("resultado"), v("descricao")].filter(Boolean).join("\n");
+    if (texto.length < 30) return;
+    setLendo(true);
+    const r = await previaDasCompetencias(texto);
+    setLendo(false);
+    if (r.ok) setProvadas(r.itens);
+  }
 
   /* Os campos do formulário não são controlados pelo React, então a IA
      escreve direto neles. Sobrescreve o que houver: o aluno pediu para
@@ -422,6 +438,7 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
     const tudo = Object.values(r.campos).flat().join(" ");
     setLacunas((tudo.match(new RegExp(LACUNA.source, "g")) || []).length);
     setAlerta(r.alerta);
+    lerCompetencias();
   }
 
   useEffect(() => {
@@ -629,6 +646,32 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
                 <span className="mt-0.5 block text-xs text-slate-500">{tr("Desmarcado, ele fica só para a turma, dentro do portal.")}</span>
               </span>
             </label>
+          </div>
+
+          {/* A constelação se formando: cada competência com o trecho do
+              próprio projeto que a prova. É o mesmo "por que" que o visitante
+              vai ler no 4D do site. */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-semibold text-white">{tr("O que este projeto acende no seu Universo 4D")}</p>
+              <button type="button" onClick={lerCompetencias} disabled={lendo} className="text-xs text-brand-green hover:underline disabled:opacity-50">
+                {lendo ? tr("Lendo o projeto...") : provadas ? tr("Ler de novo") : tr("Ver agora")}
+              </button>
+            </div>
+            {provadas === null ? (
+              <p className="mt-1 text-xs text-slate-500">{tr("A IA lê o texto do projeto e aponta as competências que ele prova, com o trecho que prova cada uma. Também acontece sozinho ao salvar.")}</p>
+            ) : provadas.length === 0 ? (
+              <p className="mt-1 text-xs text-slate-400">{tr("O texto ainda não prova nenhuma competência do catálogo. Conte o que você fez com mais detalhe: o que planejou, o que construiu, com qual ferramenta.")}</p>
+            ) : (
+              <ul className="mt-2 flex flex-col gap-2">
+                {provadas.map((c) => (
+                  <li key={c.id} className="text-sm">
+                    <span className="font-semibold text-brand-green">{c.nome}</span>
+                    <span className="block text-xs text-slate-400">&ldquo;{c.trecho}&rdquo;</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {erro && <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-200" role="alert">{erro}</p>}

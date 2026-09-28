@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import UniversoPublico from "@/components/knowledge/UniversoPublico";
 
 /* A página pública do portfólio: a faixa da Academy em cima, o site do aluno
@@ -31,7 +31,24 @@ export default function SitePublico({
   mostrarUniverso: boolean;
 }) {
   const [universo, setUniverso] = useState(false);
-  const fechar = useCallback(() => setUniverso(false), []);
+
+  /* O site do aluno tem um botão "Explorar meu Universo 4D" que aponta para
+     esta mesma página com #universo, em target="_top". Como só o fragmento
+     muda, o navegador não recarrega: dispara hashchange, e é aqui que a
+     constelação abre. Também abre quando alguém chega pelo link direto. */
+  useEffect(() => {
+    if (!mostrarUniverso) return;
+    const conferir = () => { if (window.location.hash === "#universo") setUniverso(true); };
+    conferir();
+    window.addEventListener("hashchange", conferir);
+    return () => window.removeEventListener("hashchange", conferir);
+  }, [mostrarUniverso]);
+
+  // Fechar limpa o #universo, senão o mesmo botão não dispararia de novo.
+  const fechar = useCallback(() => {
+    setUniverso(false);
+    if (window.location.hash === "#universo") history.replaceState(null, "", window.location.pathname + window.location.search);
+  }, []);
 
   return (
     <div className="flex h-[100dvh] flex-col bg-[#050b18]">

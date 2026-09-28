@@ -28,6 +28,8 @@ export type Projeto = {
   course_id: string | null;
   /** Mês em que foi feito, "AAAA-MM-01". Ordena a carreira no Universo 4D público. */
   feito_em: string | null;
+  /** Competências que o texto do projeto prova, com o trecho. Ver lib/portfolio-competencias. */
+  competencias?: { hash: string; itens: { id: string; trecho: string }[] } | null;
   status: Status;
   motivo: string | null;
   destaque: boolean;

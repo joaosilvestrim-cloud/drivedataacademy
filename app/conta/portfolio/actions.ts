@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
 import { organizarRelato } from "@/lib/portfolio-ia";
+import { competenciasParaSalvar, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
 import { limparHtmlColado, montarPrompt, numerosSemOrigem, slugDoNome, slugLivre, type Estilo } from "@/lib/portfolio-site";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
@@ -82,9 +83,16 @@ export async function salvarProjeto(formData: FormData) {
   }
   const status = enviar ? "revisao" : "rascunho";
 
-  if (id) {
-    const atual = await meuProjeto(admin, id, user.id);
-    if (!atual) return { ok: false as const, erro: "Projeto não encontrado." };
+  const atual = id ? await meuProjeto(admin, id, user.id) : null;
+  if (id && !atual) return { ok: false as const, erro: "Projeto não encontrado." };
+
+  /* O que o texto do projeto prova, para o Universo 4D. Reaproveita a
+     leitura anterior se o texto não mudou, e nunca impede o salvamento: com
+     a IA fora do ar, o projeto salva e o 4D usa só as ferramentas. */
+  const competencias = await competenciasParaSalvar(textoDoProjeto(dados), atual?.competencias);
+  (dados as any).competencias = competencias;
+
+  if (id && atual) {
     // Mexer em projeto publicado volta para a fila: o que está na vitrine foi o que o time leu.
     const novoStatus = enviar ? "revisao" : atual.status === "aprovado" ? "revisao" : status;
     const { error } = await admin.from("portfolio_projects").update({ ...dados, status: novoStatus, motivo: null }).eq("id", id);
@@ -136,6 +144,15 @@ export async function gerarPromptDoSite(estilo: Estilo) {
   const { user, admin } = await alunoComAcesso();
   const r = await montarPrompt(admin, user.id, estilo);
   return { ok: true as const, ...r };
+}
+
+/* Prévia no formulário: o que este projeto acende no 4D, e por quê. É o
+   momento em que o aluno vê a constelação se formando enquanto escreve. */
+export async function previaDasCompetencias(texto: string) {
+  await alunoComAcesso();
+  const [itens, nomes] = await Promise.all([identificarCompetencias(texto), nomesDasCompetencias()]);
+  if (itens === null) return { ok: false as const, erro: "A IA não respondeu agora. As competências são lidas de novo quando você salvar." };
+  return { ok: true as const, itens: itens.map((i) => ({ ...i, nome: nomes[i.id] || i.id })) };
 }
 
 /** Números com cara de resultado no site que não existem nos fatos do aluno. */

@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { LACUNA } from "@/lib/portfolio";
+import { nomesDasCompetencias } from "@/lib/portfolio-competencias";
 
 /* Site de portfólio do aluno.
 
@@ -74,7 +75,7 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     admin.from("profiles").select("full_name, headline, bio, skills, linkedin_url, avatar_url").eq("id", userId).maybeSingle(),
     admin
       .from("portfolio_projects")
-      .select("titulo, resumo, problema, resultado, descricao, ferramentas, cover_url, link_url, repo_url, status, publico, destaque, updated_at, feito_em")
+      .select("titulo, resumo, problema, resultado, descricao, ferramentas, cover_url, link_url, repo_url, status, publico, destaque, updated_at, feito_em, competencias")
       .eq("user_id", userId)
       .order("destaque", { ascending: false })
       .order("updated_at", { ascending: false }),
@@ -103,16 +104,32 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
   const skills = Array.isArray(perfil?.skills) ? perfil!.skills.join(", ") : (perfil?.skills as any) || "";
   const foto = /^https?:\/\//.test(perfil?.avatar_url || "") ? perfil!.avatar_url : "";
 
+  const nomesComp = await nomesDasCompetencias();
+  const mesAno = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" });
+
+  /* Competências que cada projeto prova, com o trecho. Vêm da leitura feita
+     ao salvar o projeto (lib/portfolio-competencias). São a matéria-prima da
+     seção de competências do site: cada uma chega com a prova, e a IA
+     externa não precisa adivinhar nada. */
+  const provadasDe = (p: any): { nome: string; trecho: string }[] =>
+    (Array.isArray(p.competencias?.itens) ? p.competencias.itens : [])
+      .filter((c: any) => nomesComp[c.id])
+      .map((c: any) => ({ nome: nomesComp[c.id], trecho: c.trecho }));
+
   let blocoProjetos = "";
   validos.forEach((p: any, i: number) => {
+    const provadas = provadasDe(p);
     blocoProjetos +=
       `\n${i + 1}. ${p.titulo}\n` +
-      linha("   Quando", p.feito_em ? new Date(`${p.feito_em}T12:00:00Z`).toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" }) : null) +
+      linha("   Quando", p.feito_em ? mesAno(p.feito_em) : null) +
       linha("   Resumo", p.resumo) +
       linha("   Problema", p.problema) +
       linha("   O que mudou", p.resultado) +
       linha("   Como foi feito", p.descricao) +
       linha("   Ferramentas", (p.ferramentas ?? []).join(", ")) +
+      (provadas.length
+        ? `   Competências que este projeto prova:\n${provadas.map((c) => `   - ${c.nome}: "${c.trecho}"`).join("\n")}\n`
+        : "") +
       linha("   Imagem", p.cover_url) +
       linha("   Link do projeto", p.link_url) +
       linha("   Código", p.repo_url);
@@ -123,6 +140,55 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     const horas = c.workload ? `, ${String(c.workload).replace(/h$/i, "")}h` : "";
     blocoCerts += `- ${c.course_title}${horas}. Verificação: ${SITE}/certificado/${c.code}\n`;
   }
+
+  /* Números da carreira, contados pela plataforma.
+
+     É a resposta ao "4h" e ao "100%" inventados: o layout de portfólio pede
+     número, e quando não recebe nenhum a IA cria. Estes são contagens do que
+     o aluno cadastrou, então são verdadeiros por construção, e dão ao layout
+     o destaque numérico que ele quer. */
+  const datas = validos.map((p: any) => p.feito_em).filter(Boolean).sort() as string[];
+  const primeiroAno = datas.length ? Number(datas[0].slice(0, 4)) : null;
+  const ultimoAno = datas.length ? Number(datas[datas.length - 1].slice(0, 4)) : null;
+  const todasComp = new Set(validos.flatMap((p: any) => provadasDe(p).map((c) => c.nome)));
+  const todasFerr = new Set(validos.flatMap((p: any) => p.ferramentas ?? []));
+  const numeros = [
+    validos.length ? `${validos.length} ${validos.length === 1 ? "projeto publicado" : "projetos publicados"}` : "",
+    todasComp.size ? `${todasComp.size} ${todasComp.size === 1 ? "competência comprovada" : "competências comprovadas"} por projeto` : "",
+    todasFerr.size ? `${todasFerr.size} ${todasFerr.size === 1 ? "ferramenta usada" : "ferramentas usadas"} nos projetos` : "",
+    primeiroAno && ultimoAno && ultimoAno > primeiroAno ? `projetos de ${primeiroAno} a ${ultimoAno}` : "",
+    certificados.length ? `${certificados.length} ${certificados.length === 1 ? "certificado verificável" : "certificados verificáveis"}` : "",
+  ].filter(Boolean);
+
+  /* Competências comprovadas, agrupadas: cada uma com os projetos que a
+     provam. É a seção que transforma o site num mapa, e não numa lista. */
+  const porCompetencia = new Map<string, { projeto: string; trecho: string }[]>();
+  for (const p of validos as any[]) {
+    for (const c of provadasDe(p)) {
+      const lista = porCompetencia.get(c.nome) ?? [];
+      lista.push({ projeto: p.titulo, trecho: c.trecho });
+      porCompetencia.set(c.nome, lista);
+    }
+  }
+  const blocoCompetencias = [...porCompetencia.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .map(([nome, provas]) => `- ${nome}: ${provas.map((x) => `${x.projeto} ("${x.trecho}")`).join("; ")}`)
+    .join("\n");
+
+  /* Linha do tempo: os projetos com data, do mais antigo ao mais novo. É a
+     mesma carreira que o Universo 4D anima; o site conta em texto. */
+  const blocoLinhaDoTempo = (validos as any[])
+    .filter((p) => p.feito_em)
+    .sort((a, b) => String(a.feito_em).localeCompare(String(b.feito_em)))
+    .map((p) => `- ${mesAno(p.feito_em)}: ${p.titulo}`)
+    .join("\n");
+
+  /* O link do Universo 4D. O site do aluno roda dentro da página pública, e o
+     #universo no endereço abre a constelação por cima dele. O link precisa de
+     target="_top" para sair do iframe; com "_blank" abriria outra aba. */
+  const { data: siteAtual } = await admin.from("portfolio_sites").select("slug").eq("user_id", userId).maybeSingle();
+  const slug = siteAtual?.slug || (await slugLivre(admin, slugDoNome(perfil?.full_name || ""), userId));
+  const linkUniverso = `${SITE}/portfolio/${slug}#universo`;
 
   const estiloEscolhido = ESTILOS[estilo] ?? ESTILOS.surpresa;
 
@@ -141,13 +207,23 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     !foto && "foto",
   ].filter(Boolean) as string[];
   const blocoAusentes = ausentes.length
-    ? `
-O aluno NÃO preencheu: ${ausentes.join(", ")}. Não escreva nada no lugar deles: nenhum cargo, slogan, frase de apresentação, link ou foto de exemplo. A falta desses campos é informação, não lacuna para você completar.
-`
+    ? `\nO aluno NÃO preencheu: ${ausentes.join(", ")}. Não escreva nada no lugar deles: nenhum cargo, slogan, frase de apresentação, link ou foto de exemplo. A falta desses campos é informação, não lacuna para você completar.\n`
     : "";
   const abertura = perfil?.headline
     ? "Abertura com o nome, o título profissional e o resumo do projeto principal."
     : "Abertura com o nome e o resumo do projeto principal, copiado como está. Sem cargo, sem slogan, sem frase de apresentação.";
+
+  const secoes = [
+    abertura + ` Na abertura, um botão de destaque "Explorar meu Universo 4D" apontando para ${linkUniverso} com target="_top".`,
+    numeros.length ? "Números da carreira: os números reais listados acima, grandes, como indicadores." : "",
+    perfil?.bio ? "Sobre, com o texto de apresentação." : "",
+    "Projetos, a parte principal. Para cada um: a data, o problema, o que foi feito, o que mudou, as competências que ele prova com o trecho entre aspas como evidência, e as ferramentas.",
+    blocoLinhaDoTempo ? "Linha do tempo da carreira, com os projetos em ordem de data." : "",
+    blocoCompetencias ? `Competências comprovadas: cada competência com os projetos que a provam e o trecho de evidência. Termine a seção com um link "Ver no Universo 4D" para ${linkUniverso} com target="_top".` : "",
+    "Ferramentas que aparecem nos projetos.",
+    blocoCerts ? "Certificados, cada um com o botão Verificar." : "",
+    perfil?.linkedin_url ? "Contato pelo LinkedIn." : "",
+  ].filter(Boolean);
 
   const prompt = `Você é um designer e desenvolvedor front-end premiado. Crie o site de portfólio profissional de ${nome}, que trabalha com dados.
 
@@ -159,39 +235,41 @@ O site vai rodar num ambiente isolado e restrito. Se estas regras forem quebrada
 - Todo o CSS e o JavaScript dentro do próprio arquivo, em <style> e <script>.
 - Fontes só do Google Fonts. Bibliotecas, se precisar, só de cdnjs.cloudflare.com ou cdn.jsdelivr.net.
 - Nada de formulário, fetch, chamada de API ou iframe. O site não consegue acessar a rede.
-- Todo link externo com target="_blank" e rel="noopener".
+- Todo link externo com target="_blank" e rel="noopener". A única exceção são os links do Universo 4D, que usam target="_top".
 - Imagens: use só as URLs listadas abaixo. Não invente imagem, não use banco de imagens, não embuta imagem em base64.
 - Funcionar bem no celular, a partir de 360px de largura.
 - Respeitar prefers-reduced-motion e prefers-color-scheme.
+- Navegação por âncoras entre as seções, com um menu que acompanha a rolagem.
 
 # Conteúdo
 Use exatamente estes fatos. Não invente número, empresa, cargo, cliente, depoimento nem resultado. Se um campo não existir, omita a parte correspondente em vez de preencher com texto de exemplo.
 
 ${linha("Nome", nome)}${linha("Título profissional", perfil?.headline)}${linha("Sobre", perfil?.bio)}${linha("Habilidades", skills)}${linha("LinkedIn", perfil?.linkedin_url)}${linha("Foto", foto)}${blocoAusentes}
+${numeros.length ? `## Números reais da carreira\nContados pela plataforma a partir dos projetos. São os únicos números que podem aparecer como indicadores.\n${numeros.map((n) => `- ${n}`).join("\n")}\n` : ""}
 ## Projetos
 ${blocoProjetos || "\n(nenhum projeto pronto ainda: faça uma seção de projetos com a frase \"Projetos em breve\")\n"}
+${blocoLinhaDoTempo ? `## Linha do tempo\n${blocoLinhaDoTempo}\n` : ""}
+${blocoCompetencias ? `## Competências comprovadas\nCada competência foi identificada no texto dos projetos e vem com o trecho que a prova.\n${blocoCompetencias}\n` : ""}
 ${blocoCerts ? `## Certificados verificáveis\nEmitidos pela DriveData Academy. Mostre cada um com um botão "Verificar" apontando para o link.\n${blocoCerts}` : ""}
+## Universo 4D
+A página onde o site será publicado tem uma constelação interativa das competências de ${nome}, que cresce ao longo da carreira. Link: ${linkUniverso}
+
 # Direção de arte: ${estiloEscolhido.nome}
 ${estiloEscolhido.direcao}
 
 Isto não é um currículo, é a vitrine de alguém que resolve problemas com dados. Os números reais dos projetos são os protagonistas: dê a eles tamanho e destaque.
-Nunca crie número, percentual, prazo ou métrica que não esteja escrito nos fatos acima, nem para completar um layout. Se o layout pede um número e o fato não tem, troque o número por uma frase curta tirada do projeto.
+Nunca crie número, percentual, prazo ou métrica que não esteja escrito nos fatos acima, nem para completar um layout. Se o layout pede um número e o fato não tem, use os números reais da carreira ou troque o número por uma frase curta tirada do projeto.
 Evite a cara de template gerado por IA: nada de gradiente roxo e azul, nada de emoji como ícone, nada de tudo centralizado, nada de adjetivo vazio como "apaixonado por dados".
 
 # Estrutura
-1. ${abertura}
-2. Projetos, a parte principal: para cada um, o problema, o que foi feito e o que mudou.
-3. Ferramentas que aparecem nos projetos.
-${[blocoCerts ? "Certificados, com o link de verificação." : "", perfil?.linkedin_url ? "Contato pelo LinkedIn." : ""]
-  .filter(Boolean)
-  .map((t, i) => `${i + 4}. ${t}\n`)
-  .join("")}No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".`;
+${secoes.map((t, i) => `${i + 1}. ${t}`).join("\n")}
+No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".`;
 
   /* Os fatos, separados das instruções. O prompt tem números próprios (a
      numeração da estrutura, os 360px da regra de celular), e usar o prompt
      inteiro como régua deixava passar "4h" só porque existe um "4." na lista
-     de seções. */
-  const fatos = [nome, perfil?.headline, perfil?.bio, skills, blocoProjetos, blocoCerts].filter(Boolean).join("\n");
+     de seções. Os números da carreira entram: são fatos contados. */
+  const fatos = [nome, perfil?.headline, perfil?.bio, skills, blocoProjetos, blocoCerts, numeros.join("\n"), blocoLinhaDoTempo].filter(Boolean).join("\n");
 
   return { prompt, fatos, incluidos: validos.length, foraPorLacuna, foraPorPrivado, certificados: certificados.length };
 }

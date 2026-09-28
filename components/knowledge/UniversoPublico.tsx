@@ -89,6 +89,17 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
   const provasAte = (id: string) =>
     (dados?.provas?.[id] ?? []).filter((p) => !p.at || !atual || p.at <= atual.at.slice(0, 7));
   const comp = dados?.catalog.competencies.find((c) => c.id === selecionada);
+  /* Com quem a competência tocada se conecta, e por qual projeto. Só as que
+     já estão acesas no ponto da linha do tempo em que o visitante está. */
+  const conectadas = comp
+    ? Object.entries(dados?.conexoes ?? {})
+        .filter(([chave]) => chave.split("|").includes(comp.id))
+        .map(([chave, projetos]) => {
+          const outro = chave.split("|").find((x) => x !== comp.id)!;
+          return { id: outro, nome: dados!.catalog.competencies.find((c) => c.id === outro)?.name ?? outro, projetos };
+        })
+        .filter((c) => (scores[c.id]?.score ?? 0) > 0)
+    : [];
   const area = comp ? dados?.catalog.areas.find((a) => a.id === comp.area) : null;
   const sc = comp ? scores[comp.id] : null;
 
@@ -142,14 +153,33 @@ export default function UniversoPublico({ slug, nome, aoFechar }: { slug: string
                       que o visitante precisa ver é o projeto. */}
                   <p className="mt-3 text-sm text-slate-300">{sc.level}</p>
                   {provasAte(comp.id).length > 0 && (
-                    <ul className="mt-2 flex flex-col gap-1.5">
+                    <ul className="mt-2 flex flex-col gap-2.5">
                       {provasAte(comp.id).map((p) => (
-                        <li key={p.titulo} className="flex items-baseline justify-between gap-3 text-sm">
-                          <span className="min-w-0 truncate">{p.titulo}</span>
-                          {p.at && <span className="shrink-0 font-mono text-xs text-slate-400">{rotulo(`${p.at}-15T12:00:00Z`, "mes")}</span>}
+                        <li key={p.titulo} className="text-sm">
+                          <div className="flex items-baseline justify-between gap-3">
+                            <span className="min-w-0 truncate font-medium">{p.titulo}</span>
+                            {p.at && <span className="shrink-0 font-mono text-xs text-slate-400">{rotulo(`${p.at}-15T12:00:00Z`, "mes")}</span>}
+                          </div>
+                          {/* O porquê: o trecho do próprio projeto, ou a ferramenta usada. */}
+                          {p.motivo && <p className="mt-0.5 text-xs leading-relaxed text-slate-400">{p.motivo}</p>}
                         </li>
                       ))}
                     </ul>
+                  )}
+                  {conectadas.length > 0 && (
+                    <div className="mt-3 border-t border-white/10 pt-3">
+                      <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">Conecta com</p>
+                      <ul className="mt-1.5 flex flex-col gap-1.5">
+                        {conectadas.map((c) => (
+                          <li key={c.id} className="text-xs">
+                            <button onClick={() => setSelecionada(c.id)} className="text-left text-slate-200 hover:text-brand-green">
+                              <span className="font-semibold">{c.nome}</span>
+                              <span className="text-slate-400"> pelo projeto {c.projetos.join(", ")}</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                   <button onClick={() => setSelecionada(null)} className="mt-3 text-xs text-slate-400 hover:text-white">Ver resumo</button>
                 </>
