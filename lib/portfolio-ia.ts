@@ -100,7 +100,18 @@ Outras regras:
     return { ok: false as const, erro: "A resposta veio num formato que não consegui ler. Tente de novo." };
   }
 
-  const semTravessao = (t: unknown, max: number) => limpar(String(t ?? "").replace(/\s*[—–]\s*/g, ", "), max);
+  /* A IA às vezes passa do limite, e cortar no caractere deixava "moeda v" e
+     "otimizaram a" no fim. Corta no fim da última frase que cabe; sem frase,
+     na última palavra, sem deixar preposição ou vírgula pendurada. */
+  const caber = (t: string, max: number) => {
+    if (t.length <= max) return t;
+    const frase = t.slice(0, max + 1).match(/^[\s\S]*[.!?](?=\s|$)/)?.[0];
+    if (frase && frase.length >= max * 0.5) return frase.trim();
+    const palavras = t.slice(0, max + 1).split(/\s+/).slice(0, -1);
+    while (palavras.length > 3 && /^(a|o|as|os|e|de|da|do|das|dos|em|na|no|com|para|por|que|um|uma|ao|à|sem|entre)$/i.test(palavras[palavras.length - 1])) palavras.pop();
+    return palavras.join(" ").replace(/[,;:\s]+$/, "");
+  };
+  const semTravessao = (t: unknown, max: number) => limpar(caber(String(t ?? "").replace(/\s*[—–]\s*/g, ", ").trim(), max), max);
   const campos = {
     titulo: semTravessao(j.titulo, LIMITES.titulo),
     resumo: semTravessao(j.resumo, LIMITES.resumo),
