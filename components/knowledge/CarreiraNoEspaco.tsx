@@ -51,15 +51,24 @@ export function layoutDaCarreira(d: UniversoPublico, acesas: string[]) {
   const centro = pts.reduce((a, p) => a.add(p), new THREE.Vector3()).multiplyScalar(1 / Math.max(1, pts.length));
   const raio = Math.max(3, ...pts.map((p) => p.distanceTo(centro)));
 
+  /* Planetas num arco na frente e embaixo da constelação, em ordem de data.
+
+     Antes cada planeta nascia perto das competências que prova, e como quase
+     todo projeto prova gestão, nove planetas se amontoavam no mesmo canto com
+     os nomes uns sobre os outros. No arco cada um tem lugar próprio, o arco
+     conta a cronologia, e as linhas finas até as competências dizem o que
+     cada projeto prova. O arco usa o catálogo inteiro como referência, para
+     os planetas não andarem enquanto a constelação acende no play. */
+  const todas = d.catalog.competencies.map((c) => v(c.position));
+  const centroFixo = todas.reduce((a, p) => a.add(p), new THREE.Vector3()).multiplyScalar(1 / Math.max(1, todas.length));
+  const raioFixo = Math.max(3, ...todas.map((p) => p.distanceTo(centroFixo)));
+  const ordemPlanetas = [...(d.planetas ?? [])].sort((a, b) => a.at.localeCompare(b.at));
   const planetas = new Map<string, Vec3>();
-  (d.planetas ?? []).forEach((pl, i) => {
-    const ps = pl.competencias.map((id) => comp.get(id)).filter(Boolean).map((c) => v(c!.position));
-    const meio = ps.length ? ps.reduce((a, p) => a.add(p), new THREE.Vector3()).multiplyScalar(1 / ps.length) : centro.clone();
-    let dir = meio.clone().sub(centro).setZ(0);
-    if (dir.length() < 0.5) dir = new THREE.Vector3(Math.cos(i * 2.1), Math.sin(i * 2.1), 0);
-    dir.normalize().applyAxisAngle(new THREE.Vector3(0, 0, 1), (i % 3 - 1) * 0.5);
-    const pos = meio.add(dir.multiplyScalar(3.2)).add(new THREE.Vector3(0, 0, 1.4 + (i % 2) * 0.6));
-    planetas.set(pl.id, [pos.x, pos.y, pos.z]);
+  ordemPlanetas.forEach((pl, i) => {
+    const frac = ordemPlanetas.length > 1 ? i / (ordemPlanetas.length - 1) : 0.5;
+    const ang = THREE.MathUtils.degToRad(195 + frac * 150);
+    const r = raioFixo + 3.5;
+    planetas.set(pl.id, [centroFixo.x + Math.cos(ang) * r, centroFixo.y + Math.sin(ang) * r * 0.78, centroFixo.z + 2 + (i % 2) * 0.8]);
   });
 
   // A rota da nave: uma elipse por trás da constelação, do primeiro emprego ao atual.
