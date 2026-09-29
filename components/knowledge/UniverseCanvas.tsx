@@ -68,7 +68,7 @@ function Controls({ selected, catalog, reset, zoom, girando, cinema, visible, po
   const controls = useRef<OrbitControls | null>(null);
   useEffect(() => {
     const orbit = new OrbitControls(camera, gl.domElement); controls.current = orbit;
-    orbit.enableDamping = true; orbit.dampingFactor = .07; orbit.minDistance = 5; orbit.maxDistance = 46;
+    orbit.enableDamping = true; orbit.dampingFactor = .07; orbit.minDistance = 5; orbit.maxDistance = 72;
     const changed = () => invalidate();
     orbit.target.set(0, -.6, 0); orbit.addEventListener('change', changed);
     return () => { orbit.removeEventListener('change', changed); orbit.dispose(); controls.current = null; };
@@ -83,7 +83,7 @@ function Controls({ selected, catalog, reset, zoom, girando, cinema, visible, po
     const orbit = controls.current; if (!orbit) return;
     const factor = Math.pow(.8, zoom - previousZoom.current); previousZoom.current = zoom;
     const offset = camera.position.clone().sub(orbit.target).multiplyScalar(factor);
-    offset.setLength(THREE.MathUtils.clamp(offset.length(), 5, 46)); camera.position.copy(orbit.target).add(offset); orbit.update(); invalidate();
+    offset.setLength(THREE.MathUtils.clamp(offset.length(), 5, 72)); camera.position.copy(orbit.target).add(offset); orbit.update(); invalidate();
   }, [zoom, camera, invalidate]);
   useEffect(() => {
     const orbit = controls.current; if (!orbit) return;
@@ -105,7 +105,7 @@ function Controls({ selected, catalog, reset, zoom, girando, cinema, visible, po
     if (!pts.length) return;
     const centro = pts.reduce((acc, p) => acc.add(p), new THREE.Vector3()).multiplyScalar(1 / pts.length);
     const raio = Math.max(2.2, ...pts.map(p => p.distanceTo(centro)));
-    desejo.current = { alvo: centro, dist: THREE.MathUtils.clamp(raio * 2.4 + 5, 8, 36) };
+    desejo.current = { alvo: centro, dist: THREE.MathUtils.clamp(raio * 2.4 + 5, 8, 58) };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cinema, catalog, chaveVisiveis, reset]);
   useFrame(() => {

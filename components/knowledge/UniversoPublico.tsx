@@ -24,6 +24,26 @@ const Canvas = dynamic(() => import("./UniverseCanvas"), {
 // A carreira no espaço usa o motor 3D, então também fica fora do servidor.
 const CarreiraNoEspaco = dynamic(() => import("./CarreiraNoEspaco"), { ssr: false });
 
+/* A constelação do catálogo foi desenhada para a tela interna, com rótulos
+   pequenos. Aqui os rótulos são maiores e ainda há planetas, nave e cometas
+   em volta: na escala original os nomes encavalavam. Afastar as estrelas do
+   centro abre espaço sem mudar a forma do desenho. */
+const ESPACO = 1.6;
+function espacar(d: Dados): Dados {
+  const cs = d.catalog.competencies;
+  if (!cs.length) return d;
+  const c = [0, 1, 2].map((i) => cs.reduce((s, x) => s + x.position[i], 0) / cs.length);
+  const longe = (p: number[]) => p.map((v, i) => c[i] + (v - c[i]) * ESPACO) as typeof cs[number]["position"];
+  return {
+    ...d,
+    catalog: {
+      ...d.catalog,
+      competencies: cs.map((x) => ({ ...x, position: longe(x.position) })),
+      areas: d.catalog.areas.map((a: any) => (Array.isArray(a.position) ? { ...a, position: longe(a.position) } : a)),
+    },
+  };
+}
+
 const mesAno = (iso: string | null | undefined) =>
   iso ? new Date(iso).toLocaleDateString("pt-BR", { month: "short", year: "numeric", timeZone: "UTC" }).replace(/\./g, "").replace(" de ", " ") : "";
 
@@ -58,6 +78,7 @@ export default function UniversoPublico({
   const [estado, setEstado] = useState<"carregando" | "ok" | "vazio" | "erro">("carregando");
   const [quadro, setQuadro] = useState(0);
   const capitulos = useMemo(() => (dados ? capitulosDaCarreira(dados) : []), [dados]);
+  const noEspaco = useMemo(() => (dados ? espacar(dados) : null), [dados]);
   const [tocando, setTocando] = useState(false);
   const [selecionada, setSelecionada] = useState<string | null>(null);
   // Um objeto da carreira tocado: planeta, lua, parada da nave, cometa, sinal...
@@ -267,7 +288,7 @@ export default function UniversoPublico({
         {estado === "ok" && dados && (
           <>
             <Canvas
-              catalog={dados.catalog}
+              catalog={noEspaco!.catalog}
               scores={scores}
               visible={visiveis}
               selected={selecionada}
@@ -281,7 +302,7 @@ export default function UniversoPublico({
               pontosExtras={pontosExtras}
               extras={
                 <CarreiraNoEspaco
-                  dados={dados}
+                  dados={noEspaco!}
                   acesas={visiveis}
                   ate={ateMs}
                   cinema={!reduzido}

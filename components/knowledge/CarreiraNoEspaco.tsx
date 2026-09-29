@@ -58,7 +58,7 @@ export function layoutDaCarreira(d: UniversoPublico, acesas: string[]) {
     let dir = meio.clone().sub(centro).setZ(0);
     if (dir.length() < 0.5) dir = new THREE.Vector3(Math.cos(i * 2.1), Math.sin(i * 2.1), 0);
     dir.normalize().applyAxisAngle(new THREE.Vector3(0, 0, 1), (i % 3 - 1) * 0.5);
-    const pos = meio.add(dir.multiplyScalar(2.2)).add(new THREE.Vector3(0, 0, 1.4 + (i % 2) * 0.6));
+    const pos = meio.add(dir.multiplyScalar(3.2)).add(new THREE.Vector3(0, 0, 1.4 + (i % 2) * 0.6));
     planetas.set(pl.id, [pos.x, pos.y, pos.z]);
   });
 
