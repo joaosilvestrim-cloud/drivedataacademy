@@ -150,7 +150,9 @@ export default function UniversoPublico({
     const t0 = performance.now();
     let raf = 0;
     const passo = (agora: number) => {
-      const k = Math.min(1, (agora - t0) / 900);
+      // O carimbo do requestAnimationFrame pode vir de antes do t0: sem o
+      // piso em zero, a nota fica negativa por um quadro e o raio vira NaN.
+      const k = Math.min(1, Math.max(0, (agora - t0) / 900));
       const e = 1 - Math.pow(1 - k, 3);
       const prox: Record<string, Score> = {};
       for (const [id, sc] of Object.entries(alvo)) {

@@ -155,7 +155,7 @@ function Node({ position, color, score, focused, dim, label, onClick, reduced, c
   const halo = useRef<THREE.Mesh>(null);
   const onda = useRef<THREE.Mesh>(null);
   const nasceu = useRef<number | null>(null);
-  const radius = .10 + Math.sqrt(score.score / 100) * .21;
+  const radius = .10 + Math.sqrt(Math.max(0, score.score || 0) / 100) * .21;
   const ignicao = cinema && !reduced;
   useFrame(({ clock }) => {
     if (halo.current && !reduced) halo.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 1.8 + position[0]) * .08 * ((score.freshness ?? 0) / 100));
