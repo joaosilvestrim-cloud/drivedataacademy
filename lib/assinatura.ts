@@ -139,3 +139,35 @@ export async function cancelarNoAsaas(subscriptionId: string): Promise<{ ok: boo
     return { ok: false, resposta: `sem resposta do Asaas: ${String(e?.message || e).slice(0, 200)}` };
   }
 }
+
+/* Confere no Asaas se ainda existe cobrança recorrente para um e-mail.
+
+   Serve ao cancelamento que falhou e foi resolvido à mão no painel do Asaas:
+   o alerta só sai da fila quando o Asaas confirma que não sobrou nenhuma
+   assinatura ativa para aquele cliente. Olha todos os clientes com o e-mail,
+   porque o mesmo aluno pode ter sido cadastrado duas vezes. */
+export async function assinaturasAtivasNoAsaas(email: string): Promise<{ ok: true; ativas: string[]; vistas: string[] } | { ok: false; erro: string }> {
+  const chave = process.env.ASAAS_API_KEY;
+  if (!chave) return { ok: false, erro: "ASAAS_API_KEY não configurada" };
+  const get = async (caminho: string) => {
+    const r = await fetch(`${BASE}${caminho}`, { headers: { access_token: chave, "User-Agent": "drivedata-academy" }, cache: "no-store" });
+    if (!r.ok) throw new Error(`${r.status} ${(await r.text()).slice(0, 200)}`);
+    return r.json();
+  };
+  try {
+    const clientes = await get(`/customers?email=${encodeURIComponent(email)}`);
+    if (!clientes?.data?.length) return { ok: false, erro: "Nenhum cliente com esse e-mail no Asaas." };
+    const ativas: string[] = [];
+    const vistas: string[] = [];
+    for (const c of clientes.data) {
+      const subs = await get(`/subscriptions?customer=${c.id}&includeDeleted=true`);
+      for (const s of subs?.data ?? []) {
+        vistas.push(`${s.id} ${s.deleted ? "apagada" : String(s.status).toLowerCase()}`);
+        if (!s.deleted && s.status === "ACTIVE") ativas.push(s.id);
+      }
+    }
+    return { ok: true, ativas, vistas };
+  } catch (e: any) {
+    return { ok: false, erro: `sem resposta do Asaas: ${String(e?.message || e).slice(0, 200)}` };
+  }
+}

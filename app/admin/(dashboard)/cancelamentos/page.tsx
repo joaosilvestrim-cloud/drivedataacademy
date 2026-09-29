@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { MOTIVOS } from "@/lib/assinatura-motivos";
+import { conferirNoAsaas } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ function data(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 }
 
-export default async function CancelamentosPage() {
+export default async function CancelamentosPage({ searchParams }: { searchParams: { ok?: string; erro?: string } }) {
   const admin = createAdminClient();
   const { data: linhas } = await admin
     .from("subscription_cancellations")
@@ -45,22 +46,37 @@ export default async function CancelamentosPage() {
         O aluno cancela pela própria tela e o Asaas é avisado na hora. Aqui fica o registro, com o motivo que ele deu.
       </p>
 
+      {searchParams?.ok && (
+        <div className="mt-5 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</div>
+      )}
+      {searchParams?.erro && (
+        <div className="mt-5 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{searchParams.erro}</div>
+      )}
+
       {presos.length > 0 && (
         <div className="mt-6 rounded-2xl border border-red-400/30 bg-red-500/[0.07] p-5">
           <p className="text-sm font-semibold text-red-300">
             {presos.length === 1 ? "1 cancelamento não saiu no Asaas" : `${presos.length} cancelamentos não saíram no Asaas`}
           </p>
           <p className="mt-1 text-sm text-slate-300">
-            A cobrança continua ativa para estas pessoas. Cancele a assinatura no painel do Asaas.
+            A cobrança pode continuar ativa para estas pessoas. Cancele a assinatura no painel do Asaas e depois clique em Conferir no Asaas: o alerta só sai quando o Asaas confirma que não sobrou cobrança.
           </p>
           <ul className="mt-4 space-y-2">
             {presos.map((c) => (
-              <li key={c.id} className="rounded-xl border border-white/10 bg-ink-900/60 px-4 py-3 text-sm">
+              <li key={c.id} className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-white/10 bg-ink-900/60 px-4 py-3 text-sm">
+                <div className="min-w-0">
                 <p className="font-medium text-white">{c.email}</p>
                 <p className="mt-0.5 font-mono text-xs text-slate-400">
                   {c.asaas_subscription_id || "sem id de assinatura"} · {data(c.created_at)}
                 </p>
                 {c.asaas_resposta && <p className="mt-1 text-xs text-slate-500">{c.asaas_resposta}</p>}
+                </div>
+                <form action={conferirNoAsaas}>
+                  <input type="hidden" name="id" value={c.id} />
+                  <button type="submit" className="rounded-lg border border-white/20 px-3 py-1.5 text-xs font-semibold text-white hover:border-white/50">
+                    Conferir no Asaas
+                  </button>
+                </form>
               </li>
             ))}
           </ul>
