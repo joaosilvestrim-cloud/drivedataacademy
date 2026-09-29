@@ -107,9 +107,10 @@ Outras regras:
     if (t.length <= max) return t;
     const frase = t.slice(0, max + 1).match(/^[\s\S]*[.!?](?=\s|$)/)?.[0];
     if (frase && frase.length >= max * 0.5) return frase.trim();
-    // Resumo é frase: sem ponto que caiba, fecha na última vírgula.
-    const virgula = t.slice(0, max).lastIndexOf(",");
-    if (max > 100 && virgula >= max * 0.5) return `${t.slice(0, virgula).trim()}.`;
+    // Resumo é frase: sem ponto que caiba, fecha na primeira vírgula depois da
+    // metade, que costuma encerrar a ideia principal antes de uma lista.
+    const virgula = t.indexOf(",", Math.floor(max * 0.5));
+    if (max > 100 && virgula > 0 && virgula < max) return `${t.slice(0, virgula).trim()}.`;
     const palavras = t.slice(0, max + 1).split(/\s+/).slice(0, -1);
     while (palavras.length > 3 && /^(a|o|as|os|e|de|da|do|das|dos|em|na|no|com|para|por|que|um|uma|ao|à|sem|entre)$/i.test(palavras[palavras.length - 1])) palavras.pop();
     return palavras.join(" ").replace(/[,;:\s]+$/, "");
