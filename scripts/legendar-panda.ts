@@ -50,7 +50,10 @@ for (const l of fs.readFileSync(".env.local", "utf8").split("\n")) {
 
 const PANDA = "https://api-v2.pandavideo.com.br";
 const BASE = "pt-BR"; // idioma falado nas aulas: é dele que as traduções saem
-const OBRIGATORIOS = ["pt-BR", "en"];
+/* O que o aluno precisa ver: inglês e espanhol (decisão de 29/09). O português
+   não é exigido na tela, mas continua sendo a ORIGEM: toda tradução sai dele,
+   então sem português bom não há tradução. */
+const OBRIGATORIOS = ["en", "es"];
 const COBERTURA_MINIMA = 0.92;
 
 const H: Record<string, string> = {
@@ -115,6 +118,11 @@ async function main() {
   const iLimite = process.argv.indexOf("--limite");
   const limite = iLimite > 0 ? Number(process.argv[iLimite + 1]) : Infinity;
   const aplicar = process.argv.includes("--aplicar");
+  /* Com o português bom e duas traduções faltando, o Panda cobra cada tradução
+     como um trabalho. Apagar o português e refazer a transcrição com as duas
+     traduções junto custa a metade, mas troca o português atual, que teve
+     correção de termo técnico, pelo do Panda. Por isso é opção, não padrão. */
+  const economizar = process.argv.includes("--refazer-base");
 
   const usados = await emUso();
   const videos: any[] = [];
@@ -126,6 +134,7 @@ async function main() {
   }
 
   const planos: Plano[] = [];
+  let economiaPossivel = 0;
   for (const v of videos) {
     /* Os dois ids do Panda: `id` é o da API e `video_external_id` é o do
        player, que é o que a plataforma guarda dentro do iframe colado. */
@@ -135,7 +144,7 @@ async function main() {
 
     const faltando: string[] = [];
     const apagar: string[] = [];
-    for (const lang of idiomas) {
+    for (const lang of idiomas.filter((l) => l !== BASE)) {
       const cob = await cobertura(v.id, lang, duracao);
       if (cob >= COBERTURA_MINIMA) continue;
       faltando.push(lang);
@@ -143,14 +152,15 @@ async function main() {
     }
     if (!faltando.length) continue;
 
-    /* Uma chamada por vídeo sempre que possível. Se o português precisa ser
-       refeito, as traduções vão de carona nele e o vídeo é cobrado uma vez.
-       Se o português já está bom, sobra uma tradução por idioma, e aí cada
-       uma é um trabalho cobrado. */
-    const refazerBase = faltando.includes(BASE);
-    const traduzir = faltando.filter((l) => l !== BASE);
+    // A origem: sem português que cubra o vídeo, a tradução não tem de onde sair.
+    const cobBase = await cobertura(v.id, BASE, duracao);
+    const baseOk = cobBase >= COBERTURA_MINIMA;
     const unidade = Math.ceil(duracao / 1800);
+    const refazerBase = !baseOk || (economizar && faltando.length >= 2);
+    if (refazerBase && cobBase >= 0) apagar.push(BASE);
+    const traduzir = faltando;
     const chamadas = refazerBase ? 1 : traduzir.length;
+    if (baseOk && faltando.length >= 2 && !economizar) economiaPossivel += unidade * (faltando.length - 1);
 
     planos.push({
       videoId: v.id,
@@ -179,11 +189,12 @@ async function main() {
 
   console.log(`vídeos em uso: ${usados.size}  |  vídeos pendentes: ${planos.length}\n`);
   for (const p of planos) {
-    const o = [p.refazerBase ? BASE : null, ...p.traduzir].filter(Boolean).join(" + ");
+    const o = (p.refazerBase ? `${BASE} → ` : "") + p.traduzir.join(" + ");
     const nota = p.apagar.length ? ` (apaga ${p.apagar.join(", ")} truncada)` : "";
     console.log(`  ${String(p.min).padStart(3)} min  ${String(p.custo).padStart(2)} créd  ${o.padEnd(12)} ${p.titulo.slice(0, 40)}${nota}`);
   }
   console.log(`\ncusto: ${total} créditos (R$ ${total},00)  |  saldo: ${balance}`);
+  if (economiaPossivel) console.log(`com --refazer-base: ${total - economiaPossivel} créditos (apaga o português bom e refaz pelo Panda)`);
 
   if (!aplicar) return console.log("\nmodo seco. Para disparar: --aplicar");
 

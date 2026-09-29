@@ -36,7 +36,7 @@ for (const l of fs.readFileSync(".env.local", "utf8").split("\n")) {
 }
 
 const PANDA = "https://api-v2.pandavideo.com.br";
-const OBRIGATORIOS = ["pt-BR", "en"]; // espanhol ainda é decisão comercial
+const OBRIGATORIOS = ["en", "es"]; // decisão de 29/09: o português é só a origem das traduções
 
 /* Abaixo disto a legenda para antes do vídeo. 92% e não 100% porque é comum o
    fim ter só música, silêncio ou o "até a próxima" cortado. */

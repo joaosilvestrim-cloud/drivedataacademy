@@ -30,8 +30,10 @@ o da API, que é outro. Endpoint de legenda usa o da API. Confundir devolve
 
 ## Legendas
 
-**Português e inglês são obrigatórios.** Espanhol é decisão comercial, hoje
-presente em 26 dos 56 vídeos por herança do trabalho inicial.
+**Inglês e espanhol são obrigatórios** (decisão de 29/09). O português não é
+exigido na tela, mas é a origem: toda tradução sai da transcrição em
+português, então um vídeo sem português bom é transcrito de novo, e as duas
+traduções vão junto no mesmo trabalho.
 
 A geração é pela IA do próprio Panda, nível **Legenda Essencial**.
 
@@ -47,8 +49,11 @@ impressão. O painel sempre manda a tradução junto, então a conta aparece uma
 vez só e parece que só a tradução custou. Medido em 28/09: um vídeo de 1
 minuto, só transcrição, consumiu 1 crédito.
 
-A consequência prática é que pedir português e inglês em duas chamadas custa
-o dobro de pedir em uma. É por isso que a geração passou a ser por script, e
+A consequência prática é que pedir as traduções em chamadas separadas custa
+o dobro de pedir junto com a transcrição. Com o português já bom, cada
+tradução que falta é um trabalho cobrado; `--refazer-base` apaga o português e
+refaz tudo num trabalho só, mais barato, trocando o português corrigido pelo
+do Panda. É por isso que a geração passou a ser por script, e
 não mais pelo painel.
 
 O motor do Panda cobre o vídeo inteiro mesmo com áudio ruim, o que o Whisper
