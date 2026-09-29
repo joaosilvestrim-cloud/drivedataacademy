@@ -431,3 +431,10 @@ export async function sendMaterialEmail({
     return { sent: false, reason: "network" };
   }
 }
+
+/* E-mail genérico com a moldura da Academy, para fluxos que não têm modelo
+   próprio. Hoje: o pedido de confirmação de quem escreve uma recomendação e
+   o aviso ao aluno de que uma recomendação chegou. */
+export async function sendBrandedEmail(to: string, subject: string, titulo: string, corpoHtml: string, meta?: EmailMeta) {
+  return sendHtmlEmail(to, subject, shell(titulo, corpoHtml), "RESEND_FROM_CONTA", meta);
+}

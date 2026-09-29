@@ -51,15 +51,23 @@ async function catalogoAtual(): Promise<Catalog | null> {
   }
 }
 
-/** Devolve null quando a IA não respondeu. Lista vazia é resposta válida: o texto não prova nada do catálogo. */
-export async function identificarCompetencias(texto: string): Promise<CompetenciaProvada[] | null> {
-  const limpo = (texto || "").trim().slice(0, 6000);
+/* Dois modos, a mesma trava.
+
+   "projeto": o que o texto de um projeto do aluno PROVA que ele sabe fazer.
+   "vaga": o que o texto de uma vaga PEDE do candidato, para a comparação de
+   aderência na página pública.
+
+   Nos dois, cada competência vem com um trecho literal do texto, conferido no
+   código. Numa vaga isso impede a IA de "achar" requisito que a vaga não
+   escreveu, e o recrutador vê de onde saiu cada item. */
+export async function identificarCompetencias(texto: string, modo: "projeto" | "vaga" = "projeto"): Promise<CompetenciaProvada[] | null> {
+  const limpo = (texto || "").trim().slice(0, modo === "vaga" ? 9000 : 6000);
   if (limpo.length < 30) return [];
   const catalogo = await catalogoAtual();
   if (!catalogo) return null;
 
   const lista = catalogo.competencies.map((c) => `- ${c.id}: ${c.name}. ${c.description}`).join("\n");
-  const sistema = `Você lê o texto de um projeto profissional e aponta quais competências do catálogo abaixo ele DEMONSTRA.
+  const sistema = modo === "vaga" ? promptDaVaga(lista) : `Você lê o texto de um projeto profissional e aponta quais competências do catálogo abaixo ele DEMONSTRA.
 
 Catálogo (use só estes ids):
 ${lista}
@@ -105,7 +113,24 @@ Regras:
     return null;
   }
 
-  /* Competência que é ferramenta só vale com o nome dela no trecho. No teste,
+  function promptDaVaga(lista: string): string {
+  return `Você lê a descrição de uma vaga de emprego e aponta quais competências do catálogo abaixo ela PEDE do candidato.
+
+Catálogo (use só estes ids):
+${lista}
+
+Devolva APENAS um JSON: {"competencias": [{"id": "...", "trecho": "..."}]}
+
+Regras:
+- "trecho" é uma citação LITERAL da vaga, copiada caractere por caractere, de 3 a 25 palavras, que mostra o pedido. Não resuma nem parafraseie.
+- Entra o que a vaga pede como requisito ou diferencial. Benefício, descrição da empresa e cultura não contam.
+- Competência que é ferramenta (Power BI, DAX, SQL, Excel, Python, Snowflake) só entra se o nome da ferramenta estiver no trecho.
+- Na dúvida, deixe de fora.
+- Uma entrada por competência. No máximo 12.
+- Se nada do catálogo é pedido, devolva {"competencias": []}.`;
+}
+
+/* Competência que é ferramenta só vale com o nome dela no trecho. No teste,
    "dashboards de psicólogos e pacientes" acendeu Power BI num projeto que não
    usou Power BI. O trecho existia, mas não provava. Para ferramenta isso dá
    para conferir no código; para as outras, fica o critério do prompt. */
@@ -136,7 +161,7 @@ const EXIGE_TERMO: Record<string, string[]> = {
     vistos.add(id);
     itens.push({ id, trecho: cortarNaPalavra(trecho, 220) });
   }
-  return itens.slice(0, 10);
+  return itens.slice(0, modo === "vaga" ? 12 : 10);
 }
 
 /* Para salvar o projeto: reaproveita o que já foi identificado se o texto não
@@ -165,4 +190,77 @@ function cortarNaPalavra(texto: string, max: number): string {
   if (texto.length <= max) return texto;
   const ate = texto.lastIndexOf(" ", max);
   return `${texto.slice(0, ate > max * 0.6 ? ate : max).replace(/[,;:\s]+$/, "")}…`;
+}
+
+/* O que um cargo costuma pedir, para a estrela-guia.
+
+   Aqui não há texto do aluno para citar: o objetivo é um título curto, como
+   "Head de Dados". Então a leitura é declaradamente uma estimativa, e a
+   página diz isso ("o que esse cargo costuma pedir"). O motivo de cada item
+   é curto e fica visível, para o aluno poder discordar. */
+export async function competenciasDoObjetivo(titulo: string): Promise<{ id: string; motivo: string }[] | null> {
+  const alvo = (titulo || "").trim().slice(0, 120);
+  if (alvo.length < 3) return [];
+  const catalogo = await catalogoAtual();
+  if (!catalogo) return null;
+  const lista = catalogo.competencies.map((c) => `- ${c.id}: ${c.name}. ${c.description}`).join("\n");
+  const sistema = `Um profissional quer chegar ao cargo abaixo. Aponte, do catálogo, as competências que esse cargo costuma pedir no mercado brasileiro.
+
+Catálogo (use só estes ids):
+${lista}
+
+Devolva APENAS um JSON: {"competencias": [{"id": "...", "motivo": "..."}]}
+
+Regras:
+- Entre 4 e 8 competências, as mais importantes para o cargo.
+- "motivo": uma frase curta, de até 14 palavras, dizendo por que o cargo pede isso.
+- Não invente cargo diferente do pedido.`;
+  let resposta = await chamarClaude({ sistema, usuario: `Cargo: ${alvo}`, max_tokens: 800 });
+  if (!resposta) {
+    const r = await chamarIA({
+      messages: [{ role: "system", content: sistema }, { role: "user", content: `Cargo: ${alvo}` }],
+      json: true, temperature: 0.1, max_tokens: 1000, raciocinio: "low", modelo: "openai/gpt-oss-120b", timeoutMs: 30000,
+    });
+    resposta = r?.texto ?? null;
+  }
+  if (!resposta) return null;
+  try {
+    const j = JSON.parse(resposta.slice(resposta.indexOf("{"), resposta.lastIndexOf("}") + 1));
+    const ids = new Set(catalogo.competencies.map((c) => c.id));
+    const vistos = new Set<string>();
+    return (Array.isArray(j?.competencias) ? j.competencias : [])
+      .filter((c: any) => ids.has(String(c?.id)) && !vistos.has(String(c.id)) && vistos.add(String(c.id)))
+      .map((c: any) => ({ id: String(c.id), motivo: cortarNaPalavra(String(c.motivo || "").trim(), 120) }))
+      .slice(0, 8);
+  } catch {
+    return null;
+  }
+}
+
+/* Cursos da Academy que trabalham uma competência. Duas fontes: o
+   mapeamento oficial do catálogo (curso para competência) e, na falta dele, o
+   nome da competência escrito no título ou na descrição do curso. A segunda
+   é mais fraca, mas é literal: o curso cita aquilo. */
+export async function cursosPorCompetencia(admin: { from: (t: string) => any }): Promise<Record<string, { titulo: string; slug: string }[]>> {
+  let doc: any = null;
+  try {
+    const versoes = await catalogVersions();
+    doc = versoes.at(-1)?.document ?? null;
+  } catch {}
+  if (!doc) return {};
+  const { data: cursos } = await admin.from("courses").select("id, slug, title, description").eq("published", true);
+  const porId = new Map<string, any>((cursos ?? []).map((c: any) => [c.id, c]));
+  const saida: Record<string, { titulo: string; slug: string }[]> = {};
+  const poe = (comp: string, c: any) => {
+    if (!c?.slug || /materiais/i.test(c.slug)) return;
+    const lista = (saida[comp] ??= []);
+    if (!lista.some((x) => x.slug === c.slug)) lista.push({ titulo: c.title, slug: c.slug });
+  };
+  for (const m of doc.mappings ?? []) poe(m.competency, porId.get(m.courseId));
+  for (const comp of doc.competencies ?? []) {
+    const nome = ` ${norm(comp.name)} `;
+    if (norm(comp.name).length < 3) continue;
+    for (const c of cursos ?? []) if (` ${norm(`${c.title} ${c.description || ""}`)} `.includes(nome)) poe(comp.id, c);
+  }
+  return saida;
 }

@@ -7,6 +7,9 @@ import { LACUNA, type Projeto } from "@/lib/portfolio";
 import { vitrine } from "@/lib/portfolio-servidor";
 import Portfolio, { type Autor } from "./Portfolio";
 import SiteDoPortfolio, { type SiteAtual } from "./SiteDoPortfolio";
+import CarreiraDoAluno from "./CarreiraDoAluno";
+import { carreiraDoAluno } from "@/lib/portfolio-carreira";
+import { cursosPorCompetencia, nomesDasCompetencias } from "@/lib/portfolio-competencias";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +35,15 @@ export default async function PortfolioPage() {
     admin.from("portfolio_sites").select("slug, publicado, mostrar_universo, bloqueado").eq("user_id", user.id).maybeSingle(),
   ]);
   const { data: meuPerfil } = await admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+
+  /* A carreira além dos projetos. Sem a migration do universo da carreira,
+     carreira.pronta é falso e as partes novas não aparecem. */
+  const [carreira, nomesComp, cursosComp] = await Promise.all([
+    carreiraDoAluno(admin, user.id),
+    nomesDasCompetencias(),
+    cursosPorCompetencia(admin),
+  ]);
+  const provadas = [...new Set(((meusRes.data ?? []) as any[]).flatMap((p) => (p.competencias?.itens ?? []).map((c: any) => c.id)))];
   const siteAtual = (siteRes.data ?? null) as SiteAtual;
   // Mesma régua do prompt: público e sem lacuna entre colchetes.
   const prontos = meusProjetosProntos(meusRes.data ?? []);
@@ -76,6 +88,18 @@ export default async function PortfolioPage() {
           autores={autores}
           curtidos={((curtidasRes.data ?? []) as any[]).map((c) => c.project_id)}
           cursos={(cursosRes.data ?? []) as { id: string; title: string }[]}
+          detalhes={carreira.detalhes}
+          comDetalhes={carreira.pronta}
+        />
+      )}
+
+      {!semTabela && (
+        <CarreiraDoAluno
+          carreira={carreira}
+          projetos={((meusRes.data ?? []) as any[]).map((p) => ({ id: p.id, titulo: p.titulo }))}
+          nomes={nomesComp}
+          provadas={provadas}
+          cursos={cursosComp}
         />
       )}
 

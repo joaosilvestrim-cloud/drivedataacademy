@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
 import SeloCasa from "@/components/comunidade/SeloCasa";
 import { FERRAMENTAS_SUGERIDAS, LACUNA, LIMITES, STATUS, type Projeto } from "@/lib/portfolio";
+import type { Detalhe } from "@/lib/portfolio-carreira";
 import { assinarCapaDoProjeto, curtirProjeto, excluirProjeto, organizarComIA, previaDasCompetencias, salvarProjeto } from "./actions";
 
 /* Vitrine de portfólio.
@@ -123,12 +124,18 @@ export default function Portfolio({
   autores,
   curtidos,
   cursos,
+  detalhes = {},
+  comDetalhes = false,
 }: {
   vitrine: Projeto[];
   meus: Projeto[];
   autores: Record<string, Autor>;
   curtidos: string[];
   cursos: { id: string; title: string }[];
+  /** Detalhes do projeto (papel, time, duração...), das tabelas do universo da carreira. */
+  detalhes?: Record<string, Detalhe>;
+  /** As tabelas existem. Sem elas, os campos novos não aparecem. */
+  comDetalhes?: boolean;
 }) {
   const tr = usarTraducao();
   const [aba, setAba] = useState<"vitrine" | "meus">(meus.length ? "meus" : "vitrine");
@@ -287,6 +294,8 @@ export default function Portfolio({
           projeto={editando === "novo" ? null : editando}
           cursos={cursos}
           aoFechar={() => setEditando(null)}
+          detalhe={editando && editando !== "novo" ? detalhes[editando.id] ?? null : null}
+          comDetalhes={comDetalhes}
         />
       )}
     </div>
@@ -364,7 +373,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
   );
 }
 
-function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cursos: { id: string; title: string }[]; aoFechar: () => void }) {
+function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = false }: { projeto: Projeto | null; cursos: { id: string; title: string }[]; aoFechar: () => void; detalhe?: Detalhe | null; comDetalhes?: boolean }) {
   const tr = usarTraducao();
   const [ferramentas, setFerramentas] = useState<string[]>(projeto?.ferramentas ?? []);
   const [capa, setCapa] = useState(projeto?.cover_url ?? "");
@@ -564,6 +573,32 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
             <p className="mt-1 text-xs text-slate-500">{tr("Mês e ano bastam. É o que faz a sua carreira aparecer em ordem no Universo 4D do seu site.")}</p>
           </div>
 
+          {/* O planeta do projeto no 4D: tamanho pela duração, anéis pelo time.
+              E o papel responde a primeira pergunta de qualquer entrevista. */}
+          {comDetalhes && (
+            <div className="flex flex-col gap-4 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
+              <div>
+                <label className={rotulo} htmlFor="p-papel">{tr("Seu papel no projeto")}</label>
+                <textarea id="p-papel" name="papel" defaultValue={detalhe?.papel ?? ""} rows={2} maxLength={600} placeholder={tr("O que foi seu e o que foi do time. Ex: conduzi o levantamento e modelei os dados; o time cuidou da integração.")} className={`${campo} mt-1 resize-y`} />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label className={rotulo} htmlFor="p-setor">{tr("Setor")}</label>
+                  <input id="p-setor" name="setor" defaultValue={detalhe?.setor ?? ""} maxLength={40} placeholder={tr("logística, saúde...")} className={`${campo} mt-1`} />
+                </div>
+                <div>
+                  <label className={rotulo} htmlFor="p-time">{tr("Pessoas no time")}</label>
+                  <input id="p-time" name="time_tamanho" type="number" min={1} max={500} defaultValue={detalhe?.time_tamanho ?? ""} className={`${campo} mt-1`} />
+                </div>
+                <div>
+                  <label className={rotulo} htmlFor="p-duracao">{tr("Duração (meses)")}</label>
+                  <input id="p-duracao" name="duracao_meses" type="number" min={1} max={240} defaultValue={detalhe?.duracao_meses ?? ""} className={`${campo} mt-1`} />
+                </div>
+              </div>
+              <p className="-mt-2 text-xs text-slate-500">{tr("No seu Universo 4D, o projeto vira um planeta: a duração define o tamanho, e o time, os anéis.")}</p>
+            </div>
+          )}
+
           <div>
             <span className={rotulo}>{tr("Imagem do projeto")}</span>
             <div className="mt-1 flex items-start gap-4">
@@ -619,6 +654,13 @@ function Formulario({ projeto, cursos, aoFechar }: { projeto: Projeto | null; cu
             <label className={rotulo} htmlFor="p-descricao">{tr("Como você fez (opcional)")}</label>
             <textarea id="p-descricao" name="descricao" defaultValue={projeto?.descricao ?? ""} rows={4} maxLength={LIMITES.descricao} placeholder={tr("Fontes, modelagem, medidas principais, decisões de visual.")} className={`${campo} mt-1 resize-y`} />
           </div>
+
+          {comDetalhes && (
+            <div>
+              <label className={rotulo} htmlFor="p-aprendizado">{tr("O que você aprendeu ou faria diferente (opcional)")}</label>
+              <textarea id="p-aprendizado" name="aprendizado" defaultValue={detalhe?.aprendizado ?? ""} rows={2} maxLength={600} placeholder={tr("Quase ninguém mostra isso, e é o que mais mostra maturidade.")} className={`${campo} mt-1 resize-y`} />
+            </div>
+          )}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>

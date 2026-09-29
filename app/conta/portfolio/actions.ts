@@ -6,8 +6,10 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
 import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
-import { organizarRelato } from "@/lib/portfolio-ia";
-import { competenciasParaSalvar, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
+import { organizarExperiencias, organizarRelato, type ExperienciaLida } from "@/lib/portfolio-ia";
+import { tabelaAusente } from "@/lib/portfolio-carreira";
+import { randomBytes } from "crypto";
+import { competenciasDoObjetivo, competenciasParaSalvar, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
 import { auditarSiteDoAluno, limparHtmlColado, montarPrompt, slugDoNome, slugLivre, textoDoPostLinkedIn, type Estilo } from "@/lib/portfolio-site";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
@@ -97,9 +99,11 @@ export async function salvarProjeto(formData: FormData) {
     const novoStatus = enviar ? "revisao" : atual.status === "aprovado" ? "revisao" : status;
     const { error } = await admin.from("portfolio_projects").update({ ...dados, status: novoStatus, motivo: null }).eq("id", id);
     if (error) return { ok: false as const, erro: error.message };
+    await salvarDetalhes(admin, id, user.id, formData);
   } else {
-    const { error } = await admin.from("portfolio_projects").insert({ ...dados, user_id: user.id, status });
+    const { data: novo, error } = await admin.from("portfolio_projects").insert({ ...dados, user_id: user.id, status }).select("id").single();
     if (error) return { ok: false as const, erro: error.message };
+    if (novo?.id) await salvarDetalhes(admin, novo.id, user.id, formData);
   }
 
   revalidatePath("/conta/portfolio");
@@ -227,4 +231,157 @@ export async function postDoLinkedIn() {
   const { data: site } = await admin.from("portfolio_sites").select("slug, publicado").eq("user_id", user.id).maybeSingle();
   if (!site?.publicado) return { ok: false as const, erro: "Publique o site primeiro." };
   return { ok: true as const, texto: await textoDoPostLinkedIn(admin, user.id, `${SITE}/portfolio/${site.slug}`) };
+}
+
+/* ------------------------------------------------------------------------
+   Universo da carreira: detalhes do projeto, objetivo, trajetória,
+   conquistas e recomendações. Tudo em tabelas novas; sem a migration
+   20260929_universo_da_carreira.sql, cada ação responde com um aviso em vez
+   de quebrar.
+   ------------------------------------------------------------------------ */
+
+const SEM_TABELA = "Essa parte ainda está sendo ligada pelo time. Tente de novo mais tarde.";
+
+const inteiro = (v: FormDataEntryValue | null, min: number, max: number) => {
+  const n = Number(String(v ?? "").replace(/\D/g, ""));
+  return Number.isFinite(n) && n >= min && n <= max ? n : null;
+};
+
+/** Os detalhes que viram o planeta: papel, tamanho do time, duração, aprendizado, setor. */
+async function salvarDetalhes(admin: ReturnType<typeof createAdminClient>, projectId: string, userId: string, formData: FormData) {
+  if (!formData.has("papel") && !formData.has("setor")) return;
+  const { error } = await admin.from("portfolio_projeto_detalhes").upsert(
+    {
+      project_id: projectId,
+      user_id: userId,
+      papel: limpar(formData.get("papel") as string, 600) || null,
+      time_tamanho: inteiro(formData.get("time_tamanho"), 1, 500),
+      duracao_meses: inteiro(formData.get("duracao_meses"), 1, 240),
+      aprendizado: limpar(formData.get("aprendizado") as string, 600) || null,
+      setor: limpar(formData.get("setor") as string, 40) || null,
+      atualizado_em: new Date().toISOString(),
+    },
+    { onConflict: "project_id" },
+  );
+  if (error && !tabelaAusente(error)) console.warn("[portfolio] detalhes do projeto:", error.message);
+}
+
+/* Estrela-guia. A leitura do que o cargo pede é uma estimativa da IA, e a
+   tela diz isso; o aluno pode trocar o objetivo quando quiser. */
+export async function definirObjetivo(titulo: string) {
+  const { user, admin } = await alunoComAcesso();
+  const alvo = limpar(titulo, 120);
+  if (alvo.length < 3) return { ok: false as const, erro: "Escreva o cargo que você quer alcançar." };
+  const requeridas = await competenciasDoObjetivo(alvo);
+  const { error } = await admin.from("portfolio_objetivos").upsert(
+    { user_id: user.id, titulo: alvo, requeridas: requeridas ?? null, atualizado_em: new Date().toISOString() },
+    { onConflict: "user_id" },
+  );
+  if (error) return { ok: false as const, erro: tabelaAusente(error) ? SEM_TABELA : error.message };
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const, requeridas: requeridas ?? [] };
+}
+
+export async function removerObjetivo() {
+  const { user, admin } = await alunoComAcesso();
+  await admin.from("portfolio_objetivos").delete().eq("user_id", user.id);
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
+}
+
+/** Lê a trajetória no texto colado. Não grava: a tela mostra e o aluno confirma. */
+export async function lerTrajetoria(texto: string) {
+  await alunoComAcesso();
+  return organizarExperiencias(texto);
+}
+
+const mesParaData = (v: string | null | undefined) => {
+  const m = String(v || "").match(/^(\d{4})-(\d{2})/);
+  return m ? `${m[1]}-${m[2]}-01` : null;
+};
+
+export async function salvarExperiencias(itens: ExperienciaLida[]) {
+  const { user, admin } = await alunoComAcesso();
+  const linhas = (itens || [])
+    .filter((e) => limpar(e.cargo, 120).length >= 3)
+    .slice(0, 30)
+    .map((e) => ({
+      user_id: user.id,
+      cargo: limpar(e.cargo, 120),
+      organizacao: limpar(e.organizacao, 120) || null,
+      setor: limpar(e.setor, 40) || null,
+      inicio: mesParaData(e.inicio),
+      fim: mesParaData(e.fim),
+      descricao: limpar(e.descricao, 600) || null,
+    }));
+  if (!linhas.length) return { ok: false as const, erro: "Nenhuma experiência para salvar." };
+  const { error } = await admin.from("portfolio_experiencias").insert(linhas);
+  if (error) return { ok: false as const, erro: tabelaAusente(error) ? SEM_TABELA : error.message };
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
+}
+
+export async function excluirExperiencia(id: string) {
+  const { user, admin } = await alunoComAcesso();
+  await admin.from("portfolio_experiencias").delete().eq("id", id).eq("user_id", user.id);
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
+}
+
+export async function adicionarConquista(c: { titulo: string; data: string; descricao: string; link_prova: string }) {
+  const { user, admin } = await alunoComAcesso();
+  const titulo = limpar(c.titulo, 140);
+  if (titulo.length < 3) return { ok: false as const, erro: "Dê um título para a conquista." };
+  const { error } = await admin.from("portfolio_conquistas").insert({
+    user_id: user.id,
+    titulo,
+    data: mesParaData(c.data),
+    descricao: limpar(c.descricao, 400) || null,
+    link_prova: linkValido(c.link_prova),
+  });
+  if (error) return { ok: false as const, erro: tabelaAusente(error) ? SEM_TABELA : error.message };
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
+}
+
+export async function excluirConquista(id: string) {
+  const { user, admin } = await alunoComAcesso();
+  await admin.from("portfolio_conquistas").delete().eq("id", id).eq("user_id", user.id);
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
+}
+
+/* Recomendação: o aluno só gera o convite. Quem escreve é o colega, pelo
+   link, e confirma o próprio e-mail antes de chegar para o aluno aprovar. */
+export async function criarConviteRecomendacao(projectId: string | null) {
+  const { user, admin } = await alunoComAcesso();
+  if (projectId) {
+    const dono = await meuProjeto(admin, projectId, user.id);
+    if (!dono) return { ok: false as const, erro: "Projeto não encontrado." };
+  }
+  const token = randomBytes(18).toString("base64url");
+  const { error } = await admin.from("portfolio_recomendacoes").insert({ user_id: user.id, project_id: projectId || null, token });
+  if (error) return { ok: false as const, erro: tabelaAusente(error) ? SEM_TABELA : error.message };
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const, url: `${SITE}/recomendar/${token}` };
+}
+
+export async function decidirRecomendacao(id: string, aprovar: boolean) {
+  const { user, admin } = await alunoComAcesso();
+  const { data } = await admin.from("portfolio_recomendacoes").select("status").eq("id", id).eq("user_id", user.id).maybeSingle();
+  if (!data || data.status !== "aguardando_aprovacao") return { ok: false as const, erro: "Essa recomendação não está esperando aprovação." };
+  await admin
+    .from("portfolio_recomendacoes")
+    .update({ status: aprovar ? "aprovada" : "recusada", aprovado_em: aprovar ? new Date().toISOString() : null })
+    .eq("id", id)
+    .eq("user_id", user.id);
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
+}
+
+export async function excluirRecomendacao(id: string) {
+  const { user, admin } = await alunoComAcesso();
+  await admin.from("portfolio_recomendacoes").delete().eq("id", id).eq("user_id", user.id);
+  revalidatePath("/conta/portfolio");
+  return { ok: true as const };
 }

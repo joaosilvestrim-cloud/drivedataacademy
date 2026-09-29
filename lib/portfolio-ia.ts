@@ -163,3 +163,72 @@ function dadoPessoal(texto: string): string | null {
   if (!achado) return null;
   return `O texto cita "${achado}". Portfólio é público: descreva o projeto sem dado pessoal e confirme que os dados foram anonimizados.`;
 }
+
+/* Trajetória a partir do texto do LinkedIn ou do currículo colado.
+
+   Mesma regra do resto: a IA organiza, não acrescenta. E aqui a conferência
+   é toda de texto:
+   - o cargo tem que estar escrito no que o aluno colou;
+   - a organização, se vier, também;
+   - o ano de início e o de fim têm que aparecer no texto;
+   - a descrição é um trecho literal, não um resumo.
+   Experiência que não passa é descartada, e o aluno completa à mão. */
+export type ExperienciaLida = { cargo: string; organizacao: string | null; setor: string | null; inicio: string | null; fim: string | null; descricao: string | null };
+
+export async function organizarExperiencias(texto: string): Promise<{ ok: true; itens: ExperienciaLida[] } | { ok: false; erro: string }> {
+  const fonte = (texto || "").trim().slice(0, 12000);
+  if (fonte.length < 60) return { ok: false, erro: "Cole o trecho de experiências do seu LinkedIn ou currículo." };
+
+  const sistema = `Você lê o texto de experiências profissionais de uma pessoa (LinkedIn ou currículo) e lista cada experiência.
+
+Devolva APENAS um JSON: {"experiencias": [{"cargo": "...", "organizacao": "...", "setor": "...", "inicio": "AAAA-MM", "fim": "AAAA-MM", "descricao": "..."}]}
+
+Regras:
+- "cargo": copiado exatamente como está no texto.
+- "organizacao": o nome da empresa ou instituição exatamente como está no texto, ou null.
+- "setor": o setor de negócio em uma ou duas palavras, só se o texto disser (ex: "logística", "saúde"); senão null.
+- "inicio" e "fim": no formato AAAA-MM, só com as datas escritas no texto. Posição atual ("o momento", "atual", "presente") tem "fim": null. Sem data no texto, null.
+- "descricao": um TRECHO LITERAL do texto, de até 40 palavras, que resume a experiência. Copie, não reescreva. Sem trecho adequado, null.
+- Não invente nada. Uma entrada por experiência, da mais antiga para a mais recente.`;
+
+  let resposta = await chamarClaude({ sistema, usuario: fonte, max_tokens: 3000 });
+  if (!resposta) {
+    const r = await chamarIA({
+      messages: [{ role: "system", content: sistema }, { role: "user", content: fonte }],
+      json: true, temperature: 0.1, max_tokens: 3500, raciocinio: "low", modelo: "openai/gpt-oss-120b", timeoutMs: 45000,
+    });
+    resposta = r?.texto ?? null;
+  }
+  if (!resposta) return { ok: false, erro: "A IA não respondeu agora. Tente de novo em um minuto." };
+
+  let j: any;
+  try {
+    j = JSON.parse(resposta.slice(resposta.indexOf("{"), resposta.lastIndexOf("}") + 1));
+  } catch {
+    return { ok: false, erro: "A resposta veio num formato que não consegui ler. Tente de novo." };
+  }
+
+  const n = (t: string) => ` ${(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim()} `;
+  const base = n(fonte);
+  const anoNoTexto = (d: unknown) => {
+    const m = String(d || "").match(/^(\d{4})-(\d{2})$/);
+    return m && fonte.includes(m[1]) ? `${m[1]}-${m[2]}` : null;
+  };
+  const itens: ExperienciaLida[] = [];
+  for (const e of Array.isArray(j?.experiencias) ? j.experiencias : []) {
+    const cargo = limpar(String(e?.cargo || ""), 120);
+    if (cargo.length < 3 || !base.includes(n(cargo))) continue;
+    const org = e?.organizacao ? limpar(String(e.organizacao), 120) : "";
+    const setor = e?.setor ? limpar(String(e.setor), 40) : "";
+    const desc = e?.descricao ? limpar(String(e.descricao), 400) : "";
+    itens.push({
+      cargo,
+      organizacao: org && base.includes(n(org)) ? org : null,
+      setor: setor && base.includes(n(setor)) ? setor : null,
+      inicio: anoNoTexto(e?.inicio),
+      fim: e?.fim === null ? null : anoNoTexto(e?.fim),
+      descricao: desc && base.includes(n(desc)) ? desc : null,
+    });
+  }
+  return { ok: true, itens: itens.slice(0, 20) };
+}
