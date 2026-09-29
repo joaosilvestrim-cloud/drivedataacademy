@@ -340,7 +340,7 @@ export default function CarreiraNoEspaco({
         return (
           <group key={p.id}>
             {p.competencias.filter((c) => acesasSet.has(c)).map((c) => (
-              <Linha key={c} a={pos} b={lay.comp.get(c)!.position} cor={cor} opacidade={0.16} />
+              <Linha key={c} a={pos} b={lay.comp.get(c)!.position} cor={cor} opacidade={0.07} />
             ))}
             <Planeta pos={pos} cor={cor} raio={raio} aneis={aneis} titulo={p.titulo} cinema={cinema} onClick={() => onSelect({ tipo: "planeta", id: p.id })} />
           </group>
