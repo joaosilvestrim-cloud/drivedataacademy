@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CORES_DE_DESTAQUE, ESTILOS, PERSONALIZACAO_PADRAO, REFINAMENTOS, envelopar, limparHtmlColado, type Estilo, type Personalizacao } from "@/lib/portfolio-site-html";
+import { CORES_DE_DESTAQUE, ESTILOS, GUIA_IAS, PERSONALIZACAO_PADRAO, REFINAMENTOS, envelopar, limparHtmlColado, type Estilo, type Personalizacao } from "@/lib/portfolio-site-html";
+import type { RaioX } from "@/lib/portfolio-raiox";
 import type { Auditoria } from "@/lib/portfolio-auditoria";
-import { conferirSite, despublicarSite, gerarPromptDoSite, postDoLinkedIn, salvarSite } from "./actions";
+import { conferirSite, despublicarSite, gerarPromptDoSite, kitDeDivulgacao, postDoLinkedIn, salvarSite } from "./actions";
 import UniversoPublico from "@/components/knowledge/UniversoPublico";
 
 /* Meu site de portfólio: quatro passos, na ordem em que acontecem.
@@ -208,16 +209,36 @@ export default function SiteDoPortfolio({
   projetos,
   prontos,
   nome,
+  raioX = null,
 }: {
   atual: SiteAtual;
   siteUrl: string;
   projetos: number;
   prontos: number;
   nome: string;
+  /** O que corrigir nos projetos antes de gerar (lib/portfolio-raiox). */
+  raioX?: RaioX | null;
 }) {
   const [estilo, setEstilo] = useState<Estilo>("painel");
   const [pers, setPers] = useState<Personalizacao>(PERSONALIZACAO_PADRAO);
   const [verDirecao, setVerDirecao] = useState(false);
+  const [raioAberto, setRaioAberto] = useState(false);
+  const [ia, setIa] = useState(0);
+  const [kit, setKit] = useState<Awaited<ReturnType<typeof kitDeDivulgacao>> | null>(null);
+  const [abrindoKit, setAbrindoKit] = useState(false);
+  async function abrirKit() {
+    setAbrindoKit(true);
+    setKit(await kitDeDivulgacao());
+    setAbrindoKit(false);
+  }
+  function baixarQr(svg: string) {
+    const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "qr-do-meu-portfolio.svg";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
   const [prompt, setPrompt] = useState("");
   const [promptAberto, setPromptAberto] = useState(false);
   const [promptCopiado, setPromptCopiado] = useState(false);
@@ -399,6 +420,41 @@ export default function SiteDoPortfolio({
                 <button onClick={tirarDoAr} className="px-2 text-xs text-slate-500 hover:text-slate-300">Tirar do ar</button>
               </div>
               <p className="mt-2.5 text-xs text-slate-500">No LinkedIn, ponha o link em Editar perfil → Informações de contato → Site, e na seção Em destaque.</p>
+
+              {/* Kit de divulgação: QR para o currículo e textos prontos. */}
+              {!kit?.ok ? (
+                <button type="button" onClick={abrirKit} disabled={abrindoKit} className="mt-3 text-sm font-semibold text-brand-green hover:underline disabled:opacity-50">
+                  {abrindoKit ? "Montando o kit..." : "Abrir o kit de divulgação: QR code e textos prontos"}
+                </button>
+              ) : (
+                <div className="mt-4 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-[9rem_1fr]">
+                  <div>
+                    <div className="rounded-xl bg-white p-2" dangerouslySetInnerHTML={{ __html: kit.qrSvg }} />
+                    <button type="button" onClick={() => baixarQr(kit.qrSvg)} className="mt-2 w-full text-center text-xs font-semibold text-brand-green hover:underline">
+                      Baixar o QR
+                    </button>
+                    <p className="mt-1 text-center text-[0.7rem] text-slate-500">Para o currículo e o crachá</p>
+                  </div>
+                  <div className="flex min-w-0 flex-col gap-3">
+                    {[
+                      { rotulo: "Título para a seção Em destaque", texto: kit.destaqueTitulo },
+                      { rotulo: "Descrição para a seção Em destaque", texto: kit.destaqueDescricao },
+                      { rotulo: "Mensagem para recrutador (troque o nome entre colchetes)", texto: kit.mensagem },
+                    ].map((t) => (
+                      <div key={t.rotulo}>
+                        <div className="flex items-baseline justify-between gap-3">
+                          <p className="text-xs font-semibold text-slate-300">{t.rotulo}</p>
+                          <button type="button" onClick={() => copiar(t.texto, t.rotulo)} className="shrink-0 text-xs text-brand-green hover:underline">
+                            {copiado === t.rotulo ? "Copiado" : "Copiar"}
+                          </button>
+                        </div>
+                        <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{t.texto}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {kit && !kit.ok && <p className="mt-2 text-xs text-red-300">{kit.erro}</p>}
             </div>
           )}
         </div>
@@ -415,6 +471,64 @@ export default function SiteDoPortfolio({
             <button onClick={() => window.dispatchEvent(new Event("portfolio:novo-projeto"))} className={`mt-3 ${prontos > 0 ? botaoLeve : botaoForte}`}>
               {prontos > 0 ? "Publicar outro projeto" : "Publicar meu primeiro projeto"}
             </button>
+
+            {/* Raio-X: o site é tão bom quanto os projetos que entram nele. */}
+            {raioX && projetos > 0 && (
+              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.02]">
+                <button type="button" onClick={() => setRaioAberto((v) => !v)} className="flex w-full items-center gap-4 p-4 text-left">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-white">Raio-X do portfólio</p>
+                    <p className="mt-0.5 text-xs text-slate-400">
+                      {raioX.projetos.length + raioX.gerais.length === 0
+                        ? "Tudo certo. Seus projetos estão prontos para virar um site forte."
+                        : `${raioX.projetos.length} ${raioX.projetos.length === 1 ? "projeto pede" : "projetos pedem"} ajuste antes de gerar o site.`}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/10">
+                      <div className={`h-full rounded-full ${raioX.nota >= 85 ? "bg-brand-green" : raioX.nota >= 60 ? "bg-amber-300" : "bg-red-400"}`} style={{ width: `${raioX.nota}%` }} />
+                    </div>
+                    <span className="w-8 text-right font-mono text-sm tabular-nums text-white">{raioX.nota}</span>
+                    <span className="text-xs text-slate-500">{raioAberto ? "fechar" : "ver"}</span>
+                  </div>
+                </button>
+                {raioAberto && (
+                  <div className="border-t border-white/[0.07] p-4">
+                    {raioX.fortes.length > 0 && (
+                      <p className="text-sm text-slate-300">
+                        <span className="font-semibold text-brand-green">O que já está forte:</span> {raioX.fortes.join(", ")}.
+                      </p>
+                    )}
+                    {raioX.gerais.map((a, i) => (
+                      <p key={i} className={`mt-2 text-sm ${a.nivel === "grave" ? "text-red-200" : "text-amber-100"}`}>{a.texto}</p>
+                    ))}
+                    <ul className="mt-3 divide-y divide-white/[0.06]">
+                      {raioX.projetos.map((p) => (
+                        <li key={p.id} className="py-3">
+                          <div className="flex items-baseline justify-between gap-3">
+                            <p className="min-w-0 truncate text-sm font-semibold text-white">{p.titulo}</p>
+                            <button
+                              type="button"
+                              onClick={() => window.dispatchEvent(new CustomEvent("portfolio:editar-projeto", { detail: p.id }))}
+                              className="shrink-0 text-xs font-semibold text-brand-green hover:underline"
+                            >
+                              Corrigir →
+                            </button>
+                          </div>
+                          <ul className="mt-1 flex flex-col gap-1">
+                            {p.achados.map((a, i) => (
+                              <li key={i} className={`text-xs leading-relaxed ${a.nivel === "grave" ? "text-red-200" : "text-slate-400"}`}>
+                                {a.nivel === "grave" ? "Corrigir: " : ""}{a.texto}
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
           </Passo>
 
           <Passo n={2} titulo="Escolha o estilo e gere o seu prompt" estado={estado(1)}>
@@ -543,6 +657,37 @@ export default function SiteDoPortfolio({
                 <button onClick={() => setPromptAberto((v) => !v)} className="w-full border-t border-white/[0.07] py-2 text-xs text-slate-400 hover:text-white">
                   {promptAberto ? "Recolher o prompt" : `Ler o prompt inteiro (${prompt.length.toLocaleString("pt-BR")} caracteres)`}
                 </button>
+                {/* Como pedir em cada IA: é onde o aluno mais trava. */}
+                <div className="border-t border-white/[0.07] p-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <p className="text-xs font-semibold text-slate-300">Como pedir no</p>
+                    <div className="inline-flex rounded-lg border border-white/10 p-0.5" role="tablist" aria-label="Guia por IA">
+                      {GUIA_IAS.map((g, i) => (
+                        <button
+                          key={g.nome}
+                          type="button"
+                          role="tab"
+                          aria-selected={ia === i}
+                          onClick={() => setIa(i)}
+                          className={`rounded-md px-3 py-1 text-xs transition-colors ${ia === i ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-white"}`}
+                        >
+                          {g.nome}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <ol className="mt-3 flex flex-col gap-1.5">
+                    {GUIA_IAS[ia].passos.map((t, i) => (
+                      <li key={i} className="flex gap-2.5 text-xs leading-relaxed text-slate-300">
+                        <span className="font-mono text-brand-green">{i + 1}</span>
+                        {t}
+                      </li>
+                    ))}
+                  </ol>
+                  <a href={GUIA_IAS[ia].url} target="_blank" rel="noopener" className="mt-3 inline-block text-xs font-semibold text-brand-green hover:underline">
+                    Abrir o {GUIA_IAS[ia].nome} ↗
+                  </a>
+                </div>
               </div>
             )}
             {promptCopiado && !html && <p className="mt-2 text-xs text-brand-green">Prompt copiado. Cole na IA e, quando ela devolver o código, siga para o passo 3.</p>}

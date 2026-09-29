@@ -151,9 +151,18 @@ export default function Portfolio({
      componentes irmãos, então o pedido chega por um evento da janela. */
   useEffect(() => {
     const abrir = () => setEditando("novo");
+    // O raio-x do site abre o projeto que precisa de ajuste.
+    const editar = (e: Event) => {
+      const alvo = meus.find((p) => p.id === (e as CustomEvent<string>).detail);
+      if (alvo) setEditando(alvo);
+    };
     window.addEventListener("portfolio:novo-projeto", abrir);
-    return () => window.removeEventListener("portfolio:novo-projeto", abrir);
-  }, []);
+    window.addEventListener("portfolio:editar-projeto", editar);
+    return () => {
+      window.removeEventListener("portfolio:novo-projeto", abrir);
+      window.removeEventListener("portfolio:editar-projeto", editar);
+    };
+  }, [meus]);
   const [busca, setBusca] = useState("");
   const [ordem, setOrdem] = useState<"recentes" | "curtidos">("recentes");
 

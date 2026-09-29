@@ -255,3 +255,36 @@ export const REFINAMENTOS = [
   { rotulo: "Animações de entrada", texto: "Adicione animações de entrada discretas nas seções, respeitando prefers-reduced-motion e sem esconder conteúdo se o JavaScript falhar. Devolva o arquivo HTML inteiro." },
   { rotulo: "Revisão no celular", texto: "Revise o site para celular a partir de 360px: nada pode vazar para o lado, botões com pelo menos 44px de altura, menu compacto e textos com no mínimo 16px. Devolva o arquivo HTML inteiro." },
 ];
+
+/* Como pedir em cada IA. É onde o aluno mais trava: a resposta vem cortada,
+   vem só um trecho, ou o código abre num painel e ele não acha o botão de
+   copiar. Dicas curtas, uma IA por aba. */
+export const GUIA_IAS = [
+  {
+    nome: "Claude",
+    url: "https://claude.ai/new",
+    passos: [
+      "Abra uma conversa nova e cole o prompt inteiro.",
+      "O código costuma abrir num painel ao lado. Copie pelo botão de copiar do próprio painel, não selecionando com o mouse.",
+      "Se a resposta parar no meio, escreva: continue. Depois peça: junte tudo e devolva o arquivo HTML inteiro.",
+    ],
+  },
+  {
+    nome: "ChatGPT",
+    url: "https://chatgpt.com/",
+    passos: [
+      "Abra uma conversa nova e cole o prompt inteiro.",
+      "Se o código abrir no Canvas, copie pelo botão de copiar do Canvas.",
+      "Se ele devolver só um trecho, peça: devolva o arquivo HTML completo, do <!doctype html> ao </html>, sem cortar nada.",
+    ],
+  },
+  {
+    nome: "Gemini",
+    url: "https://gemini.google.com/app",
+    passos: [
+      "Abra uma conversa nova e cole o prompt inteiro.",
+      "Copie pelo botão de copiar do bloco de código.",
+      "Se a resposta vier cortada, peça: enxugue o CSS e devolva o arquivo HTML inteiro de novo.",
+    ],
+  },
+] as const;

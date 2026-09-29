@@ -435,3 +435,38 @@ export async function testarVaga(texto: string) {
     .sort((a, b) => Number(b.tem) - Number(a.tem));
   return { ok: true as const, itens, tem: itens.filter((i) => i.tem).length, total: itens.length };
 }
+
+/* Kit de divulgação, depois de publicar: QR code do site e textos prontos
+   para o LinkedIn e para recrutador. Tudo montado com o que o aluno tem de
+   verdade; o nome do recrutador fica entre colchetes para ele trocar. */
+export async function kitDeDivulgacao() {
+  const { user, admin } = await alunoComAcesso();
+  const { data: site } = await admin.from("portfolio_sites").select("slug, publicado").eq("user_id", user.id).maybeSingle();
+  if (!site?.publicado) return { ok: false as const, erro: "Publique o site primeiro." };
+
+  const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const url = `${SITE}/portfolio/${site.slug}`;
+  const [{ data: perfil }, { data: projetos }] = await Promise.all([
+    admin.from("profiles").select("full_name, headline").eq("id", user.id).maybeSingle(),
+    admin.from("portfolio_projects").select("titulo, resumo, problema, resultado, descricao, competencias, publico").eq("user_id", user.id).eq("publico", true),
+  ]);
+  const validos = (projetos ?? []).filter((p: any) => !LACUNA.test([p.titulo, p.resumo, p.problema, p.resultado, p.descricao].join(" ")));
+  const comps = new Set(validos.flatMap((p: any) => (p.competencias?.itens ?? []).map((c: any) => c.id)));
+  const nome = (perfil?.full_name || "").trim();
+  const n = validos.length;
+
+  const QRCode = (await import("qrcode")).default;
+  const qrSvg = await QRCode.toString(url, { type: "svg", margin: 1, color: { dark: "#04140d", light: "#ffffff" } });
+
+  const resumoCarreira = `${n} ${n === 1 ? "projeto" : "projetos"}${comps.size ? ` e ${comps.size} ${comps.size === 1 ? "competência provada" : "competências provadas"}` : ""}`;
+  return {
+    ok: true as const,
+    url,
+    qrSvg,
+    destaqueTitulo: `Portfólio${nome ? ` de ${nome}` : ""}`,
+    destaqueDescricao: `${resumoCarreira}, cada um com o problema, o que fiz e o que mudou. Tem também o Universo 4D da minha carreira.`,
+    mensagem:
+      `Olá, [nome da pessoa]! ${perfil?.headline ? `Sou ${nome.split(" ")[0] || ""}, ${perfil.headline.split("|")[0].trim()}. ` : ""}` +
+      `Reuni meu trabalho num portfólio com ${resumoCarreira}, cada um com o problema, o que fiz e o que mudou: ${url}\n\nSe fizer sentido, adoraria conversar.`,
+  };
+}

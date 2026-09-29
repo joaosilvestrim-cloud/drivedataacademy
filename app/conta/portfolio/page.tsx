@@ -7,6 +7,7 @@ import { LACUNA, type Projeto } from "@/lib/portfolio";
 import { vitrine } from "@/lib/portfolio-servidor";
 import Portfolio, { type Autor } from "./Portfolio";
 import SiteDoPortfolio, { type SiteAtual } from "./SiteDoPortfolio";
+import { raioXDoPortfolio } from "@/lib/portfolio-raiox";
 import CarreiraDoAluno from "./CarreiraDoAluno";
 import { carreiraDoAluno } from "@/lib/portfolio-carreira";
 import { cursosPorCompetencia, nomesDasCompetencias } from "@/lib/portfolio-competencias";
@@ -50,6 +51,11 @@ export default async function PortfolioPage() {
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
   const meus = (meusRes.data ?? []) as Projeto[];
+  // Papel de cada projeto só entra na régua quando a tabela de detalhes existe.
+  const papeis: Record<string, string | null> = carreira.pronta
+    ? Object.fromEntries(((meusRes.data ?? []) as any[]).map((p) => [p.id, carreira.detalhes[p.id]?.papel ?? null]))
+    : {};
+  const raioX = raioXDoPortfolio((meusRes.data ?? []) as any[], papeis);
   const semTabela = !!erro && /relation|does not exist|schema cache/i.test(erro);
 
   // Autor de cada projeto da vitrine, com a moldura que ele tem na comunidade.
@@ -75,7 +81,7 @@ export default async function PortfolioPage() {
         {tr("Projeto pronto vale mais que certificado em entrevista. Publique o seu com a imagem, o problema que ele resolvia e o resultado. O time revisa e ele entra na vitrine, aqui e na página pública da Academy.")}
       </p>
 
-      {!semTabela && <SiteDoPortfolio atual={siteAtual} siteUrl={siteUrl} projetos={(meusRes.data ?? []).length} prontos={prontos} nome={(meuPerfil?.full_name || "").trim() || "você"} />}
+      {!semTabela && <SiteDoPortfolio atual={siteAtual} siteUrl={siteUrl} projetos={(meusRes.data ?? []).length} prontos={prontos} nome={(meuPerfil?.full_name || "").trim() || "você"} raioX={raioX} />}
 
       {semTabela ? (
         <div className="mt-8 rounded-2xl border border-amber-300/25 bg-amber-300/[0.06] px-5 py-4 text-sm text-amber-100">
