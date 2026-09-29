@@ -173,11 +173,15 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
     }
   }
 
+  // Aceita uma ou várias de uma vez: colar "SQL, Python, DAX" vira três etiquetas.
   const addSkill = (s: string) => {
-    const nova = s.trim().replace(/,$/, "").trim();
     setNovaSkill("");
-    if (!nova || skills.some((x) => x.toLowerCase() === nova.toLowerCase())) return;
-    setForm((f) => ({ ...f, skills: juntar([...separar(f.skills), nova]) }));
+    setForm((f) => {
+      const atuais = separar(f.skills);
+      const novas = separar(s).filter((n, i, l) => l.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
+      const somar = novas.filter((n) => !atuais.some((x) => x.toLowerCase() === n.toLowerCase()));
+      return somar.length ? { ...f, skills: juntar([...atuais, ...somar]) } : f;
+    });
   };
   const tirarSkill = (s: string) => setForm((f) => ({ ...f, skills: juntar(separar(f.skills).filter((x) => x !== s)) }));
   const sugestoes = SUGESTOES.filter(
@@ -311,6 +315,10 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
                   id="skills-nova"
                   value={novaSkill}
                   onChange={(e) => (e.target.value.endsWith(",") ? addSkill(e.target.value) : setNovaSkill(e.target.value))}
+                  onPaste={(e) => {
+                    const t = e.clipboardData.getData("text");
+                    if (/[,;\n]/.test(t)) { e.preventDefault(); addSkill(t); }
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") { e.preventDefault(); addSkill(novaSkill); }
                     if (e.key === "Backspace" && !novaSkill && skills.length) tirarSkill(skills[skills.length - 1]);
