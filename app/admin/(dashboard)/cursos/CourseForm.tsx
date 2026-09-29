@@ -82,8 +82,21 @@ export default function CourseForm({ course, cargaCalculada }: { course?: Course
 
       <FormSection
         title="Venda"
-        description="Só assinantes compram treinamentos. A assinatura não abre o curso sozinha: o assinante paga o preço dele, com o desconto sobre o preço cheio."
+        description="Só assinantes acessam treinamentos. Escolha se o curso já vem na assinatura ou se o assinante paga um preço à parte."
       >
+        <SelectField
+          scope={scope}
+          name="acesso_assinante"
+          label="Como o assinante acessa"
+          defaultValue={
+            course?.subscriber_price == null ? (course ? "fora" : "incluso") : Number(course.subscriber_price) === 0 ? "incluso" : "venda"
+          }
+          description="Incluso: todo assinante ativo entra no curso sem pagar nada a mais. Vendido à parte: o assinante paga o preço abaixo."
+        >
+          <option value="incluso">Incluso na assinatura (libera sem pagar)</option>
+          <option value="venda">Vendido à parte para assinantes</option>
+          <option value="fora">Fora de venda por enquanto</option>
+        </SelectField>
         <div className="grid gap-4 tablet:grid-cols-2">
           <Field
             scope={scope}
@@ -102,8 +115,8 @@ export default function CourseForm({ course, cargaCalculada }: { course?: Course
             type="number"
             min="0"
             step="0.01"
-            defaultValue={course?.subscriber_price ?? ""}
-            description="Vazio: ainda não está à venda. 0: incluso na assinatura. Para cobrar, mínimo de R$ 5."
+            defaultValue={course?.subscriber_price ? course.subscriber_price : ""}
+            description="Só vale em Vendido à parte. Mínimo de R$ 5."
           />
         </div>
         {course && descontoCurso(Number(course.price) || 0, course.subscriber_price ?? null) > 0 && (

@@ -49,12 +49,21 @@ export async function saveCourse(formData: FormData) {
   const slugInput = (formData.get("slug") as string).trim();
   const slug = slugInput ? slugify(slugInput) : slugify(title);
 
-  // Vazio: fora de venda. 0: incluso na assinatura. Acima de zero, mínimo do Asaas.
+  /* Como o assinante acessa. No banco continua sendo subscriber_price, que o
+     resto do sistema já entende: null é fora de venda, 0 é incluso na
+     assinatura (lib/access.ts libera direto) e acima de zero é vendido à parte.
+     O seletor existe para ninguém precisar saber que "0" quer dizer incluso. */
+  const acesso = (formData.get("acesso_assinante") as string) || "";
   const subRaw = ((formData.get("subscriber_price") as string) || "").trim().replace(",", ".");
-  const subscriber_price = subRaw === "" ? null : Number(subRaw);
-  if (subscriber_price != null && (isNaN(subscriber_price) || subscriber_price < 0 || (subscriber_price > 0 && subscriber_price < 5))) {
+  let subscriber_price: number | null =
+    acesso === "incluso" ? 0 : acesso === "fora" ? null : subRaw === "" ? null : Number(subRaw);
+  if (acesso === "venda" && (subscriber_price == null || isNaN(subscriber_price) || subscriber_price < 5)) {
+    redirect(`/admin/cursos${id ? `/${id}` : ""}?error=${encodeURIComponent("Vendido à parte: informe o preço para assinante, a partir de R$ 5.")}`);
+  }
+  if (!acesso && subscriber_price != null && (isNaN(subscriber_price) || subscriber_price < 0 || (subscriber_price > 0 && subscriber_price < 5))) {
     redirect(`/admin/cursos${id ? `/${id}` : ""}?error=${encodeURIComponent("Preço para assinante: deixe vazio, use 0 para incluso ou um valor a partir de R$ 5.")}`);
   }
+  if (subscriber_price != null && isNaN(subscriber_price)) subscriber_price = null;
 
   const payload = {
     title,
