@@ -216,7 +216,7 @@ export default function RoteiroDaCarreira({
   return (
     <aside
       aria-label="Roteiro da carreira"
-      className="absolute bottom-3 left-3 right-3 flex max-h-[46%] flex-col rounded-2xl border border-white/10 bg-[#0a1428]/92 backdrop-blur sm:bottom-5 sm:left-auto sm:right-5 sm:top-5 sm:max-h-none sm:w-[21rem]"
+      className="absolute bottom-3 left-3 right-3 flex max-h-[46%] flex-col rounded-2xl border border-white/10 bg-[#0a1428]/92 backdrop-blur sm:bottom-5 sm:left-auto sm:right-5 sm:top-5 sm:max-h-none sm:w-[23.5rem]"
     >
       <div className="flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2 sm:px-4 sm:py-3">
         <div className="min-w-0">
