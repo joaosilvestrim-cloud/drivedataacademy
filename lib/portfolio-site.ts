@@ -170,7 +170,7 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     )
     .join("\n");
   const blocoConquistas = carreira.conquistas
-    .map((c) => `- ${c.titulo}${c.data ? `, ${mesAnoIso(c.data)}` : ""}${c.descricao ? `. ${c.descricao}` : ""}${c.link_prova ? `. Prova: ${c.link_prova}` : ""}`)
+    .map((c) => `- ${c.titulo}${c.data ? `, ${mesAnoIso(c.data)}` : ""}${c.descricao ? `. ${c.descricao.replace(/[.\s]+$/, "")}` : ""}${c.link_prova ? `. Prova: ${c.link_prova}` : ""}`)
     .join("\n");
   const recsGerais = carreira.recomendacoes.filter((r) => !r.project_id && r.texto && r.autor_nome);
   const blocoRecomendacoes = recsGerais
