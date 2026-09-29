@@ -15,11 +15,14 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
   if (!user) redirect("/entrar");
 
   const admin = createAdminClient();
-  const [ranked, { data: myEvents }, { data: badges }] = await Promise.all([
+  const [ranked, { data: myEvents }, { data: badges }, { data: site }] = await Promise.all([
     loadCommunityRanking(),
     admin.from("point_events").select("kind, points").eq("user_id", user.id),
     admin.from("user_badges").select("badge").eq("user_id", user.id),
+    admin.from("portfolio_sites").select("slug, publicado, bloqueado").eq("user_id", user.id).maybeSingle(),
   ]);
+  const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const siteDoPortfolio = site?.publicado && !site.bloqueado ? `${SITE}/portfolio/${site.slug}` : null;
 
   const myPoints = ranked.find(r=>r.id===user.id)?.pts || 0;
   const myRank = ranked.findIndex(r => r.id === user.id);
@@ -37,9 +40,9 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
   ];
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-6xl">
       <h1 className="font-display text-3xl font-bold text-white">{tr("Meu perfil")}</h1>
-      <p className="mt-1 text-sm text-slate-400">{tr("Seus dados de aluno na DriveData Academy.")}</p>
+      <p className="mt-1 max-w-2xl text-sm text-slate-400">{tr("Seus dados de aluno na DriveData Academy. O cartão ao lado mostra como você aparece para os outros alunos.")}</p>
 
       {/* Chega aqui quem tentou emitir certificado sem nome no cadastro. O nome
           é o que fica impresso, então a emissão para em vez de imprimir e-mail. */}
@@ -55,7 +58,8 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
         </div>
       )}
 
-      <ProfileForm />
+      <ProfileForm siteDoPortfolio={siteDoPortfolio} />
+      <div className="max-w-3xl">
       <ProfilePreview userId={user.id} email={user.email} />
 
       {/* Gamificação */}
@@ -94,6 +98,7 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
           <Link href="/conta/comunidade" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Ir para a comunidade")}</Link>
           <Link href="/conta/ranking" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">{tr("Ver ranking completo")}</Link>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ESTILOS, envelopar, type Estilo } from "@/lib/portfolio-site-html";
+import { ESTILOS, envelopar, limparHtmlColado, type Estilo } from "@/lib/portfolio-site-html";
 import type { Auditoria } from "@/lib/portfolio-auditoria";
 import { conferirSite, despublicarSite, gerarPromptDoSite, postDoLinkedIn, salvarSite } from "./actions";
 import UniversoPublico from "@/components/knowledge/UniversoPublico";
@@ -13,9 +13,10 @@ import UniversoPublico from "@/components/knowledge/UniversoPublico";
    3. Ele leva para a IA que quiser e cola de volta o HTML.
    4. Publica, e recebe o link para pôr no LinkedIn.
 
-   A numeração é real. O primeiro passo existe porque, sem ele, esta seção
-   no topo da página parecia ser o começo: no primeiro ensaio o João gerou o
-   prompt com zero projetos sem achar onde cadastrá-los. */
+   A numeração é real, e cada passo mostra se está feito, se é a vez dele ou
+   se vem depois. O primeiro passo existe porque, sem ele, esta seção no topo
+   da página parecia ser o começo: no primeiro ensaio o João gerou o prompt
+   com zero projetos sem achar onde cadastrá-los. */
 
 export type SiteAtual = { slug: string; publicado: boolean; mostrar_universo: boolean; bloqueado: boolean } | null;
 
@@ -25,17 +26,96 @@ const IAS = [
   { nome: "Gemini", url: "https://gemini.google.com/app" },
 ];
 
-const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+type Estado = "feito" | "atual" | "depois";
 
-function Passo({ n, titulo, children }: { n: number; titulo: string; children: React.ReactNode }) {
+function Passo({ n, titulo, estado, ultimo = false, children }: { n: number; titulo: string; estado: Estado; ultimo?: boolean; children: React.ReactNode }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-[2rem_1fr]">
-      <span className="grid h-8 w-8 place-items-center rounded-full border border-brand-green/40 font-mono text-sm text-brand-green">{n}</span>
-      <div className="min-w-0">
-        <p className="font-semibold text-white">{titulo}</p>
-        <div className="mt-2">{children}</div>
+    <div className="relative grid grid-cols-[2.25rem_1fr] gap-x-4">
+      {/* O fio que liga os passos: aceso até onde o aluno chegou. */}
+      {!ultimo && <span aria-hidden className={`absolute bottom-[-1.75rem] left-[1.08rem] top-10 w-px ${estado === "feito" ? "bg-brand-green/50" : "bg-white/10"}`} />}
+      <span
+        className={`relative z-[1] grid h-9 w-9 place-items-center rounded-full font-mono text-sm transition-colors ${
+          estado === "feito"
+            ? "bg-brand-green text-ink-900"
+            : estado === "atual"
+              ? "border-2 border-brand-green bg-[#07130f] text-brand-green"
+              : "border border-white/15 bg-[#080d17] text-slate-500"
+        }`}
+        aria-label={estado === "feito" ? `Passo ${n}, feito` : `Passo ${n}`}
+      >
+        {estado === "feito" ? (
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        ) : (
+          n
+        )}
+      </span>
+      <div className="min-w-0 pb-1 pt-1.5">
+        <p className={`font-display text-base font-semibold ${estado === "depois" ? "text-slate-400" : "text-white"}`}>{titulo}</p>
+        <div className="mt-2.5">{children}</div>
       </div>
+    </div>
+  );
+}
+
+/* Uma miniatura de cada estilo, desenhada em CSS: o aluno escolhe olhando,
+   não lendo a descrição. */
+function Miniatura({ estilo }: { estilo: Estilo }) {
+  if (estilo === "painel")
+    return (
+      <div className="flex h-full flex-col gap-1.5 bg-[#0d1422] p-2.5">
+        <div className="h-1.5 w-10 rounded-sm bg-white/60" />
+        <div className="grid grid-cols-3 gap-1">
+          {["42", "7", "3"].map((n) => (
+            <div key={n} className="rounded-sm bg-white/[0.06] px-1 py-1 font-mono text-[9px] leading-none text-[#4ade9a]">{n}</div>
+          ))}
+        </div>
+        <div className="flex flex-1 items-end gap-1">
+          {[40, 65, 50, 85, 70].map((h, i) => <div key={i} className="flex-1 rounded-t-sm bg-[#4ade9a]/70" style={{ height: `${h}%` }} />)}
+        </div>
+      </div>
+    );
+  if (estilo === "editorial")
+    return (
+      <div className="flex h-full flex-col gap-1.5 bg-[#f1ece2] p-2.5">
+        <div className="font-serif text-[13px] font-bold leading-none text-[#1c1a17]">Dados que</div>
+        <div className="font-serif text-[13px] italic leading-none text-[#1c1a17]">mudam o jogo</div>
+        <div className="mt-auto grid grid-cols-2 gap-1.5">
+          {[0, 1].map((c) => (
+            <div key={c} className="flex flex-col gap-[3px]">
+              {[100, 90, 95, 70].map((w, i) => <div key={i} className="h-[2px] bg-[#1c1a17]/40" style={{ width: `${w}%` }} />)}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  if (estilo === "terminal")
+    return (
+      <div className="flex h-full flex-col gap-1 bg-[#050805] p-2.5 font-mono text-[9px] leading-tight text-[#39ff88]">
+        <span>$ portfolio --abrir</span>
+        <span className="text-[#39ff88]/60">› 4 projetos</span>
+        <span className="text-[#39ff88]/60">› 9 competências</span>
+        <span>
+          $ <span className="inline-block h-2 w-1.5 translate-y-[1px] bg-[#39ff88]" />
+        </span>
+      </div>
+    );
+  if (estilo === "minimalista")
+    return (
+      <div className="relative flex h-full flex-col bg-white p-2.5">
+        <div className="text-[15px] font-black leading-[0.9] tracking-tight text-black">Dados.</div>
+        <div className="mt-1 h-[2px] w-8 bg-black" />
+        <div className="absolute bottom-2.5 right-2.5 h-4 w-4 bg-[#e3262b]" />
+        <div className="mt-auto flex flex-col gap-[3px]">
+          {[60, 45].map((w, i) => <div key={i} className="h-[2px] bg-black/50" style={{ width: `${w}%` }} />)}
+        </div>
+      </div>
+    );
+  return (
+    <div className="relative h-full overflow-hidden bg-[#141026]">
+      <div className="absolute -left-3 top-2 h-10 w-10 rotate-12 rounded-md bg-[#ff7a59]" />
+      <div className="absolute left-7 top-7 h-7 w-12 -rotate-6 rounded-full bg-[#5ad1ff]" />
+      <div className="absolute right-2 top-1 h-6 w-6 rotate-45 bg-[#ffd166]" />
+      <div className="absolute bottom-1.5 right-3 font-display text-lg font-bold text-white">?</div>
     </div>
   );
 }
@@ -55,11 +135,14 @@ export default function SiteDoPortfolio({
 }) {
   const [estilo, setEstilo] = useState<Estilo>("painel");
   const [prompt, setPrompt] = useState("");
+  const [promptAberto, setPromptAberto] = useState(false);
+  const [promptCopiado, setPromptCopiado] = useState(false);
   const [info, setInfo] = useState<{ incluidos: number; foraPorLacuna: string[]; foraPorPrivado: string[]; certificados: number } | null>(null);
   const [gerando, setGerando] = useState(false);
   const [copiado, setCopiado] = useState("");
   const [html, setHtml] = useState("");
   const [previa, setPrevia] = useState(false);
+  const [aparelho, setAparelho] = useState<"computador" | "celular">("computador");
   const [auditoria, setAuditoria] = useState<Auditoria | null>(null);
   const [conferindo, setConferindo] = useState(false);
   const [mostrarUniverso, setMostrarUniverso] = useState(atual?.mostrar_universo ?? true);
@@ -84,6 +167,7 @@ export default function SiteDoPortfolio({
     setGerando(false);
     if (!r.ok) return;
     setPrompt(r.prompt);
+    setPromptCopiado(false);
     setInfo(r);
   }
 
@@ -91,6 +175,7 @@ export default function SiteDoPortfolio({
     try {
       await navigator.clipboard.writeText(texto);
       setCopiado(rotulo);
+      if (rotulo === "prompt") setPromptCopiado(true);
       setTimeout(() => setCopiado(""), 2000);
     } catch {
       setErro("Não consegui copiar. Selecione o texto e copie com Ctrl+C.");
@@ -99,15 +184,36 @@ export default function SiteDoPortfolio({
 
   /* A pré-visualização também confere número inventado. É o momento certo:
      o aluno está olhando o site, e o aviso aponta exatamente o que conferir. */
-  async function previsualizar() {
+  async function previsualizar(texto = html) {
     setPrevia(true);
     setAuditoria(null);
     setErro("");
     setConferindo(true);
-    const r = await conferirSite(html);
+    const r = await conferirSite(texto);
     setConferindo(false);
     if (r.ok) setAuditoria(r.auditoria);
     else setErro(r.erro);
+  }
+
+  // Colou o site inteiro: confere na hora, sem precisar de mais um clique.
+  function aoColar(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const colado = e.clipboardData.getData("text");
+    if (colado.length > 200 && /<html|<!doctype/i.test(colado)) {
+      e.preventDefault();
+      setHtml(colado);
+      previsualizar(colado);
+    }
+  }
+
+  async function colarDaAreaDeTransferencia() {
+    try {
+      const t = await navigator.clipboard.readText();
+      if (!t.trim()) return setErro("A área de transferência está vazia. Copie o código na IA primeiro.");
+      setHtml(t);
+      previsualizar(t);
+    } catch {
+      setErro("O navegador não deixou ler a área de transferência. Clique na caixa e cole com Ctrl+V.");
+    }
   }
 
   async function salvar(publicar: boolean) {
@@ -137,6 +243,25 @@ export default function SiteDoPortfolio({
       : `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(publicado.url)}`
     : "";
 
+  // O que dá para saber do HTML colado antes de conferir no servidor.
+  const leitura = (() => {
+    const t = html.trim();
+    if (!t) return null;
+    const temInicio = /<!doctype html|<html/i.test(t);
+    const temFim = /<\/html>/i.test(t);
+    const linhas = t.split("\n").length;
+    const kb = Math.max(1, Math.round(new Blob([t]).size / 1024));
+    return { temInicio, temFim, linhas, kb };
+  })();
+
+  const temErro = !!auditoria?.achados.some((a) => a.nivel === "erro");
+  const noAr = !!publicado?.publicado;
+
+  // Onde o aluno está: o primeiro passo que ainda não foi feito é a vez dele.
+  const feito = [prontos > 0, !!prompt || noAr, (!!auditoria && !temErro) || (noAr && !html), noAr && !html];
+  const vez = feito.findIndex((f) => !f);
+  const estado = (i: number): Estado => (feito[i] && (vez === -1 || i < vez) ? "feito" : i === vez ? "atual" : "depois");
+
   const cartaoNoAr = publicado && (
     <div className="rounded-3xl border border-brand-green/30 bg-[#0a1428] p-6 text-left shadow-2xl">
       <p className="font-display text-2xl font-bold text-white">Seu portfólio está no ar</p>
@@ -158,189 +283,251 @@ export default function SiteDoPortfolio({
     </div>
   );
 
+  const botaoForte = "rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-opacity disabled:opacity-40";
+  const botaoLeve = "rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white transition-colors hover:border-white/40 disabled:opacity-40";
+
   return (
     <>
-    {revelando && publicado && (
-      <UniversoPublico
-        slug={publicado.url.split("/portfolio/")[1]}
-        nome={nome}
-        aoFechar={() => setRevelando(false)}
-        autoplay
-        final={cartaoNoAr}
-      />
-    )}
-    <section className="mt-8 rounded-3xl border border-brand-green/25 bg-gradient-to-b from-brand-green/[0.06] to-transparent p-5 sm:p-7">
-      <h2 className="font-display text-2xl font-bold text-white">Meu site de portfólio</h2>
-      <p className="mt-1 max-w-2xl text-sm text-slate-400">
-        A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D: uma constelação das competências que seus projetos provam, que quem visitar pode girar e ver crescer ao longo da sua carreira.
-      </p>
-
-      {atual?.bloqueado && (
-        <p className="mt-4 rounded-xl border border-red-400/40 bg-red-400/[0.08] px-3 py-2 text-sm text-red-200">
-          Seu site foi tirado do ar pelo time. Fale com o suporte pela Central de Ajuda.
-        </p>
+      {revelando && publicado && (
+        <UniversoPublico slug={publicado.url.split("/portfolio/")[1]} nome={nome} aoFechar={() => setRevelando(false)} autoplay final={cartaoNoAr} />
       )}
-
-      {publicado?.publicado && (
-        <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-          <div className="min-w-0 flex-1">
-            <p className="text-xs uppercase tracking-wide text-slate-400">No ar</p>
-            <a href={publicado.url} target="_blank" rel="noopener" className="block truncate font-mono text-sm text-brand-green hover:underline">{publicado.url}</a>
-          </div>
-          <button onClick={() => copiar(publicado.url, "link")} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
-          <a href={linkedin} target="_blank" rel="noopener" onMouseEnter={() => !post && carregarPost()} className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-white">Publicar no LinkedIn</a>
-          <button onClick={() => setRevelando(true)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white">Ver a revelação</button>
-          <button onClick={tirarDoAr} className="text-xs text-slate-500 hover:text-slate-300">Tirar do ar</button>
-          <p className="w-full text-xs text-slate-400">
-            No LinkedIn, ponha o link em dois lugares: Editar perfil → Informações de contato → Site, e na seção Em destaque do perfil.
+      <section className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-[#070d18]">
+        <div className="border-b border-white/[0.07] bg-[radial-gradient(90%_140%_at_0%_0%,rgba(21,196,126,.14),transparent_60%)] p-5 sm:p-7">
+          <h2 className="font-display text-2xl font-bold text-white">Meu site de portfólio</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-400">
+            A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D, que quem visitar pode girar e ver crescer ao longo da sua carreira.
           </p>
+
+          {atual?.bloqueado && (
+            <p className="mt-4 rounded-xl border border-red-400/40 bg-red-400/[0.08] px-3 py-2 text-sm text-red-200">
+              Seu site foi tirado do ar pelo time. Fale com o suporte pela Central de Ajuda.
+            </p>
+          )}
+
+          {noAr && publicado && (
+            <div className="mt-5 border-l-2 border-brand-green pl-4">
+              <p className="text-sm font-semibold text-white">Seu site está no ar</p>
+              <a href={publicado.url} target="_blank" rel="noopener" className="mt-0.5 block truncate font-mono text-sm text-brand-green hover:underline">{publicado.url}</a>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <a href={linkedin} target="_blank" rel="noopener" onMouseEnter={() => !post && carregarPost()} className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-white">Publicar no LinkedIn</a>
+                <button onClick={() => copiar(publicado.url, "link")} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white hover:border-white/40">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
+                <button onClick={() => setRevelando(true)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white hover:border-white/40">Ver a revelação</button>
+                <button onClick={tirarDoAr} className="px-2 text-xs text-slate-500 hover:text-slate-300">Tirar do ar</button>
+              </div>
+              <p className="mt-2.5 text-xs text-slate-500">No LinkedIn, ponha o link em Editar perfil → Informações de contato → Site, e na seção Em destaque.</p>
+            </div>
+          )}
         </div>
-      )}
 
-      <div className="mt-6 flex flex-col gap-7">
-        <Passo n={1} titulo="Publique seus projetos">
-          <p className="text-sm text-slate-400">
-            {prontos > 0
-              ? `${prontos} ${prontos === 1 ? "projeto pronto" : "projetos prontos"} para entrar no site${projetos > prontos ? `, e ${projetos - prontos} ainda com lacuna ou só para a turma` : ""}. Quanto mais projetos, de anos diferentes, mais o seu 4D cresce.`
-              : projetos > 0
-                ? "Seus projetos ainda têm lacunas entre colchetes ou estão só para a turma. Complete e marque como público para eles entrarem no site."
-                : "O site é feito dos seus projetos. Cadastre pelo menos um antes de gerar o prompt: conte do seu jeito e a IA organiza nos campos."}
-          </p>
-          <button
-            onClick={() => window.dispatchEvent(new Event("portfolio:novo-projeto"))}
-            className={`mt-3 rounded-xl px-4 py-2 text-sm font-semibold ${prontos > 0 ? "border border-white/15 text-white" : "bg-gradient-to-r from-brand-green to-brand-blue text-ink-900"}`}
-          >
-            {prontos > 0 ? "Publicar outro projeto" : "Publicar meu primeiro projeto"}
-          </button>
-        </Passo>
+        <div className="flex flex-col gap-7 p-5 sm:p-7">
+          <Passo n={1} titulo="Publique seus projetos" estado={estado(0)}>
+            <p className="text-sm text-slate-400">
+              {prontos > 0
+                ? `${prontos} ${prontos === 1 ? "projeto pronto" : "projetos prontos"} para entrar no site${projetos > prontos ? `, e ${projetos - prontos} ainda com lacuna ou só para a turma` : ""}. Quanto mais projetos, de anos diferentes, mais o seu 4D cresce.`
+                : projetos > 0
+                  ? "Seus projetos ainda têm lacunas entre colchetes ou estão só para a turma. Complete e marque como público para eles entrarem no site."
+                  : "O site é feito dos seus projetos. Cadastre pelo menos um antes de gerar o prompt: conte do seu jeito e a IA organiza nos campos."}
+            </p>
+            <button onClick={() => window.dispatchEvent(new Event("portfolio:novo-projeto"))} className={`mt-3 ${prontos > 0 ? botaoLeve : botaoForte}`}>
+              {prontos > 0 ? "Publicar outro projeto" : "Publicar meu primeiro projeto"}
+            </button>
+          </Passo>
 
-        <Passo n={2} titulo="Escolha o estilo e gere o seu prompt">
-          <div className="flex flex-wrap gap-1.5">
-            {(Object.keys(ESTILOS) as Estilo[]).map((e) => (
-              <button
-                key={e}
-                onClick={() => setEstilo(e)}
-                className={`rounded-full px-3 py-1 text-xs transition-colors ${estilo === e ? "bg-brand-green text-ink-900" : "border border-white/15 text-slate-300 hover:text-white"}`}
-              >
-                {ESTILOS[e].nome}
-              </button>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-slate-400">{ESTILOS[estilo].direcao}</p>
-          <button onClick={gerar} disabled={gerando} className="mt-3 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-50">
-            {gerando ? "Montando..." : prompt ? "Gerar de novo" : "Gerar meu prompt"}
-          </button>
-
-          {info && (
-            <div className="mt-3 text-xs text-slate-400">
-              <p>
-                Entraram {info.incluidos} {info.incluidos === 1 ? "projeto" : "projetos"} e {info.certificados} {info.certificados === 1 ? "certificado" : "certificados"} com link de verificação.
-              </p>
-              {info.incluidos === 0 && (
-                <p className="mt-1 text-amber-200">Seu prompt saiu sem nenhum projeto, e o site vai sair vazio. Volte ao passo 1.</p>
-              )}
-              {info.foraPorLacuna.length > 0 && (
-                <p className="mt-1 text-amber-200">
-                  Ficaram de fora porque ainda têm lacunas entre colchetes: {info.foraPorLacuna.join(", ")}. Preencha e gere de novo.
-                </p>
-              )}
-              {info.foraPorPrivado.length > 0 && (
-                <p className="mt-1">Ficaram de fora porque estão só para a turma: {info.foraPorPrivado.join(", ")}.</p>
-              )}
+          <Passo n={2} titulo="Escolha o estilo e gere o seu prompt" estado={estado(1)}>
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5" role="radiogroup" aria-label="Estilo do site">
+              {(Object.keys(ESTILOS) as Estilo[]).map((e) => {
+                const sel = estilo === e;
+                return (
+                  <button
+                    key={e}
+                    role="radio"
+                    aria-checked={sel}
+                    onClick={() => setEstilo(e)}
+                    className={`group overflow-hidden rounded-xl border text-left transition-all ${
+                      sel ? "border-brand-green ring-1 ring-brand-green" : "border-white/10 hover:-translate-y-0.5 hover:border-white/30"
+                    }`}
+                  >
+                    <div className="h-[4.5rem] overflow-hidden">
+                      <Miniatura estilo={e} />
+                    </div>
+                    <p className={`border-t border-white/10 px-2.5 py-2 text-xs font-semibold ${sel ? "bg-brand-green/10 text-white" : "text-slate-300"}`}>{ESTILOS[e].nome}</p>
+                  </button>
+                );
+              })}
             </div>
-          )}
+            <p className="mt-3 max-w-3xl text-xs leading-relaxed text-slate-400">{ESTILOS[estilo].direcao}</p>
+            <button onClick={gerar} disabled={gerando} className={`mt-4 ${botaoForte}`}>
+              {gerando ? "Montando o seu prompt..." : prompt ? "Gerar de novo" : "Gerar meu prompt"}
+            </button>
 
-          {prompt && (
-            <div className="mt-3">
-              <textarea readOnly value={prompt} rows={8} className={`${campo} font-mono text-xs`} onFocus={(e) => e.currentTarget.select()} />
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <button onClick={() => copiar(prompt, "prompt")} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white">
-                  {copiado === "prompt" ? "Copiado" : "Copiar prompt"}
+            {info && (
+              <div className="mt-4 flex flex-col gap-1 text-xs text-slate-400">
+                <p>
+                  Entraram <span className="font-semibold text-white">{info.incluidos}</span> {info.incluidos === 1 ? "projeto" : "projetos"} e{" "}
+                  <span className="font-semibold text-white">{info.certificados}</span> {info.certificados === 1 ? "certificado" : "certificados"} com link de verificação.
+                </p>
+                {info.incluidos === 0 && <p className="text-amber-200">Seu prompt saiu sem nenhum projeto, e o site vai sair vazio. Volte ao passo 1.</p>}
+                {info.foraPorLacuna.length > 0 && (
+                  <p className="text-amber-200">Ficaram de fora porque ainda têm lacunas entre colchetes: {info.foraPorLacuna.join(", ")}. Preencha e gere de novo.</p>
+                )}
+                {info.foraPorPrivado.length > 0 && <p>Ficaram de fora porque estão só para a turma: {info.foraPorPrivado.join(", ")}.</p>}
+              </div>
+            )}
+
+            {prompt && (
+              <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02]">
+                <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.07] p-3">
+                  <button onClick={() => copiar(prompt, "prompt")} className={botaoForte}>
+                    {copiado === "prompt" ? "Copiado" : "Copiar prompt"}
+                  </button>
+                  <span className="px-1 text-xs text-slate-500">e cole em</span>
+                  {IAS.map((ia) => (
+                    <a key={ia.nome} href={ia.url} target="_blank" rel="noopener" className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-white/40 hover:text-white">
+                      {ia.nome} ↗
+                    </a>
+                  ))}
+                  <span className="text-xs text-slate-500">ou no Codex</span>
+                </div>
+                <div className="relative">
+                  <pre className={`overflow-hidden whitespace-pre-wrap break-words p-4 font-mono text-[11px] leading-relaxed text-slate-400 ${promptAberto ? "max-h-[28rem] overflow-y-auto" : "max-h-28"}`}>{prompt}</pre>
+                  {!promptAberto && <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0a1019] to-transparent" />}
+                </div>
+                <button onClick={() => setPromptAberto((v) => !v)} className="w-full border-t border-white/[0.07] py-2 text-xs text-slate-400 hover:text-white">
+                  {promptAberto ? "Recolher o prompt" : `Ler o prompt inteiro (${prompt.length.toLocaleString("pt-BR")} caracteres)`}
                 </button>
-                <span className="text-xs text-slate-500">e cole em</span>
-                {IAS.map((ia) => (
-                  <a key={ia.nome} href={ia.url} target="_blank" rel="noopener" className="text-sm text-brand-green hover:underline">{ia.nome}</a>
-                ))}
-                <span className="text-xs text-slate-500">ou no Codex</span>
+              </div>
+            )}
+            {promptCopiado && !html && <p className="mt-2 text-xs text-brand-green">Prompt copiado. Cole na IA e, quando ela devolver o código, siga para o passo 3.</p>}
+          </Passo>
+
+          <Passo n={3} titulo="Cole o HTML que a IA devolveu" estado={estado(2)}>
+            <div className={`rounded-2xl border border-dashed transition-colors ${html ? "border-white/15" : "border-white/20 hover:border-brand-green/50"}`}>
+              <textarea
+                value={html}
+                onChange={(e) => { setHtml(e.target.value); setPrevia(false); setAuditoria(null); }}
+                onPaste={aoColar}
+                rows={html ? 6 : 4}
+                placeholder="Cole aqui o código inteiro, do <!doctype html> ao </html>. Pode vir com o texto que a IA escreveu em volta: a Academy separa sozinha."
+                className="w-full resize-y rounded-2xl bg-transparent px-4 py-3 font-mono text-xs text-slate-200 placeholder:font-sans placeholder:text-sm placeholder:text-slate-500 outline-none"
+              />
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/[0.07] px-4 py-2.5">
+                {!html ? (
+                  <button onClick={colarDaAreaDeTransferencia} className="text-sm font-semibold text-brand-green hover:underline">Colar da área de transferência</button>
+                ) : (
+                  leitura && (
+                    <span className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                      <span className="font-mono tabular-nums text-slate-400">{leitura.linhas.toLocaleString("pt-BR")} linhas · {leitura.kb} KB</span>
+                      <span className={leitura.temInicio ? "text-slate-400" : "text-amber-200"}>{leitura.temInicio ? "início do site encontrado" : "não achei o <!doctype html>"}</span>
+                      <span className={leitura.temFim ? "text-slate-400" : "text-amber-200"}>{leitura.temFim ? "fim do site encontrado" : "não achei o </html>: talvez a IA cortou"}</span>
+                    </span>
+                  )
+                )}
+                {html && (
+                  <button onClick={() => { setHtml(""); setPrevia(false); setAuditoria(null); }} className="ml-auto text-xs text-slate-500 hover:text-slate-300">Limpar</button>
+                )}
               </div>
             </div>
-          )}
-        </Passo>
+            <button onClick={() => previsualizar()} disabled={html.trim().length < 30 || conferindo} className={`mt-3 ${botaoLeve}`}>
+              {conferindo ? "Conferindo o site..." : auditoria ? "Conferir de novo" : "Pré-visualizar e conferir"}
+            </button>
 
-        <Passo n={3} titulo="Cole o HTML que a IA devolveu">
-          <textarea
-            value={html}
-            onChange={(e) => { setHtml(e.target.value); setPrevia(false); setAuditoria(null); }}
-            rows={6}
-            placeholder="<!doctype html> ... cole o código inteiro, pode vir com o texto que a IA escreveu em volta"
-            className={`${campo} font-mono text-xs`}
-          />
-          <button onClick={previsualizar} disabled={html.trim().length < 30 || conferindo} className="mt-2 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white disabled:opacity-40">
-            {conferindo ? "Conferindo o site..." : "Pré-visualizar e conferir"}
-          </button>
-
-          {/* A conferência do site. Erro trava o botão de publicar; aviso
-              não trava. O pedido de correção vai pronto para a mesma
-              conversa da IA, que devolve o site consertado. */}
-          {auditoria && (
-            <div className={`mt-3 rounded-2xl border p-4 ${auditoria.achados.some((a) => a.nivel === "erro") ? "border-red-400/40 bg-red-400/[0.06]" : auditoria.achados.length ? "border-amber-400/40 bg-amber-400/[0.06]" : "border-brand-green/40 bg-brand-green/[0.06]"}`}>
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="font-semibold text-white">
-                  {auditoria.achados.length === 0
-                    ? "Site conferido: pronto para publicar."
-                    : auditoria.achados.some((a) => a.nivel === "erro")
-                      ? "O site precisa de correção antes de ir ao ar."
-                      : "O site pode ir ao ar, mas vale ajustar."}
-                </p>
-                <span className="font-mono text-sm tabular-nums text-slate-300">{auditoria.nota}/100</span>
-              </div>
-              {auditoria.achados.length > 0 && (
-                <>
-                  <ul className="mt-2 flex flex-col gap-1.5 text-sm">
-                    {auditoria.achados.map((a, i) => (
-                      <li key={i} className={a.nivel === "erro" ? "text-red-200" : "text-amber-100"}>
-                        <span className="font-semibold">{a.nivel === "erro" ? "Corrigir: " : "Ajustar: "}</span>
-                        {a.texto}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <button onClick={() => copiar(auditoria.pedidoDeCorrecao, "correcao")} className="rounded-lg bg-white/10 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/15">
-                      {copiado === "correcao" ? "Copiado" : "Copiar pedido de correção"}
-                    </button>
-                    <span className="text-xs text-slate-400">Cole na mesma conversa da IA, ela devolve o site corrigido. Depois cole o novo HTML aqui.</span>
+            {/* A conferência do site. Erro trava o botão de publicar; aviso
+                não trava. O pedido de correção vai pronto para a mesma
+                conversa da IA, que devolve o site consertado. */}
+            {auditoria && (
+              <div
+                className={`mt-4 rounded-2xl border p-4 ${
+                  temErro ? "border-red-400/40 bg-red-400/[0.06]" : auditoria.achados.length ? "border-amber-400/40 bg-amber-400/[0.06]" : "border-brand-green/40 bg-brand-green/[0.06]"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <p className="font-semibold text-white">
+                    {auditoria.achados.length === 0 ? "Site conferido: pronto para publicar." : temErro ? "O site precisa de correção antes de ir ao ar." : "O site pode ir ao ar, mas vale ajustar."}
+                  </p>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <div className="h-1.5 w-20 overflow-hidden rounded-full bg-white/10">
+                      <div className={`h-full rounded-full ${temErro ? "bg-red-400" : auditoria.nota < 90 ? "bg-amber-300" : "bg-brand-green"}`} style={{ width: `${auditoria.nota}%` }} />
+                    </div>
+                    <span className="font-mono text-sm tabular-nums text-slate-200">{auditoria.nota}</span>
                   </div>
-                </>
-              )}
-            </div>
-          )}
-          {previa && (
-            <iframe
-              title="Pré-visualização do site"
-              srcDoc={envelopar(html)}
-              sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
-              className="mt-3 h-[480px] w-full rounded-xl border border-white/10 bg-[#0b1220]"
-            />
-          )}
-        </Passo>
+                </div>
+                {auditoria.achados.length > 0 && (
+                  <>
+                    <ul className="mt-3 flex flex-col divide-y divide-white/[0.06] text-sm">
+                      {auditoria.achados.map((a, i) => (
+                        <li key={i} className={`py-1.5 ${a.nivel === "erro" ? "text-red-200" : "text-amber-100"}`}>
+                          <span className="font-semibold">{a.nivel === "erro" ? "Corrigir: " : "Ajustar: "}</span>
+                          {a.texto}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 flex flex-wrap items-center gap-3">
+                      <button onClick={() => copiar(auditoria.pedidoDeCorrecao, "correcao")} className="rounded-lg bg-white/10 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/15">
+                        {copiado === "correcao" ? "Copiado" : "Copiar pedido de correção"}
+                      </button>
+                      <span className="text-xs text-slate-400">Cole na mesma conversa da IA, ela devolve o site corrigido. Depois cole o novo HTML aqui.</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
 
-        <Passo n={4} titulo="Publique e leve o link para o LinkedIn">
-          <label className="flex items-start gap-2.5 text-sm text-slate-300">
-            <input type="checkbox" checked={mostrarUniverso} onChange={(e) => setMostrarUniverso(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#15c47e]" />
-            <span>Mostrar meu Universo 4D na página. As competências acendem a partir dos seus projetos, na ordem em que você os fez.</span>
-          </label>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button onClick={() => salvar(true)} disabled={salvando || html.trim().length < 30 || !!atual?.bloqueado || !!auditoria?.achados.some((a) => a.nivel === "erro")} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-40">
-              {salvando ? "Publicando..." : publicado?.publicado ? "Publicar nova versão" : "Publicar"}
-            </button>
-            <button onClick={() => salvar(false)} disabled={salvando || html.trim().length < 30} className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white disabled:opacity-40">
-              Salvar sem publicar
-            </button>
-          </div>
-          {erro && <p className="mt-2 text-sm text-red-300">{erro}</p>}
-        </Passo>
-      </div>
-    </section>
+            {previa && (
+              <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0b1220]">
+                <div className="flex items-center justify-between gap-3 border-b border-white/[0.07] px-3 py-2">
+                  <span className="text-xs text-slate-400">Pré-visualização</span>
+                  <div className="flex rounded-lg border border-white/10 p-0.5 text-xs" role="tablist" aria-label="Tamanho da tela">
+                    {(["computador", "celular"] as const).map((a) => (
+                      <button
+                        key={a}
+                        role="tab"
+                        aria-selected={aparelho === a}
+                        onClick={() => setAparelho(a)}
+                        className={`rounded-md px-3 py-1 capitalize transition-colors ${aparelho === a ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-white"}`}
+                      >
+                        {a}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className={`flex justify-center ${aparelho === "celular" ? "bg-[#05080f] py-4" : ""}`}>
+                  <iframe
+                    title="Pré-visualização do site"
+                    srcDoc={envelopar((() => { const l = limparHtmlColado(html); return l.ok ? l.html : html; })())}
+                    sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+                    className={`bg-white transition-[width] duration-300 ${aparelho === "celular" ? "h-[640px] w-[390px] rounded-[1.4rem] border-[6px] border-[#1d2433]" : "h-[520px] w-full"}`}
+                  />
+                </div>
+              </div>
+            )}
+          </Passo>
+
+          <Passo n={4} titulo="Publique e leve o link para o LinkedIn" estado={estado(3)} ultimo>
+            <label className="flex cursor-pointer items-start gap-3 text-sm text-slate-300">
+              <span className="relative mt-0.5 inline-flex shrink-0">
+                <input type="checkbox" checked={mostrarUniverso} onChange={(e) => setMostrarUniverso(e.target.checked)} className="peer sr-only" />
+                <span className="h-5 w-9 rounded-full bg-white/15 transition-colors peer-checked:bg-brand-green peer-focus-visible:ring-2 peer-focus-visible:ring-brand-green/60" />
+                <span className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4" />
+              </span>
+              <span>
+                <span className="font-medium text-white">Mostrar meu Universo 4D na página</span>
+                <span className="block text-xs text-slate-400">As competências acendem a partir dos seus projetos, na ordem em que você os fez.</span>
+              </span>
+            </label>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              <button onClick={() => salvar(true)} disabled={salvando || html.trim().length < 30 || !!atual?.bloqueado || temErro} className={botaoForte}>
+                {salvando ? "Publicando..." : noAr ? "Publicar nova versão" : "Publicar"}
+              </button>
+              <button onClick={() => salvar(false)} disabled={salvando || html.trim().length < 30} className={botaoLeve}>
+                Salvar sem publicar
+              </button>
+              {!html && <span className="text-xs text-slate-500">{noAr ? "Para trocar o site, cole a nova versão no passo 3." : "Cole o HTML no passo 3 para liberar."}</span>}
+              {html && temErro && <span className="text-xs text-red-300">Corrija o que a conferência apontou para liberar.</span>}
+            </div>
+            {erro && <p className="mt-3 text-sm text-red-300">{erro}</p>}
+          </Passo>
+        </div>
+      </section>
     </>
   );
 }
