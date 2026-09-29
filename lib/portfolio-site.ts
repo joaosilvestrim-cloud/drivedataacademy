@@ -26,7 +26,7 @@ import { carreiraDoAluno } from "@/lib/portfolio-carreira";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
-import { ESTILOS, type Estilo } from "@/lib/portfolio-site-html";
+import { CORES_DE_DESTAQUE, ESTILOS, PERSONALIZACAO_PADRAO, type Estilo, type Personalizacao } from "@/lib/portfolio-site-html";
 export { CSP_DO_SITE, ESTILOS, LIMITE_HTML, envelopar, limparHtmlColado, type Estilo } from "@/lib/portfolio-site-html";
 
 export function slugDoNome(nome: string): string {
@@ -76,7 +76,13 @@ const linha = (rotulo: string, valor?: string | null) => (valor && String(valor)
    com lacuna ainda aberta fica de fora, porque mandar "[quanto tempo
    levava?]" para outra IA é pedir que ela invente a resposta. Projeto que o
    aluno marcou como só para a turma também fica de fora: o site é público. */
-export async function montarPrompt(admin: SupabaseClient, userId: string, estilo: Estilo): Promise<Resultado> {
+export async function montarPrompt(
+  admin: SupabaseClient,
+  userId: string,
+  estilo: Estilo,
+  personalizacao: Partial<Personalizacao> = {},
+): Promise<Resultado> {
+  const pers: Personalizacao = { ...PERSONALIZACAO_PADRAO, ...personalizacao };
   const [{ data: perfil }, { data: projetos }, { data: certs }, carreira] = await Promise.all([
     admin.from("profiles").select("full_name, headline, bio, skills, linkedin_url, avatar_url").eq("id", userId).maybeSingle(),
     admin
@@ -236,6 +242,24 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
 
   const estiloEscolhido = ESTILOS[estilo] ?? ESTILOS.surpresa;
 
+  /* A personalização do aluno por cima do estilo. Só entra no prompt o que
+     ele mudou; "auto" deixa a decisão com a direção de arte. */
+  const corValida = /^#[0-9a-f]{6}$/i.test(pers.cor) && CORES_DE_DESTAQUE.some((c) => c.hex.toLowerCase() === pers.cor.toLowerCase());
+  const nomeCor = CORES_DE_DESTAQUE.find((c) => c.hex.toLowerCase() === pers.cor.toLowerCase())?.nome;
+  const linhasPersonalizacao = [
+    corValida ? `- Cor de destaque escolhida: ${pers.cor} (${nomeCor}). Use no lugar do destaque do estilo, mantendo o resto da paleta.` : "",
+    pers.tema === "escuro" ? "- Tema: escuro. Construa a paleta do estilo sobre fundo escuro, com contraste AA." : "",
+    pers.tema === "claro" ? "- Tema: claro. Construa a paleta do estilo sobre fundo claro, com contraste AA." : "",
+    pers.tema === "auto" ? "- Tema: siga o prefers-color-scheme do visitante, com uma versão clara e uma escura da mesma identidade." : "",
+    pers.idioma === "en" ? "- Idioma: o site inteiro em inglês. Traduza os fatos fielmente, sem acrescentar nada; nomes de projetos podem ser traduzidos." : "",
+    pers.idioma === "bilingue"
+      ? "- Idioma: bilíngue. Português por padrão, com um botão PT/EN no menu que troca todos os textos e guarda a escolha em localStorage (com try/catch). A tradução é fiel, sem acrescentar nada."
+      : "",
+    pers.tom === "tecnico" ? "- Tom dos textos de interface (menus, títulos de seção, chamadas): técnico e preciso, vocabulário de dados." : "",
+    pers.tom === "caloroso" ? "- Tom dos textos de interface (menus, títulos de seção, chamadas): próximo e acolhedor, em primeira pessoa." : "",
+    pers.tom === "direto" ? "- Tom dos textos de interface (menus, títulos de seção, chamadas): direto, frases curtas." : "",
+  ].filter(Boolean);
+
   /* O que o aluno não preencheu, dito com todas as letras.
 
      No primeiro teste de ponta a ponta a conta não tinha título nem texto de
@@ -287,7 +311,7 @@ O site vai rodar num ambiente isolado e restrito. Se estas regras forem quebrada
 - Todo link externo com target="_blank" e rel="noopener". A única exceção são os links do Universo 4D, que usam target="_top".
 - Imagens: use só as URLs listadas abaixo. Não invente imagem, não use banco de imagens, não embuta imagem em base64.
 - Funcionar bem no celular, a partir de 360px de largura.
-- Respeitar prefers-reduced-motion e prefers-color-scheme.
+- Respeitar prefers-reduced-motion. O tema segue a seção de personalização abaixo.
 - Navegação por âncoras entre as seções, com um menu que acompanha a rolagem.
 
 # Conteúdo
@@ -313,6 +337,16 @@ ${estiloEscolhido.direcao}
 Isto não é um currículo, é a vitrine de alguém que resolve problemas com dados. Os números reais dos projetos são os protagonistas: dê a eles tamanho e destaque.
 Nunca crie número, percentual, prazo ou métrica que não esteja escrito nos fatos acima, nem para completar um layout. Se o layout pede um número e o fato não tem, use os números reais da carreira ou troque o número por uma frase curta tirada do projeto.
 Evite a cara de template gerado por IA: nada de gradiente roxo e azul, nada de emoji como ícone, nada de tudo centralizado, nada de adjetivo vazio como "apaixonado por dados".
+
+# Personalização escolhida por ${nome}
+${linhasPersonalizacao.join("\n")}
+Os textos dos fatos (projetos, trajetória, recomendações) nunca mudam de sentido por causa do tom: o tom vale só para a interface.
+
+# SEO e compartilhamento
+- <title> com o nome e o título profissional${perfil?.headline ? "" : " (sem título profissional, só o nome e \"Portfólio\")"}.
+- <meta name="description"> com uma frase tirada do texto de apresentação ou do resumo do projeto principal, sem inventar.
+- Tags Open Graph (og:title, og:description, og:type=profile${foto ? ", og:image com a foto" : ""}) para o link ficar bonito no LinkedIn e no WhatsApp.
+- Um bloco <script type="application/ld+json"> com schema.org Person: name${perfil?.headline ? ", jobTitle" : ""}${perfil?.linkedin_url ? ", sameAs com o LinkedIn" : ""} e url ${linkUniverso.replace("#universo", "")}.
 
 # Padrão de qualidade
 O site vai ser o cartão de visita profissional de ${nome}, aberto a partir do LinkedIn, quase sempre no celular. Trate como trabalho de agência:

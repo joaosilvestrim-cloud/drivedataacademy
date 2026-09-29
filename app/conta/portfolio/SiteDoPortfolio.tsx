@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ESTILOS, envelopar, limparHtmlColado, type Estilo } from "@/lib/portfolio-site-html";
+import { CORES_DE_DESTAQUE, ESTILOS, PERSONALIZACAO_PADRAO, REFINAMENTOS, envelopar, limparHtmlColado, type Estilo, type Personalizacao } from "@/lib/portfolio-site-html";
 import type { Auditoria } from "@/lib/portfolio-auditoria";
 import { conferirSite, despublicarSite, gerarPromptDoSite, postDoLinkedIn, salvarSite } from "./actions";
 import UniversoPublico from "@/components/knowledge/UniversoPublico";
@@ -110,6 +110,88 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
         </div>
       </div>
     );
+  if (estilo === "estudio")
+    return (
+      <div className="relative h-full overflow-hidden bg-[#0a0a0c] p-2.5">
+        <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-[radial-gradient(circle,rgba(245,184,90,.55),transparent_65%)]" />
+        <div className="font-mono text-[9px] text-[#f5b85a]">CENA 01</div>
+        <div className="mt-1 text-[13px] font-bold leading-tight text-[#f2efe9]">O projeto</div>
+        <div className="mt-auto flex flex-col gap-[3px] pt-5">
+          {[70, 50].map((w, i) => <div key={i} className="h-[2px] bg-white/30" style={{ width: `${w}%` }} />)}
+        </div>
+      </div>
+    );
+  if (estilo === "metro")
+    return (
+      <div className="relative h-full bg-[#fafaf7]">
+        <svg viewBox="0 0 120 72" className="h-full w-full" aria-hidden>
+          <path d="M8 58 H50 L70 38 H112" stroke="#e4002b" strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path d="M20 12 V30 L50 58" stroke="#0072ce" strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path d="M70 38 V12 H104" stroke="#00a650" strokeWidth="4" fill="none" strokeLinecap="round" />
+          {[[8, 58], [50, 58], [70, 38], [112, 38], [20, 12], [104, 12]].map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r="3.2" fill="#fff" stroke="#1a1a1a" strokeWidth="1.5" />
+          ))}
+        </svg>
+      </div>
+    );
+  if (estilo === "blueprint")
+    return (
+      <div className="relative h-full bg-[#0b3d91] bg-[linear-gradient(rgba(127,167,232,.25)_1px,transparent_1px),linear-gradient(90deg,rgba(127,167,232,.25)_1px,transparent_1px)] bg-[size:8px_8px] p-2.5">
+        <div className="font-mono text-[10px] font-bold text-white">PROJ-01</div>
+        <div className="mt-2 h-6 w-16 border border-[#eaf2ff]/80" />
+        <div className="absolute bottom-2 right-2 border border-[#eaf2ff]/80 px-1 font-mono text-[7px] text-[#ffcc00]">REV A · 2026</div>
+      </div>
+    );
+  if (estilo === "relatorio")
+    return (
+      <div className="flex h-full flex-col gap-1 bg-white p-2.5">
+        <div className="text-[10px] font-bold text-[#0a2540]">Relatório anual</div>
+        {[85, 60, 40].map((w, i) => (
+          <div key={i} className="flex items-center gap-1">
+            <div className="h-1 w-6 bg-[#e3e8ee]" />
+            <div className="h-1.5 rounded-sm bg-[#00a3a3]" style={{ width: `${w * 0.6}%` }} />
+          </div>
+        ))}
+        <div className="mt-auto h-[2px] w-full bg-[#0a2540]" />
+      </div>
+    );
+  if (estilo === "bento")
+    return (
+      <div className="grid h-full grid-cols-3 grid-rows-2 gap-1 bg-[#f2f2f0] p-1.5">
+        <div className="col-span-2 row-span-2 rounded-md bg-white p-1.5 text-[10px] font-bold text-[#16181d]">Nome</div>
+        <div className="rounded-md bg-[#3b5bfd]" />
+        <div className="rounded-md bg-white" />
+      </div>
+    );
+  if (estilo === "brutalista")
+    return (
+      <div className="flex h-full flex-col bg-white p-2">
+        <div className="border-[3px] border-black px-1 text-[15px] font-black leading-none text-black">DADOS</div>
+        <div className="mt-1.5 text-[9px] font-bold text-black">
+          <span className="bg-[#ffe600] px-0.5">RESULTADO</span> REAL
+        </div>
+        <div className="mt-auto h-[3px] w-full bg-black" />
+      </div>
+    );
+  if (estilo === "caderno")
+    return (
+      <div className="relative h-full bg-[#fbf8f1] bg-[linear-gradient(transparent_11px,#d9e4f2_12px)] bg-[size:100%_12px] p-2.5">
+        <div className="absolute bottom-0 left-4 top-0 w-px bg-[#f1a1a1]" />
+        <div className="pl-3 text-[11px] italic text-[#1f5fbf]">anotação</div>
+        <div className="absolute bottom-2 right-2 h-7 w-9 rotate-6 bg-[#ffe58a] shadow-sm" />
+      </div>
+    );
+  if (estilo === "museu")
+    return (
+      <div className="flex h-full items-center gap-2 bg-[#f7f6f3] p-2.5">
+        <div className="h-12 w-12 shrink-0 border-[3px] border-[#1b1b1b] bg-[#d9d4cb]" />
+        <div className="flex flex-col gap-[3px]">
+          <div className="text-[9px] font-semibold text-[#222]">Projeto, 2024</div>
+          <div className="h-[2px] w-10 bg-[#8c8a85]" />
+          <div className="h-[2px] w-8 bg-[#8c8a85]" />
+        </div>
+      </div>
+    );
   return (
     <div className="relative h-full overflow-hidden bg-[#141026]">
       <div className="absolute -left-3 top-2 h-10 w-10 rotate-12 rounded-md bg-[#ff7a59]" />
@@ -134,6 +216,8 @@ export default function SiteDoPortfolio({
   nome: string;
 }) {
   const [estilo, setEstilo] = useState<Estilo>("painel");
+  const [pers, setPers] = useState<Personalizacao>(PERSONALIZACAO_PADRAO);
+  const [verDirecao, setVerDirecao] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [promptAberto, setPromptAberto] = useState(false);
   const [promptCopiado, setPromptCopiado] = useState(false);
@@ -163,7 +247,7 @@ export default function SiteDoPortfolio({
   async function gerar() {
     setGerando(true);
     setErro("");
-    const r = await gerarPromptDoSite(estilo);
+    const r = await gerarPromptDoSite(estilo, pers);
     setGerando(false);
     if (!r.ok) return;
     setPrompt(r.prompt);
@@ -355,7 +439,71 @@ export default function SiteDoPortfolio({
                 );
               })}
             </div>
-            <p className="mt-3 max-w-3xl text-xs leading-relaxed text-slate-400">{ESTILOS[estilo].direcao}</p>
+            <div className="mt-3 max-w-3xl">
+              <p className="text-sm text-slate-300">
+                <span className="font-semibold text-white">{ESTILOS[estilo].nome}.</span> {ESTILOS[estilo].resumo}
+              </p>
+              <button type="button" onClick={() => setVerDirecao((v) => !v)} className="mt-1 text-xs text-slate-400 underline decoration-white/20 underline-offset-4 hover:text-white">
+                {verDirecao ? "Esconder a direção de arte" : "Ver a direção de arte completa que vai no prompt"}
+              </button>
+              {verDirecao && <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-white/10 bg-white/[0.02] p-3 font-sans text-xs leading-relaxed text-slate-400">{ESTILOS[estilo].direcao}</pre>}
+            </div>
+
+            {/* Personalização por cima do estilo. Cada escolha vira uma linha no prompt. */}
+            <div className="mt-5 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <p className="text-xs font-semibold text-slate-300">Cor de destaque</p>
+                <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Cor de destaque">
+                  {CORES_DE_DESTAQUE.map((c) => {
+                    const sel = pers.cor === c.hex;
+                    return (
+                      <button
+                        key={c.hex}
+                        type="button"
+                        role="radio"
+                        aria-checked={sel}
+                        onClick={() => setPers((x) => ({ ...x, cor: c.hex }))}
+                        className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${sel ? "border-white/60 bg-white/10 text-white" : "border-white/10 text-slate-300 hover:border-white/30"}`}
+                      >
+                        <span
+                          className="h-3.5 w-3.5 rounded-full border border-white/20"
+                          style={{ background: c.hex === "auto" ? "conic-gradient(#22c55e,#2f6bff,#ff5a4e,#f5b400,#22c55e)" : c.hex }}
+                        />
+                        {c.nome}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {(
+                [
+                  { chave: "tema", rotulo: "Tema", opcoes: [["auto", "Automático"], ["escuro", "Escuro"], ["claro", "Claro"]] },
+                  { chave: "idioma", rotulo: "Idioma do site", opcoes: [["pt", "Português"], ["en", "Inglês"], ["bilingue", "PT + EN"]] },
+                  { chave: "tom", rotulo: "Tom dos textos", opcoes: [["direto", "Direto"], ["tecnico", "Técnico"], ["caloroso", "Caloroso"]] },
+                ] as const
+              ).map((g) => (
+                <div key={g.chave}>
+                  <p className="text-xs font-semibold text-slate-300">{g.rotulo}</p>
+                  <div className="mt-2 inline-flex rounded-lg border border-white/10 p-0.5" role="radiogroup" aria-label={g.rotulo}>
+                    {g.opcoes.map(([v, r]) => {
+                      const sel = (pers as any)[g.chave] === v;
+                      return (
+                        <button
+                          key={v}
+                          type="button"
+                          role="radio"
+                          aria-checked={sel}
+                          onClick={() => setPers((x) => ({ ...x, [g.chave]: v }))}
+                          className={`rounded-md px-3 py-1.5 text-xs transition-colors ${sel ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-white"}`}
+                        >
+                          {r}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
             <button onClick={gerar} disabled={gerando} className={`mt-4 ${botaoForte}`}>
               {gerando ? "Montando o seu prompt..." : prompt ? "Gerar de novo" : "Gerar meu prompt"}
             </button>
@@ -469,6 +617,28 @@ export default function SiteDoPortfolio({
                     </div>
                   </>
                 )}
+              </div>
+            )}
+
+            {/* Refinar na mesma conversa da IA. O primeiro site raramente é o
+                melhor: pedir ajustes é a parte que o aluno mais aprende. */}
+            {previa && (
+              <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                <p className="text-sm font-semibold text-white">Refinar com a IA</p>
+                <p className="mt-0.5 text-xs text-slate-400">Copie um pedido, cole na mesma conversa da IA e cole aqui o código novo que ela devolver.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {REFINAMENTOS.map((r) => (
+                    <button
+                      key={r.rotulo}
+                      type="button"
+                      onClick={() => copiar(r.texto, `ref-${r.rotulo}`)}
+                      title={r.texto}
+                      className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-slate-200 transition-colors hover:border-brand-green/60 hover:text-white"
+                    >
+                      {copiado === `ref-${r.rotulo}` ? "Copiado" : r.rotulo}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 

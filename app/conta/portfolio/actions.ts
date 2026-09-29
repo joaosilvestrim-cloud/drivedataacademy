@@ -11,6 +11,7 @@ import { tabelaAusente } from "@/lib/portfolio-carreira";
 import { randomBytes } from "crypto";
 import { competenciasDoObjetivo, competenciasParaSalvar, cursosPorCompetencia, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
 import { auditarSiteDoAluno, limparHtmlColado, montarPrompt, slugDoNome, slugLivre, textoDoPostLinkedIn, type Estilo } from "@/lib/portfolio-site";
+import type { Personalizacao } from "@/lib/portfolio-site-html";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -144,9 +145,9 @@ export async function curtirProjeto(id: string) {
 /* Site de portfólio: o prompt, o HTML colado e a publicação.
    O desenho e o isolamento estão explicados em lib/portfolio-site.ts. */
 
-export async function gerarPromptDoSite(estilo: Estilo) {
+export async function gerarPromptDoSite(estilo: Estilo, personalizacao: Partial<Personalizacao> = {}) {
   const { user, admin } = await alunoComAcesso();
-  const r = await montarPrompt(admin, user.id, estilo);
+  const r = await montarPrompt(admin, user.id, estilo, personalizacao);
   return { ok: true as const, ...r };
 }
 
