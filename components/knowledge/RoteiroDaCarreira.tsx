@@ -156,6 +156,20 @@ export function Simbolo({ tipo }: { tipo: Tipo }) {
   }
 }
 
+// Quando a linha repete o título do capítulo, ela diz só o que apareceu.
+const NOME_DO_TIPO: Record<Tipo, string> = {
+  nave: "Nova parada da nave",
+  planeta: "Novo planeta",
+  estrela: "Estrelas novas",
+  reforco: "Estrelas maiores",
+  perfil: "Do perfil",
+  cometa: "Cometa",
+  lua: "Nova lua",
+  sinal: "Sinal",
+  formacao: "Em formação",
+  guia: "Estrela-guia",
+};
+
 const LEGENDA: { tipo: Tipo; nome: string }[] = [
   { tipo: "estrela", nome: "Estrela: competência provada em projeto" },
   { tipo: "planeta", nome: "Planeta: projeto" },
@@ -204,11 +218,11 @@ export default function RoteiroDaCarreira({
       aria-label="Roteiro da carreira"
       className="absolute bottom-3 left-3 right-3 flex max-h-[46%] flex-col rounded-2xl border border-white/10 bg-[#0a1428]/92 backdrop-blur sm:bottom-5 sm:left-auto sm:right-5 sm:top-5 sm:max-h-none sm:w-[21rem]"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2 sm:px-4 sm:py-3">
         <div className="min-w-0">
-          <p className="font-display text-base font-bold">Roteiro da carreira</p>
+          <p className="truncate font-display text-sm font-bold sm:text-base">Roteiro<span className="hidden sm:inline"> da carreira</span></p>
           <p className="font-mono text-xs tabular-nums text-slate-400">
-            {quadro < 0 ? "começando" : `capítulo ${quadro + 1} de ${capitulos.length}`}
+            {quadro < 0 ? "começando" : `${quadro + 1} de ${capitulos.length}`}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
@@ -251,7 +265,9 @@ export default function RoteiroDaCarreira({
                         >
                           <Simbolo tipo={l.tipo} />
                           <span className="min-w-0">
-                            <span className="block text-sm font-medium text-slate-100 group-hover:text-brand-green">{l.texto}</span>
+                            <span className="block text-sm font-medium text-slate-100 group-hover:text-brand-green">
+                              {l.texto === c.titulo ? NOME_DO_TIPO[l.tipo] : l.texto}
+                            </span>
                             <span className="block text-xs leading-relaxed text-slate-400">{l.explica}</span>
                           </span>
                         </button>
