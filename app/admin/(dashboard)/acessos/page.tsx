@@ -9,7 +9,7 @@ import CreateStudentForm from "./CreateStudentForm";
 import GrantCoursesForm from "./GrantCoursesForm";
 import DemoForm, { type Demo } from "./DemoForm";
 import CampanhaDemo, { type Campanha } from "./CampanhaDemo";
-import { revokeMembership, reactivateMembership } from "./actions";
+import { revokeMembership, reactivateMembership, reenviarCodigo } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +32,19 @@ function MembershipAction({ id, status, nome }: { id: string; status: string; no
       <Button type="submit" variant={revogar ? "danger" : "secondary"} size="sm">
         {revogar ? "Revogar" : "Reativar"}
         <span className="sr-only"> o acesso de {nome}</span>
+      </Button>
+    </form>
+  );
+}
+
+// Código novo por e-mail. O anterior expira ou já foi usado; só o último vale.
+function ReenviarCodigo({ userId, nome }: { userId: string; nome: string }) {
+  return (
+    <form action={reenviarCodigo} className="inline-block">
+      <input type="hidden" name="user_id" value={userId} />
+      <Button type="submit" variant="secondary" size="sm">
+        Reenviar código
+        <span className="sr-only"> para {nome}</span>
       </Button>
     </form>
   );
@@ -68,7 +81,11 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
     courses = cs ?? [];
 
     const emailById: Record<string, string> = {};
-    for (const u of userData?.users ?? []) emailById[u.id] = u.email || "";
+    const entrouById: Record<string, string | null> = {};
+    for (const u of userData?.users ?? []) {
+      emailById[u.id] = u.email || "";
+      entrouById[u.id] = (u as any).last_sign_in_at || null;
+    }
     const nameById: Record<string, string> = {};
     for (const p of profs ?? []) nameById[p.id] = p.full_name || "";
 
@@ -77,6 +94,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
       ...m,
       email: emailById[m.user_id] || "(sem e-mail)",
       name: nameById[m.user_id] || "",
+      nuncaEntrou: !entrouById[m.user_id],
       active: m.status === "active" && (!m.expires_at || new Date(m.expires_at).getTime() > now),
     }));
     orders = ord ?? [];
@@ -179,9 +197,13 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
                         <Status tone={m.active ? "accent" : "attention"}>
                           {m.active ? "Ativo" : m.status === "active" ? "Expirado" : m.status}
                         </Status>
+                        {m.active && m.nuncaEntrou && <span className="block text-caption text-ds-text-3">nunca entrou</span>}
                       </Cell>
-                      <Cell className="text-right">
-                        <MembershipAction id={m.id} status={m.status} nome={m.name || m.email} />
+                      <Cell className="whitespace-nowrap text-right">
+                        <span className="inline-flex items-center gap-2">
+                          {m.active && <ReenviarCodigo userId={m.user_id} nome={m.name || m.email} />}
+                          <MembershipAction id={m.id} status={m.status} nome={m.name || m.email} />
+                        </span>
                       </Cell>
                     </Tr>
                   ))}
@@ -206,9 +228,13 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
                       </Status>
                       <span className="text-caption text-ds-text-3">
                         desde {fmt(m.starts_at)} · expira {fmt(m.expires_at)}
+                        {m.active && m.nuncaEntrou ? " · nunca entrou" : ""}
                       </span>
                     </span>
-                    <MembershipAction id={m.id} status={m.status} nome={m.name || m.email} />
+                    <span className="inline-flex items-center gap-2">
+                      {m.active && <ReenviarCodigo userId={m.user_id} nome={m.name || m.email} />}
+                      <MembershipAction id={m.id} status={m.status} nome={m.name || m.email} />
+                    </span>
                   </span>
                 </li>
               ))}

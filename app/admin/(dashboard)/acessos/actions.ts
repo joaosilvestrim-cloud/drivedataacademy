@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendAccessGrantedEmail, sendDemoAccessEmail } from "@/lib/email";
+import { sendAccessCodeEmail, sendAccessGrantedEmail, sendAccountSetupEmail, sendDemoAccessEmail } from "@/lib/email";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
 
@@ -126,6 +126,36 @@ export async function revokeMembership(formData: FormData) {
   await admin.from("memberships").update({ status: "canceled" }).eq("id", id);
   revalidatePath("/admin/acessos");
   redirect("/admin/acessos?ok=" + encodeURIComponent("Acesso revogado."));
+}
+
+/* Reenvia o código de acesso de um aluno da lista.
+
+   O código do e-mail é de uso único e expira. Quando a pessoa demora a abrir,
+   não adianta procurar a mensagem antiga: gera um código novo, e o anterior
+   deixa de valer. Quem nunca entrou recebe o e-mail de "crie sua senha"; quem
+   já entrou tem senha, então recebe o código de troca de senha. */
+export async function reenviarCodigo(formData: FormData) {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+  const userId = (formData.get("user_id") as string) || "";
+  const admin = createAdminClient();
+
+  const { data: conta } = await admin.auth.admin.getUserById(userId);
+  const alvo = conta?.user;
+  const email = (alvo?.email || "").toLowerCase();
+  if (!alvo || !email) redirect("/admin/acessos?error=" + encodeURIComponent("Conta não encontrada."));
+
+  const { data: link, error } = await admin.auth.admin.generateLink({ type: "recovery", email } as any);
+  const codigo = ((link as any)?.properties?.email_otp as string) || "";
+  if (error || !codigo) redirect("/admin/acessos?error=" + encodeURIComponent("Não consegui gerar o código: " + (error?.message || "resposta sem código")));
+
+  const { data: perfil } = await admin.from("profiles").select("full_name").eq("id", userId).maybeSingle();
+  const nome = perfil?.full_name || (alvo!.user_metadata?.full_name as string) || "";
+  const r = alvo!.last_sign_in_at ? await sendAccessCodeEmail(email, codigo) : await sendAccountSetupEmail(email, nome, codigo, null);
+
+  revalidatePath("/admin/acessos");
+  if (!r.sent) redirect("/admin/acessos?error=" + encodeURIComponent(`O e-mail para ${email} não saiu (${r.reason || "motivo desconhecido"}).`));
+  redirect("/admin/acessos?ok=" + encodeURIComponent(`Código novo enviado para ${email}. O anterior deixou de valer.`));
 }
 
 export async function reactivateMembership(formData: FormData) {
