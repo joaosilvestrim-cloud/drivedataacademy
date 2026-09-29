@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { UniversoPublico as Dados } from "@/lib/knowledge/publico";
 import type { Score, Vec3 } from "@/lib/knowledge/types";
 import type { Selecao } from "./CarreiraNoEspaco";
+import RoteiroDaCarreira, { capitulosDaCarreira, type Alvo } from "./RoteiroDaCarreira";
 
 /* Universo 4D na página pública do portfólio.
 
@@ -56,11 +57,14 @@ export default function UniversoPublico({
   const [dados, setDados] = useState<Dados | null>(null);
   const [estado, setEstado] = useState<"carregando" | "ok" | "vazio" | "erro">("carregando");
   const [quadro, setQuadro] = useState(0);
+  const capitulos = useMemo(() => (dados ? capitulosDaCarreira(dados) : []), [dados]);
   const [tocando, setTocando] = useState(false);
   const [selecionada, setSelecionada] = useState<string | null>(null);
   // Um objeto da carreira tocado: planeta, lua, parada da nave, cometa, sinal...
   const [extra, setExtra] = useState<Selecao | null>(null);
   const [pontosExtras, setPontosExtras] = useState<Vec3[]>([]);
+  // O roteiro ao lado: abre sozinho no play e fica até o visitante fechar.
+  const [roteiro, setRoteiro] = useState(false);
   // Comparação com uma vaga: o visitante cola a descrição, a IA lê o que ela pede.
   const [vagaAberta, setVagaAberta] = useState(false);
   const [vagaTexto, setVagaTexto] = useState("");
@@ -125,9 +129,11 @@ export default function UniversoPublico({
       const t = setTimeout(() => { setTocando(false); setTerminou(true); }, 2600);
       return () => clearTimeout(t);
     }
-    const t = setTimeout(() => setQuadro((q) => q + 1), quadro < 0 ? 1100 : 2400);
+    // Cada capítulo fica na tela o tempo de ler o que ele explica no roteiro.
+    const linhas = quadro >= 0 ? capitulos[quadro]?.linhas.length ?? 1 : 0;
+    const t = setTimeout(() => setQuadro((q) => q + 1), quadro < 0 ? 1100 : Math.min(7000, 2800 + Math.max(0, linhas - 1) * 1200));
     return () => clearTimeout(t);
-  }, [tocando, quadro, dados]);
+  }, [tocando, quadro, dados, capitulos]);
 
   useEffect(() => {
     if (!autoplay || estado !== "ok" || jaTocou.current) return;
@@ -174,38 +180,6 @@ export default function UniversoPublico({
     return r;
   }, [alvo, exibidos]);
 
-  /* A legenda do quadro: o que aconteceu na carreira naquele momento. Os
-     projetos daquele período e as competências que acenderam pela primeira
-     vez. É isso que transforma a animação numa história. */
-  const legenda = useMemo(() => {
-    if (!dados || quadro < 0) return null;
-    const at = dados.quadros[quadro].at.slice(0, 7);
-    const ant = quadro > 0 ? dados.quadros[quadro - 1].at.slice(0, 7) : "";
-    const projetos = new Set<string>();
-    for (const lista of Object.values(dados.provas ?? {})) {
-      for (const pr of lista) if (pr.at && pr.at <= at && pr.at > ant) projetos.add(pr.titulo);
-    }
-    const antes = quadro > 0 ? dados.quadros[quadro - 1].scores : null;
-    const novas = dados.catalog.competencies
-      .filter((c) => (dados.quadros[quadro].scores[c.id]?.score ?? 0) > 0 && !(antes && (antes[c.id]?.score ?? 0) > 0))
-      .map((c) => c.name);
-    /* Projeto que não acende nada novo ainda conta: ele reforça o que já
-       estava aceso. Sem isto, o quadro do PMI em 2025 aparecia mudo, porque
-       Gestão de projetos e Planejamento já tinham acendido antes. */
-    const reforcadas = antes
-      ? dados.catalog.competencies
-          .filter((c) => (antes[c.id]?.score ?? 0) > 0 && (dados.quadros[quadro].scores[c.id]?.score ?? 0) > (antes[c.id]?.score ?? 0))
-          .map((c) => c.name)
-      : [];
-    // O que mais aconteceu no período: emprego novo, conquista, certificado.
-    const noPeriodo = (iso?: string | null) => !!iso && iso.slice(0, 7) <= at && iso.slice(0, 7) > ant;
-    const eventos = [
-      ...(dados.trajetoria ?? []).filter((t) => noPeriodo(t.inicio)).map((t) => `Começou como ${t.cargo}${t.organizacao ? ` na ${t.organizacao}` : ""}`),
-      ...(dados.conquistas ?? []).filter((c) => noPeriodo(c.at)).map((c) => `Conquista: ${c.titulo}`),
-      ...(dados.luas ?? []).filter((l) => noPeriodo(l.at)).map((l) => `Certificado: ${l.titulo}`),
-    ];
-    return { projetos: [...projetos], novas, reforcadas, eventos };
-  }, [dados, quadro]);
   // No fim da linha do tempo (e fora do play) vale tudo, inclusive a estrela-guia.
   const ateMs = quadro < 0 || !atual ? -Infinity : !tocando && dados && quadro === dados.quadros.length - 1 ? Date.now() : Date.parse(atual.at);
   const visiveis = useMemo(
@@ -239,6 +213,30 @@ export default function UniversoPublico({
         .filter((c) => (scores[c.id]?.score ?? 0) > 0)
     : [];
   const area = comp ? dados?.catalog.areas.find((a) => a.id === comp.area) : null;
+
+  const comecar = () => {
+    setSelecionada(null);
+    setExtra(null);
+    setVaga(null);
+    setVagaAberta(false);
+    setReset((r) => r + 1);
+    setQuadro(-1);
+    setRoteiro(true);
+    setTocando(true);
+  };
+  const irPara = (i: number) => {
+    setTocando(false);
+    setSelecionada(null);
+    setExtra(null);
+    setQuadro(i);
+  };
+  // Tocar numa linha do roteiro pausa e abre o objeto no painel.
+  const focar = (alvo: Alvo) => {
+    setTocando(false);
+    if (alvo.comp) { setExtra(null); setSelecionada(alvo.comp); }
+    else if (alvo.extra) { setSelecionada(null); setExtra(alvo.extra); }
+  };
+  const mostraRoteiro = roteiro && (tocando || (!extra && !comp && !vaga && !vagaAberta));
   const sc = comp ? scores[comp.id] : null;
 
   return (
@@ -301,34 +299,22 @@ export default function UniversoPublico({
                 {rotulo(atual.at, dados.passo)}
               </p>
             )}
-            {tocando && legenda && (legenda.projetos.length > 0 || legenda.novas.length > 0 || legenda.eventos.length > 0) && (
-              <div className="pointer-events-none absolute inset-x-3 bottom-3 flex justify-center sm:bottom-6">
-                <div key={`legenda-${quadro}`} className="surgir w-full max-w-xl rounded-2xl border border-white/10 bg-[#0a1428]/85 px-4 py-2.5 text-center backdrop-blur sm:px-5 sm:py-4">
-                  <p className="font-mono text-xs uppercase tracking-widest text-brand-green">{atual ? rotulo(atual.at, dados.passo) : ""}</p>
-                  {(legenda.projetos.length > 0 || legenda.eventos.length === 0) && (
-                    <p className="mt-0.5 font-display text-sm font-bold sm:mt-1 sm:text-lg">
-                      {legenda.projetos.length ? legenda.projetos.join(" · ") : "Declaradas no perfil"}
-                    </p>
-                  )}
-                  {legenda.eventos.map((e) => (
-                    <p key={e} className={legenda.projetos.length ? "mt-0.5 text-xs text-sky-200 sm:text-sm" : "mt-0.5 font-display text-sm font-bold sm:mt-1 sm:text-base"}>{e}</p>
-                  ))}
-                  {legenda.novas.length > 0 && (
-                    <p className="mt-1 text-xs text-slate-300 sm:text-sm">
-                      acendeu <span className="text-white">{legenda.novas.join(", ")}</span>
-                    </p>
-                  )}
-                  {legenda.reforcadas.length > 0 && (
-                    <p className="mt-0.5 text-xs text-slate-400 sm:text-sm">
-                      reforçou <span className="text-slate-200">{legenda.reforcadas.join(", ")}</span>
-                    </p>
-                  )}
-                </div>
-              </div>
+            {mostraRoteiro && (
+              <RoteiroDaCarreira
+                capitulos={capitulos}
+                quadro={quadro}
+                tocando={tocando}
+                rotulo={(iso) => rotulo(iso, dados.passo)}
+                onIr={irPara}
+                onTocar={() => (quadro >= capitulos.length - 1 ? comecar() : setTocando(true))}
+                onPausar={() => setTocando(false)}
+                onFoco={focar}
+                onFechar={() => setRoteiro(false)}
+              />
             )}
 
             {/* Painel: a competência tocada, ou o resumo quando nada está tocado. */}
-            {!tocando && <aside className="absolute bottom-3 left-3 right-3 max-h-[42%] overflow-y-auto rounded-2xl border border-white/10 bg-[#0a1428]/90 p-3 backdrop-blur sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:max-h-[calc(100%-2.5rem)] sm:w-72 sm:p-4">
+            {!tocando && !mostraRoteiro && <aside className="absolute bottom-3 left-3 right-3 max-h-[42%] overflow-y-auto rounded-2xl border border-white/10 bg-[#0a1428]/90 p-3 backdrop-blur sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:max-h-[calc(100%-2.5rem)] sm:w-72 sm:p-4">
               {vaga ? (
                 <PainelDaVaga vaga={vaga} aoFechar={() => setVaga(null)} aoCompetencia={(id) => { setExtra(null); setSelecionada(id); }} />
               ) : vagaAberta ? (
@@ -404,6 +390,12 @@ export default function UniversoPublico({
                     {(dados.trajetoria ?? []).length ? `, carreira desde ${new Date([...(dados.trajetoria ?? [])].sort((a, b) => a.inicio.localeCompare(b.inicio))[0].inicio).getUTCFullYear()}` : ""}
                     . Toque numa esfera, num planeta ou na nave para ver o detalhe.
                   </p>
+                  {capitulos.length > 1 && (
+                    <button onClick={() => setRoteiro(true)} className="mt-3 w-full rounded-lg border border-white/15 px-3 py-2 text-left text-sm hover:border-white/40">
+                      <span className="font-semibold">Ler o roteiro da carreira</span>
+                      <span className="block text-xs text-slate-400">{capitulos.length} capítulos, do primeiro fato até hoje</span>
+                    </button>
+                  )}
                   <ol className="mt-3 hidden flex-col gap-2 sm:flex">
                     {ranking.map((c) => {
                       const cor = dados.catalog.areas.find((a) => a.id === c.area)?.color;
@@ -453,14 +445,7 @@ export default function UniversoPublico({
       {estado === "ok" && dados && dados.quadros.length > 1 && (
         <footer className="flex items-center gap-3 border-t border-white/10 px-5 py-3 sm:gap-4 sm:px-8">
           <button
-            onClick={() => {
-              if (tocando) return setTocando(false);
-              setSelecionada(null);
-              setExtra(null);
-              setReset((r) => r + 1);
-              setQuadro(-1);
-              setTocando(true);
-            }}
+            onClick={() => (tocando ? setTocando(false) : comecar())}
             className="shrink-0 rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900"
           >
             {tocando ? "Pausar" : "Ver a evolução"}
