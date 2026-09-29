@@ -3,7 +3,8 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { UniversoPublico as Dados } from "@/lib/knowledge/publico";
-import type { Score } from "@/lib/knowledge/types";
+import type { Score, Vec3 } from "@/lib/knowledge/types";
+import type { Selecao } from "./CarreiraNoEspaco";
 
 /* Universo 4D na página pública do portfólio.
 
@@ -19,6 +20,11 @@ const Canvas = dynamic(() => import("./UniverseCanvas"), {
   ssr: false,
   loading: () => <p className="grid h-full place-items-center text-sm text-slate-400">Organizando as constelações...</p>,
 });
+// A carreira no espaço usa o motor 3D, então também fica fora do servidor.
+const CarreiraNoEspaco = dynamic(() => import("./CarreiraNoEspaco"), { ssr: false });
+
+const mesAno = (iso: string | null | undefined) =>
+  iso ? new Date(iso).toLocaleDateString("pt-BR", { month: "short", year: "numeric", timeZone: "UTC" }).replace(/\./g, "").replace(" de ", " ") : "";
 
 // A carreira pode ir por ano, por mês ou, na camada da plataforma, por semana.
 const rotulo = (iso: string, passo: "semana" | "mes" | "ano") =>
@@ -52,6 +58,36 @@ export default function UniversoPublico({
   const [quadro, setQuadro] = useState(0);
   const [tocando, setTocando] = useState(false);
   const [selecionada, setSelecionada] = useState<string | null>(null);
+  // Um objeto da carreira tocado: planeta, lua, parada da nave, cometa, sinal...
+  const [extra, setExtra] = useState<Selecao | null>(null);
+  const [pontosExtras, setPontosExtras] = useState<Vec3[]>([]);
+  // Comparação com uma vaga: o visitante cola a descrição, a IA lê o que ela pede.
+  const [vagaAberta, setVagaAberta] = useState(false);
+  const [vagaTexto, setVagaTexto] = useState("");
+  const [vagaLendo, setVagaLendo] = useState(false);
+  const [vagaErro, setVagaErro] = useState("");
+  const [vaga, setVaga] = useState<Aderencia | null>(null);
+  const compararVaga = async () => {
+    setVagaLendo(true);
+    setVagaErro("");
+    try {
+      const r = await fetch(`/api/portfolio/${encodeURIComponent(slug)}/aderencia`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: vagaTexto }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || "Não foi possível comparar agora.");
+      setVaga(j as Aderencia);
+      setSelecionada(null);
+      setExtra(null);
+      setReset((n) => n + 1);
+    } catch (e: any) {
+      setVagaErro(e.message);
+    } finally {
+      setVagaLendo(false);
+    }
+  };
   const [reset, setReset] = useState(0);
   const [zoom, setZoom] = useState(0);
   const [reduzido, setReduzido] = useState(false);
@@ -159,8 +195,17 @@ export default function UniversoPublico({
           .filter((c) => (antes[c.id]?.score ?? 0) > 0 && (dados.quadros[quadro].scores[c.id]?.score ?? 0) > (antes[c.id]?.score ?? 0))
           .map((c) => c.name)
       : [];
-    return { projetos: [...projetos], novas, reforcadas };
+    // O que mais aconteceu no período: emprego novo, conquista, certificado.
+    const noPeriodo = (iso?: string | null) => !!iso && iso.slice(0, 7) <= at && iso.slice(0, 7) > ant;
+    const eventos = [
+      ...(dados.trajetoria ?? []).filter((t) => noPeriodo(t.inicio)).map((t) => `Começou como ${t.cargo}${t.organizacao ? ` na ${t.organizacao}` : ""}`),
+      ...(dados.conquistas ?? []).filter((c) => noPeriodo(c.at)).map((c) => `Conquista: ${c.titulo}`),
+      ...(dados.luas ?? []).filter((l) => noPeriodo(l.at)).map((l) => `Certificado: ${l.titulo}`),
+    ];
+    return { projetos: [...projetos], novas, reforcadas, eventos };
   }, [dados, quadro]);
+  // No fim da linha do tempo (e fora do play) vale tudo, inclusive a estrela-guia.
+  const ateMs = quadro < 0 || !atual ? -Infinity : !tocando && dados && quadro === dados.quadros.length - 1 ? Date.now() : Date.parse(atual.at);
   const visiveis = useMemo(
     () => (dados ? dados.catalog.competencies.filter((c) => (alvo[c.id]?.score ?? 0) > 0).map((c) => c.id) : []),
     [dados, alvo],
@@ -226,13 +271,26 @@ export default function UniversoPublico({
               scores={scores}
               visible={visiveis}
               selected={selecionada}
-              onSelect={setSelecionada}
-              onArea={() => setSelecionada(null)}
+              onSelect={(id) => { setExtra(null); setSelecionada(id); }}
+              onArea={() => { setSelecionada(null); setExtra(null); }}
               reduced={reduzido}
               reset={reset}
               zoom={zoom}
               cinema={!reduzido}
               girando={tocando && !reduzido}
+              pontosExtras={pontosExtras}
+              extras={
+                <CarreiraNoEspaco
+                  dados={dados}
+                  acesas={visiveis}
+                  ate={ateMs}
+                  cinema={!reduzido}
+                  reduzido={reduzido}
+                  onSelect={(s) => { setSelecionada(null); setExtra(s); }}
+                  aoPosicionar={setPontosExtras}
+                  vaga={vaga ? vaga.itens.map((i) => ({ id: i.id, tem: i.tem })) : null}
+                />
+              }
             />
 
             {/* A data grande ao fundo e a legenda da carreira, só durante o play. */}
@@ -241,13 +299,18 @@ export default function UniversoPublico({
                 {rotulo(atual.at, dados.passo)}
               </p>
             )}
-            {tocando && legenda && (legenda.projetos.length > 0 || legenda.novas.length > 0) && (
+            {tocando && legenda && (legenda.projetos.length > 0 || legenda.novas.length > 0 || legenda.eventos.length > 0) && (
               <div className="pointer-events-none absolute inset-x-3 bottom-3 flex justify-center sm:bottom-6">
                 <div key={`legenda-${quadro}`} className="surgir w-full max-w-xl rounded-2xl border border-white/10 bg-[#0a1428]/85 px-4 py-2.5 text-center backdrop-blur sm:px-5 sm:py-4">
                   <p className="font-mono text-xs uppercase tracking-widest text-brand-green">{atual ? rotulo(atual.at, dados.passo) : ""}</p>
-                  <p className="mt-0.5 font-display text-sm font-bold sm:mt-1 sm:text-lg">
-                    {legenda.projetos.length ? legenda.projetos.join(" · ") : "Declaradas no perfil"}
-                  </p>
+                  {(legenda.projetos.length > 0 || legenda.eventos.length === 0) && (
+                    <p className="mt-0.5 font-display text-sm font-bold sm:mt-1 sm:text-lg">
+                      {legenda.projetos.length ? legenda.projetos.join(" · ") : "Declaradas no perfil"}
+                    </p>
+                  )}
+                  {legenda.eventos.map((e) => (
+                    <p key={e} className={legenda.projetos.length ? "mt-0.5 text-xs text-sky-200 sm:text-sm" : "mt-0.5 font-display text-sm font-bold sm:mt-1 sm:text-base"}>{e}</p>
+                  ))}
                   {legenda.novas.length > 0 && (
                     <p className="mt-1 text-xs text-slate-300 sm:text-sm">
                       acendeu <span className="text-white">{legenda.novas.join(", ")}</span>
@@ -264,7 +327,31 @@ export default function UniversoPublico({
 
             {/* Painel: a competência tocada, ou o resumo quando nada está tocado. */}
             {!tocando && <aside className="absolute bottom-3 left-3 right-3 max-h-[42%] overflow-y-auto rounded-2xl border border-white/10 bg-[#0a1428]/90 p-3 backdrop-blur sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:max-h-[calc(100%-2.5rem)] sm:w-72 sm:p-4">
-              {comp && sc ? (
+              {vaga ? (
+                <PainelDaVaga vaga={vaga} aoFechar={() => setVaga(null)} aoCompetencia={(id) => { setExtra(null); setSelecionada(id); }} />
+              ) : vagaAberta ? (
+                <>
+                  <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">Comparar com uma vaga</p>
+                  <p className="mt-1 text-sm text-slate-300">Cole a descrição da vaga. A constelação mostra o que ela pede e o que já está provado em projeto.</p>
+                  <textarea
+                    value={vagaTexto}
+                    onChange={(e) => setVagaTexto(e.target.value)}
+                    rows={7}
+                    maxLength={9000}
+                    placeholder="Responsabilidades, requisitos, ferramentas..."
+                    className="mt-3 w-full resize-y rounded-lg border border-white/15 bg-black/30 p-2 text-sm text-slate-100 outline-none focus:border-brand-green/60"
+                  />
+                  {vagaErro && <p className="mt-2 text-xs text-red-300">{vagaErro}</p>}
+                  <div className="mt-3 flex gap-2">
+                    <button disabled={vagaLendo || vagaTexto.trim().length < 80} onClick={compararVaga} className="h-9 rounded-lg bg-brand-green px-4 text-sm font-semibold text-slate-900 disabled:opacity-40">
+                      {vagaLendo ? "Lendo a vaga..." : "Comparar"}
+                    </button>
+                    <button onClick={() => setVagaAberta(false)} className="h-9 px-3 text-sm text-slate-400 hover:text-white">Cancelar</button>
+                  </div>
+                </>
+              ) : extra ? (
+                <PainelDaCarreira dados={dados} extra={extra} aoVoltar={() => setExtra(null)} aoCompetencia={(id) => { setExtra(null); setSelecionada(id); }} />
+              ) : comp && sc ? (
                 <>
                   <p className="text-[0.7rem] font-semibold uppercase tracking-wider" style={{ color: area?.color }}>{area?.name}</p>
                   <p className="mt-1 font-display text-lg font-bold">{comp.name}</p>
@@ -310,7 +397,11 @@ export default function UniversoPublico({
                     {visiveis.length} {visiveis.length === 1 ? "competência" : "competências"}
                     {dados.projetos ? ` em ${dados.projetos} ${dados.projetos === 1 ? "projeto" : "projetos"}` : ""}
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-400">até {atual ? rotulo(atual.at, dados.passo) : ""}. Toque numa esfera para ver o detalhe.</p>
+                  <p className="mt-0.5 text-xs text-slate-400">
+                    até {atual ? rotulo(atual.at, dados.passo) : ""}
+                    {(dados.trajetoria ?? []).length ? `, carreira desde ${new Date([...(dados.trajetoria ?? [])].sort((a, b) => a.inicio.localeCompare(b.inicio))[0].inicio).getUTCFullYear()}` : ""}
+                    . Toque numa esfera, num planeta ou na nave para ver o detalhe.
+                  </p>
                   <ol className="mt-3 hidden flex-col gap-2 sm:flex">
                     {ranking.map((c) => {
                       const cor = dados.catalog.areas.find((a) => a.id === c.area)?.color;
@@ -334,7 +425,15 @@ export default function UniversoPublico({
             <div className="absolute left-3 top-3 flex gap-1.5 sm:left-5 sm:top-5">
               <button onClick={() => setZoom((z) => z + 1)} className="h-8 w-8 rounded-lg border border-white/15 bg-black/30 text-slate-200" aria-label="Aproximar">+</button>
               <button onClick={() => setZoom((z) => z - 1)} className="h-8 w-8 rounded-lg border border-white/15 bg-black/30 text-slate-200" aria-label="Afastar">−</button>
-              <button onClick={() => { setReset((r) => r + 1); setSelecionada(null); }} className="h-8 rounded-lg border border-white/15 bg-black/30 px-2.5 text-xs text-slate-200">Centralizar</button>
+              <button onClick={() => { setReset((r) => r + 1); setSelecionada(null); setExtra(null); }} className="h-8 rounded-lg border border-white/15 bg-black/30 px-2.5 text-xs text-slate-200">Centralizar</button>
+              {!tocando && !autoplay && (
+                <button
+                  onClick={() => { setVaga(null); setExtra(null); setSelecionada(null); setVagaAberta(true); }}
+                  className="h-8 rounded-lg border border-brand-green/40 bg-black/30 px-2.5 text-xs font-semibold text-brand-green"
+                >
+                  Comparar com vaga
+                </button>
+              )}
             </div>
           </>
         )}
@@ -355,6 +454,7 @@ export default function UniversoPublico({
             onClick={() => {
               if (tocando) return setTocando(false);
               setSelecionada(null);
+              setExtra(null);
               setReset((r) => r + 1);
               setQuadro(-1);
               setTocando(true);
@@ -376,5 +476,196 @@ export default function UniversoPublico({
         </footer>
       )}
     </div>
+  );
+}
+
+/* O painel de cada objeto da carreira. Cada um responde a pergunta que o
+   visitante faria ao tocar: que projeto é esse, que certificado, que
+   emprego, que conquista, quem recomendou, para onde essa pessoa vai. */
+function PainelDaCarreira({
+  dados,
+  extra,
+  aoVoltar,
+  aoCompetencia,
+}: {
+  dados: Dados;
+  extra: Selecao;
+  aoVoltar: () => void;
+  aoCompetencia: (id: string) => void;
+}) {
+  const nome = (id: string) => dados.catalog.competencies.find((c) => c.id === id)?.name ?? id;
+  const Rotulo = ({ children }: { children: React.ReactNode }) => <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">{children}</p>;
+  const Titulo = ({ children }: { children: React.ReactNode }) => <p className="mt-1 font-display text-lg font-bold leading-snug">{children}</p>;
+  const Campo = ({ r, v }: { r: string; v: React.ReactNode }) => (v ? <div className="mt-2 text-sm"><span className="text-xs text-slate-400">{r}</span><p className="text-slate-200">{v}</p></div> : null);
+  const voltar = <button onClick={aoVoltar} className="mt-3 text-xs text-slate-400 hover:text-white">Ver resumo</button>;
+
+  if (extra.tipo === "planeta") {
+    const p = (dados.planetas ?? []).find((x) => x.id === extra.id);
+    if (!p) return voltar;
+    const recs = (dados.sinais ?? []).filter((s) => s.projeto === p.id);
+    return (
+      <>
+        <Rotulo>Projeto · {mesAno(p.at)}{p.setor ? ` · ${p.setor}` : ""}</Rotulo>
+        <Titulo>{p.titulo}</Titulo>
+        {p.resumo && <p className="mt-1 text-xs text-slate-300">{p.resumo}</p>}
+        <Campo r="Papel" v={p.papel} />
+        <Campo r="Time e duração" v={[p.time ? `${p.time} ${p.time === 1 ? "pessoa" : "pessoas"}` : "", p.duracao ? `${p.duracao} ${p.duracao === 1 ? "mês" : "meses"}` : ""].filter(Boolean).join(" · ")} />
+        <Campo r="O problema" v={p.problema} />
+        <Campo r="O que mudou" v={p.resultado} />
+        <Campo r="O que aprendeu" v={p.aprendizado} />
+        {p.competencias.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {p.competencias.map((c) => (
+              <button key={c} onClick={() => aoCompetencia(c)} className="rounded-full border border-white/15 px-2 py-0.5 text-xs text-slate-200 hover:border-brand-green/60">{nome(c)}</button>
+            ))}
+          </div>
+        )}
+        {recs.map((r) => (
+          <div key={r.id} className="mt-3 border-t border-white/10 pt-3 text-xs">
+            <p className="text-slate-200">&ldquo;{r.texto}&rdquo;</p>
+            <p className="mt-1 text-slate-400">{r.autor}{r.cargo ? `, ${r.cargo}` : ""}</p>
+          </div>
+        ))}
+        {voltar}
+      </>
+    );
+  }
+
+  if (extra.tipo === "lua") {
+    const l = (dados.luas ?? []).find((x) => x.id === extra.id);
+    if (!l) return voltar;
+    return (
+      <>
+        <Rotulo>Certificado · {mesAno(l.at)}</Rotulo>
+        <Titulo>{l.titulo}</Titulo>
+        <p className="mt-1 text-xs text-slate-400">Orbita {nome(l.competencia)}, a competência que ele trabalha.</p>
+        <a href={l.verificacao} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-brand-green hover:underline">Verificar o certificado</a>
+        {voltar}
+      </>
+    );
+  }
+
+  if (extra.tipo === "parada") {
+    const t = (dados.trajetoria ?? []).find((x) => x.id === extra.id);
+    if (!t) return voltar;
+    return (
+      <>
+        <Rotulo>Trajetória · {mesAno(t.inicio)} a {t.fim ? mesAno(t.fim) : "hoje"}</Rotulo>
+        <Titulo>{t.cargo}</Titulo>
+        {t.organizacao && <p className="mt-1 text-sm text-slate-300">{t.organizacao}</p>}
+        {t.setor && <p className="mt-1 text-xs text-slate-400">Setor: {t.setor}</p>}
+        {voltar}
+      </>
+    );
+  }
+
+  if (extra.tipo === "cometa") {
+    const c = (dados.conquistas ?? []).find((x) => x.id === extra.id);
+    if (!c) return voltar;
+    return (
+      <>
+        <Rotulo>Conquista · {mesAno(c.at)}</Rotulo>
+        <Titulo>{c.titulo}</Titulo>
+        {c.descricao && <p className="mt-1 text-sm text-slate-300">{c.descricao}</p>}
+        {c.link && <a href={c.link} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-brand-green hover:underline">Ver a prova</a>}
+        {voltar}
+      </>
+    );
+  }
+
+  if (extra.tipo === "sinal") {
+    const r = (dados.sinais ?? []).find((x) => x.id === extra.id);
+    if (!r) return voltar;
+    const projeto = r.projeto ? (dados.planetas ?? []).find((p) => p.id === r.projeto)?.titulo : null;
+    return (
+      <>
+        <Rotulo>Recomendação{projeto ? ` · ${projeto}` : ""}</Rotulo>
+        <p className="mt-2 text-sm leading-relaxed text-slate-100">&ldquo;{r.texto}&rdquo;</p>
+        <p className="mt-2 text-sm font-semibold">{r.autor}</p>
+        <p className="text-xs text-slate-400">{[r.cargo, r.relacao].filter(Boolean).join(" · ")}</p>
+        <p className="mt-2 text-[0.7rem] text-slate-500">Escrita por quem assina, com e-mail confirmado pela DriveData Academy.</p>
+        {voltar}
+      </>
+    );
+  }
+
+  if (extra.tipo === "formacao") {
+    const f = dados.formacao?.[extra.id];
+    return (
+      <>
+        <Rotulo>Em formação</Rotulo>
+        <Titulo>{nome(extra.id)}</Titulo>
+        <p className="mt-1 text-sm text-slate-300">Estudando na DriveData Academy{f ? `: ${f.level.toLowerCase()}` : ""}.</p>
+        <p className="mt-1 text-xs text-slate-400">Ainda sem projeto que prove. Quando provar, vira estrela.</p>
+        {voltar}
+      </>
+    );
+  }
+
+  const g = dados.guia;
+  if (!g) return voltar;
+  const tem = g.requeridas.filter((r) => r.tem).length;
+  return (
+    <>
+      <Rotulo>Objetivo</Rotulo>
+      <Titulo>{g.titulo}</Titulo>
+      <p className="mt-1 text-xs text-slate-400">O que esse cargo costuma pedir, segundo a IA. {tem} de {g.requeridas.length} já comprovadas por projeto.</p>
+      <ul className="mt-3 flex flex-col gap-2">
+        {g.requeridas.map((r) => (
+          <li key={r.id} className="text-sm">
+            <button onClick={() => r.tem && aoCompetencia(r.id)} className={r.tem ? "font-semibold text-brand-green hover:underline" : "font-semibold text-slate-300"}>
+              {r.tem ? "✓ " : "○ "}{nome(r.id)}
+            </button>
+            <p className="text-xs text-slate-400">{r.motivo}</p>
+            {!r.tem && r.cursos.length > 0 && (
+              <p className="text-xs text-slate-400">
+                Para acender: {r.cursos.map((c, i) => (
+                  <a key={c.slug} href={`/cursos/${c.slug}`} target="_top" className="text-sky-300 hover:underline">{i > 0 ? ", " : ""}{c.titulo}</a>
+                ))}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+      {voltar}
+    </>
+  );
+}
+
+type Aderencia = {
+  itens: { id: string; nome: string; trecho: string; tem: boolean; projetos: string[]; cursos: { titulo: string; slug: string }[] }[];
+  tem: number;
+  total: number;
+};
+
+function PainelDaVaga({ vaga, aoFechar, aoCompetencia }: { vaga: Aderencia; aoFechar: () => void; aoCompetencia: (id: string) => void }) {
+  return (
+    <>
+      <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">Aderência à vaga</p>
+      <p className="mt-1 font-display text-2xl font-bold">
+        {vaga.tem} <span className="text-base font-normal text-slate-400">de {vaga.total} pedidas já provadas</span>
+      </p>
+      <p className="mt-1 text-xs text-slate-400">Anel verde: provada em projeto. Estrela vazada: a vaga pede e ainda não há projeto que prove.</p>
+      <ul className="mt-3 flex flex-col gap-2.5">
+        {vaga.itens.map((i) => (
+          <li key={i.id} className="text-sm">
+            <button onClick={() => i.tem && aoCompetencia(i.id)} className={i.tem ? "font-semibold text-brand-green hover:underline" : "font-semibold text-orange-200"}>
+              {i.tem ? "✓ " : "○ "}{i.nome}
+            </button>
+            <p className="text-xs text-slate-400">A vaga: &ldquo;{i.trecho}&rdquo;</p>
+            {i.tem && <p className="text-xs text-slate-300">Provada em {i.projetos.join(", ")}</p>}
+            {!i.tem && i.cursos.length > 0 && (
+              <p className="text-xs text-slate-400">
+                Curso na Academy: {i.cursos.map((c, k) => (
+                  <a key={c.slug} href={`/cursos/${c.slug}`} target="_top" className="text-sky-300 hover:underline">{k > 0 ? ", " : ""}{c.titulo}</a>
+                ))}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-[0.7rem] text-slate-500">Leitura feita por IA a partir do texto da vaga. Confira os trechos.</p>
+      <button onClick={aoFechar} className="mt-2 text-xs text-slate-400 hover:text-white">Fechar comparação</button>
+    </>
   );
 }

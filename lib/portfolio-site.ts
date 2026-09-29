@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { LACUNA } from "@/lib/portfolio";
 import { nomesDasCompetencias } from "@/lib/portfolio-competencias";
 import { auditarSite } from "@/lib/portfolio-auditoria";
+import { carreiraDoAluno } from "@/lib/portfolio-carreira";
 
 /* Site de portfólio do aluno.
 
@@ -76,11 +77,11 @@ const linha = (rotulo: string, valor?: string | null) => (valor && String(valor)
    levava?]" para outra IA é pedir que ela invente a resposta. Projeto que o
    aluno marcou como só para a turma também fica de fora: o site é público. */
 export async function montarPrompt(admin: SupabaseClient, userId: string, estilo: Estilo): Promise<Resultado> {
-  const [{ data: perfil }, { data: projetos }, { data: certs }] = await Promise.all([
+  const [{ data: perfil }, { data: projetos }, { data: certs }, carreira] = await Promise.all([
     admin.from("profiles").select("full_name, headline, bio, skills, linkedin_url, avatar_url").eq("id", userId).maybeSingle(),
     admin
       .from("portfolio_projects")
-      .select("titulo, resumo, problema, resultado, descricao, ferramentas, cover_url, link_url, repo_url, status, publico, destaque, updated_at, feito_em, competencias")
+      .select("id, titulo, resumo, problema, resultado, descricao, ferramentas, cover_url, link_url, repo_url, status, publico, destaque, updated_at, feito_em, competencias")
       .eq("user_id", userId)
       .order("destaque", { ascending: false })
       .order("updated_at", { ascending: false }),
@@ -90,6 +91,9 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
       .eq("user_id", userId)
       .eq("revoked", false)
       .order("created_at", { ascending: false }),
+    // Trajetória, conquistas, recomendações aprovadas, objetivo e detalhes
+    // dos projetos. Vazio enquanto a migration do universo não rodar.
+    carreiraDoAluno(admin, userId, { soPublico: true }),
   ]);
 
   const foraPorLacuna: string[] = [];
@@ -124,14 +128,22 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
   let blocoProjetos = "";
   validos.forEach((p: any, i: number) => {
     const provadas = provadasDe(p);
+    const d = carreira.detalhes[p.id];
+    const recs = carreira.recomendacoes.filter((r) => r.project_id === p.id && r.texto && r.autor_nome);
     blocoProjetos +=
       `\n${i + 1}. ${p.titulo}\n` +
       linha("   Quando", p.feito_em ? mesAno(p.feito_em) : null) +
+      linha("   Setor", d?.setor) +
+      linha("   Papel", d?.papel) +
+      linha("   Time", d?.time_tamanho ? `${d.time_tamanho} ${d.time_tamanho === 1 ? "pessoa" : "pessoas"}` : null) +
+      linha("   Duração", d?.duracao_meses ? `${d.duracao_meses} ${d.duracao_meses === 1 ? "mês" : "meses"}` : null) +
       linha("   Resumo", p.resumo) +
       linha("   Problema", p.problema) +
       linha("   O que mudou", p.resultado) +
       linha("   Como foi feito", p.descricao) +
       linha("   Ferramentas", (p.ferramentas ?? []).join(", ")) +
+      linha("   O que aprendeu", d?.aprendizado) +
+      recs.map((r) => `   Recomendação de ${r.autor_nome}${r.autor_cargo ? `, ${r.autor_cargo}` : ""}: "${r.texto}"\n`).join("") +
       (provadas.length
         ? `   Competências que este projeto prova:\n${provadas.map((c) => `   - ${c.nome}: "${c.trecho}"`).join("\n")}\n`
         : "") +
@@ -145,6 +157,27 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     const horas = c.workload ? `, ${String(c.workload).replace(/h$/i, "")}h` : "";
     blocoCerts += `- ${c.course_title}${horas}. Verificação: ${SITE}/certificado/${c.code}\n`;
   }
+
+  /* A carreira além dos projetos. Só o que o aluno escreveu (trajetória e
+     conquistas) ou o que outra pessoa escreveu e confirmou por e-mail
+     (recomendações aprovadas). */
+  const mesAnoIso = (d: string) => mesAno(d.length === 7 ? `${d}-01` : d.slice(0, 10));
+  const blocoTrajetoria = carreira.experiencias
+    .filter((e) => e.inicio)
+    .map((e) =>
+      `- ${mesAnoIso(e.inicio!)} a ${e.fim ? mesAnoIso(e.fim) : "hoje"}: ${e.cargo}${e.organizacao ? `, ${e.organizacao}` : ""}${e.setor ? ` (${e.setor})` : ""}` +
+      (e.descricao ? `\n  ${e.descricao}` : ""),
+    )
+    .join("\n");
+  const blocoConquistas = carreira.conquistas
+    .map((c) => `- ${c.titulo}${c.data ? `, ${mesAnoIso(c.data)}` : ""}${c.descricao ? `. ${c.descricao}` : ""}${c.link_prova ? `. Prova: ${c.link_prova}` : ""}`)
+    .join("\n");
+  const recsGerais = carreira.recomendacoes.filter((r) => !r.project_id && r.texto && r.autor_nome);
+  const blocoRecomendacoes = recsGerais
+    .map((r) => `- "${r.texto}" (${r.autor_nome}${r.autor_cargo ? `, ${r.autor_cargo}` : ""}${r.relacao ? `; ${r.relacao}` : ""})`)
+    .join("\n");
+  const temRecomendacao = carreira.recomendacoes.some((r) => r.texto && r.autor_nome);
+  const objetivo = carreira.objetivo?.titulo || "";
 
   /* Números da carreira, contados pela plataforma.
 
@@ -163,6 +196,12 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     todasFerr.size ? `${todasFerr.size} ${todasFerr.size === 1 ? "ferramenta usada" : "ferramentas usadas"} nos projetos` : "",
     primeiroAno && ultimoAno && ultimoAno > primeiroAno ? `projetos de ${primeiroAno} a ${ultimoAno}` : "",
     certificados.length ? `${certificados.length} ${certificados.length === 1 ? "certificado verificável" : "certificados verificáveis"}` : "",
+    (() => {
+      const inicios = carreira.experiencias.map((e) => e.inicio).filter(Boolean).sort() as string[];
+      return inicios.length ? `carreira desde ${inicios[0].slice(0, 4)}` : "";
+    })(),
+    carreira.experiencias.length > 1 ? `${carreira.experiencias.length} experiências profissionais` : "",
+    carreira.conquistas.length ? `${carreira.conquistas.length} ${carreira.conquistas.length === 1 ? "conquista" : "conquistas"}` : "",
   ].filter(Boolean);
 
   /* Competências comprovadas, agrupadas: cada uma com os projetos que a
@@ -223,10 +262,15 @@ export async function montarPrompt(admin: SupabaseClient, userId: string, estilo
     numeros.length ? "Números da carreira: os números reais listados acima, grandes, como indicadores." : "",
     perfil?.bio ? "Sobre, com o texto de apresentação." : "",
     "Projetos, a parte principal. Para cada um: a data, o problema, o que foi feito, o que mudou, as competências que ele prova com o trecho entre aspas como evidência, e as ferramentas.",
-    blocoLinhaDoTempo ? "Linha do tempo da carreira, com os projetos em ordem de data." : "",
+    blocoTrajetoria
+      ? "Trajetória: os cargos e organizações em ordem de data, intercalados com os projetos, como uma linha do tempo única."
+      : blocoLinhaDoTempo ? "Linha do tempo da carreira, com os projetos em ordem de data." : "",
+    blocoConquistas ? "Conquistas, cada uma com a data e o link de prova quando houver." : "",
+    temRecomendacao ? "Recomendações: o texto entre aspas exatamente como está, com o nome e o cargo de quem escreveu. Nunca resuma nem reescreva uma recomendação." : "",
     blocoCompetencias ? `Competências comprovadas: cada competência com os projetos que a provam e o trecho de evidência. Termine a seção com um link "Ver no Universo 4D" para ${linkUniverso} com target="_top".` : "",
     "Ferramentas que aparecem nos projetos.",
     blocoCerts ? "Certificados, cada um com o botão Verificar." : "",
+    objetivo ? `Próximo passo: uma frase curta dizendo que ${nome} busca atuar como ${objetivo}.` : "",
     perfil?.linkedin_url ? "Contato pelo LinkedIn." : "",
   ].filter(Boolean);
 
@@ -254,6 +298,10 @@ ${numeros.length ? `## Números reais da carreira\nContados pela plataforma a pa
 ## Projetos
 ${blocoProjetos || "\n(nenhum projeto pronto ainda: faça uma seção de projetos com a frase \"Projetos em breve\")\n"}
 ${blocoLinhaDoTempo ? `## Linha do tempo\n${blocoLinhaDoTempo}\n` : ""}
+${blocoTrajetoria ? `## Trajetória profissional\nEscrita pelo próprio aluno. Use os cargos e organizações exatamente como estão.\n${blocoTrajetoria}\n` : ""}
+${blocoConquistas ? `## Conquistas\n${blocoConquistas}\n` : ""}
+${blocoRecomendacoes ? `## Recomendações\nEscritas por quem assina, com e-mail confirmado. Copie o texto exatamente.\n${blocoRecomendacoes}\n` : ""}
+${objetivo ? `## Objetivo profissional\n${objetivo}\n` : ""}
 ${blocoCompetencias ? `## Competências comprovadas\nCada competência foi identificada no texto dos projetos e vem com o trecho que a prova.\n${blocoCompetencias}\n` : ""}
 ${blocoCerts ? `## Certificados verificáveis\nEmitidos pela DriveData Academy. Mostre cada um com um botão "Verificar" apontando para o link.\n${blocoCerts}` : ""}
 ## Universo 4D
@@ -290,7 +338,9 @@ No rodapé, em letra pequena: "Portfólio publicado na DriveData Academy".
      numeração da estrutura, os 360px da regra de celular), e usar o prompt
      inteiro como régua deixava passar "4h" só porque existe um "4." na lista
      de seções. Os números da carreira entram: são fatos contados. */
-  const fatos = [nome, perfil?.headline, perfil?.bio, skills, blocoProjetos, blocoCerts, numeros.join("\n"), blocoLinhaDoTempo].filter(Boolean).join("\n");
+  const fatos = [nome, perfil?.headline, perfil?.bio, skills, blocoProjetos, blocoCerts, numeros.join("\n"), blocoLinhaDoTempo, blocoTrajetoria, blocoConquistas, blocoRecomendacoes, objetivo]
+    .filter(Boolean)
+    .join("\n");
 
   return {
     prompt,

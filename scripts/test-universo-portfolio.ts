@@ -28,15 +28,40 @@ const PROJETOS = [
   { titulo: "Projeto privado", ferramentas: ["Databricks"], feito_em: "2024-05-01", publico: false },
 ].map((p) => ({ resumo: "ok", problema: "ok", resultado: "ok", descricao: "ok", created_at: "2026-09-28T00:00:00Z", publico: true, ...p }));
 
+/* A carreira além dos projetos: um emprego, uma conquista, duas
+   recomendações (só uma aprovada), detalhes de um projeto e o objetivo. */
+const TABELAS: Record<string, any[]> = {
+  portfolio_projects: PROJETOS.map((p, i) => ({ id: `p${i}`, ...p })),
+  profiles: [{ skills: ["Scrum", "Power BI"] }],
+  portfolio_projeto_detalhes: [{ project_id: "p2", papel: "Modelei os dados", time_tamanho: 4, duracao_meses: 6, aprendizado: null, setor: "varejo" }],
+  portfolio_experiencias: [{ id: "e1", cargo: "Analista de dados", organizacao: "Loja X", setor: "varejo", inicio: "2020-01-01", fim: null, descricao: null }],
+  portfolio_conquistas: [{ id: "c1", titulo: "Prêmio interno", data: "2024-03-01", descricao: null, link_prova: null }],
+  portfolio_recomendacoes: [
+    { id: "r1", project_id: "p2", status: "aprovada", token: "segredo1", autor_nome: "Ana", autor_cargo: "Gerente", relacao: "gestora", texto: "Ótimo trabalho.", criado_em: "2025-01-01", aprovado_em: "2025-01-02" },
+    { id: "r2", project_id: null, status: "aguardando_aprovacao", token: "segredo2", autor_nome: "Beto", autor_cargo: null, relacao: null, texto: "Pendente.", criado_em: "2025-01-01", aprovado_em: null },
+  ],
+  portfolio_objetivos: [{ titulo: "Head de Dados", requeridas: [{ id: "power-bi", motivo: "painéis" }, { id: "python", motivo: "automação" }] }],
+  certificates: [],
+  courses: [],
+};
+
+/* Dublê genérico: qualquer cadeia de filtros devolve as linhas da tabela.
+   Os filtros de verdade (publico, status) quem aplica é o código testado. */
 const dubleDoBanco: any = {
-  from: (tabela: string) => ({
-    select: () => ({
-      eq: () =>
-        tabela === "profiles"
-          ? { maybeSingle: async () => ({ data: { skills: ["Scrum", "Power BI"] } }) }
-          : Promise.resolve({ data: PROJETOS }),
-    }),
-  }),
+  from: (tabela: string) => {
+    const linhas = TABELAS[tabela] ?? [];
+    const cadeia: any = new Proxy(
+      {},
+      {
+        get: (_, prop) => {
+          if (prop === "then") return (ok: any, falha: any) => Promise.resolve({ data: linhas, error: null }).then(ok, falha);
+          if (prop === "maybeSingle" || prop === "single") return async () => ({ data: linhas[0] ?? null, error: null });
+          return () => cadeia;
+        },
+      },
+    );
+    return cadeia;
+  },
 };
 
 (async () => {
@@ -59,6 +84,13 @@ const dubleDoBanco: any = {
   if (u.quadros[0].scores["scrum"]?.score) erros.push("declarada apareceu antes de hoje");
   if (!u.provas?.["power-bi"]?.length) erros.push("Power BI sem prova");
   if ((u.catalog as any).mappings) erros.push("mappings vazou");
+  if (u.trajetoria?.length !== 1) erros.push("trajetoria nao entrou");
+  if (u.conquistas?.length !== 1) erros.push("conquista nao entrou");
+  if (u.sinais?.length !== 1 || u.sinais[0].autor !== "Ana") erros.push("recomendacao pendente vazou ou aprovada sumiu");
+  if (JSON.stringify(u).includes("segredo")) erros.push("token de recomendacao vazou");
+  if (u.planetas?.find((p) => p.id === "p2")?.time !== 4) erros.push("detalhes do projeto nao chegaram ao planeta");
+  if (!u.guia || u.guia.requeridas.find((r) => r.id === "power-bi")?.tem !== true) erros.push("estrela-guia errada");
+  if (u.quadros[0].at.slice(0, 4) !== "2019") erros.push("linha do tempo nao comeca no primeiro fato");
   console.log(`\nprovas de Power BI: ${JSON.stringify(u.provas?.["power-bi"])}`);
   console.log(erros.length ? `\nFALHOU: ${erros.join("; ")}` : "\nOK: todas as regras conferem");
   if (process.argv[2]) fs.writeFileSync(process.argv[2], JSON.stringify(u));

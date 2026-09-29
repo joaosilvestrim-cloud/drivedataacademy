@@ -5,11 +5,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { canUseCommunity } from "@/lib/community";
-import { LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
+import { LACUNA, LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
 import { organizarExperiencias, organizarRelato, type ExperienciaLida } from "@/lib/portfolio-ia";
 import { tabelaAusente } from "@/lib/portfolio-carreira";
 import { randomBytes } from "crypto";
-import { competenciasDoObjetivo, competenciasParaSalvar, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
+import { competenciasDoObjetivo, competenciasParaSalvar, cursosPorCompetencia, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
 import { auditarSiteDoAluno, limparHtmlColado, montarPrompt, slugDoNome, slugLivre, textoDoPostLinkedIn, type Estilo } from "@/lib/portfolio-site";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
@@ -384,4 +384,53 @@ export async function excluirRecomendacao(id: string) {
   await admin.from("portfolio_recomendacoes").delete().eq("id", id).eq("user_id", user.id);
   revalidatePath("/conta/portfolio");
   return { ok: true as const };
+}
+
+/* Aderência a uma vaga, do lado do aluno: a mesma leitura que o recrutador
+   faz na página pública, para o aluno testar antes de mandar o link. Não
+   grava nada além do registro de uso, que segura o custo de IA. */
+export async function testarVaga(texto: string) {
+  const { user, admin } = await alunoComAcesso();
+  const limpo = (texto || "").trim().slice(0, 9000);
+  if (limpo.length < 80) return { ok: false as const, erro: "Cole a descrição completa da vaga, com as responsabilidades e os requisitos." };
+
+  const chave = `aluno:${user.id}`;
+  const { count, error } = await admin
+    .from("portfolio_consultas")
+    .select("id", { count: "exact", head: true })
+    .eq("slug", chave)
+    .gte("criado_em", new Date(Date.now() - 3600_000).toISOString());
+  if (error) return { ok: false as const, erro: tabelaAusente(error) ? SEM_TABELA : error.message };
+  if ((count ?? 0) >= 15) return { ok: false as const, erro: "Muitas comparações seguidas. Tente de novo daqui a pouco." };
+  await admin.from("portfolio_consultas").insert({ slug: chave, origem: "aluno" });
+
+  const pedidas = await identificarCompetencias(limpo, "vaga");
+  if (pedidas === null) return { ok: false as const, erro: "Não consegui ler a vaga agora. Tente de novo em instantes." };
+  if (!pedidas.length) return { ok: false as const, erro: "Não encontrei na vaga competências do catálogo de dados. Confira se colou a descrição inteira." };
+
+  const [{ data: projetos }, nomes, cursos] = await Promise.all([
+    admin.from("portfolio_projects").select("titulo, resumo, problema, resultado, descricao, publico, competencias").eq("user_id", user.id),
+    nomesDasCompetencias(),
+    cursosPorCompetencia(admin),
+  ]);
+  // Do lado do aluno vale projeto privado também, avisado: a página pública só conta os públicos.
+  const provas = new Map<string, { titulo: string; publico: boolean }[]>();
+  for (const p of (projetos ?? []) as any[]) {
+    if (LACUNA.test([p.titulo, p.resumo, p.problema, p.resultado, p.descricao].join(" "))) continue;
+    for (const c of Array.isArray(p.competencias?.itens) ? p.competencias.itens : []) {
+      provas.set(c.id, [...(provas.get(c.id) ?? []), { titulo: p.titulo, publico: !!p.publico }]);
+    }
+  }
+  const itens = pedidas
+    .filter((c) => nomes[c.id])
+    .map((c) => ({
+      id: c.id,
+      nome: nomes[c.id],
+      trecho: c.trecho,
+      tem: provas.has(c.id),
+      projetos: provas.get(c.id) ?? [],
+      cursos: provas.has(c.id) ? [] : (cursos[c.id] ?? []).slice(0, 2),
+    }))
+    .sort((a, b) => Number(b.tem) - Number(a.tem));
+  return { ok: true as const, itens, tem: itens.filter((i) => i.tem).length, total: itens.length };
 }

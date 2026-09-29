@@ -14,6 +14,7 @@ import {
   lerTrajetoria,
   removerObjetivo,
   salvarExperiencias,
+  testarVaga,
 } from "./actions";
 
 /* A carreira além dos projetos. Cada bloco vira um objeto no Universo 4D
@@ -76,6 +77,11 @@ export default function CarreiraDoAluno({
   // Recomendação
   const [projetoRec, setProjetoRec] = useState("");
   const [convite, setConvite] = useState("");
+
+  // Vaga
+  const [vagaTexto, setVagaTexto] = useState("");
+  const [vagaLendo, setVagaLendo] = useState(false);
+  const [vaga, setVaga] = useState<Awaited<ReturnType<typeof testarVaga>> | null>(null);
 
   if (!carreira.pronta) return null;
 
@@ -301,6 +307,54 @@ export default function CarreiraDoAluno({
                   </span>
                 </div>
               ))}
+            </div>
+          )}
+        </Bloco>
+
+        <Bloco titulo="Testar com uma vaga" espaco="anéis no que você já prova">
+          <p className="text-sm text-slate-400">
+            Cole a descrição de uma vaga. A IA lê o que ela pede, com o trecho, e cruza com o que seus projetos provam. Quem abrir o seu Universo 4D pode fazer o mesmo.
+          </p>
+          <textarea value={vagaTexto} onChange={(e) => setVagaTexto(e.target.value)} rows={6} maxLength={9000} placeholder="Responsabilidades, requisitos, ferramentas..." className={`${campo} mt-3 resize-y`} />
+          <button
+            disabled={vagaLendo || vagaTexto.trim().length < 80}
+            onClick={async () => {
+              setVagaLendo(true); setErro("");
+              const r = await testarVaga(vagaTexto);
+              setVagaLendo(false);
+              if (!r.ok) return setErro(r.erro);
+              setVaga(r);
+            }}
+            className={`${botao} mt-3`}
+          >
+            {vagaLendo ? "Lendo a vaga..." : "Comparar com meus projetos"}
+          </button>
+          {vaga?.ok && (
+            <div className="mt-4">
+              <p className="text-sm text-white">
+                <span className="font-display text-2xl font-bold">{vaga.tem}</span> de {vaga.total} competências pedidas já provadas por projeto.
+              </p>
+              <ul className="mt-2 flex flex-col gap-2">
+                {vaga.itens.map((i) => (
+                  <li key={i.id} className="text-sm">
+                    <span className={i.tem ? "font-semibold text-brand-green" : "font-semibold text-slate-200"}>{i.tem ? "✓ " : "○ "}{i.nome}</span>
+                    <span className="block text-xs text-slate-400">A vaga: &ldquo;{i.trecho}&rdquo;</span>
+                    {i.tem && (
+                      <span className="block text-xs text-slate-300">
+                        Provada em {i.projetos.map((p) => p.titulo + (p.publico ? "" : " (privado, não aparece na página pública)")).join(", ")}
+                      </span>
+                    )}
+                    {!i.tem && i.cursos.length > 0 && (
+                      <span className="block text-xs text-slate-400">
+                        Para acender: {i.cursos.map((c, k) => (
+                          <a key={c.slug} href={`/cursos/${c.slug}`} className="text-brand-teal hover:underline">{k > 0 ? ", " : ""}{c.titulo}</a>
+                        ))}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-slate-500">Leitura feita por IA. O que falta vira projeto: é o próximo que vale a pena publicar.</p>
             </div>
           )}
         </Bloco>

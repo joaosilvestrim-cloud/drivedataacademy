@@ -12,7 +12,12 @@ interface Props { catalog: Catalog; scores: Record<string, Score>; visible: stri
      o /universo dos alunos continuar exatamente como era. */
   cinema?: boolean;
   /** Câmera orbitando sozinha, enquanto a carreira toca. */
-  girando?: boolean }
+  girando?: boolean;
+  /* Objetos da carreira desenhados por cima da constelação (planetas, nave,
+     cometas...), e as posições deles para o enquadramento incluir. Só a
+     página pública usa. */
+  extras?: React.ReactNode;
+  pontosExtras?: Vec3[] }
 
 // Salto elástico: passa um pouco do tamanho final e assenta, como algo que acende.
 const elastico = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1);
@@ -21,7 +26,7 @@ const elastico = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : Math.pow(2, -10 * x) 
    todas as esferas acesas. Somado ao fundo (blending aditivo), é o que faz a
    constelação parecer luz e não bolinha. */
 let texturaBrilho: THREE.CanvasTexture | null = null;
-function brilho(): THREE.CanvasTexture {
+export function brilho(): THREE.CanvasTexture {
   if (texturaBrilho) return texturaBrilho;
   const c = document.createElement('canvas'); c.width = c.height = 128;
   const g = c.getContext('2d')!;
@@ -47,7 +52,7 @@ function Aparece({ ativo, children }: { ativo: boolean; children: React.ReactNod
   });
   return <group ref={grupo} scale={ativo ? 0.001 : 1}>{children}</group>;
 }
-function Label({ text, position, color = '#e4edf8', size = 1.65 }: { text: string; position: Vec3; color?: string; size?: number }) {
+export function Label({ text, position, color = '#e4edf8', size = 1.65 }: { text: string; position: Vec3; color?: string; size?: number }) {
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 96;
     const ctx = canvas.getContext('2d')!;
@@ -58,12 +63,12 @@ function Label({ text, position, color = '#e4edf8', size = 1.65 }: { text: strin
   useEffect(() => () => texture.dispose(), [texture]);
   return <sprite position={position} scale={[size * 2, size * .375, 1]} renderOrder={5}><spriteMaterial map={texture} transparent depthTest={false} /></sprite>;
 }
-function Controls({ selected, catalog, reset, zoom, girando, cinema, visible }: Pick<Props, 'selected' | 'catalog' | 'reset' | 'zoom' | 'girando' | 'cinema' | 'visible'>) {
+function Controls({ selected, catalog, reset, zoom, girando, cinema, visible, pontosExtras }: Pick<Props, 'selected' | 'catalog' | 'reset' | 'zoom' | 'girando' | 'cinema' | 'visible' | 'pontosExtras'>) {
   const { camera, gl, invalidate } = useThree();
   const controls = useRef<OrbitControls | null>(null);
   useEffect(() => {
     const orbit = new OrbitControls(camera, gl.domElement); controls.current = orbit;
-    orbit.enableDamping = true; orbit.dampingFactor = .07; orbit.minDistance = 5; orbit.maxDistance = 38;
+    orbit.enableDamping = true; orbit.dampingFactor = .07; orbit.minDistance = 5; orbit.maxDistance = 46;
     const changed = () => invalidate();
     orbit.target.set(0, -.6, 0); orbit.addEventListener('change', changed);
     return () => { orbit.removeEventListener('change', changed); orbit.dispose(); controls.current = null; };
@@ -78,7 +83,7 @@ function Controls({ selected, catalog, reset, zoom, girando, cinema, visible }: 
     const orbit = controls.current; if (!orbit) return;
     const factor = Math.pow(.8, zoom - previousZoom.current); previousZoom.current = zoom;
     const offset = camera.position.clone().sub(orbit.target).multiplyScalar(factor);
-    offset.setLength(THREE.MathUtils.clamp(offset.length(), 5, 38)); camera.position.copy(orbit.target).add(offset); orbit.update(); invalidate();
+    offset.setLength(THREE.MathUtils.clamp(offset.length(), 5, 46)); camera.position.copy(orbit.target).add(offset); orbit.update(); invalidate();
   }, [zoom, camera, invalidate]);
   useEffect(() => {
     const orbit = controls.current; if (!orbit) return;
@@ -90,14 +95,17 @@ function Controls({ selected, catalog, reset, zoom, girando, cinema, visible }: 
      dados aparecia pequena e encostada num canto. A cada quadro novo ela
      reenquadra devagar; depois larga o controle para quem está girando. */
   const desejo = useRef<{ alvo: THREE.Vector3; dist: number } | null>(null);
-  const chaveVisiveis = (visible ?? []).join('|');
+  const chaveVisiveis = (visible ?? []).join('|') + '#' + (pontosExtras ?? []).map(p => p.join(',')).join('|');
   useEffect(() => {
     if (!cinema) return;
-    const pts = catalog.competencies.filter(c => (visible ?? []).includes(c.id)).map(c => new THREE.Vector3(...c.position));
+    const pts = [
+      ...catalog.competencies.filter(c => (visible ?? []).includes(c.id)).map(c => new THREE.Vector3(...c.position)),
+      ...(pontosExtras ?? []).map(p => new THREE.Vector3(...p)),
+    ];
     if (!pts.length) return;
     const centro = pts.reduce((acc, p) => acc.add(p), new THREE.Vector3()).multiplyScalar(1 / pts.length);
     const raio = Math.max(2.2, ...pts.map(p => p.distanceTo(centro)));
-    desejo.current = { alvo: centro, dist: THREE.MathUtils.clamp(raio * 2.4 + 5, 8, 30) };
+    desejo.current = { alvo: centro, dist: THREE.MathUtils.clamp(raio * 2.4 + 5, 8, 36) };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cinema, catalog, chaveVisiveis, reset]);
   useFrame(() => {
@@ -238,5 +246,6 @@ export default function UniverseCanvas(props: Props) {
   useEffect(() => { const change = () => setActive(!document.hidden); document.addEventListener('visibilitychange', change); return () => { document.removeEventListener('visibilitychange', change); document.body.style.cursor = ''; }; }, []);
   return <Canvas camera={{ position: [0,1.5,23], fov: 42 }} dpr={[1,1.5]} gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }} frameloop={props.reduced || !active ? 'demand' : 'always'} onPointerMissed={() => { document.body.style.cursor = ''; }}>
     <Scene {...props} />
+    {props.extras}
   </Canvas>;
 }

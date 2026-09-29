@@ -3,6 +3,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { catalogVersions, loadUniverse } from '@/lib/knowledge/server';
 import { universe } from '@/lib/knowledge/engine';
 import { LACUNA } from '@/lib/portfolio';
+import { carreiraDoAluno } from '@/lib/portfolio-carreira';
+import { cursosPorCompetencia } from '@/lib/portfolio-competencias';
 import type { Catalog, Score } from '@/lib/knowledge/types';
 
 /* O Universo 4D na página pública do portfólio.
@@ -38,7 +40,32 @@ export type UniversoPublico = {
   /* Por que duas competências se conectam: os projetos que provam as duas.
      Chave "a|b", com os ids em ordem alfabética. */
   conexoes?: Record<string, string[]>;
+
+  /* O universo da carreira. Cada objeto do espaço é um tipo de fato real:
+     planetas são projetos, luas são certificados, a nave percorre a
+     trajetória, cometas são conquistas, sinais são recomendações, a
+     nebulosa em formação é o que a pessoa estuda na Academy agora, e a
+     estrela-guia é o objetivo. Todos têm data, e aparecem no play quando
+     aconteceram. */
+  planetas?: Planeta[];
+  luas?: Lua[];
+  trajetoria?: Parada[];
+  conquistas?: Cometa[];
+  sinais?: Sinal[];
+  formacao?: Record<string, { score: number; level: string }>;
+  guia?: Guia | null;
 };
+
+export type Planeta = {
+  id: string; titulo: string; at: string; competencias: string[];
+  resumo: string | null; problema: string | null; resultado: string | null;
+  papel: string | null; time: number | null; duracao: number | null; setor: string | null; aprendizado: string | null;
+};
+export type Lua = { id: string; titulo: string; competencia: string; at: string; verificacao: string };
+export type Parada = { id: string; cargo: string; organizacao: string | null; setor: string | null; inicio: string; fim: string | null };
+export type Cometa = { id: string; titulo: string; at: string; descricao: string | null; link: string | null };
+export type Sinal = { id: string; autor: string; cargo: string | null; relacao: string | null; texto: string; projeto: string | null };
+export type Guia = { titulo: string; requeridas: { id: string; motivo: string; tem: boolean; cursos: { titulo: string; slug: string }[] }[] };
 
 const MAX_QUADROS = 12;
 
@@ -144,12 +171,17 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
   // visitante não precisa dela.
   const { mappings: _interno, ...catalogo } = doc as Catalog & { mappings?: unknown };
 
-  const [{ data: linhas }, { data: perfil }] = await Promise.all([
+  const [{ data: linhas }, { data: perfil }, carreira, { data: certs }, plataforma] = await Promise.all([
     admin
       .from('portfolio_projects')
-      .select('titulo, resumo, problema, resultado, descricao, ferramentas, feito_em, created_at, publico, competencias')
+      .select('id, titulo, resumo, problema, resultado, descricao, ferramentas, feito_em, created_at, publico, competencias')
       .eq('user_id', userId),
     admin.from('profiles').select('skills').eq('id', userId).maybeSingle(),
+    carreiraDoAluno(admin, userId, { soPublico: true }),
+    admin.from('certificates').select('id, course_id, course_title, created_at, code, revoked, expires_at').eq('user_id', userId).eq('revoked', false),
+    // A camada da plataforma: o que o aluno estuda na Academy. Só a nota
+    // agregada, sem evento (ver universoPublico).
+    universoPublico(userId).catch(() => null),
   ]);
 
   /* Os mesmos projetos que entram no site: públicos e sem lacuna. Projeto
@@ -173,6 +205,8 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
       }
       if (!p.competencias && !motivos.has('fundamentos-dados')) motivos.set('fundamentos-dados', 'Projeto com problema de negócio e resultado');
       return {
+        id: p.id as string,
+        linha: p,
         titulo: p.titulo as string,
         at: (p.feito_em ? `${p.feito_em}T12:00:00Z` : p.created_at) as string,
         competencias: [...motivos.keys()],
@@ -185,10 +219,46 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
   const skills: string[] = Array.isArray(perfil?.skills) ? perfil!.skills : String(perfil?.skills || '').split(',');
   const declaradas = new Set(skills.flatMap((s) => competenciasDe(s, catalogo)));
 
-  if (!projetos.length && !declaradas.size) return { catalog: catalogo, quadros: [], passo: 'mes', provas: {}, projetos: 0 };
+  /* Os fatos da carreira fora dos projetos. Cada um tem data, e a data
+     entra na linha do tempo: o play passa a começar no primeiro emprego, não
+     no primeiro projeto cadastrado. */
+  const trajetoria: Parada[] = carreira.experiencias
+    .filter((e) => e.inicio)
+    .map((e) => ({ id: e.id, cargo: e.cargo, organizacao: e.organizacao, setor: e.setor, inicio: `${e.inicio}T12:00:00Z`, fim: e.fim ? `${e.fim}T12:00:00Z` : null }));
+  const conquistas: Cometa[] = carreira.conquistas
+    .filter((c) => c.data)
+    .map((c) => ({ id: c.id, titulo: c.titulo, at: `${c.data}T12:00:00Z`, descricao: c.descricao, link: c.link_prova }));
+
+  /* Luas: certificado orbitando a competência que ele trabalha. Pelo
+     mapeamento oficial do catálogo (curso para competência) ou, na falta, pelo
+     nome da competência no título do certificado. Certificado que não casa
+     com nenhuma competência fica fora do céu, mas continua no site. */
+  const mapeamentos = ((doc as any).mappings ?? []) as { courseId: string; competency: string }[];
+  const agoraMs = Date.now();
+  const luas: Lua[] = [];
+  for (const c of (certs ?? []) as any[]) {
+    if (c.expires_at && Date.parse(c.expires_at) < agoraMs) continue;
+    const oficial = mapeamentos.find((m) => m.courseId === c.course_id)?.competency;
+    const porNome = catalogo.competencies.find((k) => norm(c.course_title || '').includes(norm(k.name)))?.id;
+    const competencia = oficial || porNome;
+    if (!competencia) continue;
+    luas.push({ id: c.id, titulo: c.course_title, competencia, at: c.created_at, verificacao: `/certificado/${c.code}` });
+  }
+
+  if (!projetos.length && !declaradas.size && !trajetoria.length && !conquistas.length && !luas.length) {
+    return { catalog: catalogo, quadros: [], passo: 'mes', provas: {}, projetos: 0 };
+  }
 
   const agora = Date.now();
-  const { pontos, passo } = pontosDaCarreira(projetos.map((p) => Date.parse(p.at)), agora);
+  const { pontos, passo } = pontosDaCarreira(
+    [
+      ...projetos.map((p) => Date.parse(p.at)),
+      ...trajetoria.map((t) => Date.parse(t.inicio)),
+      ...conquistas.map((c) => Date.parse(c.at)),
+      ...luas.map((l) => Date.parse(l.at)),
+    ],
+    agora,
+  );
   const quadros = pontos.map((t) => ({
     at: new Date(t).toISOString(),
     // Declarada não tem data: só aparece no quadro de hoje.
@@ -251,7 +321,54 @@ export async function universoDoPortfolio(admin: SupabaseClient, userId: string)
     return { source, target, strength: Math.min(1, 0.55 + 0.15 * titulos.length) };
   });
 
-  return { catalog: { ...catalogo, relations: relacoes }, quadros, passo, provas, projetos: projetos.length, conexoes };
+  const planetas: Planeta[] = projetos.map((p) => {
+    const d = carreira.detalhes[p.id];
+    return {
+      id: p.id, titulo: p.titulo, at: p.at, competencias: p.competencias,
+      resumo: p.linha.resumo ?? null, problema: p.linha.problema ?? null, resultado: p.linha.resultado ?? null,
+      papel: d?.papel ?? null, time: d?.time_tamanho ?? null, duracao: d?.duracao_meses ?? null, setor: d?.setor ?? null, aprendizado: d?.aprendizado ?? null,
+    };
+  });
+
+  const sinais: Sinal[] = carreira.recomendacoes
+    .filter((r) => r.status === 'aprovada' && r.texto && r.autor_nome)
+    .map((r) => ({ id: r.id, autor: r.autor_nome!, cargo: r.autor_cargo, relacao: r.relacao, texto: r.texto!, projeto: r.project_id }));
+
+  /* Em formação: competência que a pessoa estuda na Academy e ainda não
+     provou em projeto. Aparece diferente das estrelas, porque é outro tipo de
+     evidência. */
+  const provadasIds = new Set(projetos.flatMap((p) => p.competencias));
+  const formacao: Record<string, { score: number; level: string }> = {};
+  for (const [id, sc] of Object.entries(plataforma?.quadros.at(-1)?.scores ?? {})) {
+    if (sc.score > 0 && !provadasIds.has(id)) formacao[id] = { score: Math.round(sc.score), level: sc.level };
+  }
+
+  /* Estrela-guia: o objetivo, o que o cargo costuma pedir, o que já está
+     provado e o curso da Academy que trabalha o que falta. */
+  let guia: Guia | null = null;
+  if (carreira.objetivo?.titulo) {
+    const cursos = await cursosPorCompetencia(admin);
+    guia = {
+      titulo: carreira.objetivo.titulo,
+      requeridas: (carreira.objetivo.requeridas ?? []).map((r) => ({ ...r, tem: provadasIds.has(r.id), cursos: cursos[r.id] ?? [] })),
+    };
+  }
+
+  return {
+    catalog: { ...catalogo, relations: relacoes },
+    quadros,
+    passo,
+    provas,
+    projetos: projetos.length,
+    conexoes,
+    planetas,
+    luas,
+    trajetoria,
+    conquistas,
+    sinais,
+    formacao,
+    guia,
+  };
 }
 
 /* ---------------------------------------------------------------------
