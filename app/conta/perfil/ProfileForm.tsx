@@ -25,7 +25,7 @@ type Form = { full_name: string; phone: string; country: string; linkedin_url: s
 const EMPTY: Form = { full_name: "", phone: "", country: "", linkedin_url: "", headline: "", bio: "", skills: "", avatar_url: "", portfolio_url: "" };
 
 const LIMITE_TITULO = 220; // o mesmo do título do LinkedIn
-const LIMITE_BIO = 1200;
+const LIMITE_BIO = 2600; // o mesmo do "Sobre" do LinkedIn
 
 const SUGESTOES = [
   "Power BI", "DAX", "Power Query", "SQL", "Excel", "Python", "Microsoft Fabric", "Snowflake", "Looker Studio",
@@ -203,7 +203,7 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
       ? tr("Três a cinco frases: o que você faz, onde já aplicou dados e o que busca agora.")
       : bioLen < 80
         ? tr("Está curto. Conte onde você aplicou dados e com que resultado.")
-        : bioLen < 400
+        : bioLen < 1200
           ? tr("Bom tamanho. Quem lê entende em poucos segundos.")
           : tr("Completo. Confira se o começo já diz o principal: muita gente só lê a primeira linha.");
 
@@ -291,7 +291,7 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
                 <label className={label} htmlFor="bio">{tr("Sobre você / trajetória")}</label>
                 <Contador n={bioLen} max={LIMITE_BIO} />
               </div>
-              <textarea id="bio" value={form.bio} onChange={set("bio")} rows={5} maxLength={LIMITE_BIO + 200} className={`${field} resize-y leading-relaxed`} />
+              <textarea id="bio" value={form.bio} onChange={set("bio")} rows={5} maxLength={LIMITE_BIO} className={`${field} resize-y leading-relaxed`} />
               <p className={dica}>{bioDica}</p>
             </div>
           </Secao>
@@ -394,8 +394,8 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
 
         {/* A barra de salvar gruda no pé da tela quando há mudança. */}
         <div
-          className={`sticky bottom-3 z-10 mt-8 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${
-            alterado ? "border-brand-green/40 bg-[#0b1a1a]/95 shadow-lg shadow-black/40 backdrop-blur" : "border-transparent"
+          className={`z-10 mt-8 flex flex-wrap items-center gap-3 rounded-xl border py-3 transition-colors ${
+            alterado ? "sticky bottom-3 border-brand-green/40 bg-[#0b1a1a] px-4 shadow-lg shadow-black/40" : "border-transparent"
           }`}
         >
           <button type="submit" disabled={saving || !alterado} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-2.5 text-sm font-semibold text-ink-900 transition-opacity disabled:opacity-40">
