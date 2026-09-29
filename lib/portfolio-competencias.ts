@@ -254,7 +254,8 @@ export async function cursosPorCompetencia(admin: { from: (t: string) => any }):
   const poe = (comp: string, c: any) => {
     if (!c?.slug || /materiais/i.test(c.slug)) return;
     const lista = (saida[comp] ??= []);
-    if (!lista.some((x) => x.slug === c.slug)) lista.push({ titulo: c.title, slug: c.slug });
+    // Dois cursos com o mesmo título (turmas diferentes) aparecem uma vez só.
+    if (!lista.some((x) => x.slug === c.slug || norm(x.titulo) === norm(c.title))) lista.push({ titulo: c.title, slug: c.slug });
   };
   for (const m of doc.mappings ?? []) poe(m.competency, porId.get(m.courseId));
   for (const comp of doc.competencies ?? []) {
