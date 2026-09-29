@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { caGet, caLista, caPost, config, ligado } from "@/lib/conta-azul";
+import { completarNaVenda, type DadosFiscais } from "@/lib/dados-fiscais";
 
 /* Transforma uma cobrança paga do Asaas numa venda no Conta Azul.
 
@@ -22,7 +23,15 @@ export type CobrancaParaCA = {
      parcela: a competência tem que ser a do recebimento, não a de hoje, senão
      o backfill joga meses antigos todos para o mês corrente. */
   pagoEm: string;
-  cliente: { nome: string; documento: string; email?: string | null; telefone?: string | null };
+  cliente: {
+    nome: string;
+    documento: string;
+    email?: string | null;
+    telefone?: string | null;
+    /* Endereço que o aluno deu no checkout, guardado no cliente do Asaas. O
+       que ele preencher no perfil passa por cima (lib/dados-fiscais). */
+    endereco?: Partial<DadosFiscais> | null;
+  };
   descricao?: string | null;
 };
 
@@ -195,6 +204,8 @@ export async function enviarCobranca(c: CobrancaParaCA): Promise<{ ok: boolean; 
     if (!cfg.ca_categoria_id || !cfg.ca_servico_id) return falhar("categoria ou serviço não configurados");
 
     const pessoaId = await acharOuCriarPessoa(c.cliente);
+    // Endereço e RG para a nota. Falhar aqui não derruba a venda.
+    await completarNaVenda(admin, pessoaId, c.cliente.email, c.cliente.endereco);
     const numero = await proximoNumero();
     const dia = c.pagoEm.slice(0, 10);
     const valor = Number(c.valor.toFixed(2));
@@ -294,6 +305,7 @@ export type Pendente = {
   telefone: string | null;
   descricao: string | null;
   orderId: string | null;
+  endereco: Partial<DadosFiscais> | null;
   motivo: string | null; // por que não dá para enviar, quando não dá
   erro: string | null; // falha da tentativa anterior
 };
@@ -364,6 +376,7 @@ export async function cobrancasPendentes(): Promise<Pendente[]> {
       telefone: c?.mobilePhone || c?.phone || null,
       descricao: p.description || null,
       orderId: pedidoDe.get(p.id) ?? null,
+      endereco: c ? enderecoDoClienteAsaas(c) : null,
       motivo,
       erro: registro?.erro ?? null,
     });
@@ -394,7 +407,7 @@ export async function enviarPendentes(limite = 25): Promise<{ enviadas: number; 
       orderId: p.orderId,
       valor: p.valor,
       pagoEm: p.pagoEm,
-      cliente: { nome: p.nome, documento: p.documento, email: p.email, telefone: p.telefone },
+      cliente: { nome: p.nome, documento: p.documento, email: p.email, telefone: p.telefone, endereco: p.endereco },
       descricao: p.descricao,
     });
     if (r.ok) enviadas++;
@@ -435,5 +448,23 @@ export async function clienteDoAsaas(customerId: string): Promise<CobrancaParaCA
   });
   if (!r.ok) return null;
   const c = await r.json();
-  return { nome: c.name || "", documento: c.cpfCnpj || "", email: c.email || null, telefone: c.mobilePhone || c.phone || null };
+  return {
+    nome: c.name || "",
+    documento: c.cpfCnpj || "",
+    email: c.email || null,
+    telefone: c.mobilePhone || c.phone || null,
+    endereco: enderecoDoClienteAsaas(c),
+  };
+}
+
+function enderecoDoClienteAsaas(c: any): Partial<DadosFiscais> {
+  return {
+    cep: String(c?.postalCode || "").replace(/\D/g, ""),
+    logradouro: c?.address || "",
+    numero: c?.addressNumber || "",
+    complemento: c?.complement || "",
+    bairro: c?.province || "",
+    cidade: c?.cityName || "",
+    uf: String(c?.state || "").toUpperCase(),
+  };
 }

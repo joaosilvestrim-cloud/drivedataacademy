@@ -104,6 +104,38 @@ Para não duplicar cliente, procure antes com `busca` recebendo o documento:
 `GET /v1/pessoas?busca=12345678901`. O `busca` funciona por documento e por
 nome, mas **não** por e-mail.
 
+## Endereço e RG da pessoa (para a nota fiscal)
+
+Descoberto em 29/09/2026 mandando corpo inválido para um id inexistente: a
+API valida o corpo antes de procurar a pessoa, então dá para mapear o
+contrato sem tocar em cadastro real.
+
+```
+PATCH /v1/pessoas/{id}
+{
+  "rg": "12.345.678-9",                         // string
+  "enderecos": [{                               // []models.PartialAddress
+    "id":          "<id do endereço que já existe>",  // sem ele, cria outro
+    "cep":         "01310100",
+    "logradouro":  "Avenida Paulista",
+    "numero":      "1000",
+    "complemento": "apto 12",
+    "bairro":      "Bela Vista",
+    "cidade":      "São Paulo",
+    "estado":      "SP",
+    "pais":        "Brasil"
+  }]
+}
+```
+
+`uf` e `id_cidade` não existem na escrita: são aceitos e descartados, como
+todo campo desconhecido. A leitura (`GET /v1/pessoas/{id}`) devolve o mesmo
+formato em `enderecos[]`, com `id_cidade` resolvido pelo Conta Azul.
+
+Toda pessoa nasce com um endereço vazio. Por isso `completarPessoa`
+(lib/dados-fiscais.ts) lê primeiro, manda o `id` desse endereço e confere o
+CEP depois de gravar.
+
 ## Criar venda
 
 ```

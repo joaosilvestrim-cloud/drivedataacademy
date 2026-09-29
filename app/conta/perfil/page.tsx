@@ -5,6 +5,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { BADGE_LABELS } from "@/lib/community";
 import {loadCommunityRanking} from "@/lib/community-ranking";
 import ProfileForm from "./ProfileForm";
+import DadosFiscais from "./DadosFiscais";
+import { clienteAsaasPorEmail, dadosSalvos, juntarDados } from "@/lib/dados-fiscais";
 import ProfilePreview from "@/components/knowledge/ProfilePreview";
 import { usuarioAtual } from "@/lib/sessao";
 
@@ -23,6 +25,30 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
   ]);
   const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
   const siteDoPortfolio = site?.publicado && !site.bloqueado ? `${SITE}/portfolio/${site.slug}` : null;
+
+  /* Dados para nota fiscal: só para quem pagou, por Asaas ou por fora. O
+     bloco se esconde enquanto a tabela dados_fiscais não existir. */
+  const email = (user.email || "").toLowerCase();
+  const { data: pedidoPago } = await admin
+    .from("orders")
+    .select("id")
+    .eq("status", "paid")
+    .or(`user_id.eq.${user.id},email.eq."${email.replace(/"/g, "")}"`)
+    .limit(1);
+  let fiscal: { inicial: any; cpfDoPagamento: string | null; enviadoEm: string | null; erroEnvio: string | null } | null = null;
+  if (pedidoPago?.length) {
+    const [salvos, asaas] = await Promise.all([dadosSalvos(admin, user.id), clienteAsaasPorEmail(email).catch(() => null)]);
+    if (salvos.pronta) {
+      const juntos = juntarDados(salvos.dados, asaas);
+      const cpf = asaas?.cpf || "";
+      fiscal = {
+        inicial: { ...juntos, cpf: asaas?.cpf ? "" : juntos.cpf },
+        cpfDoPagamento: cpf.length === 11 ? `***.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-**` : cpf ? "informado no pagamento" : null,
+        enviadoEm: salvos.dados?.ca_sincronizado_em ?? null,
+        erroEnvio: salvos.dados?.ca_erro ?? null,
+      };
+    }
+  }
 
   const myPoints = ranked.find(r=>r.id===user.id)?.pts || 0;
   const myRank = ranked.findIndex(r => r.id === user.id);
@@ -59,6 +85,7 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
       )}
 
       <ProfileForm siteDoPortfolio={siteDoPortfolio} />
+      {fiscal && <DadosFiscais {...fiscal} />}
       <div className="max-w-3xl">
       <ProfilePreview userId={user.id} email={user.email} />
 

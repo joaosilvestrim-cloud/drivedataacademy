@@ -121,3 +121,66 @@ export async function voteWorkshop(formData: FormData) {
   );
   revalidatePath("/conta");
 }
+
+/* Dados para a nota fiscal (lib/dados-fiscais).
+
+   O aluno preenche no perfil, a Academy guarda, atualiza o endereço no
+   cliente do Asaas e leva tudo ao cadastro dele no Conta Azul, onde a nota é
+   emitida. O CPF de quem pagou pelo Asaas não passa por aqui: já está lá. */
+export async function consultarCep(cep: string) {
+  const { enderecoDoCep } = await import("@/lib/dados-fiscais");
+  return enderecoDoCep(cep);
+}
+
+export async function salvarDadosFiscais(entrada: Record<string, string>) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) return { ok: false as const, erro: "Faça login novamente." };
+
+  const { clienteAsaasPorEmail, faltandoParaNota, sincronizarAluno, SEM_DADOS } = await import("@/lib/dados-fiscais");
+  const { documentoValido } = await import("@/lib/conta-azul-venda");
+  const { tabelaAusente } = await import("@/lib/portfolio-carreira");
+
+  const limpo = (k: string, max: number) => String(entrada?.[k] ?? "").trim().slice(0, max);
+  const d = {
+    ...SEM_DADOS,
+    cpf: limpo("cpf", 20).replace(/\D/g, ""),
+    rg: limpo("rg", 20),
+    cep: limpo("cep", 12).replace(/\D/g, ""),
+    logradouro: limpo("logradouro", 120),
+    numero: limpo("numero", 20),
+    complemento: limpo("complemento", 60),
+    bairro: limpo("bairro", 60),
+    cidade: limpo("cidade", 60),
+    uf: limpo("uf", 2).toUpperCase(),
+  };
+
+  const asaas = await clienteAsaasPorEmail(user.email);
+  // Quem pagou pelo Asaas já tem CPF lá; só quem pagou por fora informa aqui.
+  const cpf = asaas?.cpf || d.cpf;
+  if (!asaas?.cpf && !documentoValido(d.cpf)) return { ok: false as const, erro: "Confira o CPF: os números não formam um CPF válido." };
+  const falta = faltandoParaNota({ ...d, cpf });
+  if (falta.length) return { ok: false as const, erro: `Falta preencher: ${falta.join(", ")}.` };
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("dados_fiscais").upsert(
+    { user_id: user.id, ...d, cpf: asaas?.cpf ? null : d.cpf, atualizado_em: new Date().toISOString() },
+    { onConflict: "user_id" },
+  );
+  if (error) {
+    return { ok: false as const, erro: tabelaAusente(error) ? "Essa parte ainda está sendo ligada pelo time. Tente de novo mais tarde." : error.message };
+  }
+
+  // O endereço também vai para o cliente do Asaas, para as duas fontes não divergirem.
+  if (asaas?.id && process.env.ASAAS_API_KEY) {
+    await fetch(`${process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3"}/customers/${asaas.id}`, {
+      method: "PUT",
+      headers: { access_token: process.env.ASAAS_API_KEY, "User-Agent": "drivedata-academy", "Content-Type": "application/json" },
+      body: JSON.stringify({ postalCode: d.cep, address: d.logradouro, addressNumber: d.numero, complement: d.complemento || undefined, province: d.bairro }),
+    }).catch(() => null);
+  }
+
+  const r = await sincronizarAluno(admin, user.id, user.email);
+  revalidatePath("/conta/perfil");
+  return { ok: true as const, mensagem: r.mensagem };
+}

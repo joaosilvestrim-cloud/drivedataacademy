@@ -247,6 +247,25 @@ export async function caPost<T = any>(caminho: string, corpo: unknown): Promise<
   return (texto ? JSON.parse(texto) : null) as T;
 }
 
+/* Atualização parcial. Mesma regra do POST: sem retry. Aqui repetir seria
+   inofensivo, mas manter uma regra só para escrita evita que alguém copie o
+   padrão errado para onde não é. */
+export async function caPatch<T = any>(caminho: string, corpo: unknown): Promise<T> {
+  const r = await fetch(API + caminho, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${await accessToken()}`,
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify(corpo),
+    cache: "no-store",
+  });
+  const texto = await r.text();
+  if (!r.ok) throw new Error(`Conta Azul ${r.status} em ${caminho}: ${texto.slice(0, 400)}`);
+  return (texto ? JSON.parse(texto) : null) as T;
+}
+
 // ---------------------------------------------------------------- config
 
 export async function config(): Promise<Record<string, string>> {

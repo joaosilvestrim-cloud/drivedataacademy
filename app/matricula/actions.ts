@@ -47,6 +47,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
     address: ((formData.get("endereco") as string) || "").trim(),
     addressNumber: ((formData.get("numero") as string) || "").trim(),
     province: ((formData.get("bairro") as string) || "").trim(),
+    complement: ((formData.get("complemento") as string) || "").trim(),
   };
 
   if (!name || !email) return { ok: false, error: "Preencha nome e e-mail." };
@@ -106,7 +107,7 @@ export async function createMatricula(formData: FormData): Promise<MatriculaResu
   return { ok: true, mode: "manual", whatsapp: map.checkout_whatsapp || null };
 }
 
-type Address = { postalCode: string; address: string; addressNumber: string; province: string };
+type Address = { postalCode: string; address: string; addressNumber: string; province: string; complement?: string };
 
 // Cria cliente + ASSINATURA mensal no cartão e devolve o link de pagamento da 1ª cobrança.
 type Cobranca = { url: string | null; erro?: string };
@@ -138,6 +139,7 @@ async function createAsaasSubscription(
         address: address.address || undefined,
         addressNumber: address.addressNumber || undefined,
         province: address.province || undefined,
+        complement: address.complement || undefined,
       }),
     });
     const cust = await custRes.json();
@@ -198,6 +200,7 @@ async function createAsaasAnnualPayment(
         address: address.address || undefined,
         addressNumber: address.addressNumber || undefined,
         province: address.province || undefined,
+        complement: address.complement || undefined,
       }),
     });
     const cust = await custRes.json();

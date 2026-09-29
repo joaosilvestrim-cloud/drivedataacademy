@@ -215,7 +215,8 @@ export default function MatriculaForm({
         </div>
 
         <details className="rounded-xl border border-white/8 bg-white/[0.02] px-3 py-2">
-          <summary className="cursor-pointer text-sm text-slate-300">{tr("Endereço")} <span className="text-slate-500">(opcional)</span></summary>
+          <summary className="cursor-pointer text-sm text-slate-300">{tr("Endereço para nota fiscal")} <span className="text-slate-500">(opcional)</span></summary>
+          <p className="mt-2 text-xs text-slate-500">{tr("Só se você precisar de nota fiscal. Dá para completar depois, no seu perfil.")}</p>
           <div className="mt-3 space-y-3 pb-1">
             <div className="grid grid-cols-3 gap-3">
               <input name="cep" inputMode="numeric" aria-label="CEP" placeholder="CEP" className={field} />
@@ -225,6 +226,7 @@ export default function MatriculaForm({
               <input name="numero" aria-label={tr("Número")} placeholder={tr("Número")} className={field} />
               <input name="bairro" aria-label={tr("Bairro")} placeholder={tr("Bairro")} className={`${field} col-span-2`} />
             </div>
+            <input name="complemento" aria-label={tr("Complemento")} placeholder={tr("Complemento (apto, bloco...)")} className={field} />
           </div>
         </details>
       </Etapa>
