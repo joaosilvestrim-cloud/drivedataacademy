@@ -91,7 +91,7 @@ export default function CupomContagem({
 
       <span className="flex flex-col gap-1.5">
         <span className="text-xs text-slate-400">
-          Validade {prazo} · <span className="text-slate-500">{tr("termina em")}</span>
+          {tr("Validade")} {prazo} · <span className="text-slate-500">{tr("termina em")}</span>
         </span>
         <span className="inline-flex items-end gap-1.5" role="timer" aria-label={`O cupom ${codigo} vence em ${falta}`}>
           {blocos.map((b, i) => (

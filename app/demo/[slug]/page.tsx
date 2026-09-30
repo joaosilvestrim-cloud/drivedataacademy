@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { pedirDemonstracao } from "./actions";
@@ -29,44 +30,43 @@ export default async function DemoPage({
     const codigo = searchParams.codigo || "";
     return (
       <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-12">
-        <p className="text-sm font-semibold text-marca">Acesso liberado</p>
+        <p className="text-sm font-semibold text-marca">{tr("Acesso liberado")}</p>
         <h1 className="mt-2 font-display text-3xl font-bold text-tinta">
-          {c.dias} dias de DriveCanvas são seus.
+          {c.dias} {tr("dias de DriveCanvas são seus.")}
         </h1>
 
         {nova && codigo ? (
           <>
-            <p className="mt-5 text-slate-300">Guarde este código. Ele cria a sua senha:</p>
+            <p className="mt-5 text-slate-300">{tr("Guarde este código. Ele cria a sua senha:")}</p>
             <p className="mt-3 rounded-2xl border border-acento/40 bg-brand-green/10 px-6 py-6 text-center font-mono text-4xl font-bold tracking-[0.2em] text-acento">
               {codigo}
             </p>
             <p className="mt-3 text-sm text-slate-400">
-              Mandamos ele no seu e-mail também. Se sumir da tela, procure lá.
+              {tr("Mandamos ele no seu e-mail também. Se sumir da tela, procure lá.")}
             </p>
             <a
               href="/redefinir-senha"
               className="mt-6 block rounded-xl bg-marca-verde px-6 py-4 text-center text-base font-semibold text-sobre-acento"
             >
-              Criar minha senha
+              {tr("Criar minha senha")}
             </a>
           </>
         ) : (
           <>
             <p className="mt-5 text-slate-300">
-              Esta conta já existia, então entre com a senha que você já usa.
+              {tr("Esta conta já existia, então entre com a senha que você já usa.")}
             </p>
             <a
               href="/entrar"
               className="mt-6 block rounded-xl bg-marca-verde px-6 py-4 text-center text-base font-semibold text-sobre-acento"
             >
-              Entrar agora
+              {tr("Entrar agora")}
             </a>
           </>
         )}
 
         <p className="mt-8 text-sm leading-relaxed text-slate-500">
-          Depois de entrar, abra <b className="text-slate-300">Ferramentas → DriveCanvas</b>. O resto da
-          plataforma fica visível para você conhecer, mas só a ferramenta funciona nesses {c.dias} dias.
+          {tr("Depois de entrar, abra")} <b className="text-slate-300">{tr("Ferramentas → DriveCanvas")}</b>{tr(". O resto da plataforma fica visível para você conhecer, mas só a ferramenta funciona nesses")} {c.dias} dias.
         </p>
       </main>
     );
@@ -76,15 +76,15 @@ export default async function DemoPage({
     <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-12">
       <p className="text-sm font-semibold text-marca">{c.titulo}</p>
       <h1 className="mt-2 font-display text-3xl font-bold leading-tight text-tinta">
-        {c.dias} dias de DriveCanvas, de graça.
+        {c.dias} {tr("dias de DriveCanvas, de graça.")}
       </h1>
       <p className="mt-3 text-slate-400">
-        A ferramenta de visuais em HTML da DriveData. Preencha e o acesso sai na hora.
+        {tr("A ferramenta de visuais em HTML da DriveData. Preencha e o acesso sai na hora.")}
       </p>
 
       {!c.ativo && (
         <p className="mt-6 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
-          Esta demonstração está encerrada.
+          {tr("Esta demonstração está encerrada.")}
         </p>
       )}
 
@@ -97,14 +97,14 @@ export default async function DemoPage({
       {c.ativo && (
         <form action={pedirDemonstracao} className="mt-7 space-y-3">
           <input type="hidden" name="slug" value={params.slug} />
-          <input name="name" required placeholder="Seu nome" autoComplete="name" className={campo} />
-          <input name="email" type="email" required placeholder="Seu melhor e-mail" autoComplete="email" inputMode="email" className={campo} />
-          <input name="phone" required placeholder="WhatsApp com DDD" autoComplete="tel" inputMode="tel" className={campo} />
+          <input name="name" required placeholder={tr("Seu nome")} autoComplete="name" className={campo} />
+          <input name="email" type="email" required placeholder={tr("Seu melhor e-mail")} autoComplete="email" inputMode="email" className={campo} />
+          <input name="phone" required placeholder={tr("WhatsApp com DDD")} autoComplete="tel" inputMode="tel" className={campo} />
           {c.palavra && (
             <input
               name="palavra"
               required
-              placeholder="Palavra-chave da tela"
+              placeholder={tr("Palavra-chave da tela")}
               autoCapitalize="none"
               autoComplete="off"
               className={campo}
@@ -112,13 +112,13 @@ export default async function DemoPage({
           )}
           <label className="flex cursor-pointer items-start gap-3 pt-1 text-sm text-slate-400">
             <input type="checkbox" name="consent" defaultChecked className="mt-1 h-4 w-4 shrink-0 accent-acento" />
-            <span>Aceito receber novidades da DriveData Academy.</span>
+            <span>{tr("Aceito receber novidades da DriveData Academy.")}</span>
           </label>
           <button
             type="submit"
             className="mt-2 w-full rounded-xl bg-marca-verde px-6 py-4 text-base font-semibold text-sobre-acento"
           >
-            Liberar meu acesso
+            {tr("Liberar meu acesso")}
           </button>
         </form>
       )}

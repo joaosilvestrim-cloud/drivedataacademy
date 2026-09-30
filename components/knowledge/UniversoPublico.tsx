@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { UniversoPublico as Dados } from "@/lib/knowledge/publico";
@@ -17,10 +19,13 @@ import RoteiroDaCarreira, { capitulosDaCarreira, type Alvo } from "./RoteiroDaCa
    aluno nascendo e crescendo mês a mês. É a resposta visual para a pergunta
    que todo recrutador faz: essa pessoa está evoluindo? */
 
-const Canvas = dynamic(() => import("./UniverseCanvas"), {
-  ssr: false,
-  loading: () => <p className="grid h-full place-items-center text-sm text-slate-400">Organizando as constelações...</p>,
-});
+// O aviso de carregamento é um componente de verdade: o tr é hook e não existe
+// fora de um componente, como na opção "loading" do dynamic.
+function Carregando() {
+  const tr = usarTraducao();
+  return <p className="grid h-full place-items-center text-sm text-slate-400">{tr("Organizando as constelações...")}</p>;
+}
+const Canvas = dynamic(() => import("./UniverseCanvas"), { ssr: false, loading: () => <Carregando /> });
 // A carreira no espaço usa o motor 3D, então também fica fora do servidor.
 const CarreiraNoEspaco = dynamic(() => import("./CarreiraNoEspaco"), { ssr: false });
 
@@ -72,6 +77,7 @@ export default function UniversoPublico({
   autoplay?: boolean;
   final?: React.ReactNode;
 }) {
+  const tr = usarTraducao();
   const [terminou, setTerminou] = useState(false);
   const jaTocou = useRef(false);
   const [dados, setDados] = useState<Dados | null>(null);
@@ -265,25 +271,25 @@ export default function UniversoPublico({
       <style>{`@keyframes surgir{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}.surgir{animation:surgir .7s cubic-bezier(.2,.8,.2,1) both}@media (prefers-reduced-motion:reduce){.surgir{animation:none}}`}</style>
       <header className="flex items-start justify-between gap-4 border-b border-tinta/10 px-5 py-4 sm:px-8">
         <div>
-          <p className="text-[0.7rem] font-semibold text-marca">Knowledge Universe 4D</p>
+          <p className="text-[0.7rem] font-semibold text-marca">{tr("Knowledge Universe 4D")}</p>
           {/* No celular o título curto: a constelação precisa da altura. */}
           <h2 className="mt-1 font-display text-lg font-bold sm:text-2xl">
-            <span className="sm:hidden">Universo de {primeiro}</span>
-            <span className="hidden sm:inline">Universo de competências de {nome}</span>
+            <span className="sm:hidden">{tr("Universo de")} {primeiro}</span>
+            <span className="hidden sm:inline">{tr("Universo de competências de")} {nome}</span>
           </h2>
           <p className={`mt-1 max-w-2xl text-xs text-slate-400 sm:text-sm ${tocando ? "hidden sm:block" : ""}`}>
-            Cada competência acende porque um projeto de {primeiro} a demonstra. Toque numa esfera para ver qual, e aperte play para ver a carreira crescer.
+            {tr("Cada competência acende porque um projeto a demonstra.")} {tr("Toque numa esfera para ver qual, e aperte play para ver a carreira crescer.")}
           </p>
         </div>
-        <button onClick={aoFechar} className="shrink-0 rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-slate-300 hover:text-tinta" aria-label="Fechar o universo">
-          Fechar
+        <button onClick={aoFechar} className="shrink-0 rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-slate-300 hover:text-tinta" aria-label={tr("Fechar o universo")}>
+          {tr("Fechar")}
         </button>
       </header>
 
       <div className="relative min-h-0 flex-1">
-        {estado === "carregando" && <p className="grid h-full place-items-center text-sm text-slate-400">Calculando o universo de {primeiro}...</p>}
-        {estado === "vazio" && <p className="grid h-full place-items-center px-6 text-center text-sm text-slate-400">Os projetos de {primeiro} ainda não acenderam nenhuma competência.</p>}
-        {estado === "erro" && <p className="grid h-full place-items-center text-sm text-slate-400">Não foi possível carregar o universo agora.</p>}
+        {estado === "carregando" && <p className="grid h-full place-items-center text-sm text-slate-400">{tr("Calculando o universo de")} {primeiro}...</p>}
+        {estado === "vazio" && <p className="grid h-full place-items-center px-6 text-center text-sm text-slate-400">{tr("Os projetos de")} {primeiro} {tr("ainda não acenderam nenhuma competência.")}</p>}
+        {estado === "erro" && <p className="grid h-full place-items-center text-sm text-slate-400">{tr("Não foi possível carregar o universo agora.")}</p>}
 
         {estado === "ok" && dados && (
           <>
@@ -341,14 +347,14 @@ export default function UniversoPublico({
                 <PainelDaVaga vaga={vaga} aoFechar={() => setVaga(null)} aoCompetencia={(id) => { setExtra(null); setSelecionada(id); }} />
               ) : vagaAberta ? (
                 <>
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">Comparar com uma vaga</p>
-                  <p className="mt-1 text-sm text-slate-300">Cole a descrição da vaga. A constelação mostra o que ela pede e o que já está provado em projeto.</p>
+                  <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">{tr("Comparar com uma vaga")}</p>
+                  <p className="mt-1 text-sm text-slate-300">{tr("Cole a descrição da vaga. A constelação mostra o que ela pede e o que já está provado em projeto.")}</p>
                   <textarea
                     value={vagaTexto}
                     onChange={(e) => setVagaTexto(e.target.value)}
                     rows={7}
                     maxLength={9000}
-                    placeholder="Responsabilidades, requisitos, ferramentas..."
+                    placeholder={tr("Responsabilidades, requisitos, ferramentas...")}
                     className="mt-3 w-full resize-y rounded-lg border border-tinta/15 bg-black/30 p-2 text-sm text-slate-100 outline-none focus:border-acento/60"
                   />
                   {vagaErro && <p className="mt-2 text-xs text-red-300">{vagaErro}</p>}
@@ -356,7 +362,7 @@ export default function UniversoPublico({
                     <button disabled={vagaLendo || vagaTexto.trim().length < 80} onClick={compararVaga} className="h-9 rounded-lg bg-brand-green px-4 text-sm font-semibold text-slate-900 disabled:opacity-40">
                       {vagaLendo ? "Lendo a vaga..." : "Comparar"}
                     </button>
-                    <button onClick={() => setVagaAberta(false)} className="h-9 px-3 text-sm text-slate-400 hover:text-tinta">Cancelar</button>
+                    <button onClick={() => setVagaAberta(false)} className="h-9 px-3 text-sm text-slate-400 hover:text-tinta">{tr("Cancelar")}</button>
                   </div>
                 </>
               ) : extra ? (
@@ -386,7 +392,7 @@ export default function UniversoPublico({
                   )}
                   {conectadas.length > 0 && (
                     <div className="mt-3 border-t border-tinta/10 pt-3">
-                      <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">Conecta com</p>
+                      <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">{tr("Conecta com")}</p>
                       <ul className="mt-1.5 flex flex-col gap-1.5">
                         {conectadas.map((c) => (
                           <li key={c.id} className="text-xs">
@@ -399,23 +405,23 @@ export default function UniversoPublico({
                       </ul>
                     </div>
                   )}
-                  <button onClick={() => setSelecionada(null)} className="mt-3 text-xs text-slate-400 hover:text-tinta">Ver resumo</button>
+                  <button onClick={() => setSelecionada(null)} className="mt-3 text-xs text-slate-400 hover:text-tinta">{tr("Ver resumo")}</button>
                 </>
               ) : (
                 <>
                   <p className="text-sm font-semibold">
-                    {visiveis.length} {visiveis.length === 1 ? "competência" : "competências"}
-                    {dados.projetos ? ` em ${dados.projetos} ${dados.projetos === 1 ? "projeto" : "projetos"}` : ""}
+                    {visiveis.length} {tr(visiveis.length === 1 ? "competência" : "competências")}
+                    {dados.projetos ? ` ${tr("em")} ${dados.projetos} ${tr(dados.projetos === 1 ? "projeto" : "projetos")}` : ""}
                   </p>
                   <p className="mt-0.5 text-xs text-slate-400">
-                    até {atual ? rotulo(atual.at, dados.passo) : ""}
-                    {(dados.trajetoria ?? []).length ? `, carreira desde ${new Date([...(dados.trajetoria ?? [])].sort((a, b) => a.inicio.localeCompare(b.inicio))[0].inicio).getUTCFullYear()}` : ""}
-                    . Toque numa esfera, num planeta ou na nave para ver o detalhe.
+                    {tr("até")} {atual ? rotulo(atual.at, dados.passo) : ""}
+                    {(dados.trajetoria ?? []).length ? `, ${tr("carreira desde")} ${new Date([...(dados.trajetoria ?? [])].sort((a, b) => a.inicio.localeCompare(b.inicio))[0].inicio).getUTCFullYear()}` : ""}
+                    {tr(". Toque numa esfera, num planeta ou na nave para ver o detalhe.")}
                   </p>
                   {capitulos.length > 1 && (
                     <button onClick={() => setRoteiro(true)} className="mt-3 w-full rounded-lg border border-tinta/15 px-3 py-2 text-left text-sm hover:border-tinta/40">
-                      <span className="font-semibold">Ler o roteiro da carreira</span>
-                      <span className="block text-xs text-slate-400">{capitulos.length} capítulos, do primeiro fato até hoje</span>
+                      <span className="font-semibold">{tr("Ler o roteiro da carreira")}</span>
+                      <span className="block text-xs text-slate-400">{capitulos.length} {tr("capítulos, do primeiro fato até hoje")}</span>
                     </button>
                   )}
                   <ol className="mt-3 hidden flex-col gap-2 sm:flex">
@@ -439,15 +445,15 @@ export default function UniversoPublico({
             </aside>}
 
             <div className="absolute left-3 top-3 flex gap-1.5 sm:left-5 sm:top-5">
-              <button onClick={() => setZoom((z) => z + 1)} className="h-8 w-8 rounded-lg border border-tinta/15 bg-black/30 text-slate-200" aria-label="Aproximar">+</button>
-              <button onClick={() => setZoom((z) => z - 1)} className="h-8 w-8 rounded-lg border border-tinta/15 bg-black/30 text-slate-200" aria-label="Afastar">−</button>
-              <button onClick={() => { setReset((r) => r + 1); setSelecionada(null); setExtra(null); }} className="h-8 rounded-lg border border-tinta/15 bg-black/30 px-2.5 text-xs text-slate-200">Centralizar</button>
+              <button onClick={() => setZoom((z) => z + 1)} className="h-8 w-8 rounded-lg border border-tinta/15 bg-black/30 text-slate-200" aria-label={tr("Aproximar")}>+</button>
+              <button onClick={() => setZoom((z) => z - 1)} className="h-8 w-8 rounded-lg border border-tinta/15 bg-black/30 text-slate-200" aria-label={tr("Afastar")}>−</button>
+              <button onClick={() => { setReset((r) => r + 1); setSelecionada(null); setExtra(null); }} className="h-8 rounded-lg border border-tinta/15 bg-black/30 px-2.5 text-xs text-slate-200">{tr("Centralizar")}</button>
               {!tocando && !autoplay && (
                 <button
                   onClick={() => { setVaga(null); setExtra(null); setSelecionada(null); setVagaAberta(true); }}
                   className="h-8 rounded-lg border border-acento/40 bg-black/30 px-2.5 text-xs font-semibold text-acento"
                 >
-                  Comparar com vaga
+                  {tr("Comparar com vaga")}
                 </button>
               )}
             </div>
@@ -470,7 +476,7 @@ export default function UniversoPublico({
             onClick={() => (tocando ? setTocando(false) : comecar())}
             className="shrink-0 rounded-lg bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento"
           >
-            {tocando ? "Pausar" : "Ver a evolução"}
+            {tocando ? tr("Pausar") : tr("Ver a evolução")}
           </button>
           <input
             type="range"
@@ -479,7 +485,7 @@ export default function UniversoPublico({
             value={Math.max(0, quadro)}
             onChange={(e) => { setTocando(false); setQuadro(Number(e.target.value)); }}
             className="min-w-0 flex-1 accent-[#15c47e]"
-            aria-label="Linha do tempo"
+            aria-label={tr("Linha do tempo")}
           />
           <span className="w-20 shrink-0 text-right font-mono text-xs tabular-nums text-slate-300">{atual ? rotulo(atual.at, dados.passo) : ""}</span>
         </footer>
@@ -502,11 +508,12 @@ function PainelDaCarreira({
   aoVoltar: () => void;
   aoCompetencia: (id: string) => void;
 }) {
+  const tr = usarTraducao();
   const nome = (id: string) => dados.catalog.competencies.find((c) => c.id === id)?.name ?? id;
   const Rotulo = ({ children }: { children: React.ReactNode }) => <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">{children}</p>;
   const Titulo = ({ children }: { children: React.ReactNode }) => <p className="mt-1 font-display text-lg font-bold leading-snug">{children}</p>;
   const Campo = ({ r, v }: { r: string; v: React.ReactNode }) => (v ? <div className="mt-2 text-sm"><span className="text-xs text-slate-400">{r}</span><p className="text-slate-200">{v}</p></div> : null);
-  const voltar = <button onClick={aoVoltar} className="mt-3 text-xs text-slate-400 hover:text-tinta">Ver resumo</button>;
+  const voltar = <button onClick={aoVoltar} className="mt-3 text-xs text-slate-400 hover:text-tinta">{tr("Ver resumo")}</button>;
 
   if (extra.tipo === "planeta") {
     const p = (dados.planetas ?? []).find((x) => x.id === extra.id);
@@ -547,8 +554,8 @@ function PainelDaCarreira({
       <>
         <Rotulo>Certificado · {mesAno(l.at)}</Rotulo>
         <Titulo>{l.titulo}</Titulo>
-        <p className="mt-1 text-xs text-slate-400">Orbita {nome(l.competencia)}, a competência que ele trabalha.</p>
-        <a href={l.verificacao} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-acento hover:underline">Verificar o certificado</a>
+        <p className="mt-1 text-xs text-slate-400">Orbita {nome(l.competencia)}{tr(", a competência que ele trabalha.")}</p>
+        <a href={l.verificacao} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-acento hover:underline">{tr("Verificar o certificado")}</a>
         {voltar}
       </>
     );
@@ -559,7 +566,7 @@ function PainelDaCarreira({
     if (!t) return voltar;
     return (
       <>
-        <Rotulo>Trajetória · {mesAno(t.inicio)} a {t.fim ? mesAno(t.fim) : "hoje"}</Rotulo>
+        <Rotulo>{tr("Trajetória ·")} {mesAno(t.inicio)} a {t.fim ? mesAno(t.fim) : "hoje"}</Rotulo>
         <Titulo>{t.cargo}</Titulo>
         {t.organizacao && <p className="mt-1 text-sm text-slate-300">{t.organizacao}</p>}
         {t.setor && <p className="mt-1 text-xs text-slate-400">Setor: {t.setor}</p>}
@@ -576,7 +583,7 @@ function PainelDaCarreira({
         <Rotulo>Conquista · {mesAno(c.at)}</Rotulo>
         <Titulo>{c.titulo}</Titulo>
         {c.descricao && <p className="mt-1 text-sm text-slate-300">{c.descricao}</p>}
-        {c.link && <a href={c.link} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-acento hover:underline">Ver a prova</a>}
+        {c.link && <a href={c.link} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-acento hover:underline">{tr("Ver a prova")}</a>}
         {voltar}
       </>
     );
@@ -588,11 +595,11 @@ function PainelDaCarreira({
     const projeto = r.projeto ? (dados.planetas ?? []).find((p) => p.id === r.projeto)?.titulo : null;
     return (
       <>
-        <Rotulo>Recomendação{projeto ? ` · ${projeto}` : ""}</Rotulo>
+        <Rotulo>{tr("Recomendação")}{projeto ? ` · ${projeto}` : ""}</Rotulo>
         <p className="mt-2 text-sm leading-relaxed text-slate-100">&ldquo;{r.texto}&rdquo;</p>
         <p className="mt-2 text-sm font-semibold">{r.autor}</p>
         <p className="text-xs text-slate-400">{[r.cargo, r.relacao].filter(Boolean).join(" · ")}</p>
-        <p className="mt-2 text-[0.7rem] text-slate-500">Escrita por quem assina, com e-mail confirmado pela DriveData Academy.</p>
+        <p className="mt-2 text-[0.7rem] text-slate-500">{tr("Escrita por quem assina, com e-mail confirmado pela DriveData Academy.")}</p>
         {voltar}
       </>
     );
@@ -602,10 +609,10 @@ function PainelDaCarreira({
     const f = dados.formacao?.[extra.id];
     return (
       <>
-        <Rotulo>Em formação</Rotulo>
+        <Rotulo>{tr("Em formação")}</Rotulo>
         <Titulo>{nome(extra.id)}</Titulo>
-        <p className="mt-1 text-sm text-slate-300">Estudando na DriveData Academy{f ? `: ${f.level.toLowerCase()}` : ""}.</p>
-        <p className="mt-1 text-xs text-slate-400">Ainda sem projeto que prove. Quando provar, vira estrela.</p>
+        <p className="mt-1 text-sm text-slate-300">{tr("Estudando na DriveData Academy")}{f ? `: ${f.level.toLowerCase()}` : ""}.</p>
+        <p className="mt-1 text-xs text-slate-400">{tr("Ainda sem projeto que prove. Quando provar, vira estrela.")}</p>
         {voltar}
       </>
     );
@@ -616,9 +623,9 @@ function PainelDaCarreira({
   const tem = g.requeridas.filter((r) => r.tem).length;
   return (
     <>
-      <Rotulo>Objetivo</Rotulo>
+      <Rotulo>{tr("Objetivo")}</Rotulo>
       <Titulo>{g.titulo}</Titulo>
-      <p className="mt-1 text-xs text-slate-400">O que esse cargo costuma pedir, segundo a IA. {tem} de {g.requeridas.length} já comprovadas por projeto.</p>
+      <p className="mt-1 text-xs text-slate-400">{tr("O que esse cargo costuma pedir, segundo a IA.")} {tem} de {g.requeridas.length} {tr("já comprovadas por projeto.")}</p>
       <ul className="mt-3 flex flex-col gap-2">
         {g.requeridas.map((r) => (
           <li key={r.id} className="text-sm">
@@ -628,7 +635,7 @@ function PainelDaCarreira({
             <p className="text-xs text-slate-400">{r.motivo}</p>
             {!r.tem && r.cursos.length > 0 && (
               <p className="text-xs text-slate-400">
-                Para acender: {r.cursos.map((c, i) => (
+                {tr("Para acender:")} {r.cursos.map((c, i) => (
                   <a key={c.slug} href={`/cursos/${c.slug}`} target="_top" className="text-sky-300 hover:underline">{i > 0 ? ", " : ""}{c.titulo}</a>
                 ))}
               </p>
@@ -648,13 +655,14 @@ type Aderencia = {
 };
 
 function PainelDaVaga({ vaga, aoFechar, aoCompetencia }: { vaga: Aderencia; aoFechar: () => void; aoCompetencia: (id: string) => void }) {
+  const tr = usarTraducao();
   return (
     <>
-      <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">Aderência à vaga</p>
+      <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">{tr("Aderência à vaga")}</p>
       <p className="mt-1 font-display text-2xl font-bold">
-        {vaga.tem} <span className="text-base font-normal text-slate-400">de {vaga.total} pedidas já provadas</span>
+        {vaga.tem} <span className="text-base font-normal text-slate-400">{tr("de")} {vaga.total} {tr("pedidas já provadas")}</span>
       </p>
-      <p className="mt-1 text-xs text-slate-400">Anel verde: provada em projeto. Estrela vazada: a vaga pede e ainda não há projeto que prove.</p>
+      <p className="mt-1 text-xs text-slate-400">{tr("Anel verde: provada em projeto. Estrela vazada: a vaga pede e ainda não há projeto que prove.")}</p>
       <ul className="mt-3 flex flex-col gap-2.5">
         {vaga.itens.map((i) => (
           <li key={i.id} className="text-sm">
@@ -662,10 +670,10 @@ function PainelDaVaga({ vaga, aoFechar, aoCompetencia }: { vaga: Aderencia; aoFe
               {i.tem ? "✓ " : "○ "}{i.nome}
             </button>
             <p className="text-xs text-slate-400">A vaga: &ldquo;{i.trecho}&rdquo;</p>
-            {i.tem && <p className="text-xs text-slate-300">Provada em {i.projetos.join(", ")}</p>}
+            {i.tem && <p className="text-xs text-slate-300">{tr("Provada em")} {i.projetos.join(", ")}</p>}
             {!i.tem && i.cursos.length > 0 && (
               <p className="text-xs text-slate-400">
-                Curso na Academy: {i.cursos.map((c, k) => (
+                {tr("Curso na Academy:")} {i.cursos.map((c, k) => (
                   <a key={c.slug} href={`/cursos/${c.slug}`} target="_top" className="text-sky-300 hover:underline">{k > 0 ? ", " : ""}{c.titulo}</a>
                 ))}
               </p>
@@ -673,8 +681,8 @@ function PainelDaVaga({ vaga, aoFechar, aoCompetencia }: { vaga: Aderencia; aoFe
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-[0.7rem] text-slate-500">Leitura feita por IA a partir do texto da vaga. Confira os trechos.</p>
-      <button onClick={aoFechar} className="mt-2 text-xs text-slate-400 hover:text-tinta">Fechar comparação</button>
+      <p className="mt-3 text-[0.7rem] text-slate-500">{tr("Leitura feita por IA a partir do texto da vaga. Confira os trechos.")}</p>
+      <button onClick={aoFechar} className="mt-2 text-xs text-slate-400 hover:text-tinta">{tr("Fechar comparação")}</button>
     </>
   );
 }

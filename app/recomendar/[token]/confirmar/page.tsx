@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendBrandedEmail } from "@/lib/email";
 
@@ -35,8 +36,8 @@ export default async function Confirmar({ params, searchParams }: { params: { to
           u.user.email,
           "Você recebeu uma recomendação",
           "Chegou uma recomendação",
-          `<p style="margin:0 0 20px;color:#cbd5e1">${(rec.autor_nome || "Um colega").replace(/[<>&]/g, "")} escreveu uma recomendação para o seu portfólio. Leia e decida se ela aparece no seu site.</p>
-           <a href="${SITE}/conta/portfolio" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Ver a recomendação</a>`,
+          `<p style="margin:0 0 20px;color:#cbd5e1">${(rec.autor_nome || "Um colega").replace(/[<>&]/g, "")} {tr("escreveu uma recomendação para o seu portfólio. Leia e decida se ela aparece no seu site.")}</p>
+           <a href="${SITE}/conta/portfolio" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">{tr("Ver a recomendação")}</a>`,
           { kind: "recomendacao-recebida" },
         );
       }
@@ -48,7 +49,7 @@ export default async function Confirmar({ params, searchParams }: { params: { to
 
   return (
     <main className="mx-auto max-w-xl px-6 py-24 text-tinta">
-      <p className="text-sm text-acento">DriveData Academy</p>
+      <p className="text-sm text-acento">{tr("DriveData Academy")}</p>
       <h1 className="mt-2 font-display text-3xl font-bold">{titulo}</h1>
       <p className="mt-4 text-slate-300">{texto}</p>
     </main>

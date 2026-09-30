@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import type { Carreira } from "@/lib/portfolio-carreira";
 import type { ExperienciaLida } from "@/lib/portfolio-ia";
@@ -31,11 +33,12 @@ const mesAno = (d: string | null) =>
   d ? new Date(`${d.slice(0, 7)}-15T12:00:00Z`).toLocaleDateString("pt-BR", { month: "short", year: "numeric", timeZone: "UTC" }).replace(/\./g, "") : "";
 
 function Bloco({ titulo, espaco, children, aberto = false }: { titulo: string; espaco: string; children: React.ReactNode; aberto?: boolean }) {
+  const tr = usarTraducao();
   return (
     <details open={aberto} className="group rounded-[20px] border border-tinta/10 bg-papel p-4">
       <summary className="flex cursor-pointer list-none flex-wrap items-baseline justify-between gap-2">
         <span className="font-semibold text-tinta">{titulo}</span>
-        <span className="text-xs text-slate-400">no seu 4D: {espaco}</span>
+        <span className="text-xs text-slate-400">{tr("no seu 4D:")} {espaco}</span>
       </summary>
       <div className="mt-4">{children}</div>
     </details>
@@ -55,6 +58,7 @@ export default function CarreiraDoAluno({
   provadas: string[];
   cursos: Record<string, { titulo: string; slug: string }[]>;
 }) {
+  const tr = usarTraducao();
   const [erro, setErro] = useState("");
   const [copiado, setCopiado] = useState("");
   const copiar = async (t: string, r: string) => {
@@ -93,16 +97,16 @@ export default function CarreiraDoAluno({
 
   return (
     <section className="mt-8 rounded-[20px] border border-tinta/10 bg-papel p-5 sm:p-7">
-      <h2 className="font-display text-2xl font-bold text-tinta">Sua carreira no universo</h2>
+      <h2 className="font-display text-2xl font-bold text-tinta">{tr("Sua carreira no universo")}</h2>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">
-        Os projetos acendem as estrelas. Estes blocos contam o resto da história: para onde você vai, por onde passou, o que conquistou e quem confirma o seu trabalho.
+        {tr("Os projetos acendem as estrelas. Estes blocos contam o resto da história: para onde você vai, por onde passou, o que conquistou e quem confirma o seu trabalho.")}
       </p>
       {erro && <p className="mt-3 text-sm text-red-300">{erro}</p>}
 
       <div className="mt-5 flex flex-col gap-3">
         <Bloco titulo="Seu objetivo" espaco="a estrela-guia" aberto={!carreira.objetivo}>
           <div className="flex flex-wrap gap-2">
-            <input value={objetivo} onChange={(e) => setObjetivo(e.target.value)} placeholder="Ex: Head de Dados" className={`${campo} max-w-sm`} />
+            <input value={objetivo} onChange={(e) => setObjetivo(e.target.value)} placeholder={tr("Ex: Head de Dados")} className={`${campo} max-w-sm`} />
             <button
               disabled={definindo || objetivo.trim().length < 3}
               onClick={async () => {
@@ -116,12 +120,12 @@ export default function CarreiraDoAluno({
             >
               {definindo ? "Lendo o cargo..." : carreira.objetivo ? "Atualizar" : "Definir objetivo"}
             </button>
-            {carreira.objetivo && <button onClick={async () => { await removerObjetivo(); setObjetivo(""); setRequeridas(null); }} className="text-xs text-slate-500 hover:text-slate-300">remover</button>}
+            {carreira.objetivo && <button onClick={async () => { await removerObjetivo(); setObjetivo(""); setRequeridas(null); }} className="text-xs text-slate-500 hover:text-slate-300">{tr("remover")}</button>}
           </div>
           {requeridas && requeridas.length > 0 && (
             <div className="mt-4">
               <p className="text-xs text-slate-400">
-                O que esse cargo costuma pedir, segundo a IA. Você tem {requeridas.filter((r) => provadasSet.has(r.id)).length} de {requeridas.length} comprovadas por projeto.
+                {tr("O que esse cargo costuma pedir, segundo a IA. Você tem")} {requeridas.filter((r) => provadasSet.has(r.id)).length} de {requeridas.length} {tr("comprovadas por projeto.")}
               </p>
               <ul className="mt-2 flex flex-col gap-2">
                 {requeridas.map((r) => {
@@ -132,7 +136,7 @@ export default function CarreiraDoAluno({
                       <span className="text-slate-400"> · {r.motivo}</span>
                       {!tem && (cursos[r.id] ?? []).length > 0 && (
                         <span className="block text-xs text-slate-400">
-                          Para acender: {(cursos[r.id] ?? []).map((c, i) => (
+                          {tr("Para acender:")} {(cursos[r.id] ?? []).map((c, i) => (
                             <a key={c.slug} href={`/cursos/${c.slug}`} className="text-brand-teal hover:underline">{i > 0 ? ", " : ""}{c.titulo}</a>
                           ))}
                         </span>
@@ -155,13 +159,13 @@ export default function CarreiraDoAluno({
                     {e.organizacao && <span className="text-slate-300"> · {e.organizacao}</span>}
                     <span className="block text-xs text-slate-400">{mesAno(e.inicio)}{e.inicio ? " a " : ""}{e.fim ? mesAno(e.fim) : e.inicio ? "hoje" : ""}{e.setor ? ` · ${e.setor}` : ""}</span>
                   </span>
-                  <button onClick={() => excluirExperiencia(e.id)} className="text-xs text-slate-500 hover:text-slate-300">excluir</button>
+                  <button onClick={() => excluirExperiencia(e.id)} className="text-xs text-slate-500 hover:text-slate-300">{tr("excluir")}</button>
                 </li>
               ))}
             </ul>
           )}
-          <p className="text-xs text-slate-400">Cole a seção de experiências do seu LinkedIn ou do currículo. A IA separa cargo, organização e datas, só com o que está escrito.</p>
-          <textarea value={colado} onChange={(e) => setColado(e.target.value)} rows={5} placeholder="Gerente de Projetos · Empresa · fev. de 2021 - o momento ..." className={`${campo} mt-2 resize-y`} />
+          <p className="text-xs text-slate-400">{tr("Cole a seção de experiências do seu LinkedIn ou do currículo. A IA separa cargo, organização e datas, só com o que está escrito.")}</p>
+          <textarea value={colado} onChange={(e) => setColado(e.target.value)} rows={5} placeholder={tr("Gerente de Projetos · Empresa · fev. de 2021 - o momento ...")} className={`${campo} mt-2 resize-y`} />
           <button
             disabled={lendo || colado.trim().length < 60}
             onClick={async () => {
@@ -178,7 +182,7 @@ export default function CarreiraDoAluno({
           {lidas && (
             <div className="mt-3 rounded-xl border border-tinta/10 p-3">
               {lidas.length === 0 ? (
-                <p className="text-sm text-slate-400">Não encontrei experiências com cargo e datas no texto.</p>
+                <p className="text-sm text-slate-400">{tr("Não encontrei experiências com cargo e datas no texto.")}</p>
               ) : (
                 <>
                   <ul className="flex flex-col gap-1.5 text-sm">
@@ -213,19 +217,19 @@ export default function CarreiraDoAluno({
                   <span>
                     <span className="font-semibold text-tinta">{c.titulo}</span>
                     <span className="text-xs text-slate-400"> {mesAno(c.data)}</span>
-                    {c.link_prova && <a href={c.link_prova} target="_blank" rel="noopener" className="ml-2 text-xs text-brand-teal hover:underline">prova</a>}
+                    {c.link_prova && <a href={c.link_prova} target="_blank" rel="noopener" className="ml-2 text-xs text-brand-teal hover:underline">{tr("prova")}</a>}
                   </span>
-                  <button onClick={() => excluirConquista(c.id)} className="text-xs text-slate-500 hover:text-slate-300">excluir</button>
+                  <button onClick={() => excluirConquista(c.id)} className="text-xs text-slate-500 hover:text-slate-300">{tr("excluir")}</button>
                 </li>
               ))}
             </ul>
           )}
           <div className="grid gap-2 sm:grid-cols-[1fr_10rem]">
-            <input value={conquista.titulo} onChange={(e) => setConquista((c) => ({ ...c, titulo: e.target.value }))} placeholder="Ex: Voluntário do Ano, PMI São Paulo" className={campo} />
+            <input value={conquista.titulo} onChange={(e) => setConquista((c) => ({ ...c, titulo: e.target.value }))} placeholder={tr("Ex: Voluntário do Ano, PMI São Paulo")} className={campo} />
             <input type="month" value={conquista.data} onChange={(e) => setConquista((c) => ({ ...c, data: e.target.value }))} className={`${campo} [color-scheme:dark]`} />
           </div>
-          <input value={conquista.link_prova} onChange={(e) => setConquista((c) => ({ ...c, link_prova: e.target.value }))} placeholder="Link que prova (post, certificado, notícia)" className={`${campo} mt-2`} />
-          <input value={conquista.descricao} onChange={(e) => setConquista((c) => ({ ...c, descricao: e.target.value }))} placeholder="Uma frase sobre a conquista (opcional)" className={`${campo} mt-2`} />
+          <input value={conquista.link_prova} onChange={(e) => setConquista((c) => ({ ...c, link_prova: e.target.value }))} placeholder={tr("Link que prova (post, certificado, notícia)")} className={`${campo} mt-2`} />
+          <input value={conquista.descricao} onChange={(e) => setConquista((c) => ({ ...c, descricao: e.target.value }))} placeholder={tr("Uma frase sobre a conquista (opcional)")} className={`${campo} mt-2`} />
           <button
             disabled={conquista.titulo.trim().length < 3}
             onClick={async () => {
@@ -235,17 +239,17 @@ export default function CarreiraDoAluno({
             }}
             className={`${botaoLeve} mt-2`}
           >
-            Adicionar conquista
+            {tr("Adicionar conquista")}
           </button>
         </Bloco>
 
         <Bloco titulo="Recomendações" espaco="sinais" aberto={recsPendentes.length > 0}>
           <p className="text-xs text-slate-400">
-            Quem escreve é o colega, por um link, e confirma o próprio e-mail. Você só decide se aparece. É isso que faz a recomendação valer.
+            {tr("Quem escreve é o colega, por um link, e confirma o próprio e-mail. Você só decide se aparece. É isso que faz a recomendação valer.")}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <select value={projetoRec} onChange={(e) => setProjetoRec(e.target.value)} className={`${campo} max-w-xs [&>option]:bg-ink-900`}>
-              <option value="">Sobre o meu trabalho em geral</option>
+              <option value="">{tr("Sobre o meu trabalho em geral")}</option>
               {projetos.map((p) => <option key={p.id} value={p.id}>Sobre: {p.titulo}</option>)}
             </select>
             <button
@@ -256,27 +260,27 @@ export default function CarreiraDoAluno({
               }}
               className={botaoLeve}
             >
-              Gerar link de convite
+              {tr("Gerar link de convite")}
             </button>
           </div>
           {convite && (
             <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-acento/30 bg-brand-green/[0.06] p-3">
               <span className="min-w-0 flex-1 truncate font-mono text-xs text-acento">{convite}</span>
               <button onClick={() => copiar(convite, "convite")} className={botaoLeve}>{copiado === "convite" ? "Copiado" : "Copiar"}</button>
-              <a href={`https://wa.me/?text=${encodeURIComponent(`Oi! Estou montando meu portfólio. Você escreveria uma recomendação sobre o nosso trabalho juntos? É rapidinho: ${convite}`)}`} target="_blank" rel="noopener" className={botaoLeve}>Mandar no WhatsApp</a>
+              <a href={`https://wa.me/?text=${encodeURIComponent(`Oi! Estou montando meu portfólio. Você escreveria uma recomendação sobre o nosso trabalho juntos? É rapidinho: ${convite}`)}`} target="_blank" rel="noopener" className={botaoLeve}>{tr("Mandar no WhatsApp")}</a>
             </div>
           )}
 
           {recsPendentes.length > 0 && (
             <div className="mt-4 flex flex-col gap-3">
-              <p className="text-sm font-semibold text-tinta">Esperando você aprovar</p>
+              <p className="text-sm font-semibold text-tinta">{tr("Esperando você aprovar")}</p>
               {recsPendentes.map((r) => (
                 <div key={r.id} className="rounded-xl border border-tinta/10 p-3">
                   <p className="text-sm text-slate-200">&ldquo;{r.texto}&rdquo;</p>
                   <p className="mt-1 text-xs text-slate-400">{r.autor_nome}{r.autor_cargo ? `, ${r.autor_cargo}` : ""}{r.relacao ? ` · ${r.relacao}` : ""} · e-mail confirmado</p>
                   <div className="mt-2 flex gap-2">
-                    <button onClick={() => decidirRecomendacao(r.id, true)} className={botao}>Aprovar</button>
-                    <button onClick={() => decidirRecomendacao(r.id, false)} className={botaoLeve}>Não mostrar</button>
+                    <button onClick={() => decidirRecomendacao(r.id, true)} className={botao}>{tr("Aprovar")}</button>
+                    <button onClick={() => decidirRecomendacao(r.id, false)} className={botaoLeve}>{tr("Não mostrar")}</button>
                   </div>
                 </div>
               ))}
@@ -285,11 +289,11 @@ export default function CarreiraDoAluno({
 
           {recsAprovadas.length > 0 && (
             <div className="mt-4 flex flex-col gap-2">
-              <p className="text-sm font-semibold text-tinta">No seu portfólio</p>
+              <p className="text-sm font-semibold text-tinta">{tr("No seu portfólio")}</p>
               {recsAprovadas.map((r) => (
                 <div key={r.id} className="flex items-baseline justify-between gap-2 text-sm">
                   <span className="text-slate-300">{r.autor_nome}{r.autor_cargo ? `, ${r.autor_cargo}` : ""}</span>
-                  <button onClick={() => excluirRecomendacao(r.id)} className="text-xs text-slate-500 hover:text-slate-300">remover</button>
+                  <button onClick={() => excluirRecomendacao(r.id)} className="text-xs text-slate-500 hover:text-slate-300">{tr("remover")}</button>
                 </div>
               ))}
             </div>
@@ -297,13 +301,13 @@ export default function CarreiraDoAluno({
 
           {convitesAbertos.length > 0 && (
             <div className="mt-4 flex flex-col gap-1.5">
-              <p className="text-xs text-slate-400">Convites em aberto</p>
+              <p className="text-xs text-slate-400">{tr("Convites em aberto")}</p>
               {convitesAbertos.map((r) => (
                 <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
                   <span>{r.status === "aguardando_email" ? `${r.autor_nome ?? "Alguém"} escreveu, falta confirmar o e-mail` : "Ninguém escreveu ainda"}</span>
                   <span className="flex gap-3">
                     {r.status === "convite" && <button onClick={() => copiar(`${siteBase}/recomendar/${r.token}`, r.id)} className="text-brand-teal hover:underline">{copiado === r.id ? "copiado" : "copiar link"}</button>}
-                    <button onClick={() => excluirRecomendacao(r.id)} className="hover:text-slate-200">cancelar</button>
+                    <button onClick={() => excluirRecomendacao(r.id)} className="hover:text-slate-200">{tr("cancelar")}</button>
                   </span>
                 </div>
               ))}
@@ -313,9 +317,9 @@ export default function CarreiraDoAluno({
 
         <Bloco titulo="Testar com uma vaga" espaco="anéis no que você já prova">
           <p className="text-sm text-slate-400">
-            Cole a descrição de uma vaga. A IA lê o que ela pede, com o trecho, e cruza com o que seus projetos provam. Quem abrir o seu Universo 4D pode fazer o mesmo.
+            {tr("Cole a descrição de uma vaga. A IA lê o que ela pede, com o trecho, e cruza com o que seus projetos provam. Quem abrir o seu Universo 4D pode fazer o mesmo.")}
           </p>
-          <textarea value={vagaTexto} onChange={(e) => setVagaTexto(e.target.value)} rows={6} maxLength={9000} placeholder="Responsabilidades, requisitos, ferramentas..." className={`${campo} mt-3 resize-y`} />
+          <textarea value={vagaTexto} onChange={(e) => setVagaTexto(e.target.value)} rows={6} maxLength={9000} placeholder={tr("Responsabilidades, requisitos, ferramentas...")} className={`${campo} mt-3 resize-y`} />
           <button
             disabled={vagaLendo || vagaTexto.trim().length < 80}
             onClick={async () => {
@@ -332,7 +336,7 @@ export default function CarreiraDoAluno({
           {vaga?.ok && (
             <div className="mt-4">
               <p className="text-sm text-tinta">
-                <span className="font-display text-2xl font-bold">{vaga.tem}</span> de {vaga.total} competências pedidas já provadas por projeto.
+                <span className="font-display text-2xl font-bold">{vaga.tem}</span> {tr("de")} {vaga.total} {tr("competências pedidas já provadas por projeto.")}
               </p>
               <ul className="mt-2 flex flex-col gap-2">
                 {vaga.itens.map((i) => (
@@ -341,12 +345,12 @@ export default function CarreiraDoAluno({
                     <span className="block text-xs text-slate-400">A vaga: &ldquo;{i.trecho}&rdquo;</span>
                     {i.tem && (
                       <span className="block text-xs text-slate-300">
-                        Provada em {i.projetos.map((p) => p.titulo + (p.publico ? "" : " (privado, não aparece na página pública)")).join(", ")}
+                        {tr("Provada em")} {i.projetos.map((p) => p.titulo + (p.publico ? "" : " (privado, não aparece na página pública)")).join(", ")}
                       </span>
                     )}
                     {!i.tem && i.cursos.length > 0 && (
                       <span className="block text-xs text-slate-400">
-                        Para acender: {i.cursos.map((c, k) => (
+                        {tr("Para acender:")} {i.cursos.map((c, k) => (
                           <a key={c.slug} href={`/cursos/${c.slug}`} className="text-brand-teal hover:underline">{k > 0 ? ", " : ""}{c.titulo}</a>
                         ))}
                       </span>
@@ -354,7 +358,7 @@ export default function CarreiraDoAluno({
                   </li>
                 ))}
               </ul>
-              <p className="mt-2 text-xs text-slate-500">Leitura feita por IA. O que falta vira projeto: é o próximo que vale a pena publicar.</p>
+              <p className="mt-2 text-xs text-slate-500">{tr("Leitura feita por IA. O que falta vira projeto: é o próximo que vale a pena publicar.")}</p>
             </div>
           )}
         </Bloco>

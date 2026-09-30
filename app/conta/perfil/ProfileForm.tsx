@@ -241,7 +241,7 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
             )}
             {(form.linkedin_url || form.portfolio_url) && (
               <div className="mt-3 flex flex-wrap gap-3 text-xs">
-                {form.linkedin_url && <span className="font-semibold text-marca-azul">LinkedIn ↗</span>}
+                {form.linkedin_url && <span className="font-semibold text-marca-azul">{tr("LinkedIn ↗")}</span>}
                 {form.portfolio_url && <span className="font-semibold text-marca-azul">{tr("Portfólio")} ↗</span>}
               </div>
             )}
@@ -410,7 +410,7 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
           </button>
           {alterado && !saving && (
             <span className="text-sm text-slate-300">
-              {tr("Alterações não salvas")} <span className="hidden text-xs text-slate-500 sm:inline">· Ctrl+S</span>
+              {tr("Alterações não salvas")} <span className="hidden text-xs text-slate-500 sm:inline">{tr("· Ctrl+S")}</span>
             </span>
           )}
           {!alterado && saved && <span className="text-sm text-acento">{tr("Salvo")}</span>}

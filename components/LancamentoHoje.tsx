@@ -1,4 +1,6 @@
 import { tr } from "@/lib/i18n/traduzir-servidor";
+import { idiomaAtual } from "@/lib/i18n/idioma-servidor";
+import { TAG_HTML } from "@/lib/i18n/idioma";
 import { listaTraduzida } from "@/lib/i18n/conteudo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import Cronometro from "@/components/Cronometro";
@@ -31,22 +33,26 @@ type Evento = {
 };
 
 const diaISO = (d: Date) => new Intl.DateTimeFormat("sv-SE", { timeZone: FUSO }).format(d);
-const hora = (iso: string) => new Intl.DateTimeFormat("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: FUSO }).format(new Date(iso));
-const mes = (iso: string) => new Intl.DateTimeFormat("pt-BR", { month: "long", timeZone: FUSO }).format(new Date(iso));
+/* Datas no idioma de quem lê: a função pergunta o idioma a cada chamada, dentro
+   da requisição, em vez de fixar "pt-BR" no módulo. */
+const local = () => TAG_HTML[idiomaAtual()];
+const hora = (iso: string) => new Intl.DateTimeFormat(local(), { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: FUSO }).format(new Date(iso));
+const mes = (iso: string) => new Intl.DateTimeFormat(local(), { month: "long", timeZone: FUSO }).format(new Date(iso));
 
 function rotuloDia(iso: string, agora: Date) {
   const alvo = diaISO(new Date(iso));
-  if (alvo === diaISO(agora)) return "Hoje";
-  if (alvo === diaISO(new Date(agora.getTime() + 864e5))) return "Amanhã";
-  return new Intl.DateTimeFormat("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: FUSO }).format(new Date(iso)).replace(".", "");
+  if (alvo === diaISO(agora)) return tr("Hoje");
+  if (alvo === diaISO(new Date(agora.getTime() + 864e5))) return tr("Amanhã");
+  return new Intl.DateTimeFormat(local(), { weekday: "short", day: "2-digit", month: "2-digit", timeZone: FUSO }).format(new Date(iso)).replace(".", "");
 }
+const ehHoje = (iso: string, agora: Date) => diaISO(new Date(iso)) === diaISO(agora);
 
 function subtitulo(d: string | null) {
   const linhas = (d || "").split("\n").map((l) => l.trim()).filter(Boolean);
   return linhas.length > 1 ? linhas.slice(1).join(" ") : linhas[0] || null;
 }
 
-const tipo = (k: string | null) => (k === "mentoria" ? "Mentoria" : "Live");
+const tipo = (k: string | null) => (k === "mentoria" ? tr("Mentoria") : "Live");
 
 function Cartaz({ e, className = "" }: { e: Evento; className?: string }) {
   return e.cover_url ? (
@@ -135,9 +141,9 @@ export default async function LancamentoHoje() {
           {/* O próximo encontro num bloco azul-noite: a faixa escura é a ênfase do sistema. */}
           <div className="escuro mt-10 rounded-grande bg-noite p-7 sm:p-8">
             <p className="text-sm text-slate-300">
-              {rotuloDia(destaque.starts_at, agora) === "Hoje" ? tr("Hoje às") : `${rotuloDia(destaque.starts_at, agora)} às`}{" "}
+              {ehHoje(destaque.starts_at, agora) ? tr("Hoje às") : `${rotuloDia(destaque.starts_at, agora)} ${tr("às")}`}{" "}
               <span className="font-mono tabular-nums text-white">{hora(destaque.starts_at)}</span>
-              <span className="text-slate-400"> · {tipo(destaque.kind)}{destaque.mentor_nome ? ` com ${destaque.mentor_nome}` : ""}</span>
+              <span className="text-slate-400"> · {tipo(destaque.kind)}{destaque.mentor_nome ? ` ${tr("com")} ${destaque.mentor_nome}` : ""}</span>
             </p>
             <p className="mt-2 text-2xl font-bold leading-snug tracking-tight text-marca-verde sm:text-[1.7rem]">{destaque.title}</p>
             {subtitulo(destaque.description) && <p className="mt-2 line-clamp-3 text-slate-300">{subtitulo(destaque.description)}</p>}

@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useCallback, useEffect, useState } from "react";
 import UniversoPublico from "@/components/knowledge/UniversoPublico";
 
@@ -30,6 +32,7 @@ export default function SitePublico({
   slug: string;
   mostrarUniverso: boolean;
 }) {
+  const tr = usarTraducao();
   const [universo, setUniverso] = useState(false);
   // O site entra com um fade quando termina de carregar, em vez de piscar branco.
   const [carregou, setCarregou] = useState(false);
@@ -62,17 +65,17 @@ export default function SitePublico({
   return (
     <div className="flex h-[100dvh] flex-col bg-ink-800">
       <div className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-4 text-tinta">
-        <a href="/" className="flex min-w-0 items-center gap-2.5" title="DriveData Academy">
+        <a href="/" className="flex min-w-0 items-center gap-2.5" title={tr("DriveData Academy")}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-claro.png" alt="DriveData Academy" className="h-6 w-auto shrink-0" />
-          <span className="hidden truncate text-xs text-slate-400 sm:inline">Portfólio de {nome}</span>
+          <img src="/logo-claro.png" alt={tr("DriveData Academy")} className="h-6 w-auto shrink-0" />
+          <span className="hidden truncate text-xs text-slate-400 sm:inline">{tr("Portfólio de")} {nome}</span>
         </a>
         {mostrarUniverso && (
           <button
             onClick={() => setUniverso(true)}
             className="shrink-0 rounded-lg bg-marca-verde px-3 py-1.5 text-xs font-semibold text-sobre-acento sm:text-sm"
           >
-            Ver universo de competências 4D
+            {tr("Ver universo de competências 4D")}
           </button>
         )}
       </div>

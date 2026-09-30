@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import type { ReactNode } from "react";
 
 /* --------------------------------------------------------------------------
@@ -159,7 +160,7 @@ export function FreshnessRing({
       </svg>
       <div className="min-w-0">
         <p className="truncate text-label font-medium text-ds-text">{name}</p>
-        <p className="text-caption text-ds-text-3">{days} dias sem prática</p>
+        <p className="text-caption text-ds-text-3">{days} {tr("dias sem prática")}</p>
       </div>
     </div>
   );

@@ -1,6 +1,23 @@
 {
+  "(e: React.ChangeEvent": [
+    "app\\conta\\perfil\\DadosFiscais.tsx",
+    "app\\conta\\perfil\\ProfileForm.tsx",
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
+  ],
   "(sua resposta)": [
     "app\\aprender\\[slug]\\avaliacao\\page.tsx"
+  ],
+  ", a competência que ele trabalha.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  ". O resto da plataforma fica visível para você conhecer, mas só a ferramenta funciona nesses": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  ". Preencha e gere de novo.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  ". Toque numa esfera, num planeta ou na nave para ver o detalhe.": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "04 JUNÇÃO": [
     "components\\dataflow\\FlowScene.tsx"
@@ -13,6 +30,15 @@
   ],
   "6 ciclos de 5 dias": [
     "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D, que quem visitar pode girar e ver crescer ao longo da sua carreira.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "A IA lê o texto do projeto e aponta as competências que ele prova, com o trecho que prova cada uma. Também acontece sozinho ao salvar.": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "A IA não inventa número. O que você não contou vira pergunta entre colchetes.": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "A aba Desafios permite experimentar um exercício fictício.": [
     "components\\knowledge\\UniverseGuide.tsx"
@@ -28,6 +54,9 @@
   ],
   "A chave que duplica": [
     "lib\\dataflow\\missions.ts"
+  ],
+  "A cobrança no cartão para hoje. Nenhuma nova mensalidade é lançada.": [
+    "app/conta/assinatura/CancelarForm.tsx"
   ],
   "A compra chega neste ciclo.": [
     "components\\decision-lab\\DecisionLab.tsx"
@@ -80,6 +109,9 @@
   "A execução anterior continua disponível abaixo.": [
     "components\\dataflow\\DataFlowLab.tsx"
   ],
+  "A ferramenta de visuais em HTML da DriveData. Preencha e o acesso sai na hora.": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
   "A filial sumiu do painel": [
     "lib\\conciliacao\\gerador.ts"
   ],
@@ -125,6 +157,12 @@
   "A tabela precisa de ao menos 1 coluna": [
     "components\\editor\\Properties.tsx"
   ],
+  "A temporada": [
+    "components/LancamentoHoje.tsx"
+  ],
+  "Abra o assistente acima e mande sua dúvida. Se ele acionar o time, o atendimento aparece nesta lista e o time responde em até 3 dias úteis.": [
+    "app/conta/ajuda/page.tsx"
+  ],
   "Abra o relatório, compare estratégias e tente uma abordagem diferente.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
@@ -134,17 +172,35 @@
   "Abrindo o banco...": [
     "app\\conta\\ferramentas\\arena\\Arena.tsx"
   ],
+  "Abrir a reunião ↗": [
+    "app/conta/agenda/page.tsx"
+  ],
   "Abrir cardápio": [
     "app\\conta\\page.tsx"
+  ],
+  "Abrir o": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Abrir o mapa 3D": [
     "app\\conta\\universo\\page.tsx"
   ],
+  "Abrir o site": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Abrir os lançamentos deste recorte": [
     "app\\conta\\ferramentas\\conciliacao\\Conciliacao.tsx"
   ],
+  "Aceito receber novidades da DriveData Academy.": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Acesso até": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Acesso imediato.": [
     "app\\cursos\\[slug]\\page.tsx"
+  ],
+  "Acesso liberado": [
+    "app\\demo\\[slug]\\page.tsx"
   ],
   "Acumulado no ano (YTD)": [
     "lib\\forja\\gerar.ts"
@@ -152,8 +208,17 @@
   "Acumulado no mês (MTD)": [
     "lib\\forja\\gerar.ts"
   ],
+  "Aderência à vaga": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Adicionar ao plano": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Adicionar conquista": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Afastar": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Agenda ao vivo, gravações, comunidade, ferramentas e certificados. E os treinamentos completos com preço de assinante.": [
     "app\\matricula\\page.tsx"
@@ -180,6 +245,9 @@
   "Ainda não. Experimente outra opção.": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
+  "Ainda sem projeto que prove. Quando provar, vira estrela.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Alinhar expectativas e comunicar decisões.": [
     "lib\\knowledge\\demo.ts"
   ],
@@ -192,11 +260,17 @@
   "Alterações ainda não executadas": [
     "components\\dataflow\\DataFlowLab.tsx"
   ],
+  "Alterações não salvas": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "Alvo inválido": [
     "lib\\knowledge\\engine.ts"
   ],
   "Analisar outra versão": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Anel verde: provada em projeto. Estrela vazada: a vaga pede e ainda não há projeto que prove.": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Antes da primeira decisão": [
     "components\\decision-lab\\DecisionLab.tsx"
@@ -204,11 +278,26 @@
   "Análise cancelada. O resultado anterior foi mantido.": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
   ],
+  "Aparece no seu cartão e entra no prompt do seu site de portfólio.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "Aplique seu primeiro plano para observar a procura e as vendas.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
   "Aprender no seu ritmo": [
     "components\\assinatura\\MenuImersivo.tsx"
+  ],
+  "Aprofunde": [
+    "components/knowledge/UniverseExperience.tsx"
+  ],
+  "Aprovar": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Aproximar": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Apto, bloco...": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
   ],
   "Aqui você vê o mapa. Estrela apagada não quer dizer que você não sabe: quer dizer que ainda não há registro na plataforma.": [
     "app\\conta\\universo\\page.tsx"
@@ -241,6 +330,9 @@
   "Arredondamento por linha": [
     "lib\\conciliacao\\tipos.ts"
   ],
+  "As competências acendem a partir dos seus projetos, na ordem em que você os fez.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "As decisões e seus efeitos estão no registro abaixo.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
@@ -253,8 +345,17 @@
   "As receitas cobriram os custos reconhecidos até aqui.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Assinante desde": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Assine a Academy para entrar na comunidade, usar as ferramentas e comprar treinamentos com preço de assinante.": [
     "app\\conta\\page.tsx"
+  ],
+  "Assine para entrar na live": [
+    "components/LancamentoHoje.tsx"
+  ],
+  "Assistente da DriveData Academy": [
+    "components/AssistantButton.tsx"
   ],
   "Associação de curso inválida.": [
     "lib\\knowledge\\catalog.ts"
@@ -268,14 +369,23 @@
   "Atenção: chegará após o encerramento da missão.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Ativa": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Ative o filtro da etapa 03 e compare a coluna status.": [
     "lib\\dataflow\\missions.ts"
   ],
   "Atrai clientes com retorno decrescente. Verifique se há estoque e equipe.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Aula ao vivo toda semana,": [
+    "components/LancamentoHoje.tsx"
+  ],
   "Automatizar análises e transformar dados com programação.": [
     "lib\\knowledge\\demo.ts"
+  ],
+  "Automática, no cartão": [
+    "app/conta/assinatura/page.tsx"
   ],
   "Avaliação corrigida": [
     "lib\\knowledge\\demo.ts",
@@ -284,23 +394,44 @@
   "Avaliações e certificados antigos usam suas datas registradas. Quando não conhecemos as datas do progresso antigo, ele aparece a partir da importação. Por isso, a linha do tempo pode não mostrar toda a sua trajetória anterior.": [
     "components\\knowledge\\UniverseGuide.tsx"
   ],
+  "Avisar os alunos por e-mail": [
+    "app/conta/comunidade/[channel]/ChatRoom.tsx"
+  ],
+  "Aviso enviado para": [
+    "app/conta/comunidade/[channel]/ChatRoom.tsx"
+  ],
   "BOLETIM DO PRÓXIMO CICLO": [
     "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Bairro": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
   ],
   "Baixa: escolhe o provável. Texto sem graça e mais seguro.": [
     "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
   ],
+  "Baixar o QR": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Bateu com o esperado": [
     "lib\\arena\\motor.ts"
   ],
+  "Bom tamanho. Quem lê entende em poucos segundos.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "CALCULATE avalia uma expressão em um contexto de filtro modificado. Essa é a base de medidas como participação no total e comparações entre períodos.": [
     "lib\\knowledge\\demo.ts"
+  ],
+  "CENA 01": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "COBERTURA DO RELATÓRIO": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
   ],
   "CSV inválido: há um campo com aspas não fechadas.": [
     "lib\\dataflow\\engine.ts"
+  ],
+  "Cada competência acende porque um projeto de": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Cada escolha deixa uma lição.": [
     "components\\decision-lab\\DecisionLab.tsx"
@@ -317,6 +448,9 @@
   "Caixa e estoque iniciais. Nenhuma decisão aplicada.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Calculando o universo de": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Caminho configurado pela equipe acadêmica. Cada etapa pede domínio evidenciado de 60/100.": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
@@ -329,14 +463,35 @@
   "Canal": [
     "lib\\conciliacao\\tipos.ts"
   ],
+  "Cancelada": [
+    "app/conta/assinatura/page.tsx"
+  ],
+  "Cancelamento registrado.": [
+    "app/conta/assinatura/page.tsx"
+  ],
+  "Cancelando...": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "Cancelar": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Cancelar a assinatura": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
   "Candidatar-se na DriveData": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
   "Capacidade da equipe": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Capítulo anterior": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
   "Cards, velocímetros, storytelling, gráficos. Arraste, edite e pronto.": [
     "app\\ferramenta-visuais\\page.tsx"
+  ],
+  "Cargo e especialidade bastam. Separe com | como no LinkedIn.": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Carnaval": [
     "lib\\forja\\feriados.ts"
@@ -350,6 +505,9 @@
   "Central de dados": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Centralizar": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Certificado de Conclusão": [
     "components\\CertificateView.tsx"
   ],
@@ -358,6 +516,9 @@
   ],
   "Certificado válido": [
     "app\\certificado\\[code]\\page.tsx"
+  ],
+  "Cidade": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
   ],
   "Clientes sem tratamento. Chaves repetidas podem multiplicar pedidos na junção.": [
     "lib\\dataflow\\engine.ts"
@@ -371,8 +532,29 @@
   "Cobrança única. Acesso por 12 meses a partir da confirmação.": [
     "app\\matricula\\MatriculaForm.tsx"
   ],
+  "Colar da área de transferência": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Cole a descrição da vaga. A constelação mostra o que ela pede e o que já está provado em projeto.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Cole a descrição de uma vaga. A IA lê o que ela pede, com o trecho, e cruza com o que seus projetos provam. Quem abrir o seu Universo 4D pode fazer o mesmo.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Cole a seção de experiências do seu LinkedIn ou do currículo. A IA separa cargo, organização e datas, só com o que está escrito.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
   "Cole mais detalhes (seu LinkedIn ou currículo).": [
     "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Cole na mesma conversa da IA, ela devolve o site corrigido. Depois cole o novo HTML aqui.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Comece com https:// para o link funcionar.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Comece por uma receita": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Comercial e financeiro estão brigando por causa de um número. Cada um mostra um total diferente para o mesmo mês.": [
     "lib\\conciliacao\\gerador.ts"
@@ -392,6 +574,21 @@
   "Como ganho pontos na comunidade?": [
     "components\\AssistantButton.tsx"
   ],
+  "Como ler o espaço": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
+  "Como pedir no": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Como vocês trabalharam juntos": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
+  ],
+  "Comparar com uma vaga": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Comparar com vaga": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Compare os resultados e veja o efeito de cada escolha.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
@@ -410,8 +607,17 @@
   "Competência pai inexistente.": [
     "lib\\knowledge\\catalog.ts"
   ],
+  "Complemento": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
+  ],
+  "Complemento (apto, bloco...)": [
+    "app/matricula/MatriculaForm.tsx"
+  ],
   "Complete seu nome": [
     "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Completo. Confira se o começo já diz o principal: muita gente só lê a primeira linha.": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Compra de estoque reduz caixa imediatamente; só os produtos vendidos entram no custo do resultado.": [
     "lib\\decision-lab\\engine.ts"
@@ -434,11 +640,17 @@
   "Concorrência em promoção": [
     "lib\\decision-lab\\engine.ts"
   ],
+  "Conecta com": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Conectar objetivos, entregas, recursos e resultados.": [
     "lib\\knowledge\\demo.ts"
   ],
   "Configuração inválida do projeto.": [
     "lib\\dataflow\\storage.ts"
+  ],
+  "Confirmar cancelamento": [
+    "app/conta/assinatura/CancelarForm.tsx"
   ],
   "Confirme o envio.": [
     "app\\presenca\\page.tsx"
@@ -470,8 +682,17 @@
   "Consulte o código de autenticidade.": [
     "components\\CertificateView.tsx"
   ],
+  "Conta o que está faltando, o que atrapalha e o que você quer ver por aqui. Lemos tudo e respondemos em até 3 dias úteis.": [
+    "app/conta/sugestoes/page.tsx"
+  ],
   "Conta um pouco do seu público": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Contato e links": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Conte o que aconteceu": [
+    "app/conta/assinatura/CancelarForm.tsx"
   ],
   "Conte o que trava hoje, não a solução. O problema bem contado vale mais que a especificação.": [
     "app\\conta\\_funis\\definicoes.ts"
@@ -482,11 +703,17 @@
   "Conteúdo estudado": [
     "lib\\knowledge\\demo.ts"
   ],
+  "Continuar assinante": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
   "Continuar para o pagamento": [
     "app\\matricula\\MatriculaForm.tsx"
   ],
   "Contrato jurídico": [
     "lib\\caixapreta\\corpora.ts"
+  ],
+  "Convites em aberto": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
   ],
   "Copiar para a planilha": [
     "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
@@ -494,11 +721,23 @@
   "Copie o código Pix ou leia o QR Code no app do seu banco.": [
     "app\\matricula\\MatriculaForm.tsx"
   ],
+  "Copie um pedido, cole na mesma conversa da IA e cole aqui o código novo que ela devolver.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Cor de destaque": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Cor inválida.": [
     "lib\\knowledge\\catalog.ts"
   ],
   "Corpus Christi": [
     "lib\\forja\\feriados.ts"
+  ],
+  "Corrigir →": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Corrija o que a conferência apontou para liberar.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Cortar com LIMIT devolve os três melhores do geral, não os três de cada categoria. Você precisa numerar dentro de cada grupo.": [
     "lib\\arena\\familias.ts"
@@ -515,6 +754,9 @@
   "Criar medidas, dominar contextos de filtro e realizar análises temporais.": [
     "lib\\knowledge\\demo.ts"
   ],
+  "Criar minha senha": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
   "Crie páginas e transições para storytelling dentro do próprio visual.": [
     "app\\ferramenta-visuais\\page.tsx"
   ],
@@ -523,6 +765,9 @@
   ],
   "Cupom e confirmação": [
     "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "Curso na Academy:": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Custo dos produtos vendidos": [
     "components\\decision-lab\\DecisionLab.tsx"
@@ -547,6 +792,12 @@
   ],
   "Dados da partida inválidos.": [
     "lib\\decision-lab\\storage.ts"
+  ],
+  "Dados para nota fiscal": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
+  ],
+  "Dados que": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Dashboard exclusivo para monitorar seus clientes, indicações e comissões em tempo real.": [
     "app\\conta\\_funis\\definicoes.ts"
@@ -581,6 +832,9 @@
   "Demonstração salva neste navegador.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Depois de entrar, abra": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
   "Desbloqueio duplicado ou inexistente.": [
     "lib\\knowledge\\catalog.ts"
   ],
@@ -591,14 +845,26 @@
   "Desenvolver pipelines e infraestrutura para produtos de dados.": [
     "lib\\knowledge\\demo.ts"
   ],
+  "Destaques da comunidade": [
+    "components/ranking/RankingPodium.tsx"
+  ],
+  "Detalhes de": [
+    "components/knowledge/UniverseExperience.tsx"
+  ],
   "Devolução contada duas vezes": [
     "lib\\conciliacao\\tipos.ts"
   ],
   "Dezenas de templates e componentes": [
     "app\\ferramenta\\assinar\\page.tsx"
   ],
+  "Dia": [
+    "components/decision-lab/DecisionLab.tsx"
+  ],
   "Dia do Trabalho": [
     "lib\\forja\\feriados.ts"
+  ],
+  "Dica:": [
+    "components/dataflow/DataFlowLab.tsx"
   ],
   "Digite a palavra-chave dita na transmissão.": [
     "app\\presenca\\page.tsx"
@@ -612,11 +878,19 @@
   "Dois totais para o mesmo mês": [
     "lib\\conciliacao\\gerador.ts"
   ],
+  "DriveData Academy": [
+    "app\\portfolio\\[slug]\\SitePublico.tsx",
+    "app\\recomendar\\[token]\\confirmar\\page.tsx",
+    "app\\recomendar\\[token]\\page.tsx"
+  ],
   "DriveData Academy · aulas abertas no YouTube": [
     "components\\LancamentoHoje.tsx"
   ],
   "Duas noites de aula aberta no YouTube, com quem entrega projeto de dados todo dia. Sem inscrição: é só entrar no horário.": [
     "components\\LancamentoHoje.tsx"
+  ],
+  "Duração (meses)": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "Dá para trocar o voto quando quiser.": [
     "app\\conta\\EnquetePoll.tsx"
@@ -636,14 +910,47 @@
   "EVENTO DESTE PERÍODO": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Ebook": [
+    "app\\conta\\ebooks\\page.tsx"
+  ],
   "Em descoberta": [
     "lib\\knowledge\\engine.ts"
+  ],
+  "Em formação": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Em qual curso eu estou?": [
     "components\\AssistantButton.tsx"
   ],
   "Em uma medida DAX, qual função permite modificar o contexto de filtro de uma expressão?": [
     "lib\\knowledge\\demo.ts"
+  ],
+  "Encontro fechado, só para alunos. Não compartilhe este link.": [
+    "app/conta/agenda/page.tsx"
+  ],
+  "Endereço": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
+  ],
+  "Endereço para nota fiscal": [
+    "app/matricula/MatriculaForm.tsx"
+  ],
+  "Entendi que não serei cobrado de novo e que meu acesso vai até": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "Entendi que não serei cobrado de novo.": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "Entrar agora": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Entrar na reunião →": [
+    "app/conta/agenda/page.tsx"
+  ],
+  "Entrar na sala": [
+    "components/mentorias/ProximasMentorias.tsx"
+  ],
+  "Entraram": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Entrega expressa entrou neste ciclo com acréscimo de 15% no custo de compra.": [
     "lib\\decision-lab\\engine.ts"
@@ -684,6 +991,12 @@
   "Equilibre crescimento, caixa e atendimento.": [
     "lib\\decision-lab\\engine.ts"
   ],
+  "Equipe": [
+    "components/comunidade/SeloCasa.tsx"
+  ],
+  "Equipe da DriveData Academy": [
+    "components/comunidade/SeloCasa.tsx"
+  ],
   "Escaneie para verificar o certificado.": [
     "components\\CertificateView.tsx"
   ],
@@ -720,14 +1033,32 @@
   "Escopo diferente": [
     "lib\\conciliacao\\tipos.ts"
   ],
+  "Escreva e aperte Enter, ou toque numa sugestão.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "Escreva uma consulta": [
     "lib\\arena\\motor.ts"
+  ],
+  "Escrita por quem assina, com e-mail confirmado pela DriveData Academy.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Esperando você aprovar": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
   ],
   "Essa entrega será após o fim da missão.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
   "Esta compra chegará após o dia 30. O valor ficou comprometido em estoque em trânsito.": [
     "lib\\decision-lab\\engine.ts"
+  ],
+  "Esta conta já existia, então entre com a senha que você já usa.": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Esta conta não tem assinatura ativa.": [
+    "app/conta/assinatura/page.tsx"
+  ],
+  "Esta demonstração está encerrada.": [
+    "app\\demo\\[slug]\\page.tsx"
   ],
   "Esta missão já foi concluída. Comece uma nova estratégia.": [
     "lib\\decision-lab\\engine.ts"
@@ -744,6 +1075,9 @@
   "Estilo do badge": [
     "components\\editor\\Properties.tsx"
   ],
+  "Estilo do site": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Estilo rápido": [
     "components\\editor\\Properties.tsx"
   ],
@@ -755,6 +1089,12 @@
   ],
   "Estruturar planilhas, fórmulas e análises reproduzíveis.": [
     "lib\\knowledge\\demo.ts"
+  ],
+  "Estudando na DriveData Academy": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Está curto. Conte onde você aplicou dados e com que resultado.": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Etapas do funil": [
     "components\\editor\\Properties.tsx"
@@ -786,6 +1126,18 @@
   "Ex.: varejo farmacêutico, 300 funcionários, 12 lojas": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "Ex: Gerente de Operações": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
+  ],
+  "Ex: Head de Dados": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Ex: Voluntário do Ano, PMI São Paulo": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Ex: meu gestor juntava as vendas de 12 planilhas toda segunda. Montei um painel no Power BI puxando direto do SQL, com meta por vendedor. Agora a reunião começa com o número pronto.": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
   "Excluir este projeto? Não dá para desfazer.": [
     "app\\conta\\portfolio\\Portfolio.tsx"
   ],
@@ -806,6 +1158,9 @@
   ],
   "Experiência, tecnologias, o que te move": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Expirada": [
+    "app/conta/assinatura/page.tsx"
   ],
   "Explorador": [
     "lib\\decision-lab\\engine.ts"
@@ -843,17 +1198,47 @@
   "Falta dinheiro no painel": [
     "lib\\conciliacao\\gerador.ts"
   ],
+  "Falta um passo: confirme seu e-mail.": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
+  ],
   "Faça o diagnóstico": [
     "app\\conta\\universo\\page.tsx"
   ],
   "Fechamento do mês": [
     "lib\\decision-lab\\engine.ts"
   ],
+  "Fechar": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Fechar comparação": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Fechar o roteiro": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
+  "Fechar o universo": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Fechar seleção": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
   ],
   "Fechou": [
     "lib\\conciliacao\\motor.ts"
+  ],
+  "Ferramentas → DriveCanvas": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Ficaram": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Ficaram de fora porque ainda têm lacunas entre colchetes:": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Ficaram de fora porque estão só para a turma:": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Ficou 1 lacuna entre colchetes. Troque pela informação real antes de enviar.": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "Filial": [
     "lib\\conciliacao\\tipos.ts"
@@ -876,6 +1261,9 @@
   "Forja DAX": [
     "lib\\ferramentas-nomes.ts"
   ],
+  "Foto": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "Fundamentos de IA": [
     "lib\\knowledge\\demo.ts"
   ],
@@ -896,6 +1284,12 @@
     "app\\matricula\\MatriculaForm.tsx",
     "app\\workshop\\[id]\\WorkshopBuyForm.tsx"
   ],
+  "Gerar link de convite": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Gerente de Projetos · Empresa · fev. de 2021 - o momento ...": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
   "Gestor": [
     "lib\\decision-lab\\engine.ts"
   ],
@@ -907,6 +1301,12 @@
   ],
   "Grupo inválido.": [
     "lib\\knowledge\\practical.ts"
+  ],
+  "Guarde este código. Ele cria a sua senha:": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Guia por IA": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Histórico e comparação": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
@@ -962,11 +1362,41 @@
   "Junção desativada: o pedido seguiu sozinho.": [
     "lib\\dataflow\\trace.ts"
   ],
+  "Já é assinante? Entre pela sua agenda": [
+    "components/LancamentoHoje.tsx"
+  ],
+  "Knowledge Universe 4D": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Lançamentos do fim do mês caíram no mês seguinte por causa do horário.": [
     "lib\\conciliacao\\tipos.ts"
   ],
+  "Leitura feita por IA a partir do texto da vaga. Confira os trechos.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Leitura feita por IA. O que falta vira projeto: é o próximo que vale a pena publicar.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Lendo o projeto...": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Ler de novo": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Ler o roteiro da carreira": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Liberar meu acesso": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Limpar": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Limpeza": [
     "lib\\dataflow\\engine.ts"
+  ],
+  "Linha do tempo": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Linha não encontrada.": [
     "lib\\dataflow\\trace.ts"
@@ -974,8 +1404,17 @@
   "Linhas perdidas na junção": [
     "lib\\conciliacao\\tipos.ts"
   ],
+  "Link que prova (post, certificado, notícia)": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
   "LinkedIn ou portfólio": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "LinkedIn ↗": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
+  ],
+  "Links de apoio": [
+    "app/aprender/[slug]/CoursePlayer.tsx"
   ],
   "Lista inválida ou acima do limite.": [
     "lib\\knowledge\\catalog.ts"
@@ -988,6 +1427,12 @@
   ],
   "Lives e mentorias com quem faz dados de verdade. Sem inscrição: é só entrar no horário.": [
     "components\\LancamentoHoje.tsx"
+  ],
+  "Lives e mentorias com quem faz dados de verdade. Você assiste pela plataforma, pergunta ao vivo e fica com a gravação e o certificado de participação.": [
+    "components/LancamentoHoje.tsx"
+  ],
+  "Lives e mentorias com quem faz dados de verdade. Você assiste pela plataforma, pergunta ao vivo e fica com a gravação.": [
+    "components/LancamentoHoje.tsx"
   ],
   "MARCO DA EVOLUÇÃO DEMONSTRATIVA": [
     "components\\knowledge\\UniverseExperience.tsx"
@@ -1009,6 +1454,18 @@
   ],
   "Mais reserva de caixa e metas mais suaves para experimentar.": [
     "lib\\decision-lab\\engine.ts"
+  ],
+  "Mandamos ele no seu e-mail também. Se sumir da tela, procure lá.": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Mandamos um link para": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
+  ],
+  "Mandar esta mensagem por e-mail para todos os assinantes ativos?": [
+    "app/conta/comunidade/[channel]/ChatRoom.tsx"
+  ],
+  "Mandar no WhatsApp": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
   ],
   "Mantenha ao menos um projeto.": [
     "components\\dataflow\\DataFlowLab.tsx"
@@ -1040,8 +1497,14 @@
   "Menos caixa e metas exigentes nas tres frentes.": [
     "lib\\decision-lab\\engine.ts"
   ],
+  "Mensalidade": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Meta no dia 30: pelo menos 70/100": [
     "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Meu site de portfólio": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Minha Medida = ...": [
     "app\\conta\\ferramentas\\dojo\\Dojo.tsx"
@@ -1058,8 +1521,20 @@
   "Modelo demonstrativo. Sem validade.": [
     "components\\CertificateView.tsx"
   ],
+  "Modo claro": [
+    "components/tema/AlternarTema.tsx"
+  ],
+  "Modo escuro": [
+    "components/tema/AlternarTema.tsx"
+  ],
+  "Mostrar meu Universo 4D na página": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Mouse sem fio": [
     "lib\\arena\\gerador.ts"
+  ],
+  "Muita gente organizando agora. Tento de novo em": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "Muito alta: escolhe o improvável e delira com confiança.": [
     "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
@@ -1069,6 +1544,9 @@
   ],
   "Mês": [
     "lib\\conciliacao\\tipos.ts"
+  ],
+  "Mês e ano bastam. É o que faz a sua carreira aparecer em ordem no Universo 4D do seu site.": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "Mês fiscal": [
     "lib\\forja\\gerar.ts"
@@ -1100,8 +1578,26 @@
   "Nesta versão, a equipe registra essas evidências; você as consulta na aba Desafios.": [
     "components\\knowledge\\UniverseGuide.tsx"
   ],
+  "Nexo": [
+    "components\\AssistantButton.tsx"
+  ],
+  "Ninguém responde por você. Isso vai direto para quem cuida da Academy.": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "No LinkedIn, ponha o link em Editar perfil → Informações de contato → Site, e na seção Em destaque.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "No histórico": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "No seu Universo 4D, o projeto vira um planeta: a duração define o tamanho, e o time, os anéis.": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "No seu portfólio": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Nome": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Nome de coluna inválido no projeto.": [
     "lib\\dataflow\\storage.ts"
@@ -1116,8 +1612,14 @@
   "Nome do dia": [
     "lib\\forja\\gerar.ts"
   ],
+  "Nota fiscal, troca de cartão ou qualquer coisa fora daqui:": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Nova conexão consolidada.": [
     "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Não aparece no portfólio. Serve só para confirmar que foi você.": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
   ],
   "Não avaliado": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
@@ -1149,11 +1651,17 @@
   "Não consegui subir a imagem:": [
     "app\\conta\\portfolio\\Portfolio.tsx"
   ],
+  "Não encontrei experiências com cargo e datas no texto.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
   "Não foi possível aplicar o plano.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
   "Não foi possível carregar o histórico. Tente novamente.": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Não foi possível carregar o universo agora.": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Não foi possível carregar o universo. Tente novamente em instantes.": [
     "lib\\knowledge\\server.ts"
@@ -1183,8 +1691,23 @@
   "Não foi possível salvar a senha. Tente de novo.": [
     "app\\redefinir-senha\\page.tsx"
   ],
+  "Não mostrar": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Não vamos cobrar de novo.": [
+    "app/conta/assinatura/page.tsx"
+  ],
+  "Não vamos cobrar de novo. Seu acesso continua até": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Nível inválido.": [
     "lib\\decision-lab\\engine.ts"
+  ],
+  "Número": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
+  ],
+  "Número do RG": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
   ],
   "O CPF do cliente é": [
     "lib\\caixapreta\\corpora.ts"
@@ -1231,6 +1754,9 @@
   "O editor está vazio.": [
     "lib\\arena\\motor.ts"
   ],
+  "O espaço começa vazio. A carreira acende em ordem de data.": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
   "O extrato do sistema trouxe o mesmo lançamento mais de uma vez.": [
     "lib\\conciliacao\\tipos.ts"
   ],
@@ -1246,6 +1772,9 @@
   "O limite do arquivo é 200 KB.": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "O mesmo que você informou no pagamento.": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
+  ],
   "O mês imediatamente anterior ao contexto.": [
     "lib\\forja\\gerar.ts"
   ],
@@ -1254,6 +1783,9 @@
   ],
   "O navegador não permitiu salvar. Use Exportar partida para guardar seu progresso.": [
     "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "O nome sai no certificado e no portfólio. O título é a primeira linha que alguém lê.": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "O painel está contando lançamento que o sistema origem não considera, como cancelado.": [
     "lib\\conciliacao\\tipos.ts"
@@ -1282,17 +1814,63 @@
   "O prazo deste certificado terminou": [
     "app\\presenca\\page.tsx"
   ],
+  "O projeto": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "O que esse cargo costuma pedir, segundo a IA.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "O que esse cargo costuma pedir, segundo a IA. Você tem": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "O que este projeto acende no seu Universo 4D": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "O que faltou para a Academy valer a pena para você?": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "O que foi seu e o que foi do time. Ex: conduzi o levantamento e modelei os dados; o time cuidou da integração.": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
   "O que foi vendido em cada pedido.": [
     "lib\\arena\\gerador.ts"
   ],
+  "O que já está forte:": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "O que te fez decidir isso?": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "O que você aprendeu ou faria diferente (opcional)": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
   "O que você quer resolver?": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "O que você sabe fazer": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "O relacionamento entre": [
     "lib\\caixapreta\\corpora.ts"
   ],
   "O salvamento foi interrompido. Tente novamente; a mesma versão não será duplicada.": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "O telefone não aparece para outros alunos: só o time usa, se precisar falar com você.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "O texto ainda não prova nenhuma competência do catálogo. Conte o que você fez com mais detalhe: o que planejou, o que construiu, com qual ferramenta.": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "O texto do post, montado com o que você publicou:": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "O time responde em até 3 dias úteis.": [
+    "app/conta/ajuda/page.tsx",
+    "app/conta/mentoria/page.tsx"
+  ],
+  "O time responde em até 3 dias úteis. Você recebe a resposta por aqui e por e-mail.": [
+    "app/conta/ajuda/[id]/page.tsx"
   ],
   "O total da origem fica maior, e a diferença some quando você conta os ids distintos. Procure id repetido: é a primeira coisa a conferir sempre.": [
     "lib\\conciliacao\\tipos.ts"
@@ -1312,14 +1890,32 @@
   "O valor está certo, a causa não": [
     "lib\\conciliacao\\motor.ts"
   ],
+  "Objetivo": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Obrigado por ter estado aqui. Se mudar de ideia, é só assinar de novo.": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Onde fica meu certificado?": [
     "components\\AssistantButton.tsx"
   ],
   "Ordem do mês": [
     "lib\\forja\\gerar.ts"
   ],
+  "Organizando as constelações...": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Organizando...": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Organizar com IA": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
   "Organizar dimensões, fatos e relacionamentos para análises consistentes.": [
     "lib\\knowledge\\demo.ts"
+  ],
+  "Organizar nos campos": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "Organizar trabalho iterativo com inspeção e adaptação.": [
     "lib\\knowledge\\demo.ts"
@@ -1336,17 +1932,42 @@
   "Os pesos das dimensões devem somar 100.": [
     "lib\\knowledge\\catalog.ts"
   ],
+  "Os projetos acendem as estrelas. Estes blocos contam o resto da história: para onde você vai, por onde passou, o que conquistou e quem confirma o seu trabalho.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Os projetos de": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Os pré-requisitos desta competência foram atendidos.": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
   "Os treinamentos são vendidos só para assinantes, com preço especial.": [
     "app\\conta\\cursos\\page.tsx"
   ],
+  "Ou escolha o estilo": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Painel de acompanhamento": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "Palavra-chave da tela": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "Para acender:": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx",
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Para o currículo e o crachá": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Parceria em projetos": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Parte 1": [
+    "app/conta/gravacoes/[id]/page.tsx"
+  ],
+  "Parte 2": [
+    "app/conta/gravacoes/[id]/page.tsx"
   ],
   "Partida ativa não encontrada.": [
     "lib\\decision-lab\\storage.ts"
@@ -1372,6 +1993,15 @@
   "Pedidos sem cliente são preservados com campos vazios.": [
     "lib\\dataflow\\engine.ts"
   ],
+  "Pelo menos 3 habilidades": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Perfil completo": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Pessoas no time": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
   "Plano atualizado nesta sessão. Salve o diagnóstico ou exporte para conservar sua revisão.": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
   ],
@@ -1380,6 +2010,15 @@
   ],
   "Plano salvo. Os ajustes serão confirmados por uma nova análise.": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Ponha o link também no seu perfil do LinkedIn: Informações de contato → Site, e na seção Em destaque.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Portfólio de": [
+    "app\\portfolio\\[slug]\\SitePublico.tsx"
+  ],
+  "Portfólio no ar": [
+    "app/conta/vitrine/VitrineClient.tsx"
   ],
   "Posição e tamanho": [
     "components\\editor\\Properties.tsx"
@@ -1392,6 +2031,12 @@
   ],
   "Power BI e DAX": [
     "lib\\caixapreta\\corpora.ts"
+  ],
+  "Power BI, SQL, Python...": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Precisa de nota fiscal da sua assinatura? Preencha uma vez. A nota sai com estes dados todo mês.": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
   ],
   "Preencha o e-mail para receber um código.": [
     "app\\redefinir-senha\\page.tsx"
@@ -1450,8 +2095,14 @@
   "Projeto inválido.": [
     "lib\\dataflow\\storage.ts"
   ],
+  "Projeto, 2024": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Projetos importados.": [
     "components\\dataflow\\DataFlowLab.tsx"
+  ],
+  "Prompt copiado. Cole na IA e, quando ela devolver o código, siga para o passo 3.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Prontinho! Confira os campos e salve.": [
     "app\\conta\\perfil\\ProfileForm.tsx"
@@ -1459,11 +2110,27 @@
   "Pronto para começar": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
+  "Provada em": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx",
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Pré-requisito inexistente.": [
     "lib\\knowledge\\catalog.ts"
   ],
   "Pré-requisito muito profundo.": [
     "lib\\knowledge\\catalog.ts"
+  ],
+  "Pré-visualização": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Pré-visualização do site": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Prévia do seu cartão na Vitrine e na comunidade. Muda enquanto você digita.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Próxima cobrança": [
+    "app/conta/assinatura/page.tsx"
   ],
   "Próxima live": [
     "app\\conta\\agenda\\page.tsx"
@@ -1474,8 +2141,20 @@
   "Próximas Mentorias": [
     "components\\mentorias\\ProximasMentorias.tsx"
   ],
+  "Próximo capítulo": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
   "Publicar na comunidade": [
     "components\\editor\\PublishModal.tsx"
+  ],
+  "Publicar no LinkedIn": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Publicar projeto": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Publique pelo menos um projeto no passo 1 e o seu prompt aparece aqui, pronto.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Publique seu visual, veja os melhores e reaproveite o que a comunidade criou.": [
     "app\\ferramenta-visuais\\page.tsx"
@@ -1492,11 +2171,17 @@
   "Qualidade fora do intervalo.": [
     "lib\\knowledge\\practical.ts"
   ],
+  "Quando foi feito": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
   "Quantos clientes você pretende levar?": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
   "Quarta-feira de Cinzas": [
     "lib\\forja\\feriados.ts"
+  ],
+  "Quase ninguém mostra isso, e é o que mais mostra maturidade.": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "Quase. Sei exatamente onde você tropeçou": [
     "lib\\arena\\motor.ts"
@@ -1513,11 +2198,23 @@
   "Quem compra. Nem todo cliente tem pedido.": [
     "lib\\arena\\gerador.ts"
   ],
+  "Quem escreve é o colega, por um link, e confirma o próprio e-mail. Você só decide se aparece. É isso que faz a recomendação valer.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
   "Quem vai usar o resultado e para decidir o quê?": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "Quem é você": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Quer contar mais? (opcional)": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
   "Quer ser consultor(a) DriveData? Preencha e entra na nossa triagem.": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Quero cancelar minha assinatura": [
+    "app/conta/assinatura/CancelarForm.tsx"
   ],
   "Quero revender": [
     "app\\conta\\_funis\\definicoes.ts"
@@ -1534,6 +2231,12 @@
   "RELATÓRIO PARCIAL": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "REV A · 2026": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Raio-X do portfólio": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Receita aplicada. Os dados nao sao salvos: importe seu CSV ou use o caso de exemplo.": [
     "components\\dataflow\\DataFlowLab.tsx"
   ],
@@ -1546,6 +2249,15 @@
   "Receitas de cozinha": [
     "lib\\caixapreta\\corpora.ts"
   ],
+  "Recomendação": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Reconhecimento na comunidade": [
+    "components/ranking/MedalCatalog.tsx"
+  ],
+  "Refinar com a IA": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Registrado no universo": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
@@ -1555,6 +2267,9 @@
   ],
   "Registro duplicado na origem": [
     "lib\\conciliacao\\tipos.ts"
+  ],
+  "Relatório anual": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
   "Relatório da estratégia": [
     "components\\decision-lab\\DecisionLab.tsx"
@@ -1574,6 +2289,9 @@
   "Renova todo mês. Cancele quando quiser.": [
     "app\\matricula\\MatriculaForm.tsx"
   ],
+  "Renovação": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Repetidor de sinal": [
     "lib\\arena\\gerador.ts"
   ],
@@ -1585,6 +2303,10 @@
   ],
   "Reprodução pausada": [
     "app\\aprender\\[slug]\\ProtectedPlayer.tsx"
+  ],
+  "Responsabilidades, requisitos, ferramentas...": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx",
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Resultado acumulado": [
     "lib\\decision-lab\\engine.ts"
@@ -1601,6 +2323,12 @@
   "Ribeirão Preto": [
     "lib\\conciliacao\\gerador.ts"
   ],
+  "Roteiro": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
+  "Roteiro da carreira": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
   "Rótulo: valor": [
     "components\\editor\\Properties.tsx"
   ],
@@ -1616,11 +2344,23 @@
   "Salvamento indisponível": [
     "components\\decision-lab\\DecisionLab.tsx"
   ],
+  "Salvando...": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "Salvar como template": [
     "components\\editor\\TemplateModal.tsx"
   ],
   "Salvar diagnóstico": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Salvar perfil": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Salvar sem publicar": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Salvo": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Satisfação dos clientes": [
     "lib\\decision-lab\\engine.ts"
@@ -1676,14 +2416,63 @@
   "Senioridade": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "Setor": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Seu acesso continua até": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "Seu acesso continua até o fim do período que você já pagou.": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
   "Seu caminho de aprendizagem": [
     "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Seu cargo": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
+  ],
+  "Seu e-mail": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
   ],
   "Seu material está pronto para download abaixo.": [
     "app\\materiais\\[slug]\\MaterialView.tsx"
   ],
+  "Seu melhor e-mail": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
   "Seu navegador não conseguiu iniciar a análise. Recarregue a página e tente novamente.": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Seu nome": [
+    "app\\demo\\[slug]\\page.tsx",
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
+  ],
+  "Seu papel no projeto": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Seu perfil": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Seu plano é de cobrança única, então não existe mensalidade para interromper.": [
+    "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "Seu portfólio está no ar": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Seu progresso": [
+    "app/aprender/[slug]/CoursePlayer.tsx"
+  ],
+  "Seu prompt saiu sem nenhum projeto, e o site vai sair vazio. Volte ao passo 1.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Seu site está no ar": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Seu site foi tirado do ar pelo time. Fale com o suporte pela Central de Ajuda.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Seu título profissional": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Seu universo está pronto para receber as primeiras evidências de aprendizagem.": [
     "components\\knowledge\\ProfilePreview.tsx"
@@ -1694,11 +2483,23 @@
   "Seus dados acadêmicos · Histórico importado identificado nas evidências · Mudanças de configuração são versionadas.": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
+  "Seus dados de aluno na DriveData Academy. O cartão ao lado mostra como você aparece para os outros alunos.": [
+    "app/conta/perfil/page.tsx"
+  ],
   "Sexta-feira Santa": [
     "lib\\forja\\feriados.ts"
   ],
   "Simulação educacional com regras fixas. Os resultados não constituem uma previsão de negócio real.": [
     "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Sobre o meu trabalho em geral": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Sobre o projeto": [
+    "app\\recomendar\\[token]\\page.tsx"
+  ],
+  "Sobre você": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Solicitar mentoria": [
     "app\\conta\\_funis\\definicoes.ts"
@@ -1724,11 +2525,26 @@
   "Sua assinatura não está ativa no momento.": [
     "app\\conta\\page.tsx"
   ],
+  "Sua carreira no universo": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "Sua categoria atual": [
+    "components/ranking/MedalCatalog.tsx"
+  ],
+  "Sua conta": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Sua entrega está na fila de correção. A gente te avisa por e-mail assim que revisar.": [
     "app\\conta\\universo\\page.tsx"
   ],
   "Sua estratégia está em construção.": [
     "components\\decision-lab\\DecisionLab.tsx"
+  ],
+  "Sua história": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Sua recomendação": [
+    "app\\recomendar\\[token]\\EscreverRecomendacao.tsx"
   ],
   "Suas primeiras evidências aparecem conforme você avança nas aulas.": [
     "app\\conta\\page.tsx"
@@ -1752,6 +2568,12 @@
   "Só os aprovados": [
     "lib\\dataflow\\missions.ts"
   ],
+  "Só se você precisar de nota fiscal. Dá para completar depois, no seu perfil.": [
+    "app/matricula/MatriculaForm.tsx"
+  ],
+  "Tamanho da tela": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Tamanho do card": [
     "components\\editor\\Properties.tsx"
   ],
@@ -1760,6 +2582,9 @@
   ],
   "Tem um projeto de dados para tirar do papel? Responda abaixo e a gente volta com um caminho, um prazo e um preço.": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "Tentando de novo...": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "Tente atualizar a página em instantes. Se o problema continuar, entre em contato com o suporte.": [
     "app\\(knowledge)\\universo\\page.tsx"
@@ -1779,8 +2604,17 @@
   "Tipografia do tema": [
     "components\\editor\\Properties.tsx"
   ],
+  "Tirar": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Tirar do ar": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Toda a procura foi atendida. A satisfação ganhou 4 pontos, antes do ajuste por preço.": [
     "lib\\decision-lab\\engine.ts"
+  ],
+  "Toda semana às": [
+    "components/LancamentoHoje.tsx"
   ],
   "Todos os pedidos mantidos, inclusive os cancelados.": [
     "lib\\dataflow\\engine.ts"
@@ -1788,8 +2622,14 @@
   "Top 3 de cada categoria": [
     "lib\\arena\\familias.ts"
   ],
+  "Toque numa linha para ver o objeto de perto.": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
   "Traduzir objetivos em um plano executável.": [
     "lib\\knowledge\\demo.ts"
+  ],
+  "Trajetória ·": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "Transformar dados em relatórios claros e decisões fundamentadas.": [
     "lib\\knowledge\\demo.ts"
@@ -1804,8 +2644,17 @@
     "app\\conta\\page.tsx",
     "app\\cursos\\[slug]\\page.tsx"
   ],
+  "Três a cinco frases: o que você faz, onde já aplicou dados e o que busca agora.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Tudo preenchido. Seu cartão está pronto para quem visitar.": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "Tudo pronto para começar.": [
     "app\\conta\\page.tsx"
+  ],
+  "Tudo salvo": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Título e cores": [
     "components\\editor\\Properties.tsx"
@@ -1834,6 +2683,9 @@
   "Uma faixa já basta. Sem ela, a gente sugere o escopo mínimo que resolve.": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "Uma frase sobre a conquista (opcional)": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
   "Uma nova gestão": [
     "lib\\decision-lab\\engine.ts"
   ],
@@ -1843,8 +2695,29 @@
   "Uma trajetória demonstrativa. Cada etapa pede domínio evidenciado de 60/100.": [
     "components\\knowledge\\UniverseExperience.tsx"
   ],
+  "Universo de": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Universo de competências de": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Universo demonstrativo · Perfil fictício · Nenhum dado acadêmico é alterado.": [
     "components\\knowledge\\UniverseExperience.tsx"
+  ],
+  "Usamos estes dados só para emitir a sua nota fiscal. Eles não aparecem para outros alunos.": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
+  ],
+  "Usar meu site da Academy": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "Usar modo claro": [
+    "components/tema/AlternarTema.tsx"
+  ],
+  "Usar modo escuro": [
+    "components/tema/AlternarTema.tsx"
+  ],
+  "Use o endereço do seu perfil, no formato linkedin.com/in/seu-nome.": [
+    "app/conta/perfil/ProfileForm.tsx"
   ],
   "Use um CSV de até 1 MB.": [
     "lib\\dataflow\\engine.ts"
@@ -1858,6 +2731,9 @@
   "Valor numérico fora do intervalo permitido.": [
     "lib\\knowledge\\catalog.ts"
   ],
+  "Valor pago": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Variação contra o ano anterior (%)": [
     "lib\\forja\\gerar.ts"
   ],
@@ -1867,11 +2743,47 @@
   "Venda autorizada Portal BI": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "Ver a prova": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Ver a recomendação": [
+    "app\\recomendar\\[token]\\confirmar\\page.tsx"
+  ],
+  "Ver a revelação": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "Ver a temporada de lives": [
+    "components/LancamentoHoje.tsx"
+  ],
+  "Ver agora": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "Ver no espaço": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
+  "Ver os planos": [
+    "app/conta/assinatura/page.tsx"
+  ],
+  "Ver portfólio": [
+    "app/conta/vitrine/VitrineClient.tsx"
+  ],
+  "Ver resumo": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "Ver universo de competências 4D": [
+    "app\\portfolio\\[slug]\\SitePublico.tsx"
+  ],
+  "Verificar o certificado": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "Vitrine do bairro": [
     "lib\\decision-lab\\engine.ts"
   ],
   "Você ainda não tem acesso": [
     "app\\conta\\page.tsx"
+  ],
+  "Você já pagou por esse período e ele é seu.": [
+    "app/conta/assinatura/CancelarForm.tsx"
   ],
   "Você já pode começar": [
     "components\\knowledge\\UniverseExperience.tsx"
@@ -1894,17 +2806,41 @@
   "Vocês têm time de dados hoje?": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "Voltar": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "Votação encerrada.": [
     "app\\votacao\\[slug]\\page.tsx"
+  ],
+  "WhatsApp com DDD": [
+    "app\\demo\\[slug]\\page.tsx"
   ],
   "Zero: sempre o campeão. Repetitivo e previsível.": [
     "app\\conta\\ferramentas\\caixa-preta\\CaixaPreta.tsx"
   ],
+  "a demonstra. Toque numa esfera para ver qual, e aperte play para ver a carreira crescer.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "adicionar...": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "ainda não acenderam nenhuma competência.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "alguns apontam para cliente que não está na base": [
     "lib\\arena\\gerador.ts"
   ],
+  "alunos": [
+    "app/conta/comunidade/[channel]/ChatRoom.tsx"
+  ],
+  "anotação": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "antes depois atual anterior lado a lado versus": [
     "components\\editor\\Toolbox.tsx"
+  ],
+  "ao vivo para assinantes": [
+    "components/LancamentoHoje.tsx"
   ],
   "area": [
     "app\\conta\\_funis\\definicoes.ts"
@@ -1926,6 +2862,9 @@
   "ativo": [
     "lib\\arena\\gerador.ts"
   ],
+  "até": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "até aqui": [
     "lib\\forja\\gerar.ts"
   ],
@@ -1938,6 +2877,12 @@
   "canal": [
     "lib\\arena\\gerador.ts"
   ],
+  "cancelar": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "capítulos, do primeiro fato até hoje": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "categoria": [
     "lib\\arena\\gerador.ts"
   ],
@@ -1947,14 +2892,42 @@
   "cláusulas e prazos": [
     "lib\\caixapreta\\corpora.ts"
   ],
+  "com": [
+    "components/LancamentoHoje.tsx"
+  ],
+  "com link de verificação.": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "como funciona": [
     "components\\editor\\StartModal.tsx"
+  ],
+  "competências pedidas já provadas por projeto.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "competências provadas": [
+    "app/conta/vitrine/VitrineClient.tsx"
+  ],
+  "comprovadas por projeto.": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
   ],
   "concluiu com êxito o curso": [
     "components\\CertificateView.tsx"
   ],
+  "conte do seu jeito, a IA distribui nos campos": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
+  "da carreira": [
+    "components\\knowledge\\RoteiroDaCarreira.tsx"
+  ],
   "data": [
     "lib\\arena\\gerador.ts"
+  ],
+  "de": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx",
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "dentro da Academy.": [
+    "components/LancamentoHoje.tsx"
   ],
   "desconto": [
     "lib\\arena\\gerador.ts"
@@ -1965,14 +2938,44 @@
   "dia útil": [
     "lib\\forja\\feriados.ts"
   ],
+  "dias de DriveCanvas são seus.": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "dias de DriveCanvas, de graça.": [
+    "app\\demo\\[slug]\\page.tsx"
+  ],
+  "dias sem prática": [
+    "components\\ui\\signature.tsx"
+  ],
+  "e cole em": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "e passa a ser": [
     "lib\\arena\\motor.ts"
   ],
   "em minutos": [
     "app\\conta\\page.tsx"
   ],
+  "encontros até": [
+    "components/LancamentoHoje.tsx"
+  ],
+  "enviados para a emissão em": [
+    "app\\conta\\perfil\\DadosFiscais.tsx"
+  ],
+  "enviando": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "escopo": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "escreveu uma recomendação para o seu portfólio. Leia e decida se ela aparece no seu site.": [
+    "app\\recomendar\\[token]\\confirmar\\page.tsx"
+  ],
+  "excluir": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
+  "fale com o time": [
+    "app/conta/assinatura/page.tsx"
   ],
   "frete": [
     "lib\\arena\\gerador.ts"
@@ -1983,11 +2986,20 @@
   "itens": [
     "lib\\arena\\gerador.ts"
   ],
+  "já comprovadas por projeto.": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
+  "lacunas entre colchetes. Troque pela informação real antes de enviar.": [
+    "app/conta/portfolio/Portfolio.tsx"
+  ],
   "linha do tempo passos etapas jornada": [
     "components\\editor\\Toolbox.tsx"
   ],
   "linkedin": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "logística, saúde...": [
+    "app/conta/portfolio/Portfolio.tsx"
   ],
   "membros do canal": [
     "app\\conta\\comunidade\\[channel]\\ChatRoom.tsx"
@@ -2022,8 +3034,17 @@
   "moeda com duas casas": [
     "app\\conta\\ferramentas\\forja\\Forja.tsx"
   ],
+  "mudam o jogo": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "na plataforma": [
+    "components/LancamentoHoje.tsx"
+  ],
   "no 1º mês": [
     "app\\matricula\\MatriculaForm.tsx"
+  ],
+  "no seu 4D:": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
   ],
   "nome": [
     "lib\\arena\\gerador.ts"
@@ -2053,11 +3074,20 @@
   "observacao": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
+  "ou no Codex": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
   "participou da transmissão ao vivo": [
     "app\\certificado\\[code]\\page.tsx"
   ],
+  "pedidas já provadas": [
+    "components\\knowledge\\UniversoPublico.tsx"
+  ],
   "pedidos": [
     "lib\\arena\\gerador.ts"
+  ],
+  "pediu sua recomendação": [
+    "app\\recomendar\\[token]\\page.tsx"
   ],
   "prazo": [
     "app\\conta\\_funis\\definicoes.ts"
@@ -2065,14 +3095,32 @@
   "preco": [
     "lib\\arena\\gerador.ts"
   ],
+  "preencher": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "preço de tabela, não o vendido": [
     "lib\\arena\\gerador.ts"
   ],
   "produtos": [
     "lib\\arena\\gerador.ts"
   ],
+  "projeto": [
+    "app/conta/vitrine/VitrineClient.tsx"
+  ],
+  "projetos": [
+    "app/conta/vitrine/VitrineClient.tsx"
+  ],
+  "prova": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
+  ],
   "publico": [
     "app\\conta\\_funis\\definicoes.ts"
+  ],
+  "pôr foto": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
+  "q + 1), quadro": [
+    "components\\knowledge\\UniversoPublico.tsx"
   ],
   "quando usar": [
     "app\\conta\\ferramentas\\biblioteca\\Biblioteca.tsx"
@@ -2082,6 +3130,9 @@
   ],
   "relatório e modelo": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "remover": [
+    "app\\conta\\portfolio\\CarreiraDoAluno.tsx"
   ],
   "segmento": [
     "app\\conta\\_funis\\definicoes.ts"
@@ -2104,11 +3155,17 @@
   "status": [
     "lib\\arena\\gerador.ts"
   ],
+  "trocar": [
+    "app/conta/perfil/ProfileForm.tsx"
+  ],
   "use no checkout": [
     "components\\CupomContagem.tsx"
   ],
   "vender na página de matrícula": [
     "components\\LaunchBanner.tsx"
+  ],
+  "· Ctrl+S": [
+    "app\\conta\\perfil\\ProfileForm.tsx"
   ],
   "· Histórico importado": [
     "components\\knowledge\\UniverseExperience.tsx"
@@ -2139,5 +3196,11 @@
   ],
   "Últimos cinco dias. Compras normais chegarão depois da missão; cuide do caixa.": [
     "lib\\decision-lab\\engine.ts"
+  ],
+  "› 4 projetos": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
+  ],
+  "› 9 competências": [
+    "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ]
 }

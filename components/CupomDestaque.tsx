@@ -1,5 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import CupomContagem from "@/components/CupomContagem";
+import { tr } from "@/lib/i18n/traduzir-servidor";
+import { idiomaAtual } from "@/lib/i18n/idioma-servidor";
+import { TAG_HTML } from "@/lib/i18n/idioma";
 
 /* Cupom de lançamento na home.
 
@@ -11,9 +14,9 @@ const CODIGO = "FUNDADOR10";
 const FUSO = "America/Sao_Paulo";
 
 const prazoLegivel = (iso: string) =>
-  new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: FUSO })
+  new Intl.DateTimeFormat(TAG_HTML[idiomaAtual()], { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: false, timeZone: FUSO })
     .format(new Date(iso))
-    .replace(", ", " às ");
+    .replace(", ", ` ${tr("às")} `);
 
 export default async function CupomDestaque() {
   let cupom: any = null;

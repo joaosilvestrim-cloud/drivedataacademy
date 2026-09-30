@@ -196,7 +196,7 @@ export default function AssistantButton() {
               <div className={panelStyles.portrait}><Mascot realistic className="h-16 w-16 drop-shadow" /></div>
               <div className="flex-1">
                 <p className={panelStyles.brand}>{tr("Assistente da DriveData Academy")}</p>
-                <p className={panelStyles.title}>Nexo</p>
+                <p className={panelStyles.title}>{tr("Nexo")}</p>
                 <p className="mt-2 flex items-center gap-1.5 text-xs text-[#c3cddb]"><span className="h-1.5 w-1.5 rounded-full bg-marca-verde" /> {tr("Online agora")}</p>
               </div>
               <button ref={closeRef} onClick={closeChat} aria-label={tr("Fechar")} className={panelStyles.close}>✕</button>

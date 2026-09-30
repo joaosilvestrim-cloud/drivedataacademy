@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef } from "react";
 import type { UniversoPublico as Dados } from "@/lib/knowledge/publico";
 import type { Selecao } from "./CarreiraNoEspaco";
@@ -212,6 +214,7 @@ export default function RoteiroDaCarreira({
   onFoco: (alvo: Alvo) => void;
   onFechar: () => void;
 }) {
+  const tr = usarTraducao();
   const itens = useRef<(HTMLLIElement | null)[]>([]);
   useEffect(() => {
     itens.current[quadro]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -223,32 +226,32 @@ export default function RoteiroDaCarreira({
 
   return (
     <aside
-      aria-label="Roteiro da carreira"
+      aria-label={tr("Roteiro da carreira")}
       className="absolute bottom-3 left-3 right-3 flex max-h-[46%] flex-col rounded-2xl border border-tinta/10 bg-ink-800/92 backdrop-blur sm:bottom-5 sm:left-auto sm:right-5 sm:top-5 sm:max-h-none sm:w-[23.5rem]"
     >
       <div className="flex items-center justify-between gap-3 border-b border-tinta/10 px-3 py-2 sm:px-4 sm:py-3">
         <div className="min-w-0">
-          <p className="truncate font-display text-sm font-bold sm:text-base">Roteiro<span className="hidden sm:inline"> da carreira</span></p>
+          <p className="truncate font-display text-sm font-bold sm:text-base">{tr("Roteiro")}<span className="hidden sm:inline"> {tr("da carreira")}</span></p>
           <p className="font-mono text-xs tabular-nums text-slate-400">
             {quadro < 0 ? "começando" : `${quadro + 1} de ${capitulos.length}`}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <button className={botao} onClick={() => onIr(Math.max(0, quadro - 1))} disabled={quadro <= 0} aria-label="Capítulo anterior">‹</button>
+          <button className={botao} onClick={() => onIr(Math.max(0, quadro - 1))} disabled={quadro <= 0} aria-label={tr("Capítulo anterior")}>‹</button>
           <button
             className="h-8 rounded-lg bg-white px-3 text-xs font-semibold text-ink-800 hover:bg-slate-200"
             onClick={tocando ? onPausar : onTocar}
           >
             {tocando ? "Pausar" : quadro >= capitulos.length - 1 ? "Do início" : "Continuar"}
           </button>
-          <button className={botao} onClick={() => onIr(Math.min(capitulos.length - 1, quadro + 1))} disabled={quadro >= capitulos.length - 1} aria-label="Próximo capítulo">›</button>
-          <button className={`${botao} ml-1`} onClick={onFechar} aria-label="Fechar o roteiro">×</button>
+          <button className={botao} onClick={() => onIr(Math.min(capitulos.length - 1, quadro + 1))} disabled={quadro >= capitulos.length - 1} aria-label={tr("Próximo capítulo")}>›</button>
+          <button className={`${botao} ml-1`} onClick={onFechar} aria-label={tr("Fechar o roteiro")}>×</button>
         </div>
       </div>
 
       {/* No celular, só o capítulo atual: a constelação precisa da tela. */}
       <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
-        {quadro < 0 && <p className="px-2 py-3 text-sm text-slate-400">O espaço começa vazio. A carreira acende em ordem de data.</p>}
+        {quadro < 0 && <p className="px-2 py-3 text-sm text-slate-400">{tr("O espaço começa vazio. A carreira acende em ordem de data.")}</p>}
         <ol className="flex flex-col">
           {capitulos.map((c, i) => {
             const aqui = i === quadro;
@@ -269,7 +272,7 @@ export default function RoteiroDaCarreira({
                           onClick={() => l.alvo && onFoco(l.alvo)}
                           disabled={!l.alvo}
                           className="group flex w-full gap-2.5 text-left"
-                          title="Ver no espaço"
+                          title={tr("Ver no espaço")}
                         >
                           <Simbolo tipo={l.tipo} />
                           <span className="min-w-0">
@@ -289,10 +292,10 @@ export default function RoteiroDaCarreira({
         </ol>
       </div>
 
-      {atual && <p className="hidden border-t border-tinta/10 px-4 py-2 text-[0.72rem] text-slate-500 sm:block">Toque numa linha para ver o objeto de perto.</p>}
+      {atual && <p className="hidden border-t border-tinta/10 px-4 py-2 text-[0.72rem] text-slate-500 sm:block">{tr("Toque numa linha para ver o objeto de perto.")}</p>}
 
       <details className="hidden border-t border-tinta/10 px-4 py-2.5 sm:block">
-        <summary className="cursor-pointer text-xs font-semibold text-slate-300 hover:text-tinta">Como ler o espaço</summary>
+        <summary className="cursor-pointer text-xs font-semibold text-slate-300 hover:text-tinta">{tr("Como ler o espaço")}</summary>
         <ul className="mt-2 flex flex-col gap-1.5">
           {LEGENDA.filter((l) => tipos.has(l.tipo) || l.tipo === "estrela" || l.tipo === "constelacao" || (l.tipo === "ecliptica" && tipos.has("planeta"))).map((l) => (
             <li key={l.tipo} className="flex items-start gap-2 text-xs text-slate-400">

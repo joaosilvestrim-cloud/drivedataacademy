@@ -1,3 +1,4 @@
+import { tr } from "@/lib/i18n/traduzir-servidor";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { tabelaAusente } from "@/lib/portfolio-carreira";
 import EscreverRecomendacao from "./EscreverRecomendacao";
@@ -33,12 +34,12 @@ export default async function Recomendar({ params }: { params: { token: string }
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-16 text-tinta">
-      <p className="text-sm text-acento">DriveData Academy</p>
-      <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">{nome} pediu sua recomendação</h1>
+      <p className="text-sm text-acento">{tr("DriveData Academy")}</p>
+      <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">{nome} {tr("pediu sua recomendação")}</h1>
       {perfil?.headline && <p className="mt-2 text-slate-400">{perfil.headline}</p>}
       <p className="mt-6 text-slate-300">
         {projeto?.data?.titulo
-          ? <>Sobre o projeto <span className="font-semibold text-tinta">{projeto.data.titulo}</span>. </>
+          ? <>{tr("Sobre o projeto")} <span className="font-semibold text-tinta">{projeto.data.titulo}</span>. </>
           : null}
         Conte o que {nome.split(" ")[0]} fez e como foi trabalhar junto. Seu texto aparece no portfólio público, com seu nome e cargo, depois que você confirmar o e-mail e {nome.split(" ")[0]} aprovar.
       </p>

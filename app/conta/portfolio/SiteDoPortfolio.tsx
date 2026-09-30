@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useEffect, useRef, useState } from "react";
 import { CORES_DE_DESTAQUE, ESTILOS, GUIA_IAS, PERSONALIZACAO_PADRAO, RECEITAS, REFINAMENTOS, envelopar, limparHtmlColado, type Estilo, type Personalizacao } from "@/lib/portfolio-site-html";
 import type { RaioX } from "@/lib/portfolio-raiox";
@@ -61,6 +63,7 @@ function Passo({ n, titulo, estado, ultimo = false, children }: { n: number; tit
 /* Uma miniatura de cada estilo, desenhada em CSS: o aluno escolhe olhando,
    não lendo a descrição. */
 function Miniatura({ estilo }: { estilo: Estilo }) {
+  const tr = usarTraducao();
   if (estilo === "painel")
     return (
       <div className="flex h-full flex-col gap-1.5 bg-[#0d1422] p-2.5">
@@ -78,8 +81,8 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
   if (estilo === "editorial")
     return (
       <div className="flex h-full flex-col gap-1.5 bg-[#f1ece2] p-2.5">
-        <div className="font-serif text-[13px] font-bold leading-none text-[#1c1a17]">Dados que</div>
-        <div className="font-serif text-[13px] italic leading-none text-[#1c1a17]">mudam o jogo</div>
+        <div className="font-serif text-[13px] font-bold leading-none text-[#1c1a17]">{tr("Dados que")}</div>
+        <div className="font-serif text-[13px] italic leading-none text-[#1c1a17]">{tr("mudam o jogo")}</div>
         <div className="mt-auto grid grid-cols-2 gap-1.5">
           {[0, 1].map((c) => (
             <div key={c} className="flex flex-col gap-[3px]">
@@ -93,8 +96,8 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
     return (
       <div className="flex h-full flex-col gap-1 bg-[#050805] p-2.5 font-mono text-[9px] leading-tight text-[#39ff88]">
         <span>$ portfolio --abrir</span>
-        <span className="text-[#39ff88]/60">› 4 projetos</span>
-        <span className="text-[#39ff88]/60">› 9 competências</span>
+        <span className="text-[#39ff88]/60">{tr("› 4 projetos")}</span>
+        <span className="text-[#39ff88]/60">{tr("› 9 competências")}</span>
         <span>
           $ <span className="inline-block h-2 w-1.5 translate-y-[1px] bg-[#39ff88]" />
         </span>
@@ -115,8 +118,8 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
     return (
       <div className="relative h-full overflow-hidden bg-[#0a0a0c] p-2.5">
         <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-[radial-gradient(circle,rgba(245,184,90,.55),transparent_65%)]" />
-        <div className="font-mono text-[9px] text-[#f5b85a]">CENA 01</div>
-        <div className="mt-1 text-[13px] font-bold leading-tight text-[#f2efe9]">O projeto</div>
+        <div className="font-mono text-[9px] text-[#f5b85a]">{tr("CENA 01")}</div>
+        <div className="mt-1 text-[13px] font-bold leading-tight text-[#f2efe9]">{tr("O projeto")}</div>
         <div className="mt-auto flex flex-col gap-[3px] pt-5">
           {[70, 50].map((w, i) => <div key={i} className="h-[2px] bg-tinta/30" style={{ width: `${w}%` }} />)}
         </div>
@@ -140,13 +143,13 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
       <div className="relative h-full bg-[#0b3d91] bg-[linear-gradient(rgba(127,167,232,.25)_1px,transparent_1px),linear-gradient(90deg,rgba(127,167,232,.25)_1px,transparent_1px)] bg-[size:8px_8px] p-2.5">
         <div className="font-mono text-[10px] font-bold text-tinta">PROJ-01</div>
         <div className="mt-2 h-6 w-16 border border-[#eaf2ff]/80" />
-        <div className="absolute bottom-2 right-2 border border-[#eaf2ff]/80 px-1 font-mono text-[7px] text-[#ffcc00]">REV A · 2026</div>
+        <div className="absolute bottom-2 right-2 border border-[#eaf2ff]/80 px-1 font-mono text-[7px] text-[#ffcc00]">{tr("REV A · 2026")}</div>
       </div>
     );
   if (estilo === "relatorio")
     return (
       <div className="flex h-full flex-col gap-1 bg-white p-2.5">
-        <div className="text-[10px] font-bold text-[#0a2540]">Relatório anual</div>
+        <div className="text-[10px] font-bold text-[#0a2540]">{tr("Relatório anual")}</div>
         {[85, 60, 40].map((w, i) => (
           <div key={i} className="flex items-center gap-1">
             <div className="h-1 w-6 bg-[#e3e8ee]" />
@@ -159,7 +162,7 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
   if (estilo === "bento")
     return (
       <div className="grid h-full grid-cols-3 grid-rows-2 gap-1 bg-[#f2f2f0] p-1.5">
-        <div className="col-span-2 row-span-2 rounded-md bg-white p-1.5 text-[10px] font-bold text-[#16181d]">Nome</div>
+        <div className="col-span-2 row-span-2 rounded-md bg-white p-1.5 text-[10px] font-bold text-[#16181d]">{tr("Nome")}</div>
         <div className="rounded-md bg-[#3b5bfd]" />
         <div className="rounded-md bg-white" />
       </div>
@@ -178,7 +181,7 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
     return (
       <div className="relative h-full bg-[#fbf8f1] bg-[linear-gradient(transparent_11px,#d9e4f2_12px)] bg-[size:100%_12px] p-2.5">
         <div className="absolute bottom-0 left-4 top-0 w-px bg-[#f1a1a1]" />
-        <div className="pl-3 text-[11px] italic text-[#1f5fbf]">anotação</div>
+        <div className="pl-3 text-[11px] italic text-[#1f5fbf]">{tr("anotação")}</div>
         <div className="absolute bottom-2 right-2 h-7 w-9 rotate-6 bg-[#ffe58a] shadow-sm" />
       </div>
     );
@@ -187,7 +190,7 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
       <div className="flex h-full items-center gap-2 bg-[#f7f6f3] p-2.5">
         <div className="h-12 w-12 shrink-0 border-[3px] border-[#1b1b1b] bg-[#d9d4cb]" />
         <div className="flex flex-col gap-[3px]">
-          <div className="text-[9px] font-semibold text-[#222]">Projeto, 2024</div>
+          <div className="text-[9px] font-semibold text-[#222]">{tr("Projeto, 2024")}</div>
           <div className="h-[2px] w-10 bg-[#8c8a85]" />
           <div className="h-[2px] w-8 bg-[#8c8a85]" />
         </div>
@@ -222,6 +225,7 @@ export default function SiteDoPortfolio({
   /** Prompt já montado no servidor com o estilo padrão: o aluno chega e ele está pronto. */
   promptInicial?: { prompt: string; incluidos: number; foraPorLacuna: string[]; foraPorPrivado: string[]; certificados: number } | null;
 }) {
+  const tr = usarTraducao();
   const [estilo, setEstilo] = useState<Estilo>("painel");
   const [pers, setPers] = useState<Personalizacao>(PERSONALIZACAO_PADRAO);
   const [verDirecao, setVerDirecao] = useState(false);
@@ -406,22 +410,22 @@ export default function SiteDoPortfolio({
 
   const cartaoNoAr = publicado && (
     <div className="rounded-3xl border border-acento/30 bg-papel p-6 text-left shadow-overlay">
-      <p className="font-display text-2xl font-bold text-tinta">Seu portfólio está no ar</p>
+      <p className="font-display text-2xl font-bold text-tinta">{tr("Seu portfólio está no ar")}</p>
       <a href={publicado.url} target="_blank" rel="noopener" className="mt-1 block truncate font-mono text-sm text-acento hover:underline">{publicado.url}</a>
       <div className="mt-4 flex flex-wrap gap-2">
-        <a href={linkedin} target="_blank" rel="noopener" className="rounded-xl bg-[#0a66c2] px-4 py-2 text-sm font-semibold text-tinta">Publicar no LinkedIn</a>
+        <a href={linkedin} target="_blank" rel="noopener" className="rounded-xl bg-[#0a66c2] px-4 py-2 text-sm font-semibold text-tinta">{tr("Publicar no LinkedIn")}</a>
         <button onClick={() => copiar(publicado.url, "link")} className="rounded-xl border border-tinta/15 px-4 py-2 text-sm text-tinta">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
-        <a href={publicado.url} target="_blank" rel="noopener" className="rounded-xl border border-tinta/15 px-4 py-2 text-sm text-tinta">Abrir o site</a>
+        <a href={publicado.url} target="_blank" rel="noopener" className="rounded-xl border border-tinta/15 px-4 py-2 text-sm text-tinta">{tr("Abrir o site")}</a>
       </div>
       {post && (
         <div className="mt-4">
-          <p className="text-xs text-slate-400">O texto do post, montado com o que você publicou:</p>
+          <p className="text-xs text-slate-400">{tr("O texto do post, montado com o que você publicou:")}</p>
           <textarea readOnly value={post} rows={7} className="mt-1 w-full resize-none rounded-xl border border-tinta/10 bg-papel p-3 text-xs text-slate-200" />
           <button onClick={() => copiar(post, "post")} className="mt-1 text-xs text-acento hover:underline">{copiado === "post" ? "Copiado" : "Copiar o texto"}</button>
         </div>
       )}
-      <p className="mt-3 text-xs text-slate-400">Ponha o link também no seu perfil do LinkedIn: Informações de contato → Site, e na seção Em destaque.</p>
-      <button onClick={() => setRevelando(false)} className="mt-4 text-sm text-slate-300 hover:text-tinta">Voltar</button>
+      <p className="mt-3 text-xs text-slate-400">{tr("Ponha o link também no seu perfil do LinkedIn: Informações de contato → Site, e na seção Em destaque.")}</p>
+      <button onClick={() => setRevelando(false)} className="mt-4 text-sm text-slate-300 hover:text-tinta">{tr("Voltar")}</button>
     </div>
   );
 
@@ -435,28 +439,28 @@ export default function SiteDoPortfolio({
       )}
       <section className="mt-8 overflow-hidden rounded-[20px] border border-tinta/10 bg-papel">
         <div className="border-b border-tinta/10 p-6 sm:p-8">
-          <h2 className="text-[1.6rem] font-bold tracking-tight text-obsidian">Meu site de portfólio</h2>
+          <h2 className="text-[1.6rem] font-bold tracking-tight text-obsidian">{tr("Meu site de portfólio")}</h2>
           <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-400">
-            A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D, que quem visitar pode girar e ver crescer ao longo da sua carreira.
+            {tr("A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D, que quem visitar pode girar e ver crescer ao longo da sua carreira.")}
           </p>
 
           {atual?.bloqueado && (
             <p className="mt-4 rounded-xl border border-red-400/40 bg-red-400/[0.08] px-3 py-2 text-sm text-red-200">
-              Seu site foi tirado do ar pelo time. Fale com o suporte pela Central de Ajuda.
+              {tr("Seu site foi tirado do ar pelo time. Fale com o suporte pela Central de Ajuda.")}
             </p>
           )}
 
           {noAr && publicado && (
             <div className="mt-5 border-l-2 border-acento pl-4">
-              <p className="text-sm font-semibold text-tinta">Seu site está no ar</p>
+              <p className="text-sm font-semibold text-tinta">{tr("Seu site está no ar")}</p>
               <a href={publicado.url} target="_blank" rel="noopener" className="mt-0.5 block truncate font-mono text-sm text-acento hover:underline">{publicado.url}</a>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                <a href={linkedin} target="_blank" rel="noopener" onMouseEnter={() => !post && carregarPost()} className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-tinta">Publicar no LinkedIn</a>
+                <a href={linkedin} target="_blank" rel="noopener" onMouseEnter={() => !post && carregarPost()} className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-tinta">{tr("Publicar no LinkedIn")}</a>
                 <button onClick={() => copiar(publicado.url, "link")} className="rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-tinta hover:border-tinta/40">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
-                <button onClick={() => setRevelando(true)} className="rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-tinta hover:border-tinta/40">Ver a revelação</button>
-                <button onClick={tirarDoAr} className="px-2 text-xs text-slate-500 hover:text-slate-300">Tirar do ar</button>
+                <button onClick={() => setRevelando(true)} className="rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-tinta hover:border-tinta/40">{tr("Ver a revelação")}</button>
+                <button onClick={tirarDoAr} className="px-2 text-xs text-slate-500 hover:text-slate-300">{tr("Tirar do ar")}</button>
               </div>
-              <p className="mt-2.5 text-xs text-slate-500">No LinkedIn, ponha o link em Editar perfil → Informações de contato → Site, e na seção Em destaque.</p>
+              <p className="mt-2.5 text-xs text-slate-500">{tr("No LinkedIn, ponha o link em Editar perfil → Informações de contato → Site, e na seção Em destaque.")}</p>
 
               {/* Kit de divulgação: QR para o currículo e textos prontos. */}
               {!kit?.ok ? (
@@ -468,9 +472,9 @@ export default function SiteDoPortfolio({
                   <div>
                     <div className="rounded-xl bg-white p-2" dangerouslySetInnerHTML={{ __html: kit.qrSvg }} />
                     <button type="button" onClick={() => baixarQr(kit.qrSvg)} className="mt-2 w-full text-center text-xs font-semibold text-acento hover:underline">
-                      Baixar o QR
+                      {tr("Baixar o QR")}
                     </button>
-                    <p className="mt-1 text-center text-[0.7rem] text-slate-500">Para o currículo e o crachá</p>
+                    <p className="mt-1 text-center text-[0.7rem] text-slate-500">{tr("Para o currículo e o crachá")}</p>
                   </div>
                   <div className="flex min-w-0 flex-col gap-3">
                     {[
@@ -514,7 +518,7 @@ export default function SiteDoPortfolio({
               <div className="mt-5 rounded-2xl border border-tinta/10 bg-tinta/[0.02]">
                 <button type="button" onClick={() => setRaioAberto((v) => !v)} className="flex w-full items-center gap-4 p-4 text-left">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-tinta">Raio-X do portfólio</p>
+                    <p className="text-sm font-semibold text-tinta">{tr("Raio-X do portfólio")}</p>
                     <p className="mt-0.5 text-xs text-slate-400">
                       {raioX.projetos.length + raioX.gerais.length === 0
                         ? "Tudo certo. Seus projetos estão prontos para virar um site forte."
@@ -533,7 +537,7 @@ export default function SiteDoPortfolio({
                   <div className="border-t border-tinta/[0.07] p-4">
                     {raioX.fortes.length > 0 && (
                       <p className="text-sm text-slate-300">
-                        <span className="font-semibold text-acento">O que já está forte:</span> {raioX.fortes.join(", ")}.
+                        <span className="font-semibold text-acento">{tr("O que já está forte:")}</span> {raioX.fortes.join(", ")}.
                       </p>
                     )}
                     {raioX.gerais.map((a, i) => (
@@ -549,7 +553,7 @@ export default function SiteDoPortfolio({
                               onClick={() => window.dispatchEvent(new CustomEvent("portfolio:editar-projeto", { detail: p.id }))}
                               className="shrink-0 text-xs font-semibold text-acento hover:underline"
                             >
-                              Corrigir →
+                              {tr("Corrigir →")}
                             </button>
                           </div>
                           <ul className="mt-1 flex flex-col gap-1">
@@ -570,7 +574,7 @@ export default function SiteDoPortfolio({
 
           <Passo n={2} titulo="Escolha o estilo e gere o seu prompt" estado={estado(1)}>
             {/* Receitas: um clique e está pronto. Os estilos embaixo são para quem quer ajustar. */}
-            <p className="text-xs font-semibold text-slate-300">Comece por uma receita</p>
+            <p className="text-xs font-semibold text-slate-300">{tr("Comece por uma receita")}</p>
             <div className="mt-2 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
               {RECEITAS.map((r) => {
                 const sel = receitaAtiva === r.id;
@@ -590,8 +594,8 @@ export default function SiteDoPortfolio({
                 );
               })}
             </div>
-            <p className="mt-5 text-xs font-semibold text-slate-300">Ou escolha o estilo</p>
-            <div className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5" role="radiogroup" aria-label="Estilo do site">
+            <p className="mt-5 text-xs font-semibold text-slate-300">{tr("Ou escolha o estilo")}</p>
+            <div className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5" role="radiogroup" aria-label={tr("Estilo do site")}>
               {(Object.keys(ESTILOS) as Estilo[]).map((e) => {
                 const sel = estilo === e;
                 return (
@@ -625,8 +629,8 @@ export default function SiteDoPortfolio({
             {/* Personalização por cima do estilo. Cada escolha vira uma linha no prompt. */}
             <div className="mt-5 grid gap-4 rounded-[20px] border border-tinta/10 bg-papel p-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <p className="text-xs font-semibold text-slate-300">Cor de destaque</p>
-                <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Cor de destaque">
+                <p className="text-xs font-semibold text-slate-300">{tr("Cor de destaque")}</p>
+                <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label={tr("Cor de destaque")}>
                   {CORES_DE_DESTAQUE.map((c) => {
                     const sel = pers.cor === c.hex;
                     return (
@@ -682,20 +686,20 @@ export default function SiteDoPortfolio({
                 {gerando ? "Atualizando o seu prompt com a escolha..." : prompt ? "Seu prompt está pronto, com o estilo e as escolhas acima. É só copiar." : ""}
               </p>
             ) : (
-              <p className="mt-4 text-sm text-amber-200">Publique pelo menos um projeto no passo 1 e o seu prompt aparece aqui, pronto.</p>
+              <p className="mt-4 text-sm text-amber-200">{tr("Publique pelo menos um projeto no passo 1 e o seu prompt aparece aqui, pronto.")}</p>
             )}
 
             {info && (
               <div className="mt-4 flex flex-col gap-1 text-xs text-slate-400">
                 <p>
-                  Entraram <span className="font-semibold text-tinta">{info.incluidos}</span> {info.incluidos === 1 ? "projeto" : "projetos"} e{" "}
-                  <span className="font-semibold text-tinta">{info.certificados}</span> {info.certificados === 1 ? "certificado" : "certificados"} com link de verificação.
+                  {tr("Entraram")} <span className="font-semibold text-tinta">{info.incluidos}</span> {info.incluidos === 1 ? "projeto" : "projetos"} e{" "}
+                  <span className="font-semibold text-tinta">{info.certificados}</span> {info.certificados === 1 ? "certificado" : "certificados"} {tr("com link de verificação.")}
                 </p>
-                {info.incluidos === 0 && <p className="text-amber-200">Seu prompt saiu sem nenhum projeto, e o site vai sair vazio. Volte ao passo 1.</p>}
+                {info.incluidos === 0 && <p className="text-amber-200">{tr("Seu prompt saiu sem nenhum projeto, e o site vai sair vazio. Volte ao passo 1.")}</p>}
                 {info.foraPorLacuna.length > 0 && (
-                  <p className="text-amber-200">Ficaram de fora porque ainda têm lacunas entre colchetes: {info.foraPorLacuna.join(", ")}. Preencha e gere de novo.</p>
+                  <p className="text-amber-200">{tr("Ficaram de fora porque ainda têm lacunas entre colchetes:")} {info.foraPorLacuna.join(", ")}{tr(". Preencha e gere de novo.")}</p>
                 )}
-                {info.foraPorPrivado.length > 0 && <p>Ficaram de fora porque estão só para a turma: {info.foraPorPrivado.join(", ")}.</p>}
+                {info.foraPorPrivado.length > 0 && <p>{tr("Ficaram de fora porque estão só para a turma:")} {info.foraPorPrivado.join(", ")}.</p>}
               </div>
             )}
 
@@ -705,13 +709,13 @@ export default function SiteDoPortfolio({
                   <button onClick={() => copiar(prompt, "prompt")} className={botaoForte}>
                     {copiado === "prompt" ? "Copiado" : "Copiar prompt"}
                   </button>
-                  <span className="px-1 text-xs text-slate-500">e cole em</span>
+                  <span className="px-1 text-xs text-slate-500">{tr("e cole em")}</span>
                   {IAS.map((ia) => (
                     <a key={ia.nome} href={ia.url} target="_blank" rel="noopener" className="rounded-full border border-tinta/25 px-3 py-1.5 text-sm font-medium text-obsidian transition-colors hover:border-tinta/50">
                       {ia.nome} ↗
                     </a>
                   ))}
-                  <span className="text-xs text-slate-500">ou no Codex</span>
+                  <span className="text-xs text-slate-500">{tr("ou no Codex")}</span>
                 </div>
                 <div className="relative">
                   <pre className={`overflow-hidden whitespace-pre-wrap break-words p-4 font-mono text-[11px] leading-relaxed text-slate-400 ${promptAberto ? "max-h-[28rem] overflow-y-auto" : "max-h-28"}`}>{prompt}</pre>
@@ -723,8 +727,8 @@ export default function SiteDoPortfolio({
                 {/* Como pedir em cada IA: é onde o aluno mais trava. */}
                 <div className="border-t border-tinta/[0.07] p-4">
                   <div className="flex flex-wrap items-center gap-3">
-                    <p className="text-xs font-semibold text-slate-300">Como pedir no</p>
-                    <div className="inline-flex rounded-lg border border-tinta/10 p-0.5" role="tablist" aria-label="Guia por IA">
+                    <p className="text-xs font-semibold text-slate-300">{tr("Como pedir no")}</p>
+                    <div className="inline-flex rounded-lg border border-tinta/10 p-0.5" role="tablist" aria-label={tr("Guia por IA")}>
                       {GUIA_IAS.map((g, i) => (
                         <button
                           key={g.nome}
@@ -748,12 +752,12 @@ export default function SiteDoPortfolio({
                     ))}
                   </ol>
                   <a href={GUIA_IAS[ia].url} target="_blank" rel="noopener" className="mt-3 inline-block text-xs font-semibold text-acento hover:underline">
-                    Abrir o {GUIA_IAS[ia].nome} ↗
+                    {tr("Abrir o")} {GUIA_IAS[ia].nome} ↗
                   </a>
                 </div>
               </div>
             )}
-            {promptCopiado && !html && <p className="mt-2 text-xs text-acento">Prompt copiado. Cole na IA e, quando ela devolver o código, siga para o passo 3.</p>}
+            {promptCopiado && !html && <p className="mt-2 text-xs text-acento">{tr("Prompt copiado. Cole na IA e, quando ela devolver o código, siga para o passo 3.")}</p>}
           </Passo>
 
           <Passo n={3} titulo="Cole o HTML que a IA devolveu" estado={estado(2)}>
@@ -768,7 +772,7 @@ export default function SiteDoPortfolio({
               />
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-tinta/[0.07] px-4 py-2.5">
                 {!html ? (
-                  <button onClick={colarDaAreaDeTransferencia} className="text-sm font-semibold text-acento hover:underline">Colar da área de transferência</button>
+                  <button onClick={colarDaAreaDeTransferencia} className="text-sm font-semibold text-acento hover:underline">{tr("Colar da área de transferência")}</button>
                 ) : (
                   leitura && (
                     <span className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
@@ -779,7 +783,7 @@ export default function SiteDoPortfolio({
                   )
                 )}
                 {html && (
-                  <button onClick={() => { setHtml(""); setPrevia(false); setAuditoria(null); }} className="ml-auto text-xs text-slate-500 hover:text-slate-300">Limpar</button>
+                  <button onClick={() => { setHtml(""); setPrevia(false); setAuditoria(null); }} className="ml-auto text-xs text-slate-500 hover:text-slate-300">{tr("Limpar")}</button>
                 )}
               </div>
             </div>
@@ -821,7 +825,7 @@ export default function SiteDoPortfolio({
                       <button onClick={() => copiar(auditoria.pedidoDeCorrecao, "correcao")} className="rounded-lg bg-tinta/10 px-3 py-1.5 text-sm font-semibold text-tinta hover:bg-tinta/15">
                         {copiado === "correcao" ? "Copiado" : "Copiar pedido de correção"}
                       </button>
-                      <span className="text-xs text-slate-400">Cole na mesma conversa da IA, ela devolve o site corrigido. Depois cole o novo HTML aqui.</span>
+                      <span className="text-xs text-slate-400">{tr("Cole na mesma conversa da IA, ela devolve o site corrigido. Depois cole o novo HTML aqui.")}</span>
                     </div>
                   </>
                 )}
@@ -832,8 +836,8 @@ export default function SiteDoPortfolio({
                 melhor: pedir ajustes é a parte que o aluno mais aprende. */}
             {previa && (
               <div className="mt-4 rounded-[20px] border border-tinta/10 bg-papel p-4">
-                <p className="text-sm font-semibold text-tinta">Refinar com a IA</p>
-                <p className="mt-0.5 text-xs text-slate-400">Copie um pedido, cole na mesma conversa da IA e cole aqui o código novo que ela devolver.</p>
+                <p className="text-sm font-semibold text-tinta">{tr("Refinar com a IA")}</p>
+                <p className="mt-0.5 text-xs text-slate-400">{tr("Copie um pedido, cole na mesma conversa da IA e cole aqui o código novo que ela devolver.")}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {REFINAMENTOS.map((r) => (
                     <button
@@ -853,8 +857,8 @@ export default function SiteDoPortfolio({
             {previa && (
               <div className="mt-4 overflow-hidden rounded-srf border border-tinta/10 bg-fog">
                 <div className="flex items-center justify-between gap-3 border-b border-tinta/[0.07] px-3 py-2">
-                  <span className="text-xs text-slate-400">Pré-visualização</span>
-                  <div className="flex rounded-lg border border-tinta/10 p-0.5 text-xs" role="tablist" aria-label="Tamanho da tela">
+                  <span className="text-xs text-slate-400">{tr("Pré-visualização")}</span>
+                  <div className="flex rounded-lg border border-tinta/10 p-0.5 text-xs" role="tablist" aria-label={tr("Tamanho da tela")}>
                     {(["computador", "celular"] as const).map((a) => (
                       <button
                         key={a}
@@ -870,7 +874,7 @@ export default function SiteDoPortfolio({
                 </div>
                 <div className={`flex justify-center ${aparelho === "celular" ? "bg-fog py-4" : ""}`}>
                   <iframe
-                    title="Pré-visualização do site"
+                    title={tr("Pré-visualização do site")}
                     srcDoc={envelopar((() => { const l = limparHtmlColado(html); return l.ok ? l.html : html; })())}
                     sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
                     className={`bg-white transition-[width] duration-300 ${aparelho === "celular" ? "h-[640px] w-[390px] rounded-[1.4rem] border-[6px] border-[#1d2433]" : "h-[520px] w-full"}`}
@@ -888,8 +892,8 @@ export default function SiteDoPortfolio({
                 <span className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4" />
               </span>
               <span>
-                <span className="font-medium text-tinta">Mostrar meu Universo 4D na página</span>
-                <span className="block text-xs text-slate-400">As competências acendem a partir dos seus projetos, na ordem em que você os fez.</span>
+                <span className="font-medium text-tinta">{tr("Mostrar meu Universo 4D na página")}</span>
+                <span className="block text-xs text-slate-400">{tr("As competências acendem a partir dos seus projetos, na ordem em que você os fez.")}</span>
               </span>
             </label>
             <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -897,10 +901,10 @@ export default function SiteDoPortfolio({
                 {salvando ? "Publicando..." : noAr ? "Publicar nova versão" : "Publicar"}
               </button>
               <button onClick={() => salvar(false)} disabled={salvando || html.trim().length < 30} className={botaoLeve}>
-                Salvar sem publicar
+                {tr("Salvar sem publicar")}
               </button>
               {!html && <span className="text-xs text-slate-500">{noAr ? "Para trocar o site, cole a nova versão no passo 3." : "Cole o HTML no passo 3 para liberar."}</span>}
-              {html && temErro && <span className="text-xs text-red-300">Corrija o que a conferência apontou para liberar.</span>}
+              {html && temErro && <span className="text-xs text-red-300">{tr("Corrija o que a conferência apontou para liberar.")}</span>}
             </div>
             {erro && <p className="mt-3 text-sm text-red-300">{erro}</p>}
           </Passo>

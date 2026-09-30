@@ -19,6 +19,24 @@ type Par = { en: string; es: string };
    usaria. Vence o arquivo gerado. */
 const CORRECOES: Record<string, Partial<Par>> = {
   ...MASCOT_POLL_PHRASES,
+  // Pedaços curtos das datas da home ("ter, 06/10 às 19:30"): palavra solta
+  // demais para a tradução automática acertar sem contexto.
+  "às": { en: "at", es: "a las" },
+  "Hoje": { en: "Today", es: "Hoy" },
+  "Amanhã": { en: "Tomorrow", es: "Mañana" },
+  "Validade": { en: "Valid until", es: "Válido hasta" },
+  // Painel do Universo 4D: frases inteiras, sem nome no meio, para a ordem
+  // das palavras funcionar nos três idiomas.
+  "Cada competência acende porque um projeto a demonstra.": { en: "Each skill lights up because a project proves it.", es: "Cada competencia se enciende porque un proyecto la demuestra." },
+  "Toque numa esfera para ver qual, e aperte play para ver a carreira crescer.": { en: "Tap a sphere to see which one, and press play to watch the career grow.", es: "Toca una esfera para ver cuál y pulsa play para ver crecer la carrera." },
+  "competência": { en: "skill", es: "competencia" },
+  "competências": { en: "skills", es: "competencias" },
+  "projeto": { en: "project", es: "proyecto" },
+  "projetos": { en: "projects", es: "proyectos" },
+  "em": { en: "in", es: "en" },
+  "carreira desde": { en: "career since", es: "carrera desde" },
+  "Pausar": { en: "Pause", es: "Pausar" },
+  "Ver a evolução": { en: "Watch the evolution", es: "Ver la evolución" },
   // Dica embaixo do player. "Legendas" e "engrenagem" precisam bater com o
   // que o menu do Panda escreve em cada idioma, senão o aluno procura um
   // botão que não existe com esse nome.

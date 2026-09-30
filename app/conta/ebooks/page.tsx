@@ -121,7 +121,7 @@ function Capa({ ebook }: { ebook: Ebook }) {
   }
   return (
     <div className="flex h-44 w-32 shrink-0 flex-col justify-between escuro rounded-srf bg-noite p-3">
-      <span className="text-[0.6rem] font-semibold text-marca-verde">Ebook</span>
+      <span className="text-[0.6rem] font-semibold text-marca-verde">{tr("Ebook")}</span>
       <span className="line-clamp-5 text-[0.8rem] font-bold leading-tight text-white">{ebook.title}</span>
     </div>
   );

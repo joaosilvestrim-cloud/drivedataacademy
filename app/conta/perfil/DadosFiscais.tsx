@@ -1,5 +1,7 @@
 "use client";
 
+import { usarTraducao } from "@/lib/i18n/usarTraducao";
+
 import { useState } from "react";
 import { consultarCep, salvarDadosFiscais } from "../actions";
 
@@ -31,6 +33,7 @@ export default function DadosFiscais({
   enviadoEm: string | null;
   erroEnvio: string | null;
 }) {
+  const tr = usarTraducao();
   const [d, setD] = useState<Dados>({ ...inicial, cep: mascaraCep(inicial.cep), cpf: mascaraCpf(inicial.cpf) });
   const [buscando, setBuscando] = useState(false);
   const [avisoCep, setAvisoCep] = useState("");
@@ -68,11 +71,11 @@ export default function DadosFiscais({
   return (
     <section id="nota-fiscal" className="mt-6 scroll-mt-6 rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-8 lg:max-w-[calc(100%-21.5rem)]">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-bold tracking-tight text-obsidian">Dados para nota fiscal</h2>
-        {quando && !erroEnvio && <span className="text-xs text-slate-400">enviados para a emissão em {quando}</span>}
+        <h2 className="text-lg font-bold tracking-tight text-obsidian">{tr("Dados para nota fiscal")}</h2>
+        {quando && !erroEnvio && <span className="text-xs text-slate-400">{tr("enviados para a emissão em")} {quando}</span>}
       </div>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">
-        Precisa de nota fiscal da sua assinatura? Preencha uma vez. A nota sai com estes dados todo mês.
+        {tr("Precisa de nota fiscal da sua assinatura? Preencha uma vez. A nota sai com estes dados todo mês.")}
       </p>
 
       <form onSubmit={salvar} className="mt-5 grid gap-4">
@@ -84,11 +87,11 @@ export default function DadosFiscais({
             ) : (
               <input id="nf-cpf" value={d.cpf} onChange={set("cpf")} inputMode="numeric" placeholder="000.000.000-00" className={campo} />
             )}
-            {cpfDoPagamento && <p className="text-xs text-slate-500">O mesmo que você informou no pagamento.</p>}
+            {cpfDoPagamento && <p className="text-xs text-slate-500">{tr("O mesmo que você informou no pagamento.")}</p>}
           </div>
           <div className="space-y-1.5">
             <label className={rotulo} htmlFor="nf-rg">RG</label>
-            <input id="nf-rg" value={d.rg} onChange={set("rg")} placeholder="Número do RG" className={campo} />
+            <input id="nf-rg" value={d.rg} onChange={set("rg")} placeholder={tr("Número do RG")} className={campo} />
           </div>
         </div>
 
@@ -98,7 +101,7 @@ export default function DadosFiscais({
             <input id="nf-cep" value={d.cep} onChange={set("cep")} inputMode="numeric" autoComplete="postal-code" placeholder="00000-000" className={campo} />
           </div>
           <div className="space-y-1.5">
-            <label className={rotulo} htmlFor="nf-logradouro">Endereço</label>
+            <label className={rotulo} htmlFor="nf-logradouro">{tr("Endereço")}</label>
             <input id="nf-logradouro" value={d.logradouro} onChange={set("logradouro")} autoComplete="address-line1" placeholder={buscando ? "Buscando pelo CEP..." : "Rua, avenida..."} className={campo} />
           </div>
         </div>
@@ -106,22 +109,22 @@ export default function DadosFiscais({
 
         <div className="grid gap-4 sm:grid-cols-[8rem_1fr_1fr]">
           <div className="space-y-1.5">
-            <label className={rotulo} htmlFor="nf-numero">Número</label>
+            <label className={rotulo} htmlFor="nf-numero">{tr("Número")}</label>
             <input id="nf-numero" value={d.numero} onChange={set("numero")} placeholder="123" className={campo} />
           </div>
           <div className="space-y-1.5">
-            <label className={rotulo} htmlFor="nf-complemento">Complemento <span className="font-normal text-slate-500">(opcional)</span></label>
-            <input id="nf-complemento" value={d.complemento} onChange={set("complemento")} autoComplete="address-line2" placeholder="Apto, bloco..." className={campo} />
+            <label className={rotulo} htmlFor="nf-complemento">{tr("Complemento")} <span className="font-normal text-slate-500">(opcional)</span></label>
+            <input id="nf-complemento" value={d.complemento} onChange={set("complemento")} autoComplete="address-line2" placeholder={tr("Apto, bloco...")} className={campo} />
           </div>
           <div className="space-y-1.5">
-            <label className={rotulo} htmlFor="nf-bairro">Bairro</label>
+            <label className={rotulo} htmlFor="nf-bairro">{tr("Bairro")}</label>
             <input id="nf-bairro" value={d.bairro} onChange={set("bairro")} className={campo} />
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-[1fr_6rem]">
           <div className="space-y-1.5">
-            <label className={rotulo} htmlFor="nf-cidade">Cidade</label>
+            <label className={rotulo} htmlFor="nf-cidade">{tr("Cidade")}</label>
             <input id="nf-cidade" value={d.cidade} onChange={set("cidade")} autoComplete="address-level2" className={campo} />
           </div>
           <div className="space-y-1.5">
@@ -136,7 +139,7 @@ export default function DadosFiscais({
           </button>
           {resposta && <span className={`text-sm ${resposta.ok ? "text-acento" : "text-red-300"}`}>{resposta.texto}</span>}
         </div>
-        <p className="text-xs text-slate-500">Usamos estes dados só para emitir a sua nota fiscal. Eles não aparecem para outros alunos.</p>
+        <p className="text-xs text-slate-500">{tr("Usamos estes dados só para emitir a sua nota fiscal. Eles não aparecem para outros alunos.")}</p>
       </form>
     </section>
   );
