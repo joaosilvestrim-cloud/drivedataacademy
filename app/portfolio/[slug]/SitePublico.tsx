@@ -33,6 +33,13 @@ export default function SitePublico({
   const [universo, setUniverso] = useState(false);
   // O site entra com um fade quando termina de carregar, em vez de piscar branco.
   const [carregou, setCarregou] = useState(false);
+  /* Rede de segurança do fade-in: o srcdoc pode terminar de carregar antes de
+     o React ligar o onLoad, e aí o evento se perde e o site ficava invisível
+     para sempre. Depois de um instante ele aparece de qualquer jeito. */
+  useEffect(() => {
+    const t = setTimeout(() => setCarregou(true), 900);
+    return () => clearTimeout(t);
+  }, []);
 
   /* O site do aluno tem um botão "Explorar meu Universo 4D" que aponta para
      esta mesma página com #universo, em target="_top". Como só o fragmento
