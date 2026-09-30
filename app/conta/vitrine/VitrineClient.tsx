@@ -36,6 +36,8 @@ export type Membro = {
   skills: string[];
   rank: number | null;
   casa: string | null;
+  /** Site do portfólio publicado: o card ganha destaque e o link. */
+  portfolio: { slug: string; projetos: number; competencias: number } | null;
 };
 
 const BADGE_ICONS: Record<string, string> = {
@@ -268,9 +270,39 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
             key={m.id}
             href={`/conta/vitrine/${m.id}`}
             className={`glass group relative flex flex-col overflow-hidden rounded-2xl border p-5 transition-colors ${
-              m.casa ? "border-[#f6d68c]/35 hover:border-[#f6d68c]/60" : "border-white/8 hover:border-brand-green/40"
+              m.portfolio
+                ? "border-brand-green/45 shadow-[0_0_0_1px_rgba(21,196,126,.12),0_18px_40px_-24px_rgba(21,196,126,.6)] hover:border-brand-green/80"
+                : m.casa
+                  ? "border-[#f6d68c]/35 hover:border-[#f6d68c]/60"
+                  : "border-white/8 hover:border-brand-green/40"
             }`}
           >
+            {/* Portfólio no ar: a faixa de destaque no topo do card, com o
+                resumo do que o site prova e o botão para abrir. */}
+            {m.portfolio && (
+              <div className="-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 border-b border-brand-green/20 bg-[radial-gradient(120%_160%_at_0%_0%,rgba(21,196,126,.22),transparent_60%)] px-5 py-2.5">
+                <span className="flex min-w-0 items-center gap-2">
+                  <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true" className="shrink-0">
+                    <path d="M2 12 L7 5 L13 9 L20 3" stroke="#6ce6c7" strokeWidth="1" fill="none" opacity=".7" />
+                    {[[2, 12], [7, 5], [13, 9], [20, 3]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.8" fill="#15c47e" />)}
+                  </svg>
+                  <span className="min-w-0">
+                    <span className="block text-xs font-semibold text-white">{tr("Portfólio no ar")}</span>
+                    <span className="block truncate text-[0.68rem] text-slate-400">
+                      {m.portfolio.projetos} {m.portfolio.projetos === 1 ? tr("projeto") : tr("projetos")}
+                      {m.portfolio.competencias > 0 && ` · ${m.portfolio.competencias} ${tr("competências provadas")}`}
+                    </span>
+                  </span>
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`/portfolio/${m.portfolio!.slug}`, "_blank", "noopener"); }}
+                  className="shrink-0 rounded-lg bg-brand-green px-2.5 py-1 text-[0.7rem] font-semibold text-ink-900 transition-colors hover:bg-white"
+                >
+                  {tr("Ver portfólio")} ↗
+                </button>
+              </div>
+            )}
             {/* Traço da marca na lateral, que acende no hover. */}
             <span
               aria-hidden="true"
@@ -282,7 +314,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
             <div className="flex items-center gap-3">
               <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
               <div className="min-w-0">
-                <p className={`truncate font-display text-base font-bold transition-colors ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa ? "text-[#f6d68c]" : "text-white group-hover:text-brand-green"}`}>
+                <p className={`truncate font-display text-base font-bold transition-colors ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa === "Equipe" ? "text-[#6ce6c7]" : m.casa ? "text-[#f6d68c]" : "text-white group-hover:text-brand-green"}`}>
                   {m.full_name}
                   {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">{tr("(você)")}</span>}
                 </p>

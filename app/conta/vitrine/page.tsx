@@ -16,11 +16,22 @@ export default async function VitrinePage() {
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) redirect("/conta");
 
-  const [{ data: profs }, totals, { data: badgeRows }] = await Promise.all([
+  const [{ data: profs }, totals, { data: badgeRows }, { data: sites }, { data: projetosPublicos }] = await Promise.all([
     admin.from("profiles").select("id, full_name, headline, avatar_url, skills, created_at"),
     pointsByUser(admin),
     admin.from("user_badges").select("user_id, badge"),
+    // Portfólio no ar: o card da vitrine ganha destaque e o link do site.
+    admin.from("portfolio_sites").select("user_id, slug").eq("publicado", true).eq("bloqueado", false),
+    admin.from("portfolio_projects").select("user_id, competencias").eq("publico", true),
   ]);
+  const siteDe = new Map((sites ?? []).map((x: any) => [x.user_id, x.slug as string]));
+  const contagem = new Map<string, { projetos: number; comps: Set<string> }>();
+  for (const p of (projetosPublicos ?? []) as any[]) {
+    const c = contagem.get(p.user_id) ?? { projetos: 0, comps: new Set<string>() };
+    c.projetos++;
+    for (const i of p.competencias?.itens ?? []) c.comps.add(i.id);
+    contagem.set(p.user_id, c);
+  }
 
   const badgesById: Record<string, string[]> = {};
   for (const b of badgeRows ?? []) (badgesById[b.user_id] ||= []).push(b.badge);
@@ -44,6 +55,9 @@ export default async function VitrinePage() {
       skills: listaSkills(p.skills),
       rank: rankById[p.id] ?? null,
       casa: seloDaCasa(badgesById[p.id]),
+      portfolio: siteDe.has(p.id)
+        ? { slug: siteDe.get(p.id)!, projetos: contagem.get(p.id)?.projetos ?? 0, competencias: contagem.get(p.id)?.comps.size ?? 0 }
+        : null,
     }))
     .sort((a, b) => b.pts - a.pts)
     .slice(0, 100);
