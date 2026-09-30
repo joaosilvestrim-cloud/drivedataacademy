@@ -13,7 +13,7 @@ export default function RankingPodium({participants}:{participants:Participant[]
   if(!top.length)return null;
   const ordered=top.length===1?[{person:top[0],rank:1}]:[1,0,2].filter(i=>top[i]).map(i=>({person:top[i],rank:i+1}));
   return <section className={s.podiumSection} aria-label={tr("Pódio do ranking")}>
-    <div className={s.podiumHeading}><span>{tr("DESTAQUES DA COMUNIDADE")}</span><p>{tr("Conhecimento compartilhado merece reconhecimento.")}</p></div>
+    <div className={s.podiumHeading}><span>{tr("Destaques da comunidade")}</span><p>{tr("Conhecimento compartilhado merece reconhecimento.")}</p></div>
     <div className={`${s.podium} ${top.length===1?s.solo:''}`}>
       {ordered.map(({person,rank})=><article key={person.id} className={`${s.podiumCard} ${rank===1?s.first:rank===2?s.second:s.third}`}>
         <div className={s.positionTag}>{rank===1?'OURO':rank===2?'PRATA':'BRONZE'} <span>· {rank}º LUGAR</span></div>

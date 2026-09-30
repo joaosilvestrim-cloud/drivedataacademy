@@ -83,7 +83,7 @@ export default async function RankingPage() {
                 <span className="grid h-8 w-8 place-items-center rounded-full bg-papel text-marca">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d={r.d2} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
-                <span className="font-mono text-lg font-medium tabular-nums text-marca">+{r.pts}</span>
+                <span className="font-mono text-lg font-medium tabular-nums text-marca">{r.pts}</span>
               </div>
               <p className="mt-2 text-sm font-semibold text-tinta">{r.t}</p>
               <p className="mt-0.5 text-xs text-slate-400">{r.d}</p>

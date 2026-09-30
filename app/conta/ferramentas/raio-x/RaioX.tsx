@@ -101,7 +101,7 @@ export default function RaioX({nome="Raio-X do Dashboard",historicoInicial=[],de
   function escolher(chave:string){setSelecionado(chave);const a=laudo?.achados.find(a=>chaveAchado(a)===chave);if(a?.alvo)setPaginaId(a.alvo.paginaId);setVisualId("");}
   function escolherVisual(id:string){setVisualId(id);const a=laudo?.achados.find(a=>a.alvo?.paginaId===pagina?.id&&a.alvo?.visuais.includes(id));if(a){setDimensao("");setPrioridade("");setBusca("");setSelecionado(chaveAchado(a));}}
 
-  return <div className={s.root}>
+  return <div className={`${s.root} escuro`}>
     <div className={s.screenOnly}>
       <Link href="/conta/ferramentas" className={s.back}><ArrowLeft size={15}/> {tr("Todas as ferramentas")}</Link>
       <header className={s.header}><div><p className={s.eyebrow}>{tr("POWER BI / DIAGNÓSTICO")}</p><h1>{nome}</h1><p className={s.subtitle}>{tr("Encontre pontos de atenção, entenda as evidências e organize sua próxima revisão.")}</p></div><span className={s.private}><ShieldCheck size={18}/> {tr("Análise no navegador")}</span></header>

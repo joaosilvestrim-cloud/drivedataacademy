@@ -40,7 +40,7 @@ function Passo({ n, titulo, estado, ultimo = false, children }: { n: number; tit
             ? "bg-brand-green text-sobre-acento"
             : estado === "atual"
               ? "border-2 border-acento bg-[#07130f] text-acento"
-              : "border border-tinta/15 bg-[#080d17] text-slate-500"
+              : "border border-tinta/20 bg-papel text-slate-500"
         }`}
         aria-label={estado === "feito" ? `Passo ${n}, feito` : `Passo ${n}`}
       >
@@ -426,16 +426,16 @@ export default function SiteDoPortfolio({
   );
 
   const botaoForte = "rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-opacity disabled:opacity-40";
-  const botaoLeve = "rounded-xl border border-tinta/15 px-4 py-2.5 text-sm text-tinta transition-colors hover:border-tinta/40 disabled:opacity-40";
+  const botaoLeve = "rounded-full border border-tinta/25 px-4 py-2.5 text-sm font-medium text-tinta transition-colors hover:border-tinta/40 disabled:opacity-40";
 
   return (
     <>
       {revelando && publicado && (
         <UniversoPublico slug={publicado.url.split("/portfolio/")[1]} nome={nome} aoFechar={() => setRevelando(false)} autoplay final={cartaoNoAr} />
       )}
-      <section className="mt-8 overflow-hidden rounded-3xl border border-tinta/10 bg-[#070d18]">
-        <div className="border-b border-tinta/[0.07] bg-[radial-gradient(90%_140%_at_0%_0%,rgba(21,196,126,.14),transparent_60%)] p-5 sm:p-7">
-          <h2 className="font-display text-2xl font-bold text-tinta">Meu site de portfólio</h2>
+      <section className="mt-8 overflow-hidden rounded-[20px] border border-tinta/10 bg-papel">
+        <div className="border-b border-tinta/10 p-6 sm:p-8">
+          <h2 className="text-[1.6rem] font-bold tracking-tight text-obsidian">Meu site de portfólio</h2>
           <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-400">
             A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D, que quem visitar pode girar e ver crescer ao longo da sua carreira.
           </p>
@@ -667,7 +667,7 @@ export default function SiteDoPortfolio({
                           role="radio"
                           aria-checked={sel}
                           onClick={() => setPers((x) => ({ ...x, [g.chave]: v }))}
-                          className={`rounded-md px-3 py-1.5 text-xs transition-colors ${sel ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-tinta"}`}
+                          className={`rounded-full px-3 py-1.5 text-xs transition-colors ${sel ? "bg-marca-verde font-semibold text-sobre-acento" : "text-slate-300 hover:text-tinta"}`}
                         >
                           {r}
                         </button>
@@ -700,14 +700,14 @@ export default function SiteDoPortfolio({
             )}
 
             {prompt && (
-              <div className="mt-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02]">
+              <div className="mt-4 rounded-srf border border-tinta/10 bg-fog">
                 <div className="flex flex-wrap items-center gap-2 border-b border-tinta/[0.07] p-3">
                   <button onClick={() => copiar(prompt, "prompt")} className={botaoForte}>
                     {copiado === "prompt" ? "Copiado" : "Copiar prompt"}
                   </button>
                   <span className="px-1 text-xs text-slate-500">e cole em</span>
                   {IAS.map((ia) => (
-                    <a key={ia.nome} href={ia.url} target="_blank" rel="noopener" className="rounded-lg border border-tinta/10 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-tinta/40 hover:text-tinta">
+                    <a key={ia.nome} href={ia.url} target="_blank" rel="noopener" className="rounded-full border border-tinta/25 px-3 py-1.5 text-sm font-medium text-obsidian transition-colors hover:border-tinta/50">
                       {ia.nome} ↗
                     </a>
                   ))}
@@ -715,7 +715,7 @@ export default function SiteDoPortfolio({
                 </div>
                 <div className="relative">
                   <pre className={`overflow-hidden whitespace-pre-wrap break-words p-4 font-mono text-[11px] leading-relaxed text-slate-400 ${promptAberto ? "max-h-[28rem] overflow-y-auto" : "max-h-28"}`}>{prompt}</pre>
-                  {!promptAberto && <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0a1019] to-transparent" />}
+                  {!promptAberto && <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-fog to-transparent" />}
                 </div>
                 <button onClick={() => setPromptAberto((v) => !v)} className="w-full border-t border-tinta/[0.07] py-2 text-xs text-slate-400 hover:text-tinta">
                   {promptAberto ? "Recolher o prompt" : `Ler o prompt inteiro (${prompt.length.toLocaleString("pt-BR")} caracteres)`}
@@ -732,7 +732,7 @@ export default function SiteDoPortfolio({
                           role="tab"
                           aria-selected={ia === i}
                           onClick={() => setIa(i)}
-                          className={`rounded-md px-3 py-1 text-xs transition-colors ${ia === i ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-tinta"}`}
+                          className={`rounded-full px-3 py-1 text-xs transition-colors ${ia === i ? "bg-marca-verde font-semibold text-sobre-acento" : "text-slate-300 hover:text-tinta"}`}
                         >
                           {g.nome}
                         </button>
@@ -851,7 +851,7 @@ export default function SiteDoPortfolio({
             )}
 
             {previa && (
-              <div className="mt-4 overflow-hidden rounded-2xl border border-tinta/10 bg-[#0b1220]">
+              <div className="mt-4 overflow-hidden rounded-srf border border-tinta/10 bg-fog">
                 <div className="flex items-center justify-between gap-3 border-b border-tinta/[0.07] px-3 py-2">
                   <span className="text-xs text-slate-400">Pré-visualização</span>
                   <div className="flex rounded-lg border border-tinta/10 p-0.5 text-xs" role="tablist" aria-label="Tamanho da tela">
@@ -861,14 +861,14 @@ export default function SiteDoPortfolio({
                         role="tab"
                         aria-selected={aparelho === a}
                         onClick={() => setAparelho(a)}
-                        className={`rounded-md px-3 py-1 capitalize transition-colors ${aparelho === a ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-tinta"}`}
+                        className={`rounded-full px-3 py-1 capitalize transition-colors ${aparelho === a ? "bg-marca-verde font-semibold text-sobre-acento" : "text-slate-300 hover:text-tinta"}`}
                       >
                         {a}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div className={`flex justify-center ${aparelho === "celular" ? "bg-[#05080f] py-4" : ""}`}>
+                <div className={`flex justify-center ${aparelho === "celular" ? "bg-fog py-4" : ""}`}>
                   <iframe
                     title="Pré-visualização do site"
                     srcDoc={envelopar((() => { const l = limparHtmlColado(html); return l.ok ? l.html : html; })())}
