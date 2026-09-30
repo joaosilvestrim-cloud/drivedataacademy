@@ -300,6 +300,7 @@ export default function UniversoPublico({
               cinema={!reduzido}
               girando={tocando && !reduzido}
               pontosExtras={pontosExtras}
+              ceu
               extras={
                 <CarreiraNoEspaco
                   dados={noEspaco!}

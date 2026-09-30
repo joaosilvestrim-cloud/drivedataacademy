@@ -17,6 +17,10 @@ interface Props { catalog: Catalog; scores: Record<string, Score>; visible: stri
      cometas...), e as posições deles para o enquadramento incluir. Só a
      página pública usa. */
   extras?: React.ReactNode;
+  /* Mapa do céu (página pública): sem os centros de área e sem a teia de
+     arcos. As constelações são desenhadas como regiões e figuras pela camada
+     de cima (CarreiraNoEspaco). As ligações só aparecem ao tocar uma estrela. */
+  ceu?: boolean;
   pontosExtras?: Vec3[] }
 
 // Salto elástico: passa um pouco do tamanho final e assenta, como algo que acende.
@@ -222,17 +226,17 @@ function Scene(props: Props) {
   return <>
     <Controls {...props} />
     {[0,1,2].map(layer => <StarLayer key={layer} layer={layer} reduced={reduced} />)}
-    {catalog.areas.filter(area => catalog.competencies.some(c => c.area === area.id && visible.includes(c.id))).map(area => <group key={area.id} position={area.position}><Aparece ativo={cinema}>
+    {!props.ceu && catalog.areas.filter(area => catalog.competencies.some(c => c.area === area.id && visible.includes(c.id))).map(area => <group key={area.id} position={area.position}><Aparece ativo={cinema}>
       <mesh onClick={e => { e.stopPropagation(); onArea(area.id); }}><sphereGeometry args={[cinema ? .3 : .48,32,24]} /><meshBasicMaterial color={area.color} transparent opacity={cinema ? .07 : .13} /></mesh>
       <mesh><sphereGeometry args={[cinema ? .09 : .20,24,16]} /><meshBasicMaterial color={area.color} transparent opacity={cinema ? .7 : 1} /></mesh>
       {(cinema ? [.55] : [.68,.85]).map(r => <mesh key={r} rotation={[.25,.25,0]}><ringGeometry args={[r,r+.009,96]} /><meshBasicMaterial color={area.color} transparent opacity={cinema ? .14 : .22} side={THREE.DoubleSide} /></mesh>)}
       <Label text={area.name.toLocaleUpperCase('pt-BR')} color={area.color} position={[0,.95,0]} size={1.7} />
     </Aparece></group>)}
-    {catalog.competencies.filter(c => visible.includes(c.id)).map(c => {
+    {!props.ceu && catalog.competencies.filter(c => visible.includes(c.id)).map(c => {
       const area = catalog.areas.find(a => a.id === c.area)!;
       return <Connection key={`area-${c.id}`} a={area.position} b={c.position} color={area.color} opacity={selected && selectedArea !== c.area ? .018 : cinema ? .06 : .1} cinema={false} />;
     })}
-    {catalog.relations.filter(r => visible.includes(r.source) && visible.includes(r.target)).map(r => {
+    {catalog.relations.filter(r => visible.includes(r.source) && visible.includes(r.target) && (!props.ceu || r.source === selected || r.target === selected)).map(r => {
       const a = catalog.competencies.find(c => c.id === r.source)!; const b = catalog.competencies.find(c => c.id === r.target)!;
       const active = scores[a.id].score > 0 && scores[b.id].score > 0;
       const focused = r.source === selected || r.target === selected;

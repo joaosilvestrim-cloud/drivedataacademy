@@ -63,6 +63,7 @@ export function layoutDaCarreira(d: UniversoPublico, acesas: string[]) {
   const centroFixo = todas.reduce((a, p) => a.add(p), new THREE.Vector3()).multiplyScalar(1 / Math.max(1, todas.length));
   const raioFixo = Math.max(3, ...todas.map((p) => p.distanceTo(centroFixo)));
   const ordemPlanetas = [...(d.planetas ?? [])].sort((a, b) => a.at.localeCompare(b.at));
+  const eclitica = ordemPlanetas.length ? { centro: centroFixo.clone(), r: raioFixo + 3.5 } : null;
   const planetas = new Map<string, Vec3>();
   ordemPlanetas.forEach((pl, i) => {
     const frac = ordemPlanetas.length > 1 ? i / (ordemPlanetas.length - 1) : 0.5;
@@ -100,7 +101,7 @@ export function layoutDaCarreira(d: UniversoPublico, acesas: string[]) {
   });
 
   const todos: Vec3[] = [...planetas.values(), ...paradas.values(), ...cometas.values(), ...(d.guia ? [guia] : [])];
-  return { comp, centro, raio, planetas, paradas, trajeto, cometas, guia, nebulosas, todos };
+  return { comp, centro, raio, planetas, paradas, trajeto, cometas, guia, nebulosas, todos, eclitica };
 }
 
 function Surgir({ ativo, children }: { ativo: boolean; children: React.ReactNode }) {
@@ -123,6 +124,110 @@ function Linha({ a, b, cor, opacidade }: { a: Vec3; b: Vec3; cor: string; opacid
   }, [a, b, cor, opacidade]);
   useEffect(() => () => { obj.geometry.dispose(); (obj.material as THREE.Material).dispose(); }, [obj]);
   return <primitive object={obj} />;
+}
+
+/* ---------------------------------------------------------- mapa do céu
+
+   O céu de verdade é dividido em 88 constelações oficiais, cada uma com
+   fronteira própria: toda estrela pertence a uma só região. Aqui cada área
+   de competência é uma constelação desenhada assim, com três camadas:
+
+   - a região: um contorno tracejado arredondado em volta das estrelas acesas
+     da área, com o nome na borda, como nas cartas celestes;
+   - a figura: as estrelas ligadas pelo caminho mais curto que passa por
+     todas (árvore geradora mínima), o "desenho" da constelação;
+   - a eclíptica: o anel por onde correm os planetas (projetos), em ordem de
+     data, como o zodíaco na faixa por onde o Sol passa ao longo do ano. */
+
+function Tracejado({ pontos, cor, opacidade, fechado = true }: { pontos: THREE.Vector3[]; cor: string; opacidade: number; fechado?: boolean }) {
+  const obj = useMemo(() => {
+    const g = new THREE.BufferGeometry().setFromPoints(pontos);
+    const m = new THREE.LineDashedMaterial({ color: cor, dashSize: 0.32, gapSize: 0.22, transparent: true, opacity: opacidade, depthWrite: false });
+    const l = fechado ? new THREE.LineLoop(g, m) : new THREE.Line(g, m);
+    l.computeLineDistances();
+    return l;
+  }, [pontos, cor, opacidade, fechado]);
+  useEffect(() => () => { obj.geometry.dispose(); (obj.material as THREE.Material).dispose(); }, [obj]);
+  return <primitive object={obj} />;
+}
+
+/* Contorno arredondado: envoltória convexa das estrelas "engordadas" por um
+   círculo. Uma estrela sozinha vira um círculo; duas, uma cápsula. */
+function regiaoDe(pontos: THREE.Vector3[], folga = 1.9): { contorno: THREE.Vector3[]; topo: THREE.Vector3 } {
+  const z = pontos.reduce((s, p) => s + p.z, 0) / pontos.length;
+  const nuvem: [number, number][] = [];
+  for (const p of pontos) for (let k = 0; k < 16; k++) nuvem.push([p.x + Math.cos((k / 16) * Math.PI * 2) * folga, p.y + Math.sin((k / 16) * Math.PI * 2) * folga]);
+  nuvem.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const cruz = (o: number[], a: number[], b: number[]) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const baixo: [number, number][] = [];
+  for (const p of nuvem) { while (baixo.length >= 2 && cruz(baixo[baixo.length - 2], baixo[baixo.length - 1], p) <= 0) baixo.pop(); baixo.push(p); }
+  const cima: [number, number][] = [];
+  for (let i = nuvem.length - 1; i >= 0; i--) { const p = nuvem[i]; while (cima.length >= 2 && cruz(cima[cima.length - 2], cima[cima.length - 1], p) <= 0) cima.pop(); cima.push(p); }
+  const casco = [...baixo.slice(0, -1), ...cima.slice(0, -1)];
+  const contorno = casco.map(([x, y]) => new THREE.Vector3(x, y, z));
+  const topo = contorno.reduce((a, b) => (b.y > a.y ? b : a), contorno[0]);
+  return { contorno, topo };
+}
+
+/* Figura da constelação: árvore geradora mínima (Prim) entre as estrelas acesas. */
+function figuraDe(pontos: THREE.Vector3[]): [number, number][] {
+  if (pontos.length < 2) return [];
+  const dentro = new Set([0]);
+  const arestas: [number, number][] = [];
+  while (dentro.size < pontos.length) {
+    let melhor: [number, number, number] | null = null;
+    for (const i of dentro) for (let j = 0; j < pontos.length; j++) {
+      if (dentro.has(j)) continue;
+      const d = pontos[i].distanceTo(pontos[j]);
+      if (!melhor || d < melhor[2]) melhor = [i, j, d];
+    }
+    arestas.push([melhor![0], melhor![1]]);
+    dentro.add(melhor![1]);
+  }
+  return arestas;
+}
+
+function MapaDoCeu({ dados, acesas, eclitica }: { dados: UniversoPublico; acesas: string[]; eclitica: { centro: THREE.Vector3; r: number } | null }) {
+  const constelacoes = useMemo(() => {
+    const acesasSet = new Set(acesas);
+    return dados.catalog.areas
+      .map((a: any) => {
+        const estrelas = dados.catalog.competencies.filter((c) => c.area === a.id && acesasSet.has(c.id)).map((c) => v(c.position));
+        if (!estrelas.length) return null;
+        return { id: a.id as string, nome: String(a.name), cor: String(a.color), estrelas, ...regiaoDe(estrelas), figura: figuraDe(estrelas) };
+      })
+      .filter(Boolean) as { id: string; nome: string; cor: string; estrelas: THREE.Vector3[]; contorno: THREE.Vector3[]; topo: THREE.Vector3; figura: [number, number][] }[];
+  }, [dados, acesas]);
+
+  const anel = useMemo(() => {
+    if (!eclitica) return null;
+    const pts: THREE.Vector3[] = [];
+    for (let k = 0; k < 120; k++) {
+      const t = (k / 120) * Math.PI * 2;
+      pts.push(new THREE.Vector3(eclitica.centro.x + Math.cos(t) * eclitica.r, eclitica.centro.y + Math.sin(t) * eclitica.r * 0.78, eclitica.centro.z + 2.3));
+    }
+    return pts;
+  }, [eclitica]);
+
+  return (
+    <>
+      {constelacoes.map((c) => (
+        <group key={c.id}>
+          <Tracejado pontos={c.contorno} cor={c.cor} opacidade={0.22} />
+          {c.figura.map(([i, j]) => (
+            <Linha key={`${i}-${j}`} a={[c.estrelas[i].x, c.estrelas[i].y, c.estrelas[i].z]} b={[c.estrelas[j].x, c.estrelas[j].y, c.estrelas[j].z]} cor={c.cor} opacidade={0.5} />
+          ))}
+          <Label text={c.nome.toLocaleUpperCase("pt-BR")} position={[c.topo.x, c.topo.y + 0.55, c.topo.z]} color={c.cor} size={1.6} />
+        </group>
+      ))}
+      {anel && (
+        <>
+          <Tracejado pontos={anel} cor="#ffd27a" opacidade={0.16} />
+          <Label text="eclíptica da carreira" position={[anel[0].x + 0.4, anel[0].y + 0.6, anel[0].z]} color="#c9a860" size={1.2} />
+        </>
+      )}
+    </>
+  );
 }
 
 const clicavel = (onClick: () => void) => ({
@@ -320,6 +425,7 @@ export default function CarreiraNoEspaco({
   return (
     <>
       {/* Luz só para os planetas: as estrelas usam material que não recebe luz. */}
+      <MapaDoCeu dados={dados} acesas={acesas} eclitica={lay.eclitica} />
       <ambientLight intensity={0.55} />
       <directionalLight position={[8, 10, 12]} intensity={1.1} />
 

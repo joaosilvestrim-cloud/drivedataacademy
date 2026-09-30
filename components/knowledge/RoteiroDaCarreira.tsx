@@ -13,7 +13,7 @@ import type { Selecao } from "./CarreiraNoEspaco";
    para um capítulo, pausar e tocar numa linha para ver o objeto de perto. */
 
 export type Alvo = { comp?: string; extra?: Selecao };
-export type Tipo = "nave" | "planeta" | "estrela" | "reforco" | "perfil" | "cometa" | "lua" | "sinal" | "formacao" | "guia";
+export type Tipo = "nave" | "planeta" | "estrela" | "reforco" | "perfil" | "cometa" | "lua" | "sinal" | "formacao" | "guia" | "constelacao" | "ecliptica";
 export type LinhaDoRoteiro = { tipo: Tipo; texto: string; explica: string; alvo?: Alvo };
 export type Capitulo = { at: string; titulo: string; linhas: LinhaDoRoteiro[] };
 
@@ -151,6 +151,10 @@ export function Simbolo({ tipo }: { tipo: Tipo }) {
       return <svg {...p}><circle cx="8" cy="8" r="1.8" fill="#8ff3d6" /><circle cx="8" cy="8" r="4.2" fill="none" stroke="#8ff3d6" strokeWidth="1" opacity=".7" /><circle cx="8" cy="8" r="6.8" fill="none" stroke="#8ff3d6" strokeWidth="1" opacity=".35" /></svg>;
     case "formacao":
       return <svg {...p}><circle cx="8" cy="8" r="4.5" fill="none" stroke="#9fb3c8" strokeWidth="1.2" strokeDasharray="2 1.6" /></svg>;
+    case "constelacao":
+      return <svg {...p}><path d="M3 5 L9 3 L14 7 L12 13 L5 12 Z" fill="none" stroke="#9fb3c8" strokeWidth="1" strokeDasharray="1.6 1.2" /><path d="M6 6 L9 5 L11 9" stroke="#6dffb0" strokeWidth="1.1" fill="none" /><circle cx="6" cy="6" r="1.3" fill="#6dffb0" /><circle cx="9" cy="5" r="1.3" fill="#6dffb0" /><circle cx="11" cy="9" r="1.3" fill="#6dffb0" /></svg>;
+    case "ecliptica":
+      return <svg {...p}><ellipse cx="8" cy="8" rx="7" ry="4.5" fill="none" stroke="#ffd27a" strokeWidth="1" strokeDasharray="1.6 1.2" /><circle cx="3" cy="10" r="1.6" fill="#b39cff" /><circle cx="13" cy="10" r="1.6" fill="#b39cff" /></svg>;
     case "guia":
       return <svg {...p}><path d="M8 1.5 L9.6 6.4 L14.5 8 L9.6 9.6 L8 14.5 L6.4 9.6 L1.5 8 L6.4 6.4 Z" fill="#ffd27a" /></svg>;
   }
@@ -168,9 +172,13 @@ const NOME_DO_TIPO: Record<Tipo, string> = {
   sinal: "Sinal",
   formacao: "Em formação",
   guia: "Estrela-guia",
+  constelacao: "Constelação",
+  ecliptica: "Eclíptica",
 };
 
 const LEGENDA: { tipo: Tipo; nome: string }[] = [
+  { tipo: "constelacao", nome: "Constelação: uma área de competências, com fronteira e figura" },
+  { tipo: "ecliptica", nome: "Eclíptica: o anel dos projetos, em ordem de data" },
   { tipo: "estrela", nome: "Estrela: competência provada em projeto" },
   { tipo: "planeta", nome: "Planeta: projeto" },
   { tipo: "nave", nome: "Nave e rota: trajetória profissional" },
@@ -286,7 +294,7 @@ export default function RoteiroDaCarreira({
       <details className="hidden border-t border-white/10 px-4 py-2.5 sm:block">
         <summary className="cursor-pointer text-xs font-semibold text-slate-300 hover:text-white">Como ler o espaço</summary>
         <ul className="mt-2 flex flex-col gap-1.5">
-          {LEGENDA.filter((l) => tipos.has(l.tipo) || l.tipo === "estrela").map((l) => (
+          {LEGENDA.filter((l) => tipos.has(l.tipo) || l.tipo === "estrela" || l.tipo === "constelacao" || (l.tipo === "ecliptica" && tipos.has("planeta"))).map((l) => (
             <li key={l.tipo} className="flex items-start gap-2 text-xs text-slate-400">
               <Simbolo tipo={l.tipo} />
               {l.nome}
