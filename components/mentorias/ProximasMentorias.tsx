@@ -110,7 +110,7 @@ export default async function ProximasMentorias({
             </h2>
             <span className="inline-flex items-center gap-2.5 rounded-full border border-tinta/12 bg-papel px-4 py-1.5">
               <span aria-hidden className={`block h-2 w-2 rounded-full bg-red-500 ${s.ponto}`} />
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">{tr("Ao vivo")}</span>
+              <span className="text-xs font-semibold text-slate-200">{tr("Ao vivo")}</span>
             </span>
           </div>
 
@@ -168,9 +168,9 @@ export default async function ProximasMentorias({
                       {dataCurta(m.starts_at)} · {hora(m.starts_at)}
                     </time>
                     {/* A mais próxima é a que interessa agora. */}
-                    {i === 0 && <span className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-cyan/80">{tr("Próxima")}</span>}
+                    {i === 0 && <span className="text-xs font-semibold text-brand-cyan/80">{tr("Próxima")}</span>}
                   </p>
-                  <span className={`ml-2 inline-block rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider ${m.kind === "mentoria" ? "bg-brand-blue/15 text-brand-teal" : "bg-red-500/15 text-red-300"}`}>
+                  <span className={`ml-2 inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${m.kind === "mentoria" ? "bg-brand-blue/15 text-brand-teal" : "bg-red-500/15 text-red-300"}`}>
                     {m.kind === "mentoria" ? "Mentoria" : "Live"}
                   </span>
                   <h3 className="mt-3 font-display text-lg font-semibold leading-snug text-brand-cyan">{m.title}</h3>

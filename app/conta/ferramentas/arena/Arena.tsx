@@ -53,7 +53,7 @@ function Tabela({ dados, limite = 12 }: { dados: Resultado; limite?: number }) {
         <thead>
           <tr className="border-b border-tinta/10">
             {dados.colunas.map((c, i) => (
-              <th key={i} className="whitespace-nowrap px-3 py-2 font-mono text-[0.7rem] uppercase tracking-wide text-slate-400">{c}</th>
+              <th key={i} className="whitespace-nowrap px-3 py-2 font-mono text-[0.7rem] text-slate-400">{c}</th>
             ))}
           </tr>
         </thead>
@@ -188,8 +188,8 @@ export default function Arena({ semente }: { semente: number }) {
         {/* Enunciado */}
         <div data-tour="arena-enunciado" className="mt-4 rounded-[20px] border border-tinta/10 bg-papel p-6">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={`rounded-full border px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide ${NIVEL[desafio.nivel]}`}>{desafio.nivel}</span>
-            <span className="text-[0.7rem] uppercase tracking-wider text-slate-500">{desafio.assunto}</span>
+            <span className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${NIVEL[desafio.nivel]}`}>{desafio.nivel}</span>
+            <span className="text-[0.7rem] text-slate-500 font-medium">{desafio.assunto}</span>
           </div>
           <h2 className="mt-2 font-display text-xl font-bold text-tinta">{desafio.titulo}</h2>
           <p className="mt-3 whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-300">{desafio.enunciado}</p>
@@ -247,7 +247,7 @@ export default function Arena({ semente }: { semente: number }) {
 
             {veredito.resultado && (
               <div className="mt-4">
-                <p className="text-[0.7rem] uppercase tracking-wider text-slate-500">{tr("O que a sua consulta devolveu")}</p>
+                <p className="text-[0.7rem] text-slate-500 font-medium">{tr("O que a sua consulta devolveu")}</p>
                 <div className="mt-2 overflow-hidden rounded-2xl border border-tinta/8 bg-ink-700">
                   <Tabela dados={veredito.resultado} />
                 </div>
@@ -271,7 +271,7 @@ export default function Arena({ semente }: { semente: number }) {
         <div data-tour="arena-progresso" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
           <div className="flex items-end justify-between gap-3">
             <div>
-              <p className="text-[0.7rem] uppercase tracking-wider text-slate-500">{tr("Resolvidos")}</p>
+              <p className="text-[0.7rem] text-slate-500 font-medium">{tr("Resolvidos")}</p>
               <p className="font-display text-2xl font-bold text-tinta">
                 {feitos}<span className="text-base text-slate-500">/{FAMILIAS.length}</span>
               </p>

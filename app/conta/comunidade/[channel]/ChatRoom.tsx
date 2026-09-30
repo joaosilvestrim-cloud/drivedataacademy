@@ -22,13 +22,14 @@ type Msg = {
 type Channel = { id: string; slug: string; name: string; description: string | null };
 
 const TAGS: { k: string; c: string }[] = [
-  { k: "Dúvida", c: "#f59e0b" },
-  { k: "Conquista", c: "#34e8a0" },
-  { k: "Experiência", c: "#3b9dff" },
-  { k: "Novidade", c: "#a78bfa" },
-  { k: "Comunidade", c: "#2ee6d6" },
+  // Tons que leem bem no claro e no escuro. Conquista usa o verde do logo, escurecido.
+  { k: "Dúvida", c: "#c2410c" },
+  { k: "Conquista", c: "#1f9d3a" },
+  { k: "Experiência", c: "#0b62cf" },
+  { k: "Novidade", c: "#7c3aed" },
+  { k: "Comunidade", c: "#0e7490" },
 ];
-const tagColor = (t: string | null) => TAGS.find((x) => x.k === t)?.c || "#94a3b8";
+const tagColor = (t: string | null) => TAGS.find((x) => x.k === t)?.c || "#5f6b7c";
 
 const CHANNEL_COLORS: Record<string, [string, string]> = {
   geral: ["#34e8a0", "#2ee6d6"],
@@ -357,7 +358,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
         </div>
 
         <nav className="flex-1 overflow-y-auto px-2 py-3">
-          <p className="px-2 pb-1.5 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">{tr("Canais de texto")}</p>
+          <p className="px-2 pb-1.5 text-xs font-semibold text-slate-500">{tr("Canais de texto")}</p>
           {souEquipe && totalAguardando > 0 && (
             <div className="mx-1 mb-3 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2.5">
               <p className="flex items-center gap-1.5 text-[0.78rem] font-bold text-red-300">
@@ -406,13 +407,13 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
         </nav>
 
         {/* Barra do próprio aluno, no rodapé, como no Discord. */}
-        <div className="flex items-center gap-2.5 border-t border-tinta/10 bg-black/25 px-3 py-2.5">
+        <div className="flex items-center gap-2.5 border-t border-tinta/10 bg-papel px-3 py-3">
           <MedalAvatar rank={medalRanks[me.id]} casa={me.casa ?? null} name={me.name} src={me.avatar ?? null} size="sm" />
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[0.85rem] font-semibold text-slate-200">{me.name}</span>
-            <span className="block text-[0.65rem] text-acento">{tr("disponível")}</span>
+            <span className="block truncate text-[0.85rem] font-semibold text-obsidian">{me.name}</span>
+            <span className="flex items-center gap-1 text-xs text-slate-500"><span className="h-1.5 w-1.5 rounded-full bg-marca-verde" />{tr("disponível")}</span>
           </span>
-          <Link href="/conta/perfil" title={tr("Editar meu perfil")} className="grid h-7 w-7 shrink-0 place-items-center rounded text-slate-500 transition-colors hover:bg-tinta/5 hover:text-tinta">
+          <Link href="/conta/perfil" title={tr("Editar meu perfil")} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-slate-500 transition-colors hover:bg-fog hover:text-tinta">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="1.7" /><path d="M4 12a8 8 0 01.2-1.8l-2-1.5 2-3.4 2.3 1a8 8 0 013.1-1.8L10 2h4l.4 2.5a8 8 0 013.1 1.8l2.3-1 2 3.4-2 1.5a8 8 0 010 3.6l2 1.5-2 3.4-2.3-1a8 8 0 01-3.1 1.8L14 22h-4l-.4-2.5a8 8 0 01-3.1-1.8l-2.3 1-2-3.4 2-1.5A8 8 0 014 12z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" /></svg>
           </Link>
         </div>
@@ -422,7 +423,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
       <div className="relative flex min-w-0 flex-1 flex-col bg-ink-800">
         <header className="relative z-10 flex items-center gap-3 border-b border-tinta/10 px-4 py-3.5 sm:px-5">
           <span className="text-2xl font-normal leading-none text-slate-600">#</span>
-          <span className="font-display text-lg font-bold text-tinta">{channel.name}</span>
+          <span className="text-lg font-bold tracking-tight text-obsidian">{channel.name}</span>
           {channel.description && (
             <span className="hidden truncate border-l border-tinta/10 pl-3 text-sm text-slate-500 md:block">{channel.description}</span>
           )}
@@ -431,7 +432,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
             <Link
               href="/conta/ranking"
               title={tr("Ganhe pontos ajudando: solução +10, curtida +2, participar +1/dia")}
-              className="hidden items-center gap-1.5 rounded px-2 py-1 text-[0.7rem] font-medium text-amber-200/90 transition-colors hover:bg-tinta/5 sm:flex"
+              className="hidden items-center gap-1.5 rounded-full border border-tinta/15 px-3 py-1.5 text-xs font-semibold text-charcoal transition-colors hover:border-tinta/40 hover:text-obsidian sm:flex"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0zM7 4H4v2a3 3 0 003 3M17 4h3v2a3 3 0 01-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               {tr("Pontos")}
@@ -449,7 +450,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                 onChange={(e) => setBusca(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
                 placeholder={tr("Buscar")}
-                className="w-32 rounded bg-black/40 py-2 pl-8 pr-3 text-[0.8rem] text-tinta placeholder:text-slate-500 outline-none transition-all focus:w-52 sm:w-40 sm:focus:w-64"
+                className="w-32 rounded-full border border-tinta/15 bg-papel py-1.5 pl-8 pr-3 text-[0.8rem] text-tinta placeholder:text-slate-500 outline-none transition-all focus:w-52 focus:border-marca sm:w-40 sm:focus:w-64"
               />
             </div>
 
@@ -543,7 +544,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                 {newDay && (
                   <div className="mx-4 my-4 flex items-center gap-3">
                     <div className="h-px flex-1 bg-tinta/[0.08]" />
-                    <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-slate-500">{dayStr(m.created_at)}</span>
+                    <span className="text-xs font-medium text-slate-500">{dayStr(m.created_at)}</span>
                     <div className="h-px flex-1 bg-tinta/[0.08]" />
                   </div>
                 )}
@@ -567,8 +568,8 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                         <span className={`text-[1.05rem] font-semibold ${m.casa === "Oficial" ? "text-sky-300" : m.casa === "Equipe" ? "text-teal-300" : m.casa ? "text-amber-300" : m.user_id === me.id ? "text-acento" : "text-tinta"}`}>{m.name}</span>
                         <SeloCasa label={m.casa} />
                         {online.has(m.user_id) && <span className="h-1.5 w-1.5 rounded-full bg-brand-green" title={tr("online")} />}
-                        {m.tag && <span className="rounded px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{tr(m.tag)}</span>}
-                        {m.solved && <span className="rounded bg-brand-green/15 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase text-acento">{tr("resolvido")}</span>}
+                        {m.tag && <span className="rounded-full px-2 py-0.5 text-[0.7rem] font-semibold" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}1a` }}>{tr(m.tag)}</span>}
+                        {m.solved && <span className="rounded-full bg-marca-nevoa px-2 py-0.5 text-[0.7rem] font-semibold text-marca">{tr("resolvido")}</span>}
                         <span className="text-[0.72rem] text-slate-500">{timeStr(m.created_at)}</span>
                       </p>
                     )}
@@ -682,7 +683,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
             </div>
           )}
 
-          <div className={`flex items-center gap-1 bg-ink-700 px-2 ${replyTo || pendingImage ? "rounded-b-lg" : "rounded-lg"}`}>
+          <div className={`flex items-center gap-1 border border-tinta/15 bg-papel px-2 transition-colors focus-within:border-marca ${replyTo || pendingImage ? "rounded-b-[20px]" : "rounded-[20px]"}`}>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.currentTarget.value = ""; }} />
             <button onClick={() => fileRef.current?.click()} disabled={uploading} className="grid h-12 w-10 shrink-0 place-items-center text-slate-400 transition-colors hover:text-tinta disabled:opacity-40" aria-label={tr("Anexar foto")} title={tr("Anexar foto")}>
               {uploading ? (
@@ -715,8 +716,8 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                   key={t.k}
                   onClick={() => setTag(tag === t.k ? null : t.k)}
                   title={`${tr("Marcar como")} ${tr(t.k)}`}
-                  className="h-7 rounded px-2 text-[0.7rem] font-semibold uppercase tracking-wide transition-colors"
-                  style={tag === t.k ? { color: "#04140d", background: t.c } : { color: `${t.c}cc` }}
+                  className="h-7 rounded-full border px-2.5 text-xs font-semibold transition-colors"
+                  style={tag === t.k ? { color: "#fff", background: t.c, borderColor: t.c } : { color: t.c, borderColor: `${t.c}40` }}
                 >
                   {tr(t.k)}
                 </button>
@@ -729,15 +730,15 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
 
           {/* No celular as marcações não cabem ao lado do campo. */}
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5 md:hidden">
-            <span className="text-[0.65rem] uppercase tracking-wider text-slate-500">{tr("Marcar")}</span>
+            <span className="text-xs text-slate-500">{tr("Marcar")}</span>
             {TAGS.map((t) => (
-              <button key={t.k} onClick={() => setTag(tag === t.k ? null : t.k)} className="rounded border px-2 py-0.5 text-[0.65rem] font-medium" style={tag === t.k ? { color: "#04140d", background: t.c, borderColor: t.c } : { color: t.c, borderColor: `${t.c}55` }}>
+              <button key={t.k} onClick={() => setTag(tag === t.k ? null : t.k)} className="rounded-full border px-2.5 py-0.5 text-xs font-medium" style={tag === t.k ? { color: "#fff", background: t.c, borderColor: t.c } : { color: t.c, borderColor: `${t.c}55` }}>
                 {tr(t.k)}
               </button>
             ))}
           </div>
 
-          <p className="mt-2 px-1 text-[0.72rem] text-slate-600">{tr("Enter envia · solução dá +10 pontos a quem respondeu")}</p>
+          <p className="mt-2 px-2 text-xs text-slate-500">{tr("Enter envia · solução dá +10 pontos a quem respondeu")}</p>
         </div>
       </div>
 
@@ -746,7 +747,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
         <aside className="hidden w-60 shrink-0 flex-col overflow-y-auto border-l border-tinta/10 bg-ink-700 py-5 lg:flex xl:w-72">
           {grupos.map((g) => (
             <div key={g.titulo} className="mb-5 px-3.5">
-              <p className="mb-2 px-1 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">
+              <p className="mb-2 px-1 text-xs font-semibold text-slate-500">
                 {g.titulo} — {g.gente.length}
               </p>
               {g.gente.map((p) => (

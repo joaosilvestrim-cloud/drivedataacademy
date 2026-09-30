@@ -62,7 +62,7 @@ export default async function TicketPage({ params }: { params: { id: string } })
             <div key={m.id} className={`flex gap-3 ${mine ? "flex-row-reverse" : ""}`}>
               {!mine && <Mascot className="h-9 w-9 shrink-0" />}
               <div className={`max-w-[80%] rounded-[20px] border px-4 py-3 ${mine ? "border-acento/20 bg-brand-green/[0.08]" : "border-tinta/10 bg-papel"}`}>
-                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">
+                <p className="text-[0.7rem] font-semibold text-slate-400">
                   {mine ? "Você" : m.author === "ai" ? "Assistente (IA)" : "Time DriveData"}
                   <span className="ml-2 font-normal normal-case text-slate-500">{fmt(m.created_at)}</span>
                 </p>

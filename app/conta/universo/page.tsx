@@ -44,8 +44,8 @@ function Passo({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="font-display text-lg font-bold text-tinta">{titulo}</h3>
-          {feito && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-bold uppercase text-acento">{tr("Concluído")}</span>}
-          {agora && <span className="rounded-full bg-tinta/10 px-2 py-0.5 text-[0.6rem] font-bold uppercase text-slate-200">{tr("Comece por aqui")}</span>}
+          {feito && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-xs font-bold text-acento">{tr("Concluído")}</span>}
+          {agora && <span className="rounded-full bg-tinta/10 px-2 py-0.5 text-xs font-bold text-slate-200">{tr("Comece por aqui")}</span>}
         </div>
         <div className="mt-1.5 text-sm leading-relaxed text-slate-400">{children}</div>
         <Link

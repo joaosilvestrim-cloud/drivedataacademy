@@ -76,17 +76,17 @@ export default function CoursePlayer({
   const pct = flatIds.length ? Math.round((feitas / flatIds.length) * 100) : 0;
 
   const Sidebar = useMemo(() => (
-    <div className="overflow-hidden rounded-2xl border border-tinta/8 bg-tinta/[0.02]">
+    <div className="overflow-hidden rounded-[20px] border border-tinta/10 bg-papel shadow-painel">
       {/* Onde o aluno esta no curso inteiro. Antes isso so existia como um
           "0/11" miudo dentro de cada modulo, e nao somava o curso. */}
-      <div className="border-b border-tinta/5 px-4 py-4">
+      <div className="border-b border-tinta/10 px-4 py-4">
         <div className="flex items-baseline justify-between gap-2">
           <p className="text-sm font-semibold text-tinta">{tr("Seu progresso")}</p>
           <p className="font-mono text-xs tabular-nums text-slate-400">
             <span className="text-acento">{feitas}</span>/{flatIds.length}
           </p>
         </div>
-        <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-tinta/8">
+        <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-fog">
           <div
             className="h-full rounded-full bg-marca-verde transition-[width] duration-500"
             style={{ width: `${pct}%` }}
@@ -98,7 +98,7 @@ export default function CoursePlayer({
         const total = m.lessons.length;
         const completed = m.lessons.filter((l) => done.has(l.id)).length;
         return (
-          <div key={m.id} className="border-b border-tinta/5 last:border-0">
+          <div key={m.id} className="border-b border-tinta/10 last:border-0">
             <div className="flex items-center justify-between gap-2 px-4 pb-1 pt-4">
               <p className="min-w-0 truncate text-sm font-semibold text-tinta">{m.title}</p>
               {m.locked ? (
@@ -129,7 +129,7 @@ export default function CoursePlayer({
                   return (
                     <li key={l.id} className="relative">
                       {trilho}
-                      <div className="flex cursor-not-allowed gap-3 rounded-lg py-2.5 pl-3 pr-2.5 text-sm text-slate-500">
+                      <div className="flex cursor-not-allowed gap-3 rounded-srf py-2.5 pl-3 pr-2.5 text-sm text-slate-500">
                         <span className="relative z-10 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-tinta/12 bg-ink-900 text-slate-600">
                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 10V8a6 6 0 1112 0v2M5 10h14v10H5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         </span>
@@ -144,18 +144,18 @@ export default function CoursePlayer({
                     <button
                       onClick={() => select(l.id)}
                       aria-current={active ? "true" : undefined}
-                      className={`relative flex w-full gap-3 rounded-lg py-2.5 pl-3 pr-2.5 text-left transition-colors ${active ? "bg-tinta/[0.07]" : "hover:bg-tinta/[0.04]"}`}
+                      className={`relative flex w-full gap-3 rounded-srf py-2.5 pl-3 pr-2.5 text-left transition-colors ${active ? "bg-marca-nevoa" : "hover:bg-fog"}`}
                     >
                       {/* Marca da aula aberta: uma barra na borda, nao um
                           brilho. O olho acha na hora e nada pisca. */}
-                      {active ? <span aria-hidden="true" className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-brand-green" /> : null}
+                      
                       <span
                         className={`relative z-10 grid h-6 w-6 shrink-0 place-items-center rounded-full border text-[0.7rem] font-semibold tabular-nums transition-colors ${
                           isDone
-                            ? "border-acento bg-brand-green text-sobre-acento"
+                            ? "border-marca-verde bg-marca-verde text-sobre-acento"
                             : active
-                              ? "border-acento bg-ink-900 text-acento"
-                              : "border-tinta/15 bg-ink-900 text-slate-500"
+                              ? "border-marca bg-marca text-papel"
+                              : "border-tinta/20 bg-papel text-slate-500"
                         }`}
                       >
                         {isDone ? (
@@ -183,8 +183,8 @@ export default function CoursePlayer({
         );
       })}
       {quiz && (
-        <div className="border-t border-tinta/5 p-2">
-          <Link href={`/aprender/${slug}/avaliacao`} className="flex items-center gap-3 rounded-lg py-2.5 pl-3 pr-2.5 text-sm font-medium text-acento transition-colors hover:bg-tinta/[0.04]">
+        <div className="border-t border-tinta/10 p-2">
+          <Link href={`/aprender/${slug}/avaliacao`} className="flex items-center gap-3 rounded-srf py-2.5 pl-3 pr-2.5 text-sm font-medium text-acento transition-colors hover:bg-tinta/[0.04]">
             <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full border border-acento/40">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
@@ -199,11 +199,11 @@ export default function CoursePlayer({
     <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
       <div className="min-w-0">
         {!current ? (
-          <div className="rounded-2xl border border-dashed border-tinta/10 px-6 py-20 text-center text-slate-400">{tr("Este curso ainda não tem aulas publicadas.")}</div>
+          <div className="rounded-[20px] border border-dashed border-tinta/20 bg-papel px-6 py-20 text-center text-slate-400">{tr("Este curso ainda não tem aulas publicadas.")}</div>
         ) : (
           <>
             {current.type === "materiais" ? (
-              <div className="overflow-hidden rounded-2xl border border-tinta/10 bg-ink-900">
+              <div className="overflow-hidden rounded-[20px] bg-papel shadow-painel">
                 <img src="/banners/cases-reais-prontos.png" alt={tr("Cases reais prontos, disponíveis para download")} className="block aspect-video w-full object-cover" />
               </div>
             ) : current.video_provider === "panda" && current.video_id ? (
@@ -212,30 +212,30 @@ export default function CoursePlayer({
               </ProtectedPlayer>
             ) : current.yt ? (
               <ProtectedPlayer>
-                <div className="overflow-hidden rounded-2xl border border-tinta/10 bg-black">
+                <div className="overflow-hidden rounded-[20px] bg-black shadow-overlay">
                   <div className="relative aspect-video">
                     <iframe key={current.id} className="absolute inset-0 h-full w-full" src={`https://www.youtube.com/embed/${current.yt}?rel=0&modestbranding=1`} title={current.title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
                   </div>
                 </div>
               </ProtectedPlayer>
             ) : current.type === "text" ? (
-              <article className="rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-6 sm:p-8">
+              <article className="rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-8">
                 <div className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200">{current.content || "—"}</div>
               </article>
             ) : (
-              <div className="grid aspect-video place-items-center rounded-2xl border border-tinta/10 bg-tinta/[0.02] text-slate-500">{tr("Aula em preparação.")}</div>
+              <div className="grid aspect-video place-items-center rounded-[20px] border border-tinta/10 bg-papel text-slate-500">{tr("Aula em preparação.")}</div>
             )}
 
             <p className="mt-5 text-xs font-medium text-marca">{tr("Aula")} {idx + 1} de {flatIds.length}</p>
-            <h1 className="mt-1 font-display text-2xl font-bold text-tinta">{current.title}</h1>
+            <h1 className="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight text-obsidian">{current.title}</h1>
 
             {current.type === "materiais" && (
               <div className="mt-5">
                 {current.content && <p className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-300">{current.content}</p>}
                 {(current.arquivos || []).length === 0 ? (
-                  <p className="mt-4 rounded-2xl border border-dashed border-tinta/10 px-5 py-8 text-center text-sm text-slate-500">{tr("Os arquivos desta aula estão sendo preparados.")}</p>
+                  <p className="mt-4 rounded-[20px] border border-dashed border-tinta/20 bg-papel px-5 py-8 text-center text-sm text-slate-500">{tr("Os arquivos desta aula estão sendo preparados.")}</p>
                 ) : (
-                  <ul className="mt-4 divide-y divide-tinta/5 rounded-2xl border border-tinta/8 bg-tinta/[0.02]">
+                  <ul className="mt-4 divide-y divide-tinta/10 rounded-[20px] border border-tinta/10 bg-papel">
                     {current.arquivos.map((a) => {
                       const ext = a.file_name ? extensao(a.file_name) : "LINK";
                       return (
@@ -246,13 +246,13 @@ export default function CoursePlayer({
                             rel="noreferrer"
                             className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-tinta/[0.04]"
                           >
-                            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-green/10 font-mono text-[0.65rem] font-bold text-acento">{ext || "ARQ"}</span>
+                            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-srf bg-marca-nevoa font-mono text-[0.65rem] font-bold text-marca">{ext || "ARQ"}</span>
                             <span className="min-w-0 flex-1">
                               <span className="block truncate text-sm font-semibold text-tinta">{a.title}</span>
                               {a.description && <span className="mt-0.5 line-clamp-2 block text-xs text-slate-400">{a.description}</span>}
                             </span>
                             {a.file_size ? <span className="hidden shrink-0 font-mono text-xs tabular-nums text-slate-500 sm:block">{tamanhoLegivel(a.file_size)}</span> : null}
-                            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-200 group-hover:border-acento/50 group-hover:text-acento">
+                            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-tinta/25 px-3 py-1.5 text-xs font-semibold text-obsidian group-hover:border-marca">
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                               {a.file_name ? "Baixar" : "Abrir"}
                             </span>
@@ -269,9 +269,9 @@ export default function CoursePlayer({
                 protegida. Antes só aparecia na aula do tipo "materiais", então
                 anexo de aula de vídeo existia no banco e nunca chegava aqui. */}
             {current.type !== "materiais" && (current.arquivos || []).length > 0 && (
-              <div className="mt-5 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+              <div className="mt-5 rounded-[20px] border border-tinta/10 bg-papel p-5">
                 <p className="text-sm font-semibold text-tinta">{tr("Materiais de apoio")}</p>
-                <ul className="mt-3 divide-y divide-tinta/5">
+                <ul className="mt-3 divide-y divide-tinta/10">
                   {current.arquivos.map((a) => {
                     const ext = a.file_name ? extensao(a.file_name) : "LINK";
                     return (
@@ -282,7 +282,7 @@ export default function CoursePlayer({
                           rel="noreferrer"
                           className="group flex items-center gap-3 py-3 transition-colors hover:bg-tinta/[0.03]"
                         >
-                          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-green/10 font-mono text-[0.6rem] font-bold text-acento">{ext || "ARQ"}</span>
+                          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-srf bg-marca-nevoa font-mono text-[0.6rem] font-bold text-marca">{ext || "ARQ"}</span>
                           <span className="min-w-0 flex-1">
                             <span className="block truncate text-sm text-tinta">{a.title}</span>
                             {a.description && <span className="mt-0.5 line-clamp-1 block text-xs text-slate-500">{a.description}</span>}
@@ -298,12 +298,12 @@ export default function CoursePlayer({
             )}
 
             {materials.length > 0 && (
-              <div className="mt-5 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+              <div className="mt-5 rounded-[20px] border border-tinta/10 bg-papel p-5">
                 <p className="text-sm font-semibold text-tinta">{tr("Links de apoio")}</p>
                 <ul className="mt-3 space-y-2">
                   {materials.map((mat, i) => (
                     <li key={i}>
-                      <a href={mat.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-brand-teal hover:underline">
+                      <a href={mat.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm text-marca-azul hover:underline">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         {mat.title}
                       </a>
@@ -314,24 +314,24 @@ export default function CoursePlayer({
             )}
 
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              {prevId ? <button onClick={() => select(prevId)} className="rounded-xl border border-tinta/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-tinta/30 hover:text-tinta">{tr("← Aula anterior")}</button> : <span />}
+              {prevId ? <button onClick={() => select(prevId)} className="rounded-full border border-tinta/25 px-5 py-2.5 text-sm font-semibold text-obsidian transition-colors hover:border-tinta/50 hover:bg-papel">{tr("← Aula anterior")}</button> : <span />}
               <div className="flex items-center gap-2">
-                {nextId && <button onClick={() => select(nextId)} className="rounded-xl border border-tinta/10 px-4 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-tinta/30 hover:text-tinta">{tr("Próxima aula →")}</button>}
-                <button onClick={complete} disabled={pending} className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:opacity-70">
+                {nextId && <button onClick={() => select(nextId)} className="rounded-full border border-tinta/25 px-5 py-2.5 text-sm font-semibold text-obsidian transition-colors hover:border-tinta/50 hover:bg-papel">{tr("Próxima aula →")}</button>}
+                <button onClick={complete} disabled={pending} className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95 disabled:opacity-70">
                   {done.has(current.id) ? (nextId ? tr("Concluída · avançar") : "Concluída") : nextId ? tr("Concluir e avançar") : tr("Marcar como concluída")}
                 </button>
               </div>
             </div>
 
             <div className="mt-8">
-              <h2 className="font-display text-lg font-bold text-tinta">{tr("Comentários")}</h2>
+              <h2 className="text-lg font-bold tracking-tight text-obsidian">{tr("Comentários")}</h2>
               <form action={addComment} className="mt-3 space-y-2">
                 <input type="hidden" name="slug" value={slug} />
                 <input type="hidden" name="lesson_id" value={current.id} />
                 <input type="hidden" name="course_id" value={courseId} />
-                <textarea name="body" required rows={2} placeholder={tr("Comente ou tire uma dúvida sobre esta aula...")} className="w-full resize-y rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
+                <textarea name="body" required rows={2} placeholder={tr("Comente ou tire uma dúvida sobre esta aula...")} className="w-full resize-y rounded-srf border border-tinta/20 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
                 <div className="flex items-center gap-3">
-                  <button className="rounded-xl bg-marca-verde px-5 py-2 text-sm font-semibold text-sobre-acento">{tr("Comentar")}</button>
+                  <button className="rounded-full bg-marca-verde px-5 py-2 text-sm font-semibold text-sobre-acento">{tr("Comentar")}</button>
                   <span className="text-xs text-slate-500">{tr("Comentários passam por aprovação antes de aparecer.")}</span>
                 </div>
               </form>
@@ -339,16 +339,16 @@ export default function CoursePlayer({
               <div className="mt-5 space-y-3">
                 {comments.length === 0 && <p className="text-sm text-slate-500">{tr("Seja o primeiro a comentar.")}</p>}
                 {comments.map((c) => (
-                  <div key={c.id} className="flex items-start gap-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-4">
+                  <div key={c.id} className="flex items-start gap-3 rounded-[20px] border border-tinta/10 bg-papel p-4">
                     <Avatar name={commentNames[c.user_id] || "Aluno"} size="sm" />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs text-slate-500">
                         {commentNames[c.user_id] || "Aluno"}
-                        {c.status === "pending" && <span className="ml-2 rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-amber-300">{tr("em análise")}</span>}
+                        {c.status === "pending" && <span className="ml-2 rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.7rem] font-semibold text-amber-300">{tr("em análise")}</span>}
                       </p>
                       <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.body}</p>
                       {c.admin_reply && (
-                        <div className="mt-2 rounded-xl border border-brand-blue/25 bg-brand-blue/[0.06] p-3">
+                        <div className="mt-2 rounded-srf bg-fog p-3">
                           <p className="text-[0.6rem] font-semibold text-marca">{tr("Resposta da equipe DriveData")}</p>
                           <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.admin_reply}</p>
                         </div>
@@ -365,7 +365,7 @@ export default function CoursePlayer({
       {/* Sidebar */}
       <div>
         <div className="lg:hidden">
-          <button onClick={() => setMobileOpen((o) => !o)} className="flex w-full items-center justify-between rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm font-medium text-tinta">
+          <button onClick={() => setMobileOpen((o) => !o)} className="flex w-full items-center justify-between rounded-full border border-tinta/15 bg-papel px-5 py-3 text-sm font-semibold text-obsidian">
             {tr("Conteúdo do curso")}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={`transition-transform ${mobileOpen ? "rotate-180" : ""}`}><path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>

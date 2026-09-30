@@ -288,7 +288,7 @@ body {
 
 /* Tema claro: sem brilho decorativo. As bolhas desfocadas que
    iluminavam o fundo escuro somem; o que tem blur leve (backdrop) fica. */
-:where([class~="blur-3xl"], [class~="blur-2xl"], [class~="blur-xl"], [class*="blur-[1"]) {
+:where([class~="blur-3xl"], [class~="blur-2xl"], [class~="blur-xl"], [class*="blur-[1"]).absolute:not(.brightness-50) {
   display: none !important;
 }
 

@@ -13,7 +13,7 @@ export default function NpsPrompt({ courseId, slug }: { courseId: string; slug: 
     n <= 6 ? "border-red-400/40 bg-red-400/10 text-red-300" : n <= 8 ? "border-amber-400/40 bg-amber-400/10 text-amber-300" : "border-acento/40 bg-brand-green/10 text-acento";
 
   return (
-    <div className="rounded-2xl border border-tinta/10 bg-tinta/[0.03] p-5">
+    <div className="rounded-[20px] border border-tinta/10 bg-papel p-5">
       <p className="text-sm font-semibold text-tinta">{tr("De 0 a 10, o quanto você recomendaria este curso?")}</p>
       <p className="mt-1 text-xs text-slate-400">{tr("Sua nota nos ajuda a melhorar os treinamentos.")}</p>
 
@@ -38,8 +38,8 @@ export default function NpsPrompt({ courseId, slug }: { courseId: string; slug: 
 
         {score !== null && (
           <div className="mt-4 space-y-3">
-            <textarea name="comment" rows={2} placeholder={tr("Quer deixar um comentário? (opcional)")} className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-2.5 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
-            <button className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Enviar avaliação")}</button>
+            <textarea name="comment" rows={2} placeholder={tr("Quer deixar um comentário? (opcional)")} className="w-full rounded-xl border border-tinta/10 bg-papel px-4 py-2.5 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
+            <button className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">{tr("Enviar avaliação")}</button>
           </div>
         )}
       </form>

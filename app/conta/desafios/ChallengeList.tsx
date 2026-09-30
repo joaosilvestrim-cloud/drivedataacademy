@@ -76,11 +76,11 @@ function Card({ item }: { item: Item }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-brand-blue/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase text-brand-teal">
+            <span className="rounded-full bg-brand-blue/15 px-2.5 py-0.5 text-xs font-semibold text-brand-teal">
               {DIMENSION_LABEL[item.dimension] || item.dimension}
             </span>
             <span className="text-xs text-slate-400">{item.competencyName}</span>
-            {item.advanced && <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-amber-300">{tr("Avançado")}</span>}
+            {item.advanced && <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-xs font-semibold text-amber-300">{tr("Avançado")}</span>}
           </div>
           <h2 className="mt-2 font-display text-lg font-bold text-tinta">{item.title}</h2>
         </div>

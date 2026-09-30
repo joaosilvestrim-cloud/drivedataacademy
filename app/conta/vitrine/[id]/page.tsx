@@ -102,13 +102,13 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
 
           <div className="shrink-0 rounded-[20px] border border-tinta/10 bg-papel px-5 py-3 text-center">
             <p className="font-display text-2xl font-bold text-acento">{pts}</p>
-            <p className="text-[0.7rem] uppercase tracking-wide text-slate-500">{tr("pontos")}</p>
+            <p className="text-[0.7rem] text-slate-500 font-medium">{tr("pontos")}</p>
           </div>
         </div>
 
         {skills.length > 0 && (
           <div className="mt-7 border-t border-tinta/8 pt-6">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Especialidades")}</h2>
+            <h2 className="text-xs font-semibold text-slate-400">{tr("Especialidades")}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {skills.map((s) => (
                 <span key={s} className="rounded-md border border-brand-blue/25 bg-brand-blue/10 px-2.5 py-1 text-xs font-medium text-brand-teal">
@@ -121,7 +121,7 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
 
         {p.bio && (
           <div className="mt-7 border-t border-tinta/8 pt-6">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Sobre")}</h2>
+            <h2 className="text-xs font-semibold text-slate-400">{tr("Sobre")}</h2>
             <p className="mt-3 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.bio}</p>
           </div>
         )}

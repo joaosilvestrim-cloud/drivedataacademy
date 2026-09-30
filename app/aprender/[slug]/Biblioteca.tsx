@@ -36,8 +36,8 @@ export default function Biblioteca({
   const total = modulos.flatMap((m) => m.lessons).reduce((t, a) => t + (arquivosPorAula[a.id]?.length || 0), 0);
 
   return (
-    <div className="min-h-screen bg-ink-900">
-      <header className="sticky top-0 z-40 border-b border-tinta/10 bg-ink-900/80 backdrop-blur">
+    <div className="min-h-screen bg-tela">
+      <header className="sticky top-0 z-40 border-b border-tinta/10 bg-papel/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
           <div className="flex min-w-0 items-center gap-4">
             <Link href="/conta" aria-label={tr("Minha conta")}>
@@ -94,7 +94,7 @@ export default function Biblioteca({
                 m.lessons.map((a) => {
                   const arquivos = arquivosPorAula[a.id] ?? [];
                   return (
-                    <div key={a.id} className="border-b border-tinta/5 py-6 last:border-b-0">
+                    <div key={a.id} className="border-b border-tinta/10 py-6 last:border-b-0">
                       <h3 className="font-semibold text-tinta">{a.title}</h3>
                       {a.content && <p className="mt-1 max-w-2xl whitespace-pre-line text-sm text-slate-400">{a.content}</p>}
 
@@ -121,7 +121,7 @@ export default function Biblioteca({
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img src={f.cover_url} alt={`Prévia de ${f.title}`} className="aspect-[16/9] w-full border-b border-tinta/10 object-cover" />
                                   ) : (
-                                    <span className="grid aspect-[16/9] w-full place-items-center border-b border-tinta/10 bg-ink-800 font-mono text-sm font-bold text-acento">{ext || "ARQ"}</span>
+                                    <span className="grid aspect-[16/9] w-full place-items-center border-b border-tinta/10 bg-ink-800 font-mono text-sm font-bold text-marca">{ext || "ARQ"}</span>
                                   )}
                                   <span className="flex min-w-0 flex-1 flex-col p-4">
                                     <span className="block font-medium text-tinta">{f.title}</span>

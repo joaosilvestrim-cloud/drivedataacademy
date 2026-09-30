@@ -21,7 +21,7 @@ import TourConciliacao, { tourConciliacaoJaVisto } from "@/components/conciliaca
 
 const campo =
   "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
-const rotulo = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400";
+const rotulo = "block text-[0.7rem] font-semibold text-slate-400";
 
 const SITUACAO: Record<string, { texto: string; cor: string }> = {
   igual: { texto: "igual", cor: "text-slate-500" },
@@ -110,7 +110,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           { nome: tr("Diferença"), valor: recorte.diferenca, linhas: null, tom: cor(recorte.diferenca) },
         ].map((c) => (
           <div key={c.nome} className="rounded-[20px] border border-tinta/10 bg-papel px-5 py-4">
-            <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{c.nome}</p>
+            <p className="text-xs text-slate-500 font-medium">{c.nome}</p>
             <p className={`mt-1 font-display text-xl font-bold tabular-nums ${c.tom}`}>{moeda(c.valor)}</p>
             {c.linhas !== null && <p className="text-[0.7rem] text-slate-500">{c.linhas} {tr("lançamentos")}</p>}
           </div>
@@ -159,10 +159,10 @@ export default function Conciliacao({ semente }: { semente: number }) {
           <table className="w-full min-w-[34rem] border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-tinta/10">
-                <th className="px-4 py-2.5 text-[0.7rem] uppercase tracking-wide text-slate-400">{nomeDaDimensao(dimensao)}</th>
-                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Sistema")}</th>
-                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Painel")}</th>
-                <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Diferença")}</th>
+                <th className="px-4 py-2.5 text-[0.7rem] text-slate-400 font-medium">{nomeDaDimensao(dimensao)}</th>
+                <th className="px-4 py-2.5 text-right text-[0.7rem] text-slate-400 font-medium">{tr("Sistema")}</th>
+                <th className="px-4 py-2.5 text-right text-[0.7rem] text-slate-400 font-medium">{tr("Painel")}</th>
+                <th className="px-4 py-2.5 text-right text-[0.7rem] text-slate-400 font-medium">{tr("Diferença")}</th>
                 <th className="px-4 py-2.5" />
               </tr>
             </thead>
@@ -208,7 +208,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
                 <thead className="sticky top-0 bg-ink-700">
                   <tr className="border-b border-tinta/10">
                     {["Lançamento", "Data", "Filial", "Status", "Sistema", "Painel", "Situação"].map((h) => (
-                      <th key={h} className="px-3 py-2 text-[0.7rem] uppercase tracking-wide text-slate-400">{h}</th>
+                      <th key={h} className="px-3 py-2 text-[0.7rem] text-slate-400 font-medium">{h}</th>
                     ))}
                   </tr>
                 </thead>

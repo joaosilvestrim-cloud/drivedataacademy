@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { createMatricula, previewCupom, type MatriculaResult, type PreviaCupom } from "./actions";
 
 const field =
-  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
+  "w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 const rotulo = "mb-1.5 block text-sm font-medium text-slate-300";
 const dica = "mt-1 block text-xs text-slate-500";
 
@@ -105,7 +105,7 @@ export default function MatriculaForm({
             { t: tr("Receba o código de acesso"), d: <>{tr("Enviamos para")} <b className="text-tinta">{indo.email}</b> {tr("assim que o pagamento confirmar. Olhe também o lixo eletrônico.")}</> },
             { t: tr("Crie sua senha"), d: tr("Clique em Criar minha senha no e-mail, digite o código e escolha a senha.") },
           ].map((s, i) => (
-            <li key={i} className="flex gap-3 rounded-xl border border-tinta/8 bg-tinta/[0.03] p-3">
+            <li key={i} className="flex gap-3 rounded-xl border border-tinta/10 bg-papel p-3">
               <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-marca-verde text-xs font-bold text-sobre-acento">{i + 1}</span>
               <span>
                 <span className="block text-sm font-semibold text-tinta">{s.t}</span>
@@ -115,7 +115,7 @@ export default function MatriculaForm({
           ))}
         </ol>
 
-        <a href={indo.url} className="mt-6 block w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
+        <a href={indo.url} className="mt-6 block w-full rounded-full bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">
           {tr("Ir para o pagamento agora")}
         </a>
         <p className="mt-2 text-xs text-slate-500">{tr("Abrindo sozinho em")} {Math.max(segundos, 0)}s.</p>
@@ -131,7 +131,7 @@ export default function MatriculaForm({
         <p className="text-lg font-semibold text-tinta">{tr("Recebemos seu pedido!")}</p>
         <p className="mt-2 text-sm text-slate-300">{tr("Fale com a gente pelo WhatsApp pra finalizar a assinatura. Sua conta é criada assim que o pagamento é confirmado.")}</p>
         {digits && (
-          <a href={`https://wa.me/${digits}?text=${msg}`} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Falar no WhatsApp")}</a>
+          <a href={`https://wa.me/${digits}?text=${msg}`} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Falar no WhatsApp")}</a>
         )}
       </div>
     );
@@ -178,7 +178,7 @@ export default function MatriculaForm({
               return (
                 <label
                   key={f.k}
-                  className={`cursor-pointer rounded-xl border px-4 py-2 text-sm transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-acento/60 ${ativo ? "border-acento/60 bg-brand-green/10 text-tinta" : "border-tinta/10 bg-tinta/[0.03] text-slate-300 hover:border-tinta/25"}`}
+                  className={`cursor-pointer rounded-xl border px-4 py-2 text-sm transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-acento/60 ${ativo ? "border-acento/60 bg-brand-green/10 text-tinta" : "border-tinta/10 bg-papel text-slate-300 hover:border-tinta/25"}`}
                 >
                   <input type="radio" name="forma_ui" value={f.k} checked={ativo} onChange={() => setForma(f.k)} className="sr-only" />
                   <span className="font-semibold">{f.rotulo}</span> <span className="text-xs text-slate-400">· {f.nota}</span>
@@ -233,7 +233,7 @@ export default function MatriculaForm({
 
       <Etapa n={3} titulo={tr("Cupom e confirmação")}>
         {/* Cupom. O desconto mostrado vem do servidor e é conferido de novo ao pagar. */}
-        <div className="rounded-xl border border-tinta/10 bg-tinta/[0.02] p-3">
+        <div className="rounded-xl border border-tinta/10 bg-papel p-3">
           <label htmlFor="cupom-codigo" className="block text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Cupom de desconto")} <span className="normal-case tracking-normal text-slate-500">(opcional)</span></label>
           {cupom ? (
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
@@ -288,7 +288,7 @@ export default function MatriculaForm({
         )}
         <button
           disabled={loading}
-          className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:opacity-60"
+          className="w-full rounded-full bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95 disabled:opacity-60"
         >
           {loading ? tr("Gerando pagamento...") : tr("Continuar para o pagamento")}
         </button>

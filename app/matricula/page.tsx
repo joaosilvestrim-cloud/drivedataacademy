@@ -86,11 +86,11 @@ export default async function MatriculaPage() {
 
       <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
         {!open ? (
-          <div className="mx-auto max-w-xl rounded-2xl border border-tinta/10 bg-tinta/[0.02] px-6 py-16 text-center">
+          <div className="mx-auto max-w-xl rounded-[20px] border border-tinta/10 bg-papel px-6 py-16 text-center">
             <p className="text-sm font-medium text-ds-text-3">{tr("Matrículas")}</p>
             <h1 className="mt-2 font-display text-3xl font-bold text-tinta">{tr("Inscrições fechadas no momento")}</h1>
             <p className="mt-3 text-slate-300">{tr("Enquanto isso, acompanhe as aulas abertas ao vivo.")}</p>
-            <Link href="/#ao-vivo" className="mt-6 inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Ver as próximas lives")}</Link>
+            <Link href="/#ao-vivo" className="mt-6 inline-block rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Ver as próximas lives")}</Link>
           </div>
         ) : (
           <>
@@ -99,7 +99,7 @@ export default async function MatriculaPage() {
               <h2 id="como-funciona" className="text-sm font-semibold text-marca">{tr("Como funciona")}</h2>
               <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {passos().map((s, i) => (
-                  <li key={s.titulo} className="relative rounded-2xl border border-tinta/8 bg-tinta/[0.03] p-4">
+                  <li key={s.titulo} className="relative rounded-[20px] border border-tinta/10 bg-papel p-4">
                     <span className="grid h-8 w-8 place-items-center rounded-full bg-marca-verde font-display text-sm font-bold text-sobre-acento">{i + 1}</span>
                     <p className="mt-3 font-semibold text-tinta">{s.titulo}</p>
                     <p className="mt-1 text-sm text-slate-400">{s.texto}</p>
@@ -148,7 +148,7 @@ export default async function MatriculaPage() {
                   </div>
                 )}
 
-                <div className="mt-6 flex items-start gap-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3 text-sm text-slate-400">
+                <div className="mt-6 flex items-start gap-3 rounded-[20px] border border-tinta/10 bg-papel px-4 py-3 text-sm text-slate-400">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-brand-teal"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
                   <span>{tr("Pagamento processado pelo Asaas. Não guardamos dados do seu cartão.")}</span>
                 </div>

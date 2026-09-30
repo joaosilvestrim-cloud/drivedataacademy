@@ -25,7 +25,7 @@ export type Autor = { nome: string; avatar: string | null; casa: string | null; 
 
 const campo =
   "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2.5 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
-const rotulo = "block text-[0.72rem] font-semibold uppercase tracking-wide text-slate-400";
+const rotulo = "block text-[0.72rem] font-semibold text-slate-400";
 
 function Chip({ children, ativo, onClick }: { children: React.ReactNode; ativo?: boolean; onClick?: () => void }) {
   const base = "rounded-full px-2.5 py-1 text-[0.7rem] transition-colors";
@@ -50,7 +50,7 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
           <div className="grid h-full place-items-center text-xs text-slate-600">{tr("sem imagem")}</div>
         )}
         {p.destaque && p.status === "aprovado" && (
-          <span className="absolute left-3 top-3 rounded-full bg-amber-300 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-sobre-acento">{tr("Destaque")}</span>
+          <span className="absolute left-3 top-3 rounded-full bg-amber-300 px-2 py-0.5 text-xs font-bold text-sobre-acento">{tr("Destaque")}</span>
         )}
         {meu && p.status !== "aprovado" && (
           <span className={`absolute right-3 top-3 rounded-full bg-ink-900/90 px-2 py-0.5 text-[0.65rem] font-semibold ${st.cor}`}>{st.rotulo}</span>
@@ -349,7 +349,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
 
           {p.problema && (
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("O problema")}</p>
+              <p className="text-[0.7rem] font-semibold text-slate-400">{tr("O problema")}</p>
               <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.problema}</p>
             </div>
           )}
@@ -361,7 +361,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
           )}
           {p.descricao && (
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Como foi feito")}</p>
+              <p className="text-[0.7rem] font-semibold text-slate-400">{tr("Como foi feito")}</p>
               <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.descricao}</p>
             </div>
           )}

@@ -240,3 +240,40 @@
 .dd-ticket-stamp {position:absolute;right:18px;top:44%;padding:6px 12px;border:3px double #c8473f;border-radius:6px;color:#c8473f;font-style:normal;font-weight:600;font-size:15px;letter-spacing:3px;transform:rotate(-16deg) translateZ(10px);opacity:.85;mix-blend-mode:multiply;}
 @media(max-width:600px){.dd-ticket-front {padding:18px 18px 16px;} .dd-ticket-cut {margin-left:-18px;margin-right:-18px;}}
 @media(prefers-reduced-motion:reduce){.dd-ticket-front {transition:none;}}
+
+/* ---- Modo claro (padrão do sistema) --------------------------------------
+   A moldura passa para o claro com as cores do logo; as pecinhas 3D de cada
+   benefício continuam com as cores próprias, só com sombra mais leve.
+   No modo escuro do aluno vale o visual azul-noite de cima. */
+:root:not([data-tema="escuro"]) #dd-universe.dd-full { --dd-text:#0b1220; --dd-muted:#3d4859; --dd-accent:#0b62cf; color-scheme:light; background:radial-gradient(ellipse at 50% 42%,#e3eefb 0%,transparent 55%),#f5f7fa; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-h1 em { color:#0b62cf; }
+:root:not([data-tema="escuro"]) #dd-universe.dd-full .dd-lead,
+:root:not([data-tema="escuro"]) #dd-universe .dd-intro-side p { color:#3d4859; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-motion { color:#3d4859; }
+:root:not([data-tema="escuro"]) #dd-universe.dd-full .dd-cta-secondary { border-color:#0a2647; color:#0a2647; }
+:root:not([data-tema="escuro"]) #dd-universe.dd-full .dd-cta-secondary:hover { background:#fff; color:#0a2647; }
+:root:not([data-tema="escuro"]) #dd-universe.dd-full .dd-eyebrow { color:#5f6b7c; }
+:root:not([data-tema="escuro"]) #dd-universe.dd-full .dd-eyebrow span { background:#5fe06a; box-shadow:none; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node { border-bottom-color:#dae0e7; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node:hover { background:#e9edf2; border-color:#c6ccd6; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node:after { display:none; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node[aria-pressed="true"] { background:#e6f8e8; border-color:#5fe06a; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node[aria-pressed="true"]:before { background:#5fe06a; box-shadow:none; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node-number { color:#5f6b7c; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node[aria-pressed="true"] .dd-node-number { color:#0a2647; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node-icon { background:#e9edf2; color:#0a2647; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-node[aria-pressed="true"] .dd-node-icon { background:#5fe06a; color:#0a2647; box-shadow:none; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-core-front { filter:drop-shadow(0 14px 18px rgba(10,38,71,.22)); }
+:root:not([data-tema="escuro"]) #dd-universe .dd-core-back,
+:root:not([data-tema="escuro"]) #dd-universe .dd-core-middle { border-color:#b9d3f2; background:rgba(11,98,207,.05); box-shadow:none; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-scene { filter:drop-shadow(0 16px 14px rgba(10,38,71,.22)); }
+:root:not([data-tema="escuro"]) #dd-universe .dd-core-caption strong { color:#0b1220; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-detail { background:#fff; border-color:#dae0e7; box-shadow:rgba(0,0,0,.08) 0 6px 20px; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-detail:before { background:#5fe06a; box-shadow:none; height:3px; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-detail h2 { color:#0b1220; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-detail-tag { color:#5f6b7c; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-detail-body p { color:#3d4859; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-detail-chips span { border-color:#dae0e7; background:#f1f4f7; color:#0a2647; border-radius:9999px; padding:4px 10px; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-detail-decoration { color:#0b62cf; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-footer > span { color:#5f6b7c; }
+:root:not([data-tema="escuro"]) #dd-universe .dd-footer a { background:#5fe06a; color:#0a2647; border-radius:9999px; box-shadow:none; }

@@ -292,7 +292,7 @@ export default function MenuImersivo() {
   );
 
   return (
-    <div id="dd-universe" className="dd-full escuro" ref={rootRef} aria-label={tr("Benefícios da assinatura")} data-motion="on">
+    <div id="dd-universe" className="dd-full" ref={rootRef} aria-label={tr("Benefícios da assinatura")} data-motion="on">
       <main>
         <div className="dd-intro">
           <div className="dd-hero">

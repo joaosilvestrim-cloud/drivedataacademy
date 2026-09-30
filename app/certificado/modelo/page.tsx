@@ -29,7 +29,7 @@ export default async function CertModeloPage({ searchParams }: { searchParams: {
             <h1 className="font-display text-xl font-bold text-tinta">{tr("Pré-visualização")}</h1>
             <p className="mt-1 text-sm text-slate-400">{tr("Exemplo com dados fictícios. O certificado real usa o nome do aluno e o título do curso.")}</p>
           </div>
-          <Link href="/admin/cursos" className="rounded-lg border border-tinta/10 px-4 py-2 text-sm text-slate-300 hover:border-acento/50 hover:text-acento">{tr("← Cursos")}</Link>
+          <Link href="/admin/cursos" className="rounded-full border border-tinta/25 px-4 py-2 text-sm text-slate-300 hover:border-acento/50 hover:text-acento">{tr("← Cursos")}</Link>
         </div>
 
         <CertificateView

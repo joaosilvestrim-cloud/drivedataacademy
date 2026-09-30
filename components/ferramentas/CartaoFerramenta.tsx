@@ -80,12 +80,12 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
           </span>
 
           {t.novo ? (
-            <span className="relative overflow-hidden rounded-full px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-sobre-acento" style={{ backgroundImage: `linear-gradient(135deg, ${t.from}, ${t.to})` }}>
+            <span className="relative overflow-hidden rounded-full px-2.5 py-0.5 text-xs font-bold text-sobre-acento" style={{ backgroundImage: `linear-gradient(135deg, ${t.from}, ${t.to})` }}>
               {tr(t.tag)}
               {/* Brilho que atravessa o selo de tempos em tempos. */}
             </span>
           ) : (
-            <span className={`rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase ${t.available ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>{tr(t.tag)}</span>
+            <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${t.available ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>{tr(t.tag)}</span>
           )}
         </div>
 

@@ -119,7 +119,7 @@ export default async function AssinaturaPage({ searchParams }: { searchParams: {
 function Linha({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
     <div>
-      <dt className="text-xs uppercase tracking-wide text-slate-500">{rotulo}</dt>
+      <dt className="text-xs text-slate-500 font-medium">{rotulo}</dt>
       <dd className="mt-1 text-sm font-medium text-slate-200">{valor}</dd>
     </div>
   );

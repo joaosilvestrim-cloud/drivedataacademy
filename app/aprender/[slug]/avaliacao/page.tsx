@@ -36,7 +36,7 @@ export default async function AvaliacaoPage({
   const bestPassed = list.find((a: any) => a.passed);
 
   const Shell = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen bg-ink-900">
+    <div className="min-h-screen bg-tela">
       <header className="border-b border-tinta/10 px-6 py-3">
         <div className="mx-auto flex max-w-3xl items-center gap-3">
           <Link href={`/aprender/${params.slug}`} className="text-sm text-slate-400 hover:text-tinta">{tr("← Voltar ao curso")}</Link>
@@ -62,7 +62,7 @@ export default async function AvaliacaoPage({
             const picked = (attempt.answers ?? {})[q.id];
             const opts = q.options as any[];
             return (
-              <div key={q.id} className="glass rounded-2xl border border-tinta/8 p-5">
+              <div key={q.id} className="bg-papel rounded-[20px] border border-tinta/10 p-5">
                 <p className="font-medium text-tinta">{i + 1}. {q.prompt}</p>
                 <ul className="mt-3 space-y-1.5 text-sm">
                   {opts.map((o: any, idx: number) => {
@@ -84,9 +84,9 @@ export default async function AvaliacaoPage({
         </div>
         <div className="mt-6 flex items-center gap-3">
           {attempt.passed ? (
-            <Link href={`/aprender/${params.slug}`} className="rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Voltar ao curso")}</Link>
+            <Link href={`/aprender/${params.slug}`} className="rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Voltar ao curso")}</Link>
           ) : (
-            <Link href={`/aprender/${params.slug}/avaliacao`} className="rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Tentar novamente")}</Link>
+            <Link href={`/aprender/${params.slug}/avaliacao`} className="rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Tentar novamente")}</Link>
           )}
         </div>
       </Shell>
@@ -135,7 +135,7 @@ export default async function AvaliacaoPage({
           <input type="hidden" name="quiz_id" value={quiz.id} />
           <input type="hidden" name="course_id" value={course.id} />
           {qs.map((q: any, i: number) => (
-            <div key={q.id} className="glass rounded-2xl border border-tinta/8 p-5">
+            <div key={q.id} className="bg-papel rounded-[20px] border border-tinta/10 p-5">
               <p className="font-medium text-tinta">{i + 1}. {q.prompt}</p>
               <div className="mt-3 space-y-2">
                 {(q.options as any[]).map((o: any, idx: number) => (
@@ -147,7 +147,7 @@ export default async function AvaliacaoPage({
               </div>
             </div>
           ))}
-          <button className="rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Enviar respostas")}</button>
+          <button className="rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">{tr("Enviar respostas")}</button>
         </form>
       )}
     </Shell>

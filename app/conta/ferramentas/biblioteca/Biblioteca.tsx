@@ -209,7 +209,7 @@ export default function Biblioteca() {
             {grupos.map(([l, itens]) => (
               <li key={l}>
                 {linguagem === "todas" && (
-                  <p className="sticky top-0 z-10 flex items-center gap-2 bg-tela/95 px-2 py-1.5 text-[0.68rem] font-semibold uppercase tracking-wider text-slate-500 backdrop-blur">
+                  <p className="sticky top-0 z-10 flex items-center gap-2 bg-tela/95 px-2 py-1.5 text-xs font-semibold text-slate-500 backdrop-blur">
                     <span className={`h-1.5 w-1.5 rounded-full ${COR[l].ponto}`} aria-hidden="true" />
                     {NOME_LINGUAGEM[l]}
                     <span className="font-mono tabular-nums opacity-70">{itens.length}</span>
@@ -257,7 +257,7 @@ export default function Biblioteca() {
                 <button onClick={() => setAbertoNoCelular(false)} className="mr-1 rounded-lg border border-tinta/10 px-2 py-1 text-xs text-slate-300 lg:hidden">
                   {tr("← Lista")}
                 </button>
-                <span className={`rounded px-1.5 py-0.5 font-mono text-[0.65rem] font-bold uppercase ${COR[item.linguagem].chip}`}>
+                <span className={`rounded px-1.5 py-0.5 font-mono text-xs font-bold ${COR[item.linguagem].chip}`}>
                   {NOME_LINGUAGEM[item.linguagem]}
                 </span>
                 <span className="rounded bg-tinta/[0.06] px-2 py-0.5 text-[0.65rem] text-slate-300">{tr(item.nivel)}</span>
@@ -282,7 +282,7 @@ export default function Biblioteca() {
 
               <div data-tour="bib-codigo" className="mt-5">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("O código")}</p>
+                  <p className="text-[0.7rem] font-semibold text-slate-400">{tr("O código")}</p>
                   <button
                     onClick={copiar}
                     className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
@@ -298,13 +298,13 @@ export default function Biblioteca() {
               </div>
 
               <div className="mt-5">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Por que é assim")}</p>
+                <p className="text-[0.7rem] font-semibold text-slate-400">{tr("Por que é assim")}</p>
                 <p className="mt-1 text-sm leading-relaxed text-slate-300">{tr(item.explicacao)}</p>
               </div>
 
               {item.armadilha && (
                 <div data-tour="bib-armadilha" className="mt-5 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4">
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-amber-300">{tr("A armadilha")}</p>
+                  <p className="text-[0.7rem] font-semibold text-amber-300">{tr("A armadilha")}</p>
                   <p className="mt-1 text-sm leading-relaxed text-amber-100/90">{tr(item.armadilha)}</p>
                 </div>
               )}

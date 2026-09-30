@@ -51,7 +51,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
         <button
           onClick={printCertificate}
           disabled={preparing}
-          className="rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
+          className="rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95"
         >
           {preparing ? "Preparando certificado…" : "Baixar / Imprimir PDF"}
         </button>
@@ -59,7 +59,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
           href={share}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl border border-tinta/15 px-6 py-3 text-sm font-semibold text-tinta transition-colors hover:border-acento/50 hover:text-acento"
+          className="inline-flex items-center gap-2 rounded-full border border-tinta/15 px-6 py-3 text-sm font-semibold text-tinta transition-colors hover:border-acento/50 hover:text-acento"
         >
           <LinkedInIcon />
           {tr("Compartilhar")}

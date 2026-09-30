@@ -146,7 +146,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
       {podio.length > 0 && !filtrando && (
         <section className="mt-8">
           <div className="flex items-baseline justify-between gap-3">
-            <h2 className="font-display text-sm font-bold uppercase tracking-wider text-slate-400">{tr("No topo agora")}</h2>
+            <h2 className="font-display text-sm font-bold text-slate-400">{tr("No topo agora")}</h2>
             <Link href="/conta/ranking" className="text-xs font-medium text-brand-teal underline-offset-4 hover:underline">{tr("ver o ranking →")}</Link>
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">

@@ -31,7 +31,7 @@ export default function RatingStars({ courseId, avg, count, mine }: { courseId: 
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-2.5">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-srf border border-tinta/10 bg-papel px-4 py-2.5">
       <div className="flex items-center gap-1.5">
         <span className="font-display text-lg font-bold text-amber-300">{avg ? avg.toFixed(1) : "—"}</span>
         <div className="flex" onMouseLeave={() => setHover(0)}>

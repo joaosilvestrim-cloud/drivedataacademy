@@ -126,7 +126,7 @@ export default function DadosFiscais({
           </div>
           <div className="space-y-1.5">
             <label className={rotulo} htmlFor="nf-uf">UF</label>
-            <input id="nf-uf" value={d.uf} onChange={set("uf")} autoComplete="address-level1" placeholder="SP" className={`${campo} uppercase`} />
+            <input id="nf-uf" value={d.uf} onChange={set("uf")} autoComplete="address-level1" placeholder="SP" className={`${campo} font-medium`} />
           </div>
         </div>
 

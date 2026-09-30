@@ -178,7 +178,7 @@ export default function Dojo({ semente }: { semente: number }) {
           <div className="mt-3 max-h-[26rem] overflow-auto rounded-xl border border-tinta/8">
             <table className="w-full min-w-[640px] text-[0.8rem]">
               <thead className="sticky top-0 bg-tela/95 backdrop-blur">
-                <tr className="text-left text-[0.68rem] uppercase tracking-wide text-slate-500">
+                <tr className="text-left text-xs text-slate-500 font-medium">
                   <th className="px-2 py-2 font-medium">#</th>
                   {COLUNAS.map((c, i) => (
                     <th key={c} className="px-2 py-2 font-medium">
@@ -221,10 +221,10 @@ export default function Dojo({ semente }: { semente: number }) {
         <div className="flex min-w-0 flex-col gap-4">
           <div data-tour="dojo-desafio" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-tinta/[0.06] px-2 py-0.5 text-[0.65rem] uppercase tracking-wide text-slate-400">
+              <span className="rounded-full bg-tinta/[0.06] px-2 py-0.5 text-xs text-slate-400 font-medium">
                 {indice + 1} de {desafios.length}
               </span>
-              <span className="text-[0.65rem] uppercase tracking-wide text-slate-500">
+              <span className="text-xs text-slate-500 font-medium">
                 {desafio.nivel === 1 ? "básico" : desafio.nivel === 2 ? "intermediário" : "avançado"}
               </span>
               {resolvidos[trilha].includes(desafio.id) && <span className="text-[0.65rem] font-semibold text-acento">{tr("resolvido")}</span>}
@@ -235,7 +235,7 @@ export default function Dojo({ semente }: { semente: number }) {
 
             <div className="mt-4 flex flex-col gap-3">
               <div>
-                <label className="block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400" htmlFor="dojo-valor">
+                <label className="block text-[0.7rem] font-semibold text-slate-400" htmlFor="dojo-valor">
                   {tr("O número")}
                 </label>
                 <input
@@ -249,7 +249,7 @@ export default function Dojo({ semente }: { semente: number }) {
                 />
               </div>
               <div>
-                <label className="block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400" htmlFor="dojo-formula">
+                <label className="block text-[0.7rem] font-semibold text-slate-400" htmlFor="dojo-formula">
                   {tr("A fórmula")} {trilha === "dax" ? "(DAX)" : "(Excel)"}
                 </label>
                 <textarea
@@ -313,7 +313,7 @@ export default function Dojo({ semente }: { semente: number }) {
 
               {(verGabarito || veredito.acertou) && (
                 <div className="mt-3">
-                  <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400">{tr("Um jeito certo de escrever")}</p>
+                  <p className="text-[0.7rem] font-semibold text-slate-400">{tr("Um jeito certo de escrever")}</p>
                   <pre className="mt-1 overflow-x-auto rounded-xl border border-tinta/10 bg-ink-800 p-3 text-[0.78rem] leading-relaxed text-slate-200"><code>{desafio.gabarito}</code></pre>
                   {!veredito.acertou && <p className="mt-2 text-sm leading-relaxed text-slate-300">{tr(desafio.porque)}</p>}
                 </div>

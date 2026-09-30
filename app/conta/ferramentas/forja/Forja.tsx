@@ -26,7 +26,7 @@ const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julh
 
 const campo =
   "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
-const rotulo = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400";
+const rotulo = "block text-[0.7rem] font-semibold text-slate-400";
 
 function Copiar({ texto }: { texto: string }) {
   const tr = usarTraducao();

@@ -23,7 +23,7 @@ const CORES = ["#34e8a0", "#3b9dff", "#a78bfa", "#fbbf24", "#2ee6d6", "#f6d68c",
 
 const campo =
   "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
-const rotulo = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400";
+const rotulo = "block text-[0.7rem] font-semibold text-slate-400";
 
 /** Espaço vira ponto médio para o aluno ver que o espaço faz parte do token. */
 const visivel = (t: string) => t.replace(/ /g, "·").replace(/\n/g, "↵");
@@ -64,7 +64,7 @@ function Fichas({ tokens }: { tokens: string[] }) {
 function Numero({ valor, rotulo: r, tom }: { valor: string | number; rotulo: string; tom?: string }) {
   return (
     <div className="rounded-[20px] border border-tinta/10 bg-papel px-4 py-3">
-      <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{r}</p>
+      <p className="text-xs text-slate-500 font-medium">{r}</p>
       <p className={`mt-0.5 font-display text-xl font-bold tabular-nums ${tom || "text-tinta"}`}>{valor}</p>
     </div>
   );
@@ -186,7 +186,7 @@ export default function CaixaPreta() {
                 rows={4}
                 className={`${campo} mt-2 resize-y font-mono text-[0.85rem]`}
               />
-              <p className="mt-4 text-[0.7rem] uppercase tracking-wider text-slate-500">{tr("Como o modelo enxerga")}</p>
+              <p className="mt-4 text-[0.7rem] text-slate-500 font-medium">{tr("Como o modelo enxerga")}</p>
               <div className="mt-2">
                 <Fichas tokens={stats.lista} />
               </div>

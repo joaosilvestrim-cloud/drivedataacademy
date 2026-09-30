@@ -200,7 +200,7 @@ export function SortTh({
       <button
         type="button"
         onClick={() => onSort(field)}
-        className={cx("inline-flex items-center gap-1 uppercase transition-colors duration-fast ease-ds hover:text-ds-text", numeric && "flex-row-reverse")}
+        className={cx("inline-flex items-center gap-1 transition-colors duration-fast ease-ds hover:text-ds-text font-medium", numeric && "flex-row-reverse")}
       >
         {children}
         <span aria-hidden="true" className={cx("text-[0.9em]", ativo ? "opacity-100" : "opacity-0")}>
