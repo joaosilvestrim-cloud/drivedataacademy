@@ -1709,6 +1709,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "DriveData Assistant",
     "es": "Asistente DriveData"
   },
+  "Nexo, assistente da DriveData": {
+    "en": "Nexo, the DriveData assistant",
+    "es": "Nexo, el asistente de DriveData"
+  },
+  "Oi, eu sou o Nexo. Precisa de ajuda?": {
+    "en": "Hi, I'm Nexo. Need help?",
+    "es": "Hola, soy Nexo. ¿Necesitas ayuda?"
+  },
   "Assistente de dúvidas": {
     "en": "Question assistant",
     "es": "Asistente de dudas"
@@ -5265,9 +5273,9 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Talk to us on WhatsApp to finish. The workshop link arrives by email after payment.",
     "es": "Habla con nosotros por WhatsApp para finalizar. El enlace del workshop llega por correo después del pago."
   },
-  "Fale com o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.": {
-    "en": "Talk to DriveData's assistant. It answers your questions instantly and, when you need a person, it contacts the team without hassle.",
-    "es": "Habla con el asistente de DriveData. Responde tus dudas al instante y, si necesitas a una persona, contacta al equipo sin burocracia."
+  "Fale com o Nexo, o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.": {
+    "en": "Talk to Nexo, DriveData's assistant. It answers your questions instantly and, when you need a person, it contacts the team without hassle.",
+    "es": "Habla con Nexo, el asistente de DriveData. Responde tus dudas al instante y, si necesitas a una persona, contacta al equipo sin burocracia."
   },
   "Fale comigo, respondo na hora.": {
     "en": "Talk to me, I reply instantly.",
@@ -8085,9 +8093,9 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Hi! This is the Academy team. Tell us what happened and we’ll fix it.",
     "es": "¡Hola! Aquí el equipo de Academy. Cuéntanos lo que pasó y lo resolvemos."
   },
-  "Oi! Sou o assistente da DriveData. Posso ajudar com cursos, certificados, comunidade, ranking e como tudo funciona por aqui. No que posso ajudar?": {
-    "en": "Hi! I'm DriveData's assistant. I can help with courses, certificates, community, ranking and how everything works here. How can I help?",
-    "es": "¡Hola! Soy el asistente de DriveData. Puedo ayudar con cursos, certificados, comunidad, ranking y cómo funciona todo aquí. ¿En qué puedo ayudar?"
+  "Oi! Eu sou o Nexo, o assistente da DriveData Academy. Posso ajudar com cursos, certificados, comunidade, ranking e como tudo funciona por aqui. No que posso ajudar?": {
+    "en": "Hi! I'm Nexo, the DriveData Academy assistant. I can help with courses, certificates, community, ranking and how everything works here. How can I help?",
+    "es": "¡Hola! Soy Nexo, el asistente de DriveData Academy. Puedo ayudar con cursos, certificados, comunidad, ranking y cómo funciona todo aquí. ¿En qué puedo ayudar?"
   },
   "Oi, pessoal! Eu trabalho com": {
     "en": "Hi, folks! I work with",

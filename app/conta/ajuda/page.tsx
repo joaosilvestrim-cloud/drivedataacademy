@@ -36,7 +36,7 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
           <Mascot className="h-24 w-24 shrink-0 animate-float" />
           <div className="flex-1">
             <h1 className="font-display text-2xl font-bold text-white">{tr("Central de Ajuda")}</h1>
-            <p className="mt-1 text-sm text-slate-300">{tr("Fale com o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.")}</p>
+            <p className="mt-1 text-sm text-slate-300">{tr("Fale com o Nexo, o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.")}</p>
             {/* O prazo aparece antes de a pessoa escrever, nao depois.
                 Quem abre chamado quer saber quando tem resposta, e esperar
                 sem prazo e o que faz o aluno mandar a mesma duvida tres vezes. */}

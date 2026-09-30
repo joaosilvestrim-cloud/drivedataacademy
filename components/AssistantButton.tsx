@@ -9,7 +9,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Mascot from "./Mascot";
 import FloatingMascot from "./FloatingMascot";
-import MascotNamePoll from "./MascotNamePoll";
 import { montarFila, type Balao } from "@/lib/mascote";
 
 /* Ritmo dos balões: o primeiro aparece logo, fica um tempo e some; o próximo
@@ -28,7 +27,7 @@ function gravarSessao(chave: string, valor: string) {
 
 type Msg = { role: "user" | "assistant"; content: string; link?: { href: string; label: string } };
 
-const GREETING = "Oi! Sou o assistente da DriveData. Posso ajudar com cursos, certificados, comunidade, ranking e como tudo funciona por aqui. No que posso ajudar?";
+const GREETING = "Oi! Eu sou o Nexo, o assistente da DriveData Academy. Posso ajudar com cursos, certificados, comunidade, ranking e como tudo funciona por aqui. No que posso ajudar?";
 const SUGGESTIONS = ["Onde fica meu certificado?", "Em qual curso eu estou?", "Como ganho pontos na comunidade?"];
 
 /* O modelo escreve Markdown mesmo mandado nao escrever.
@@ -58,8 +57,6 @@ function comNegrito(texto: string) {
 export default function AssistantButton() {
   const tr = usarTraducao();
   const [open, setOpen] = useState(false);
-  const [pollVisible, setPollVisible] = useState(false);
-  const [pollAvailable, setPollAvailable] = useState(false);
   const reduceMotion = useReducedMotion();
   const closeRef = useRef<HTMLButtonElement>(null);
   const [messages, setMessages] = useState<Msg[]>([{ role: "assistant", content: tr(GREETING) }]);
@@ -74,7 +71,7 @@ export default function AssistantButton() {
   const pathRef = useRef(pathname);
   pathRef.current = pathname;
   const openRef = useRef(false);
-  openRef.current = open || pollVisible;
+  openRef.current = open;
   const scrollRef = useRef<HTMLDivElement>(null);
 
 
@@ -186,7 +183,7 @@ export default function AssistantButton() {
       <style>{`@media (prefers-reduced-motion:reduce){.assistant-dock .animate-float,.assistant-dock .animate-pulse{animation:none!important}}`}</style>
       <AnimatePresence initial={false}>
       {open && (
-        <motion.section key="assistant-panel" id="drivedata-assistant-panel" role="dialog" aria-label={tr("Assistente DriveData")} className={panelStyles.panel}
+        <motion.section key="assistant-panel" id="drivedata-assistant-panel" role="dialog" aria-label={tr("Nexo, assistente da DriveData")} className={panelStyles.panel}
           initial={reduceMotion ? {opacity:0} : {opacity:0,scale:.84,y:28,rotateX:9,filter:"blur(10px)"}}
           animate={{opacity:1,scale:1,y:0,rotateX:0,filter:"blur(0px)"}}
           exit={reduceMotion ? {opacity:0} : {opacity:0,scale:.94,y:16,filter:"blur(5px)",transition:{duration:.18}}}
@@ -199,7 +196,7 @@ export default function AssistantButton() {
               <div className={panelStyles.portrait}><Mascot realistic className="h-16 w-16 drop-shadow" /></div>
               <div className="flex-1">
                 <p className={panelStyles.brand}>DRIVEDATA ACADEMY</p>
-                <p className={panelStyles.title}>{tr("Assistente DriveData")}</p>
+                <p className={panelStyles.title}>Nexo</p>
                 <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-300"><span className="h-1.5 w-1.5 rounded-full bg-brand-green" /> {tr("Online agora")}</p>
               </div>
               <button ref={closeRef} onClick={closeChat} aria-label={tr("Fechar")} className={panelStyles.close}>✕</button>
@@ -275,14 +272,14 @@ export default function AssistantButton() {
       </AnimatePresence>
 
       {/* Balão do mascote: convite, dica da plataforma ou piada de tech. */}
-      {showHint && !open && !pollAvailable && !hintDismissed && balao && (
+      {showHint && !open && !hintDismissed && balao && (
         <div className="absolute bottom-5 right-[116px] w-64 max-w-[calc(100vw-164px)]" role="status" aria-live="polite">
           <div className="relative rounded-2xl border border-white/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
             <button onClick={calar} aria-label={tr("Não mostrar mais balões nesta sessão")} title={tr("Não mostrar mais nesta sessão")} className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
 
             {balao.tipo === "ajuda" && (
               <button onClick={openChat} className="block pr-4 text-left">
-                <p className="text-sm font-semibold text-white">{tr("Precisa de ajuda?")}</p>
+                <p className="text-sm font-semibold text-white">{tr("Oi, eu sou o Nexo. Precisa de ajuda?")}</p>
                 <p className="mt-0.5 text-xs text-slate-300">{tr("Fale comigo, respondo na hora.")}</p>
               </button>
             )}
@@ -319,7 +316,6 @@ export default function AssistantButton() {
       )}
 
       {/* Botão flutuante */}
-      <MascotNamePoll chatOpen={open} onVisibilityChange={setPollVisible} onAvailabilityChange={setPollAvailable} />
       <FloatingMascot open={open} onToggle={() => (open ? closeChat() : openChat())} />
     </div>
   );
