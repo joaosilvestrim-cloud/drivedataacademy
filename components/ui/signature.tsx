@@ -26,7 +26,7 @@ export function DataRule({ items, className }: { items: Reading[]; className?: s
         <div key={it.label} className="min-w-0">
           <dd className="font-mono text-data tabular-nums text-ds-text">{it.value}</dd>
           <dt className="mt-1 text-caption text-ds-text-2">{it.label}</dt>
-          {it.hint && <p className="text-meta uppercase text-ds-text-3">{it.hint}</p>}
+          {it.hint && <p className="text-meta text-ds-text-3">{it.hint}</p>}
         </div>
       ))}
     </dl>

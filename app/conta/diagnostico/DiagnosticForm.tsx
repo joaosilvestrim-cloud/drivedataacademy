@@ -30,7 +30,7 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
 
   return (
     <div className="mt-8">
-      <div className="sticky top-0 z-10 -mx-1 mb-5 rounded-xl bg-ink-900/90 px-1 py-3 backdrop-blur">
+      <div className="sticky top-0 z-10 -mx-1 mb-5 rounded-xl bg-tela/95 px-1 py-3 backdrop-blur">
         <div className="h-2 overflow-hidden rounded-full bg-tinta/10">
           <div className="h-full rounded-full bg-marca-verde transition-all duration-300" style={{ width: `${(respondidas / questions.length) * 100}%` }} />
         </div>
@@ -39,8 +39,8 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
 
       <div className="space-y-4">
         {questions.map((q, i) => (
-          <div key={q.id} className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
-            <p className="text-[0.65rem] font-semibold uppercase tracking-wide text-brand-teal">{q.competencyName}</p>
+          <div key={q.id} className="rounded-[20px] border border-tinta/10 bg-papel p-5">
+            <p className="text-[0.65rem] font-semibold text-marca">{q.competencyName}</p>
             <p className="mt-1.5 font-medium text-tinta">{i + 1}. {q.prompt}</p>
             <div className="mt-3 space-y-2">
               {q.options.map((opt, idx) => {
@@ -63,7 +63,7 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+      <div className="mt-6 rounded-[20px] border border-tinta/10 bg-papel p-5">
         {confirming ? (
           <>
             <p className="text-sm font-medium text-tinta">{tr("Enviar o diagnóstico?")}</p>
@@ -71,7 +71,7 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
               {faltam > 0 ? `Ainda faltam ${faltam} perguntas. ` : ""}{tr("Você responde uma vez só, então não dá para refazer depois.")}
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <button onClick={send} disabled={busy} className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-60">
+              <button onClick={send} disabled={busy} className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-60">
                 {busy ? "Enviando..." : "Confirmar envio"}
               </button>
               <button onClick={() => setConfirming(false)} disabled={busy} className="text-sm text-slate-400 hover:text-tinta">{tr("Voltar")}</button>
@@ -79,7 +79,7 @@ export default function DiagnosticForm({ questions }: { questions: Question[] })
           </>
         ) : (
           <div className="flex flex-wrap items-center gap-3">
-            <button onClick={() => setConfirming(true)} disabled={respondidas === 0} className="rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento disabled:opacity-40">
+            <button onClick={() => setConfirming(true)} disabled={respondidas === 0} className="rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento disabled:opacity-40">
               {tr("Enviar diagnóstico")}
             </button>
             {faltam > 0 && <span className="text-sm text-slate-400">Faltam {faltam}.</span>}

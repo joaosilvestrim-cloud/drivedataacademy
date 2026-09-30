@@ -86,7 +86,7 @@ export default function CupomContagem({
         >
           CUPOM: {codigo}
         </button>
-        <span className="rounded-full bg-marca px-2.5 py-0.5 text-xs font-semibold text-marca-verde">{desconto}</span>
+        <span className="rounded-full bg-noite px-2.5 py-0.5 text-xs font-semibold text-marca-verde">{desconto}</span>
       </span>
 
       <span className="flex flex-col gap-1.5">
@@ -96,7 +96,7 @@ export default function CupomContagem({
         <span className="inline-flex items-end gap-1.5" role="timer" aria-label={`O cupom ${codigo} vence em ${falta}`}>
           {blocos.map((b, i) => (
             <span key={i} className="flex flex-col items-center">
-              <span className="min-w-[2.1rem] rounded-md bg-white px-1.5 py-1 text-center font-mono text-sm font-bold tabular-nums text-tinta" aria-hidden="true">
+              <span className="min-w-[2.1rem] rounded-md bg-papel px-1.5 py-1 text-center font-mono text-sm font-bold tabular-nums text-tinta" aria-hidden="true">
                 {b.r === "dia" || b.r === "dias" ? b.v : dois(b.v)}
               </span>
               <span className="mt-0.5 text-[0.58rem] uppercase tracking-wider text-slate-500" aria-hidden="true">{b.r}</span>

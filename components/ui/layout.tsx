@@ -26,9 +26,9 @@ export function PageHeader({
   return (
     <header className={cx("flex flex-wrap items-end justify-between gap-x-8 gap-y-4", className)}>
       <div className="min-w-0 max-w-2xl">
-        {context && <p className="text-meta uppercase text-ds-text-3">{context}</p>}
-        <h1 className="mt-2 text-balance font-display text-title font-semibold text-ds-text">{title}</h1>
-        {lede && <p className="mt-2 text-body text-ds-text-2">{lede}</p>}
+        {context && <p className="text-meta text-ds-text-3">{context}</p>}
+        <h1 className="mt-2 text-balance text-[2rem] font-bold leading-tight tracking-tight text-ds-text">{title}</h1>
+        {lede && <p className="mt-2 text-[15px] leading-relaxed text-ds-text-2">{lede}</p>}
       </div>
       {action}
     </header>
@@ -51,9 +51,9 @@ export function SectionHeader({
 }) {
   return (
     <div className={cx("flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5", className)}>
-      <h2 className="font-display text-section font-semibold text-ds-text">{title}</h2>
+      <h2 className="text-lg font-bold tracking-tight text-ds-text">{title}</h2>
       <div className="flex items-baseline gap-4">
-        {meta && <span className="text-meta uppercase text-ds-text-3">{meta}</span>}
+        {meta && <span className="text-meta text-ds-text-3">{meta}</span>}
         {action}
       </div>
     </div>
@@ -122,7 +122,7 @@ export function Alert({
 }) {
   return (
     <div
-      className={cx("border-l-2 py-2.5 pl-4", ALERT_TONE[tone])}
+      className={cx("rounded-srf border-l-4 bg-ds-raised py-3 pl-4 pr-4", ALERT_TONE[tone])}
       role={tone === "danger" ? "alert" : "status"}
     >
       {title && <p className="text-label font-medium text-ds-text">{title}</p>}
@@ -147,7 +147,7 @@ export function Th({ children, className, numeric }: { children?: ReactNode; cla
     <th
       scope="col"
       className={cx(
-        "border-b border-ds-line pb-2 pr-4 text-left text-meta font-medium uppercase text-ds-text-3",
+        "border-b border-ds-line pb-2 pr-4 text-left text-meta font-medium text-ds-text-3",
         numeric && "text-right",
         className
       )}

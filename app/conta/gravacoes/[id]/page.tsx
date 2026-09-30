@@ -49,8 +49,8 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
   return (
     <div className="max-w-4xl">
       <Link href="/conta/agenda" className="text-sm text-slate-400 hover:text-tinta">{tr("← Voltar para a agenda")}</Link>
-      <p className="mt-5 text-sm font-medium uppercase tracking-wide text-acento">{tr("Gravação")}{ev.kind === "mentoria" ? " · Mentoria" : ""}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{ev.title}</h1>
+      <p className="mt-5 text-sm font-medium text-ds-text-3">{tr("Gravação")}{ev.kind === "mentoria" ? " · Mentoria" : ""}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{ev.title}</h1>
       <p className="mt-1 text-sm text-slate-400">{fmt(ev.starts_at)}{ev.duration_min ? ` · ${ev.duration_min} min` : ""}</p>
 
       <div className="mt-6 space-y-6">
@@ -68,7 +68,7 @@ export default async function GravacaoPage({ params }: { params: { id: string } 
                 </div>
               </ProtectedPlayer>
             ) : (
-              <a href={parte.url} target="_blank" rel="noreferrer" className="inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">
+              <a href={parte.url} target="_blank" rel="noreferrer" className="inline-block rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">
                 {tr("Abrir gravação ↗")}
               </a>
             )}

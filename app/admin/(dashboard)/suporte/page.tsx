@@ -93,7 +93,7 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
         <h2 className="font-display text-section font-semibold text-ds-text">
           {FILTERS.find((f) => f.key === active)?.label ?? "Chamados"}
         </h2>
-        <span className="text-meta uppercase text-ds-text-3">
+        <span className="text-meta text-ds-text-3">
           {tickets.length} {tickets.length === 1 ? "chamado" : "chamados"}
         </span>
       </div>

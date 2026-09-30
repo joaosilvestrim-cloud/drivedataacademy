@@ -218,7 +218,7 @@ export default function AssistantButton() {
                 </div>
               ) : (
                 <div key={i} className="flex justify-end">
-                  <div className="max-w-[82%] whitespace-pre-line rounded-[18px] rounded-br-[4px] bg-marca px-4 py-2.5 text-sm leading-relaxed text-white">{m.content}</div>
+                  <div className="max-w-[82%] whitespace-pre-line rounded-[18px] rounded-br-[4px] bg-noite px-4 py-2.5 text-sm leading-relaxed text-white">{m.content}</div>
                 </div>
               )
             )}
@@ -256,7 +256,7 @@ export default function AssistantButton() {
                 aria-label={tr("Escreva sua mensagem...")}
                 className={panelStyles.input}
               />
-              <button onClick={() => sendText(input)} disabled={loading || !input.trim()} aria-label={tr("Enviar")} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-marca-verde text-marca transition-[filter] hover:brightness-95 disabled:opacity-40">
+              <button onClick={() => sendText(input)} disabled={loading || !input.trim()} aria-label={tr("Enviar")} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-marca-verde text-sobre-acento transition-[filter] hover:brightness-95 disabled:opacity-40">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             </div>
@@ -286,7 +286,7 @@ export default function AssistantButton() {
 
             {balao.tipo === "dica" && (
               <div className="pr-4">
-                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-acento">{tr("Dica")}</p>
+                <p className="text-[0.62rem] font-semibold text-marca">{tr("Dica")}</p>
                 <p className="mt-0.5 text-sm font-semibold text-tinta">{tr(balao.titulo)}</p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-300">{tr(balao.texto)}</p>
                 {!pathname.startsWith(balao.href) && (

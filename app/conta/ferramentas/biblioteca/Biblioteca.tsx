@@ -126,7 +126,7 @@ export default function Biblioteca() {
   return (
     <div className="mt-6">
       {/* 1. Barra de comando: busca e linguagem, sempre no mesmo lugar. */}
-      <div data-tour="bib-busca" className="sticky top-[61px] z-20 -mx-4 border-b border-tinta/8 bg-ink-900/92 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:top-0">
+      <div data-tour="bib-busca" className="sticky top-[61px] z-20 -mx-4 border-b border-tinta/8 bg-tela/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:top-0">
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative min-w-[13rem] flex-1">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
@@ -209,7 +209,7 @@ export default function Biblioteca() {
             {grupos.map(([l, itens]) => (
               <li key={l}>
                 {linguagem === "todas" && (
-                  <p className="sticky top-0 z-10 flex items-center gap-2 bg-ink-900/95 px-2 py-1.5 text-[0.68rem] font-semibold uppercase tracking-wider text-slate-500 backdrop-blur">
+                  <p className="sticky top-0 z-10 flex items-center gap-2 bg-tela/95 px-2 py-1.5 text-[0.68rem] font-semibold uppercase tracking-wider text-slate-500 backdrop-blur">
                     <span className={`h-1.5 w-1.5 rounded-full ${COR[l].ponto}`} aria-hidden="true" />
                     {NOME_LINGUAGEM[l]}
                     <span className="font-mono tabular-nums opacity-70">{itens.length}</span>
@@ -238,7 +238,7 @@ export default function Biblioteca() {
             ))}
 
             {!resultado.length && (
-              <li className="rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-8 text-center">
+              <li className="rounded-xl border border-tinta/10 bg-papel px-4 py-8 text-center">
                 <p className="text-sm text-slate-300">{tr("Nada com esse termo.")}</p>
                 <p className="mx-auto mt-1 max-w-xs text-xs text-slate-500">
                   {tr("Tente pelo problema, não pela função: “não bate”, “duplicata”, “mês anterior”, “filial”.")}
@@ -252,7 +252,7 @@ export default function Biblioteca() {
         {/* 3. Verbete. No computador fica ao lado; no celular vira folha por cima. */}
         <div className={`min-w-0 ${abertoNoCelular ? "fixed inset-0 z-40 overflow-y-auto bg-ink-900 p-4 lg:static lg:z-auto lg:overflow-visible lg:bg-transparent lg:p-0" : "hidden lg:block"}`}>
           {item ? (
-            <article className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5 sm:p-6 lg:sticky lg:top-[7.5rem]">
+            <article className="rounded-[20px] border border-tinta/10 bg-papel p-5 sm:p-6 lg:sticky lg:top-[7.5rem]">
               <div className="flex flex-wrap items-center gap-2">
                 <button onClick={() => setAbertoNoCelular(false)} className="mr-1 rounded-lg border border-tinta/10 px-2 py-1 text-xs text-slate-300 lg:hidden">
                   {tr("← Lista")}
@@ -276,7 +276,7 @@ export default function Biblioteca() {
               <h2 className="mt-3 font-display text-2xl font-bold text-tinta">{tr(item.titulo)}</h2>
 
               <div data-tour="bib-quando" className="mt-3 border-l-2 border-acento/50 pl-3">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-acento">{tr("Quando usar")}</p>
+                <p className="text-[0.7rem] font-semibold text-marca">{tr("Quando usar")}</p>
                 <p className="mt-0.5 text-sm text-slate-200">{tr(item.quando)}</p>
               </div>
 
@@ -316,7 +316,7 @@ export default function Biblioteca() {
               </p>
             </article>
           ) : (
-            <div className="rounded-3xl border border-dashed border-tinta/10 p-10 text-center text-sm text-slate-400">
+            <div className="rounded-[20px] border border-dashed bg-papel border-tinta/20 p-10 text-center text-sm text-slate-400">
               {tr("Escolha um verbete na lista.")}
             </div>
           )}

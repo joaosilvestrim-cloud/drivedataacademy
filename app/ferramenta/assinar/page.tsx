@@ -36,7 +36,7 @@ export default async function AssinarFerramentaPage() {
       <div className="mx-auto grid max-w-4xl items-start gap-10 lg:grid-cols-2">
         <div>
           <Link href="/conta" className="text-sm text-slate-400 hover:text-tinta">{tr("← Voltar ao portal")}</Link>
-          <p className="mt-4 text-sm font-medium uppercase tracking-wide text-acento">{tr("Ferramenta de Visuais")}</p>
+          <p className="mt-4 text-sm font-medium text-ds-text-3">{tr("Ferramenta de Visuais")}</p>
           <h1 className="mt-2 font-display text-4xl font-bold text-tinta">{tr("Crie visuais de Power BI sem código")}</h1>
           <p className="mt-4 text-lg text-slate-300">{tr("Monte cards em HTML/SVG e leve a medida DAX pronta pro seu relatório.")}</p>
           <ul className="mt-8 space-y-3">

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useT } from "@/lib/i18n/LanguageProvider";
 import LangSwitcher from "./LangSwitcher";
+import AlternarTema from "./tema/AlternarTema";
 import AccountNav from "./AccountNav";
 import { useAssinaturaAberta } from "./useMenuPublico";
 
@@ -45,7 +46,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 flex justify-center border-b bg-white/95 px-4 backdrop-blur transition-colors duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 flex justify-center border-b bg-papel/95 px-4 backdrop-blur transition-colors duration-300 ${
         scrolled ? "border-tinta/10" : "border-transparent"
       }`}
     >
@@ -64,7 +65,7 @@ export default function Navbar() {
                   aria-disabled={assinaturaAberta ? undefined : true}
                   title={assinaturaAberta ? undefined : tr("Liberamos nos próximos dias")}
                   className={`inline-flex items-baseline gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-[15px] font-semibold transition-colors ${
-                    pathname === DESTAQUE ? "bg-marca text-white" : assinaturaAberta ? "text-marca hover:bg-marca-nevoa" : "cursor-default text-marca/70"
+                    pathname === DESTAQUE ? "bg-noite text-white" : assinaturaAberta ? "text-marca hover:bg-marca-nevoa" : "cursor-default text-marca/70"
                   }`}
                 >
                   {l.label}
@@ -85,9 +86,10 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           <AccountNav />
           <LangSwitcher className="hidden sm:flex" />
+          <AlternarTema className="hidden sm:inline-flex" />
           <a
             href={resolverAncora("#ao-vivo", pathname)}
-            className="whitespace-nowrap rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-marca transition-[filter] hover:brightness-95 sm:px-5 sm:py-2.5 sm:text-[15px]"
+            className="whitespace-nowrap rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95 sm:px-5 sm:py-2.5 sm:text-[15px]"
           >
             {t.nav.cta}
           </a>
@@ -104,7 +106,7 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="absolute top-[76px] w-[92%] max-w-6xl rounded-srf bg-white p-3 shadow-overlay lg:hidden">
+        <div className="absolute top-[76px] w-[92%] max-w-6xl rounded-srf bg-papel p-3 shadow-overlay lg:hidden">
           {links.map((l) => (
             <a
               key={l.href}

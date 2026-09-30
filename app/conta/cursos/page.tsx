@@ -75,8 +75,8 @@ export default async function CursosCardapio() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Cursos")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Cardápio de treinamentos")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Cursos")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Cardápio de treinamentos")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {assinante
           ? tr("Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você.")
@@ -84,9 +84,9 @@ export default async function CursosCardapio() {
       </p>
 
       {!assinante && (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-acento/25 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
-          <p className="text-sm text-slate-200">{tr("Assine para liberar a compra dos treinamentos com preço de assinante.")}</p>
-          <Link href="/matricula" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Ver assinatura")}</Link>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-[20px] bg-marca-nevoa px-6 py-5">
+          <p className="text-[15px] font-medium text-marca">{tr("Assine para liberar a compra dos treinamentos com preço de assinante.")}</p>
+          <Link href="/matricula" className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Ver assinatura")}</Link>
         </div>
       )}
 
@@ -156,7 +156,7 @@ export default async function CursosCardapio() {
       )}
 
       {cardapio.length === 0 && (
-        <p className="mt-10 rounded-2xl border border-dashed border-tinta/10 px-6 py-12 text-center text-sm text-slate-500">
+        <p className="mt-10 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-6 py-12 text-center text-sm text-slate-500">
           {tr("Você já tem todos os treinamentos disponíveis. Novos chegam em breve.")}
         </p>
       )}
@@ -202,13 +202,13 @@ function Cartao({
             className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] ${apagado ? "saturate-[0.55] group-hover:saturate-100" : ""}`}
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
+          <div className="absolute inset-0 bg-noite" />
         )}
         {selo && (
           <span
-            className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[0.7rem] font-semibold backdrop-blur ${
+            className={`absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-semibold ${
               selo === "Seu" || selo === "À venda" || selo === "Incluso"
-                ? "bg-brand-green/90 text-sobre-acento"
+                ? "bg-marca-verde text-sobre-acento"
                 : "bg-amber-400/90 text-sobre-acento"
             }`}
           >

@@ -72,7 +72,7 @@ function Card({ item }: { item: Item }) {
   const enviado = done || !!sub;
 
   return (
-    <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+    <div className="rounded-[20px] border border-tinta/10 bg-papel p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -91,7 +91,7 @@ function Card({ item }: { item: Item }) {
       <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-300">{item.brief}</p>
 
       {sub?.feedback && (
-        <div className="mt-4 rounded-xl border border-tinta/10 bg-tinta/[0.03] p-3">
+        <div className="mt-4 rounded-xl border border-tinta/10 bg-papel p-3">
           <p className="text-xs font-semibold text-slate-300">{tr("Retorno da equipe")}</p>
           <p className="mt-1 text-sm text-slate-400">{sub.feedback}</p>
           {aprovado && sub.quality !== null && (
@@ -109,24 +109,24 @@ function Card({ item }: { item: Item }) {
             onChange={(e) => setContent(e.target.value.slice(0, 4000))}
             rows={5}
             placeholder={tr("Conte o que você fez, as decisões que tomou e o resultado.")}
-            className="w-full resize-y rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60"
+            className="w-full resize-y rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60"
           />
           <input
             value={link}
             onChange={(e) => setLink(e.target.value)}
             placeholder={tr("Link do arquivo, repositório ou publicação (opcional)")}
-            className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60"
+            className="w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60"
           />
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
-              className="rounded-lg border border-tinta/12 px-4 py-2 text-sm font-medium text-slate-200 hover:border-acento/50 hover:text-acento disabled:opacity-60">
+              className="rounded-full border border-tinta/12 px-4 py-2 text-sm font-medium text-slate-200 hover:border-acento/50 hover:text-acento disabled:opacity-60">
               {uploading ? tr("Enviando arquivo...") : "Anexar arquivo"}
             </button>
             <input ref={fileRef} type="file" onChange={onFile} className="hidden" />
             <span className="text-xs text-slate-500">{tr(".pbix, PDF, imagem, planilha. Até")} {MAX_MB} MB.</span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <button onClick={send} disabled={busy} className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-60">
+            <button onClick={send} disabled={busy} className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-60">
               {busy ? "Enviando..." : "Enviar entrega"}
             </button>
             <button onClick={() => setOpen(false)} className="text-sm text-slate-400 hover:text-tinta">{tr("Cancelar")}</button>
@@ -134,7 +134,7 @@ function Card({ item }: { item: Item }) {
           </div>
         </div>
       ) : (
-        <button onClick={() => setOpen(true)} className="mt-4 rounded-xl border border-tinta/12 px-4 py-2 text-sm font-medium text-slate-200 hover:border-acento/50 hover:text-acento">
+        <button onClick={() => setOpen(true)} className="mt-4 rounded-full border border-tinta/12 px-4 py-2 text-sm font-medium text-slate-200 hover:border-acento/50 hover:text-acento">
           {enviado ? "Reenviar entrega" : "Fazer minha entrega"}
         </button>
       )}
@@ -146,7 +146,7 @@ export default function ChallengeList({ items }: { items: Item[] }) {
   const tr = usarTraducao();
   if (!items.length) {
     return (
-      <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-14 text-center">
+      <div className="mt-8 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-6 py-14 text-center">
         <p className="font-medium text-tinta">{tr("Nenhum desafio aberto no momento.")}</p>
         <p className="mt-1 text-sm text-slate-400">{tr("A equipe publica novos desafios conforme as turmas avançam.")}</p>
       </div>

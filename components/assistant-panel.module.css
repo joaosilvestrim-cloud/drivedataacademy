@@ -29,3 +29,14 @@
 .input::placeholder { color:#5f6b7c; }
 @media(max-width:480px) { .header { padding:14px; } .portrait { width:55px; height:55px; } .title { font-size:20px; } .messages { padding:16px 12px; } .message { padding:12px; } }
 @media(prefers-reduced-motion:reduce) { .panel * { transition:none!important; } }
+/* Modo escuro do aluno: a conversa passa para azul-noite. */
+:global(:root[data-tema="escuro"]) .panel { background:#0c284a; box-shadow:rgba(0,0,0,.45) 0 10px 32px, rgba(255,255,255,.08) 0 0 0 1px; }
+:global(:root[data-tema="escuro"]) .messages,
+:global(:root[data-tema="escuro"]) .composer { background:#0c284a; border-color:#1d3d66; }
+:global(:root[data-tema="escuro"]) .message { background:#133563; color:#f1f5f9; }
+:global(:root[data-tema="escuro"]) .suggestion { background:transparent; border-color:#5fe06a; color:#e2e8f0; }
+:global(:root[data-tema="escuro"]) .suggestion:hover { background:#143c34; }
+:global(:root[data-tema="escuro"]) .inputRow { background:#0a2240; border-color:#3a5b86; }
+:global(:root[data-tema="escuro"]) .inputRow:focus-within { border-color:#5fe06a; }
+:global(:root[data-tema="escuro"]) .input { color:#f1f5f9; }
+:global(:root[data-tema="escuro"]) .input::placeholder { color:#94a3b8; }

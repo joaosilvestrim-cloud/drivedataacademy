@@ -38,7 +38,7 @@ function Numero({ rotulo, valor, apoio, tom = "neutral", href }: { rotulo: strin
   const cor = tom === "danger" ? "text-ds-danger" : tom === "attention" ? "text-ds-attention" : tom === "accent" ? "text-acento" : "text-ds-text";
   const corpo = (
     <>
-      <span className="block text-meta uppercase text-ds-text-3">{rotulo}</span>
+      <span className="block text-meta text-ds-text-3">{rotulo}</span>
       <span className={`mt-1 block font-mono text-2xl tabular-nums ${cor}`}>{valor}</span>
       {apoio && <span className="mt-1 block text-caption text-ds-text-3">{apoio}</span>}
     </>
@@ -92,13 +92,13 @@ export default async function SistemaAdmin() {
         </div>
         <div className="mt-3 grid gap-3 lg:grid-cols-2">
           <div className="rounded-srf border border-ds-line px-4 py-3 text-caption text-ds-text-2">
-            <span className="block text-meta uppercase text-ds-text-3">Último pagamento confirmado</span>
+            <span className="block text-meta text-ds-text-3">Último pagamento confirmado</span>
             {resumo.ultimoPagamento ? (
               <span className="mt-1 block">{resumo.ultimoPagamento.email} · {brl(Number(resumo.ultimoPagamento.amount || 0))} · {quando(resumo.ultimoPagamento.updated_at)}</span>
             ) : <span className="mt-1 block">Nenhum ainda.</span>}
           </div>
           <div className="rounded-srf border border-ds-line px-4 py-3 text-caption text-ds-text-2">
-            <span className="block text-meta uppercase text-ds-text-3">Última falha de e-mail</span>
+            <span className="block text-meta text-ds-text-3">Última falha de e-mail</span>
             {resumo.ultimaFalhaEmail ? (
               <span className="mt-1 block break-words">{resumo.ultimaFalhaEmail.to_email} · {quando(resumo.ultimaFalhaEmail.created_at)} · <span className="text-ds-danger">{resumo.ultimaFalhaEmail.reason}</span></span>
             ) : <span className="mt-1 block">Nenhuma registrada.</span>}

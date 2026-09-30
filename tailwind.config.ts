@@ -27,7 +27,7 @@ const TONS = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900
 const INVERSO: Record<string, string> = { "50": "950", "100": "900", "200": "800", "300": "700", "400": "700", "500": "600", "600": "500", "700": "300", "800": "200", "900": "100", "950": "50" };
 const PALETAS = ["red", "amber", "teal", "sky", "emerald", "violet", "orange", "rose"] as const;
 // Neutro frio, puxado para o azul do logo. No .escuro volta o slate original do Tailwind.
-const NEUTRO_CLARO: Record<string, string> = { "50": "#0b1220", "100": "#152033", "200": "#263247", "300": "#3d4859", "400": "#4f5a6b", "500": "#5f6b7c", "600": "#8b95a4", "700": "#c6ccd6", "800": "#e7ebf0", "900": "#f1f4f7", "950": "#f7f9fb" };
+const NEUTRO_CLARO: Record<string, string> = { "50": "#0b1220", "100": "#152033", "200": "#263247", "300": "#3d4859", "400": "#4f5a6b", "500": "#5f6b7c", "600": "#748196", "700": "#c6ccd6", "800": "#e7ebf0", "900": "#f1f4f7", "950": "#f7f9fb" };
 const NEUTRO_ESCURO: Record<string, string> = (paletaTailwind as any).slate;
 
 const variavel = (nome: string) => `rgb(var(--p-${nome}) / <alpha-value>)`;
@@ -44,6 +44,16 @@ for (const t of TONS) {
     escuro[`--p-${p}-${t}`] = canais(orig[t]);
   }
 }
+/* Cores com nome que mudam com o tema. "marca" é texto e traço (azul-noite no
+   claro, quase branco no escuro); a faixa escura usa "noite", que não muda. */
+Object.assign(claro, {
+  "--p-obsidian": "11 18 32", "--p-charcoal": "61 72 89", "--p-pebble": "139 149 164", "--p-fog": "233 237 242",
+  "--p-nevoa": "230 248 232", "--p-azul": "11 98 207", "--p-papel": "255 255 255", "--p-marca": "10 38 71", "--p-tela": "245 247 250",
+});
+Object.assign(escuro, {
+  "--p-obsidian": "241 245 249", "--p-charcoal": "203 213 225", "--p-pebble": "120 136 158", "--p-fog": "17 46 84",
+  "--p-nevoa": "22 64 54", "--p-azul": "125 184 255", "--p-papel": "12 40 74", "--p-marca": "226 232 240", "--p-tela": "6 26 51",
+});
 Object.assign(claro, {
   "--p-ink-900": "255 255 255", "--p-ink-800": "255 255 255", "--p-ink-700": "247 249 251", "--p-ink-600": "233 237 242",
   "--p-tinta": "11 18 32", "--p-acento": "11 98 207",
@@ -55,7 +65,12 @@ Object.assign(escuro, {
   "--p-brand-green": "95 224 106", "--p-brand-teal": "46 230 214", "--p-brand-blue": "90 169 255", "--p-brand-cyan": "34 211 238",
 });
 const temas = plugin(({ addBase }) => {
-  addBase({ ":root": claro, ".escuro": { ...escuro, color: "rgb(var(--p-tinta))" } });
+  addBase({
+    ":root": claro,
+    // Modo escuro escolhido pelo aluno: a página inteira lê como a faixa escura.
+    ':root[data-tema="escuro"]': { ...escuro, colorScheme: "dark" },
+    ".escuro": { ...escuro, color: "rgb(var(--p-tinta))" },
+  });
 });
 
 const config: Config = {
@@ -95,18 +110,21 @@ const config: Config = {
         acento: variavel("acento"),
         "sobre-acento": "#0a2647",
         // Paleta do logo, com nome, para tela nova.
-        marca: "#0a2647",         // azul-noite: faixa escura, menu, texto de peso
-        "marca-verde": "#5fe06a", // verde do "D": ação principal, estado ativo
-        "marca-azul": "#0b62cf",  // azul do logo: link e destaque em texto
-        "marca-ciano": "#13b8ef", // ciano do logo: detalhe, nunca texto no claro
-        "marca-nevoa": "#e6f8e8", // verde bem claro: selo, hover, bloco de destaque
+        noite: "#0a2647",               // azul-noite fixo: fundo da faixa escura e do menu do admin
+        marca: variavel("marca"),       // texto e traço de peso: azul-noite no claro, claro no escuro
+        "marca-verde": "#5fe06a",       // verde do "D": ação principal, estado ativo
+        "marca-azul": variavel("azul"), // azul do logo: link e destaque em texto
+        "marca-ciano": "#13b8ef",       // ciano do logo: detalhe, nunca texto no claro
+        "marca-nevoa": variavel("nevoa"), // verde bem claro: selo, hover, bloco de destaque
+        papel: variavel("papel"),       // superfície branca que escurece no modo escuro
+        tela: variavel("tela"),         // fundo da área logada: um tom abaixo do cartão
         spruce: "#1f9fa3",
         "signal-blue": "#0b62cf",
         "alarm-red": "#cb272f",
-        charcoal: "#3d4859",
-        obsidian: "#0b1220",
-        pebble: "#8b95a4",
-        fog: "#e9edf2",
+        charcoal: variavel("charcoal"),
+        obsidian: variavel("obsidian"),
+        pebble: variavel("pebble"),
+        fog: variavel("fog"),
         // Tokens da Ferramenta de Visuais (editor). Tema claro próprio.
         viz: {
           DEFAULT: "#0891b2",
@@ -131,7 +149,7 @@ const config: Config = {
         "body-sm": ["0.875rem",   { lineHeight: "1.55" }],
         label:     ["0.8125rem",  { lineHeight: "1.35" }],
         caption:   ["0.75rem",    { lineHeight: "1.5" }],
-        meta:      ["0.75rem",    { lineHeight: "1.4",  letterSpacing: "0.07em" }],
+        meta:      ["0.75rem",    { lineHeight: "1.4" }],
         data:      ["1.5rem",     { lineHeight: "1.08", letterSpacing: "-0.02em" }],
         "data-lg": ["2.25rem",    { lineHeight: "1.02", letterSpacing: "-0.03em" }],
       },

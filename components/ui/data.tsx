@@ -187,7 +187,7 @@ export function SortTh({
 }) {
   const ativo = !!field && sort === field;
   const base = cx(
-    "border-b border-ds-line pb-2 pr-4 text-left text-meta font-medium uppercase",
+    "border-b border-ds-line pb-2 pr-4 text-left text-meta font-medium",
     numeric && "text-right",
     ativo ? "text-ds-text" : "text-ds-text-3",
     className

@@ -276,11 +276,11 @@ export default function TurmaForm({
 
           {open ? (
             <div className="rounded-srf border border-ds-line bg-ds-surface p-4">
-              <p className="font-mono text-meta uppercase text-acento">Assinatura</p>
+              <p className="font-mono text-meta text-acento">Assinatura</p>
               <p className="mt-1 font-display text-title font-semibold leading-tight text-ds-text">{previewNome}</p>
               <p className="mt-2 text-caption leading-relaxed text-ds-text-3">{previewDesc}</p>
               <div className="mt-4 border-l-2 border-acento py-1.5 pl-3">
-                <span className="block text-meta uppercase text-ds-text-3">Assinatura mensal</span>
+                <span className="block text-meta text-ds-text-3">Assinatura mensal</span>
                 {hasPrice ? (
                   <span className="block font-display text-data font-semibold tabular-nums text-ds-text">
                     R$ {centsToBRL(cents)}
@@ -293,7 +293,7 @@ export default function TurmaForm({
               </div>
               {anualCents > 0 && !anualCaro && (
                 <div className="mt-3 border-l-2 border-ds-info py-1.5 pl-3">
-                  <span className="block text-meta uppercase text-ds-text-3">Anual à vista{desconto > 0 ? ` · ${desconto}% off` : ""}</span>
+                  <span className="block text-meta text-ds-text-3">Anual à vista{desconto > 0 ? ` · ${desconto}% off` : ""}</span>
                   <span className="block font-display text-data font-semibold tabular-nums text-ds-text">R$ {centsToBRL(anualCents)}</span>
                   <span className="mt-0.5 block text-meta text-ds-text-3">pagamento único · 12 meses de acesso</span>
                 </div>
@@ -301,7 +301,7 @@ export default function TurmaForm({
             </div>
           ) : (
             <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-8 text-center">
-              <p className="font-mono text-meta uppercase text-acento">Matrículas</p>
+              <p className="font-mono text-meta text-acento">Matrículas</p>
               <p className="mt-1 font-display text-component font-semibold text-ds-text">Inscrições fechadas no momento</p>
               <p className="mt-2 text-caption text-ds-text-3">Entre na lista de espera e avisamos assim que abrir.</p>
             </div>

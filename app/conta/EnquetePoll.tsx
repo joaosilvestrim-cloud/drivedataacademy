@@ -33,7 +33,7 @@ export default function EnquetePoll({
     <div className="rounded-srf border border-acento/30 bg-ds-accent/[0.04] p-5 tablet:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
         <h2 className="font-display text-section font-semibold text-ds-text">{titulo}</h2>
-        <span className="text-meta uppercase text-ds-text-3">
+        <span className="text-meta text-ds-text-3">
           {totalVotos} {totalVotos === 1 ? "voto" : "votos"}
         </span>
       </div>

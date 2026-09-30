@@ -12,15 +12,15 @@ export default async function CaixaPretaPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Ferramentas")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{await nomeDaFerramenta("caixa-preta")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Ferramentas")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{await nomeDaFerramenta("caixa-preta")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("Monte e opere um modelo de linguagem dentro do seu navegador. Veja o texto virar token, o corpus virar tabela de probabilidade e a frase ser escrita um token por vez, com os candidatos à vista. Sem API, sem chave e sem custo.")}
       </p>
 
       <CaixaPreta />
 
-      <section className="mt-12 grid gap-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6 sm:grid-cols-3">
+      <section className="mt-12 grid gap-5 rounded-[20px] border border-tinta/10 bg-papel p-6 sm:grid-cols-3">
         <div>
           <p className="text-sm font-semibold text-acento">{tr("Por que um modelo pequeno")}</p>
           <p className="mt-1 text-sm text-slate-400">

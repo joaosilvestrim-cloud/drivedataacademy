@@ -31,7 +31,7 @@ export default async function NomesFerramentas({ searchParams }: { searchParams:
           const trocado = !!(trocas[chave]?.nome || trocas[chave]?.desc);
           return (
             <fieldset key={chave} className="flex flex-col gap-4 rounded-srf border border-ds-line bg-ds-surface p-4">
-              <legend className="px-1 text-meta uppercase text-ds-text-3">
+              <legend className="px-1 text-meta text-ds-text-3">
                 {padrao.nome}
                 {trocado && <span className="ml-2 rounded-ctl bg-ds-accent/15 px-1.5 py-0.5 text-acento">personalizado</span>}
               </legend>

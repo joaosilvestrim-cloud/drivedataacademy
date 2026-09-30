@@ -39,13 +39,13 @@ export default async function GravacoesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-tinta">{tr("Gravações")}</h1>
+      <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Gravações")}</h1>
       <p className="mt-1 text-sm text-slate-400">
         {tr("As lives e mentorias que já aconteceram, para assistir quando der. Incluídas na assinatura.")}
       </p>
 
       {gravacoes.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-16 text-center">
+        <div className="mt-8 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-6 py-16 text-center">
           <p className="font-medium text-tinta">{tr("Nenhuma gravação publicada ainda")}</p>
           <p className="mt-2 text-sm text-slate-400">
             {tr("Assim que o time subir a gravação de um encontro, ela aparece aqui.")}{" "}

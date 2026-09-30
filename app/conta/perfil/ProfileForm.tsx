@@ -17,9 +17,9 @@ import { signAvatarUpload, saveProfile } from "../actions";
      também salva. */
 
 const field =
-  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors hover:border-tinta/20 focus:border-acento/70 focus:bg-tinta/[0.06]";
-const label = "block text-sm font-medium text-slate-200";
-const dica = "text-xs leading-relaxed text-slate-500";
+  "w-full rounded-srf border border-tinta/20 bg-papel px-4 py-3 text-[15px] text-tinta placeholder:text-slate-500 outline-none transition-colors hover:border-tinta/35 focus:border-marca";
+const label = "block text-sm font-semibold text-obsidian";
+const dica = "text-[13px] leading-relaxed text-slate-500";
 
 type Form = { full_name: string; phone: string; country: string; linkedin_url: string; headline: string; bio: string; skills: string; avatar_url: string; portfolio_url: string };
 const EMPTY: Form = { full_name: "", phone: "", country: "", linkedin_url: "", headline: "", bio: "", skills: "", avatar_url: "", portfolio_url: "" };
@@ -45,10 +45,10 @@ const urlOk = (u: string) => !u.trim() || /^https?:\/\/[^\s.]+\.[^\s]+$/i.test(u
    recriaria a seção e o campo perderia o foco. */
 function Secao({ titulo, texto, children }: { titulo: string; texto: string; children: React.ReactNode }) {
   return (
-    <fieldset className="space-y-5 border-t border-tinta/10 pt-6 first:border-t-0 first:pt-0">
+    <fieldset className="space-y-5 border-t border-tinta/10 pt-8 first:border-t-0 first:pt-0">
       <legend className="sr-only">{titulo}</legend>
       <div>
-        <p className="font-display text-base font-semibold text-tinta">{titulo}</p>
+        <p className="text-lg font-bold tracking-tight text-obsidian">{titulo}</p>
         <p className={`mt-0.5 ${dica}`}>{texto}</p>
       </div>
       {children}
@@ -191,8 +191,8 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
   if (loading) {
     return (
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <div className="h-[32rem] animate-pulse rounded-2xl bg-tinta/[0.03]" />
-        <div className="h-72 animate-pulse rounded-2xl bg-tinta/[0.03]" />
+        <div className="h-[32rem] animate-pulse rounded-[20px] border border-tinta/10 bg-papel" />
+        <div className="h-72 animate-pulse rounded-[20px] border border-tinta/10 bg-papel" />
       </div>
     );
   }
@@ -211,53 +211,60 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
     <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       {/* Prévia ao vivo: é assim que os outros alunos e quem visita veem. */}
       <aside className="order-first flex flex-col gap-4 lg:sticky lg:top-6 lg:order-last">
-        <div className="overflow-hidden rounded-2xl border border-tinta/10 bg-ink-800">
-          <div className="h-16 bg-[radial-gradient(120%_140%_at_0%_0%,rgba(21,196,126,.32),transparent_60%),radial-gradient(120%_140%_at_100%_0%,rgba(59,130,246,.28),transparent_55%)]" />
-          <div className="-mt-9 px-5 pb-5">
+        <div className="overflow-hidden rounded-[20px] border border-tinta/10 bg-papel shadow-painel">
+          {/* Capa azul-noite com a faixa nas três cores do logo. */}
+          <div className="relative h-20 bg-noite">
+            <span aria-hidden="true" className="absolute inset-x-0 bottom-0 flex h-1.5">
+              <span className="flex-1 bg-[#5fe06a]" />
+              <span className="flex-1 bg-[#13b8ef]" />
+              <span className="flex-1 bg-[#0b62cf]" />
+            </span>
+          </div>
+          <div className="-mt-10 px-5 pb-5">
             <button type="button" onClick={() => avatarRef.current?.click()} className="group relative rounded-full" title={tr("Trocar foto")}>
-              <Avatar name={form.full_name || email} src={form.avatar_url || null} size="lg" className="ring-4 ring-ink-800" />
-              <span className="absolute inset-0 grid place-items-center rounded-full bg-black/55 text-[0.65rem] font-semibold text-tinta opacity-0 transition-opacity group-hover:opacity-100">
+              <Avatar name={form.full_name || email} src={form.avatar_url || null} size="lg" className="ring-4 ring-papel" />
+              <span className="absolute inset-0 grid place-items-center rounded-full bg-black/55 text-[0.65rem] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
                 {uploading ? tr("enviando") : form.avatar_url ? tr("trocar") : tr("pôr foto")}
               </span>
             </button>
             <input ref={avatarRef} type="file" accept="image/*" onChange={onAvatar} className="hidden" />
             {avisoFoto && <p className="mt-1 text-xs text-red-300">{avisoFoto}</p>}
-            <p className="mt-2 font-display text-lg font-bold leading-tight text-tinta">{form.full_name || <span className="text-slate-500">{tr("Seu nome")}</span>}</p>
-            <p className="mt-0.5 text-sm leading-snug text-brand-teal">{form.headline || <span className="text-slate-600">{tr("Seu título profissional")}</span>}</p>
+            <p className="mt-3 text-xl font-bold leading-tight tracking-tight text-obsidian">{form.full_name || <span className="text-slate-500">{tr("Seu nome")}</span>}</p>
+            <p className="mt-1 text-sm font-medium leading-snug text-marca-azul">{form.headline || <span className="font-normal text-slate-500">{tr("Seu título profissional")}</span>}</p>
             {form.country && <p className="mt-0.5 text-xs text-slate-500">{form.country}</p>}
-            {form.bio && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-slate-300">{form.bio}</p>}
+            {form.bio && <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-charcoal">{form.bio}</p>}
             {skills.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
-                {skills.slice(0, 8).map((s) => <span key={s} className="rounded-md bg-tinta/[0.06] px-2 py-0.5 text-xs text-slate-200">{s}</span>)}
+                {skills.slice(0, 8).map((s) => <span key={s} className="rounded-full bg-fog px-2.5 py-0.5 text-xs font-medium text-charcoal">{s}</span>)}
                 {skills.length > 8 && <span className="px-1 py-0.5 text-xs text-slate-500">+{skills.length - 8}</span>}
               </div>
             )}
             {(form.linkedin_url || form.portfolio_url) && (
               <div className="mt-3 flex flex-wrap gap-3 text-xs">
-                {form.linkedin_url && <span className="text-sky-400">LinkedIn</span>}
-                {form.portfolio_url && <span className="text-acento">{tr("Portfólio")}</span>}
+                {form.linkedin_url && <span className="font-semibold text-marca-azul">LinkedIn ↗</span>}
+                {form.portfolio_url && <span className="font-semibold text-marca-azul">{tr("Portfólio")} ↗</span>}
               </div>
             )}
-            <p className="mt-4 border-t border-tinta/[0.06] pt-3 text-xs text-slate-500">{tr("Prévia do seu cartão na Vitrine e na comunidade. Muda enquanto você digita.")}</p>
+            <p className="mt-4 border-t border-tinta/10 pt-3 text-xs text-slate-500">{tr("Prévia do seu cartão na Vitrine e na comunidade. Muda enquanto você digita.")}</p>
           </div>
         </div>
 
         {/* Quanto falta, com o nome de cada coisa. Clicar leva ao campo. */}
-        <div className="rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-5">
+        <div className="rounded-[20px] border border-tinta/10 bg-papel p-5">
           <div className="flex items-baseline justify-between">
-            <p className="text-sm font-semibold text-tinta">{feitos === itens.length ? tr("Perfil completo") : tr("Seu perfil")}</p>
+            <p className="text-sm font-bold text-obsidian">{feitos === itens.length ? tr("Perfil completo") : tr("Seu perfil")}</p>
             <p className="font-mono text-xs tabular-nums text-slate-400">{feitos} {tr("de")} {itens.length}</p>
           </div>
-          <div className="mt-2 h-1 overflow-hidden rounded-full bg-tinta/[0.07]">
-            <div className="h-full rounded-full bg-brand-green transition-[width] duration-500" style={{ width: `${(feitos / itens.length) * 100}%` }} />
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-fog">
+            <div className="h-full rounded-full bg-marca-verde transition-[width] duration-500" style={{ width: `${(feitos / itens.length) * 100}%` }} />
           </div>
           {faltam.length > 0 ? (
-            <ul className="mt-3 divide-y divide-tinta/[0.06]">
+            <ul className="mt-3 divide-y divide-tinta/10">
               {faltam.map((i) => (
                 <li key={i.id}>
-                  <button type="button" onClick={() => irPara(i.id)} className="flex w-full items-center justify-between gap-3 py-2 text-left text-sm text-slate-300 hover:text-tinta">
+                  <button type="button" onClick={() => irPara(i.id)} className="flex w-full items-center justify-between gap-3 py-2.5 text-left text-sm text-charcoal hover:text-obsidian">
                     {i.nome}
-                    <span className="shrink-0 text-xs text-acento">{tr("preencher")} →</span>
+                    <span className="shrink-0 text-xs font-semibold text-marca-azul">{tr("preencher")} →</span>
                   </button>
                 </li>
               ))}
@@ -268,7 +275,7 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
         </div>
       </aside>
 
-      <form onSubmit={(e) => { e.preventDefault(); salvar(); }} className="rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-5 sm:p-7">
+      <form onSubmit={(e) => { e.preventDefault(); salvar(); }} className="rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-8">
         <div className="space-y-6">
           <Secao titulo={tr("Quem é você")} texto={tr("O nome sai no certificado e no portfólio. O título é a primeira linha que alguém lê.")}>
             <div className="space-y-1.5">
@@ -300,13 +307,13 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
             <div>
               <label className="sr-only" htmlFor="skills-nova">{tr("Habilidades")}</label>
               <div
-                className="flex cursor-text flex-wrap items-center gap-1.5 rounded-xl border border-tinta/10 bg-tinta/[0.04] p-2 transition-colors hover:border-tinta/20 focus-within:border-acento/70"
+                className="flex cursor-text flex-wrap items-center gap-1.5 rounded-srf border border-tinta/20 bg-papel p-2 transition-colors hover:border-tinta/35 focus-within:border-marca"
                 onClick={() => document.getElementById("skills-nova")?.focus()}
               >
                 {skills.map((s) => (
-                  <span key={s} className="inline-flex items-center gap-1 rounded-lg bg-tinta/[0.08] py-1 pl-2.5 pr-1 text-sm text-tinta">
+                  <span key={s} className="inline-flex items-center gap-1 rounded-full bg-marca-nevoa py-1 pl-3 pr-1 text-sm font-medium text-marca">
                     {s}
-                    <button type="button" onClick={() => tirarSkill(s)} className="grid h-5 w-5 place-items-center rounded text-slate-400 hover:bg-tinta/10 hover:text-tinta" aria-label={`${tr("Tirar")} ${s}`}>
+                    <button type="button" onClick={() => tirarSkill(s)} className="grid h-5 w-5 place-items-center rounded-full text-marca/60 hover:bg-marca/10 hover:text-marca" aria-label={`${tr("Tirar")} ${s}`}>
                       ×
                     </button>
                   </span>
@@ -336,7 +343,7 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => addSkill(s)}
-                      className="rounded-lg border border-dashed border-tinta/15 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-acento/60 hover:text-tinta"
+                      className="rounded-full border border-dashed border-tinta/25 px-3 py-1 text-xs font-medium text-charcoal transition-colors hover:border-marca hover:text-marca"
                     >
                       + {s}
                     </button>
@@ -383,7 +390,7 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className={dica}>{urlOk(form.portfolio_url) ? tr("Aparece na Vitrine de alunos.") : tr("Comece com https:// para o link funcionar.")}</p>
                 {siteDoPortfolio && form.portfolio_url !== siteDoPortfolio && (
-                  <button type="button" onClick={() => setForm((f) => ({ ...f, portfolio_url: siteDoPortfolio }))} className="text-xs font-semibold text-acento hover:underline">
+                  <button type="button" onClick={() => setForm((f) => ({ ...f, portfolio_url: siteDoPortfolio }))} className="text-xs font-semibold text-marca-azul hover:underline">
                     {tr("Usar meu site da Academy")}
                   </button>
                 )}
@@ -394,11 +401,11 @@ export default function ProfileForm({ siteDoPortfolio = null }: { siteDoPortfoli
 
         {/* A barra de salvar gruda no pé da tela quando há mudança. */}
         <div
-          className={`z-10 mt-8 flex flex-wrap items-center gap-3 rounded-xl border py-3 transition-colors ${
-            alterado ? "sticky bottom-3 border-acento/40 bg-ink-700 px-4 shadow-lg shadow-black/40" : "border-transparent"
+          className={`z-10 mt-8 flex flex-wrap items-center gap-3 rounded-full py-2 transition-colors ${
+            alterado ? "escuro sticky bottom-4 bg-noite pl-2 pr-5 shadow-overlay" : ""
           }`}
         >
-          <button type="submit" disabled={saving || !alterado} className="rounded-xl bg-marca-verde px-6 py-2.5 text-sm font-semibold text-sobre-acento transition-opacity disabled:opacity-40">
+          <button type="submit" disabled={saving || !alterado} className="rounded-full bg-marca-verde px-6 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter,opacity] hover:brightness-95 disabled:opacity-40">
             {saving ? tr("Salvando...") : tr("Salvar perfil")}
           </button>
           {alterado && !saving && (

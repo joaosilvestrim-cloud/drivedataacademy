@@ -34,13 +34,13 @@ export default async function AgendaPage() {
   const admin = createAdminClient();
   if (!(await canUseCommunity(admin, user.id, user.email))) {
     return (
-      <div className="rounded-3xl border border-tinta/10 bg-tinta/[0.02] px-6 py-20 text-center">
+      <div className="rounded-[20px] border border-tinta/10 bg-papel px-6 py-20 text-center">
         <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-marca-verde text-sobre-acento">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </div>
-        <h1 className="font-display text-2xl font-bold text-tinta">{tr("Agenda de lives")}</h1>
+        <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Agenda de lives")}</h1>
         <p className="mt-2 text-slate-400">{tr("Exclusivo para alunos com acesso ativo.")}</p>
-        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Garantir meu acesso")}</Link>
+        <Link href="/matricula" className="mt-6 inline-block rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">{tr("Garantir meu acesso")}</Link>
       </div>
     );
   }
@@ -59,13 +59,13 @@ export default async function AgendaPage() {
   return (
     <div>
       <AgendaAtualizacao />
-      <h1 className="font-display text-3xl font-bold text-tinta">{tr("Agenda de lives")}</h1>
+      <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Agenda de lives")}</h1>
       <p className="mt-1 text-sm text-slate-400">{tr("Encontros ao vivo e o roadmap de conteúdo da turma.")}</p>
 
       {/* Próxima live em destaque */}
       {next ? (
-        <div className="mt-6 glow-border overflow-hidden rounded-3xl">
-          <div className={`glass relative p-6 sm:p-8 ${next.cover_url ? "grid gap-6 lg:grid-cols-[1fr_24rem] lg:items-center" : ""}`}>
+        <div className="escuro mt-6 overflow-hidden rounded-grande bg-noite">
+          <div className={`relative p-7 sm:p-9 ${next.cover_url ? "grid gap-6 lg:grid-cols-[1fr_24rem] lg:items-center" : ""}`}>
             <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               {isLiveNow(next) ? (
@@ -74,12 +74,12 @@ export default async function AgendaPage() {
                   {tr("AO VIVO AGORA")}
                 </span>
               ) : (
-                <span className="rounded-full bg-brand-green/15 px-3 py-1 text-xs font-semibold text-acento">{next.kind === "mentoria" ? tr("Próxima mentoria") : tr("Próxima live")} · {countdown(next.starts_at)}</span>
+                <span className="rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-sobre-acento">{next.kind === "mentoria" ? tr("Próxima mentoria") : tr("Próxima live")} · {countdown(next.starts_at)}</span>
               )}
               {next.kind === "mentoria" && <span className="rounded-full bg-brand-blue/15 px-3 py-1 text-xs font-semibold text-brand-teal">{tr("Mentoria")}</span>}
             </div>
-            <h2 className="mt-3 font-display text-2xl font-bold text-tinta">{next.title}</h2>
-            <p className="mt-1 text-sm text-brand-teal">{fmt(next.starts_at)}{next.duration_min ? ` · ${next.duration_min} min` : ""}</p>
+            <h2 className="mt-4 text-[1.75rem] font-black leading-tight tracking-tight text-white sm:text-[2rem]">{next.title}</h2>
+            <p className="mt-2 text-sm font-medium text-marca-verde">{fmt(next.starts_at)}{next.duration_min ? ` · ${next.duration_min} min` : ""}</p>
             <div className="mt-4"><Cronometro inicio={next.starts_at} duracaoMin={next.duration_min} agoraInicial={now} /></div>
             {next.description && <p className="mt-3 max-w-2xl text-sm text-slate-300">{next.description}</p>}
             {/* Link restrito primeiro. Esta é rota do middleware, e é o único
@@ -88,7 +88,7 @@ export default async function AgendaPage() {
                 que deixar a sala destrancada. */}
             {next.url_alunos ? (
               <div className="mt-5">
-                <a href={next.url_alunos} target="_blank" rel="noreferrer" className="inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
+                <a href={next.url_alunos} target="_blank" rel="noreferrer" className="inline-block rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">
                   {isLiveNow(next) ? tr("Entrar na reunião →") : tr("Abrir a reunião ↗")}
                 </a>
                 <p className="mt-2 text-xs text-slate-500">{tr("Encontro fechado, só para alunos. Não compartilhe este link.")}</p>
@@ -97,12 +97,12 @@ export default async function AgendaPage() {
                 )}
               </div>
             ) : next.url ? (isLiveNow(next) ? (
-              <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Entrar na live →")}</a>
+              <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">{tr("Entrar na live →")}</a>
             ) : (
               /youtu/.test(next.url) ? (
-                <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-tinta transition-colors hover:bg-red-500">{tr("Abrir no YouTube ↗")}</a>
+                <a href={next.url} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-500">{tr("Abrir no YouTube ↗")}</a>
               ) : (
-                <span className="mt-5 inline-block rounded-xl border border-tinta/10 px-6 py-3 text-sm font-medium text-slate-400">{tr("O link libera no horário")}</span>
+                <span className="mt-5 inline-block rounded-full border border-tinta/25 px-6 py-3 text-sm font-medium text-slate-300">{tr("O link libera no horário")}</span>
               )
             )) : null}
             </div>
@@ -113,7 +113,7 @@ export default async function AgendaPage() {
           </div>
         </div>
       ) : (
-        <div className="mt-6 rounded-3xl border border-dashed border-tinta/10 px-6 py-16 text-center">
+        <div className="mt-6 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-6 py-16 text-center">
           <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-full bg-tinta/5 text-acento">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
@@ -149,7 +149,7 @@ export default async function AgendaPage() {
           <h2 className="mt-10 font-display text-lg font-bold text-tinta">{tr("Gravações anteriores")}</h2>
           <div className="mt-4 space-y-3">
             {past.map((l: any) => (
-              <div key={l.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-4">
+              <div key={l.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[20px] border border-tinta/10 bg-papel px-5 py-4">
                 <div className="flex items-center gap-3">
                   {l.cover_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -165,7 +165,7 @@ export default async function AgendaPage() {
                   </div>
                 </div>
                 {l.recording_url ? (
-                  <Link href={`/conta/gravacoes/${l.id}`} className="rounded-lg bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Assistir gravação")}</Link>
+                  <Link href={`/conta/gravacoes/${l.id}`} className="rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">{tr("Assistir gravação")}</Link>
                 ) : (
                   <span className="text-xs text-slate-500">{tr("Gravação em breve")}</span>
                 )}

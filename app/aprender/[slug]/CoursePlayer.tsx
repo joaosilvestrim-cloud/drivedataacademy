@@ -226,7 +226,7 @@ export default function CoursePlayer({
               <div className="grid aspect-video place-items-center rounded-2xl border border-tinta/10 bg-tinta/[0.02] text-slate-500">{tr("Aula em preparação.")}</div>
             )}
 
-            <p className="mt-5 text-xs font-medium uppercase tracking-wide text-acento">{tr("Aula")} {idx + 1} de {flatIds.length}</p>
+            <p className="mt-5 text-xs font-medium text-marca">{tr("Aula")} {idx + 1} de {flatIds.length}</p>
             <h1 className="mt-1 font-display text-2xl font-bold text-tinta">{current.title}</h1>
 
             {current.type === "materiais" && (
@@ -349,7 +349,7 @@ export default function CoursePlayer({
                       <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.body}</p>
                       {c.admin_reply && (
                         <div className="mt-2 rounded-xl border border-brand-blue/25 bg-brand-blue/[0.06] p-3">
-                          <p className="text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">{tr("Resposta da equipe DriveData")}</p>
+                          <p className="text-[0.6rem] font-semibold text-marca">{tr("Resposta da equipe DriveData")}</p>
                           <p className="mt-1 whitespace-pre-line text-sm text-slate-200">{c.admin_reply}</p>
                         </div>
                       )}

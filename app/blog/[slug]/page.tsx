@@ -90,7 +90,7 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
                   {(outros ?? []).map((o: any) => (
                     <li key={o.id} className="py-3">
                       <Link href={`/blog/${o.slug}`} className="group block">
-                        <span className="block text-[0.7rem] font-semibold uppercase tracking-wide text-brand-teal">{o.category}</span>
+                        <span className="block text-[0.7rem] font-semibold text-marca">{o.category}</span>
                         <span className="mt-1 block text-sm font-medium text-slate-200 transition-colors group-hover:text-acento">{o.title}</span>
                       </Link>
                     </li>

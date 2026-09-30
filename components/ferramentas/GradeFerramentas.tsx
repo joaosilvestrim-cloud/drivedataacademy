@@ -75,7 +75,7 @@ export default function GradeFerramentas({ ferramentas }: { ferramentas: Ferrame
       </div>
 
       {visiveis.length === 0 && (
-        <p className="mt-6 rounded-2xl border border-dashed border-tinta/10 px-4 py-10 text-center text-sm text-slate-500">
+        <p className="mt-6 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-4 py-10 text-center text-sm text-slate-500">
           {tr("Nenhuma ferramenta nesta categoria por enquanto.")}
         </p>
       )}

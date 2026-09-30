@@ -63,7 +63,7 @@ function Fichas({ tokens }: { tokens: string[] }) {
 
 function Numero({ valor, rotulo: r, tom }: { valor: string | number; rotulo: string; tom?: string }) {
   return (
-    <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3">
+    <div className="rounded-[20px] border border-tinta/10 bg-papel px-4 py-3">
       <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{r}</p>
       <p className={`mt-0.5 font-display text-xl font-bold tabular-nums ${tom || "text-tinta"}`}>{valor}</p>
     </div>
@@ -150,7 +150,7 @@ export default function CaixaPreta() {
         <button
           type="button"
           onClick={() => setTour(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-tinta/10 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-tinta/25 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
           {tr("Tour guiado")}
@@ -158,7 +158,7 @@ export default function CaixaPreta() {
       </div>
 
       {/* Corpus, comum às duas estações */}
-      <div data-tour="cp-corpus" className="mt-4 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+      <div data-tour="cp-corpus" className="mt-4 rounded-[20px] border border-tinta/10 bg-papel p-5">
         <div className="grid gap-4 sm:grid-cols-[1fr_1fr]">
           <label>
             <span className={rotulo}>{tr("Corpus de treino")}</span>
@@ -178,7 +178,7 @@ export default function CaixaPreta() {
       {estacao === "tokenizar" ? (
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_18rem] lg:items-start">
           <div>
-            <div data-tour="cp-texto" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+            <div data-tour="cp-texto" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
               <span className={rotulo}>{tr("Seu texto")}</span>
               <textarea
                 value={texto}
@@ -213,7 +213,7 @@ export default function CaixaPreta() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+          <div className="rounded-[20px] border border-tinta/10 bg-papel p-5">
             <p className="font-display text-base font-bold text-tinta">{tr("O que está acontecendo")}</p>
             <div className="mt-3 flex flex-col gap-3 text-sm leading-relaxed text-slate-400">
               <p><b className="text-slate-200">{tr("1. Pré-corte.")}</b> {tr("O texto é quebrado em palavras, pontuação e dígitos soltos, com o espaço colado na palavra seguinte.")}</p>
@@ -228,7 +228,7 @@ export default function CaixaPreta() {
       ) : (
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_20rem] lg:items-start">
           <div>
-            <div data-tour="cp-prompt" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+            <div data-tour="cp-prompt" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
               <div className="grid gap-4 sm:grid-cols-[1fr_9rem]">
                 <label>
                   <span className={rotulo}>{tr("Comece uma frase")}</span>
@@ -279,10 +279,10 @@ export default function CaixaPreta() {
                 <span className="animate-pulse text-acento">▍</span>
               </p>
               <div className="flex flex-wrap items-center gap-2 border-t border-tinta/8 px-4 py-3">
-                <button type="button" onClick={() => passo(1)} className="rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento">
+                <button type="button" onClick={() => passo(1)} className="rounded-full border border-tinta/25 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento">
                   {tr("Gerar 1 token")}
                 </button>
-                <button type="button" onClick={() => passo(40)} className="rounded-xl bg-marca-verde px-5 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
+                <button type="button" onClick={() => passo(40)} className="rounded-full bg-marca-verde px-5 py-2 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">
                   {tr("Gerar 40")}
                 </button>
                 <button type="button" onClick={() => setGerados([])} className="rounded-xl border border-tinta/10 px-4 py-2 text-sm text-slate-400 transition-colors hover:text-tinta">
@@ -299,7 +299,7 @@ export default function CaixaPreta() {
           </div>
 
           <div className="flex flex-col gap-4 lg:sticky lg:top-6">
-            <div data-tour="cp-candidatos" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+            <div data-tour="cp-candidatos" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
               <p className="font-display text-base font-bold text-tinta">{tr("O próximo token")}</p>
               <p className="mt-1 text-[0.7rem] text-slate-500">{tr("O que o modelo considera agora, e com que chance.")}</p>
               <div className="mt-3 flex flex-col gap-2">
@@ -322,7 +322,7 @@ export default function CaixaPreta() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+            <div className="rounded-[20px] border border-tinta/10 bg-papel p-5">
               <p className="font-display text-base font-bold text-tinta">{tr("O modelo")}</p>
               <div className="mt-3 flex flex-col gap-1.5 text-sm text-slate-400">
                 <p>{tr("Vocabulário:")} <b className="text-slate-200">{vocab.tokens.length.toLocaleString("pt-BR")}</b> {tr("tokens")}</p>

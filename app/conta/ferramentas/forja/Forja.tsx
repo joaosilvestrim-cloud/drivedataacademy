@@ -119,7 +119,7 @@ export default function Forja() {
   return (
     <div className="mt-8 grid gap-6 lg:grid-cols-[22rem_1fr] lg:items-start">
       {/* Escolhas */}
-      <div className="flex flex-col gap-6 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+      <div className="flex flex-col gap-6 rounded-[20px] border border-tinta/10 bg-papel p-5">
         <div data-tour="forja-modelo">
           <h2 className="font-display text-base font-bold text-tinta">{tr("O seu modelo")}</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
@@ -282,7 +282,7 @@ export default function Forja() {
         <button
           type="button"
           onClick={() => setTour(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-tinta/10 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-tinta/25 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
           {tr("Tour guiado")}
@@ -316,7 +316,7 @@ export default function Forja() {
           </div>
         )}
 
-        <div className="mt-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+        <div className="mt-5 rounded-[20px] border border-tinta/10 bg-papel p-5">
           <h2 className="font-display text-base font-bold text-tinta">{tr("Onde colar, na ordem")}</h2>
           <ol className="mt-3 flex flex-col gap-3">
             {passos.map((p, i) => (

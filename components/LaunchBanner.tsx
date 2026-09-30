@@ -68,7 +68,7 @@ export default async function LaunchBanner() {
               ) : (
                 <span className="block text-sm text-slate-300">{tr("Garanta sua vaga")}</span>
               )}
-              <Link href="/matricula" className="mt-4 inline-block w-full rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
+              <Link href="/matricula" className="mt-4 inline-block w-full rounded-full bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">
                 {tr("Garantir minha vaga")}
               </Link>
             </div>

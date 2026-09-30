@@ -45,8 +45,8 @@ export default async function EbooksPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Biblioteca")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Ebooks")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Biblioteca")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Ebooks")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("Material de leitura para levar junto: o método por escrito, para consultar no meio do projeto. Incluído na assinatura.")}
       </p>
@@ -64,7 +64,7 @@ export default async function EbooksPage() {
             return (
               <li
                 key={e.id}
-                className="flex flex-col gap-4 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5 transition-colors hover:border-acento/30 sm:flex-row"
+                className="flex flex-col gap-4 rounded-[20px] border border-tinta/10 bg-papel p-5 transition-colors hover:border-acento/30 sm:flex-row"
               >
                 <Capa ebook={e} />
 
@@ -83,7 +83,7 @@ export default async function EbooksPage() {
                     {principal && (
                       <a
                         href={`/conta/ebooks/${e.slug}/baixar?lang=${principal.idioma}`}
-                        className="inline-flex items-center gap-2 rounded-xl bg-marca-verde px-4 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
+                        className="inline-flex items-center gap-2 rounded-full bg-marca-verde px-4 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95"
                       >
                         <Bandeira idioma={principal.idioma} tamanho={18} />
                         {tr("Baixar o PDF")}
@@ -94,7 +94,7 @@ export default async function EbooksPage() {
                         key={a.idioma}
                         href={`/conta/ebooks/${e.slug}/baixar?lang=${a.idioma}`}
                         title={`${tr("Baixar em")} ${NOME_DO_IDIOMA[a.idioma]}`}
-                        className="inline-flex items-center gap-2 rounded-xl border border-tinta/10 px-3 py-2.5 text-xs text-slate-300 transition-colors hover:border-acento/50 hover:text-tinta"
+                        className="inline-flex items-center gap-2 rounded-full border border-tinta/25 px-3 py-2.5 text-xs text-slate-300 transition-colors hover:border-acento/50 hover:text-tinta"
                       >
                         <Bandeira idioma={a.idioma} tamanho={16} />
                         {NOME_DO_IDIOMA[a.idioma]}
@@ -117,12 +117,12 @@ export default async function EbooksPage() {
 function Capa({ ebook }: { ebook: Ebook }) {
   if (ebook.cover_url) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={ebook.cover_url} alt="" className="h-44 w-32 shrink-0 rounded-xl border border-tinta/10 object-cover" />;
+    return <img src={ebook.cover_url} alt="" className="h-44 w-32 shrink-0 rounded-srf object-cover shadow-painel" />;
   }
   return (
-    <div className="flex h-44 w-32 shrink-0 flex-col justify-between rounded-xl border border-acento/25 bg-gradient-to-br from-brand-green/15 via-ink-800 to-ink-900 p-3">
-      <span className="text-[0.55rem] font-semibold text-marca">Ebook</span>
-      <span className="font-display text-[0.8rem] font-bold leading-tight text-tinta line-clamp-5">{ebook.title}</span>
+    <div className="flex h-44 w-32 shrink-0 flex-col justify-between escuro rounded-srf bg-noite p-3">
+      <span className="text-[0.6rem] font-semibold text-marca-verde">Ebook</span>
+      <span className="line-clamp-5 text-[0.8rem] font-bold leading-tight text-white">{ebook.title}</span>
     </div>
   );
 }

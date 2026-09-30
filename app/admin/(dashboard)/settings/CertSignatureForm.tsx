@@ -41,7 +41,7 @@ function Bloco({
 
       {url && (
         <div className="flex flex-col gap-2">
-          <p className="text-meta uppercase text-ds-text-3">Prévia</p>
+          <p className="text-meta text-ds-text-3">Prévia</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={url} alt={`Assinatura de ${inicial[`${prefixo}_name`] || "responsável"}`} className="h-16 w-auto" />
         </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-[70vh] max-w-xl flex-col justify-center px-6 py-20">
-      <p className="font-mono text-meta uppercase text-ds-text-3">{tr("Erro 404")}</p>
+      <p className="font-mono text-meta text-ds-text-3">{tr("Erro 404")}</p>
       <h1 className="mt-3 font-display text-title font-semibold text-ds-text">
         {tr("Esta página não existe")}
       </h1>

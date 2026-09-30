@@ -129,7 +129,7 @@ export default async function ProgressoPage({ searchParams }: { searchParams: { 
         <section className="mt-10">
           <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
             <h2 className="font-display text-section font-semibold text-ds-text">Por treinamento</h2>
-            <span className="text-meta uppercase text-ds-text-3">
+            <span className="text-meta text-ds-text-3">
               {rows.length} {rows.length === 1 ? "treinamento" : "treinamentos"}
             </span>
           </div>

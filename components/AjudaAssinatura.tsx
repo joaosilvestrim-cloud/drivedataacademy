@@ -106,7 +106,7 @@ export default function AjudaAssinatura() {
                     key={chave}
                     type="button"
                     onClick={() => { setMotivo(chave); setEtapa("dados"); }}
-                    className="rounded-xl border border-tinta/10 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:border-acento/50 hover:text-tinta"
+                    className="rounded-full border border-tinta/25 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:border-acento/50 hover:text-tinta"
                   >
                     {rotulo}
                   </button>

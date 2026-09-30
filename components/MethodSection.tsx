@@ -8,7 +8,7 @@ export default function MethodSection() {
   const steps = t.method.steps.map((s, i) => ({ ...s, n: String(i + 1).padStart(2, "0") }));
 
   return (
-    <section id="metodo" className="escuro scroll-mt-24 bg-marca">
+    <section id="metodo" className="escuro scroll-mt-24 bg-noite">
       <div className="mx-auto grid max-w-[1200px] gap-14 px-6 py-24 lg:grid-cols-[0.9fr_1.1fr]">
         <Reveal>
           <div>

@@ -23,15 +23,15 @@ export default async function ArenaPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Ferramentas")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{await nomeDaFerramenta("arena")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Ferramentas")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{await nomeDaFerramenta("arena")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("Seis desafios sobre uma base de comércio gerada só para você. Escreva a consulta, execute ali mesmo e receba a correção na hora. Quando errar, a Arena não diz só que errou: diz onde você tropeçou.")}
       </p>
 
       <Arena semente={sementeDoAluno(user.id)} />
 
-      <section className="mt-12 grid gap-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6 sm:grid-cols-3">
+      <section className="mt-12 grid gap-5 rounded-[20px] border border-tinta/10 bg-papel p-6 sm:grid-cols-3">
         <div>
           <p className="text-sm font-semibold text-acento">{tr("Banco de verdade, no seu navegador")}</p>
           <p className="mt-1 text-sm text-slate-400">

@@ -132,7 +132,7 @@ export default async function CuponsAdmin({ searchParams }: { searchParams: { ok
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-ds-line pb-2.5">
           <h2 className="font-display text-section font-semibold text-ds-text">Cupons criados</h2>
-          <span className="text-meta uppercase text-ds-text-3">{cupons.length} {cupons.length === 1 ? "cupom" : "cupons"}</span>
+          <span className="text-meta text-ds-text-3">{cupons.length} {cupons.length === 1 ? "cupom" : "cupons"}</span>
         </div>
 
         {cupons.length === 0 ? (

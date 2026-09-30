@@ -120,7 +120,7 @@ export default async function PortfolioAdmin({ searchParams }: { searchParams: {
 
       <SectionHeader
         title={FILTROS.find((x) => x.key === f)?.label ?? "Projetos"}
-        action={<span className="text-meta uppercase text-ds-text-3">{lista.length} {lista.length === 1 ? "projeto" : "projetos"}</span>}
+        action={<span className="text-meta text-ds-text-3">{lista.length} {lista.length === 1 ? "projeto" : "projetos"}</span>}
       />
 
       {lista.length === 0 ? (

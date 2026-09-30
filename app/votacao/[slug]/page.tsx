@@ -56,7 +56,7 @@ export default async function VotacaoPage({
           </Link>
         </div>
 
-        <h1 className="mt-10 font-display text-3xl font-bold leading-tight tracking-tight text-tinta sm:text-4xl">{votacao.title}</h1>
+        <h1 className="mt-10 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{votacao.title}</h1>
         {votacao.description && <p className="mt-4 whitespace-pre-line text-slate-300/90">{votacao.description}</p>}
 
         <p className="mt-4 text-sm text-slate-400">

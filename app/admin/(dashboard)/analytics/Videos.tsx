@@ -90,7 +90,7 @@ export default async function Videos({ dias, cursoSel }: { dias: number; cursoSe
       </div>
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Cursos" action={<span className="text-meta uppercase text-ds-text-3">clique para ver as aulas</span>} />
+        <SectionHeader title="Cursos" action={<span className="text-meta text-ds-text-3">clique para ver as aulas</span>} />
         <Tabela
           colunas={["Curso", "Matriculados", "Assistiram no período", "Horas assistidas", "Progresso médio", "Concluíram tudo"]}
           vazio="Nenhum curso com aula em vídeo."
@@ -109,7 +109,7 @@ export default async function Videos({ dias, cursoSel }: { dias: number; cursoSe
 
       {sel && (
         <section className="flex flex-col gap-3">
-          <SectionHeader title={`Aulas · ${sel.titulo}`} action={<span className="text-meta uppercase text-ds-text-3">retenção em 20 trechos de 5%</span>} />
+          <SectionHeader title={`Aulas · ${sel.titulo}`} action={<span className="text-meta text-ds-text-3">retenção em 20 trechos de 5%</span>} />
           <Tabela
             colunas={["Aula", "Deram play", "Assistem em média", "Retenção", "Ponto de queda", "Concluíram", "Horas"]}
             vazio="Esse curso não tem aula em vídeo."

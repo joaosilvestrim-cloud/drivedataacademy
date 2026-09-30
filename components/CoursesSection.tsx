@@ -33,11 +33,11 @@ export default function CoursesSection() {
           <Reveal key={c.tag} delay={i * 0.08}>
             <article
               className={`card-hover relative flex h-full flex-col rounded-grande p-8 ${
-                c.featured ? "escuro bg-marca" : "bg-fog"
+                c.featured ? "escuro bg-noite" : "bg-fog"
               }`}
             >
               <div className="flex flex-wrap items-center gap-2">
-                <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${c.featured ? "bg-marca-verde text-marca" : "bg-white text-marca"}`}>
+                <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${c.featured ? "bg-marca-verde text-sobre-acento" : "bg-papel text-marca"}`}>
                   {c.tag}
                 </span>
                 {c.featured && <span className="text-xs font-medium text-slate-300">{t.courses.featured}</span>}
@@ -59,7 +59,7 @@ export default function CoursesSection() {
               <a
                 href={c.href}
                 className={`mt-8 inline-flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${
-                  c.featured ? "bg-marca-verde text-marca hover:brightness-95" : "border border-marca text-marca hover:bg-white"
+                  c.featured ? "bg-marca-verde text-sobre-acento hover:brightness-95" : "border border-marca text-sobre-acento hover:bg-papel"
                 }`}
               >
                 {c.cta}

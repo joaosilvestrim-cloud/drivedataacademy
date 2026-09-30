@@ -75,11 +75,11 @@ export default function BlogSectionView({ posts }: { posts: Post[] }) {
                   <img src={p.cover_url} alt={title} className="absolute inset-0 h-full w-full object-cover" />
                 ) : (
                   <>
-                    <div className="absolute inset-0 bg-marca" />
+                    <div className="absolute inset-0 bg-noite" />
                   </>
                 )}
                 {category && (
-                  <span className="absolute left-4 top-4 rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-marca">
+                  <span className="absolute left-4 top-4 rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-sobre-acento">
                     {category}
                   </span>
                 )}

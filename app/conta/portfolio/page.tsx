@@ -78,8 +78,8 @@ export default async function PortfolioPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Portfólio")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("O que a turma construiu")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Portfólio")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("O que a turma construiu")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("Projeto pronto vale mais que certificado em entrevista. Publique o seu com a imagem, o problema que ele resolvia e o resultado. O time revisa e ele entra na vitrine, aqui e na página pública da Academy.")}
       </p>
@@ -112,7 +112,7 @@ export default async function PortfolioPage() {
         />
       )}
 
-      <section className="mt-12 grid gap-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6 sm:grid-cols-3">
+      <section className="mt-12 grid gap-5 rounded-[20px] border border-tinta/10 bg-papel p-6 sm:grid-cols-3">
         <div>
           <p className="text-sm font-semibold text-acento">{tr("Serve qualquer projeto")}</p>
           <p className="mt-1 text-sm text-slate-400">

@@ -210,7 +210,7 @@ export default function Portfolio({
         </div>
         <button
           onClick={() => setEditando("novo")}
-          className="rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
+          className="rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95"
         >
           {tr("Publicar um projeto")}
         </button>
@@ -250,12 +250,12 @@ export default function Portfolio({
           )}
 
           {lista.length === 0 && (busca || filtro) ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-12 text-center">
+            <div className="mt-8 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-6 py-12 text-center">
               <p className="font-medium text-tinta">{tr("Nenhum projeto com esse recorte")}</p>
               <button onClick={() => { setBusca(""); setFiltro(""); }} className="mt-3 text-sm text-acento hover:underline">{tr("Limpar a busca e o filtro")}</button>
             </div>
           ) : lista.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-16 text-center">
+            <div className="mt-8 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-6 py-16 text-center">
               <p className="font-medium text-tinta">{tr("Ainda não tem projeto publicado aqui")}</p>
               <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
                 {tr("Seja o primeiro. Um dashboard que você montou no trabalho, um exercício da Academy que virou coisa séria, uma automação que economizou o seu dia: tudo conta.")}
@@ -279,12 +279,12 @@ export default function Portfolio({
           )}
         </>
       ) : meus.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-16 text-center">
+        <div className="mt-8 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-6 py-16 text-center">
           <p className="font-medium text-tinta">{tr("Você ainda não publicou nada")}</p>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
             {tr("Portfólio é o que abre porta. Publique um projeto com a imagem, o problema que ele resolve e o resultado, e ele passa a aparecer para a turma e para quem visita o site.")}
           </p>
-          <button onClick={() => setEditando("novo")} className="mt-6 rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">
+          <button onClick={() => setEditando("novo")} className="mt-6 rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">
             {tr("Publicar meu primeiro projeto")}
           </button>
         </div>
@@ -321,8 +321,8 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
   }, [aoFechar]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm" onClick={aoFechar} role="dialog" aria-modal="true" aria-label={p.titulo}>
-      <article onClick={(e) => e.stopPropagation()} className="my-8 w-full max-w-3xl overflow-hidden rounded-3xl border border-tinta/10 bg-ink-900 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-obsidian/50 p-4 backdrop-blur-sm" onClick={aoFechar} role="dialog" aria-modal="true" aria-label={p.titulo}>
+      <article onClick={(e) => e.stopPropagation()} className="my-8 w-full max-w-3xl overflow-hidden rounded-3xl border border-tinta/10 bg-ink-900 shadow-overlay">
         {p.cover_url && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.cover_url} alt="" className="max-h-[60vh] w-full object-contain bg-ink-800" />
@@ -355,7 +355,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
           )}
           {p.resultado && (
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-acento">{tr("O resultado")}</p>
+              <p className="text-[0.7rem] font-semibold text-marca">{tr("O resultado")}</p>
               <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-200">{p.resultado}</p>
             </div>
           )}
@@ -373,8 +373,8 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
           )}
 
           <div className="flex flex-wrap gap-3 pt-1">
-            {p.link_url && <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento">{tr("Ver o projeto ↗")}</a>}
-            {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-xl border border-tinta/10 px-4 py-2 text-sm text-slate-200 hover:border-acento/50">{tr("Código ↗")}</a>}
+            {p.link_url && <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento">{tr("Ver o projeto ↗")}</a>}
+            {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-full border border-tinta/25 px-4 py-2 text-sm text-slate-200 hover:border-acento/50">{tr("Código ↗")}</a>}
           </div>
         </div>
       </article>
@@ -502,12 +502,12 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm" onClick={aoFechar}>
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-obsidian/50 p-4 backdrop-blur-sm" onClick={aoFechar}>
       <form
         ref={form}
         onClick={(e) => e.stopPropagation()}
         onSubmit={enviar}
-        className="my-8 w-full max-w-2xl rounded-3xl border border-tinta/10 bg-ink-900 p-6 shadow-2xl"
+        className="my-8 w-full max-w-2xl rounded-3xl border border-tinta/10 bg-ink-900 p-6 shadow-overlay"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -538,7 +538,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
                 type="button"
                 onClick={organizar}
                 disabled={organizando || relato.trim().length < 40}
-                className="rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento disabled:opacity-40"
+                className="rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento disabled:opacity-40"
               >
                 {organizando ? tr("Organizando...") : tr("Organizar nos campos")}
               </button>
@@ -585,7 +585,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
           {/* O planeta do projeto no 4D: tamanho pela duração, anéis pelo time.
               E o papel responde a primeira pergunta de qualquer entrevista. */}
           {comDetalhes && (
-            <div className="flex flex-col gap-4 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-4">
+            <div className="flex flex-col gap-4 rounded-[20px] border border-tinta/10 bg-papel p-4">
               <div>
                 <label className={rotulo} htmlFor="p-papel">{tr("Seu papel no projeto")}</label>
                 <textarea id="p-papel" name="papel" defaultValue={detalhe?.papel ?? ""} rows={2} maxLength={600} placeholder={tr("O que foi seu e o que foi do time. Ex: conduzi o levantamento e modelei os dados; o time cuidou da integração.")} className={`${campo} mt-1 resize-y`} />
@@ -690,7 +690,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
                 {cursos.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
               </select>
             </div>
-            <label className="flex items-start gap-2.5 rounded-xl border border-tinta/8 bg-tinta/[0.02] p-3 text-sm text-slate-300">
+            <label className="flex items-start gap-2.5 rounded-xl border border-tinta/10 bg-papel p-3 text-sm text-slate-300">
               <input type="checkbox" name="publico" defaultChecked={projeto?.publico ?? true} className="mt-0.5 h-4 w-4 accent-[#15c47e]" />
               <span>
                 {tr("Pode aparecer na página pública da Academy")}
@@ -702,7 +702,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
           {/* A constelação se formando: cada competência com o trecho do
               próprio projeto que a prova. É o mesmo "por que" que o visitante
               vai ler no 4D do site. */}
-          <div className="rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4">
+          <div className="rounded-[20px] border border-tinta/10 bg-papel p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-semibold text-tinta">{tr("O que este projeto acende no seu Universo 4D")}</p>
               <button type="button" onClick={lerCompetencias} disabled={lendo} className="text-xs text-acento hover:underline disabled:opacity-50">
@@ -728,11 +728,11 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
           {erro && <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-200" role="alert">{erro}</p>}
 
           <div className="flex flex-wrap items-center gap-3 border-t border-tinta/10 pt-4">
-            <button type="submit" onClick={() => (acao.current = "enviar")} disabled={salvando || subindo} className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-50">
+            <button type="submit" onClick={() => (acao.current = "enviar")} disabled={salvando || subindo} className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-50">
               {salvando ? "Enviando..." : tr("Publicar projeto")}
             </button>
             {/* Rascunho não exige campo obrigatório: a pessoa salva o que tem e volta depois. */}
-            <button type="submit" formNoValidate onClick={() => (acao.current = "rascunho")} disabled={salvando} className="rounded-xl border border-tinta/10 px-4 py-2.5 text-sm text-slate-200 hover:border-acento/50">
+            <button type="submit" formNoValidate onClick={() => (acao.current = "rascunho")} disabled={salvando} className="rounded-full border border-tinta/25 px-4 py-2.5 text-sm text-slate-200 hover:border-acento/50">
               {tr("Salvar rascunho")}
             </button>
             {projeto && (

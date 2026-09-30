@@ -29,7 +29,7 @@ const FILTERS = [{ key: "all", label: "Todos" }, { key: "portal", label: "Portal
    o Badge. Geometria idêntica à do Badge, só sem Mono. */
 function TipoChip({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-ctl border border-ds-line px-2 py-0.5 text-meta uppercase text-ds-text-2">
+    <span className="inline-flex items-center rounded-ctl border border-ds-line px-2 py-0.5 text-meta text-ds-text-2">
       {children}
     </span>
   );
@@ -83,7 +83,7 @@ function ContatoDoAluno({ nome, tipo, contato }: { nome: string; tipo: string; c
   }
   return (
     <div className="flex flex-col gap-2 rounded-srf border border-ds-line-soft bg-ds-surface/60 px-3 py-2.5">
-      <p className="text-meta uppercase text-ds-text-3">Contato</p>
+      <p className="text-meta text-ds-text-3">Contato</p>
       <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-body-sm text-ds-text">
         {contato.email && <span className="select-all break-all">{contato.email}</span>}
         {contato.telefone && <span className="select-all font-mono tabular-nums">{telefoneLegivel(contato.telefone)}</span>}
@@ -178,7 +178,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
         <h2 className="font-display text-section font-semibold text-ds-text">
           {FILTERS.find((o) => o.key === f)?.label ?? "Solicitações"}
         </h2>
-        <span className="text-meta uppercase text-ds-text-3">
+        <span className="text-meta text-ds-text-3">
           {rows.length} {rows.length === 1 ? "solicitação" : "solicitações"}
         </span>
       </div>
@@ -216,7 +216,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
                   <dl className="grid gap-x-8 gap-y-2 tablet:grid-cols-2">
                     {entries.map(([k, v]) => (
                       <div key={k} className="min-w-0">
-                        <dt className="text-meta uppercase text-ds-text-3">{k.replace(/_/g, " ")}</dt>
+                        <dt className="text-meta text-ds-text-3">{k.replace(/_/g, " ")}</dt>
                         <dd className="whitespace-pre-line break-words text-body-sm text-ds-text-2">{String(v)}</dd>
                       </div>
                     ))}

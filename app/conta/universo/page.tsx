@@ -71,14 +71,14 @@ export default async function UniversoHub() {
   if (!liberado) {
     return (
       <div className="max-w-xl">
-        <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Knowledge Universe 4D")}</p>
-        <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Seu mapa de competências")}</h1>
+        <p className="text-sm font-medium text-ds-text-3">{tr("Knowledge Universe 4D")}</p>
+        <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Seu mapa de competências")}</h1>
         <p className="mt-3 text-sm leading-relaxed text-slate-400">
           {tr("Está incluído na assinatura ativa da Academy. Enquanto isso, você pode explorar a demonstração.")}
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/matricula" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Conhecer a assinatura")}</Link>
-          <Link href="/universo/demo" target="_blank" rel="noreferrer" className="rounded-xl border border-tinta/10 px-5 py-2.5 text-sm text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Ver a demonstração")}</Link>
+          <Link href="/matricula" className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Conhecer a assinatura")}</Link>
+          <Link href="/universo/demo" target="_blank" rel="noreferrer" className="rounded-full border border-tinta/25 px-5 py-2.5 text-sm text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Ver a demonstração")}</Link>
         </div>
       </div>
     );
@@ -103,8 +103,8 @@ export default async function UniversoHub() {
 
   return (
     <div className="max-w-3xl">
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Knowledge Universe 4D")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Seu mapa de competências")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Knowledge Universe 4D")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Seu mapa de competências")}</h1>
       <p className="mt-3 max-w-2xl text-[0.95rem] leading-relaxed text-slate-300">
         {tr("Tudo que você faz na Academy vira um mapa em 3D do seu conhecimento. Cada estrela é uma competência, e ela cresce conforme você acumula evidências: aulas assistidas, avaliações feitas e desafios entregues.")}
       </p>
@@ -114,15 +114,15 @@ export default async function UniversoHub() {
 
       {temEvidencia && (
         <div className="mt-6 flex flex-wrap gap-3">
-          <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3">
+          <div className="rounded-[20px] border border-tinta/10 bg-papel px-5 py-3">
             <p className="font-display text-2xl font-bold text-tinta">{resumo.developed}</p>
             <p className="text-xs text-slate-400">{tr("competências com evidência")}</p>
           </div>
-          <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3">
+          <div className="rounded-[20px] border border-tinta/10 bg-papel px-5 py-3">
             <p className="font-display text-2xl font-bold text-tinta">{resumo.advanced}</p>
             <p className="text-xs text-slate-400">{tr("em nível avançado")}</p>
           </div>
-          <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3">
+          <div className="rounded-[20px] border border-tinta/10 bg-papel px-5 py-3">
             <p className="font-display text-2xl font-bold text-tinta">{aprovadas}</p>
             <p className="text-xs text-slate-400">{tr("desafios aprovados")}</p>
           </div>
@@ -156,7 +156,7 @@ export default async function UniversoHub() {
       </div>
 
       <h2 className="mt-10 font-display text-lg font-bold text-tinta">{tr("Como a pontuação funciona")}</h2>
-      <div className="mt-4 space-y-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5 text-sm leading-relaxed text-slate-400">
+      <div className="mt-4 space-y-3 rounded-[20px] border border-tinta/10 bg-papel p-5 text-sm leading-relaxed text-slate-400">
         <p>
           {tr("Cada competência vai de 0 a 100 e soma cinco tipos de evidência:")}
           <span className="text-slate-200"> {tr("aulas (25), avaliações (35), exercícios (15), desafios (20) e revisões (5)")}</span>.
@@ -173,8 +173,8 @@ export default async function UniversoHub() {
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Abrir meu universo ↗")}</Link>
-        <Link href="/conta/ranking" className="rounded-xl border border-tinta/10 px-5 py-2.5 text-sm text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Ver meus pontos")}</Link>
+        <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Abrir meu universo ↗")}</Link>
+        <Link href="/conta/ranking" className="rounded-full border border-tinta/25 px-5 py-2.5 text-sm text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Ver meus pontos")}</Link>
       </div>
     </div>
   );

@@ -405,7 +405,7 @@ export default function SiteDoPortfolio({
   const estado = (i: number): Estado => (feito[i] && (vez === -1 || i < vez) ? "feito" : i === vez ? "atual" : "depois");
 
   const cartaoNoAr = publicado && (
-    <div className="rounded-3xl border border-acento/30 bg-[#0a1428] p-6 text-left shadow-2xl">
+    <div className="rounded-3xl border border-acento/30 bg-papel p-6 text-left shadow-overlay">
       <p className="font-display text-2xl font-bold text-tinta">Seu portfólio está no ar</p>
       <a href={publicado.url} target="_blank" rel="noopener" className="mt-1 block truncate font-mono text-sm text-acento hover:underline">{publicado.url}</a>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -416,7 +416,7 @@ export default function SiteDoPortfolio({
       {post && (
         <div className="mt-4">
           <p className="text-xs text-slate-400">O texto do post, montado com o que você publicou:</p>
-          <textarea readOnly value={post} rows={7} className="mt-1 w-full resize-none rounded-xl border border-tinta/10 bg-tinta/[0.03] p-3 text-xs text-slate-200" />
+          <textarea readOnly value={post} rows={7} className="mt-1 w-full resize-none rounded-xl border border-tinta/10 bg-papel p-3 text-xs text-slate-200" />
           <button onClick={() => copiar(post, "post")} className="mt-1 text-xs text-acento hover:underline">{copiado === "post" ? "Copiado" : "Copiar o texto"}</button>
         </div>
       )}
@@ -425,7 +425,7 @@ export default function SiteDoPortfolio({
     </div>
   );
 
-  const botaoForte = "rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-opacity disabled:opacity-40";
+  const botaoForte = "rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-opacity disabled:opacity-40";
   const botaoLeve = "rounded-xl border border-tinta/15 px-4 py-2.5 text-sm text-tinta transition-colors hover:border-tinta/40 disabled:opacity-40";
 
   return (
@@ -464,7 +464,7 @@ export default function SiteDoPortfolio({
                   {abrindoKit ? "Montando o kit..." : "Abrir o kit de divulgação: QR code e textos prontos"}
                 </button>
               ) : (
-                <div className="mt-4 grid gap-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4 sm:grid-cols-[9rem_1fr]">
+                <div className="mt-4 grid gap-4 rounded-[20px] border border-tinta/10 bg-papel p-4 sm:grid-cols-[9rem_1fr]">
                   <div>
                     <div className="rounded-xl bg-white p-2" dangerouslySetInnerHTML={{ __html: kit.qrSvg }} />
                     <button type="button" onClick={() => baixarQr(kit.qrSvg)} className="mt-2 w-full text-center text-xs font-semibold text-acento hover:underline">
@@ -619,11 +619,11 @@ export default function SiteDoPortfolio({
               <button type="button" onClick={() => setVerDirecao((v) => !v)} className="mt-1 text-xs text-slate-400 underline decoration-tinta/20 underline-offset-4 hover:text-tinta">
                 {verDirecao ? "Esconder a direção de arte" : "Ver a direção de arte completa que vai no prompt"}
               </button>
-              {verDirecao && <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-tinta/10 bg-tinta/[0.02] p-3 font-sans text-xs leading-relaxed text-slate-400">{ESTILOS[estilo].direcao}</pre>}
+              {verDirecao && <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-tinta/10 bg-papel p-3 font-sans text-xs leading-relaxed text-slate-400">{ESTILOS[estilo].direcao}</pre>}
             </div>
 
             {/* Personalização por cima do estilo. Cada escolha vira uma linha no prompt. */}
-            <div className="mt-5 grid gap-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4 sm:grid-cols-2">
+            <div className="mt-5 grid gap-4 rounded-[20px] border border-tinta/10 bg-papel p-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <p className="text-xs font-semibold text-slate-300">Cor de destaque</p>
                 <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Cor de destaque">
@@ -831,7 +831,7 @@ export default function SiteDoPortfolio({
             {/* Refinar na mesma conversa da IA. O primeiro site raramente é o
                 melhor: pedir ajustes é a parte que o aluno mais aprende. */}
             {previa && (
-              <div className="mt-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4">
+              <div className="mt-4 rounded-[20px] border border-tinta/10 bg-papel p-4">
                 <p className="text-sm font-semibold text-tinta">Refinar com a IA</p>
                 <p className="mt-0.5 text-xs text-slate-400">Copie um pedido, cole na mesma conversa da IA e cole aqui o código novo que ela devolver.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -841,7 +841,7 @@ export default function SiteDoPortfolio({
                       type="button"
                       onClick={() => copiar(r.texto, `ref-${r.rotulo}`)}
                       title={r.texto}
-                      className="rounded-lg border border-tinta/15 px-3 py-1.5 text-xs text-slate-200 transition-colors hover:border-acento/60 hover:text-tinta"
+                      className="rounded-full border border-tinta/15 px-3 py-1.5 text-xs text-slate-200 transition-colors hover:border-acento/60 hover:text-tinta"
                     >
                       {copiado === `ref-${r.rotulo}` ? "Copiado" : r.rotulo}
                     </button>

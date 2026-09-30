@@ -27,7 +27,7 @@ export default function VideoSectionView({ ids }: { ids: string[] }) {
         ) : (
           <div className="mx-auto mt-10 max-w-4xl">
             <div className="escuro overflow-hidden rounded-grande">
-              <div className="relative aspect-video w-full overflow-hidden rounded-grande bg-marca">
+              <div className="relative aspect-video w-full overflow-hidden rounded-grande bg-noite">
                 <div className="absolute inset-0 grid place-items-center text-center">
                   <div className="grid-bg absolute inset-0 opacity-30" />
                   <div className="relative">

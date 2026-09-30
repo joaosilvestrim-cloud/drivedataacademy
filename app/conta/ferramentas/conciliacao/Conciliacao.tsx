@@ -77,9 +77,9 @@ export default function Conciliacao({ semente }: { semente: number }) {
   return (
     <div className="mt-8">
       {/* Caso */}
-      <div className="flex flex-wrap items-start justify-between gap-4 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-[20px] border border-tinta/10 bg-papel p-6">
         <div className="min-w-0 flex-1">
-          <p className="text-[0.7rem] uppercase tracking-wider text-acento">{tr("Chamado do dia")}</p>
+          <p className="text-[0.7rem] text-marca">{tr("Chamado do dia")}</p>
           <h2 className="mt-1 font-display text-2xl font-bold text-tinta">{caso.titulo}</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">{caso.contexto}</p>
         </div>
@@ -87,7 +87,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           <button
             type="button"
             onClick={() => setTour(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-tinta/10 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
+            className="inline-flex items-center gap-2 rounded-full border border-tinta/25 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
             {tr("Tour guiado")}
@@ -109,7 +109,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           { nome: tr("O que o painel mostra"), valor: recorte.painel, linhas: recorte.linhasPainel, tom: "text-tinta" },
           { nome: tr("Diferença"), valor: recorte.diferenca, linhas: null, tom: cor(recorte.diferenca) },
         ].map((c) => (
-          <div key={c.nome} className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-4">
+          <div key={c.nome} className="rounded-[20px] border border-tinta/10 bg-papel px-5 py-4">
             <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{c.nome}</p>
             <p className={`mt-1 font-display text-xl font-bold tabular-nums ${c.tom}`}>{moeda(c.valor)}</p>
             {c.linhas !== null && <p className="text-[0.7rem] text-slate-500">{c.linhas} {tr("lançamentos")}</p>}
@@ -196,7 +196,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
         <button
           type="button"
           onClick={() => setVerRegistros((v) => !v)}
-          className="rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
+          className="rounded-full border border-tinta/25 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
         >
           {verRegistros ? tr("Esconder os lançamentos") : tr("Abrir os lançamentos deste recorte")}
         </button>
@@ -237,7 +237,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
       </div>
 
       {/* Resposta */}
-      <div data-tour="conc-resposta" className="mt-6 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6">
+      <div data-tour="conc-resposta" className="mt-6 rounded-[20px] border border-tinta/10 bg-papel p-6">
         <h3 className="font-display text-lg font-bold text-tinta">{tr("Seu laudo")}</h3>
         <p className="mt-1 text-sm text-slate-400">{caso.pergunta}</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-[14rem_1fr_auto] sm:items-end">
@@ -255,7 +255,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           <button
             type="button"
             onClick={responder}
-            className="rounded-xl bg-marca-verde px-6 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
+            className="rounded-full bg-marca-verde px-6 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95"
           >
             {tr("Entregar o laudo")}
           </button>

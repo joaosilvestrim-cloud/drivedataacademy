@@ -99,31 +99,29 @@ export default async function ProximasMentorias({
 
   return (
     <section aria-labelledby="proximas-mentorias" className={className}>
-      <div className={`relative overflow-hidden rounded-[1.75rem] bg-ink-900 ${s.moldura}`}>
-        {/* Fundo: um degradê fixo e um brilho que atravessa devagar. */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_140%_at_18%_0%,#0d2b3f_0%,#071019_58%,#04070f_100%)]" />
+      <div className={`escuro relative overflow-hidden rounded-grande bg-noite ${s.moldura}`}>
+        {/* Fundo azul-noite chapado; a grade leve dá textura. */}
         <div aria-hidden className={`pointer-events-none absolute inset-0 ${s.grade}`} />
-        <div aria-hidden className={`pointer-events-none absolute -inset-x-1/4 -top-1/2 h-[200%] ${s.brilho} bg-[radial-gradient(42%_38%_at_50%_50%,rgba(34,211,238,0.12)_0%,transparent_70%)]`} />
 
         <div className="relative px-6 py-8 sm:px-10 sm:py-10">
           <div className={`flex flex-wrap items-center gap-x-5 gap-y-3 ${s.titulo}`}>
-            <h2 id="proximas-mentorias" className="font-display text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
+            <h2 id="proximas-mentorias" className="grito text-[2.2rem] text-white sm:text-[2.8rem]">
               {tr("Próximas lives e mentorias")}
             </h2>
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-tinta/12 bg-tinta/[0.04] px-4 py-1.5">
+            <span className="inline-flex items-center gap-2.5 rounded-full border border-tinta/12 bg-papel px-4 py-1.5">
               <span aria-hidden className={`block h-2 w-2 rounded-full bg-red-500 ${s.ponto}`} />
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">{tr("Ao vivo")}</span>
             </span>
           </div>
 
           {/* Cronômetro da próxima transmissão, correndo em segundos. */}
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl border border-tinta/8 bg-tinta/[0.03] px-5 py-4">
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-[20px] border border-tinta/10 bg-papel px-5 py-4">
             <span className="text-sm text-slate-400">
               {tr("Próxima:")} <span className="font-semibold text-slate-100">{mentorias[0].title}</span>
             </span>
             <Cronometro inicio={mentorias[0].starts_at} duracaoMin={mentorias[0].duration_min} agoraInicial={agora} />
             {privado && mentorias[0].url_alunos ? (
-              <a href={mentorias[0].url_alunos} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
+              <a href={mentorias[0].url_alunos} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">
                 {tr("Entrar na sala")}
                 <span aria-hidden="true">&rarr;</span>
               </a>

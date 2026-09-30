@@ -23,7 +23,7 @@ function QuestionForm({ courseId, quizId, q, numero }: { courseId: string; quizI
       <input type="hidden" name="quiz_id" value={quizId} />
       <input type="hidden" name="course_id" value={courseId} />
 
-      <p className="text-meta uppercase text-ds-text-3">{numero === null ? "Nova pergunta" : `Pergunta ${numero}`}</p>
+      <p className="text-meta text-ds-text-3">{numero === null ? "Nova pergunta" : `Pergunta ${numero}`}</p>
 
       <Field
         scope={scope}

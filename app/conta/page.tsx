@@ -180,34 +180,34 @@ export default async function ContaHome() {
     : tr("Tudo pronto para começar.");
 
   return (
-    <div className="flex flex-col gap-12 pb-4 tablet:gap-14">
+    <div className="flex flex-col gap-6 pb-4">
 
       {/* ── 1 · Contexto. Discreto de propósito. ─────────────────────── */}
       <header>
-        <p className="text-meta uppercase text-ds-text-3">
-          {hoje(new Date().toISOString())}
-          {full && <> · <span className="text-acento">{tr("assinatura ativa")}</span></>}
+        <p className="flex flex-wrap items-center gap-2 text-sm text-ds-text-3">
+          <span className="first-letter:uppercase">{hoje(new Date().toISOString())}</span>
+          {full && <span className="rounded-full bg-marca-nevoa px-2.5 py-0.5 text-xs font-semibold text-marca">{tr("assinatura ativa")}</span>}
         </p>
-        <h1 className="mt-2.5 text-balance font-display text-title font-semibold text-ds-text">
-          {tr("Olá")}{firstName ? `, ${firstName}` : ""}
+        <h1 className="grito mt-3 text-[2.6rem] text-obsidian sm:text-[3.2rem]">
+          {tr("Olá")}{firstName ? `, ${firstName}` : ""}.
         </h1>
-        <p className="mt-1.5 max-w-xl text-body text-ds-text-2">{leitura}</p>
+        <p className="mt-3 max-w-xl text-[15px] text-ds-text-2">{leitura}</p>
       </header>
 
       {/* ── 2 · Próximo passo. O elemento mais forte da página. ──────── */}
-      <section aria-labelledby="passo" className="border-l-2 border-acento pl-5 tablet:pl-6">
-        <p id="passo" className="text-meta uppercase text-ds-text-3">{tr("Próximo passo")}</p>
-        <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
-          <div className="min-w-0 max-w-lg">
-            <h2 className="text-balance font-display text-section font-semibold text-ds-text">{passo.titulo}</h2>
-            <p className="mt-1 text-body-sm text-ds-text-2">{passo.apoio}</p>
+      <section aria-labelledby="passo" className="escuro rounded-grande bg-noite p-7 sm:p-9">
+        <p id="passo" className="text-sm font-medium text-slate-300">{tr("Próximo passo")}</p>
+        <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
+          <div className="min-w-0 max-w-xl">
+            <h2 className="text-balance text-[1.75rem] font-black leading-tight tracking-tight text-marca-verde sm:text-[2.1rem]">{passo.titulo}</h2>
+            <p className="mt-2 text-[15px] text-slate-300">{passo.apoio}</p>
             {passo.curso && (
-              <div className="mt-3 flex items-center gap-3">
-                <span className="h-0.5 w-full max-w-[14rem] bg-ds-line" aria-hidden="true">
-                  <span className="block h-0.5 bg-ds-accent" style={{ width: `${Math.max(2, passo.curso.pct)}%` }} />
+              <div className="mt-4 flex items-center gap-3">
+                <span className="h-1.5 w-full max-w-[16rem] overflow-hidden rounded-full bg-white/15" aria-hidden="true">
+                  <span className="block h-full rounded-full bg-marca-verde" style={{ width: `${Math.max(2, passo.curso.pct)}%` }} />
                 </span>
                 {/* Percentual é medição: mono. */}
-                <span className="font-mono text-meta tabular-nums text-ds-text-3">{passo.curso.pct}%</span>
+                <span className="font-mono text-sm tabular-nums text-white">{passo.curso.pct}%</span>
               </div>
             )}
           </div>
@@ -219,6 +219,7 @@ export default async function ContaHome() {
       </section>
 
       {/* ── 3 · Estado atual. ───────────────────────────────────────── */}
+      <div className="rounded-[20px] border border-tinta/10 bg-papel px-6 py-5 sm:px-7">
       <DataRule
         items={[
           { label: "Treinamentos", value: courses.length },
@@ -228,10 +229,11 @@ export default async function ContaHome() {
           { label: "Competências", value: resumo.developed, hint: resumo.advanced ? `${resumo.advanced} no avançado` : undefined },
         ]}
       />
+      </div>
 
       {/* ── 4 · Evolução. A composição pertence a UMA competência. ───── */}
       {resumo.top && (
-        <section aria-labelledby="evidencia">
+        <section aria-labelledby="evidencia" className="rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-7">
           <SectionHeader
             title={`Competência mais forte: ${resumo.top.name}`}
             meta={<span className="font-mono tabular-nums">{resumo.top.score}/100</span>}
@@ -251,7 +253,7 @@ export default async function ContaHome() {
       )}
 
       {resumo.cooling.length > 0 && (
-        <section aria-labelledby="frescor">
+        <section aria-labelledby="frescor" className="rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-7">
           <SectionHeader
             title={tr("Hora de revisar")}
             action={<Link href="/conta/desafios" className="text-label text-acento hover:underline">{tr("Ver desafios")}</Link>}
@@ -268,7 +270,7 @@ export default async function ContaHome() {
       )}
 
       {(aprovadas.length > 0 || emCorrecao > 0) && (
-        <section aria-labelledby="pratica">
+        <section aria-labelledby="pratica" className="rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-7">
           <SectionHeader title={tr("Sua prática")} />
           <ul className="mt-3 flex flex-col">
             {emCorrecao > 0 && (
@@ -293,7 +295,7 @@ export default async function ContaHome() {
       )}
 
       {/* ── 5 · Conteúdo e secundários. ─────────────────────────────── */}
-      <section aria-labelledby="cursos">
+      <section aria-labelledby="cursos" className="rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-7">
         <SectionHeader
           title={tr("Em curso")}
           action={<Link href="/conta/cursos" className="text-label text-ds-text-2 hover:text-ds-text">{tr("Cardápio")}</Link>}
@@ -316,7 +318,7 @@ export default async function ContaHome() {
                 <li key={c.id}>
                   <Link
                     href={`/aprender/${c.slug}`}
-                    className="group flex items-center gap-4 border-b border-ds-line-soft py-4 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                    className="group -mx-3 flex items-center gap-4 rounded-srf px-3 py-4 transition-colors duration-fast ease-ds hover:bg-ds-raised"
                   >
                     <Thumb url={c.cover_url} title={c.title} />
                     <span className="min-w-0 flex-1">
@@ -327,9 +329,9 @@ export default async function ContaHome() {
                         {completo && <Badge tone="accent">{tr("concluído")}</Badge>}
                       </span>
                       <span className="mt-2 flex items-center gap-3">
-                        <span className="h-0.5 w-full max-w-[16rem] bg-ds-line" aria-hidden="true">
+                        <span className="h-1.5 w-full max-w-[16rem] overflow-hidden rounded-full bg-fog" aria-hidden="true">
                           <span
-                            className={`block h-0.5 ${completo ? "bg-ds-accent" : "bg-ds-text-3"}`}
+                            className={`block h-full rounded-full ${completo ? "bg-marca-verde" : "bg-marca-azul"}`}
                             style={{ width: `${Math.max(2, c.pct)}%` }}
                           />
                         </span>
@@ -368,7 +370,7 @@ export default async function ContaHome() {
       )}
 
       {catalogo.length > 0 && (
-        <section aria-labelledby="catalogo">
+        <section aria-labelledby="catalogo" className="rounded-[20px] border border-tinta/10 bg-papel p-6 sm:p-7">
           <SectionHeader title={full ? tr("Treinamentos com preço de assinante") : tr("Treinamentos da Academy")} />
           <p className="mt-1 text-caption text-ds-text-3">
             {full
@@ -380,7 +382,7 @@ export default async function ContaHome() {
               <li key={c.id}>
                 <Link
                   href={`/cursos/${c.slug}`}
-                  className="group flex items-center justify-between gap-4 border-b border-ds-line-soft py-3 transition-colors duration-fast ease-ds hover:bg-ds-raised/50"
+                  className="group -mx-3 flex items-center justify-between gap-4 rounded-srf px-3 py-3 transition-colors duration-fast ease-ds hover:bg-ds-raised"
                 >
                   <span className="min-w-0">
                     <span className="flex min-w-0 items-center gap-2">
@@ -393,7 +395,7 @@ export default async function ContaHome() {
                   </span>
                   <span className="flex shrink-0 items-center gap-2">
                     {c.subscriber_price != null && (
-                      <span className="font-mono text-caption tabular-nums text-acento">
+                      <span className="rounded-full bg-marca-nevoa px-2.5 py-0.5 font-mono text-caption tabular-nums text-marca">
                         {Number(c.subscriber_price) === 0 ? "Incluso" : brl(Number(c.subscriber_price))}
                       </span>
                     )}
@@ -407,7 +409,7 @@ export default async function ContaHome() {
       )}
 
       {COMMUNITY_WHATSAPP_URL && (
-        <p className="border-t border-ds-line pt-5 text-body-sm text-ds-text-3">
+        <p className="px-1 text-body-sm text-ds-text-3">
           {tr("Avisos das lives saem primeiro no")}{" "}
           <a
             href={COMMUNITY_WHATSAPP_URL}

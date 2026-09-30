@@ -74,11 +74,11 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
         {tr("Voltar para a vitrine")}
       </Link>
 
-      <div className="glass mt-5 rounded-3xl border border-tinta/8 p-6 sm:p-8">
+      <div className="bg-papel mt-5 rounded-[20px] border border-tinta/10 p-6 sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
           <Avatar name={p.full_name} src={p.avatar_url} size="lg" className="h-20 w-20 shrink-0 text-2xl ring-2 ring-tinta/10" />
           <div className="min-w-0 flex-1">
-            <h1 className="font-display text-2xl font-bold text-tinta sm:text-3xl">
+            <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-obsidian">
               {p.full_name}
               {souEu && <span className="ml-2 align-middle text-sm font-normal text-acento">{tr("(você)")}</span>}
             </h1>
@@ -91,7 +91,7 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
             {badges.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {badges.map((b: string) => (
-                  <span key={b} className="inline-flex items-center gap-1 rounded-full bg-brand-teal/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-brand-teal">
+                  <span key={b} className="inline-flex items-center gap-1 rounded-full bg-brand-teal/15 px-2.5 py-0.5 text-[0.65rem] font-semibold text-marca">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={BADGE_ICONS[b] || "M12 2l3 6 6 .9-4.5 4.2 1 6-5.5-3-5.5 3 1-6L3 8.9 9 8z"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     {BADGE_LABELS[b] || b}
                   </span>
@@ -100,7 +100,7 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
             )}
           </div>
 
-          <div className="shrink-0 rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3 text-center">
+          <div className="shrink-0 rounded-[20px] border border-tinta/10 bg-papel px-5 py-3 text-center">
             <p className="font-display text-2xl font-bold text-acento">{pts}</p>
             <p className="text-[0.7rem] uppercase tracking-wide text-slate-500">{tr("pontos")}</p>
           </div>
@@ -133,7 +133,7 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
               href={l.url}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento"
+              className="inline-flex items-center gap-1.5 rounded-full border border-tinta/25 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento"
             >
               {l.label}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>

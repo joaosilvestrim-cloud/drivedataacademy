@@ -13,7 +13,7 @@ export function Kpi({ rotulo, valor, detalhe, tom }: { rotulo: string; valor: st
   const borda = tom === "danger" ? "border-ds-danger/40 bg-ds-danger/[0.05]" : "border-ds-line bg-ds-surface";
   return (
     <div className={`rounded-srf border px-4 py-3 ${borda}`}>
-      <span className="block text-meta uppercase tracking-wide text-ds-text-3">{rotulo}</span>
+      <span className="block text-meta tracking-wide text-ds-text-3">{rotulo}</span>
       <span className={`mt-1 block font-mono text-data tabular-nums ${cor}`}>{valor}</span>
       {detalhe && <span className="mt-0.5 block text-caption text-ds-text-3">{detalhe}</span>}
     </div>
@@ -25,7 +25,7 @@ export function Tabela({ colunas, linhas, vazio }: { colunas: string[]; linhas: 
     <div className="overflow-x-auto rounded-srf border border-ds-line bg-ds-surface">
       <table className="w-full min-w-[640px] text-body-sm">
         <thead>
-          <tr className="border-b border-ds-line text-left text-meta uppercase text-ds-text-3">
+          <tr className="border-b border-ds-line text-left text-meta text-ds-text-3">
             {colunas.map((c, i) => (
               <th key={c + i} className={`px-3 py-2.5 font-medium ${i === 0 ? "pl-4" : ""}`}>{c}</th>
             ))}

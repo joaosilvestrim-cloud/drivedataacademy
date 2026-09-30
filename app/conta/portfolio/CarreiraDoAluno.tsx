@@ -24,7 +24,7 @@ import {
 
 const campo =
   "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
-const botao = "rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento disabled:opacity-40";
+const botao = "rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento disabled:opacity-40";
 const botaoLeve = "rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-tinta disabled:opacity-40";
 
 const mesAno = (d: string | null) =>
@@ -32,7 +32,7 @@ const mesAno = (d: string | null) =>
 
 function Bloco({ titulo, espaco, children, aberto = false }: { titulo: string; espaco: string; children: React.ReactNode; aberto?: boolean }) {
   return (
-    <details open={aberto} className="group rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4">
+    <details open={aberto} className="group rounded-[20px] border border-tinta/10 bg-papel p-4">
       <summary className="flex cursor-pointer list-none flex-wrap items-baseline justify-between gap-2">
         <span className="font-semibold text-tinta">{titulo}</span>
         <span className="text-xs text-slate-400">no seu 4D: {espaco}</span>
@@ -92,7 +92,7 @@ export default function CarreiraDoAluno({
   const siteBase = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
-    <section className="mt-8 rounded-3xl border border-tinta/10 bg-tinta/[0.02] p-5 sm:p-7">
+    <section className="mt-8 rounded-[20px] border border-tinta/10 bg-papel p-5 sm:p-7">
       <h2 className="font-display text-2xl font-bold text-tinta">Sua carreira no universo</h2>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">
         Os projetos acendem as estrelas. Estes blocos contam o resto da história: para onde você vai, por onde passou, o que conquistou e quem confirma o seu trabalho.

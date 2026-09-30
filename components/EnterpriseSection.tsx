@@ -31,7 +31,7 @@ export default function EnterpriseSection() {
               <div className="mt-8 space-y-4">
                 {perks.map((p) => (
                   <div key={p.title} className="flex items-start gap-4">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-marca">
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-papel text-marca">
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                         <path d={p.icon} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -46,7 +46,7 @@ export default function EnterpriseSection() {
             </div>
 
             {/* Enterprise form */}
-            <div className="relative rounded-srf bg-white p-6 shadow-painel sm:p-7">
+            <div className="relative rounded-srf bg-papel p-6 shadow-painel sm:p-7">
               <h3 className="font-display text-lg font-bold text-tinta">{t.enterprise.formTitle}</h3>
               <p className="mt-1 text-sm text-slate-400">{t.enterprise.formSubtitle}</p>
               <EnterpriseForm />

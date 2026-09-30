@@ -118,11 +118,11 @@ export default function Dojo({ semente }: { semente: number }) {
         ))}
         <Link
           href="/conta/ferramentas/arena"
-          className="rounded-xl border border-tinta/10 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-acento/50 hover:text-tinta"
+          className="rounded-full border border-tinta/25 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-acento/50 hover:text-tinta"
         >
           SQL <span className="text-[0.7rem] opacity-70">{tr("na Arena ↗")}</span>
         </Link>
-        <button onClick={() => setTour(true)} className="ml-auto rounded-full border border-tinta/10 px-3 py-1.5 text-xs text-slate-300 hover:border-acento/50 hover:text-tinta">
+        <button onClick={() => setTour(true)} className="ml-auto rounded-full border border-tinta/25 px-3 py-1.5 text-xs text-slate-300 hover:border-acento/50 hover:text-tinta">
           {tr("Como funciona")}
         </button>
       </div>
@@ -157,9 +157,9 @@ export default function Dojo({ semente }: { semente: number }) {
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
         {/* Base */}
-        <div data-tour="dojo-base" className="min-w-0 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-4">
+        <div data-tour="dojo-base" className="min-w-0 rounded-[20px] border border-tinta/10 bg-papel p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-[0.7rem] uppercase tracking-wider text-acento">{tr("Sua base · tabela Vendas")}</p>
+            <p className="text-[0.7rem] text-marca">{tr("Sua base · tabela Vendas")}</p>
             <div className="flex flex-wrap items-center gap-2">
               {desafio.recorte && (
                 <button
@@ -177,7 +177,7 @@ export default function Dojo({ semente }: { semente: number }) {
           </div>
           <div className="mt-3 max-h-[26rem] overflow-auto rounded-xl border border-tinta/8">
             <table className="w-full min-w-[640px] text-[0.8rem]">
-              <thead className="sticky top-0 bg-ink-900/95 backdrop-blur">
+              <thead className="sticky top-0 bg-tela/95 backdrop-blur">
                 <tr className="text-left text-[0.68rem] uppercase tracking-wide text-slate-500">
                   <th className="px-2 py-2 font-medium">#</th>
                   {COLUNAS.map((c, i) => (
@@ -219,7 +219,7 @@ export default function Dojo({ semente }: { semente: number }) {
 
         {/* Desafio */}
         <div className="flex min-w-0 flex-col gap-4">
-          <div data-tour="dojo-desafio" className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+          <div data-tour="dojo-desafio" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-tinta/[0.06] px-2 py-0.5 text-[0.65rem] uppercase tracking-wide text-slate-400">
                 {indice + 1} de {desafios.length}
@@ -265,15 +265,15 @@ export default function Dojo({ semente }: { semente: number }) {
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              <button onClick={conferir} title={tr("Ctrl + Enter")} className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
+              <button onClick={conferir} title={tr("Ctrl + Enter")} className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">
                 {tr("Conferir")}
               </button>
-              <button onClick={() => setVerDica((v) => !v)} className="rounded-xl border border-tinta/10 px-3 py-2.5 text-sm text-slate-300 hover:border-acento/50 hover:text-tinta">
+              <button onClick={() => setVerDica((v) => !v)} className="rounded-full border border-tinta/25 px-3 py-2.5 text-sm text-slate-300 hover:border-acento/50 hover:text-tinta">
                 {verDica ? tr("Esconder a dica") : "Dica"}
               </button>
               <button
                 onClick={() => { setIndice((i) => (i + 1) % desafios.length); limpar(); }}
-                className="ml-auto rounded-xl border border-tinta/10 px-3 py-2.5 text-sm text-slate-300 hover:border-acento/50 hover:text-tinta"
+                className="ml-auto rounded-full border border-tinta/25 px-3 py-2.5 text-sm text-slate-300 hover:border-acento/50 hover:text-tinta"
               >
                 {tr("Próximo →")}
               </button>

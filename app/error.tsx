@@ -22,7 +22,7 @@ export default function GlobalError({
 
   return (
     <main className="mx-auto flex min-h-[70vh] max-w-xl flex-col justify-center px-6 py-20">
-      <p className="font-mono text-meta uppercase text-ds-attention">{tr("Algo saiu do lugar")}</p>
+      <p className="font-mono text-meta text-ds-attention">{tr("Algo saiu do lugar")}</p>
       <h1 className="mt-3 font-display text-title font-semibold text-ds-text">
         {tr("Não conseguimos carregar esta página")}
       </h1>

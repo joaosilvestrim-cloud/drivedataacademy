@@ -19,15 +19,15 @@ export default async function BibliotecaPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Biblioteca")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{((await trocasDoAdmin()).biblioteca?.nome || "").trim() || "Referência de bolso"}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Biblioteca")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{((await trocasDoAdmin()).biblioteca?.nome || "").trim() || "Referência de bolso"}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {ITENS.length} {tr("padrões de DAX, SQL e Power Query que resolvem o dia a dia. Cada um responde três coisas: quando usar, o código para colar e a armadilha em que a maioria cai. Sem enrolação e sem precisar assistir a nada.")}
       </p>
 
       <Biblioteca />
 
-      <section className="mt-12 grid gap-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6 sm:grid-cols-3">
+      <section className="mt-12 grid gap-5 rounded-[20px] border border-tinta/10 bg-papel p-6 sm:grid-cols-3">
         <div>
           <p className="text-sm font-semibold text-acento">{tr("Escrito para consulta")}</p>
           <p className="mt-1 text-sm text-slate-400">

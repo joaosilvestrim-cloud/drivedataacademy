@@ -153,7 +153,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
       <section className="mt-12">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
           <h2 className="font-display text-section font-semibold text-ds-text">Alunos com acesso</h2>
-          <span className="text-meta uppercase text-ds-text-3">
+          <span className="text-meta text-ds-text-3">
             {members.length} {members.length === 1 ? "registro" : "registros"}
             {members.length > 0 && ` · ${activeCount} ${activeCount === 1 ? "ativo" : "ativos"}`}
           </span>
@@ -247,7 +247,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
       <section className="mt-12">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
           <h2 className="font-display text-section font-semibold text-ds-text">Pedidos</h2>
-          <span className="text-meta uppercase text-ds-text-3">
+          <span className="text-meta text-ds-text-3">
             {orders.length} {orders.length === 1 ? "registro" : "registros"}
           </span>
         </div>

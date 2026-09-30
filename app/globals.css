@@ -98,8 +98,10 @@
 }
 
 /* Faixa escura: azul-noite com o verde do logo. Vale para o 4D, o player, o
-   rodapé e os blocos de destaque. Tudo o que está dentro volta a ler escuro. */
-.escuro {
+   rodapé e os blocos de destaque. Tudo o que está dentro volta a ler escuro.
+   O modo escuro do aluno (html[data-tema="escuro"]) usa os mesmos valores. */
+.escuro,
+:root[data-tema="escuro"] {
   --ds-bg-c: 6 26 51;
   --ds-surface-c: 10 38 71;
   --ds-raised-c: 17 50 96;
@@ -150,7 +152,7 @@ html {
 
 body {
   background-color: var(--bg);
-  color: #3d4859;
+  color: rgb(var(--ds-text-2-c));
   overflow-x: hidden;
   font-feature-settings: "calt";
 }
@@ -165,7 +167,7 @@ body {
 /* Superfície "vidro" virou cartão chapado com fio. */
 .glass,
 .glass-strong {
-  background: #f3f6f9;
+  background: rgb(var(--ds-raised-c));
 }
 .escuro .glass,
 .escuro .glass-strong {
@@ -194,12 +196,12 @@ body {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f4f7;
+  background: rgb(var(--ds-raised-c));
 }
 ::-webkit-scrollbar-thumb {
-  background: #c6ccd6;
+  background: rgb(var(--ds-line-c));
   border-radius: 999px;
-  border: 2px solid #f1f4f7;
+  border: 2px solid rgb(var(--ds-raised-c));
 }
 
 /* Grain / noise overlay helper */
@@ -304,9 +306,14 @@ body {
 /* Campos: Paper com fio frio e foco em azul-noite, sem anel de brilho.
    Pega os campos antigos (bg-tinta/5) sem precisar reescrever cada um. */
 :where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), select, textarea)[class*="bg-tinta/"]:not(.escuro *) {
-  background-color: #fff;
-  border-color: rgba(11, 18, 32, 0.25);
+  background-color: rgb(var(--p-papel));
+  border-color: rgb(var(--p-tinta) / 0.25);
 }
 :where(input, select, textarea)[class*="bg-tinta/"]:not(.escuro *):focus {
-  border-color: #0a2647;
+  border-color: rgb(var(--p-marca));
+}
+
+/* Modo escuro: o logo com letra escura troca pelo de letra branca. */
+:root[data-tema="escuro"] img[src="/logo-claro.png"] {
+  content: url("/logo.png");
 }

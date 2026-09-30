@@ -64,7 +64,7 @@ function Ranking({ titulo, linhas, rotuloExtra, vazio }: { titulo: string; linha
       <div className="overflow-x-auto rounded-srf border border-ds-line bg-ds-surface">
         <table className="w-full min-w-[520px] text-body-sm">
           <thead>
-            <tr className="border-b border-ds-line text-left text-meta uppercase text-ds-text-3">
+            <tr className="border-b border-ds-line text-left text-meta text-ds-text-3">
               <th className="px-4 py-2.5 font-medium">#</th>
               <th className="px-2 py-2.5 font-medium">Nome</th>
               <th className="px-2 py-2.5 text-right font-medium">Alunos</th>
@@ -215,29 +215,29 @@ export default async function UsoAdmin({ searchParams }: { searchParams: { perio
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-3">
-          <span className="block text-meta uppercase tracking-wide text-ds-text-3">Alunos ativos</span>
+          <span className="block text-meta tracking-wide text-ds-text-3">Alunos ativos</span>
           <span className="mt-1 block font-mono text-data tabular-nums text-ds-text">{n(alunosAtivos)}</span>
           <span className="mt-0.5 block font-mono text-caption tabular-nums"><Tendencia agora={alunosAtivos} antes={alunosAntes} /> <span className="text-ds-text-3">vs. {dias} dias antes</span></span>
         </div>
         <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-3">
-          <span className="block text-meta uppercase tracking-wide text-ds-text-3">Ferramenta mais usada</span>
+          <span className="block text-meta tracking-wide text-ds-text-3">Ferramenta mais usada</span>
           <span className="mt-1 block truncate text-body font-semibold text-ds-text">{campea?.nome ?? "—"}</span>
           <span className="mt-0.5 block text-caption text-ds-text-3">{campea ? `${n(campea.alunos)} alunos · ${n(campea.acessos)} acessos` : "nenhum acesso no período"}</span>
         </div>
         <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-3">
-          <span className="block text-meta uppercase tracking-wide text-ds-text-3">Curso mais visto</span>
+          <span className="block text-meta tracking-wide text-ds-text-3">Curso mais visto</span>
           <span className="mt-1 block truncate text-body font-semibold text-ds-text">{cursoCampeao?.nome ?? "—"}</span>
           <span className="mt-0.5 block text-caption text-ds-text-3">{cursoCampeao ? `${n(cursoCampeao.alunos)} alunos · ${n(cursoCampeao.acessos)} acessos` : "nenhum acesso no período"}</span>
         </div>
         <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-3">
-          <span className="block text-meta uppercase tracking-wide text-ds-text-3">Aulas concluídas</span>
+          <span className="block text-meta tracking-wide text-ds-text-3">Aulas concluídas</span>
           <span className="mt-1 block font-mono text-data tabular-nums text-ds-text">{n(aulasConcluidas)}</span>
           <span className="mt-0.5 block text-caption text-ds-text-3">nos últimos {dias} dias</span>
         </div>
       </div>
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Alunos por dia" action={<span className="text-meta uppercase text-ds-text-3">pico: {n(pico === 1 && !serie.some((s) => s.alunos) ? 0 : pico)}</span>} />
+        <SectionHeader title="Alunos por dia" action={<span className="text-meta text-ds-text-3">pico: {n(pico === 1 && !serie.some((s) => s.alunos) ? 0 : pico)}</span>} />
         <div className="rounded-srf border border-ds-line bg-ds-surface p-4">
           <div className="flex h-28 items-end gap-[2px]">
             {serie.map((s) => (

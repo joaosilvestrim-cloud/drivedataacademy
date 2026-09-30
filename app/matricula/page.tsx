@@ -87,7 +87,7 @@ export default async function MatriculaPage() {
       <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
         {!open ? (
           <div className="mx-auto max-w-xl rounded-2xl border border-tinta/10 bg-tinta/[0.02] px-6 py-16 text-center">
-            <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Matrículas")}</p>
+            <p className="text-sm font-medium text-ds-text-3">{tr("Matrículas")}</p>
             <h1 className="mt-2 font-display text-3xl font-bold text-tinta">{tr("Inscrições fechadas no momento")}</h1>
             <p className="mt-3 text-slate-300">{tr("Enquanto isso, acompanhe as aulas abertas ao vivo.")}</p>
             <Link href="/#ao-vivo" className="mt-6 inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Ver as próximas lives")}</Link>
@@ -111,7 +111,7 @@ export default async function MatriculaPage() {
             <div className="grid items-start gap-10 lg:grid-cols-2">
               {/* Oferta */}
               <div>
-                <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Assinatura")}</p>
+                <p className="text-sm font-medium text-ds-text-3">{tr("Assinatura")}</p>
                 <h1 className="mt-2 font-display text-4xl font-bold text-tinta">{tr("Assine a DriveData Academy")}</h1>
                 <p className="mt-4 text-lg text-slate-300">{descricao}</p>
 

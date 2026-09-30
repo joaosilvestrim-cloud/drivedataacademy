@@ -186,7 +186,7 @@ export default function Arena({ semente }: { semente: number }) {
         </div>
 
         {/* Enunciado */}
-        <div data-tour="arena-enunciado" className="mt-4 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6">
+        <div data-tour="arena-enunciado" className="mt-4 rounded-[20px] border border-tinta/10 bg-papel p-6">
           <div className="flex flex-wrap items-center gap-2">
             <span className={`rounded-full border px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide ${NIVEL[desafio.nivel]}`}>{desafio.nivel}</span>
             <span className="text-[0.7rem] uppercase tracking-wider text-slate-500">{desafio.assunto}</span>
@@ -224,7 +224,7 @@ export default function Arena({ semente }: { semente: number }) {
               type="button"
               onClick={executar}
               disabled={!banco}
-              className="inline-flex items-center gap-2 rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95 disabled:opacity-50"
             >
               {banco ? "Executar e corrigir" : tr("Abrindo o banco...")}
             </button>
@@ -241,7 +241,7 @@ export default function Arena({ semente }: { semente: number }) {
 
         {/* Veredito */}
         {veredito && (
-          <div className={`mt-4 rounded-3xl border p-5 ${veredito.certo ? "border-acento/40 bg-brand-green/[0.07]" : veredito.diagnosticado ? "border-amber-400/35 bg-amber-400/[0.06]" : "border-tinta/10 bg-tinta/[0.02]"}`}>
+          <div className={`mt-4 rounded-[20px] border p-5 ${veredito.certo ? "border-acento/40 bg-brand-green/[0.07]" : veredito.diagnosticado ? "border-amber-400/35 bg-amber-400/[0.06]" : "border-tinta/10 bg-papel"}`}>
             <p className={`font-display text-lg font-bold ${veredito.certo ? "text-acento" : "text-tinta"}`}>{veredito.titulo}</p>
             <p className="mt-1 text-sm leading-relaxed text-slate-300">{veredito.detalhe}</p>
 
@@ -268,7 +268,7 @@ export default function Arena({ semente }: { semente: number }) {
 
       {/* Coluna de apoio */}
       <div className="flex flex-col gap-4 xl:sticky xl:top-6">
-        <div data-tour="arena-progresso" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+        <div data-tour="arena-progresso" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
           <div className="flex items-end justify-between gap-3">
             <div>
               <p className="text-[0.7rem] uppercase tracking-wider text-slate-500">{tr("Resolvidos")}</p>
@@ -280,7 +280,7 @@ export default function Arena({ semente }: { semente: number }) {
               type="button"
               onClick={() => setRodada((r) => r + 1)}
               title={tr("Gera uma base nova, com outros números")}
-              className="rounded-xl border border-tinta/10 px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
+              className="rounded-full border border-tinta/25 px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
             >
               {tr("Nova base")}
             </button>
@@ -293,13 +293,13 @@ export default function Arena({ semente }: { semente: number }) {
           </p>
         </div>
 
-        <div data-tour="arena-dicionario" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+        <div data-tour="arena-dicionario" className="rounded-[20px] border border-tinta/10 bg-papel p-5">
           <div className="flex items-center justify-between gap-3">
             <p className="font-display text-base font-bold text-tinta">{tr("As tabelas")}</p>
         <button
           type="button"
           onClick={() => setTour(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-tinta/10 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-tinta/25 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
           {tr("Tour guiado")}

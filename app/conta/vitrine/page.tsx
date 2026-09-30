@@ -66,10 +66,10 @@ export default async function VitrinePage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-bold text-tinta">{tr("Vitrine de alunos")}</h1>
+          <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Vitrine de alunos")}</h1>
           <p className="mt-1 text-sm text-slate-400">{tr("Conheça a comunidade: especialidades, pontos, conquistas e portfólio.")}</p>
         </div>
-        <Link href="/conta/perfil" className="rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Editar meu perfil")}</Link>
+        <Link href="/conta/perfil" className="rounded-full border border-tinta/25 px-4 py-2 text-sm font-medium text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Editar meu perfil")}</Link>
       </div>
 
       <VitrineClient membros={membros} meuId={user.id} lider={lider} />

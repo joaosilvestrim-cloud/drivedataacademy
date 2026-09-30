@@ -12,7 +12,7 @@ export default function SeloCasa({ label, className = "" }: { label?: string | n
   if (label === "Oficial") {
     return (
       <span
-        className={`inline-flex items-center gap-1 rounded-full border border-sky-400/50 bg-gradient-to-r from-sky-500/20 to-violet-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-sky-300 ${className}`}
+        className={`inline-flex items-center gap-1 rounded-full bg-marca-azul px-2 py-0.5 text-[0.65rem] font-semibold text-white ${className}`}
         title={tr("Conta oficial da DriveData Academy")}
       >
         <Escudo size={9} />
@@ -23,7 +23,7 @@ export default function SeloCasa({ label, className = "" }: { label?: string | n
   if (label === "Equipe") {
     return (
       <span
-        className={`inline-flex items-center gap-1 rounded-full border border-teal-300/50 bg-gradient-to-r from-brand-green/20 to-teal-300/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-teal-300 ${className}`}
+        className={`inline-flex items-center gap-1 rounded-full bg-marca-verde px-2 py-0.5 text-[0.65rem] font-semibold text-sobre-acento ${className}`}
         title={tr("Equipe da DriveData Academy")}
       >
         <Insignia size={9} />
@@ -33,7 +33,7 @@ export default function SeloCasa({ label, className = "" }: { label?: string | n
   }
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border border-amber-300/45 bg-gradient-to-r from-amber-300/18 to-brand-green/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-amber-300 ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full bg-amber-400/20 px-2 py-0.5 text-[0.65rem] font-semibold text-amber-300 ${className}`}
       title={`${label} da DriveData Academy`}
     >
       <Coroa size={9} />

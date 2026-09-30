@@ -36,7 +36,7 @@ export default async function WorkshopPage({ params }: { params: { id: string } 
       <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
         <div className="grid items-start gap-10 lg:grid-cols-2">
           <div>
-            <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Workshop ao vivo")}</p>
+            <p className="text-sm font-medium text-ds-text-3">{tr("Workshop ao vivo")}</p>
             <h1 className="mt-2 font-display text-4xl font-bold text-tinta">{ev.title}</h1>
             <p className="mt-2 text-brand-teal">{fmt(ev.starts_at)}{ev.duration_min ? ` · ${ev.duration_min} min` : ""}</p>
             {ev.description && <p className="mt-4 text-lg text-slate-300">{ev.description}</p>}

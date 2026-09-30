@@ -331,13 +331,13 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
   }, [membros]);
 
   return (
-    <div className="flex h-[calc(100dvh-140px-var(--faixa,0px))] min-h-[520px] overflow-hidden rounded-2xl border border-black/50 bg-ink-800 shadow-2xl sm:h-[calc(100vh-108px-var(--faixa,0px))]">
+    <div className="flex h-[calc(100dvh-140px-var(--faixa,0px))] min-h-[520px] overflow-hidden rounded-[20px] border border-tinta/10 bg-papel shadow-painel sm:h-[calc(100vh-108px-var(--faixa,0px))]">
       {/* Balão do canal com novidade. Fica fora da lista (posição fixa) para não
           ser cortado pela rolagem da coluna de canais. */}
       {dicaCanal && (
         <div
           role="tooltip"
-          className={`pointer-events-none fixed z-50 max-w-[260px] -translate-y-1/2 rounded-lg border px-3 py-2 text-[0.78rem] font-medium leading-snug shadow-2xl ${dicaCanal.alerta ? "border-red-500/50 bg-red-950 text-red-100" : "border-tinta/10 bg-ink-700 text-slate-100"}`}
+          className={`pointer-events-none fixed z-50 max-w-[260px] -translate-y-1/2 rounded-lg border px-3 py-2 text-[0.78rem] font-medium leading-snug shadow-overlay ${dicaCanal.alerta ? "border-red-500/50 bg-red-950 text-red-100" : "border-tinta/10 bg-ink-700 text-slate-100"}`}
           style={{ left: dicaCanal.x, top: dicaCanal.y }}
         >
           <span className={`absolute -left-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 border-b border-l ${dicaCanal.alerta ? "border-red-500/50 bg-red-950" : "border-tinta/10 bg-ink-700"}`} />
@@ -346,7 +346,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
       )}
       {/* Coluna dos canais */}
       <aside className="hidden w-64 shrink-0 flex-col bg-ink-700 sm:flex xl:w-72">
-        <div className="flex items-center gap-2.5 border-b border-black/40 px-4 py-4 shadow-sm">
+        <div className="flex items-center gap-2.5 border-b border-tinta/10 px-4 py-4 shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/drivedata-symbol.png" alt="" aria-hidden="true" className="h-7 w-7 shrink-0 object-contain" />
           <span className="font-display text-base font-bold text-tinta">{tr("Comunidade")}</span>
@@ -391,7 +391,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                 <span className={`truncate ${!active && novidade.naoLidas > 0 ? "font-semibold text-tinta" : ""}`}>{c.name}</span>
                 <span className="ml-auto flex shrink-0 items-center gap-1">
                   {souEquipe && novidade.aguardando > 0 && (
-                    <span className="relative flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[0.65rem] font-bold tabular-nums text-tinta shadow-[0_0_10px_rgba(239,68,68,.55)]">
+                    <span className="relative flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[0.65rem] font-bold tabular-nums text-tinta">
                       <span className="absolute inset-0 animate-ping rounded-full bg-red-500/40" />
                       <span className="relative">{novidade.aguardando > 99 ? "99+" : novidade.aguardando}</span>
                     </span>
@@ -406,7 +406,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
         </nav>
 
         {/* Barra do próprio aluno, no rodapé, como no Discord. */}
-        <div className="flex items-center gap-2.5 border-t border-black/40 bg-black/25 px-3 py-2.5">
+        <div className="flex items-center gap-2.5 border-t border-tinta/10 bg-black/25 px-3 py-2.5">
           <MedalAvatar rank={medalRanks[me.id]} casa={me.casa ?? null} name={me.name} src={me.avatar ?? null} size="sm" />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[0.85rem] font-semibold text-slate-200">{me.name}</span>
@@ -420,7 +420,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
 
       {/* Coluna da conversa */}
       <div className="relative flex min-w-0 flex-1 flex-col bg-ink-800">
-        <header className="relative z-10 flex items-center gap-3 border-b border-black/40 px-4 py-3.5 shadow-[0_1px_0_rgba(0,0,0,0.35)] sm:px-5">
+        <header className="relative z-10 flex items-center gap-3 border-b border-tinta/10 px-4 py-3.5 sm:px-5">
           <span className="text-2xl font-normal leading-none text-slate-600">#</span>
           <span className="font-display text-lg font-bold text-tinta">{channel.name}</span>
           {channel.description && (
@@ -477,7 +477,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
         )}
 
         {/* Canais (mobile) */}
-        <div className="flex gap-1.5 overflow-x-auto border-b border-black/40 px-3 py-2 sm:hidden">
+        <div className="flex gap-1.5 overflow-x-auto border-b border-tinta/10 px-3 py-2 sm:hidden">
           {channels.map((c) => {
             const active = c.slug === channel.slug;
             return (
@@ -522,7 +522,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                     key={sg.texto}
                     type="button"
                     onClick={() => usarSugestao(sg)}
-                    className="rounded border border-tinta/10 bg-tinta/[0.04] px-3 py-1.5 text-xs text-slate-300 transition-colors hover:border-acento/40 hover:text-tinta"
+                    className="rounded border border-tinta/25 bg-tinta/[0.04] px-3 py-1.5 text-xs text-slate-300 transition-colors hover:border-acento/40 hover:text-tinta"
                   >
                     {sg.tag ? <span className="mr-1.5 font-semibold" style={{ color: tagColor(sg.tag) }}>{tr(sg.tag)}</span> : <span className="mr-1.5 text-brand-teal">{tr("Apresentação")}</span>}
                     {sg.texto.trim()}…
@@ -595,7 +595,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                       </p>
                     ) : m.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={m.image_url} alt={tr("anexo")} className="mt-2 max-h-72 rounded-lg border border-black/40 object-contain" />
+                      <img src={m.image_url} alt={tr("anexo")} className="mt-2 max-h-72 rounded-lg border border-tinta/10 object-contain" />
                     ) : null}
 
                     {m.is_solution && (
@@ -622,7 +622,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                   </div>
 
                   {/* Barra de ações flutuante, no canto da mensagem, como no Discord. */}
-                  <div className="absolute -top-3 right-4 z-10 hidden items-center rounded-md border border-black/60 bg-ink-700 shadow-lg group-hover:flex">
+                  <div className="absolute -top-3 right-4 z-10 hidden items-center rounded-md border border-tinta/10 bg-ink-700 shadow-lg group-hover:flex">
                     <button onClick={() => toggleLike(m)} className={`grid h-7 w-7 place-items-center rounded-l-md transition-colors hover:bg-tinta/5 ${m.liked ? "text-acento" : "text-slate-400 hover:text-acento"}`} aria-label={tr("Curtir")} title={tr("Curtir")}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill={m.liked ? "currentColor" : "none"}><path d="M7 10v11M2 13v6a2 2 0 002 2h13.4a2 2 0 002-1.6l1.4-7A2 2 0 0018.8 10H14V5a2 2 0 00-2-2l-3 7z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
                     </button>
@@ -657,7 +657,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
             <button
               type="button"
               onClick={scrollToBottom}
-              className="absolute -top-10 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-black/50 bg-ink-700 px-3.5 py-1.5 text-xs font-medium text-slate-200 shadow-lg transition-colors hover:text-tinta"
+              className="absolute -top-10 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-tinta/10 bg-ink-700 px-3.5 py-1.5 text-xs font-medium text-slate-200 shadow-lg transition-colors hover:text-tinta"
             >
               {naoVistas > 0 ? `${naoVistas} ${naoVistas === 1 ? "mensagem nova" : "mensagens novas"}` : tr("Ir para o fim")}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -722,7 +722,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                 </button>
               ))}
             </div>
-            <button onClick={send} disabled={!input.trim() && !pendingImage} className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-marca-verde text-sobre-acento transition-transform hover:scale-105 disabled:opacity-40">
+            <button onClick={send} disabled={!input.trim() && !pendingImage} className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-marca-verde text-sobre-acento transition-[filter] hover:brightness-95 disabled:opacity-40">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
@@ -743,7 +743,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
 
       {/* Coluna dos membros */}
       {mostrarMembros && (
-        <aside className="hidden w-60 shrink-0 flex-col overflow-y-auto border-l border-black/40 bg-ink-700 py-5 lg:flex xl:w-72">
+        <aside className="hidden w-60 shrink-0 flex-col overflow-y-auto border-l border-tinta/10 bg-ink-700 py-5 lg:flex xl:w-72">
           {grupos.map((g) => (
             <div key={g.titulo} className="mb-5 px-3.5">
               <p className="mb-2 px-1 text-[0.7rem] font-bold uppercase tracking-wider text-slate-500">

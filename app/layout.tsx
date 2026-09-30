@@ -26,6 +26,8 @@ const mono = IBM_Plex_Mono({
   fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
+const TEMA_ANTES_DE_PINTAR = `try{if(localStorage.getItem("tema")==="escuro")document.documentElement.dataset.tema="escuro"}catch(e){}`;
+
 /* Função, e não constante: constante de módulo é avaliada uma vez, quando o
    arquivo carrega, fora de qualquer requisição. O tr() ali não enxergaria o
    cookie e o título da aba ficaria em português para sempre. */
@@ -52,7 +54,11 @@ export default function RootLayout({
 }) {
   const idioma = idiomaAtual();
   return (
-    <html lang={TAG_HTML[idioma]} className={`${inter.variable} ${mono.variable}`}>
+    <html lang={TAG_HTML[idioma]} className={`${inter.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Aplica o modo escuro antes da primeira pintura (components/tema/AlternarTema.tsx). */}
+        <script dangerouslySetInnerHTML={{ __html: TEMA_ANTES_DE_PINTAR }} />
+      </head>
       <body className="font-sans antialiased">
         <LanguageProvider inicial={idioma}>{children}</LanguageProvider>
         <RastreioDeUso />

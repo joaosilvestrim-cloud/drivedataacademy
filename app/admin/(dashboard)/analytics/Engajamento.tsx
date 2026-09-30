@@ -113,7 +113,7 @@ export default async function Engajamento({ dias }: { dias: number }) {
       </div>
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Alunos por dia" action={<span className="text-meta uppercase text-ds-text-3">pico {n(picoSerie === 1 && !serie.some((s) => s.alunos) ? 0 : picoSerie)}</span>} />
+        <SectionHeader title="Alunos por dia" action={<span className="text-meta text-ds-text-3">pico {n(picoSerie === 1 && !serie.some((s) => s.alunos) ? 0 : picoSerie)}</span>} />
         <div className="rounded-srf border border-ds-line bg-ds-surface p-4">
           <div className="flex h-28 items-end gap-[2px]">
             {serie.map((s) => (
@@ -130,7 +130,7 @@ export default async function Engajamento({ dias }: { dias: number }) {
       </section>
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Quando os alunos entram" action={<span className="text-meta uppercase text-ds-text-3">sessões por dia da semana e hora (Brasília)</span>} />
+        <SectionHeader title="Quando os alunos entram" action={<span className="text-meta text-ds-text-3">sessões por dia da semana e hora (Brasília)</span>} />
         <div className="overflow-x-auto rounded-srf border border-ds-line bg-ds-surface p-4">
           <div className="grid min-w-[640px] gap-[3px]" style={{ gridTemplateColumns: "36px repeat(24, minmax(0, 1fr))" }}>
             <span />
@@ -153,7 +153,7 @@ export default async function Engajamento({ dias }: { dias: number }) {
       </section>
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Alunos" action={<span className="text-meta uppercase text-ds-text-3">últimos {dias} dias</span>} />
+        <SectionHeader title="Alunos" action={<span className="text-meta text-ds-text-3">últimos {dias} dias</span>} />
         <Tabela
           colunas={["Aluno", "Último acesso", "Dias ativos", "Sessões", "Vídeo assistido", "Aulas concluídas", "Situação"]}
           vazio="Sem atividade registrada no período."

@@ -13,7 +13,7 @@ import type { Form } from "./definicoes";
    própria. O markup é o mesmo de antes, incluindo o simulador do Portal, que
    continua aparecendo só no funil "portal". */
 
-const field = "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
+const field = "w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 
 const OUTRO = /^outr[oa]$/i;
 
@@ -46,7 +46,7 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
   }
 
   return (
-    <div className="glass rounded-3xl border border-tinta/8 p-6 sm:p-8">
+    <div className="bg-papel rounded-[20px] border border-tinta/10 p-6 sm:p-8">
       {cabecalho && (
         <>
           <h2 className="font-display text-xl font-bold text-tinta">{form.title}</h2>
@@ -62,7 +62,7 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
                 <span className="block text-sm font-semibold text-tinta">{form.saibaMais.label}</span>
                 <span className="block text-xs text-slate-400">{tr("Veja o produto, os casos de uso e a calculadora de retorno antes de registrar seu interesse.")}</span>
               </span>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-marca-verde px-4 py-2 text-xs font-semibold text-sobre-acento">
+              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-marca-verde px-4 py-2 text-xs font-semibold text-sobre-acento">
                 {tr("Conheça mais")}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="transition-transform group-hover:translate-x-0.5"><path d="M7 17L17 7M9 7h8v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 <span className="sr-only"> {tr("(abre em nova aba)")}</span>
@@ -134,7 +134,7 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
 
           {form.key === "portal" && Number(values.clientes) > 0 && Number(values.mensalidade) > 0 && (
             <div className="rounded-2xl border border-brand-blue/25 bg-brand-blue/[0.06] p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-teal">{tr("Simulação")}</p>
+              <p className="text-xs font-semibold text-marca">{tr("Simulação")}</p>
               <div className="mt-2 flex flex-wrap gap-6">
                 <div><p className="text-xs text-slate-400">{tr("Receita mensal dos clientes")}</p><p className="font-display text-xl font-bold text-tinta">{brl(sim.receita)}</p></div>
                 <div><p className="text-xs text-slate-400">{tr("Sua recorrência (exemplo)")}</p><p className="font-display text-xl font-bold text-acento">{brl(sim.recorrencia)}{tr("/mês")}</p></div>
@@ -143,7 +143,7 @@ export default function FunilForm({ form, cabecalho = true }: { form: Form; cabe
             </div>
           )}
 
-          <button disabled={loading} className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.01] disabled:opacity-60 sm:w-auto sm:px-10">
+          <button disabled={loading} className="w-full rounded-full bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95 disabled:opacity-60 sm:w-auto sm:px-10">
             {loading ? "Enviando..." : form.cta}
           </button>
         </form>

@@ -51,7 +51,7 @@ export default function Footer() {
   const academyLinks = NAV_HREFS.map((href, i) => ({ href: resolverAncora(href, pathname), label: t.nav.links[i] }));
 
   return (
-    <footer className="escuro relative bg-marca">
+    <footer className="escuro relative bg-noite">
       <div className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div>
@@ -72,7 +72,7 @@ export default function Footer() {
                         rel="noreferrer"
                         aria-label={it.label}
                         title={it.label}
-                        className="grid h-9 w-9 place-items-center rounded-full border border-tinta/15 text-slate-200 transition-colors hover:bg-marca-verde hover:text-marca"
+                        className="grid h-9 w-9 place-items-center rounded-full border border-tinta/15 text-slate-200 transition-colors hover:bg-marca-verde hover:text-sobre-acento"
                       >
                         <SocialIcon type={it.type} />
                       </a>

@@ -25,7 +25,7 @@ export default function VideoField({ scope, defaultProvider, defaultValue }: { s
 
   return (
     <div className="flex flex-col gap-4 rounded-srf border border-ds-line-soft p-4">
-      <p className="flex items-center gap-1.5 text-meta uppercase text-ds-text-3">
+      <p className="flex items-center gap-1.5 text-meta text-ds-text-3">
         <Video size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" />
         Vídeo, para aulas do tipo Vídeo
       </p>
@@ -58,7 +58,7 @@ export default function VideoField({ scope, defaultProvider, defaultValue }: { s
       </div>
 
       <div>
-        <p className="mb-1.5 text-meta uppercase text-ds-text-3">Pré-visualização</p>
+        <p className="mb-1.5 text-meta text-ds-text-3">Pré-visualização</p>
         {preview ? (
           <div className="overflow-hidden rounded-srf border border-ds-line bg-black">
             <div className="relative aspect-video">

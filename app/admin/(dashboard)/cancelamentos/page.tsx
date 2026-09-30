@@ -40,7 +40,7 @@ export default async function CancelamentosPage({ searchParams }: { searchParams
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">Assinatura</p>
+      <p className="text-sm font-medium text-ds-text-3">Assinatura</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-tinta">Cancelamentos</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         O aluno cancela pela própria tela e o Asaas é avisado na hora. Aqui fica o registro, com o motivo que ele deu.

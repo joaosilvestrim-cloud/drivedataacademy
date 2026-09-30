@@ -126,7 +126,7 @@ export default async function TraducoesAdmin({
         <>
           <SectionHeader
             title={area.rotulo}
-            action={<span className="text-meta uppercase text-ds-text-3">{registros.length} {registros.length === 1 ? "registro" : "registros"}</span>}
+            action={<span className="text-meta text-ds-text-3">{registros.length} {registros.length === 1 ? "registro" : "registros"}</span>}
           />
           {registros.length === 0 ? (
             <EmptyState title="Nada para traduzir aqui" description="Quando o time publicar um registro nesta área, ele aparece nesta lista." />
@@ -196,7 +196,7 @@ function Editor({
 
         {campos.map((campo) => (
           <div key={campo} className="flex flex-col gap-2 rounded-srf border border-ds-line bg-ds-surface p-4">
-            <p className="text-meta uppercase text-ds-text-3">{ROTULO_DO_CAMPO[campo] ?? campo}</p>
+            <p className="text-meta text-ds-text-3">{ROTULO_DO_CAMPO[campo] ?? campo}</p>
             <p className="whitespace-pre-line rounded-srf border border-ds-line-soft bg-ds-raised p-3 text-body-sm text-ds-text-2">
               {String(registro[campo] ?? "")}
             </p>

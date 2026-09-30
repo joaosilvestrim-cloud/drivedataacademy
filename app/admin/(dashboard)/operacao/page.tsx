@@ -42,7 +42,7 @@ type Problema = { chave: "sem_cobranca" | "sem_acesso" | "email_falhou"; label: 
 function Tile({ label, valor, detalhe, href, tom }: { label: string; valor: string; detalhe?: string; href?: string; tom?: "danger" | "accent" }) {
   const corpo = (
     <>
-      <span className="block text-meta uppercase tracking-wide text-ds-text-3">{label}</span>
+      <span className="block text-meta tracking-wide text-ds-text-3">{label}</span>
       <span className={`mt-1 block font-mono text-heading-sm tabular-nums ${tom === "danger" ? "text-ds-danger" : tom === "accent" ? "text-acento" : "text-ds-text"}`}>{valor}</span>
       {detalhe && <span className="mt-0.5 block text-caption text-ds-text-3">{detalhe}</span>}
     </>
@@ -234,7 +234,7 @@ export default async function OperacaoAdmin({
           <div className="mt-3">
             <DataTable caption="Pedidos e estado do acesso">
               <thead>
-                <tr className="text-left text-meta uppercase text-ds-text-3">
+                <tr className="text-left text-meta text-ds-text-3">
                   <th className="px-3 py-2">Quando</th><th className="px-3 py-2">Comprador</th><th className="px-3 py-2">Produto</th><th className="px-3 py-2">Pagamento</th><th className="px-3 py-2">Conta</th><th className="px-3 py-2">Assinatura</th><th className="px-3 py-2">E-mail</th><th className="px-3 py-2">Ações</th>
                 </tr>
               </thead>
@@ -294,7 +294,7 @@ export default async function OperacaoAdmin({
       </section>
 
       <section id="emails" className="scroll-mt-24">
-        <SectionHeader title="E-mails enviados" action={<span className="text-meta uppercase text-ds-text-3">últimos {Math.min(emails.length, 60)}</span>} />
+        <SectionHeader title="E-mails enviados" action={<span className="text-meta text-ds-text-3">últimos {Math.min(emails.length, 60)}</span>} />
         {!logDisponivel ? (
           <Alert tone="attention">A tabela email_log ainda não existe. Rode a migration 20260915_email_log.sql no Supabase para começar a registrar os envios.</Alert>
         ) : emails.length === 0 ? (
@@ -303,7 +303,7 @@ export default async function OperacaoAdmin({
           <div className="mt-3">
             <DataTable caption="Registro de e-mails">
               <thead>
-                <tr className="text-left text-meta uppercase text-ds-text-3">
+                <tr className="text-left text-meta text-ds-text-3">
                   <th className="px-3 py-2">Quando</th><th className="px-3 py-2">Para</th><th className="px-3 py-2">Assunto</th><th className="px-3 py-2">Tipo</th><th className="px-3 py-2">Estado</th>
                 </tr>
               </thead>

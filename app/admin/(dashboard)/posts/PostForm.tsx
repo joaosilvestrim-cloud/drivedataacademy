@@ -78,7 +78,7 @@ export default function PostForm({ post }: { post?: Post }) {
       >
         {IDIOMAS.map((i) => (
           <div key={i.sufixo} className="flex flex-col gap-4 border-l-2 border-ds-line pl-4">
-            <p className="text-meta uppercase text-ds-text-3">{i.nome}</p>
+            <p className="text-meta text-ds-text-3">{i.nome}</p>
             <Field
               scope={scope}
               name={`title_${i.sufixo}`}

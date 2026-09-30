@@ -15,8 +15,8 @@ export default async function RepresentacaoPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Parceria & Negócios")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Cresça com a gente")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Parceria & Negócios")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Cresça com a gente")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">{tr("Revenda o Portal BI, traga projetos ou candidate-se ao time. Escolha um caminho e registre seu interesse. Agendar mentoria agora tem item próprio no menu.")}</p>
 
       <div className="mt-8">

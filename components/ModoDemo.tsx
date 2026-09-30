@@ -85,7 +85,7 @@ export default function ModoDemo({ ate }: { ate: string }) {
             <b className="font-semibold text-tinta">{tr("DriveCanvas")}</b> {tr("está liberado para usar.")}
           </p>
           <div className="flex shrink-0 items-center gap-2">
-            <Link href="/ferramenta" className="rounded-lg bg-marca-verde px-3.5 py-1.5 text-[0.8rem] font-semibold text-sobre-acento">
+            <Link href="/ferramenta" className="rounded-full bg-marca-verde px-3.5 py-1.5 text-[0.8rem] font-semibold text-sobre-acento">
               {tr("Abrir o DriveCanvas")}
             </Link>
             <Link href="/matricula" className="rounded-lg border border-amber-300/40 px-3.5 py-1.5 text-[0.8rem] font-semibold text-amber-200 hover:text-tinta">

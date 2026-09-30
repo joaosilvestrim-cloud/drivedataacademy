@@ -51,7 +51,7 @@ function Wrapper({
     <div className={cx("flex flex-col gap-1.5", className)}>
       <label htmlFor={id} className="flex flex-wrap items-baseline gap-x-2 text-label font-medium text-ds-text-2">
         {label}
-        {required && <span className="text-meta uppercase text-ds-text-3">obrigatório</span>}
+        {required && <span className="text-meta text-ds-text-3">obrigatório</span>}
       </label>
       {children}
       {/* Erro tem precedência sobre descrição e é anunciado por aria-describedby. */}
@@ -193,7 +193,7 @@ export function FileField({
     <div className={cx("flex flex-col gap-2", className)}>
       <label htmlFor={id} className="flex flex-wrap items-baseline gap-x-2 text-label font-medium text-ds-text-2">
         {label}
-        {required && <span className="text-meta uppercase text-ds-text-3">obrigatório</span>}
+        {required && <span className="text-meta text-ds-text-3">obrigatório</span>}
       </label>
 
       {preview && (

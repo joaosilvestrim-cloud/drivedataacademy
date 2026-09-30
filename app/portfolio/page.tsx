@@ -38,7 +38,7 @@ export default async function PortfolioPublico() {
       <Navbar />
       <main className="relative z-10 mx-auto max-w-6xl px-5 pb-24 pt-28 sm:px-8">
         <Reveal>
-          <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Portfólio")}</p>
+          <p className="text-sm font-medium text-ds-text-3">{tr("Portfólio")}</p>
           <h1 className="mt-2 max-w-3xl font-display text-4xl font-bold leading-tight text-tinta sm:text-5xl">
             {tr("O que os alunos construíram")}
           </h1>

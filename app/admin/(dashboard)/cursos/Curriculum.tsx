@@ -251,7 +251,7 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
             <form action={addLesson} className="mt-4 flex flex-col gap-3 border-t border-ds-line-soft pt-4">
               <input type="hidden" name="module_id" value={m.id} />
               <input type="hidden" name="course_id" value={courseId} />
-              <p className="text-meta uppercase text-ds-text-3">Nova aula</p>
+              <p className="text-meta text-ds-text-3">Nova aula</p>
               <div className="flex flex-wrap items-end gap-3">
                 <Field
                   scope={`aula-nova-${m.id}`}

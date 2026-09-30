@@ -77,7 +77,7 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
         <h2 className="font-display text-section font-semibold text-ds-text">
           {FILTERS.find((o) => o.key === f)?.label ?? "Comentários"}
         </h2>
-        <span className="text-meta uppercase text-ds-text-3">
+        <span className="text-meta text-ds-text-3">
           {comments.length} {comments.length === 1 ? "comentário" : "comentários"}
         </span>
       </div>
@@ -114,7 +114,7 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
 
                   {c.admin_reply && (
                     <div className="border-l-2 border-ds-info py-1.5 pl-3">
-                      <p className="text-meta uppercase text-ds-text-3">Resposta da equipe</p>
+                      <p className="text-meta text-ds-text-3">Resposta da equipe</p>
                       <p className="mt-1 whitespace-pre-line text-body-sm text-ds-text-2">{c.admin_reply}</p>
                     </div>
                   )}

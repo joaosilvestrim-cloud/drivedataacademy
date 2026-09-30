@@ -108,7 +108,7 @@ export default async function Pagamentos() {
       </div>
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Assinaturas mensais" action={<span className="text-meta uppercase text-ds-text-3">{n(linhas.length)} no Asaas</span>} />
+        <SectionHeader title="Assinaturas mensais" action={<span className="text-meta text-ds-text-3">{n(linhas.length)} no Asaas</span>} />
         <Tabela
           colunas={["Aluno", "Situação", "Meses pagos", "Total pago", "1º pagamento", "Último pagamento", "Próxima / atraso"]}
           vazio="Nenhuma assinatura mensal no Asaas."
@@ -128,7 +128,7 @@ export default async function Pagamentos() {
 
       {meses.length > 0 && (
         <section className="flex flex-col gap-3">
-          <SectionHeader title="Coorte: quantos continuam pagando" action={<span className="text-meta uppercase text-ds-text-3">pelo mês do 1º pagamento</span>} />
+          <SectionHeader title="Coorte: quantos continuam pagando" action={<span className="text-meta text-ds-text-3">pelo mês do 1º pagamento</span>} />
           <Tabela
             colunas={["Entrou em", "Assinantes", ...Array.from({ length: maxMeses }, (_, i) => `${i + 1}º mês`)]}
             vazio=""
@@ -154,7 +154,7 @@ export default async function Pagamentos() {
       )}
 
       <section className="flex flex-col gap-3">
-        <SectionHeader title="Plano anual: renovações" action={<span className="text-meta uppercase text-ds-text-3">{n(anuais.length)} pagos · {n(anualAbandonado)} boletos/pix não pagos</span>} />
+        <SectionHeader title="Plano anual: renovações" action={<span className="text-meta text-ds-text-3">{n(anuais.length)} pagos · {n(anualAbandonado)} boletos/pix não pagos</span>} />
         <Tabela
           colunas={["Aluno", "Valor", "Pago em", "Renova em", "Faltam"]}
           vazio="Nenhum anual pago ainda."

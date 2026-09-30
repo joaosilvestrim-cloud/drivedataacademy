@@ -63,7 +63,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         placeholder={t.waitlist.name}
         value={form.name}
         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-        className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
+        className="w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
       />
       <input
         required
@@ -71,7 +71,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         placeholder={t.waitlist.email}
         value={form.email}
         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-        className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
+        className="w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
       />
       <div className="flex items-stretch gap-2">
         <select
@@ -122,7 +122,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
           placeholder={t.waitlist.whatsapp}
           value={form.whatsapp}
           onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
-          className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
+          className="w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
         />
       </div>
       {ddi === "+" && <p className="text-xs text-slate-500">Selecionou "outro": digite o número completo com o código do país (ex.: +244 923 000 000).</p>}
@@ -130,7 +130,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-full bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? t.waitlist.sending : t.waitlist.submit}
       </button>

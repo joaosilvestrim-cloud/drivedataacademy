@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
 import PaletaDeComandos, { type Destino } from "@/components/conta/PaletaDeComandos";
 import SeletorDeIdioma from "@/components/conta/SeletorDeIdioma";
+import AlternarTema from "@/components/tema/AlternarTema";
 import { textos } from "@/lib/i18n/textos";
 import { frase } from "@/lib/i18n/frases";
 import { IDIOMA_PADRAO, type Idioma } from "@/lib/i18n/idioma";
@@ -168,7 +169,7 @@ function BarraInferior({ avisoComunidade, idioma }: { avisoComunidade?: Aviso; i
   return (
     <nav
       aria-label={t.menu.buscarTela}
-      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-tinta/10 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-tinta/10 bg-papel pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       {BARRA.map((it) => {
         const on = ativo(it.href, it.exact);
@@ -185,7 +186,7 @@ function BarraInferior({ avisoComunidade, idioma }: { avisoComunidade?: Aviso; i
                 <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {aviso && (
-                <span className={`absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full px-1 text-[0.55rem] font-bold ${avisoComunidade!.urgente ? "bg-alarm-red text-white" : "bg-marca text-marca-verde"}`}>
+                <span className={`absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full px-1 text-[0.55rem] font-bold ${avisoComunidade!.urgente ? "bg-alarm-red text-white" : "bg-noite text-marca-verde"}`}>
                   {avisoComunidade!.n > 9 ? "9+" : avisoComunidade!.n}
                 </span>
               )}
@@ -209,7 +210,7 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { on
       {/* Atalho para quem já sabe aonde vai. O mesmo botão serve de dica do Ctrl+K. */}
       <button
         onClick={() => window.dispatchEvent(new Event("abrir-paleta"))}
-        className="flex w-full items-center gap-2 rounded-full border border-tinta/15 bg-white px-4 py-2 text-left text-sm text-slate-400 transition-colors hover:border-marca hover:text-tinta"
+        className="flex w-full items-center gap-2 rounded-full border border-tinta/15 bg-papel px-4 py-2 text-left text-sm text-slate-400 transition-colors hover:border-marca hover:text-tinta"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
@@ -254,14 +255,14 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { on
                           aluno decide. Some sozinho quando não há nenhum. */}
                       {it.href === "/conta/comunidade" && avisoComunidade && avisoComunidade.n > 0 && !active && (
                         <span
-                          className={`ml-auto rounded-full px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums ${avisoComunidade.urgente ? "bg-alarm-red text-white" : "bg-marca text-marca-verde"}`}
+                          className={`ml-auto rounded-full px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums ${avisoComunidade.urgente ? "bg-alarm-red text-white" : "bg-noite text-marca-verde"}`}
                           title={avisoComunidade.urgente ? t.menu.avisoComunidade.aguardando(avisoComunidade.n) : t.menu.avisoComunidade.naoLidas(avisoComunidade.n)}
                         >
                           {avisoComunidade.n > 99 ? "99+" : avisoComunidade.n}
                         </span>
                       )}
                       {it.href === "/conta/cursos" && cursosAVenda > 0 && (
-                        <span className="ml-auto rounded-full bg-marca-verde px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-marca" title={t.menu.cursosAVenda(cursosAVenda)}>
+                        <span className="ml-auto rounded-full bg-marca-verde px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-sobre-acento" title={t.menu.cursosAVenda(cursosAVenda)}>
                           {cursosAVenda}
                         </span>
                       )}
@@ -287,9 +288,9 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
     : "mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8";
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen bg-tela">
       {/* Topo (mobile) */}
-      <header data-demo-nav className="sticky top-0 z-40 flex items-center justify-between border-b border-tinta/10 bg-white px-4 py-3 lg:hidden">
+      <header data-demo-nav className="sticky top-0 z-40 flex items-center justify-between border-b border-tinta/10 bg-papel px-4 py-3 lg:hidden">
         <button onClick={() => setOpen(true)} aria-label={tr("Menu")} className="grid h-9 w-9 place-items-center rounded-full border border-tinta/15 text-tinta">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" /></svg>
         </button>
@@ -304,6 +305,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
               <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
             </svg>
           </button>
+          <AlternarTema />
           <SignOutButton />
         </div>
       </header>
@@ -312,7 +314,7 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
       {open && (
         <div data-demo-nav className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-obsidian/40" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto bg-white p-4">
+          <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto bg-papel p-4">
             <div className="mb-6 flex items-center justify-between">
               <Link href="/" onClick={() => setOpen(false)}><img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" /></Link>
               <button onClick={() => setOpen(false)} aria-label={tr("Fechar")} className="grid h-8 w-8 place-items-center rounded-full border border-tinta/15 text-slate-400">✕</button>
@@ -321,15 +323,16 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
             <div className="mt-6 border-t border-tinta/10 pt-4">
               <WhatsAppGroupLink onNavigate={() => setOpen(false)} idioma={idioma} />
             </div>
-            <div className="mt-4 border-t border-tinta/10 pt-4">
+            <div className="mt-4 flex items-center justify-between gap-2 border-t border-tinta/10 pt-4">
               <SeletorDeIdioma atual={idioma} />
+              <AlternarTema comRotulo />
             </div>
           </div>
         </div>
       )}
 
       {/* Sidebar (desktop) */}
-      <aside data-demo-nav className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-tinta/10 bg-white p-4 lg:flex">
+      <aside data-demo-nav className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-tinta/10 bg-papel p-4 lg:flex">
         <Link href="/" className="mb-8 block px-2">
           <img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" />
         </Link>
@@ -343,7 +346,10 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
           <p className="truncate px-2 text-xs text-slate-500">{email}</p>
           <div className="mt-2 flex items-center justify-between gap-2 px-2">
             <SignOutButton rotulo={t.menu.sair} />
-            <SeletorDeIdioma atual={idioma} />
+            <div className="flex items-center gap-1.5">
+              <SeletorDeIdioma atual={idioma} />
+              <AlternarTema />
+            </div>
           </div>
         </div>
       </aside>

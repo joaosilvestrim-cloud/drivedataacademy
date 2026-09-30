@@ -81,7 +81,7 @@ function Selos({ m }: { m: Membro }) {
         <span
           key={b.key}
           title={tr(b.label)}
-          className="inline-flex items-center gap-1 rounded-full border border-brand-teal/25 bg-brand-teal/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal"
+          className="inline-flex items-center gap-1 rounded-full border border-brand-teal/25 bg-brand-teal/10 px-2 py-0.5 text-[0.6rem] font-semibold text-marca"
         >
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d={BADGE_ICONS[b.key] || "M12 2l3 6 6 .9-4.5 4.2 1 6-5.5-3-5.5 3 1-6L3 8.9 9 8z"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -154,7 +154,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               <Link
                 key={m.id}
                 href={`/conta/vitrine/${m.id}`}
-                className="glass group flex items-center gap-4 rounded-2xl border border-tinta/8 p-4 transition-colors hover:border-acento/40"
+                className="bg-papel group flex items-center gap-4 rounded-[20px] border border-tinta/10 p-4 transition-colors hover:border-acento/40"
               >
                 <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
                 <div className="min-w-0 flex-1">
@@ -196,7 +196,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               id="vitrine-skill"
               value={skill}
               onChange={(e) => setSkill(e.target.value)}
-              className={`w-full rounded-xl border bg-tinta/5 px-4 py-3 text-sm text-tinta outline-none [&>option]:bg-ink-900 sm:w-56 ${skill ? "border-acento/50" : "border-tinta/10"}`}
+              className={`w-full rounded-xl border bg-papel px-4 py-3 text-sm text-tinta outline-none [&>option]:bg-ink-900 sm:w-56 ${skill ? "border-acento/50" : "border-tinta/10"}`}
             >
               <option value="">{tr("Todas as especialidades")}</option>
               {habilidades.map(([s, n]) => (
@@ -210,7 +210,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               id="vitrine-ordem"
               value={ordem}
               onChange={(e) => setOrdem(e.target.value)}
-              className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta outline-none [&>option]:bg-ink-900 sm:w-44"
+              className="w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta outline-none [&>option]:bg-ink-900 sm:w-44"
             >
               {ORDENS.map((o) => (
                 <option key={o.key} value={o.key}>{tr(o.label)}</option>
@@ -269,18 +269,18 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
           <Link
             key={m.id}
             href={`/conta/vitrine/${m.id}`}
-            className={`glass group relative flex flex-col overflow-hidden rounded-2xl border p-5 transition-colors ${
+            className={`group relative flex flex-col overflow-hidden rounded-[20px] border bg-papel p-5 transition-[border-color,box-shadow] hover:shadow-painel ${
               m.portfolio
-                ? "border-acento/45 hover:border-acento/80"
+                ? "border-marca-azul/40 hover:border-marca-azul"
                 : m.casa
                   ? "border-amber-300/35 hover:border-amber-300/60"
-                  : "border-tinta/8 hover:border-acento/40"
+                  : "border-tinta/10 hover:border-tinta/30"
             }`}
           >
             {/* Portfólio no ar: a faixa de destaque no topo do card, com o
                 resumo do que o site prova e o botão para abrir. */}
             {m.portfolio && (
-              <div className="-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 border-b border-acento/20 bg-[radial-gradient(120%_160%_at_0%_0%,rgba(21,196,126,.22),transparent_60%)] px-5 py-2.5">
+              <div className="-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 bg-marca-nevoa px-5 py-2.5">
                 <span className="flex min-w-0 items-center gap-2">
                   <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true" className="shrink-0">
                     <path d="M2 12 L7 5 L13 9 L20 3" stroke="#6ce6c7" strokeWidth="1" fill="none" opacity=".7" />
@@ -297,19 +297,12 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
                 <button
                   type="button"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`/portfolio/${m.portfolio!.slug}`, "_blank", "noopener"); }}
-                  className="shrink-0 rounded-lg bg-brand-green px-2.5 py-1 text-[0.7rem] font-semibold text-sobre-acento transition-colors hover:bg-white"
+                  className="shrink-0 rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-sobre-acento transition-[filter] hover:brightness-95"
                 >
                   {tr("Ver portfólio")} ↗
                 </button>
               </div>
             )}
-            {/* Traço da marca na lateral, que acende no hover. */}
-            <span
-              aria-hidden="true"
-              className={`absolute inset-y-0 left-0 w-[3px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-                m.casa ? "bg-gradient-to-b from-amber-300 to-brand-green" : "bg-marca-verde"
-              }`}
-            />
 
             <div className="flex items-center gap-3">
               <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
@@ -361,7 +354,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
       </div>
 
       {filtrados.length === 0 && (
-        <p className="mt-6 rounded-2xl border border-dashed border-tinta/10 px-4 py-12 text-center text-slate-500">
+        <p className="mt-6 rounded-[20px] border border-dashed bg-papel border-tinta/20 px-4 py-12 text-center text-slate-500">
           {membros.length === 0
             ? tr("Ainda não há alunos na vitrine.")
             : tr("Nenhum aluno encontrado com esses termos. Tente outra busca ou limpe o filtro.")}

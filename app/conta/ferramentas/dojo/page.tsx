@@ -23,15 +23,15 @@ export default async function DojoPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Ferramentas")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{await nomeDaFerramenta("dojo")}</h1>
+      <p className="text-sm font-medium text-ds-text-3">{tr("Ferramentas")}</p>
+      <h1 className="mt-1 text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{await nomeDaFerramenta("dojo")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("A mesma base, as mesmas perguntas, duas ferramentas. Você responde com o número e com a fórmula, e a correção separa as duas coisas: entender o problema e saber escrever a solução.")}
       </p>
 
       <Dojo semente={sementeDoAluno(user.id)} />
 
-      <section className="mt-12 grid gap-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6 sm:grid-cols-3">
+      <section className="mt-12 grid gap-5 rounded-[20px] border border-tinta/10 bg-papel p-6 sm:grid-cols-3">
         <div>
           <p className="text-sm font-semibold text-acento">{tr("Número e fórmula")}</p>
           <p className="mt-1 text-sm text-slate-400">

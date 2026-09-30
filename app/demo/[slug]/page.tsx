@@ -29,7 +29,7 @@ export default async function DemoPage({
     const codigo = searchParams.codigo || "";
     return (
       <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-12">
-        <p className="text-sm font-semibold uppercase tracking-wide text-acento">Acesso liberado</p>
+        <p className="text-sm font-semibold text-marca">Acesso liberado</p>
         <h1 className="mt-2 font-display text-3xl font-bold text-tinta">
           {c.dias} dias de DriveCanvas são seus.
         </h1>
@@ -74,7 +74,7 @@ export default async function DemoPage({
 
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-12">
-      <p className="text-sm font-semibold uppercase tracking-wide text-acento">{c.titulo}</p>
+      <p className="text-sm font-semibold text-marca">{c.titulo}</p>
       <h1 className="mt-2 font-display text-3xl font-bold leading-tight text-tinta">
         {c.dias} dias de DriveCanvas, de graça.
       </h1>

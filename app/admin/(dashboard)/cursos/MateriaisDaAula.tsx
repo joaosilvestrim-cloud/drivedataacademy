@@ -30,7 +30,7 @@ export default function MateriaisDaAula({
   const scope = `materiais-${lessonId}`;
   return (
     <div className="flex flex-col gap-4 border-t border-ds-line-soft p-4">
-      <p className="text-meta uppercase text-ds-text-3">Arquivos para download ({itens.length})</p>
+      <p className="text-meta text-ds-text-3">Arquivos para download ({itens.length})</p>
 
       {itens.length > 0 ? (
         <ul className="flex flex-col">

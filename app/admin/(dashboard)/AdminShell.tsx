@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import AlternarTema from "@/components/tema/AlternarTema";
 import { usePathname } from "next/navigation";
 import SignOutButton from "./SignOutButton";
 import MarcarVisto from "./MarcarVisto";
@@ -148,7 +149,7 @@ function ItemMenu({ it, active, qtd, onNavigate, grupo }: { it: Item; active: bo
         onClick={onNavigate}
         aria-current={active ? "page" : undefined}
         className={`relative flex items-center gap-3 overflow-hidden rounded-full px-3 py-2 text-sm transition-colors ${
-          active ? "bg-marca-verde font-semibold text-marca" : pend ? "font-medium text-amber-100 hover:bg-tinta/10" : "text-slate-300 hover:bg-tinta/10 hover:text-tinta"
+          active ? "bg-marca-verde font-semibold text-sobre-acento" : pend ? "font-medium text-amber-100 hover:bg-tinta/10" : "text-slate-300 hover:bg-tinta/10 hover:text-tinta"
         }`}
       >
         {/* Pendência: o fundo pulsa até alguém atuar. */}
@@ -313,7 +314,7 @@ export default function AdminShell({ email, children, badges: inicial }: { email
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-obsidian/40" onClick={() => setOpen(false)} />
-          <div className="escuro absolute inset-y-0 left-0 w-72 max-w-[85%] overflow-y-auto bg-marca p-4">
+          <div className="escuro absolute inset-y-0 left-0 w-72 max-w-[85%] overflow-y-auto bg-noite p-4">
             <div className="mb-6 flex items-center justify-between">
               <span className="text-lg font-bold text-white">Portal <span className="text-marca-verde">DriveData</span></span>
               <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-full border border-tinta/15 text-slate-400">✕</button>
@@ -324,7 +325,7 @@ export default function AdminShell({ email, children, badges: inicial }: { email
       )}
 
       {/* Sidebar (desktop) */}
-      <aside className="escuro fixed inset-y-0 left-0 hidden w-60 flex-col bg-marca p-4 lg:flex">
+      <aside className="escuro fixed inset-y-0 left-0 hidden w-60 flex-col bg-noite p-4 lg:flex">
         <Link href="/admin" className="mb-8 block px-2 text-lg font-bold text-white">
           Portal <span className="text-marca-verde">DriveData</span>
         </Link>
@@ -333,8 +334,9 @@ export default function AdminShell({ email, children, badges: inicial }: { email
         </div>
         <div className="mt-4 border-t border-tinta/10 pt-4">
           <p className="truncate px-2 text-xs text-slate-500">{email}</p>
-          <div className="mt-2 px-2">
+          <div className="mt-2 flex items-center justify-between gap-2 px-2">
             <SignOutButton />
+            <AlternarTema />
           </div>
         </div>
       </aside>

@@ -60,8 +60,8 @@ export default function PaletaDeComandos({ destinos, idioma = IDIOMA_PADRAO }: {
   if (!aberta) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/70 p-4 pt-[12vh] backdrop-blur-sm" onClick={() => setAberta(false)}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl border border-tinta/10 bg-ink-900 shadow-2xl" role="dialog" aria-modal="true" aria-label={t.menu.buscarTela}>
+    <div className="fixed inset-0 z-[60] flex items-start justify-center bg-obsidian/50 p-4 pt-[12vh] backdrop-blur-sm" onClick={() => setAberta(false)}>
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl border border-tinta/10 bg-ink-900 shadow-overlay" role="dialog" aria-modal="true" aria-label={t.menu.buscarTela}>
         <div className="flex items-center gap-2 border-b border-tinta/8 px-4">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-slate-500">
             <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />

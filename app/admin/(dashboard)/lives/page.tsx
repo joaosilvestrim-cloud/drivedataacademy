@@ -433,7 +433,7 @@ export default async function LivesPage({ searchParams }: { searchParams: { ok?:
       <section aria-labelledby="agenda">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ds-line pb-2.5">
           <h2 id="agenda" className="font-display text-section font-semibold text-ds-text">Agenda</h2>
-          <span className="text-meta uppercase text-ds-text-3">
+          <span className="text-meta text-ds-text-3">
             {lives.length} {lives.length === 1 ? "evento" : "eventos"}
             {lives.length > 0 && ` · ${publicadas} ${publicadas === 1 ? "publicado" : "publicados"}`}
           </span>

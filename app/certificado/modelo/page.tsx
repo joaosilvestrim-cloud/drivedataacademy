@@ -25,7 +25,7 @@ export default async function CertModeloPage({ searchParams }: { searchParams: {
       <div className="certificate-page-inner mx-auto max-w-6xl">
         <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-acento">{tr("Modelo de certificado")}</p>
+            <p className="text-xs font-semibold text-marca">{tr("Modelo de certificado")}</p>
             <h1 className="font-display text-xl font-bold text-tinta">{tr("Pré-visualização")}</h1>
             <p className="mt-1 text-sm text-slate-400">{tr("Exemplo com dados fictícios. O certificado real usa o nome do aluno e o título do curso.")}</p>
           </div>

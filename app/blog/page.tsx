@@ -53,7 +53,7 @@ export default async function BlogPage() {
               )}
             </div>
             <div className="flex flex-col justify-center p-8 sm:p-10">
-              <span className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-teal">{destaque.category}</span>
+              <span className="text-[0.7rem] font-semibold text-marca">{destaque.category}</span>
               <h2 className="mt-3 font-display text-2xl font-bold leading-snug text-tinta transition-colors group-hover:text-acento sm:text-3xl">{destaque.title}</h2>
               <p className="mt-3 text-slate-400">{destaque.excerpt}</p>
               <p className="mt-6 text-xs text-slate-500">{data(destaque.published_at)}</p>
@@ -73,7 +73,7 @@ export default async function BlogPage() {
                 )}
               </div>
               <div className="flex flex-1 flex-col p-6">
-                <span className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-teal">{p.category}</span>
+                <span className="text-[0.7rem] font-semibold text-marca">{p.category}</span>
                 <h2 className="mt-2 font-display text-lg font-bold leading-snug text-tinta transition-colors group-hover:text-acento">{p.title}</h2>
                 <p className="mt-2 flex-1 text-sm text-slate-400">{p.excerpt}</p>
                 <p className="mt-5 text-xs text-slate-500">{data(p.published_at)}</p>

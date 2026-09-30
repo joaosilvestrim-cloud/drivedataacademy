@@ -13,7 +13,7 @@ import { usuarioAtual } from "@/lib/sessao";
 export const dynamic = "force-dynamic";
 
 const field =
-  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
+  "w-full rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 
 function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
@@ -24,7 +24,7 @@ function Badges({ list }: { list?: string[] }) {
   return (
     <>
       {list.map((b) => (
-        <span key={b} className="ml-1.5 rounded-full bg-brand-teal/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-brand-teal">
+        <span key={b} className="ml-1.5 rounded-full bg-brand-teal/15 px-2 py-0.5 text-[0.6rem] font-semibold text-marca">
           {BADGE_LABELS[b] || b}
         </span>
       ))}
@@ -85,7 +85,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           <MedalAvatar name={authorName} size="md" casa={seloDaCasa(badgeById[thread.user_id])} />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-display text-2xl font-bold text-tinta">{thread.title}</h1>
+              <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{thread.title}</h1>
               {thread.solved && <span className="inline-flex items-center gap-1 rounded-full bg-brand-green/15 px-2.5 py-1 text-xs font-semibold text-acento"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Resolvido")}</span>}
             </div>
             <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><span className={seloDaCasa(badgeById[thread.user_id]) === "Oficial" ? "font-semibold text-sky-300" : seloDaCasa(badgeById[thread.user_id]) === "Equipe" ? "font-semibold text-teal-300" : seloDaCasa(badgeById[thread.user_id]) ? "font-semibold text-amber-300" : ""}>{authorName}</span><SeloCasa label={seloDaCasa(badgeById[thread.user_id])} /><Badges list={badgeById[thread.user_id]} /> · {fmt(thread.created_at)}</p>
@@ -137,7 +137,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                       <form action={markSolution}>
                         <input type="hidden" name="thread_id" value={thread.id} />
                         <input type="hidden" name="post_id" value={p.id} />
-                        <button className="inline-flex items-center gap-1.5 rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Marcar como solução")}</button>
+                        <button className="inline-flex items-center gap-1.5 rounded-full border border-tinta/25 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Marcar como solução")}</button>
                       </form>
                     )}
                   </div>
@@ -147,22 +147,22 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           );
         })}
         {(posts ?? []).length === 0 && (
-          <div className="rounded-2xl border border-dashed border-tinta/10 px-4 py-10 text-center text-slate-500">{tr("Nenhuma resposta ainda. Seja o primeiro a ajudar.")}</div>
+          <div className="rounded-[20px] border border-dashed bg-papel border-tinta/20 px-4 py-10 text-center text-slate-500">{tr("Nenhuma resposta ainda. Seja o primeiro a ajudar.")}</div>
         )}
       </div>
 
       {/* Responder */}
       {thread.locked ? (
-        <p className="mt-8 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3 text-sm text-slate-400">{tr("Este tópico está fechado para novas respostas.")}</p>
+        <p className="mt-8 rounded-xl border border-tinta/10 bg-papel px-4 py-3 text-sm text-slate-400">{tr("Este tópico está fechado para novas respostas.")}</p>
       ) : (
-        <div className="mt-8 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+        <div className="mt-8 rounded-[20px] border border-tinta/10 bg-papel p-5">
           <p className="text-sm font-semibold text-tinta">{tr("Sua resposta")}</p>
           <form action={createReply} className="mt-3 space-y-3">
             <input type="hidden" name="thread_id" value={thread.id} />
             <textarea name="body" rows={4} required placeholder={tr("Escreva sua resposta...")} className={`${field} resize-y`} />
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-xs text-slate-500">{tr("Resposta marcada como solução vale")} <span className="text-acento">{tr("+10 pontos")}</span>.</p>
-              <button className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Responder")}</button>
+              <button className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">{tr("Responder")}</button>
             </div>
           </form>
         </div>

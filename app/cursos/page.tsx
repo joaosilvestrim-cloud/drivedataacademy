@@ -79,7 +79,7 @@ export default function AssinaturaPage() {
         <section className="relative mx-auto max-w-5xl px-6 pb-24">
           <Reveal>
             <div className="relative overflow-hidden rounded-grande">
-              <div className="escuro relative rounded-grande bg-marca px-8 py-14 text-center sm:px-14">
+              <div className="escuro relative rounded-grande bg-noite px-8 py-14 text-center sm:px-14">
                 <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-brand-green/20 blur-[100px]" />
                 <h2 className="relative font-display text-3xl font-bold sm:text-4xl">
                   {tr("Seu próximo nível em dados")}

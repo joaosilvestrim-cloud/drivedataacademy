@@ -53,7 +53,7 @@ function Cartaz({ e, className = "" }: { e: Evento; className?: string }) {
     // eslint-disable-next-line @next/next/no-img-element
     <img src={e.cover_url} alt="" className={`h-full w-full object-cover ${className}`} loading="lazy" />
   ) : (
-    <span className={`flex h-full w-full items-end bg-marca p-4 text-lg font-bold leading-tight text-marca-verde ${className}`}>{e.title}</span>
+    <span className={`flex h-full w-full items-end bg-noite p-4 text-lg font-bold leading-tight text-marca-verde ${className}`}>{e.title}</span>
   );
 }
 
@@ -118,7 +118,7 @@ export default async function LancamentoHoje() {
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
             <a
               href="/matricula"
-              className="group inline-flex items-center gap-2 rounded-full bg-marca-verde px-7 py-3.5 text-base font-semibold text-marca transition-[filter] hover:brightness-95"
+              className="group inline-flex items-center gap-2 rounded-full bg-marca-verde px-7 py-3.5 text-base font-semibold text-sobre-acento transition-[filter] hover:brightness-95"
             >
               {tr("Faça parte da Academy")}
               <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -133,7 +133,7 @@ export default async function LancamentoHoje() {
           <CupomDestaque />
 
           {/* O próximo encontro num bloco azul-noite: a faixa escura é a ênfase do sistema. */}
-          <div className="escuro mt-10 rounded-grande bg-marca p-7 sm:p-8">
+          <div className="escuro mt-10 rounded-grande bg-noite p-7 sm:p-8">
             <p className="text-sm text-slate-300">
               {rotuloDia(destaque.starts_at, agora) === "Hoje" ? tr("Hoje às") : `${rotuloDia(destaque.starts_at, agora)} às`}{" "}
               <span className="font-mono tabular-nums text-white">{hora(destaque.starts_at)}</span>
@@ -143,7 +143,7 @@ export default async function LancamentoHoje() {
             {subtitulo(destaque.description) && <p className="mt-2 line-clamp-3 text-slate-300">{subtitulo(destaque.description)}</p>}
             <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
               <Cronometro inicio={destaque.starts_at} duracaoMin={destaque.duration_min} agoraInicial={agoraMs} />
-              <a href="/matricula" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-marca transition-colors hover:bg-marca-nevoa">
+              <a href="/matricula" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-sobre-acento transition-colors hover:bg-[#e6f8e8]">
                 {tr("Assine para entrar na live")}
               </a>
             </div>
@@ -160,11 +160,11 @@ export default async function LancamentoHoje() {
               .map((e) => {
                 const i = leque.indexOf(e);
                 return (
-                  <span key={e.id} className={`cartaz c${i} absolute inset-0 overflow-hidden rounded-grande bg-marca shadow-overlay`}>
+                  <span key={e.id} className={`cartaz c${i} absolute inset-0 overflow-hidden rounded-grande bg-noite shadow-overlay`}>
                     <Cartaz e={e} />
                     {i === 0 && (
                       <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-6 pb-5 pt-16">
-                        <span className="rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-marca">
+                        <span className="rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-sobre-acento">
                           {rotuloDia(e.starts_at, agora)} · {hora(e.starts_at)} · {tr("na plataforma")}
                         </span>
                       </span>
@@ -200,7 +200,7 @@ export default async function LancamentoHoje() {
                     </span>
                   )}
                   <a href={i === 0 ? "#inicio" : "/matricula"} className="group block w-[17rem] sm:w-[19rem]">
-                    <span className="block aspect-[16/10] overflow-hidden rounded-srf bg-marca transition-transform duration-300 group-hover:-translate-y-1">
+                    <span className="block aspect-[16/10] overflow-hidden rounded-srf bg-noite transition-transform duration-300 group-hover:-translate-y-1">
                       <Cartaz e={e} className="transition-transform duration-500 group-hover:scale-[1.04]" />
                     </span>
                     <span className="mt-3 flex items-baseline gap-2 text-sm">

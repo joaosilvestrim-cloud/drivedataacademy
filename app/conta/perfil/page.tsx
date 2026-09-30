@@ -56,7 +56,7 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
   const myBadges = (badges ?? []).map((b: any) => b.badge);
 
   const Icon = ({ d }: { d: string }) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-acento"><path d={d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-marca"><path d={d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
   );
 
   const stats = [
@@ -67,13 +67,13 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
 
   return (
     <div className="max-w-6xl">
-      <h1 className="font-display text-3xl font-bold text-tinta">{tr("Meu perfil")}</h1>
-      <p className="mt-1 max-w-2xl text-sm text-slate-400">{tr("Seus dados de aluno na DriveData Academy. O cartão ao lado mostra como você aparece para os outros alunos.")}</p>
+      <h1 className="text-[2rem] font-bold leading-tight tracking-tight text-obsidian">{tr("Meu perfil")}</h1>
+      <p className="mt-2 max-w-2xl text-[15px] text-charcoal">{tr("Seus dados de aluno na DriveData Academy. O cartão ao lado mostra como você aparece para os outros alunos.")}</p>
 
       {/* Chega aqui quem tentou emitir certificado sem nome no cadastro. O nome
           é o que fica impresso, então a emissão para em vez de imprimir e-mail. */}
       {searchParams?.falta === "nome" && (
-        <div className="mt-5 flex gap-3 rounded-2xl border border-amber-400/30 bg-amber-400/[0.07] p-4">
+        <div className="mt-6 flex gap-3 rounded-[20px] border border-amber-400/40 bg-amber-400/[0.08] p-5">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-amber-300">
             <path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -86,31 +86,31 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
 
       <ProfileForm siteDoPortfolio={siteDoPortfolio} />
       {fiscal && <DadosFiscais {...fiscal} />}
-      <div className="max-w-3xl">
+      <div className="lg:max-w-[calc(100%-21.5rem)]">
       <ProfilePreview userId={user.id} email={user.email} />
 
       {/* Gamificação */}
       <div className="mt-8">
-        <h2 className="font-display text-lg font-bold text-tinta">{tr("Minha gamificação")}</h2>
-        <p className="mt-1 text-sm text-slate-400">{tr("Você ganha pontos participando da comunidade: cada curtida que suas mensagens recebem vale pontos e te faz subir no ranking.")}</p>
+        <h2 className="text-xl font-bold tracking-tight text-obsidian">{tr("Minha gamificação")}</h2>
+        <p className="mt-1 text-[15px] text-charcoal">{tr("Você ganha pontos participando da comunidade: cada curtida que suas mensagens recebem vale pontos e te faz subir no ranking.")}</p>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
           {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-4 text-center">
-              <div className="mx-auto grid h-9 w-9 place-items-center rounded-full bg-brand-green/10"><Icon d={s.d} /></div>
-              <p className="mt-2 font-display text-2xl font-bold text-tinta">{s.value}</p>
-              <p className="text-xs text-slate-400">{s.label}</p>
+            <div key={s.label} className="rounded-[20px] border border-tinta/10 bg-papel p-5">
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-marca-nevoa"><Icon d={s.d} /></div>
+              <p className="mt-4 font-mono text-[2rem] font-medium leading-none tabular-nums tracking-tight text-obsidian">{s.value}</p>
+              <p className="mt-1.5 text-sm text-charcoal">{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* Selos */}
-        <div className="mt-4 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
-          <p className="text-sm font-semibold text-tinta">{tr("Meus selos")}</p>
+        <div className="mt-3 rounded-[20px] border border-tinta/10 bg-papel p-5">
+          <p className="text-sm font-bold text-obsidian">{tr("Meus selos")}</p>
           {myBadges.length > 0 ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {myBadges.map((b) => (
-                <span key={b} className="inline-flex items-center gap-1.5 rounded-full border border-brand-teal/30 bg-brand-teal/10 px-3 py-1 text-xs font-semibold text-brand-teal">
+                <span key={b} className="inline-flex items-center gap-1.5 rounded-full bg-marca-nevoa px-3 py-1 text-xs font-semibold text-marca">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.3 7.2 17.7l.9-5.4L4.2 8.5l5.4-.8z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>
                   {BADGE_LABELS[b] || b}
                 </span>
@@ -121,9 +121,9 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
           )}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-3">
-          <Link href="/conta/comunidade" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Ir para a comunidade")}</Link>
-          <Link href="/conta/ranking" className="rounded-xl border border-tinta/10 px-5 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento">{tr("Ver ranking completo")}</Link>
+        <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <Link href="/conta/comunidade" className="rounded-full bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95">{tr("Ir para a comunidade")}</Link>
+          <Link href="/conta/ranking" className="text-sm font-semibold text-marca underline decoration-marca/30 underline-offset-4 hover:decoration-marca">{tr("Ver ranking completo")}</Link>
         </div>
       </div>
       </div>
