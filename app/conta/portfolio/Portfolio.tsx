@@ -729,7 +729,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
 
           <div className="flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
             <button type="submit" onClick={() => (acao.current = "enviar")} disabled={salvando || subindo} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-50">
-              {salvando ? "Enviando..." : tr("Enviar para revisão")}
+              {salvando ? "Enviando..." : tr("Publicar projeto")}
             </button>
             {/* Rascunho não exige campo obrigatório: a pessoa salva o que tem e volta depois. */}
             <button type="submit" formNoValidate onClick={() => (acao.current = "rascunho")} disabled={salvando} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-200 hover:border-brand-green/50">

@@ -1,3 +1,4 @@
+import { aprovacaoLigada } from "@/lib/portfolio-aprovacao";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { loadProfiles, displayName } from "@/lib/community";
 import { Button, Status } from "@/components/ui/primitives";
@@ -5,7 +6,7 @@ import { PageHeader, SectionHeader, EmptyState, Alert } from "@/components/ui/la
 import { LinkFilter } from "@/components/ui/filter";
 import AdminError from "../AdminError";
 import { STATUS, type Projeto } from "@/lib/portfolio";
-import { aprovarProjeto, recusarProjeto, alternarDestaque, despublicarProjeto, alternarBloqueioSite } from "./actions";
+import { aprovarProjeto, recusarProjeto, alternarDestaque, despublicarProjeto, alternarBloqueioSite, alternarAprovacao } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,7 @@ export default async function PortfolioAdmin({ searchParams }: { searchParams: {
     if (faltam.length) Object.assign(nomes, (await loadProfiles(admin, faltam)).nameById);
   } catch {}
 
+  const comAprovacao = await aprovacaoLigada(createAdminClient());
   const contagem: Record<string, number> = { todos: todos.length };
   for (const p of todos) contagem[p.status] = (contagem[p.status] || 0) + 1;
   const lista = f === "todos" ? todos : todos.filter((p) => p.status === f);
@@ -74,6 +76,19 @@ export default async function PortfolioAdmin({ searchParams }: { searchParams: {
       />
 
       {searchParams?.ok && <Alert tone="accent" title="Pronto">{searchParams.ok}</Alert>}
+
+      <form action={alternarAprovacao} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ds-line px-4 py-3">
+        <input type="hidden" name="ligar" value={comAprovacao ? "0" : "1"} />
+        <span className="min-w-0">
+          <span className="block text-body-sm font-semibold text-ds-text">Aprovação do portfólio: {comAprovacao ? "ligada" : "desligada"}</span>
+          <span className="block text-caption text-ds-text-3">
+            {comAprovacao
+              ? "Projetos enviados entram na fila e só vão para a vitrine depois de aprovados."
+              : "Projetos enviados saem publicados na hora, sem passar pela fila."}
+          </span>
+        </span>
+        <Button type="submit" variant={comAprovacao ? "secondary" : "primary"}>{comAprovacao ? "Desligar aprovação" : "Ligar aprovação"}</Button>
+      </form>
       {searchParams?.error && <Alert tone="danger" title="Não deu certo">{searchParams.error}</Alert>}
 
       {sites.length > 0 && (

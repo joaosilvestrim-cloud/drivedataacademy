@@ -78,3 +78,21 @@ export async function alternarBloqueioSite(formData: FormData) {
   voltar(error ? error.message : bloquear ? "Site tirado do ar." : "Bloqueio removido. O aluno pode publicar de novo.", !error);
 }
 
+/* Liga ou desliga a aprovação do portfólio. Ao desligar, o que está na fila
+   é publicado junto: a turma não fica esperando por uma regra que saiu. */
+export async function alternarAprovacao(formData: FormData) {
+  const supabase = await admin();
+  const ligar = formData.get("ligar") === "1";
+  const { error } = await supabase.from("site_settings").upsert({ key: "portfolio_aprovacao", value: ligar ? "on" : "off" }, { onConflict: "key" });
+  if (error) return voltar(error.message, false);
+  let publicados = 0;
+  if (!ligar) {
+    const { data } = await supabase
+      .from("portfolio_projects")
+      .update({ status: "aprovado", motivo: null, aprovado_em: new Date().toISOString() })
+      .eq("status", "revisao")
+      .select("id");
+    publicados = data?.length ?? 0;
+  }
+  voltar(ligar ? "Aprovação ligada: projetos enviados voltam para a fila." : `Aprovação desligada: projetos enviados saem publicados na hora.${publicados ? ` ${publicados} da fila foram publicados agora.` : ""}`);
+}

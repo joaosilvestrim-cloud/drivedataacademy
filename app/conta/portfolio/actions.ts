@@ -8,6 +8,7 @@ import { canUseCommunity } from "@/lib/community";
 import { LACUNA, LIMITES, ferramentasValidas, limpar, linkValido, pendenciasDoProjeto, type Projeto } from "@/lib/portfolio";
 import { organizarExperiencias, organizarRelato, type ExperienciaLida } from "@/lib/portfolio-ia";
 import { tabelaAusente } from "@/lib/portfolio-carreira";
+import { aprovacaoLigada } from "@/lib/portfolio-aprovacao";
 import { randomBytes } from "crypto";
 import { competenciasDoObjetivo, competenciasParaSalvar, cursosPorCompetencia, identificarCompetencias, nomesDasCompetencias, textoDoProjeto } from "@/lib/portfolio-competencias";
 import { auditarSiteDoAluno, limparHtmlColado, montarPrompt, slugDoNome, slugLivre, textoDoPostLinkedIn, type Estilo } from "@/lib/portfolio-site";
@@ -84,7 +85,9 @@ export async function salvarProjeto(formData: FormData) {
   if (enviar && faltas.length) {
     return { ok: false as const, erro: `Falta ${faltas.join(", ")}.` };
   }
-  const status = enviar ? "revisao" : "rascunho";
+  // Com a aprovação desligada pelo time, o projeto enviado já sai publicado.
+  const comAprovacao = await aprovacaoLigada(admin);
+  const status = enviar ? (comAprovacao ? "revisao" : "aprovado") : "rascunho";
 
   const atual = id ? await meuProjeto(admin, id, user.id) : null;
   if (id && !atual) return { ok: false as const, erro: "Projeto não encontrado." };
@@ -97,12 +100,19 @@ export async function salvarProjeto(formData: FormData) {
 
   if (id && atual) {
     // Mexer em projeto publicado volta para a fila: o que está na vitrine foi o que o time leu.
-    const novoStatus = enviar ? "revisao" : atual.status === "aprovado" ? "revisao" : status;
-    const { error } = await admin.from("portfolio_projects").update({ ...dados, status: novoStatus, motivo: null }).eq("id", id);
+    const novoStatus = enviar ? status : atual.status === "aprovado" ? (comAprovacao ? "revisao" : "aprovado") : status;
+    const { error } = await admin
+      .from("portfolio_projects")
+      .update({ ...dados, status: novoStatus, motivo: null, ...(novoStatus === "aprovado" && atual.status !== "aprovado" ? { aprovado_em: new Date().toISOString() } : {}) })
+      .eq("id", id);
     if (error) return { ok: false as const, erro: error.message };
     await salvarDetalhes(admin, id, user.id, formData);
   } else {
-    const { data: novo, error } = await admin.from("portfolio_projects").insert({ ...dados, user_id: user.id, status }).select("id").single();
+    const { data: novo, error } = await admin
+      .from("portfolio_projects")
+      .insert({ ...dados, user_id: user.id, status, ...(status === "aprovado" ? { aprovado_em: new Date().toISOString() } : {}) })
+      .select("id")
+      .single();
     if (error) return { ok: false as const, erro: error.message };
     if (novo?.id) await salvarDetalhes(admin, novo.id, user.id, formData);
   }
