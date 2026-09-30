@@ -62,7 +62,7 @@ export function auditarSite(
 
   // Texto de exemplo esquecido.
   const texto = visivel(html);
-  const exemplo = texto.match(/lorem ipsum|seu nome|your name|nome sobrenome|example\.com|exemplo\.com|seu@email|seuemail|email@|\(00\)|00000-0000|\[inserir|\[insira|\[seu|\bTODO\b/i);
+  const exemplo = texto.match(/lorem ipsum|seu nome|your name|nome sobrenome|example\.com|exemplo\.com|seu@email|seuemail|email@|\(00\)|00000-0000|\[inserir|\[insira|\[seu/i) ?? texto.match(/\bTODO\b|\bFIXME\b/); // TODO só em maiúsculas: "todo" é palavra comum em português
   if (exemplo) {
     erro(`O site tem texto de exemplo esquecido: "${exemplo[0]}".`, `Remova todo texto de exemplo, como "${exemplo[0]}". Use só os fatos que eu passei; o que não existe deve ficar de fora.`);
   }
