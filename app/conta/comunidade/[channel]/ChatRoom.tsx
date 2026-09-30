@@ -8,8 +8,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import MedalAvatar from "@/components/ranking/MedalAvatar";
 import {useChatMedals} from "@/components/ranking/useChatMedals";
+import CorpoDaMensagem from "@/components/comunidade/CorpoDaMensagem";
 import SeloCasa from "@/components/comunidade/SeloCasa";
-import { markChatSolution, signCommunityImage, chatProfiles, marcarCanalLido } from "../actions";
+import { markChatSolution, signCommunityImage, chatProfiles, marcarCanalLido, avisarAlunosDaMensagem } from "../actions";
 import type { EstadoComunidade, EstadoCanal } from "@/lib/comunidade-leitura";
 
 type Msg = {
@@ -109,7 +110,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
   );
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const supa = useRef(createClient());
 
   function scrollToBottom() {
@@ -258,6 +259,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
     if (pendingImage) payload.image_url = pendingImage;
     const rt = replyTo;
     setInput(""); setTag(null); setReplyTo(null); setPendingImage(null);
+    if (inputRef.current) (inputRef.current as unknown as HTMLTextAreaElement).style.height = "auto";
     const { data } = await supa.current.from("channel_messages").insert(payload).select("id, created_at").single();
     if (data) {
       peopleCache.current[me.id] = { name: me.name, avatar: me.avatar ?? null, casa: me.casa ?? null };
@@ -322,7 +324,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
   const grupos = useMemo(() => {
     const porNome = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, "pt-BR");
     return [
-      { titulo: "Fundadores", gente: membros.filter((m) => m.casa).sort(porNome) },
+      { titulo: "Equipe e fundadores", gente: membros.filter((m) => m.casa).sort(porNome) },
       { titulo: "Online", gente: membros.filter((m) => !m.casa && m.online).sort(porNome) },
       { titulo: "Ausentes", gente: membros.filter((m) => !m.casa && !m.online).sort(porNome) },
     ].filter((g) => g.gente.length > 0);
@@ -562,7 +564,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                   <div className="min-w-0 flex-1">
                     {!grouped && (
                       <p className="flex flex-wrap items-baseline gap-2">
-                        <span className={`text-[1.05rem] font-semibold ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
+                        <span className={`text-[1.05rem] font-semibold ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa === "Equipe" ? "text-[#6ce6c7]" : m.casa ? "text-[#f6d68c]" : m.user_id === me.id ? "text-brand-green" : "text-white"}`}>{m.name}</span>
                         <SeloCasa label={m.casa} />
                         {online.has(m.user_id) && <span className="h-1.5 w-1.5 rounded-full bg-brand-green" title={tr("online")} />}
                         {m.tag && <span className="rounded px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: tagColor(m.tag), background: `${tagColor(m.tag)}22` }}>{tr(m.tag)}</span>}
@@ -582,7 +584,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                       </div>
                     )}
 
-                    {m.body && <p className="whitespace-pre-line break-words text-[1.02rem] leading-[1.55] text-slate-200">{m.body}</p>}
+                    {m.body && <p className="whitespace-pre-line break-words text-[1.02rem] leading-[1.55] text-slate-200"><CorpoDaMensagem texto={m.body} /></p>}
 
                     {/* Imagem só aparece depois que o time aprova. Até lá, quem vê
                         sabe que existe um anexo em análise, em vez de sumir sem explicação. */}
@@ -624,6 +626,20 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                     <button onClick={() => toggleLike(m)} className={`grid h-7 w-7 place-items-center rounded-l-md transition-colors hover:bg-white/5 ${m.liked ? "text-brand-green" : "text-slate-400 hover:text-brand-green"}`} aria-label={tr("Curtir")} title={tr("Curtir")}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill={m.liked ? "currentColor" : "none"}><path d="M7 10v11M2 13v6a2 2 0 002 2h13.4a2 2 0 002-1.6l1.4-7A2 2 0 0018.8 10H14V5a2 2 0 00-2-2l-3 7z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
                     </button>
+                    {m.user_id === me.id && me.casa && (
+                      <button
+                        onClick={async () => {
+                          if (!window.confirm(tr("Mandar esta mensagem por e-mail para todos os assinantes ativos?"))) return;
+                          const r = await avisarAlunosDaMensagem(m.id);
+                          window.alert(r.ok ? `${tr("Aviso enviado para")} ${r.enviados} ${tr("de")} ${r.total} ${tr("alunos")}.` : r.erro);
+                        }}
+                        className="grid h-7 w-7 place-items-center text-slate-400 transition-colors hover:bg-white/5 hover:text-[#6ce6c7]"
+                        aria-label={tr("Avisar os alunos por e-mail")}
+                        title={tr("Avisar os alunos por e-mail")}
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 8a6 6 0 1112 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 003.4 0" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </button>
+                    )}
                     <button onClick={() => setReplyTo(m)} className="grid h-7 w-7 place-items-center rounded-r-md text-slate-400 transition-colors hover:bg-white/5 hover:text-brand-teal" aria-label={tr("Responder")} title={tr("Responder")}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M9 17l-5-5 5-5M4 12h11a5 5 0 015 5v1" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                     </button>
@@ -675,14 +691,22 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                 <svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.2" stroke="currentColor" strokeWidth="1.6" /><path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
               )}
             </button>
-            <input
+            {/* Caixa que cresce com o texto: Enter envia, Shift+Enter quebra a
+                linha, e colar um aviso longo mantém as quebras. Com <input> tudo
+                virava um bloco só. */}
+            <textarea
               ref={inputRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              rows={1}
+              onChange={(e) => {
+                setInput(e.target.value);
+                e.currentTarget.style.height = "auto";
+                e.currentTarget.style.height = `${Math.min(e.currentTarget.scrollHeight, 320)}px`;
+              }}
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
               autoComplete="off"
               placeholder={`Conversar em #${channel.name}`}
-              className="flex-1 bg-transparent px-1.5 py-3.5 text-[1.02rem] text-white placeholder:text-slate-500 outline-none"
+              className="max-h-80 flex-1 resize-none bg-transparent px-1.5 py-3.5 text-[1.02rem] leading-snug text-white placeholder:text-slate-500 outline-none"
             />
             {/* Marcador do assunto, colado no campo. */}
             <div className="hidden items-center gap-1 pr-1 md:flex">
@@ -732,7 +756,7 @@ export default function ChatRoom({ channel, channels, me, initial, initialRanks,
                   className={`flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-white/[0.04] ${p.online ? "" : "opacity-45"}`}
                 >
                   <MedalAvatar name={p.name} src={p.avatar} casa={p.casa} rank={medalRanks[p.id]} size="sm" />
-                  <span className={`truncate text-[0.92rem] ${p.casa === "Oficial" ? "font-semibold text-[#9fd3ff]" : p.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>
+                  <span className={`truncate text-[0.92rem] ${p.casa === "Oficial" ? "font-semibold text-[#9fd3ff]" : p.casa === "Equipe" ? "font-semibold text-[#6ce6c7]" : p.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>
                     {p.name}
                     {p.id === me.id && <span className="ml-1 text-[0.65rem] text-slate-500">{tr("(você)")}</span>}
                   </span>

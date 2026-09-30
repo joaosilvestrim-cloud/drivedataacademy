@@ -47,7 +47,7 @@ function quando(iso: string): string {
 
    A lista não é guardada. Quem cancelou ontem não recebe o link hoje, e quem
    assinou hoje de manhã recebe o da live desta noite. */
-async function assinantes(admin: SupabaseClient): Promise<{ email: string; nome: string }[]> {
+export async function assinantes(admin: SupabaseClient): Promise<{ email: string; nome: string }[]> {
   const { data: ativas } = await admin.from("memberships").select("user_id, expires_at").eq("status", "active");
   const agora = Date.now();
   const ids = new Set(

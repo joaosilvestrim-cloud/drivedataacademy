@@ -2,7 +2,7 @@
 
 import { usarTraducao } from "@/lib/i18n/usarTraducao";
 
-import { Coroa, Escudo } from "@/components/ranking/MedalAvatar";
+import { Coroa, Escudo, Insignia } from "@/components/ranking/MedalAvatar";
 
 /* Selo de quem é da casa, ao lado do nome. Anda junto com a moldura dourada
    do avatar: a moldura chama o olho, o selo diz o porquê. */
@@ -17,6 +17,17 @@ export default function SeloCasa({ label, className = "" }: { label?: string | n
       >
         <Escudo size={9} />
         {tr("Oficial")}
+      </span>
+    );
+  }
+  if (label === "Equipe") {
+    return (
+      <span
+        className={`inline-flex items-center gap-1 rounded-full border border-[#6ce6c7]/50 bg-gradient-to-r from-brand-green/20 to-[#6ce6c7]/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-[#6ce6c7] ${className}`}
+        title={tr("Equipe da DriveData Academy")}
+      >
+        <Insignia size={9} />
+        {tr("Equipe")}
       </span>
     );
   }

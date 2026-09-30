@@ -16,15 +16,21 @@ export function Escudo({size=11}:{size?:number}){
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5l8.5 3.2v6.1c0 5.3-3.6 9.9-8.5 11.7-4.9-1.8-8.5-6.4-8.5-11.7V4.7L12 1.5zm-1.3 13.7l5.6-5.6-1.4-1.4-4.2 4.2-2-2-1.4 1.4 3.4 3.4z"/></svg>;
 }
 
+/* Insígnia da equipe: estrela dentro do escudo. */
+export function Insignia({size=11}:{size?:number}){
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5l8.5 3.2v6.1c0 5.3-3.6 9.9-8.5 11.7-4.9-1.8-8.5-6.4-8.5-11.7V4.7L12 1.5zm0 5.2l1.5 3.1 3.4.5-2.5 2.4.6 3.4-3-1.6-3 1.6.6-3.4-2.5-2.4 3.4-.5L12 6.7z"/></svg>;
+}
+
 export default function MedalAvatar({name,src,rank,size='sm',className='',casa=null}:{name:string;src?:string|null;rank?:number|null;size?:'xs'|'sm'|'md';className?:string;casa?:string|null}){
   if(casa){
     const oficial=casa==='Oficial';
-    const label=oficial?`${name} · Conta oficial da DriveData Academy`:`${name} · ${casa} da DriveData Academy`;
+    const equipe=casa==='Equipe';
+    const label=oficial?`${name} · Conta oficial da DriveData Academy`:equipe?`${name} · Equipe DriveData Academy`:`${name} · ${casa} da DriveData Academy`;
     const icone=size==='xs'?9:size==='md'?12:10;
-    return <span className={`${s.avatar} ${oficial?s.oficial:s.casa} ${s[size]} ${className}`} role="img" aria-label={label} title={label} style={{'--phase':'0s'} as CSSProperties}>
+    return <span className={`${s.avatar} ${oficial?s.oficial:equipe?s.equipe:s.casa} ${s[size]} ${className}`} role="img" aria-label={label} title={label} style={{'--phase':'0s'} as CSSProperties}>
       <span className={s.ring} aria-hidden="true"/><span className={s.spark} aria-hidden="true"/>
       <span className={s.photo} aria-hidden="true"><Avatar name={name} src={src} size={size}/></span>
-      <span className={`${s.crown} ${oficial?s.escudo:''}`} aria-hidden="true">{oficial?<Escudo size={icone}/>:<Coroa size={icone}/>}</span>
+      <span className={`${s.crown} ${oficial?s.escudo:equipe?s.insignia:''}`} aria-hidden="true">{oficial?<Escudo size={icone}/>:equipe?<Insignia size={icone}/>:<Coroa size={icone}/>}</span>
     </span>;
   }
   const medal=rank?medalTier(rank):null;

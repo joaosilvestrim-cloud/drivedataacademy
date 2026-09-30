@@ -186,3 +186,58 @@ export async function signCommunityImage(ext: string) {
   const pub = admin.storage.from(bucket).getPublicUrl(path).data.publicUrl;
   return { ok: true as const, path: data.path, token: data.token, url: pub };
 }
+
+/* Aviso por e-mail de uma mensagem da comunidade.
+
+   Para anúncio que ninguém pode perder (novidade da plataforma, link de
+   certificado): quem é da casa (Equipe, Oficial, fundação) manda a própria
+   mensagem por e-mail para os assinantes ativos, com o texto formatado e o
+   botão para abrir a conversa. Sai uma vez só por mensagem: o registro em
+   email_log (kind comunidade:<id>) trava o segundo envio. */
+export async function avisarAlunosDaMensagem(messageId: string) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false as const, erro: "Faça login." };
+  const admin = createAdminClient();
+
+  const { data: selos } = await admin.from("user_badges").select("badge").eq("user_id", user.id);
+  if (!seloDaCasa((selos ?? []).map((b: any) => b.badge))) return { ok: false as const, erro: "Só a equipe pode avisar os alunos." };
+
+  const { data: msg } = await admin.from("channel_messages").select("id, user_id, body, channel_id").eq("id", messageId).maybeSingle();
+  if (!msg || msg.user_id !== user.id) return { ok: false as const, erro: "Só dá para avisar sobre uma mensagem sua." };
+  if (!(msg.body || "").trim()) return { ok: false as const, erro: "A mensagem está vazia." };
+
+  const tipo = `comunidade:${msg.id}`;
+  const { count } = await admin.from("email_log").select("id", { count: "exact", head: true }).eq("kind", tipo).eq("status", "sent");
+  if (count) return { ok: false as const, erro: `Os alunos já foram avisados desta mensagem (${count} e-mails).` };
+
+  const [{ data: canal }, { data: perfil }, { assinantes }, { sendBrandedEmail }] = await Promise.all([
+    admin.from("forum_channels").select("slug, name").eq("id", msg.channel_id).maybeSingle(),
+    admin.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+    import("@/lib/avisos-live"),
+    import("@/lib/email"),
+  ]);
+  const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://academy.drivedata.com.br").replace(/\/$/, "");
+  const link = `${SITE}/conta/comunidade/${canal?.slug || "geral"}`;
+
+  // O mesmo mínimo de formatação da tela: link clicável, **negrito** e quebras de linha.
+  const esc = (t: string) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const corpo = esc(msg.body.trim())
+    .replace(/\*\*([^*\n]{1,120})\*\*/g, '<b style="color:#fff">$1</b>')
+    .replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g, '<a href="$1" style="color:#15c47e">$1</a>')
+    .replace(/\n/g, "<br>");
+  const primeira = msg.body.trim().split("\n")[0].replace(/\*\*/g, "").slice(0, 80);
+  const autor = (perfil?.full_name || "Equipe DriveData").trim();
+  const html = `
+    <p style="margin:0 0 16px;color:#94a3b8;font-size:13px">${esc(autor)} publicou em #${esc(canal?.name || "Geral")}:</p>
+    <div style="margin:0 0 22px;color:#cbd5e1;font-size:15px;line-height:1.65">${corpo}</div>
+    <a href="${link}" style="display:inline-block;background:#15c47e;color:#04140d;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:12px">Ver na comunidade</a>`;
+
+  const lista = await assinantes(admin);
+  let enviados = 0;
+  for (const p of lista) {
+    const r = await sendBrandedEmail(p.email, `Novidade na comunidade: ${primeira}`, "Novidade na comunidade", html, { kind: tipo });
+    if (r.sent) enviados++;
+  }
+  return { ok: true as const, enviados, total: lista.length };
+}

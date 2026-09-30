@@ -9,3 +9,5 @@
 
 /* Conta oficial: azul elétrico e violeta, anel mais rápido que o dourado da fundação e escudo no lugar da coroa. */
 .oficial{--accent:#7cc4ff;--glow:112,169,239;box-shadow:0 0 20px rgba(80,150,255,.35),0 0 8px rgba(167,139,250,.4)}.oficial .ring{inset:-4px;padding:2.5px;background:conic-gradient(from 0deg,#3b9dff,#a78bfa 22%,#fff 28%,#6ce6c7 50%,#a78bfa 74%,#3b9dff);animation-duration:6s}.oficial .spark{animation-duration:6s}.oficial .spark:before{box-shadow:0 0 6px #7cc4ff,0 0 12px #a78bfa}.escudo{background:linear-gradient(140deg,#fff,#7cc4ff 60%,#a78bfa);color:#0b1a33}
+/* Equipe: verde da marca e turquesa, anel no ritmo do oficial, insígnia com estrela. */
+.equipe{--accent:#6ce6c7;--glow:52,232,160;box-shadow:0 0 20px rgba(52,232,160,.32),0 0 8px rgba(108,230,199,.4)}.equipe .ring{inset:-4px;padding:2.5px;background:conic-gradient(from 0deg,#15c47e,#6ce6c7 22%,#fff 28%,#2f9bff 50%,#6ce6c7 74%,#15c47e);animation-duration:6.5s}.equipe .spark{animation-duration:6.5s}.equipe .spark:before{box-shadow:0 0 6px #6ce6c7,0 0 12px #15c47e}.insignia{background:linear-gradient(140deg,#fff,#6ce6c7 60%,#15c47e);color:#06231a}

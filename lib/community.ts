@@ -56,6 +56,9 @@ export const SELOS_DA_CASA: Record<string, string> = {
   // Conta institucional da Academy (admin@drivedata.com.br). Moldura própria,
   // azul com escudo, para ninguém confundir a voz oficial com a de um aluno.
   oficial: "Oficial",
+  // Quem trabalha na Academy e conduz aulas e a comunidade. Moldura verde e
+  // turquesa, diferente do azul oficial e do dourado da fundação.
+  equipe: "Equipe",
 };
 
 /** O selo "Oficial" usa moldura e cor próprias; os de fundação usam o dourado. */
