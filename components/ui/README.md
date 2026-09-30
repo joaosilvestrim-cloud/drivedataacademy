@@ -28,6 +28,12 @@ Como o tema foi trocado sem reescrever as telas:
 - Manchete: classe `.grito` (Inter 900, tracking -0.04em). Só hero e abertura de seção.
 - Uma pílula verde por bloco; a ação secundária é link sublinhado ou pílula contornada.
 - Sem gradiente, brilho ou bolha desfocada.
+- Modo escuro: `html[data-tema="escuro"]` usa os mesmos valores da faixa `.escuro`.
+  O botão é `components/tema/AlternarTema.tsx` (guarda em localStorage "tema") e o
+  script no `<head>` de `app/layout.tsx` aplica antes da primeira pintura.
+  Por isso `marca`, `fog`, `papel`, `tela`, `obsidian` e `charcoal` são variáveis;
+  para o azul-noite que nunca muda (fundo de faixa) use `bg-noite`.
+- Área logada: fundo `bg-tela` com cartões `bg-papel`, borda `border-tinta/10`, canto 20px.
 
 ---
 
