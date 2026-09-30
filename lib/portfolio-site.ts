@@ -233,6 +233,39 @@ export async function montarPrompt(
     .map((p) => `- ${mesAno(p.feito_em)}: ${p.titulo}`)
     .join("\n");
 
+  /* Brief criativo: a leitura que um diretor de criação faria da carreira,
+     montada só com os fatos, sem IA. É o que tira o site do "currículo
+     bonito": a IA externa recebe o fio condutor pronto (de onde a pessoa veio,
+     por onde passou, o que se repete, qual é a prova mais forte) e conta uma
+     história em vez de listar cargos. Cada linha só entra se o dado existe. */
+  const trajetoriaOrdenada = carreira.experiencias.filter((e) => e.inicio).sort((a, b) => String(a.inicio).localeCompare(String(b.inicio)));
+  const atuais = trajetoriaOrdenada.filter((e) => !e.fim);
+  const primeira = trajetoriaOrdenada[0];
+  const setores = [...new Set([
+    ...(validos as any[]).map((p) => carreira.detalhes[p.id]?.setor).filter(Boolean),
+    ...trajetoriaOrdenada.map((e) => e.setor).filter(Boolean),
+  ] as string[])];
+  const temas = [...porCompetencia.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 3);
+  const ancora = [...(validos as any[])].sort(
+    (a, b) => Number(!!(b.resultado || "").trim()) - Number(!!(a.resultado || "").trim()) || provadasDe(b).length - provadasDe(a).length,
+  )[0];
+  const comResultado = (validos as any[]).filter((p) => (p.resultado || "").trim()).map((p) => p.titulo);
+  const contaFerr = new Map<string, number>();
+  for (const p of validos as any[]) for (const f of p.ferramentas ?? []) contaFerr.set(f, (contaFerr.get(f) ?? 0) + 1);
+  const recorrentes = [...contaFerr.entries()].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).map(([f, n]) => `${f} (${n} projetos)`);
+  const linhasBrief = [
+    primeira
+      ? `- Arco da carreira: começou como ${primeira.cargo}${primeira.organizacao ? ` (${primeira.organizacao})` : ""} em ${String(primeira.inicio).slice(0, 4)}${
+          atuais.length ? `; hoje atua como ${atuais.map((e) => `${e.cargo}${e.organizacao ? ` (${e.organizacao})` : ""}`).join("; ")}` : ""
+        }.`
+      : "",
+    setores.length > 1 ? `- Setores atravessados: ${setores.join(", ")}.` : "",
+    temas.length ? `- Temas que se repetem nos projetos: ${temas.map(([n, l]) => `${n} (${l.length} ${l.length === 1 ? "projeto" : "projetos"})`).join(", ")}.` : "",
+    ancora ? `- Estudo de caso principal: ${ancora.titulo}${provadasDe(ancora).length ? `, que prova ${provadasDe(ancora).length} competências` : ""}.` : "",
+    comResultado.length ? `- Projetos com resultado escrito, os mais fortes para destacar: ${comResultado.join("; ")}.` : "",
+    recorrentes.length ? `- Como trabalha (ferramentas e métodos que voltam): ${recorrentes.join(", ")}.` : "",
+  ].filter(Boolean);
+
   /* O link do Universo 4D. O site do aluno roda dentro da página pública, e o
      #universo no endereço abre a constelação por cima dele. O link precisa de
      target="_top" para sair do iframe; com "_blank" abriria outra aba. */
@@ -285,7 +318,8 @@ export async function montarPrompt(
     abertura + ` Na abertura, um botão de destaque "Explorar meu Universo 4D" apontando para ${linkUniverso} com target="_top".`,
     numeros.length ? "Números da carreira: os números reais listados acima, grandes, como indicadores." : "",
     perfil?.bio ? "Sobre, com o texto de apresentação." : "",
-    "Projetos, a parte principal. Para cada um: a data, o problema, o que foi feito, o que mudou, as competências que ele prova com o trecho entre aspas como evidência, e as ferramentas.",
+    "Projetos, a parte principal, como estudos de caso. O estudo de caso principal do brief vem primeiro e maior. Cada projeto em blocos: Contexto (data, setor, papel e duração quando houver), Desafio (o problema), O que fiz (como foi feito), Resultado (o que mudou) e Prova (as competências com o trecho entre aspas). Bloco sem fato não aparece.",
+    recorrentes.length ? "Como eu trabalho: as ferramentas e métodos que voltam em vários projetos, cada um ligado aos projetos onde aparece." : "",
     blocoTrajetoria
       ? "Trajetória: os cargos e organizações em ordem de data, intercalados com os projetos, como uma linha do tempo única."
       : blocoLinhaDoTempo ? "Linha do tempo da carreira, com os projetos em ordem de data." : "",
@@ -330,6 +364,14 @@ ${blocoCompetencias ? `## Competências comprovadas\nCada competência foi ident
 ${blocoCerts ? `## Certificados verificáveis\nEmitidos pela DriveData Academy. Mostre cada um com um botão "Verificar" apontando para o link.\n${blocoCerts}` : ""}
 ## Universo 4D
 A página onde o site será publicado tem uma constelação interativa das competências de ${nome}, que cresce ao longo da carreira. Link: ${linkUniverso}
+
+${linhasBrief.length ? `# Brief criativo\nLeitura da carreira de ${nome}, feita pela Academy só com os fatos acima. Use como fio condutor do site.\n${linhasBrief.join("\n")}\n` : ""}
+# Como contar a história
+Este site não é uma cópia do LinkedIn. Quem visita quer entender em 5 segundos quem é ${nome}, que tipo de problema resolve e qual é a prova.
+- Abra com uma tese de uma frase, montada só com os fatos do brief e do título profissional. Nenhum adjetivo ou conquista que não esteja nos fatos.
+- Nada de lista de cargos com responsabilidades em tópicos. A trajetória é uma linha do tempo curta que mostra o arco; o protagonista são os projetos.
+- Mostre evolução: use o arco da carreira e as datas para que a visita perceba de onde a pessoa veio e aonde chegou.
+- Cada seção precisa ter um motivo para existir. Se um dado é fraco ou falta, a seção some, e o site fica mais curto e mais forte.
 
 # Direção de arte: ${estiloEscolhido.nome}
 ${estiloEscolhido.direcao}

@@ -288,3 +288,12 @@ export const GUIA_IAS = [
     ],
   },
 ] as const;
+
+/* Receitas: estilo e personalização já combinados para um público. Um clique
+   e o prompt está pronto; quem quiser ajusta depois estilo por estilo. */
+export const RECEITAS: { id: string; nome: string; para: string; estilo: Estilo; pers: Personalizacao }[] = [
+  { id: "tech", nome: "Recrutador de tecnologia", para: "Vagas de dados, BI e engenharia", estilo: "painel", pers: { cor: "auto", tema: "escuro", idioma: "pt", tom: "tecnico" } },
+  { id: "executivo", nome: "Executivo e consultoria", para: "Gestão, liderança e clientes", estilo: "relatorio", pers: { cor: "auto", tema: "claro", idioma: "pt", tom: "direto" } },
+  { id: "memoravel", nome: "Memorável", para: "Quem quer ser lembrado", estilo: "estudio", pers: { cor: "auto", tema: "escuro", idioma: "pt", tom: "caloroso" } },
+  { id: "global", nome: "Internacional", para: "Vagas fora do Brasil", estilo: "minimalista", pers: { cor: "auto", tema: "auto", idioma: "bilingue", tom: "direto" } },
+];

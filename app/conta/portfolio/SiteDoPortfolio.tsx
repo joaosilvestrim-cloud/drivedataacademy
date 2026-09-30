@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { CORES_DE_DESTAQUE, ESTILOS, GUIA_IAS, PERSONALIZACAO_PADRAO, REFINAMENTOS, envelopar, limparHtmlColado, type Estilo, type Personalizacao } from "@/lib/portfolio-site-html";
+import { useEffect, useRef, useState } from "react";
+import { CORES_DE_DESTAQUE, ESTILOS, GUIA_IAS, PERSONALIZACAO_PADRAO, RECEITAS, REFINAMENTOS, envelopar, limparHtmlColado, type Estilo, type Personalizacao } from "@/lib/portfolio-site-html";
 import type { RaioX } from "@/lib/portfolio-raiox";
 import type { Auditoria } from "@/lib/portfolio-auditoria";
 import { conferirSite, despublicarSite, gerarPromptDoSite, kitDeDivulgacao, postDoLinkedIn, salvarSite } from "./actions";
@@ -210,6 +210,7 @@ export default function SiteDoPortfolio({
   prontos,
   nome,
   raioX = null,
+  promptInicial = null,
 }: {
   atual: SiteAtual;
   siteUrl: string;
@@ -218,6 +219,8 @@ export default function SiteDoPortfolio({
   nome: string;
   /** O que corrigir nos projetos antes de gerar (lib/portfolio-raiox). */
   raioX?: RaioX | null;
+  /** Prompt já montado no servidor com o estilo padrão: o aluno chega e ele está pronto. */
+  promptInicial?: { prompt: string; incluidos: number; foraPorLacuna: string[]; foraPorPrivado: string[]; certificados: number } | null;
 }) {
   const [estilo, setEstilo] = useState<Estilo>("painel");
   const [pers, setPers] = useState<Personalizacao>(PERSONALIZACAO_PADRAO);
@@ -239,10 +242,10 @@ export default function SiteDoPortfolio({
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-  const [prompt, setPrompt] = useState("");
+  const [prompt, setPrompt] = useState(promptInicial?.prompt ?? "");
   const [promptAberto, setPromptAberto] = useState(false);
   const [promptCopiado, setPromptCopiado] = useState(false);
-  const [info, setInfo] = useState<{ incluidos: number; foraPorLacuna: string[]; foraPorPrivado: string[]; certificados: number } | null>(null);
+  const [info, setInfo] = useState<{ incluidos: number; foraPorLacuna: string[]; foraPorPrivado: string[]; certificados: number } | null>(promptInicial);
   const [gerando, setGerando] = useState(false);
   const [copiado, setCopiado] = useState("");
   const [html, setHtml] = useState("");
@@ -265,16 +268,50 @@ export default function SiteDoPortfolio({
     if (r.ok) setPost(r.texto);
   }
 
-  async function gerar() {
+  /* O prompt se refaz sozinho a cada escolha, sem botão: montar é rápido e não
+     usa IA nenhuma. A última escolha fica guardada neste navegador, e na
+     próxima visita o prompt já volta montado com ela. */
+  const ultimaChamada = useRef(0);
+  async function gerar(e: Estilo = estilo, x: Personalizacao = pers) {
+    const minha = ++ultimaChamada.current;
     setGerando(true);
     setErro("");
-    const r = await gerarPromptDoSite(estilo, pers);
+    const r = await gerarPromptDoSite(e, x);
+    if (minha !== ultimaChamada.current) return; // chegou outra escolha no meio
     setGerando(false);
     if (!r.ok) return;
     setPrompt(r.prompt);
     setPromptCopiado(false);
     setInfo(r);
   }
+  const CHAVE_PREFS = "portfolio-site-escolha";
+  const carregouPrefs = useRef(false);
+  useEffect(() => {
+    try {
+      const salvo = JSON.parse(localStorage.getItem(CHAVE_PREFS) || "null");
+      if (salvo?.estilo && salvo.estilo in ESTILOS) {
+        setEstilo(salvo.estilo);
+        setPers({ ...PERSONALIZACAO_PADRAO, ...(salvo.pers || {}) });
+      }
+    } catch {}
+    carregouPrefs.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // A escolha que gerou o prompt na tela. O servidor já mandou o do padrão.
+  const escolhaDoPrompt = useRef(promptInicial ? JSON.stringify({ estilo: "painel", pers: PERSONALIZACAO_PADRAO }) : "");
+  useEffect(() => {
+    if (!carregouPrefs.current) return;
+    const escolha = JSON.stringify({ estilo, pers });
+    try { localStorage.setItem(CHAVE_PREFS, escolha); } catch {}
+    if (prontos === 0 || escolha === escolhaDoPrompt.current) return;
+    const t = setTimeout(() => {
+      escolhaDoPrompt.current = escolha;
+      gerar(estilo, pers);
+    }, 350);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estilo, pers]);
+  const receitaAtiva = RECEITAS.find((r) => r.estilo === estilo && JSON.stringify(r.pers) === JSON.stringify(pers))?.id;
 
   async function copiar(texto: string, rotulo: string) {
     try {
@@ -532,7 +569,29 @@ export default function SiteDoPortfolio({
           </Passo>
 
           <Passo n={2} titulo="Escolha o estilo e gere o seu prompt" estado={estado(1)}>
-            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5" role="radiogroup" aria-label="Estilo do site">
+            {/* Receitas: um clique e está pronto. Os estilos embaixo são para quem quer ajustar. */}
+            <p className="text-xs font-semibold text-slate-300">Comece por uma receita</p>
+            <div className="mt-2 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+              {RECEITAS.map((r) => {
+                const sel = receitaAtiva === r.id;
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => { setEstilo(r.estilo); setPers(r.pers); }}
+                    className={`flex items-center gap-3 rounded-xl border p-2.5 text-left transition-colors ${sel ? "border-brand-green bg-brand-green/10" : "border-white/10 hover:border-white/30"}`}
+                  >
+                    <span className="h-10 w-14 shrink-0 overflow-hidden rounded-md border border-white/10"><Miniatura estilo={r.estilo} /></span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-white">{r.nome}</span>
+                      <span className="block truncate text-xs text-slate-400">{r.para}</span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-5 text-xs font-semibold text-slate-300">Ou escolha o estilo</p>
+            <div className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5" role="radiogroup" aria-label="Estilo do site">
               {(Object.keys(ESTILOS) as Estilo[]).map((e) => {
                 const sel = estilo === e;
                 return (
@@ -618,9 +677,13 @@ export default function SiteDoPortfolio({
                 </div>
               ))}
             </div>
-            <button onClick={gerar} disabled={gerando} className={`mt-4 ${botaoForte}`}>
-              {gerando ? "Montando o seu prompt..." : prompt ? "Gerar de novo" : "Gerar meu prompt"}
-            </button>
+            {prontos > 0 ? (
+              <p className={`mt-4 text-sm ${gerando ? "text-slate-400" : "text-brand-green"}`} aria-live="polite">
+                {gerando ? "Atualizando o seu prompt com a escolha..." : prompt ? "Seu prompt está pronto, com o estilo e as escolhas acima. É só copiar." : ""}
+              </p>
+            ) : (
+              <p className="mt-4 text-sm text-amber-200">Publique pelo menos um projeto no passo 1 e o seu prompt aparece aqui, pronto.</p>
+            )}
 
             {info && (
               <div className="mt-4 flex flex-col gap-1 text-xs text-slate-400">
