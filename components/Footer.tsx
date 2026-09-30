@@ -51,8 +51,8 @@ export default function Footer() {
   const academyLinks = NAV_HREFS.map((href, i) => ({ href: resolverAncora(href, pathname), label: t.nav.links[i] }));
 
   return (
-    <footer className="relative mt-12 border-t border-white/8">
-      <div className="mx-auto max-w-7xl px-6 py-16">
+    <footer className="escuro relative bg-marca">
+      <div className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="grid gap-12 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -72,7 +72,7 @@ export default function Footer() {
                         rel="noreferrer"
                         aria-label={it.label}
                         title={it.label}
-                        className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+                        className="grid h-9 w-9 place-items-center rounded-full border border-tinta/15 text-slate-200 transition-colors hover:bg-marca-verde hover:text-marca"
                       >
                         <SocialIcon type={it.type} />
                       </a>
@@ -85,7 +85,7 @@ export default function Footer() {
 
           {/* Academy — espelha o menu do cabeçalho */}
           <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-white">
+            <h4 className="text-sm font-semibold text-marca-verde">
               {t.footer.colAcademy}
             </h4>
             <ul className="mt-4 space-y-2.5">
@@ -96,14 +96,14 @@ export default function Footer() {
                       {l.label} <span className="text-xs">({EM_BREVE[l.label] || tr("em breve")})</span>
                     </span>
                   ) : (
-                    <a href={l.href} className="text-sm text-slate-400 transition-colors hover:text-brand-green">
+                    <a href={l.href} className="text-sm text-slate-400 transition-colors hover:text-acento">
                       {l.label}
                     </a>
                   )}
                 </li>
               ))}
               <li>
-                <a href="/votacao" className="text-sm text-slate-400 transition-colors hover:text-brand-green">
+                <a href="/votacao" className="text-sm text-slate-400 transition-colors hover:text-acento">
                   {tr("Enquete dos temas")}
                 </a>
               </li>
@@ -112,7 +112,7 @@ export default function Footer() {
 
           {/* DriveData */}
           <div>
-            <h4 className="font-display text-sm font-bold uppercase tracking-wider text-white">
+            <h4 className="text-sm font-semibold text-marca-verde">
               {t.footer.colDriveData}
             </h4>
             <ul className="mt-4 space-y-2.5">
@@ -121,7 +121,7 @@ export default function Footer() {
                   href="https://drivedata.com.br/"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sm text-slate-400 transition-colors hover:text-brand-green"
+                  className="text-sm text-slate-400 transition-colors hover:text-acento"
                 >
                   {t.footer.site}
                 </a>
@@ -130,7 +130,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/8 pt-7 text-xs text-slate-500 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-tinta/8 pt-7 text-xs text-slate-500 sm:flex-row">
           <p>{t.footer.rights}</p>
           <div className="flex gap-5">
             <a href="#" className="hover:text-slate-300">{t.footer.privacy}</a>

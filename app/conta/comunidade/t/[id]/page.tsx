@@ -13,7 +13,7 @@ import { usuarioAtual } from "@/lib/sessao";
 export const dynamic = "force-dynamic";
 
 const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 
 function fmt(iso: string) {
   return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(iso));
@@ -77,18 +77,18 @@ export default async function ThreadPage({ params }: { params: { id: string } })
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link href={channel ? `/conta/comunidade/${channel.slug}` : "/conta/comunidade"} className="text-xs text-slate-500 transition-colors hover:text-white">← {channel?.name || "Comunidade"}</Link>
+      <Link href={channel ? `/conta/comunidade/${channel.slug}` : "/conta/comunidade"} className="text-xs text-slate-500 transition-colors hover:text-tinta">← {channel?.name || "Comunidade"}</Link>
 
       {/* Pergunta */}
-      <div className={`mt-2 overflow-hidden rounded-2xl border ${thread.solved ? "border-brand-green/25" : "border-white/8"} bg-white/[0.02]`}>
+      <div className={`mt-2 overflow-hidden rounded-2xl border ${thread.solved ? "border-acento/25" : "border-tinta/8"} bg-tinta/[0.02]`}>
         <div className="flex items-start gap-4 p-6">
           <MedalAvatar name={authorName} size="md" casa={seloDaCasa(badgeById[thread.user_id])} />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-display text-2xl font-bold text-white">{thread.title}</h1>
-              {thread.solved && <span className="inline-flex items-center gap-1 rounded-full bg-brand-green/15 px-2.5 py-1 text-xs font-semibold text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Resolvido")}</span>}
+              <h1 className="font-display text-2xl font-bold text-tinta">{thread.title}</h1>
+              {thread.solved && <span className="inline-flex items-center gap-1 rounded-full bg-brand-green/15 px-2.5 py-1 text-xs font-semibold text-acento"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Resolvido")}</span>}
             </div>
-            <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><span className={seloDaCasa(badgeById[thread.user_id]) === "Oficial" ? "font-semibold text-[#9fd3ff]" : seloDaCasa(badgeById[thread.user_id]) === "Equipe" ? "font-semibold text-[#6ce6c7]" : seloDaCasa(badgeById[thread.user_id]) ? "font-semibold text-[#f6d68c]" : ""}>{authorName}</span><SeloCasa label={seloDaCasa(badgeById[thread.user_id])} /><Badges list={badgeById[thread.user_id]} /> · {fmt(thread.created_at)}</p>
+            <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><span className={seloDaCasa(badgeById[thread.user_id]) === "Oficial" ? "font-semibold text-sky-300" : seloDaCasa(badgeById[thread.user_id]) === "Equipe" ? "font-semibold text-teal-300" : seloDaCasa(badgeById[thread.user_id]) ? "font-semibold text-amber-300" : ""}>{authorName}</span><SeloCasa label={seloDaCasa(badgeById[thread.user_id])} /><Badges list={badgeById[thread.user_id]} /> · {fmt(thread.created_at)}</p>
             {thread.body && <p className="mt-4 whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200"><CorpoDaMensagem texto={thread.body} /></p>}
             {isAuthor && thread.solved && (
               <form action={unmarkSolution} className="mt-4">
@@ -102,9 +102,9 @@ export default async function ThreadPage({ params }: { params: { id: string } })
 
       {/* Respostas */}
       <div className="mt-8 flex items-center gap-2">
-        <h2 className="font-display text-lg font-bold text-white">{(posts ?? []).length} resposta(s)</h2>
+        <h2 className="font-display text-lg font-bold text-tinta">{(posts ?? []).length} resposta(s)</h2>
         {!thread.solved && (posts ?? []).length > 0 && isAuthor && (
-          <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-[0.7rem] text-slate-400">{tr("marque a que resolveu →")}</span>
+          <span className="rounded-full bg-tinta/5 px-2.5 py-0.5 text-[0.7rem] text-slate-400">{tr("marque a que resolveu →")}</span>
         )}
       </div>
 
@@ -112,9 +112,9 @@ export default async function ThreadPage({ params }: { params: { id: string } })
         {(posts ?? []).map((p: any) => {
           const name = displayName(nameById, p.user_id);
           return (
-            <div key={p.id} className={`overflow-hidden rounded-2xl border ${p.is_answer ? "border-brand-green/40" : "border-white/8"} bg-white/[0.02]`}>
+            <div key={p.id} className={`overflow-hidden rounded-2xl border ${p.is_answer ? "border-acento/40" : "border-tinta/8"} bg-tinta/[0.02]`}>
               {p.is_answer && (
-                <div className="flex items-center gap-2 bg-brand-green/10 px-5 py-2 text-xs font-semibold text-brand-green">
+                <div className="flex items-center gap-2 bg-brand-green/10 px-5 py-2 text-xs font-semibold text-acento">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   {tr("Solução escolhida")}
                 </div>
@@ -122,13 +122,13 @@ export default async function ThreadPage({ params }: { params: { id: string } })
               <div className="flex items-start gap-4 p-5">
                 <MedalAvatar name={name} size="sm" casa={seloDaCasa(badgeById[p.user_id])} />
                 <div className="min-w-0 flex-1">
-                  <p className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><span className={seloDaCasa(badgeById[p.user_id]) === "Oficial" ? "font-semibold text-[#9fd3ff]" : seloDaCasa(badgeById[p.user_id]) === "Equipe" ? "font-semibold text-[#6ce6c7]" : seloDaCasa(badgeById[p.user_id]) ? "font-semibold text-[#f6d68c]" : ""}>{name}</span><SeloCasa label={seloDaCasa(badgeById[p.user_id])} /><Badges list={badgeById[p.user_id]} /> · {fmt(p.created_at)}</p>
+                  <p className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500"><span className={seloDaCasa(badgeById[p.user_id]) === "Oficial" ? "font-semibold text-sky-300" : seloDaCasa(badgeById[p.user_id]) === "Equipe" ? "font-semibold text-teal-300" : seloDaCasa(badgeById[p.user_id]) ? "font-semibold text-amber-300" : ""}>{name}</span><SeloCasa label={seloDaCasa(badgeById[p.user_id])} /><Badges list={badgeById[p.user_id]} /> · {fmt(p.created_at)}</p>
                   <p className="mt-2 whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-200"><CorpoDaMensagem texto={p.body} /></p>
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <form action={toggleLike}>
                       <input type="hidden" name="thread_id" value={thread.id} />
                       <input type="hidden" name="post_id" value={p.id} />
-                      <button className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${myLikes.has(p.id) ? "border-brand-green/50 bg-brand-green/10 text-brand-green" : "border-white/10 text-slate-300 hover:border-white/30"}`}>
+                      <button className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${myLikes.has(p.id) ? "border-acento/50 bg-brand-green/10 text-acento" : "border-tinta/10 text-slate-300 hover:border-tinta/30"}`}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill={myLikes.has(p.id) ? "currentColor" : "none"}><path d="M7 10v11M2 13v6a2 2 0 002 2h13.4a2 2 0 002-1.6l1.4-7A2 2 0 0018.8 10H14V5a2 2 0 00-2-2l-3 7z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
                         {likeCount[p.id] ? likeCount[p.id] : "Curtir"}
                       </button>
@@ -137,7 +137,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
                       <form action={markSolution}>
                         <input type="hidden" name="thread_id" value={thread.id} />
                         <input type="hidden" name="post_id" value={p.id} />
-                        <button className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Marcar como solução")}</button>
+                        <button className="inline-flex items-center gap-1.5 rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>{tr("Marcar como solução")}</button>
                       </form>
                     )}
                   </div>
@@ -147,22 +147,22 @@ export default async function ThreadPage({ params }: { params: { id: string } })
           );
         })}
         {(posts ?? []).length === 0 && (
-          <div className="rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-slate-500">{tr("Nenhuma resposta ainda. Seja o primeiro a ajudar.")}</div>
+          <div className="rounded-2xl border border-dashed border-tinta/10 px-4 py-10 text-center text-slate-500">{tr("Nenhuma resposta ainda. Seja o primeiro a ajudar.")}</div>
         )}
       </div>
 
       {/* Responder */}
       {thread.locked ? (
-        <p className="mt-8 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm text-slate-400">{tr("Este tópico está fechado para novas respostas.")}</p>
+        <p className="mt-8 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3 text-sm text-slate-400">{tr("Este tópico está fechado para novas respostas.")}</p>
       ) : (
-        <div className="mt-8 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-          <p className="text-sm font-semibold text-white">{tr("Sua resposta")}</p>
+        <div className="mt-8 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+          <p className="text-sm font-semibold text-tinta">{tr("Sua resposta")}</p>
           <form action={createReply} className="mt-3 space-y-3">
             <input type="hidden" name="thread_id" value={thread.id} />
             <textarea name="body" rows={4} required placeholder={tr("Escreva sua resposta...")} className={`${field} resize-y`} />
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-xs text-slate-500">{tr("Resposta marcada como solução vale")} <span className="text-brand-green">{tr("+10 pontos")}</span>.</p>
-              <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Responder")}</button>
+              <p className="text-xs text-slate-500">{tr("Resposta marcada como solução vale")} <span className="text-acento">{tr("+10 pontos")}</span>.</p>
+              <button className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Responder")}</button>
             </div>
           </form>
         </div>

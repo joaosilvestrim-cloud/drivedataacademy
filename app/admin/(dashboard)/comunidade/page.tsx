@@ -8,8 +8,8 @@ import {
 export const dynamic = "force-dynamic";
 
 const field =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
-const smallBtn = "rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white";
+  "w-full rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
+const smallBtn = "rounded-lg border border-tinta/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-tinta/30 hover:text-tinta";
 
 const CHANNEL_COLORS: Record<string, [string, string]> = {
   geral: ["#34e8a0", "#2ee6d6"],
@@ -80,7 +80,7 @@ export default async function AdminComunidadePage() {
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Comunidade</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Comunidade</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL do chat (channel_messages / message_reactions) no Supabase."} /></div>
       </div>
     );
@@ -100,29 +100,29 @@ export default async function AdminComunidadePage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Comunidade</h1>
+      <h1 className="font-display text-2xl font-bold text-tinta">Comunidade</h1>
       <p className="mt-1 text-sm text-slate-400">Modere o chat em tempo real, organize os canais e controle o acesso.</p>
 
       {/* Stats */}
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map((s) => (
-          <div key={s.label} className="glass rounded-2xl border border-white/8 p-4">
+          <div key={s.label} className="glass rounded-2xl border border-tinta/8 p-4">
             <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-green/10">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-green"><path d={s.d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-acento"><path d={s.d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </div>
-            <p className="mt-3 font-display text-2xl font-bold text-white">{s.value}</p>
+            <p className="mt-3 font-display text-2xl font-bold text-tinta">{s.value}</p>
             <p className="text-xs text-slate-400">{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Fila de imagens */}
-      <h2 className="mt-10 font-display text-lg font-bold text-white">
+      <h2 className="mt-10 font-display text-lg font-bold text-tinta">
         Imagens para aprovar{pendentes.length > 0 && <span className="ml-2 rounded-full bg-amber-400/15 px-2.5 py-0.5 text-sm text-amber-300">{pendentes.length}</span>}
       </h2>
       <p className="mt-1 text-sm text-slate-400">Imagem postada no chat fica invisível para a turma até alguém do time aprovar aqui.</p>
       {pendentes.length === 0 ? (
-        <p className="mt-4 rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-slate-500">Nenhuma imagem esperando.</p>
+        <p className="mt-4 rounded-2xl border border-dashed border-tinta/10 px-4 py-10 text-center text-slate-500">Nenhuma imagem esperando.</p>
       ) : (
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {pendentes.map((m: any) => (
@@ -130,7 +130,7 @@ export default async function AdminComunidadePage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={m.image_url} alt="Imagem enviada no chat, aguardando aprovação" className="max-h-72 w-full bg-black/40 object-contain" />
               <div className="p-4">
-                <p className="text-sm font-medium text-white">{nameById[m.user_id] || "Aluno"}</p>
+                <p className="text-sm font-medium text-tinta">{nameById[m.user_id] || "Aluno"}</p>
                 <p className="text-xs text-slate-400">
                   {canalPorId[m.channel_id] || "canal"} · {fmt(m.created_at)}
                 </p>
@@ -138,7 +138,7 @@ export default async function AdminComunidadePage() {
                 <div className="mt-4 flex gap-2">
                   <form action={aprovarImagem}>
                     <input type="hidden" name="id" value={m.id} />
-                    <button type="submit" className="rounded-lg bg-brand-green px-3 py-1.5 text-xs font-semibold text-ink-900">Aprovar</button>
+                    <button type="submit" className="rounded-lg bg-brand-green px-3 py-1.5 text-xs font-semibold text-sobre-acento">Aprovar</button>
                   </form>
                   <form action={recusarImagem}>
                     <input type="hidden" name="id" value={m.id} />
@@ -152,23 +152,23 @@ export default async function AdminComunidadePage() {
       )}
 
       {/* Moderação do chat */}
-      <h2 className="mt-10 font-display text-lg font-bold text-white">Moderação do chat</h2>
+      <h2 className="mt-10 font-display text-lg font-bold text-tinta">Moderação do chat</h2>
       <p className="mt-1 text-sm text-slate-400">Mensagens mais recentes de todos os canais. Excluir remove a mensagem do chat em tempo real.</p>
       <div className="mt-4 space-y-2">
         {messages.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-white/10 px-4 py-12 text-center text-slate-500">Nenhuma mensagem ainda.</p>
+          <p className="rounded-2xl border border-dashed border-tinta/10 px-4 py-12 text-center text-slate-500">Nenhuma mensagem ainda.</p>
         )}
         {messages.map((m) => {
           const ch = chById[m.channel_id];
           const [c1, c2] = colorOf(ch?.slug || "geral");
           return (
-            <div key={m.id} className="group flex items-start gap-3 rounded-2xl border border-white/8 bg-white/[0.02] p-3.5 transition-colors hover:border-white/15">
-              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-bold text-ink-900" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
+            <div key={m.id} className="group flex items-start gap-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-3.5 transition-colors hover:border-tinta/15">
+              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-bold text-sobre-acento" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
                 {(displayName(nameById, m.user_id) || "A").charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-sm font-semibold text-white">{displayName(nameById, m.user_id)}</span>
+                  <span className="text-sm font-semibold text-tinta">{displayName(nameById, m.user_id)}</span>
                   <span className="rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase" style={{ color: c1, background: `${c1}22` }}>#{ch?.name || "canal"}</span>
                   <span className="text-xs text-slate-500">{fmt(m.created_at)}</span>
                   {(likesByMsg[m.id] || 0) > 0 && (
@@ -182,7 +182,7 @@ export default async function AdminComunidadePage() {
               </div>
               <form action={deleteMessage} className="shrink-0">
                 <input type="hidden" name="id" value={m.id} />
-                <button className="rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-400 opacity-0 transition hover:border-red-400/40 hover:text-red-400 group-hover:opacity-100" title="Excluir mensagem">Excluir</button>
+                <button className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs font-medium text-slate-400 opacity-0 transition hover:border-red-400/40 hover:text-red-400 group-hover:opacity-100" title="Excluir mensagem">Excluir</button>
               </form>
             </div>
           );
@@ -191,51 +191,51 @@ export default async function AdminComunidadePage() {
       {msgCount > 50 && <p className="mt-2 text-xs text-slate-500">Mostrando as 50 mensagens mais recentes de {msgCount}.</p>}
 
       {/* Canais */}
-      <h2 className="mt-12 font-display text-lg font-bold text-white">Canais</h2>
+      <h2 className="mt-12 font-display text-lg font-bold text-tinta">Canais</h2>
       <p className="mt-1 text-sm text-slate-400">Cada canal é uma "sala" do chat. Use ↑ ↓ para ordenar como aparecem para o aluno.</p>
       <div className="mt-4 space-y-3">
         {channels.map((c) => {
           const [c1, c2] = colorOf(c.slug);
           return (
-            <div key={c.id} className="glass rounded-2xl border border-white/8 p-4">
+            <div key={c.id} className="glass rounded-2xl border border-tinta/8 p-4">
               <form action={updateChannel} className="space-y-2">
                 <input type="hidden" name="id" value={c.id} />
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-xs font-bold text-ink-900" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-xs font-bold text-sobre-acento" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
                     {c.name.charAt(0).toUpperCase()}
                   </span>
                   <input name="name" defaultValue={c.name} className={`${field} flex-1 font-semibold`} />
                   <span className="text-xs text-slate-500">/{c.slug} · {counts[c.id] || 0} msg</span>
-                  <button className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/15">Salvar</button>
+                  <button className="rounded-lg bg-tinta/10 px-3 py-1.5 text-xs font-medium text-tinta hover:bg-tinta/15">Salvar</button>
                 </div>
                 <input name="description" defaultValue={c.description ?? ""} placeholder="Descrição (aparece no topo do canal)" className={field} />
               </form>
               <div className="mt-2 flex items-center gap-1.5">
                 <form action={moveChannel}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="dir" value={-1} /><button className={smallBtn}>↑</button></form>
                 <form action={moveChannel}><input type="hidden" name="id" value={c.id} /><input type="hidden" name="dir" value={1} /><button className={smallBtn}>↓</button></form>
-                <form action={deleteChannel}><input type="hidden" name="id" value={c.id} /><button className="rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir</button></form>
+                <form action={deleteChannel}><input type="hidden" name="id" value={c.id} /><button className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir</button></form>
               </div>
             </div>
           );
         })}
       </div>
 
-      <form action={createChannel} className="mt-6 space-y-2 rounded-2xl border border-dashed border-white/10 p-4">
-        <p className="text-sm font-semibold text-white">Novo canal</p>
+      <form action={createChannel} className="mt-6 space-y-2 rounded-2xl border border-dashed border-tinta/10 p-4">
+        <p className="text-sm font-semibold text-tinta">Novo canal</p>
         <input name="name" required placeholder="Nome (ex.: Power BI)" className={field} />
         <input name="description" placeholder="Descrição (opcional)" className={field} />
-        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">+ Criar canal</button>
+        <button className="rounded-lg bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento">+ Criar canal</button>
       </form>
 
       {/* Permissões / acesso */}
-      <h2 className="mt-12 font-display text-lg font-bold text-white">Permissões de acesso</h2>
-      <div className="mt-4 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
+      <h2 className="mt-12 font-display text-lg font-bold text-tinta">Permissões de acesso</h2>
+      <div className="mt-4 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
         <div className="flex items-start gap-3">
           <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-blue/10">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-blue"><path d="M12 1l9 4v6c0 5-3.8 9-9 11-5.2-2-9-6-9-11V5l9-4z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
           <div className="text-sm text-slate-300">
-            <p className="font-semibold text-white">Quem entra na comunidade</p>
+            <p className="font-semibold text-tinta">Quem entra na comunidade</p>
             <p className="mt-1 text-slate-400">Só quem tem <span className="text-slate-200">acesso a algum treinamento</span> (via Turma, Acesso Full ou matrícula) participa do chat. Alunos sem acesso não conseguem abrir a comunidade.</p>
             <ul className="mt-3 space-y-1.5 text-slate-400">
               <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-brand-green" /> Libere alunos em <span className="text-slate-200">Vendas → Turmas</span> (em lote) ou <span className="text-slate-200">Acessos</span>.</li>

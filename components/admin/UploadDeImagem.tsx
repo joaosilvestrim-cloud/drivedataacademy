@@ -83,9 +83,9 @@ export default function UploadDeImagem({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder={tr("ou cole o endereço de uma imagem")}
-            className="w-full rounded-ctl border border-ds-line bg-ds-surface px-3 py-2 text-body-sm text-ds-text outline-none transition-colors placeholder:text-ds-text-3 focus:border-ds-accent"
+            className="w-full rounded-ctl border border-ds-line bg-ds-surface px-3 py-2 text-body-sm text-ds-text outline-none transition-colors placeholder:text-ds-text-3 focus:border-acento"
           />
-          {subindo && <p className="text-caption text-ds-accent">{tr("Subindo a imagem...")}</p>}
+          {subindo && <p className="text-caption text-acento">{tr("Subindo a imagem...")}</p>}
           {erro && <p className="text-caption text-ds-danger" role="alert">{erro}</p>}
           {!subindo && !erro && descricao && <p className="text-caption text-ds-text-3">{descricao}</p>}
         </div>

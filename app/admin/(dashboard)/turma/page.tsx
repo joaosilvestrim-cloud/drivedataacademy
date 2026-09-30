@@ -13,8 +13,8 @@ export const dynamic = "force-dynamic";
 
 function Stat({ value, label }: { value: number | string; label: string }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
-      <p className="font-display text-2xl font-bold text-white">{value}</p>
+    <div className="rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3">
+      <p className="font-display text-2xl font-bold text-tinta">{value}</p>
       <p className="mt-0.5 text-xs text-slate-400">{label}</p>
     </div>
   );
@@ -46,7 +46,7 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Assinatura</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Assinatura</h1>
         <div className="mt-6">
           <AdminError message={e instanceof Error ? e.message : "Erro."} />
         </div>
@@ -64,10 +64,10 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="font-display text-2xl font-bold text-white">Assinatura</h1>
+            <h1 className="font-display text-2xl font-bold text-tinta">Assinatura</h1>
             <span
               className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${
-                open ? "border-brand-green/40 bg-brand-green/10 text-brand-green" : "border-white/15 bg-white/5 text-slate-400"
+                open ? "border-acento/40 bg-brand-green/10 text-acento" : "border-tinta/15 bg-tinta/5 text-slate-400"
               }`}
             >
               <span className={`h-1.5 w-1.5 rounded-full ${open ? "bg-brand-green" : "bg-slate-500"}`} />
@@ -82,7 +82,7 @@ export default async function TurmaPage({ searchParams }: { searchParams: { ok?:
           href="/matricula"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-brand-teal/50 hover:text-white"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-tinta/10 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-brand-teal/50 hover:text-tinta"
         >
           Ver página pública
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none">

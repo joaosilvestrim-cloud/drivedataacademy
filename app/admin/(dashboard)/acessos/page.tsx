@@ -111,7 +111,7 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Acessos</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Acessos</h1>
         <div className="mt-6">
           <AdminError
             message={
@@ -129,12 +129,12 @@ export default async function AcessosPage({ searchParams }: { searchParams: { ok
   return (
     <div>
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Acessos</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Acessos</h1>
         <p className="mt-1 text-sm text-slate-400">Liberar acesso na mão (individual): criar aluno, dar acesso full, liberar treinamentos específicos ou revogar. {activeCount} acesso(s) full ativo(s).</p>
       </div>
 
       {searchParams?.ok && (
-        <div className="mt-5 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</div>
+        <div className="mt-5 rounded-xl border border-acento/30 bg-brand-green/10 px-4 py-3 text-sm text-acento">{searchParams.ok}</div>
       )}
       {searchParams?.error && (
         <div className="mt-5 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{searchParams.error}</div>

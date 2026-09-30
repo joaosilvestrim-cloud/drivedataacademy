@@ -30,7 +30,7 @@ export default async function TurmasPage() {
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Turmas</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Turmas</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL de turmas no Supabase."} /></div>
       </div>
     );
@@ -38,7 +38,7 @@ export default async function TurmasPage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Turmas / lotes</h1>
+      <h1 className="font-display text-2xl font-bold text-tinta">Turmas / lotes</h1>
       <p className="mt-1 text-sm text-slate-400">Para liberar acesso a um <b className="text-slate-200">grupo de alunos de uma vez</b> (turmas fechadas, in-company, cortesias em massa). A venda pública ao consumidor é a <b className="text-slate-200">Assinatura</b>.</p>
 
       {/* Nova turma */}
@@ -55,22 +55,22 @@ export default async function TurmasPage() {
       </form>
 
       <div className="mt-6 space-y-3">
-        {turmas.length === 0 && <p className="rounded-2xl border border-dashed border-white/10 px-4 py-12 text-center text-slate-500">Nenhuma turma ainda.</p>}
+        {turmas.length === 0 && <p className="rounded-2xl border border-dashed border-tinta/10 px-4 py-12 text-center text-slate-500">Nenhuma turma ainda.</p>}
         {turmas.map((t) => {
           const inc = t.includes === "selected"
             ? ((t.course_ids || "").split(",").filter(Boolean).map((i: string) => titleById[i] || "?").join(", ") || "nenhum curso")
             : "Todos os treinamentos";
           return (
-            <Link key={t.id} href={`/admin/turmas/${t.id}`} className="glass flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 p-4 transition-colors hover:border-brand-green/40">
+            <Link key={t.id} href={`/admin/turmas/${t.id}`} className="glass flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-tinta/8 p-4 transition-colors hover:border-acento/40">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase ${t.status === "open" ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{t.status === "open" ? "Aberta" : "Fechada"}</span>
-                  <span className="font-medium text-white">{t.name}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase ${t.status === "open" ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>{t.status === "open" ? "Aberta" : "Fechada"}</span>
+                  <span className="font-medium text-tinta">{t.name}</span>
                   {t.online_sale && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-cyan">venda online</span>}
                 </div>
                 <p className="mt-1 truncate text-xs text-slate-500">Inclui: <span className="text-slate-400">{inc}</span>{t.price ? ` · R$ ${Number(t.price).toFixed(2)}` : " · sem preço"}{t.starts_at ? ` · início ${fmt(t.starts_at)}` : ""}</p>
               </div>
-              <span className="shrink-0 rounded-full bg-white/5 px-3 py-1 text-xs text-slate-300">{counts[t.id] || 0} com acesso</span>
+              <span className="shrink-0 rounded-full bg-tinta/5 px-3 py-1 text-xs text-slate-300">{counts[t.id] || 0} com acesso</span>
             </Link>
           );
         })}

@@ -59,14 +59,14 @@ export default async function CursosCardapio() {
     return (
       <>
         {preco === 0 ? (
-          <span className="text-sm font-semibold text-brand-green">{tr("Incluso na assinatura")}</span>
+          <span className="text-sm font-semibold text-acento">{tr("Incluso na assinatura")}</span>
         ) : (
           <span className="flex items-baseline gap-1.5">
-            <span className="font-display text-xl font-bold text-white">{brl(preco)}</span>
+            <span className="font-display text-xl font-bold text-tinta">{brl(preco)}</span>
             <span className="text-xs text-slate-500">{tr("Pix ou até 12x")}</span>
           </span>
         )}
-        <span className="text-sm font-semibold text-brand-green">
+        <span className="text-sm font-semibold text-acento">
           {assinante ? (preco === 0 ? "Liberar" : "Comprar") : "Ver detalhes"} →
         </span>
       </>
@@ -75,8 +75,8 @@ export default async function CursosCardapio() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Cursos")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Cardápio de treinamentos")}</h1>
+      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Cursos")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Cardápio de treinamentos")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {assinante
           ? tr("Como assinante, você escolhe o treinamento e paga o preço de assinante uma vez só. O curso fica com você.")
@@ -84,9 +84,9 @@ export default async function CursosCardapio() {
       </p>
 
       {!assinante && (
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-green/25 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-acento/25 bg-gradient-to-r from-brand-green/[0.08] to-transparent px-5 py-4">
           <p className="text-sm text-slate-200">{tr("Assine para liberar a compra dos treinamentos com preço de assinante.")}</p>
-          <Link href="/matricula" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Ver assinatura")}</Link>
+          <Link href="/matricula" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Ver assinatura")}</Link>
         </div>
       )}
 
@@ -94,7 +94,7 @@ export default async function CursosCardapio() {
       {aVenda.length > 0 && (
         <section className="mt-10">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="flex items-center gap-2.5 font-display text-lg font-bold text-white">
+            <h2 className="flex items-center gap-2.5 font-display text-lg font-bold text-tinta">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-green opacity-75 motion-reduce:animate-none" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-green" />
@@ -122,10 +122,10 @@ export default async function CursosCardapio() {
 
       {seus.length > 0 && (
         <section className="mt-12">
-          <h2 className="font-display text-lg font-bold text-white">{tr("Seus treinamentos")}</h2>
+          <h2 className="font-display text-lg font-bold text-tinta">{tr("Seus treinamentos")}</h2>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {seus.map((c) => (
-              <Cartao key={c.id} c={c} href={`/aprender/${c.slug}`} rodape={<span className="text-sm font-semibold text-brand-green">{tr("Continuar →")}</span>} selo="Seu" />
+              <Cartao key={c.id} c={c} href={`/aprender/${c.slug}`} rodape={<span className="text-sm font-semibold text-acento">{tr("Continuar →")}</span>} selo="Seu" />
             ))}
           </div>
         </section>
@@ -133,7 +133,7 @@ export default async function CursosCardapio() {
 
       {emBreve.length > 0 && (
         <section className="mt-12">
-          <h2 className="font-display text-lg font-bold text-white">{tr("Em breve")}</h2>
+          <h2 className="font-display text-lg font-bold text-tinta">{tr("Em breve")}</h2>
           <p className="mt-1 text-sm text-slate-500">{tr("Estes ainda estão em produção. Quando abrirem, aparecem aqui em cima.")}</p>
           <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {emBreve.map((c) => (
@@ -156,7 +156,7 @@ export default async function CursosCardapio() {
       )}
 
       {cardapio.length === 0 && (
-        <p className="mt-10 rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center text-sm text-slate-500">
+        <p className="mt-10 rounded-2xl border border-dashed border-tinta/10 px-6 py-12 text-center text-sm text-slate-500">
           {tr("Você já tem todos os treinamentos disponíveis. Novos chegam em breve.")}
         </p>
       )}
@@ -186,10 +186,10 @@ function Cartao({
       href={href}
       className={`card-hover glass group flex flex-col overflow-hidden rounded-3xl border transition-opacity ${
         destaque
-          ? "border-brand-green/40 shadow-[0_18px_44px_-24px_rgba(52,232,160,0.75)]"
+          ? "border-acento/40"
           : apagado
-          ? "border-white/8 opacity-70 hover:opacity-100"
-          : "border-white/8"
+          ? "border-tinta/8 opacity-70 hover:opacity-100"
+          : "border-tinta/8"
       }`}
     >
       {/* Capa menor de propósito: o card é sobre o treinamento, não sobre o banner. */}
@@ -208,8 +208,8 @@ function Cartao({
           <span
             className={`absolute right-3 top-3 rounded-full px-3 py-1 text-[0.7rem] font-semibold backdrop-blur ${
               selo === "Seu" || selo === "À venda" || selo === "Incluso"
-                ? "bg-brand-green/90 text-ink-900"
-                : "bg-amber-400/90 text-ink-900"
+                ? "bg-brand-green/90 text-sobre-acento"
+                : "bg-amber-400/90 text-sobre-acento"
             }`}
           >
             {selo}
@@ -217,10 +217,10 @@ function Cartao({
         )}
       </div>
       <div className="flex flex-1 flex-col p-5">
-        {c.level && <span className="w-fit rounded-full bg-white/5 px-2.5 py-0.5 text-[0.7rem] font-medium text-slate-400">{c.level}</span>}
-        <h3 className="mt-2 font-display text-base font-bold leading-snug text-white transition-colors group-hover:text-brand-green">{c.title}</h3>
+        {c.level && <span className="w-fit rounded-full bg-tinta/5 px-2.5 py-0.5 text-[0.7rem] font-medium text-slate-400">{c.level}</span>}
+        <h3 className="mt-2 font-display text-base font-bold leading-snug text-tinta transition-colors group-hover:text-acento">{c.title}</h3>
         {c.subtitle && <p className="mt-1.5 line-clamp-2 flex-1 text-sm text-slate-400">{c.subtitle}</p>}
-        <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/5 pt-4">{rodape}</div>
+        <div className="mt-4 flex items-center justify-between gap-3 border-t border-tinta/5 pt-4">{rodape}</div>
       </div>
     </Link>
   );

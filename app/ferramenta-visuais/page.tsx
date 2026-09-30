@@ -45,29 +45,29 @@ export default async function FerramentaVisuaisLP() {
       <main className="mx-auto max-w-5xl px-6 pb-24 pt-28">
         {/* Hero */}
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand-green/30 bg-brand-green/10 px-3 py-1 text-xs font-semibold text-brand-green">{tr("Ferramenta de Visuais · DriveData")}</span>
-          <h1 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-bold leading-tight text-white sm:text-5xl">
+          <span className="inline-flex items-center gap-2 rounded-full border border-acento/30 bg-brand-green/10 px-3 py-1 text-xs font-semibold text-acento">{tr("Ferramenta de Visuais · DriveData")}</span>
+          <h1 className="mx-auto mt-4 max-w-3xl font-display text-4xl font-bold leading-tight text-tinta sm:text-5xl">
             {tr("Power BI sem limites.")} <span className="text-gradient">{tr("Crie visuais em HTML e SVG")}</span> {tr("sem escrever código.")}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-300">
-            {tr("Monte cards, velocímetros e dashboards que o Power BI nativo não faz, aponte para as suas medidas e leve a")} <b className="text-white">{tr("medida DAX pronta")}</b> {tr("para colar no seu relatório.")}
+            {tr("Monte cards, velocímetros e dashboards que o Power BI nativo não faz, aponte para as suas medidas e leve a")} <b className="text-tinta">{tr("medida DAX pronta")}</b> {tr("para colar no seu relatório.")}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/matricula" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-7 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Assinar a Academy (inclui a ferramenta)")}</Link>
-            <Link href="/ferramenta" className="rounded-xl border border-white/15 px-7 py-3.5 text-sm font-semibold text-white hover:border-white/30">{tr("Já sou aluno")}</Link>
+            <Link href="/matricula" className="rounded-xl bg-marca-verde px-7 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Assinar a Academy (inclui a ferramenta)")}</Link>
+            <Link href="/ferramenta" className="rounded-xl border border-tinta/15 px-7 py-3.5 text-sm font-semibold text-tinta hover:border-tinta/30">{tr("Já sou aluno")}</Link>
           </div>
           <p className="mt-3 text-xs text-slate-500">{tr("A ferramenta está incluída na assinatura da Academy. Ou assine só a ferramenta por")} {brl(price)}{tr("/mês.")}</p>
         </div>
 
         {/* Vídeo / preview */}
-        <div className="mt-12 overflow-hidden rounded-3xl border border-white/10 bg-black/40">
+        <div className="mt-12 overflow-hidden rounded-3xl border border-tinta/10 bg-black/40">
           <div className="relative aspect-video">
             {video ? (
               <iframe className="absolute inset-0 h-full w-full" src={video} title={tr("Ferramenta de Visuais")} allow="accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen" allowFullScreen />
             ) : (
               <div className="absolute inset-0 grid place-items-center bg-gradient-to-br from-brand-green/10 via-ink-800 to-brand-blue/10">
                 <div className="text-center">
-                  <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-white/10 backdrop-blur ring-1 ring-white/20">
+                  <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-tinta/10 backdrop-blur ring-1 ring-tinta/20">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z" /></svg>
                   </span>
                   <p className="mt-3 text-sm text-slate-400">{tr("Demonstração em breve")}</p>
@@ -79,12 +79,12 @@ export default async function FerramentaVisuaisLP() {
 
         {/* Como funciona */}
         <div className="mt-16">
-          <h2 className="text-center font-display text-2xl font-bold text-white">{tr("Como funciona")}</h2>
+          <h2 className="text-center font-display text-2xl font-bold text-tinta">{tr("Como funciona")}</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {steps.map((s) => (
-              <div key={s.n} className="glass rounded-2xl border border-white/8 p-6 text-center">
-                <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue font-display font-bold text-ink-900">{s.n}</span>
-                <p className="mt-3 font-display text-lg font-bold text-white">{s.t}</p>
+              <div key={s.n} className="glass rounded-2xl border border-tinta/8 p-6 text-center">
+                <span className="mx-auto grid h-10 w-10 place-items-center rounded-full bg-marca-verde font-display font-bold text-sobre-acento">{s.n}</span>
+                <p className="mt-3 font-display text-lg font-bold text-tinta">{s.t}</p>
                 <p className="mt-1 text-sm text-slate-400">{s.d}</p>
               </div>
             ))}
@@ -93,14 +93,14 @@ export default async function FerramentaVisuaisLP() {
 
         {/* Recursos */}
         <div className="mt-16">
-          <h2 className="text-center font-display text-2xl font-bold text-white">{tr("O que dá pra fazer")}</h2>
+          <h2 className="text-center font-display text-2xl font-bold text-tinta">{tr("O que dá pra fazer")}</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
-              <div key={f.t} className="glass rounded-2xl border border-white/8 p-5">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-green/10 text-brand-green">
+              <div key={f.t} className="glass rounded-2xl border border-tinta/8 p-5">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-green/10 text-acento">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d={f.d2} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
-                <p className="mt-3 font-display text-base font-bold text-white">{f.t}</p>
+                <p className="mt-3 font-display text-base font-bold text-tinta">{f.t}</p>
                 <p className="mt-1 text-sm text-slate-400">{f.d}</p>
               </div>
             ))}
@@ -108,10 +108,10 @@ export default async function FerramentaVisuaisLP() {
         </div>
 
         {/* Preço / CTA */}
-        <div className="mt-16 overflow-hidden rounded-3xl border border-brand-green/25 bg-gradient-to-br from-brand-green/[0.10] via-ink-800 to-brand-blue/[0.10] p-8 text-center">
-          <h2 className="font-display text-2xl font-bold text-white">{tr("Já vem na assinatura da Academy")}</h2>
+        <div className="mt-16 overflow-hidden rounded-3xl border border-acento/25 bg-gradient-to-br from-brand-green/[0.10] via-ink-800 to-brand-blue/[0.10] p-8 text-center">
+          <h2 className="font-display text-2xl font-bold text-tinta">{tr("Já vem na assinatura da Academy")}</h2>
           <p className="mt-2 text-slate-300">{tr("Assine a DriveData Academy e use a ferramenta, todos os cursos, a comunidade e as mentorias.")}</p>
-          <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-8 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Assinar a Academy")}</Link>
+          <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-marca-verde px-8 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Assinar a Academy")}</Link>
           <p className="mt-3 text-xs text-slate-500">{tr("Prefere só a ferramenta?")} <Link href="/ferramenta/assinar" className="text-brand-teal hover:underline">{tr("assine por")} {brl(price)}{tr("/mês")}</Link></p>
         </div>
       </main>

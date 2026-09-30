@@ -59,7 +59,7 @@ export default function PublishModal({ open, onClose }: { open: boolean; onClose
           <CheckCircle2 className="h-10 w-10 text-emerald-500" />
           <p className="text-base font-semibold">{tr("Publicado na comunidade!")}</p>
           <p className="max-w-xs text-sm text-muted">{tr("Outros membros já podem ver, votar e usar o seu visual como ponto de partida.")}</p>
-          <Link href="/comunidade" className="mt-1 rounded-lg bg-viz px-4 py-2 text-sm font-medium text-white hover:bg-viz-dark">{tr("Ver na comunidade")}</Link>
+          <Link href="/comunidade" className="mt-1 rounded-lg bg-viz px-4 py-2 text-sm font-medium text-tinta hover:bg-viz-dark">{tr("Ver na comunidade")}</Link>
         </div>
       ) : (
         <div className="flex flex-col gap-4 p-4 sm:flex-row">
@@ -85,7 +85,7 @@ export default function PublishModal({ open, onClose }: { open: boolean; onClose
               <span className="font-medium">{tr("Tags")}</span>
               <div className="flex flex-wrap gap-1.5">
                 {SUGESTOES.map((t) => (
-                  <button key={t} type="button" onClick={() => toggleTag(t)} className={`rounded-full border px-2.5 py-0.5 text-xs transition-colors ${tags.includes(t) ? "border-viz bg-viz text-white" : "border-border text-muted hover:border-viz/50"}`}>#{t}</button>
+                  <button key={t} type="button" onClick={() => toggleTag(t)} className={`rounded-full border px-2.5 py-0.5 text-xs transition-colors ${tags.includes(t) ? "border-viz bg-viz text-tinta" : "border-border text-muted hover:border-viz/50"}`}>#{t}</button>
                 ))}
               </div>
               <input value={tagsTexto} onChange={(e) => setTagsTexto(e.target.value)} placeholder={tr("ou digite: kpi, vendas…")} className="mt-1 rounded-md border border-border px-3 py-2 text-sm focus:border-viz focus:outline-none" />
@@ -94,7 +94,7 @@ export default function PublishModal({ open, onClose }: { open: boolean; onClose
 
             {erro && <p className="text-sm text-red-600">{erro}</p>}
 
-            <button onClick={publicar} disabled={enviando || !nome.trim()} className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-viz py-2.5 font-medium text-white transition-colors hover:bg-viz-dark disabled:opacity-50">
+            <button onClick={publicar} disabled={enviando || !nome.trim()} className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-viz py-2.5 font-medium text-tinta transition-colors hover:bg-viz-dark disabled:opacity-50">
               <Share2 className="h-4 w-4" /> {enviando ? "Publicando…" : tr("Publicar na comunidade")}
             </button>
           </div>

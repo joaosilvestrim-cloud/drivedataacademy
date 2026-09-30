@@ -19,7 +19,7 @@ export default function VoltarAoSistema({
   return (
     <Link
       href={href}
-      className="fixed left-4 top-4 z-50 inline-flex items-center gap-2 rounded-full border border-white/15 bg-ink-900/80 px-3 py-2 text-xs font-medium text-slate-200 shadow-lg backdrop-blur transition-colors hover:border-brand-green/50 hover:text-brand-green sm:px-4"
+      className="fixed left-4 top-4 z-50 inline-flex items-center gap-2 rounded-full border border-tinta/15 bg-ink-900/80 px-3 py-2 text-xs font-medium text-slate-200 shadow-lg backdrop-blur transition-colors hover:border-acento/50 hover:text-acento sm:px-4"
     >
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
         <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

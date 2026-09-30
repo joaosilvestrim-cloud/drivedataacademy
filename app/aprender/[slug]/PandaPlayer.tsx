@@ -116,7 +116,7 @@ export default function PandaPlayer({
 
   if (!src) {
     return (
-      <div className="grid aspect-video place-items-center rounded-2xl border border-white/10 bg-white/[0.02] px-6 text-center text-sm text-slate-500">
+      <div className="grid aspect-video place-items-center rounded-2xl border border-tinta/10 bg-tinta/[0.02] px-6 text-center text-sm text-slate-500">
         {tr("Cole o link de compartilhamento (ou o código de incorporar) do Panda nesta aula.")}
       </div>
     );
@@ -124,7 +124,7 @@ export default function PandaPlayer({
 
   return (
     <>
-      <div className="overflow-hidden rounded-2xl border border-white/10 bg-black">
+      <div className="overflow-hidden rounded-2xl border border-tinta/10 bg-black">
         <div className="relative aspect-video">
           <iframe
             ref={frame}

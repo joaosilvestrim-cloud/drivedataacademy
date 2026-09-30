@@ -42,7 +42,7 @@ function fmtPhone(d: string) {
 // depender só da cor, que é a regra do Design System para estado.
 function Check({ ok, children, warn }: { ok: boolean; warn?: boolean; children: React.ReactNode }) {
   const Icone = ok ? CheckMark : Circle;
-  const tone = ok ? "text-ds-accent" : warn ? "text-ds-attention" : "text-ds-text-3";
+  const tone = ok ? "text-acento" : warn ? "text-ds-attention" : "text-ds-text-3";
   return (
     <li className="flex items-start gap-2.5 text-caption">
       <Icone size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className={`mt-0.5 shrink-0 ${tone}`} />
@@ -128,7 +128,7 @@ export default function TurmaForm({
             de seleção no meio da lista de campos. */}
         <div
           className={`rounded-srf border p-4 transition-colors duration-fast ease-ds ${
-            open ? "border-ds-accent bg-ds-raised" : "border-ds-line"
+            open ? "border-acento bg-ds-raised" : "border-ds-line"
           }`}
         >
           <label className="flex cursor-pointer items-start justify-between gap-4">
@@ -195,7 +195,7 @@ export default function TurmaForm({
                   <span className="text-caption text-ds-attention">Custa o mesmo ou mais que 12 mensalidades. Sem desconto não é oferta.</span>
                 ) : (
                   <span className="text-caption text-ds-text-2">
-                    <span className="font-semibold text-ds-accent">{desconto}% de desconto</span> sobre 12 mensalidades de R$ {centsToBRL(cents * 12)}.
+                    <span className="font-semibold text-acento">{desconto}% de desconto</span> sobre 12 mensalidades de R$ {centsToBRL(cents * 12)}.
                     Equivale a R$ {centsToBRL(Math.round(anualCents / 12))} por mês.
                   </span>
                 )
@@ -276,10 +276,10 @@ export default function TurmaForm({
 
           {open ? (
             <div className="rounded-srf border border-ds-line bg-ds-surface p-4">
-              <p className="font-mono text-meta uppercase text-ds-accent">Assinatura</p>
+              <p className="font-mono text-meta uppercase text-acento">Assinatura</p>
               <p className="mt-1 font-display text-title font-semibold leading-tight text-ds-text">{previewNome}</p>
               <p className="mt-2 text-caption leading-relaxed text-ds-text-3">{previewDesc}</p>
-              <div className="mt-4 border-l-2 border-ds-accent py-1.5 pl-3">
+              <div className="mt-4 border-l-2 border-acento py-1.5 pl-3">
                 <span className="block text-meta uppercase text-ds-text-3">Assinatura mensal</span>
                 {hasPrice ? (
                   <span className="block font-display text-data font-semibold tabular-nums text-ds-text">
@@ -301,7 +301,7 @@ export default function TurmaForm({
             </div>
           ) : (
             <div className="rounded-srf border border-ds-line bg-ds-surface px-4 py-8 text-center">
-              <p className="font-mono text-meta uppercase text-ds-accent">Matrículas</p>
+              <p className="font-mono text-meta uppercase text-acento">Matrículas</p>
               <p className="mt-1 font-display text-component font-semibold text-ds-text">Inscrições fechadas no momento</p>
               <p className="mt-2 text-caption text-ds-text-3">Entre na lista de espera e avisamos assim que abrir.</p>
             </div>

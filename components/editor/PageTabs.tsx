@@ -116,7 +116,7 @@ export default function PageTabs() {
           onClick={() => setPaginaAtiva(i)}
           className={`group flex shrink-0 cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-xs ${sel ? "border-viz bg-viz/10 text-viz-dark" : "border-border text-muted hover:border-viz/50"}`}
         >
-          <span className={`grid h-4 w-4 place-items-center rounded-full text-[9px] font-bold ${sel ? "bg-viz text-white" : "bg-background"}`}>{i + 1}</span>
+          <span className={`grid h-4 w-4 place-items-center rounded-full text-[9px] font-bold ${sel ? "bg-viz text-tinta" : "bg-background"}`}>{i + 1}</span>
           {editando === i ? (
             <input
               autoFocus

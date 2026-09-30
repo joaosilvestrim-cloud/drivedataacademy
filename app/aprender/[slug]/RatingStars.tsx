@@ -31,7 +31,7 @@ export default function RatingStars({ courseId, avg, count, mine }: { courseId: 
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-2.5">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-2.5">
       <div className="flex items-center gap-1.5">
         <span className="font-display text-lg font-bold text-amber-300">{avg ? avg.toFixed(1) : "—"}</span>
         <div className="flex" onMouseLeave={() => setHover(0)}>
@@ -48,7 +48,7 @@ export default function RatingStars({ courseId, avg, count, mine }: { courseId: 
             <Star key={n} filled={n <= (hover || myRating)} interactive onClick={() => set(n)} onEnter={() => setHover(n)} />
           ))}
         </div>
-        {saved && <span className="text-xs text-brand-green">obrigado!</span>}
+        {saved && <span className="text-xs text-acento">obrigado!</span>}
       </div>
     </div>
   );

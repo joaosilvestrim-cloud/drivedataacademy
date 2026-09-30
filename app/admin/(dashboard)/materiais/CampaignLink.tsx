@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CopyButton from "./CopyButton";
 
 const field =
-  "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 
 export default function CampaignLink({ slug, published }: { slug: string; published: boolean }) {
   const [origin, setOrigin] = useState("");
@@ -25,14 +25,14 @@ export default function CampaignLink({ slug, published }: { slug: string; publis
   const full = qs ? `${base}?${qs}` : base;
 
   return (
-    <div className="glass rounded-2xl border border-brand-green/20 p-6">
+    <div className="glass rounded-2xl border border-acento/20 p-6">
       <div className="flex items-center gap-2">
-        <span className="grid h-7 w-7 place-items-center rounded-lg bg-brand-green/15 text-brand-green">
+        <span className="grid h-7 w-7 place-items-center rounded-lg bg-brand-green/15 text-acento">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path d="M10 14a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07L11.5 5.5M14 10a5 5 0 00-7.07 0l-2.83 2.83a5 5 0 007.07 7.07L12.5 18.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-        <h2 className="font-display text-lg font-bold text-white">Link de divulgação</h2>
+        <h2 className="font-display text-lg font-bold text-tinta">Link de divulgação</h2>
       </div>
       <p className="mt-1 text-sm text-slate-400">
         Este é o endereço da página. Compartilhe nas suas campanhas — cada lead já é registrado
@@ -49,7 +49,7 @@ export default function CampaignLink({ slug, published }: { slug: string; publis
       <div className="mt-4">
         <label className="text-xs font-medium uppercase tracking-wide text-slate-500">Link da página</label>
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
-          <code className="min-w-0 flex-1 truncate rounded-lg border border-white/10 bg-ink-900/60 px-3 py-2 text-sm text-slate-200">
+          <code className="min-w-0 flex-1 truncate rounded-lg border border-tinta/10 bg-ink-900/60 px-3 py-2 text-sm text-slate-200">
             {base}
           </code>
           <CopyButton text={base} />
@@ -57,7 +57,7 @@ export default function CampaignLink({ slug, published }: { slug: string; publis
             href={base}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white"
+            className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-tinta/30 hover:text-tinta"
           >
             Abrir
           </a>
@@ -65,8 +65,8 @@ export default function CampaignLink({ slug, published }: { slug: string; publis
       </div>
 
       {/* Construtor de campanha */}
-      <div className="mt-5 rounded-xl border border-white/8 bg-white/[0.02] p-4">
-        <p className="text-sm font-medium text-white">Rastrear campanha (opcional)</p>
+      <div className="mt-5 rounded-xl border border-tinta/8 bg-tinta/[0.02] p-4">
+        <p className="text-sm font-medium text-tinta">Rastrear campanha (opcional)</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <div>
             <label className="text-xs text-slate-400">Origem (rede/canal)</label>
@@ -85,7 +85,7 @@ export default function CampaignLink({ slug, published }: { slug: string; publis
         <div className="mt-4">
           <label className="text-xs font-medium uppercase tracking-wide text-slate-500">Link com rastreio</label>
           <div className="mt-1.5 flex flex-wrap items-center gap-2">
-            <code className="min-w-0 flex-1 truncate rounded-lg border border-white/10 bg-ink-900/60 px-3 py-2 text-sm text-brand-teal">
+            <code className="min-w-0 flex-1 truncate rounded-lg border border-tinta/10 bg-ink-900/60 px-3 py-2 text-sm text-brand-teal">
               {full}
             </code>
             <CopyButton text={full} label="Copiar link" />

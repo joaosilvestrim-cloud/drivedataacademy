@@ -110,25 +110,25 @@ export default async function ProximasMentorias({
             <h2 id="proximas-mentorias" className="font-display text-3xl font-bold tracking-tight text-slate-100 sm:text-4xl">
               {tr("Próximas lives e mentorias")}
             </h2>
-            <span className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.04] px-4 py-1.5">
+            <span className="inline-flex items-center gap-2.5 rounded-full border border-tinta/12 bg-tinta/[0.04] px-4 py-1.5">
               <span aria-hidden className={`block h-2 w-2 rounded-full bg-red-500 ${s.ponto}`} />
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-200">{tr("Ao vivo")}</span>
             </span>
           </div>
 
           {/* Cronômetro da próxima transmissão, correndo em segundos. */}
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4">
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl border border-tinta/8 bg-tinta/[0.03] px-5 py-4">
             <span className="text-sm text-slate-400">
               {tr("Próxima:")} <span className="font-semibold text-slate-100">{mentorias[0].title}</span>
             </span>
             <Cronometro inicio={mentorias[0].starts_at} duracaoMin={mentorias[0].duration_min} agoraInicial={agora} />
             {privado && mentorias[0].url_alunos ? (
-              <a href={mentorias[0].url_alunos} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+              <a href={mentorias[0].url_alunos} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                 {tr("Entrar na sala")}
                 <span aria-hidden="true">&rarr;</span>
               </a>
             ) : mentorias[0].url && (
-              <a href={mentorias[0].url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-500">
+              <a href={mentorias[0].url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-tinta transition-colors hover:bg-red-500">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.2a3 3 0 00-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 001 7.2 31 31 0 00.5 12a31 31 0 00.5 4.8 3 3 0 002.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 002.1-2.1 31 31 0 00.5-4.8 31 31 0 00-.5-4.8zM9.8 15.1V8.9L15.2 12z" /></svg>
                 {tr("Abrir no YouTube")}
               </a>
@@ -152,7 +152,7 @@ export default async function ProximasMentorias({
                   {/* A arte do evento, quando existe. Quem ainda não tem arte
                       recebe um degradê do mesmo tamanho, senão a grade fica
                       dentada com cards de alturas diferentes. */}
-                  <span className="mb-3.5 block overflow-hidden rounded-lg border border-white/10">
+                  <span className="mb-3.5 block overflow-hidden rounded-lg border border-tinta/10">
                     <span className="relative block aspect-[16/9]">
                       {m.cover_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -164,7 +164,7 @@ export default async function ProximasMentorias({
                     </span>
                   </span>
 
-                  <p className={`inline-flex items-center gap-2 rounded-md border px-2.5 py-1 ${i === 0 ? "border-brand-cyan/40 bg-brand-cyan/10" : "border-white/10 bg-white/[0.03]"}`}>
+                  <p className={`inline-flex items-center gap-2 rounded-md border px-2.5 py-1 ${i === 0 ? "border-brand-cyan/40 bg-brand-cyan/10" : "border-tinta/10 bg-tinta/[0.03]"}`}>
                     <Radio size={12} strokeWidth={2} aria-hidden className={i === 0 ? `text-brand-cyan ${s.proxima}` : "text-brand-cyan/70"} />
                     <time dateTime={m.starts_at} className={`text-[0.7rem] font-medium tabular-nums ${i === 0 ? "text-brand-cyan" : "text-slate-300"}`}>
                       {dataCurta(m.starts_at)} · {hora(m.starts_at)}
@@ -192,7 +192,7 @@ export default async function ProximasMentorias({
             })}
           </ul>
 
-          <p className="mt-8 border-t border-white/8 pt-5 text-sm">
+          <p className="mt-8 border-t border-tinta/8 pt-5 text-sm">
             <Link
               href={cta.href}
               className="inline-flex items-center gap-2 font-medium text-brand-cyan underline decoration-brand-cyan/30 underline-offset-4 transition-colors hover:decoration-brand-cyan"

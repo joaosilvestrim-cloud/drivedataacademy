@@ -18,8 +18,8 @@ export default async function MentoriaPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Mentoria")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">{form.title}</h1>
+      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Mentoria")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{form.title}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">{form.desc}</p>
       {/* Mesmo prazo do suporte: para o aluno e tudo "pedi e estou esperando". */}
       <p className="mt-2 text-sm font-medium text-brand-teal">{tr("O time responde em até 3 dias úteis.")}</p>

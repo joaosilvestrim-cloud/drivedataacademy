@@ -35,13 +35,13 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
         <div className="glass flex flex-col items-center gap-5 p-8 text-center sm:flex-row sm:text-left">
           <Mascot className="h-24 w-24 shrink-0 animate-float" />
           <div className="flex-1">
-            <h1 className="font-display text-2xl font-bold text-white">{tr("Central de Ajuda")}</h1>
+            <h1 className="font-display text-2xl font-bold text-tinta">{tr("Central de Ajuda")}</h1>
             <p className="mt-1 text-sm text-slate-300">{tr("Fale com o Nexo, o assistente da DriveData. Ele responde suas dúvidas na hora e, quando precisar de uma pessoa, aciona o time sem burocracia.")}</p>
             {/* O prazo aparece antes de a pessoa escrever, nao depois.
                 Quem abre chamado quer saber quando tem resposta, e esperar
                 sem prazo e o que faz o aluno mandar a mesma duvida tres vezes. */}
             <p className="mt-2 text-sm font-medium text-brand-teal">{tr("O time responde em até 3 dias úteis.")}</p>
-            <OpenAssistant auto={searchParams?.novo === "1"} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+            <OpenAssistant auto={searchParams?.novo === "1"} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
               {tr("Conversar com o assistente")}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </OpenAssistant>
@@ -50,34 +50,34 @@ export default async function AjudaPage({ searchParams }: { searchParams: { novo
       </div>
 
       {/* E-mail de suporte */}
-      <a href={`mailto:${supportEmail}`} className="mt-4 flex items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4 transition-colors hover:border-brand-teal/40">
+      <a href={`mailto:${supportEmail}`} className="mt-4 flex items-center gap-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-4 transition-colors hover:border-brand-teal/40">
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-blue/10 text-brand-teal">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4zM4 7l8 6 8-6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </span>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-white">{tr("Prefere e-mail? Fale com o suporte")}</p>
+          <p className="text-sm font-semibold text-tinta">{tr("Prefere e-mail? Fale com o suporte")}</p>
           <p className="truncate text-sm text-brand-teal">{supportEmail}</p>
         </div>
       </a>
 
       {/* Meus chamados */}
       <div className="mt-10 flex items-center justify-between">
-        <h2 className="font-display text-lg font-bold text-white">{tr("Meus atendimentos")}</h2>
+        <h2 className="font-display text-lg font-bold text-tinta">{tr("Meus atendimentos")}</h2>
         <span className="text-xs text-slate-500">{(tickets ?? []).length} {tr("no total")}</span>
       </div>
       <div className="mt-4 space-y-2">
         {(tickets ?? []).length === 0 && (
-          <div className="rounded-2xl border border-dashed border-white/10 px-6 py-14 text-center">
-            <p className="font-medium text-white">{tr("Nenhum atendimento por aqui ainda.")}</p>
+          <div className="rounded-2xl border border-dashed border-tinta/10 px-6 py-14 text-center">
+            <p className="font-medium text-tinta">{tr("Nenhum atendimento por aqui ainda.")}</p>
             <p className="mt-1 text-sm text-slate-400">{tr("Abra o assistente acima e mande sua dúvida. Se ele acionar o time, o atendimento aparece nesta lista e o time responde em até 3 dias úteis.")}</p>
           </div>
         )}
         {(tickets ?? []).map((t: any) => {
           const st = TICKET_STATUS[t.status] || TICKET_STATUS.open;
           return (
-            <Link key={t.id} href={`/conta/ajuda/${t.id}`} className="flex items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3.5 transition-colors hover:border-white/15 hover:bg-white/[0.04]">
+            <Link key={t.id} href={`/conta/ajuda/${t.id}`} className="flex items-center justify-between gap-3 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3.5 transition-colors hover:border-tinta/15 hover:bg-tinta/[0.04]">
               <div className="min-w-0">
-                <p className="truncate font-medium text-white">{t.subject}</p>
+                <p className="truncate font-medium text-tinta">{t.subject}</p>
                 <p className="text-xs text-slate-500">{CATEGORIES[t.category] || t.category} · atualizado {fmt(t.updated_at)}</p>
               </div>
               <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${st.cls}`}>{st.label}</span>

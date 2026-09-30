@@ -36,7 +36,7 @@ export default function MarcarVisto({ quantos }: { quantos: number }) {
       type="button"
       onClick={marcar}
       disabled={indo}
-      className="inline-flex items-center gap-2 rounded-lg border border-white/12 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-white disabled:opacity-50"
+      className="inline-flex items-center gap-2 rounded-lg border border-tinta/12 px-3 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-tinta disabled:opacity-50"
     >
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />

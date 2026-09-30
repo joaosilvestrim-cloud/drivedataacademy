@@ -17,7 +17,7 @@ export default function Flash({ kind, message }: { kind: "ok" | "error"; message
 
   const tone =
     kind === "ok"
-      ? "border-brand-green/30 bg-brand-green/10 text-brand-green"
+      ? "border-acento/30 bg-brand-green/10 text-acento"
       : "border-red-400/30 bg-red-400/10 text-red-200";
 
   return (

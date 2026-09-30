@@ -16,7 +16,7 @@ export default async function Recomendar({ params }: { params: { token: string }
     .maybeSingle();
 
   const aviso = (titulo: string, texto: string) => (
-    <main className="mx-auto max-w-xl px-6 py-24 text-white">
+    <main className="mx-auto max-w-xl px-6 py-24 text-tinta">
       <h1 className="font-display text-3xl font-bold">{titulo}</h1>
       <p className="mt-4 text-slate-300">{texto}</p>
     </main>
@@ -32,13 +32,13 @@ export default async function Recomendar({ params }: { params: { token: string }
   const nome = (perfil?.full_name || "Um aluno da Academy").trim();
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16 text-white">
-      <p className="text-sm text-brand-green">DriveData Academy</p>
+    <main className="mx-auto max-w-2xl px-6 py-16 text-tinta">
+      <p className="text-sm text-acento">DriveData Academy</p>
       <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">{nome} pediu sua recomendação</h1>
       {perfil?.headline && <p className="mt-2 text-slate-400">{perfil.headline}</p>}
       <p className="mt-6 text-slate-300">
         {projeto?.data?.titulo
-          ? <>Sobre o projeto <span className="font-semibold text-white">{projeto.data.titulo}</span>. </>
+          ? <>Sobre o projeto <span className="font-semibold text-tinta">{projeto.data.titulo}</span>. </>
           : null}
         Conte o que {nome.split(" ")[0]} fez e como foi trabalhar junto. Seu texto aparece no portfólio público, com seu nome e cargo, depois que você confirmar o e-mail e {nome.split(" ")[0]} aprovar.
       </p>

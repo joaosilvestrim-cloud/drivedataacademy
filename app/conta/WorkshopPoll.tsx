@@ -40,7 +40,7 @@ export default function WorkshopPoll({
                 aria-pressed={mine}
                 className={`relative block w-full overflow-hidden rounded-ctl border px-3.5 py-2.5 text-left transition-colors duration-fast ease-ds ${
                   mine
-                    ? "border-ds-accent/45 bg-ds-accent/[0.06]"
+                    ? "border-acento/45 bg-ds-accent/[0.06]"
                     : "border-ds-line hover:border-ds-text-3"
                 }`}
               >
@@ -52,7 +52,7 @@ export default function WorkshopPoll({
                 />
                 <span className="relative flex items-center justify-between gap-3">
                   <span className={`text-body-sm ${mine ? "font-medium text-ds-text" : "text-ds-text-2"}`}>
-                    {mine && <span className="mr-1.5 text-ds-accent" aria-hidden="true">✓</span>}
+                    {mine && <span className="mr-1.5 text-acento" aria-hidden="true">✓</span>}
                     {opt}
                     {mine && <span className="sr-only"> {tr("(seu voto)")}</span>}
                   </span>

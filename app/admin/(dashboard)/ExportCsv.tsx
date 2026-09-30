@@ -32,7 +32,7 @@ export default function ExportCsv({ rows, filename }: { rows: Row[]; filename: s
     <button
       onClick={download}
       disabled={rows.length === 0}
-      className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-brand-green/50 hover:text-brand-green disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-lg border border-tinta/10 bg-tinta/5 px-4 py-2 text-sm font-medium text-tinta transition-colors hover:border-acento/50 hover:text-acento disabled:cursor-not-allowed disabled:opacity-50"
     >
       Exportar CSV
     </button>

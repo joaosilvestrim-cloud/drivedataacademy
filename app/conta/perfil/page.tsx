@@ -56,7 +56,7 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
   const myBadges = (badges ?? []).map((b: any) => b.badge);
 
   const Icon = ({ d }: { d: string }) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-brand-green"><path d={d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-acento"><path d={d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
   );
 
   const stats = [
@@ -67,7 +67,7 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
 
   return (
     <div className="max-w-6xl">
-      <h1 className="font-display text-3xl font-bold text-white">{tr("Meu perfil")}</h1>
+      <h1 className="font-display text-3xl font-bold text-tinta">{tr("Meu perfil")}</h1>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">{tr("Seus dados de aluno na DriveData Academy. O cartão ao lado mostra como você aparece para os outros alunos.")}</p>
 
       {/* Chega aqui quem tentou emitir certificado sem nome no cadastro. O nome
@@ -91,22 +91,22 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
 
       {/* Gamificação */}
       <div className="mt-8">
-        <h2 className="font-display text-lg font-bold text-white">{tr("Minha gamificação")}</h2>
+        <h2 className="font-display text-lg font-bold text-tinta">{tr("Minha gamificação")}</h2>
         <p className="mt-1 text-sm text-slate-400">{tr("Você ganha pontos participando da comunidade: cada curtida que suas mensagens recebem vale pontos e te faz subir no ranking.")}</p>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
           {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-white/8 bg-white/[0.02] p-4 text-center">
+            <div key={s.label} className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-4 text-center">
               <div className="mx-auto grid h-9 w-9 place-items-center rounded-full bg-brand-green/10"><Icon d={s.d} /></div>
-              <p className="mt-2 font-display text-2xl font-bold text-white">{s.value}</p>
+              <p className="mt-2 font-display text-2xl font-bold text-tinta">{s.value}</p>
               <p className="text-xs text-slate-400">{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* Selos */}
-        <div className="mt-4 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
-          <p className="text-sm font-semibold text-white">{tr("Meus selos")}</p>
+        <div className="mt-4 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
+          <p className="text-sm font-semibold text-tinta">{tr("Meus selos")}</p>
           {myBadges.length > 0 ? (
             <div className="mt-3 flex flex-wrap gap-2">
               {myBadges.map((b) => (
@@ -122,8 +122,8 @@ export default async function PerfilPage({ searchParams }: { searchParams: { fal
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link href="/conta/comunidade" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Ir para a comunidade")}</Link>
-          <Link href="/conta/ranking" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">{tr("Ver ranking completo")}</Link>
+          <Link href="/conta/comunidade" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Ir para a comunidade")}</Link>
+          <Link href="/conta/ranking" className="rounded-xl border border-tinta/10 px-5 py-2.5 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento">{tr("Ver ranking completo")}</Link>
         </div>
       </div>
       </div>

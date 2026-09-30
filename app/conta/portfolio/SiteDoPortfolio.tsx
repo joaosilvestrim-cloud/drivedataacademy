@@ -33,14 +33,14 @@ function Passo({ n, titulo, estado, ultimo = false, children }: { n: number; tit
   return (
     <div className="relative grid grid-cols-[2.25rem_1fr] gap-x-4">
       {/* O fio que liga os passos: aceso até onde o aluno chegou. */}
-      {!ultimo && <span aria-hidden className={`absolute bottom-[-1.75rem] left-[1.08rem] top-10 w-px ${estado === "feito" ? "bg-brand-green/50" : "bg-white/10"}`} />}
+      {!ultimo && <span aria-hidden className={`absolute bottom-[-1.75rem] left-[1.08rem] top-10 w-px ${estado === "feito" ? "bg-brand-green/50" : "bg-tinta/10"}`} />}
       <span
         className={`relative z-[1] grid h-9 w-9 place-items-center rounded-full font-mono text-sm transition-colors ${
           estado === "feito"
-            ? "bg-brand-green text-ink-900"
+            ? "bg-brand-green text-sobre-acento"
             : estado === "atual"
-              ? "border-2 border-brand-green bg-[#07130f] text-brand-green"
-              : "border border-white/15 bg-[#080d17] text-slate-500"
+              ? "border-2 border-acento bg-[#07130f] text-acento"
+              : "border border-tinta/15 bg-[#080d17] text-slate-500"
         }`}
         aria-label={estado === "feito" ? `Passo ${n}, feito` : `Passo ${n}`}
       >
@@ -51,7 +51,7 @@ function Passo({ n, titulo, estado, ultimo = false, children }: { n: number; tit
         )}
       </span>
       <div className="min-w-0 pb-1 pt-1.5">
-        <p className={`font-display text-base font-semibold ${estado === "depois" ? "text-slate-400" : "text-white"}`}>{titulo}</p>
+        <p className={`font-display text-base font-semibold ${estado === "depois" ? "text-slate-400" : "text-tinta"}`}>{titulo}</p>
         <div className="mt-2.5">{children}</div>
       </div>
     </div>
@@ -64,10 +64,10 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
   if (estilo === "painel")
     return (
       <div className="flex h-full flex-col gap-1.5 bg-[#0d1422] p-2.5">
-        <div className="h-1.5 w-10 rounded-sm bg-white/60" />
+        <div className="h-1.5 w-10 rounded-sm bg-tinta/60" />
         <div className="grid grid-cols-3 gap-1">
           {["42", "7", "3"].map((n) => (
-            <div key={n} className="rounded-sm bg-white/[0.06] px-1 py-1 font-mono text-[9px] leading-none text-[#4ade9a]">{n}</div>
+            <div key={n} className="rounded-sm bg-tinta/[0.06] px-1 py-1 font-mono text-[9px] leading-none text-[#4ade9a]">{n}</div>
           ))}
         </div>
         <div className="flex flex-1 items-end gap-1">
@@ -118,7 +118,7 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
         <div className="font-mono text-[9px] text-[#f5b85a]">CENA 01</div>
         <div className="mt-1 text-[13px] font-bold leading-tight text-[#f2efe9]">O projeto</div>
         <div className="mt-auto flex flex-col gap-[3px] pt-5">
-          {[70, 50].map((w, i) => <div key={i} className="h-[2px] bg-white/30" style={{ width: `${w}%` }} />)}
+          {[70, 50].map((w, i) => <div key={i} className="h-[2px] bg-tinta/30" style={{ width: `${w}%` }} />)}
         </div>
       </div>
     );
@@ -138,7 +138,7 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
   if (estilo === "blueprint")
     return (
       <div className="relative h-full bg-[#0b3d91] bg-[linear-gradient(rgba(127,167,232,.25)_1px,transparent_1px),linear-gradient(90deg,rgba(127,167,232,.25)_1px,transparent_1px)] bg-[size:8px_8px] p-2.5">
-        <div className="font-mono text-[10px] font-bold text-white">PROJ-01</div>
+        <div className="font-mono text-[10px] font-bold text-tinta">PROJ-01</div>
         <div className="mt-2 h-6 w-16 border border-[#eaf2ff]/80" />
         <div className="absolute bottom-2 right-2 border border-[#eaf2ff]/80 px-1 font-mono text-[7px] text-[#ffcc00]">REV A · 2026</div>
       </div>
@@ -198,7 +198,7 @@ function Miniatura({ estilo }: { estilo: Estilo }) {
       <div className="absolute -left-3 top-2 h-10 w-10 rotate-12 rounded-md bg-[#ff7a59]" />
       <div className="absolute left-7 top-7 h-7 w-12 -rotate-6 rounded-full bg-[#5ad1ff]" />
       <div className="absolute right-2 top-1 h-6 w-6 rotate-45 bg-[#ffd166]" />
-      <div className="absolute bottom-1.5 right-3 font-display text-lg font-bold text-white">?</div>
+      <div className="absolute bottom-1.5 right-3 font-display text-lg font-bold text-tinta">?</div>
     </div>
   );
 }
@@ -405,37 +405,37 @@ export default function SiteDoPortfolio({
   const estado = (i: number): Estado => (feito[i] && (vez === -1 || i < vez) ? "feito" : i === vez ? "atual" : "depois");
 
   const cartaoNoAr = publicado && (
-    <div className="rounded-3xl border border-brand-green/30 bg-[#0a1428] p-6 text-left shadow-2xl">
-      <p className="font-display text-2xl font-bold text-white">Seu portfólio está no ar</p>
-      <a href={publicado.url} target="_blank" rel="noopener" className="mt-1 block truncate font-mono text-sm text-brand-green hover:underline">{publicado.url}</a>
+    <div className="rounded-3xl border border-acento/30 bg-[#0a1428] p-6 text-left shadow-2xl">
+      <p className="font-display text-2xl font-bold text-tinta">Seu portfólio está no ar</p>
+      <a href={publicado.url} target="_blank" rel="noopener" className="mt-1 block truncate font-mono text-sm text-acento hover:underline">{publicado.url}</a>
       <div className="mt-4 flex flex-wrap gap-2">
-        <a href={linkedin} target="_blank" rel="noopener" className="rounded-xl bg-[#0a66c2] px-4 py-2 text-sm font-semibold text-white">Publicar no LinkedIn</a>
-        <button onClick={() => copiar(publicado.url, "link")} className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
-        <a href={publicado.url} target="_blank" rel="noopener" className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white">Abrir o site</a>
+        <a href={linkedin} target="_blank" rel="noopener" className="rounded-xl bg-[#0a66c2] px-4 py-2 text-sm font-semibold text-tinta">Publicar no LinkedIn</a>
+        <button onClick={() => copiar(publicado.url, "link")} className="rounded-xl border border-tinta/15 px-4 py-2 text-sm text-tinta">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
+        <a href={publicado.url} target="_blank" rel="noopener" className="rounded-xl border border-tinta/15 px-4 py-2 text-sm text-tinta">Abrir o site</a>
       </div>
       {post && (
         <div className="mt-4">
           <p className="text-xs text-slate-400">O texto do post, montado com o que você publicou:</p>
-          <textarea readOnly value={post} rows={7} className="mt-1 w-full resize-none rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs text-slate-200" />
-          <button onClick={() => copiar(post, "post")} className="mt-1 text-xs text-brand-green hover:underline">{copiado === "post" ? "Copiado" : "Copiar o texto"}</button>
+          <textarea readOnly value={post} rows={7} className="mt-1 w-full resize-none rounded-xl border border-tinta/10 bg-tinta/[0.03] p-3 text-xs text-slate-200" />
+          <button onClick={() => copiar(post, "post")} className="mt-1 text-xs text-acento hover:underline">{copiado === "post" ? "Copiado" : "Copiar o texto"}</button>
         </div>
       )}
       <p className="mt-3 text-xs text-slate-400">Ponha o link também no seu perfil do LinkedIn: Informações de contato → Site, e na seção Em destaque.</p>
-      <button onClick={() => setRevelando(false)} className="mt-4 text-sm text-slate-300 hover:text-white">Voltar</button>
+      <button onClick={() => setRevelando(false)} className="mt-4 text-sm text-slate-300 hover:text-tinta">Voltar</button>
     </div>
   );
 
-  const botaoForte = "rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-opacity disabled:opacity-40";
-  const botaoLeve = "rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white transition-colors hover:border-white/40 disabled:opacity-40";
+  const botaoForte = "rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-opacity disabled:opacity-40";
+  const botaoLeve = "rounded-xl border border-tinta/15 px-4 py-2.5 text-sm text-tinta transition-colors hover:border-tinta/40 disabled:opacity-40";
 
   return (
     <>
       {revelando && publicado && (
         <UniversoPublico slug={publicado.url.split("/portfolio/")[1]} nome={nome} aoFechar={() => setRevelando(false)} autoplay final={cartaoNoAr} />
       )}
-      <section className="mt-8 overflow-hidden rounded-3xl border border-white/10 bg-[#070d18]">
-        <div className="border-b border-white/[0.07] bg-[radial-gradient(90%_140%_at_0%_0%,rgba(21,196,126,.14),transparent_60%)] p-5 sm:p-7">
-          <h2 className="font-display text-2xl font-bold text-white">Meu site de portfólio</h2>
+      <section className="mt-8 overflow-hidden rounded-3xl border border-tinta/10 bg-[#070d18]">
+        <div className="border-b border-tinta/[0.07] bg-[radial-gradient(90%_140%_at_0%_0%,rgba(21,196,126,.14),transparent_60%)] p-5 sm:p-7">
+          <h2 className="font-display text-2xl font-bold text-tinta">Meu site de portfólio</h2>
           <p className="mt-1 max-w-2xl text-sm leading-relaxed text-slate-400">
             A Academy junta seus projetos e certificados num prompt. Você leva para a IA que preferir, recebe um site inteiro e publica aqui, com link para o seu LinkedIn. A página vem com o seu Universo 4D, que quem visitar pode girar e ver crescer ao longo da sua carreira.
           </p>
@@ -447,27 +447,27 @@ export default function SiteDoPortfolio({
           )}
 
           {noAr && publicado && (
-            <div className="mt-5 border-l-2 border-brand-green pl-4">
-              <p className="text-sm font-semibold text-white">Seu site está no ar</p>
-              <a href={publicado.url} target="_blank" rel="noopener" className="mt-0.5 block truncate font-mono text-sm text-brand-green hover:underline">{publicado.url}</a>
+            <div className="mt-5 border-l-2 border-acento pl-4">
+              <p className="text-sm font-semibold text-tinta">Seu site está no ar</p>
+              <a href={publicado.url} target="_blank" rel="noopener" className="mt-0.5 block truncate font-mono text-sm text-acento hover:underline">{publicado.url}</a>
               <div className="mt-3 flex flex-wrap items-center gap-2">
-                <a href={linkedin} target="_blank" rel="noopener" onMouseEnter={() => !post && carregarPost()} className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-white">Publicar no LinkedIn</a>
-                <button onClick={() => copiar(publicado.url, "link")} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white hover:border-white/40">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
-                <button onClick={() => setRevelando(true)} className="rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white hover:border-white/40">Ver a revelação</button>
+                <a href={linkedin} target="_blank" rel="noopener" onMouseEnter={() => !post && carregarPost()} className="rounded-lg bg-[#0a66c2] px-3 py-1.5 text-sm font-semibold text-tinta">Publicar no LinkedIn</a>
+                <button onClick={() => copiar(publicado.url, "link")} className="rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-tinta hover:border-tinta/40">{copiado === "link" ? "Copiado" : "Copiar link"}</button>
+                <button onClick={() => setRevelando(true)} className="rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-tinta hover:border-tinta/40">Ver a revelação</button>
                 <button onClick={tirarDoAr} className="px-2 text-xs text-slate-500 hover:text-slate-300">Tirar do ar</button>
               </div>
               <p className="mt-2.5 text-xs text-slate-500">No LinkedIn, ponha o link em Editar perfil → Informações de contato → Site, e na seção Em destaque.</p>
 
               {/* Kit de divulgação: QR para o currículo e textos prontos. */}
               {!kit?.ok ? (
-                <button type="button" onClick={abrirKit} disabled={abrindoKit} className="mt-3 text-sm font-semibold text-brand-green hover:underline disabled:opacity-50">
+                <button type="button" onClick={abrirKit} disabled={abrindoKit} className="mt-3 text-sm font-semibold text-acento hover:underline disabled:opacity-50">
                   {abrindoKit ? "Montando o kit..." : "Abrir o kit de divulgação: QR code e textos prontos"}
                 </button>
               ) : (
-                <div className="mt-4 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-[9rem_1fr]">
+                <div className="mt-4 grid gap-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4 sm:grid-cols-[9rem_1fr]">
                   <div>
                     <div className="rounded-xl bg-white p-2" dangerouslySetInnerHTML={{ __html: kit.qrSvg }} />
-                    <button type="button" onClick={() => baixarQr(kit.qrSvg)} className="mt-2 w-full text-center text-xs font-semibold text-brand-green hover:underline">
+                    <button type="button" onClick={() => baixarQr(kit.qrSvg)} className="mt-2 w-full text-center text-xs font-semibold text-acento hover:underline">
                       Baixar o QR
                     </button>
                     <p className="mt-1 text-center text-[0.7rem] text-slate-500">Para o currículo e o crachá</p>
@@ -481,7 +481,7 @@ export default function SiteDoPortfolio({
                       <div key={t.rotulo}>
                         <div className="flex items-baseline justify-between gap-3">
                           <p className="text-xs font-semibold text-slate-300">{t.rotulo}</p>
-                          <button type="button" onClick={() => copiar(t.texto, t.rotulo)} className="shrink-0 text-xs text-brand-green hover:underline">
+                          <button type="button" onClick={() => copiar(t.texto, t.rotulo)} className="shrink-0 text-xs text-acento hover:underline">
                             {copiado === t.rotulo ? "Copiado" : "Copiar"}
                           </button>
                         </div>
@@ -511,10 +511,10 @@ export default function SiteDoPortfolio({
 
             {/* Raio-X: o site é tão bom quanto os projetos que entram nele. */}
             {raioX && projetos > 0 && (
-              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.02]">
+              <div className="mt-5 rounded-2xl border border-tinta/10 bg-tinta/[0.02]">
                 <button type="button" onClick={() => setRaioAberto((v) => !v)} className="flex w-full items-center gap-4 p-4 text-left">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white">Raio-X do portfólio</p>
+                    <p className="text-sm font-semibold text-tinta">Raio-X do portfólio</p>
                     <p className="mt-0.5 text-xs text-slate-400">
                       {raioX.projetos.length + raioX.gerais.length === 0
                         ? "Tudo certo. Seus projetos estão prontos para virar um site forte."
@@ -522,32 +522,32 @@ export default function SiteDoPortfolio({
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
-                    <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/10">
+                    <div className="h-1.5 w-24 overflow-hidden rounded-full bg-tinta/10">
                       <div className={`h-full rounded-full ${raioX.nota >= 85 ? "bg-brand-green" : raioX.nota >= 60 ? "bg-amber-300" : "bg-red-400"}`} style={{ width: `${raioX.nota}%` }} />
                     </div>
-                    <span className="w-8 text-right font-mono text-sm tabular-nums text-white">{raioX.nota}</span>
+                    <span className="w-8 text-right font-mono text-sm tabular-nums text-tinta">{raioX.nota}</span>
                     <span className="text-xs text-slate-500">{raioAberto ? "fechar" : "ver"}</span>
                   </div>
                 </button>
                 {raioAberto && (
-                  <div className="border-t border-white/[0.07] p-4">
+                  <div className="border-t border-tinta/[0.07] p-4">
                     {raioX.fortes.length > 0 && (
                       <p className="text-sm text-slate-300">
-                        <span className="font-semibold text-brand-green">O que já está forte:</span> {raioX.fortes.join(", ")}.
+                        <span className="font-semibold text-acento">O que já está forte:</span> {raioX.fortes.join(", ")}.
                       </p>
                     )}
                     {raioX.gerais.map((a, i) => (
                       <p key={i} className={`mt-2 text-sm ${a.nivel === "grave" ? "text-red-200" : "text-amber-100"}`}>{a.texto}</p>
                     ))}
-                    <ul className="mt-3 divide-y divide-white/[0.06]">
+                    <ul className="mt-3 divide-y divide-tinta/[0.06]">
                       {raioX.projetos.map((p) => (
                         <li key={p.id} className="py-3">
                           <div className="flex items-baseline justify-between gap-3">
-                            <p className="min-w-0 truncate text-sm font-semibold text-white">{p.titulo}</p>
+                            <p className="min-w-0 truncate text-sm font-semibold text-tinta">{p.titulo}</p>
                             <button
                               type="button"
                               onClick={() => window.dispatchEvent(new CustomEvent("portfolio:editar-projeto", { detail: p.id }))}
-                              className="shrink-0 text-xs font-semibold text-brand-green hover:underline"
+                              className="shrink-0 text-xs font-semibold text-acento hover:underline"
                             >
                               Corrigir →
                             </button>
@@ -579,11 +579,11 @@ export default function SiteDoPortfolio({
                     key={r.id}
                     type="button"
                     onClick={() => { setEstilo(r.estilo); setPers(r.pers); }}
-                    className={`flex items-center gap-3 rounded-xl border p-2.5 text-left transition-colors ${sel ? "border-brand-green bg-brand-green/10" : "border-white/10 hover:border-white/30"}`}
+                    className={`flex items-center gap-3 rounded-xl border p-2.5 text-left transition-colors ${sel ? "border-acento bg-brand-green/10" : "border-tinta/10 hover:border-tinta/30"}`}
                   >
-                    <span className="h-10 w-14 shrink-0 overflow-hidden rounded-md border border-white/10"><Miniatura estilo={r.estilo} /></span>
+                    <span className="h-10 w-14 shrink-0 overflow-hidden rounded-md border border-tinta/10"><Miniatura estilo={r.estilo} /></span>
                     <span className="min-w-0">
-                      <span className="block text-sm font-semibold text-white">{r.nome}</span>
+                      <span className="block text-sm font-semibold text-tinta">{r.nome}</span>
                       <span className="block truncate text-xs text-slate-400">{r.para}</span>
                     </span>
                   </button>
@@ -601,29 +601,29 @@ export default function SiteDoPortfolio({
                     aria-checked={sel}
                     onClick={() => setEstilo(e)}
                     className={`group overflow-hidden rounded-xl border text-left transition-all ${
-                      sel ? "border-brand-green ring-1 ring-brand-green" : "border-white/10 hover:-translate-y-0.5 hover:border-white/30"
+                      sel ? "border-acento ring-1 ring-acento" : "border-tinta/10 hover:-translate-y-0.5 hover:border-tinta/30"
                     }`}
                   >
                     <div className="h-[4.5rem] overflow-hidden">
                       <Miniatura estilo={e} />
                     </div>
-                    <p className={`border-t border-white/10 px-2.5 py-2 text-xs font-semibold ${sel ? "bg-brand-green/10 text-white" : "text-slate-300"}`}>{ESTILOS[e].nome}</p>
+                    <p className={`border-t border-tinta/10 px-2.5 py-2 text-xs font-semibold ${sel ? "bg-brand-green/10 text-tinta" : "text-slate-300"}`}>{ESTILOS[e].nome}</p>
                   </button>
                 );
               })}
             </div>
             <div className="mt-3 max-w-3xl">
               <p className="text-sm text-slate-300">
-                <span className="font-semibold text-white">{ESTILOS[estilo].nome}.</span> {ESTILOS[estilo].resumo}
+                <span className="font-semibold text-tinta">{ESTILOS[estilo].nome}.</span> {ESTILOS[estilo].resumo}
               </p>
-              <button type="button" onClick={() => setVerDirecao((v) => !v)} className="mt-1 text-xs text-slate-400 underline decoration-white/20 underline-offset-4 hover:text-white">
+              <button type="button" onClick={() => setVerDirecao((v) => !v)} className="mt-1 text-xs text-slate-400 underline decoration-tinta/20 underline-offset-4 hover:text-tinta">
                 {verDirecao ? "Esconder a direção de arte" : "Ver a direção de arte completa que vai no prompt"}
               </button>
-              {verDirecao && <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-white/10 bg-white/[0.02] p-3 font-sans text-xs leading-relaxed text-slate-400">{ESTILOS[estilo].direcao}</pre>}
+              {verDirecao && <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-tinta/10 bg-tinta/[0.02] p-3 font-sans text-xs leading-relaxed text-slate-400">{ESTILOS[estilo].direcao}</pre>}
             </div>
 
             {/* Personalização por cima do estilo. Cada escolha vira uma linha no prompt. */}
-            <div className="mt-5 grid gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:grid-cols-2">
+            <div className="mt-5 grid gap-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <p className="text-xs font-semibold text-slate-300">Cor de destaque</p>
                 <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Cor de destaque">
@@ -636,10 +636,10 @@ export default function SiteDoPortfolio({
                         role="radio"
                         aria-checked={sel}
                         onClick={() => setPers((x) => ({ ...x, cor: c.hex }))}
-                        className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${sel ? "border-white/60 bg-white/10 text-white" : "border-white/10 text-slate-300 hover:border-white/30"}`}
+                        className={`flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${sel ? "border-tinta/60 bg-tinta/10 text-tinta" : "border-tinta/10 text-slate-300 hover:border-tinta/30"}`}
                       >
                         <span
-                          className="h-3.5 w-3.5 rounded-full border border-white/20"
+                          className="h-3.5 w-3.5 rounded-full border border-tinta/20"
                           style={{ background: c.hex === "auto" ? "conic-gradient(#22c55e,#2f6bff,#ff5a4e,#f5b400,#22c55e)" : c.hex }}
                         />
                         {c.nome}
@@ -657,7 +657,7 @@ export default function SiteDoPortfolio({
               ).map((g) => (
                 <div key={g.chave}>
                   <p className="text-xs font-semibold text-slate-300">{g.rotulo}</p>
-                  <div className="mt-2 inline-flex rounded-lg border border-white/10 p-0.5" role="radiogroup" aria-label={g.rotulo}>
+                  <div className="mt-2 inline-flex rounded-lg border border-tinta/10 p-0.5" role="radiogroup" aria-label={g.rotulo}>
                     {g.opcoes.map(([v, r]) => {
                       const sel = (pers as any)[g.chave] === v;
                       return (
@@ -667,7 +667,7 @@ export default function SiteDoPortfolio({
                           role="radio"
                           aria-checked={sel}
                           onClick={() => setPers((x) => ({ ...x, [g.chave]: v }))}
-                          className={`rounded-md px-3 py-1.5 text-xs transition-colors ${sel ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-white"}`}
+                          className={`rounded-md px-3 py-1.5 text-xs transition-colors ${sel ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-tinta"}`}
                         >
                           {r}
                         </button>
@@ -678,7 +678,7 @@ export default function SiteDoPortfolio({
               ))}
             </div>
             {prontos > 0 ? (
-              <p className={`mt-4 text-sm ${gerando ? "text-slate-400" : "text-brand-green"}`} aria-live="polite">
+              <p className={`mt-4 text-sm ${gerando ? "text-slate-400" : "text-acento"}`} aria-live="polite">
                 {gerando ? "Atualizando o seu prompt com a escolha..." : prompt ? "Seu prompt está pronto, com o estilo e as escolhas acima. É só copiar." : ""}
               </p>
             ) : (
@@ -688,8 +688,8 @@ export default function SiteDoPortfolio({
             {info && (
               <div className="mt-4 flex flex-col gap-1 text-xs text-slate-400">
                 <p>
-                  Entraram <span className="font-semibold text-white">{info.incluidos}</span> {info.incluidos === 1 ? "projeto" : "projetos"} e{" "}
-                  <span className="font-semibold text-white">{info.certificados}</span> {info.certificados === 1 ? "certificado" : "certificados"} com link de verificação.
+                  Entraram <span className="font-semibold text-tinta">{info.incluidos}</span> {info.incluidos === 1 ? "projeto" : "projetos"} e{" "}
+                  <span className="font-semibold text-tinta">{info.certificados}</span> {info.certificados === 1 ? "certificado" : "certificados"} com link de verificação.
                 </p>
                 {info.incluidos === 0 && <p className="text-amber-200">Seu prompt saiu sem nenhum projeto, e o site vai sair vazio. Volte ao passo 1.</p>}
                 {info.foraPorLacuna.length > 0 && (
@@ -700,14 +700,14 @@ export default function SiteDoPortfolio({
             )}
 
             {prompt && (
-              <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02]">
-                <div className="flex flex-wrap items-center gap-2 border-b border-white/[0.07] p-3">
+              <div className="mt-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02]">
+                <div className="flex flex-wrap items-center gap-2 border-b border-tinta/[0.07] p-3">
                   <button onClick={() => copiar(prompt, "prompt")} className={botaoForte}>
                     {copiado === "prompt" ? "Copiado" : "Copiar prompt"}
                   </button>
                   <span className="px-1 text-xs text-slate-500">e cole em</span>
                   {IAS.map((ia) => (
-                    <a key={ia.nome} href={ia.url} target="_blank" rel="noopener" className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-white/40 hover:text-white">
+                    <a key={ia.nome} href={ia.url} target="_blank" rel="noopener" className="rounded-lg border border-tinta/10 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-tinta/40 hover:text-tinta">
                       {ia.nome} ↗
                     </a>
                   ))}
@@ -717,14 +717,14 @@ export default function SiteDoPortfolio({
                   <pre className={`overflow-hidden whitespace-pre-wrap break-words p-4 font-mono text-[11px] leading-relaxed text-slate-400 ${promptAberto ? "max-h-[28rem] overflow-y-auto" : "max-h-28"}`}>{prompt}</pre>
                   {!promptAberto && <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0a1019] to-transparent" />}
                 </div>
-                <button onClick={() => setPromptAberto((v) => !v)} className="w-full border-t border-white/[0.07] py-2 text-xs text-slate-400 hover:text-white">
+                <button onClick={() => setPromptAberto((v) => !v)} className="w-full border-t border-tinta/[0.07] py-2 text-xs text-slate-400 hover:text-tinta">
                   {promptAberto ? "Recolher o prompt" : `Ler o prompt inteiro (${prompt.length.toLocaleString("pt-BR")} caracteres)`}
                 </button>
                 {/* Como pedir em cada IA: é onde o aluno mais trava. */}
-                <div className="border-t border-white/[0.07] p-4">
+                <div className="border-t border-tinta/[0.07] p-4">
                   <div className="flex flex-wrap items-center gap-3">
                     <p className="text-xs font-semibold text-slate-300">Como pedir no</p>
-                    <div className="inline-flex rounded-lg border border-white/10 p-0.5" role="tablist" aria-label="Guia por IA">
+                    <div className="inline-flex rounded-lg border border-tinta/10 p-0.5" role="tablist" aria-label="Guia por IA">
                       {GUIA_IAS.map((g, i) => (
                         <button
                           key={g.nome}
@@ -732,7 +732,7 @@ export default function SiteDoPortfolio({
                           role="tab"
                           aria-selected={ia === i}
                           onClick={() => setIa(i)}
-                          className={`rounded-md px-3 py-1 text-xs transition-colors ${ia === i ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-white"}`}
+                          className={`rounded-md px-3 py-1 text-xs transition-colors ${ia === i ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-tinta"}`}
                         >
                           {g.nome}
                         </button>
@@ -742,22 +742,22 @@ export default function SiteDoPortfolio({
                   <ol className="mt-3 flex flex-col gap-1.5">
                     {GUIA_IAS[ia].passos.map((t, i) => (
                       <li key={i} className="flex gap-2.5 text-xs leading-relaxed text-slate-300">
-                        <span className="font-mono text-brand-green">{i + 1}</span>
+                        <span className="font-mono text-acento">{i + 1}</span>
                         {t}
                       </li>
                     ))}
                   </ol>
-                  <a href={GUIA_IAS[ia].url} target="_blank" rel="noopener" className="mt-3 inline-block text-xs font-semibold text-brand-green hover:underline">
+                  <a href={GUIA_IAS[ia].url} target="_blank" rel="noopener" className="mt-3 inline-block text-xs font-semibold text-acento hover:underline">
                     Abrir o {GUIA_IAS[ia].nome} ↗
                   </a>
                 </div>
               </div>
             )}
-            {promptCopiado && !html && <p className="mt-2 text-xs text-brand-green">Prompt copiado. Cole na IA e, quando ela devolver o código, siga para o passo 3.</p>}
+            {promptCopiado && !html && <p className="mt-2 text-xs text-acento">Prompt copiado. Cole na IA e, quando ela devolver o código, siga para o passo 3.</p>}
           </Passo>
 
           <Passo n={3} titulo="Cole o HTML que a IA devolveu" estado={estado(2)}>
-            <div className={`rounded-2xl border border-dashed transition-colors ${html ? "border-white/15" : "border-white/20 hover:border-brand-green/50"}`}>
+            <div className={`rounded-2xl border border-dashed transition-colors ${html ? "border-tinta/15" : "border-tinta/20 hover:border-acento/50"}`}>
               <textarea
                 value={html}
                 onChange={(e) => { setHtml(e.target.value); setPrevia(false); setAuditoria(null); }}
@@ -766,9 +766,9 @@ export default function SiteDoPortfolio({
                 placeholder="Cole aqui o código inteiro, do <!doctype html> ao </html>. Pode vir com o texto que a IA escreveu em volta: a Academy separa sozinha."
                 className="w-full resize-y rounded-2xl bg-transparent px-4 py-3 font-mono text-xs text-slate-200 placeholder:font-sans placeholder:text-sm placeholder:text-slate-500 outline-none"
               />
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/[0.07] px-4 py-2.5">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-tinta/[0.07] px-4 py-2.5">
                 {!html ? (
-                  <button onClick={colarDaAreaDeTransferencia} className="text-sm font-semibold text-brand-green hover:underline">Colar da área de transferência</button>
+                  <button onClick={colarDaAreaDeTransferencia} className="text-sm font-semibold text-acento hover:underline">Colar da área de transferência</button>
                 ) : (
                   leitura && (
                     <span className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
@@ -793,15 +793,15 @@ export default function SiteDoPortfolio({
             {auditoria && (
               <div
                 className={`mt-4 rounded-2xl border p-4 ${
-                  temErro ? "border-red-400/40 bg-red-400/[0.06]" : auditoria.achados.length ? "border-amber-400/40 bg-amber-400/[0.06]" : "border-brand-green/40 bg-brand-green/[0.06]"
+                  temErro ? "border-red-400/40 bg-red-400/[0.06]" : auditoria.achados.length ? "border-amber-400/40 bg-amber-400/[0.06]" : "border-acento/40 bg-brand-green/[0.06]"
                 }`}
               >
                 <div className="flex items-center justify-between gap-4">
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-tinta">
                     {auditoria.achados.length === 0 ? "Site conferido: pronto para publicar." : temErro ? "O site precisa de correção antes de ir ao ar." : "O site pode ir ao ar, mas vale ajustar."}
                   </p>
                   <div className="flex shrink-0 items-center gap-2">
-                    <div className="h-1.5 w-20 overflow-hidden rounded-full bg-white/10">
+                    <div className="h-1.5 w-20 overflow-hidden rounded-full bg-tinta/10">
                       <div className={`h-full rounded-full ${temErro ? "bg-red-400" : auditoria.nota < 90 ? "bg-amber-300" : "bg-brand-green"}`} style={{ width: `${auditoria.nota}%` }} />
                     </div>
                     <span className="font-mono text-sm tabular-nums text-slate-200">{auditoria.nota}</span>
@@ -809,7 +809,7 @@ export default function SiteDoPortfolio({
                 </div>
                 {auditoria.achados.length > 0 && (
                   <>
-                    <ul className="mt-3 flex flex-col divide-y divide-white/[0.06] text-sm">
+                    <ul className="mt-3 flex flex-col divide-y divide-tinta/[0.06] text-sm">
                       {auditoria.achados.map((a, i) => (
                         <li key={i} className={`py-1.5 ${a.nivel === "erro" ? "text-red-200" : "text-amber-100"}`}>
                           <span className="font-semibold">{a.nivel === "erro" ? "Corrigir: " : "Ajustar: "}</span>
@@ -818,7 +818,7 @@ export default function SiteDoPortfolio({
                       ))}
                     </ul>
                     <div className="mt-3 flex flex-wrap items-center gap-3">
-                      <button onClick={() => copiar(auditoria.pedidoDeCorrecao, "correcao")} className="rounded-lg bg-white/10 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/15">
+                      <button onClick={() => copiar(auditoria.pedidoDeCorrecao, "correcao")} className="rounded-lg bg-tinta/10 px-3 py-1.5 text-sm font-semibold text-tinta hover:bg-tinta/15">
                         {copiado === "correcao" ? "Copiado" : "Copiar pedido de correção"}
                       </button>
                       <span className="text-xs text-slate-400">Cole na mesma conversa da IA, ela devolve o site corrigido. Depois cole o novo HTML aqui.</span>
@@ -831,8 +831,8 @@ export default function SiteDoPortfolio({
             {/* Refinar na mesma conversa da IA. O primeiro site raramente é o
                 melhor: pedir ajustes é a parte que o aluno mais aprende. */}
             {previa && (
-              <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-                <p className="text-sm font-semibold text-white">Refinar com a IA</p>
+              <div className="mt-4 rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4">
+                <p className="text-sm font-semibold text-tinta">Refinar com a IA</p>
                 <p className="mt-0.5 text-xs text-slate-400">Copie um pedido, cole na mesma conversa da IA e cole aqui o código novo que ela devolver.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {REFINAMENTOS.map((r) => (
@@ -841,7 +841,7 @@ export default function SiteDoPortfolio({
                       type="button"
                       onClick={() => copiar(r.texto, `ref-${r.rotulo}`)}
                       title={r.texto}
-                      className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-slate-200 transition-colors hover:border-brand-green/60 hover:text-white"
+                      className="rounded-lg border border-tinta/15 px-3 py-1.5 text-xs text-slate-200 transition-colors hover:border-acento/60 hover:text-tinta"
                     >
                       {copiado === `ref-${r.rotulo}` ? "Copiado" : r.rotulo}
                     </button>
@@ -851,17 +851,17 @@ export default function SiteDoPortfolio({
             )}
 
             {previa && (
-              <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-[#0b1220]">
-                <div className="flex items-center justify-between gap-3 border-b border-white/[0.07] px-3 py-2">
+              <div className="mt-4 overflow-hidden rounded-2xl border border-tinta/10 bg-[#0b1220]">
+                <div className="flex items-center justify-between gap-3 border-b border-tinta/[0.07] px-3 py-2">
                   <span className="text-xs text-slate-400">Pré-visualização</span>
-                  <div className="flex rounded-lg border border-white/10 p-0.5 text-xs" role="tablist" aria-label="Tamanho da tela">
+                  <div className="flex rounded-lg border border-tinta/10 p-0.5 text-xs" role="tablist" aria-label="Tamanho da tela">
                     {(["computador", "celular"] as const).map((a) => (
                       <button
                         key={a}
                         role="tab"
                         aria-selected={aparelho === a}
                         onClick={() => setAparelho(a)}
-                        className={`rounded-md px-3 py-1 capitalize transition-colors ${aparelho === a ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-white"}`}
+                        className={`rounded-md px-3 py-1 capitalize transition-colors ${aparelho === a ? "bg-white text-[#0b1220]" : "text-slate-300 hover:text-tinta"}`}
                       >
                         {a}
                       </button>
@@ -884,11 +884,11 @@ export default function SiteDoPortfolio({
             <label className="flex cursor-pointer items-start gap-3 text-sm text-slate-300">
               <span className="relative mt-0.5 inline-flex shrink-0">
                 <input type="checkbox" checked={mostrarUniverso} onChange={(e) => setMostrarUniverso(e.target.checked)} className="peer sr-only" />
-                <span className="h-5 w-9 rounded-full bg-white/15 transition-colors peer-checked:bg-brand-green peer-focus-visible:ring-2 peer-focus-visible:ring-brand-green/60" />
+                <span className="h-5 w-9 rounded-full bg-tinta/15 transition-colors peer-checked:bg-brand-green peer-focus-visible:ring-2 peer-focus-visible:ring-acento/60" />
                 <span className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform peer-checked:translate-x-4" />
               </span>
               <span>
-                <span className="font-medium text-white">Mostrar meu Universo 4D na página</span>
+                <span className="font-medium text-tinta">Mostrar meu Universo 4D na página</span>
                 <span className="block text-xs text-slate-400">As competências acendem a partir dos seus projetos, na ordem em que você os fez.</span>
               </span>
             </label>

@@ -43,7 +43,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
           href={addToProfile}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl bg-[#0a66c2] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02]"
+          className="inline-flex items-center gap-2 rounded-xl bg-[#0a66c2] px-6 py-3 text-sm font-semibold text-tinta transition-transform hover:scale-[1.02]"
         >
           <LinkedInIcon />
           {tr("Adicionar ao LinkedIn")}
@@ -51,7 +51,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
         <button
           onClick={printCertificate}
           disabled={preparing}
-          className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+          className="rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
         >
           {preparing ? "Preparando certificado…" : "Baixar / Imprimir PDF"}
         </button>
@@ -59,7 +59,7 @@ export default function CertActions({ shareUrl, courseTitle, code, dateISO }: { 
           href={share}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-brand-green/50 hover:text-brand-green"
+          className="inline-flex items-center gap-2 rounded-xl border border-tinta/15 px-6 py-3 text-sm font-semibold text-tinta transition-colors hover:border-acento/50 hover:text-acento"
         >
           <LinkedInIcon />
           {tr("Compartilhar")}

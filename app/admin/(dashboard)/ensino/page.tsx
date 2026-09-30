@@ -75,30 +75,30 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
 
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Painel de Ensino</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Painel de Ensino</h1>
         <p className="mt-1 text-sm text-slate-400">Desempenho do Academy: engajamento, conclusão, satisfação (NPS) e ranking.</p>
 
-        {searchParams?.ok && <div className="mt-4 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</div>}
+        {searchParams?.ok && <div className="mt-4 rounded-xl border border-acento/30 bg-brand-green/10 px-4 py-3 text-sm text-acento">{searchParams.ok}</div>}
         {searchParams?.error && <div className="mt-4 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200">{searchParams.error}</div>}
 
         {/* KPIs */}
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {kpis.map((k) => (
-            <div key={k.label} className="glass rounded-2xl border border-white/8 p-4">
-              <p className="font-display text-2xl font-bold text-white">{k.value}</p>
+            <div key={k.label} className="glass rounded-2xl border border-tinta/8 p-4">
+              <p className="font-display text-2xl font-bold text-tinta">{k.value}</p>
               <p className="text-xs text-slate-400">{k.label}</p>
             </div>
           ))}
         </div>
 
         {/* Por curso */}
-        <h2 className="mt-8 font-display text-lg font-bold text-white">Por curso</h2>
-        <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
+        <h2 className="mt-8 font-display text-lg font-bold text-tinta">Por curso</h2>
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-tinta/8">
           <table className="w-full min-w-[720px] text-left text-sm">
-            <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
+            <thead className="bg-tinta/[0.03] text-xs uppercase tracking-wide text-slate-400">
               <tr><th className="px-4 py-3">Curso</th><th className="px-4 py-3 text-center">Matrículas</th><th className="px-4 py-3 text-center">Conclusões</th><th className="px-4 py-3 text-center">Certificados</th><th className="px-4 py-3 text-center">NPS</th></tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-tinta/5">
               {(courses ?? []).map((c: any) => {
                 const en = enrollPer[c.id] || 0;
                 const co = completionsPer[c.id] || 0;
@@ -106,11 +106,11 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
                 const n = npsOf(npsPer[c.id] || []);
                 return (
                   <tr key={c.id} className="text-slate-200">
-                    <td className="px-4 py-3"><Link href={`/admin/cursos/${c.id}`} className="font-medium text-white hover:text-brand-green">{c.title}</Link>{!c.published && <span className="ml-2 rounded-full bg-white/5 px-2 py-0.5 text-[0.6rem] uppercase text-slate-400">rascunho</span>}</td>
+                    <td className="px-4 py-3"><Link href={`/admin/cursos/${c.id}`} className="font-medium text-tinta hover:text-acento">{c.title}</Link>{!c.published && <span className="ml-2 rounded-full bg-tinta/5 px-2 py-0.5 text-[0.6rem] uppercase text-slate-400">rascunho</span>}</td>
                     <td className="px-4 py-3 text-center text-slate-300">{en}</td>
                     <td className="px-4 py-3 text-center text-slate-300">{co} <span className="text-xs text-slate-500">({rate}%)</span></td>
                     <td className="px-4 py-3 text-center text-slate-300">{certPer[c.id] || 0}</td>
-                    <td className="px-4 py-3 text-center">{n.nps == null ? <span className="text-slate-500">—</span> : <span className={`font-semibold ${n.nps >= 50 ? "text-brand-green" : n.nps >= 0 ? "text-amber-300" : "text-red-300"}`}>{n.nps}</span>} <span className="text-[0.65rem] text-slate-500">({n.n})</span></td>
+                    <td className="px-4 py-3 text-center">{n.nps == null ? <span className="text-slate-500">—</span> : <span className={`font-semibold ${n.nps >= 50 ? "text-acento" : n.nps >= 0 ? "text-amber-300" : "text-red-300"}`}>{n.nps}</span>} <span className="text-[0.65rem] text-slate-500">({n.n})</span></td>
                   </tr>
                 );
               })}
@@ -120,14 +120,14 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
 
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           {/* Ranking */}
-          <div className="glass rounded-2xl border border-white/8 p-5">
+          <div className="glass rounded-2xl border border-tinta/8 p-5">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold text-white">Ranking (top 10)</h2>
+              <h2 className="font-display text-lg font-bold text-tinta">Ranking (top 10)</h2>
               <div className="flex items-center gap-2">
                 <form action={awardRankingWinner}>
                   <button className="rounded-lg border border-amber-300/40 bg-amber-300/10 px-3 py-1.5 text-xs font-semibold text-amber-200 hover:bg-amber-300/20">🏆 Premiar 1º</button>
                 </form>
-                <Link href="/conta/ranking" target="_blank" className="text-xs text-brand-green hover:underline">Ver ↗</Link>
+                <Link href="/conta/ranking" target="_blank" className="text-xs text-acento hover:underline">Ver ↗</Link>
               </div>
             </div>
             <div className="mt-4 space-y-2">
@@ -136,38 +136,38 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
                 <div key={id} className="flex items-center gap-3">
                   <span className="w-5 text-center text-sm font-bold text-slate-400">{i + 1}</span>
                   <Avatar name={displayName(nameById, id)} size="xs" />
-                  <span className="flex-1 truncate text-sm text-white">{displayName(nameById, id)}
+                  <span className="flex-1 truncate text-sm text-tinta">{displayName(nameById, id)}
                     {(badgeById[id] || []).map((b) => <span key={b} className="ml-1.5 rounded-full bg-brand-teal/15 px-2 py-0.5 text-[0.55rem] font-semibold uppercase text-brand-teal">{BADGE_LABELS[b] || b}</span>)}
                   </span>
-                  <span className="text-sm font-semibold text-brand-green">{pts} pts</span>
+                  <span className="text-sm font-semibold text-acento">{pts} pts</span>
                 </div>
               ))}
             </div>
-            <form action={grantBadge} className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/8 pt-4">
-              <input name="email" required placeholder="e-mail do aluno" className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-              <select name="badge" className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white [&>option]:bg-ink-900">
+            <form action={grantBadge} className="mt-4 flex flex-wrap items-center gap-2 border-t border-tinta/8 pt-4">
+              <input name="email" required placeholder="e-mail do aluno" className="flex-1 rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
+              <select name="badge" className="rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta [&>option]:bg-ink-900">
                 <option value="fundador">Fundador</option>
                 <option value="top">Top do ranking</option>
               </select>
-              <button className="rounded-lg bg-white/10 px-3 py-2 text-xs font-semibold text-white hover:bg-white/15">Conceder selo</button>
+              <button className="rounded-lg bg-tinta/10 px-3 py-2 text-xs font-semibold text-tinta hover:bg-tinta/15">Conceder selo</button>
             </form>
-            <form action={grantChallengePoints} className="mt-3 flex flex-wrap items-center gap-2 border-t border-white/8 pt-4">
-              <input name="email" required placeholder="e-mail do aluno" className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-              <input name="points" type="number" min="1" placeholder="pts" className="w-20 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-              <input name="reason" placeholder="motivo (ex.: desafio 1)" className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-              <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-3 py-2 text-xs font-semibold text-ink-900">+ Pontos (desafio)</button>
+            <form action={grantChallengePoints} className="mt-3 flex flex-wrap items-center gap-2 border-t border-tinta/8 pt-4">
+              <input name="email" required placeholder="e-mail do aluno" className="flex-1 rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
+              <input name="points" type="number" min="1" placeholder="pts" className="w-20 rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
+              <input name="reason" placeholder="motivo (ex.: desafio 1)" className="flex-1 rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
+              <button className="rounded-lg bg-marca-verde px-3 py-2 text-xs font-semibold text-sobre-acento">+ Pontos (desafio)</button>
             </form>
           </div>
 
           {/* Comentários NPS */}
-          <div className="glass rounded-2xl border border-white/8 p-5">
-            <h2 className="font-display text-lg font-bold text-white">Comentários recentes (NPS)</h2>
+          <div className="glass rounded-2xl border border-tinta/8 p-5">
+            <h2 className="font-display text-lg font-bold text-tinta">Comentários recentes (NPS)</h2>
             <div className="mt-4 space-y-3">
               {recentComments.length === 0 && <p className="text-sm text-slate-500">Sem comentários ainda.</p>}
               {recentComments.map((r: any, i: number) => (
-                <div key={i} className="rounded-xl border border-white/8 bg-white/[0.02] p-3">
+                <div key={i} className="rounded-xl border border-tinta/8 bg-tinta/[0.02] p-3">
                   <div className="flex items-center gap-2">
-                    <span className={`grid h-6 w-6 place-items-center rounded-full text-[0.65rem] font-bold ${r.score >= 9 ? "bg-brand-green/20 text-brand-green" : r.score >= 7 ? "bg-amber-400/20 text-amber-300" : "bg-red-400/20 text-red-300"}`}>{r.score}</span>
+                    <span className={`grid h-6 w-6 place-items-center rounded-full text-[0.65rem] font-bold ${r.score >= 9 ? "bg-brand-green/20 text-acento" : r.score >= 7 ? "bg-amber-400/20 text-amber-300" : "bg-red-400/20 text-red-300"}`}>{r.score}</span>
                     <span className="text-xs text-slate-400">{displayName(nameById, r.user_id)}</span>
                   </div>
                   <p className="mt-1.5 text-sm text-slate-200">{r.comment}</p>
@@ -181,7 +181,7 @@ export default async function EnsinoPanel({ searchParams }: { searchParams: { ok
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Painel de Ensino</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Painel de Ensino</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — verifique se o SQL de NPS foi rodado."} /></div>
       </div>
     );

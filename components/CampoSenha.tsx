@@ -22,7 +22,7 @@ export default function CampoSenha({ className = "", ...props }: Props) {
         onClick={() => setVisivel((v) => !v)}
         aria-label={visivel ? "Esconder senha" : "Mostrar senha"}
         aria-pressed={visivel}
-        className="absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-400 transition-colors hover:text-white"
+        className="absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-400 transition-colors hover:text-tinta"
       >
         {visivel ? <EyeOff size={18} strokeWidth={1.75} aria-hidden="true" /> : <Eye size={18} strokeWidth={1.75} aria-hidden="true" />}
       </button>

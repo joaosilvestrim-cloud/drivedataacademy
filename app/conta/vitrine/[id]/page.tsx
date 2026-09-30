@@ -68,19 +68,19 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
     <div>
       <Link
         href="/conta/vitrine"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 transition-colors hover:text-brand-green"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 transition-colors hover:text-acento"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
         {tr("Voltar para a vitrine")}
       </Link>
 
-      <div className="glass mt-5 rounded-3xl border border-white/8 p-6 sm:p-8">
+      <div className="glass mt-5 rounded-3xl border border-tinta/8 p-6 sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-          <Avatar name={p.full_name} src={p.avatar_url} size="lg" className="h-20 w-20 shrink-0 text-2xl ring-2 ring-white/10" />
+          <Avatar name={p.full_name} src={p.avatar_url} size="lg" className="h-20 w-20 shrink-0 text-2xl ring-2 ring-tinta/10" />
           <div className="min-w-0 flex-1">
-            <h1 className="font-display text-2xl font-bold text-white sm:text-3xl">
+            <h1 className="font-display text-2xl font-bold text-tinta sm:text-3xl">
               {p.full_name}
-              {souEu && <span className="ml-2 align-middle text-sm font-normal text-brand-green">{tr("(você)")}</span>}
+              {souEu && <span className="ml-2 align-middle text-sm font-normal text-acento">{tr("(você)")}</span>}
             </h1>
             {p.headline && <p className="mt-1 text-slate-300">{p.headline}</p>}
             <p className="mt-1.5 text-xs text-slate-500">
@@ -100,14 +100,14 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
             )}
           </div>
 
-          <div className="shrink-0 rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-3 text-center">
-            <p className="font-display text-2xl font-bold text-brand-green">{pts}</p>
+          <div className="shrink-0 rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3 text-center">
+            <p className="font-display text-2xl font-bold text-acento">{pts}</p>
             <p className="text-[0.7rem] uppercase tracking-wide text-slate-500">{tr("pontos")}</p>
           </div>
         </div>
 
         {skills.length > 0 && (
-          <div className="mt-7 border-t border-white/8 pt-6">
+          <div className="mt-7 border-t border-tinta/8 pt-6">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Especialidades")}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {skills.map((s) => (
@@ -120,20 +120,20 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
         )}
 
         {p.bio && (
-          <div className="mt-7 border-t border-white/8 pt-6">
+          <div className="mt-7 border-t border-tinta/8 pt-6">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Sobre")}</h2>
             <p className="mt-3 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-slate-300">{p.bio}</p>
           </div>
         )}
 
-        <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-white/8 pt-6">
+        <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-tinta/8 pt-6">
           {links.map((l) => (
             <a
               key={l.label}
               href={l.url}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento"
             >
               {l.label}
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -141,7 +141,7 @@ export default async function AlunoVitrinePage({ params }: { params: { id: strin
           ))}
           {links.length === 0 && !souEu && <p className="text-sm text-slate-500">{tr("Este aluno ainda não publicou portfólio nem LinkedIn.")}</p>}
           {souEu && (
-            <Link href="/conta/perfil" className="inline-flex items-center gap-1.5 rounded-xl border border-brand-green/40 px-4 py-2 text-sm font-medium text-brand-green hover:bg-brand-green/10">
+            <Link href="/conta/perfil" className="inline-flex items-center gap-1.5 rounded-xl border border-acento/40 px-4 py-2 text-sm font-medium text-acento hover:bg-brand-green/10">
               {tr("Editar meu perfil")}
             </Link>
           )}

@@ -147,13 +147,13 @@ function ItemMenu({ it, active, qtd, onNavigate, grupo }: { it: Item; active: bo
         href={it.href}
         onClick={onNavigate}
         aria-current={active ? "page" : undefined}
-        className={`relative flex items-center gap-3 overflow-hidden rounded-lg px-3 py-2 text-sm transition-colors ${
-          active ? "bg-white/10 font-medium text-white" : pend ? "font-medium text-amber-100 hover:bg-white/5" : "text-slate-300 hover:bg-white/5 hover:text-white"
+        className={`relative flex items-center gap-3 overflow-hidden rounded-full px-3 py-2 text-sm transition-colors ${
+          active ? "bg-marca-verde font-semibold text-marca" : pend ? "font-medium text-amber-100 hover:bg-tinta/10" : "text-slate-300 hover:bg-tinta/10 hover:text-tinta"
         }`}
       >
         {/* Pendência: o fundo pulsa até alguém atuar. */}
-        {pend && !active && <span aria-hidden="true" className="pointer-events-none absolute inset-0 animate-pulse rounded-lg bg-amber-400/15 ring-1 ring-inset ring-amber-400/40" />}
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={`shrink-0 ${active ? "text-brand-green" : "text-slate-500"}`}>
+        {pend && !active && <span aria-hidden="true" className="pointer-events-none absolute inset-0 animate-pulse rounded-full bg-amber-400/15 ring-1 ring-inset ring-amber-400/40" />}
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={`shrink-0 ${active ? "text-marca" : "text-slate-400"}`}>
           <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <span className="min-w-0">
@@ -163,7 +163,7 @@ function ItemMenu({ it, active, qtd, onNavigate, grupo }: { it: Item; active: bo
         {pend && (
           <span className="relative ml-auto flex">
             <span aria-hidden="true" className="absolute inset-0 animate-ping rounded-full bg-amber-400 opacity-60" />
-            <span className="relative grid min-w-5 place-items-center rounded-full bg-amber-400 px-1.5 text-[0.65rem] font-bold text-ink-900">
+            <span className="relative grid min-w-5 place-items-center rounded-full bg-amber-400 px-1.5 text-[0.65rem] font-bold text-sobre-acento">
               {qtd}
               <span className="sr-only"> pendente{qtd === 1 ? "" : "s"}</span>
             </span>
@@ -207,7 +207,7 @@ function NavList({ onNavigate, badges }: { onNavigate?: () => void; badges?: Bad
           onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
           placeholder="Buscar tela..."
           aria-label="Buscar tela no menu"
-          className="w-full rounded-lg border border-white/10 bg-white/[0.04] py-2 pl-8 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/50"
+          className="w-full rounded-full border border-tinta/15 bg-tinta/[0.06] py-2 pl-8 pr-3 text-sm text-tinta placeholder:text-slate-400 outline-none focus:border-marca-verde"
         />
       </div>
 
@@ -231,14 +231,14 @@ function NavList({ onNavigate, badges }: { onNavigate?: () => void; badges?: Bad
                   type="button"
                   onClick={() => alternar(group.id, aberto)}
                   aria-expanded={aberto}
-                  className="mb-1 flex w-full items-center gap-2 rounded-md px-3 py-1 text-left text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-300"
+                  className="mb-1 flex w-full items-center gap-2 rounded-md px-3 py-1 text-left text-xs font-semibold text-slate-400 transition-colors hover:text-tinta"
                 >
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true" className={`transition-transform ${aberto ? "rotate-90" : ""}`}>
                     <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   {group.title}
                   {!aberto && pendGrupo > 0 && (
-                    <span className="ml-auto rounded-full bg-amber-400 px-1.5 text-[0.6rem] font-bold text-ink-900">{pendGrupo}</span>
+                    <span className="ml-auto rounded-full bg-amber-400 px-1.5 text-[0.6rem] font-bold text-sobre-acento">{pendGrupo}</span>
                   )}
                 </button>
               )}
@@ -295,8 +295,8 @@ export default function AdminShell({ email, children, badges: inicial }: { email
   return (
     <div className="min-h-screen">
       {/* Barra superior (mobile) */}
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur lg:hidden">
-        <button onClick={() => setOpen(true)} aria-label={total > 0 ? `Menu, ${total} pendência${total === 1 ? "" : "s"}` : "Menu"} className="relative grid h-9 w-9 place-items-center rounded-lg border border-white/10">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-tinta/10 bg-white px-4 py-3 lg:hidden">
+        <button onClick={() => setOpen(true)} aria-label={total > 0 ? `Menu, ${total} pendência${total === 1 ? "" : "s"}` : "Menu"} className="relative grid h-9 w-9 place-items-center rounded-full border border-tinta/15">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" /></svg>
           {total > 0 && (
             <span aria-hidden="true" className="absolute -right-1 -top-1 flex h-3 w-3">
@@ -305,18 +305,18 @@ export default function AdminShell({ email, children, badges: inicial }: { email
             </span>
           )}
         </button>
-        <span className="font-display text-sm font-bold text-white">Portal <span className="text-gradient">DriveData</span></span>
+        <span className="text-sm font-bold text-tinta">Portal <span className="text-marca-azul">DriveData</span></span>
         <SignOutButton />
       </header>
 
       {/* Drawer (mobile) */}
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 left-0 w-72 max-w-[85%] overflow-y-auto border-r border-white/10 bg-ink-900 p-4">
+          <div className="absolute inset-0 bg-obsidian/40" onClick={() => setOpen(false)} />
+          <div className="escuro absolute inset-y-0 left-0 w-72 max-w-[85%] overflow-y-auto bg-marca p-4">
             <div className="mb-6 flex items-center justify-between">
-              <span className="font-display text-lg font-bold text-white">Portal <span className="text-gradient">DriveData</span></span>
-              <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
+              <span className="text-lg font-bold text-white">Portal <span className="text-marca-verde">DriveData</span></span>
+              <button onClick={() => setOpen(false)} aria-label="Fechar" className="grid h-8 w-8 place-items-center rounded-full border border-tinta/15 text-slate-400">✕</button>
             </div>
             <NavList onNavigate={() => setOpen(false)} badges={badges} />
           </div>
@@ -324,14 +324,14 @@ export default function AdminShell({ email, children, badges: inicial }: { email
       )}
 
       {/* Sidebar (desktop) */}
-      <aside className="fixed inset-y-0 left-0 hidden w-60 flex-col border-r border-white/10 bg-white/[0.02] p-4 lg:flex">
-        <Link href="/admin" className="mb-8 block px-2 font-display text-lg font-bold text-white">
-          Portal <span className="text-gradient">DriveData</span>
+      <aside className="escuro fixed inset-y-0 left-0 hidden w-60 flex-col bg-marca p-4 lg:flex">
+        <Link href="/admin" className="mb-8 block px-2 text-lg font-bold text-white">
+          Portal <span className="text-marca-verde">DriveData</span>
         </Link>
         <div className="flex-1 overflow-y-auto">
           <NavList badges={badges} />
         </div>
-        <div className="mt-4 border-t border-white/10 pt-4">
+        <div className="mt-4 border-t border-tinta/10 pt-4">
           <p className="truncate px-2 text-xs text-slate-500">{email}</p>
           <div className="mt-2 px-2">
             <SignOutButton />

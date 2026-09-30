@@ -167,7 +167,7 @@ export default async function Engajamento({ dias }: { dias: number }) {
               <span key="d" className="font-mono tabular-nums">{a.sessoes}</span>,
               <span key="e" className="font-mono tabular-nums">{semVideo ? "—" : a.video ? horas(a.video) : "0"}</span>,
               <span key="f" className="font-mono tabular-nums">{a.aulas}</span>,
-              <span key="g" className={sumido ? "font-medium text-ds-danger" : assinante ? "text-ds-accent" : "text-ds-text-3"}>
+              <span key="g" className={sumido ? "font-medium text-ds-danger" : assinante ? "text-acento" : "text-ds-text-3"}>
                 {sumido ? (ultimo ? "Sumido" : "Nunca entrou") : assinante ? "Assinante ativo" : "Sem assinatura"}
               </span>,
             ];

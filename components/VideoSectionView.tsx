@@ -14,9 +14,9 @@ export default function VideoSectionView({ ids }: { ids: string[] }) {
     <section id="video" className="relative mx-auto max-w-5xl px-6 py-20 scroll-mt-24">
       <Reveal>
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{t.video.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl">
-            {t.video.titlePre} <span className="text-gradient">{t.video.titleGrad}</span>
+          <p className="text-sm font-semibold text-marca">{t.video.eyebrow}</p>
+          <h2 className="mt-3 text-[2.25rem] font-bold leading-[1.1] text-obsidian sm:text-[2.8rem]">
+            {t.video.titlePre} <span className="text-marca-azul">{t.video.titleGrad}</span>
           </h2>
         </div>
       </Reveal>
@@ -26,13 +26,13 @@ export default function VideoSectionView({ ids }: { ids: string[] }) {
           <VideoCarousel ids={ids} />
         ) : (
           <div className="mx-auto mt-10 max-w-4xl">
-            <div className="glow-border overflow-hidden rounded-[1.75rem]">
-              <div className="relative aspect-video w-full overflow-hidden rounded-[1.75rem] bg-ink-900">
+            <div className="escuro overflow-hidden rounded-grande">
+              <div className="relative aspect-video w-full overflow-hidden rounded-grande bg-marca">
                 <div className="absolute inset-0 grid place-items-center text-center">
                   <div className="grid-bg absolute inset-0 opacity-30" />
                   <div className="relative">
-                    <div className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-white/15 bg-white/5">
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" className="text-brand-green">
+                    <div className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-tinta/15 bg-tinta/5">
+                      <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" className="text-acento">
                         <path d="M8 5v14l11-7z" />
                       </svg>
                     </div>
@@ -48,10 +48,10 @@ export default function VideoSectionView({ ids }: { ids: string[] }) {
       {/* Microsoft Partner */}
       <Reveal delay={0.15}>
         <div className="mt-10 flex flex-col items-center gap-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">
+          <p className="text-sm font-medium text-slate-500">
             {t.video.partner}
           </p>
-          <div className="rounded-2xl border border-white/10 bg-white px-6 py-4">
+          <div className="rounded-srf bg-white px-6 py-4 shadow-fio">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/microsoft-partner.png" alt={tr("Microsoft Partner")} className="h-10 w-auto" />
           </div>

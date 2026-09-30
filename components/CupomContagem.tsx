@@ -75,18 +75,18 @@ export default function CupomContagem({
   }
 
   return (
-    <div className="mt-5 inline-flex max-w-full flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl border border-dashed border-brand-green/45 bg-brand-green/[0.07] px-5 py-4">
-      <span className="flex items-center gap-2.5 text-brand-green">
+    <div className="mt-5 inline-flex max-w-full flex-wrap items-center gap-x-5 gap-y-3 rounded-srf bg-marca-nevoa px-5 py-4">
+      <span className="flex items-center gap-2.5 text-acento">
         <Cupom />
         <button
           type="button"
           onClick={copiar}
           title={tr("Copiar o código")}
-          className="font-mono text-base font-bold tracking-wide text-white transition-colors hover:text-brand-green"
+          className="font-mono text-base font-bold tracking-wide text-tinta transition-colors hover:text-acento"
         >
           CUPOM: {codigo}
         </button>
-        <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-brand-green">{desconto}</span>
+        <span className="rounded-full bg-marca px-2.5 py-0.5 text-xs font-semibold text-marca-verde">{desconto}</span>
       </span>
 
       <span className="flex flex-col gap-1.5">
@@ -96,7 +96,7 @@ export default function CupomContagem({
         <span className="inline-flex items-end gap-1.5" role="timer" aria-label={`O cupom ${codigo} vence em ${falta}`}>
           {blocos.map((b, i) => (
             <span key={i} className="flex flex-col items-center">
-              <span className="min-w-[2.1rem] rounded-md border border-brand-green/30 bg-ink-900/70 px-1.5 py-1 text-center font-mono text-sm font-bold tabular-nums text-white" aria-hidden="true">
+              <span className="min-w-[2.1rem] rounded-md bg-white px-1.5 py-1 text-center font-mono text-sm font-bold tabular-nums text-tinta" aria-hidden="true">
                 {b.r === "dia" || b.r === "dias" ? b.v : dois(b.v)}
               </span>
               <span className="mt-0.5 text-[0.58rem] uppercase tracking-wider text-slate-500" aria-hidden="true">{b.r}</span>
@@ -106,7 +106,7 @@ export default function CupomContagem({
       </span>
 
       <span className="text-xs text-slate-400" aria-live="polite">
-        {copiado ? <span className="text-brand-green">{tr("código copiado")}</span> : tr("use no checkout")}
+        {copiado ? <span className="text-acento">{tr("código copiado")}</span> : tr("use no checkout")}
       </span>
     </div>
   );

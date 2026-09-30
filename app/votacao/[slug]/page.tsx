@@ -48,15 +48,15 @@ export default async function VotacaoPage({
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Link href="/" aria-label={tr("DriveData Academy")}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt={tr("DriveData Academy")} className="h-9 w-auto" />
+            <img src="/logo-claro.png" alt={tr("DriveData Academy")} className="h-9 w-auto" />
           </Link>
           {/* Quem chega pelo menu do aluno precisa de um caminho de volta. */}
-          <Link href="/conta" className="text-sm text-slate-400 transition-colors hover:text-white">
+          <Link href="/conta" className="text-sm text-slate-400 transition-colors hover:text-tinta">
             {tr("← Voltar para a plataforma")}
           </Link>
         </div>
 
-        <h1 className="mt-10 font-display text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">{votacao.title}</h1>
+        <h1 className="mt-10 font-display text-3xl font-bold leading-tight tracking-tight text-tinta sm:text-4xl">{votacao.title}</h1>
         {votacao.description && <p className="mt-4 whitespace-pre-line text-slate-300/90">{votacao.description}</p>}
 
         <p className="mt-4 text-sm text-slate-400">
@@ -75,7 +75,7 @@ export default async function VotacaoPage({
         </p>
 
         {votou && (
-          <p className="mt-8 rounded-2xl border border-brand-green/30 bg-brand-green/10 px-5 py-4 text-brand-green" role="status">
+          <p className="mt-8 rounded-2xl border border-acento/30 bg-brand-green/10 px-5 py-4 text-acento" role="status">
             {tr("Voto registrado. Obrigado por ajudar a montar a agenda.")}
           </p>
         )}
@@ -85,10 +85,10 @@ export default async function VotacaoPage({
             {resultado.map((o) => (
               <div key={o.id}>
                 <div className="flex items-baseline justify-between gap-4">
-                  <p className="font-medium text-white">{o.label}</p>
+                  <p className="font-medium text-tinta">{o.label}</p>
                   <p className="shrink-0 font-mono text-sm tabular-nums text-slate-400">{o.votos}</p>
                 </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/5">
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-tinta/5">
                   <div className="h-full rounded-full bg-brand-green" style={{ width: `${o.porcento}%` }} />
                 </div>
                 {o.description && <p className="mt-1.5 text-sm text-slate-500">{o.description}</p>}
@@ -97,7 +97,7 @@ export default async function VotacaoPage({
             {!fechada && (
               <p className="mt-2 text-sm text-slate-500">
                 {tr("Mudou de ideia? Vote de novo com o mesmo e-mail que a resposta é substituída.")}{" "}
-                <Link href={`/votacao/${votacao.slug}`} className="text-brand-green underline underline-offset-4">{tr("Votar de novo")}</Link>.
+                <Link href={`/votacao/${votacao.slug}`} className="text-acento underline underline-offset-4">{tr("Votar de novo")}</Link>.
               </p>
             )}
           </section>
@@ -118,16 +118,16 @@ export default async function VotacaoPage({
               {opcoes.map((o) => (
                 <label
                   key={o.id}
-                  className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/10 bg-ink-800/60 p-4 transition-colors hover:border-brand-green/40"
+                  className="flex cursor-pointer items-start gap-3 rounded-xl border border-tinta/10 bg-ink-800/60 p-4 transition-colors hover:border-acento/40"
                 >
                   <input
                     type={umaSo ? "radio" : "checkbox"}
                     name="opcao"
                     value={o.id}
-                    className="mt-1 h-4 w-4 shrink-0 accent-brand-green"
+                    className="mt-1 h-4 w-4 shrink-0 accent-acento"
                   />
                   <span>
-                    <span className="block font-medium text-white">{o.label}</span>
+                    <span className="block font-medium text-tinta">{o.label}</span>
                     {o.description && <span className="mt-0.5 block text-sm text-slate-400">{o.description}</span>}
                   </span>
                 </label>
@@ -136,12 +136,12 @@ export default async function VotacaoPage({
 
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-slate-200">{tr("Nome")} <span className="text-brand-green">*</span></span>
-                <input name="name" required autoComplete="name" className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors focus:border-brand-green" />
+                <span className="text-sm font-medium text-slate-200">{tr("Nome")} <span className="text-acento">*</span></span>
+                <input name="name" required autoComplete="name" className="rounded-xl border border-tinta/10 bg-ink-800 px-4 py-3 text-tinta outline-none transition-colors focus:border-acento" />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium text-slate-200">{tr("E-mail")} <span className="text-brand-green">*</span></span>
-                <input name="email" type="email" required autoComplete="email" className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors focus:border-brand-green" />
+                <span className="text-sm font-medium text-slate-200">{tr("E-mail")} <span className="text-acento">*</span></span>
+                <input name="email" type="email" required autoComplete="email" className="rounded-xl border border-tinta/10 bg-ink-800 px-4 py-3 text-tinta outline-none transition-colors focus:border-acento" />
               </label>
             </div>
             <p className="-mt-3 text-xs text-slate-500">{tr("Um voto por e-mail. Serve só para não contar duas vezes.")}</p>
@@ -152,13 +152,13 @@ export default async function VotacaoPage({
                 <textarea
                   name="suggestion"
                   rows={3}
-                  className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors focus:border-brand-green"
+                  className="rounded-xl border border-tinta/10 bg-ink-800 px-4 py-3 text-tinta outline-none transition-colors focus:border-acento"
                 />
                 <span className="text-xs text-slate-500">{tr("Opcional. Lemos todas.")}</span>
               </label>
             )}
 
-            <button type="submit" className="rounded-xl bg-brand-green px-6 py-3.5 font-semibold text-ink-900 transition-colors hover:bg-white">
+            <button type="submit" className="rounded-xl bg-brand-green px-6 py-3.5 font-semibold text-sobre-acento transition-colors hover:bg-white">
               {tr("Enviar meu voto")}
             </button>
           </form>

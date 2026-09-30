@@ -19,14 +19,14 @@ export default async function DesafiosAdminPage() {
     const setup = error instanceof KnowledgeSetupError;
     return (
       <div className="max-w-2xl">
-        <p className="text-xs uppercase tracking-widest text-brand-green">Desafios</p>
-        <h1 className="mt-2 text-3xl font-semibold text-white">{setup ? "Estrutura ainda não instalada" : "Não foi possível carregar"}</h1>
+        <p className="text-xs text-marca">Desafios</p>
+        <h1 className="mt-2 text-3xl font-semibold text-tinta">{setup ? "Estrutura ainda não instalada" : "Não foi possível carregar"}</h1>
         <p className="mt-4 text-sm leading-relaxed text-slate-300">
           {setup
             ? "Rode a migração do Knowledge Universe e publique um catálogo antes de criar desafios."
             : "Tente novamente em instantes."}
         </p>
-        <Link href="/admin/universo" className="mt-6 inline-block text-brand-green">Ir para o Knowledge Universe →</Link>
+        <Link href="/admin/universo" className="mt-6 inline-block text-acento">Ir para o Knowledge Universe →</Link>
       </div>
     );
   }
@@ -34,10 +34,10 @@ export default async function DesafiosAdminPage() {
   if (!competencies.length) {
     return (
       <div className="max-w-2xl">
-        <p className="text-xs uppercase tracking-widest text-brand-green">Desafios</p>
-        <h1 className="mt-2 text-3xl font-semibold text-white">Publique um catálogo primeiro</h1>
+        <p className="text-xs text-marca">Desafios</p>
+        <h1 className="mt-2 text-3xl font-semibold text-tinta">Publique um catálogo primeiro</h1>
         <p className="mt-4 text-sm leading-relaxed text-slate-300">Os desafios se ligam a competências do catálogo publicado.</p>
-        <Link href="/admin/universo" className="mt-6 inline-block text-brand-green">Ir para o Knowledge Universe →</Link>
+        <Link href="/admin/universo" className="mt-6 inline-block text-acento">Ir para o Knowledge Universe →</Link>
       </div>
     );
   }

@@ -35,31 +35,31 @@ export default async function TurmaDetail({ params, searchParams }: { params: { 
 
   return (
     <div>
-      <Link href="/admin/turmas" className="text-xs text-slate-500 hover:text-white">← Turmas</Link>
+      <Link href="/admin/turmas" className="text-xs text-slate-500 hover:text-tinta">← Turmas</Link>
       <div className="mt-1 flex flex-wrap items-center gap-2">
-        <h1 className="font-display text-2xl font-bold text-white">{turma.name}</h1>
-        <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase ${turma.status === "open" ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{turma.status === "open" ? "Aberta" : "Fechada"}</span>
+        <h1 className="font-display text-2xl font-bold text-tinta">{turma.name}</h1>
+        <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase ${turma.status === "open" ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>{turma.status === "open" ? "Aberta" : "Fechada"}</span>
         {turma.online_sale && <span className="rounded-full bg-brand-blue/15 px-2.5 py-0.5 text-[0.65rem] font-semibold uppercase text-brand-cyan">venda online</span>}
       </div>
       <p className="mt-1 text-sm text-slate-400">Inclui: <span className="text-slate-200">{includesSummary}</span>{turma.price ? ` · R$ ${Number(turma.price).toFixed(2)}` : ""}</p>
 
-      {searchParams?.ok && <div className="mt-4 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</div>}
+      {searchParams?.ok && <div className="mt-4 rounded-xl border border-acento/30 bg-brand-green/10 px-4 py-3 text-sm text-acento">{searchParams.ok}</div>}
 
       {/* Configuração da turma (o que inclui + cobrança) */}
-      <div className="mt-6 glass rounded-2xl border border-white/8 p-5">
+      <div className="mt-6 glass rounded-2xl border border-tinta/8 p-5">
         <TurmaForm turma={turma} courses={courses ?? []} />
       </div>
 
       {/* Liberar acesso em lote */}
-      <div className="mt-8 glass rounded-2xl border border-white/8 p-5">
-        <h2 className="font-display text-lg font-bold text-white">Dar acesso a uma lista de alunos</h2>
+      <div className="mt-8 glass rounded-2xl border border-tinta/8 p-5">
+        <h2 className="font-display text-lg font-bold text-tinta">Dar acesso a uma lista de alunos</h2>
         <p className="mt-1 text-sm text-slate-400">Cole os e-mails (um por linha ou separados por vírgula). Cada aluno recebe <span className="text-slate-200">{includesSummary}</span> na hora, com e-mail de boas-vindas. Quem ainda não tem conta precisa se cadastrar antes.</p>
 
         {showResult && (
           <div className="mt-4 space-y-2">
             <div className="flex flex-wrap gap-2 text-sm">
-              <span className="rounded-lg bg-brand-green/15 px-3 py-1.5 font-medium text-brand-green">{granted} liberado(s)</span>
-              <span className="rounded-lg bg-white/5 px-3 py-1.5 font-medium text-slate-300">{existed} já tinha(m) acesso</span>
+              <span className="rounded-lg bg-brand-green/15 px-3 py-1.5 font-medium text-acento">{granted} liberado(s)</span>
+              <span className="rounded-lg bg-tinta/5 px-3 py-1.5 font-medium text-slate-300">{existed} já tinha(m) acesso</span>
               {missing.length > 0 && <span className="rounded-lg bg-amber-400/15 px-3 py-1.5 font-medium text-amber-300">{missing.length} sem conta</span>}
             </div>
             {missing.length > 0 && (
@@ -87,25 +87,25 @@ export default async function TurmaDetail({ params, searchParams }: { params: { 
       </div>
 
       {/* Alunos da turma */}
-      <h2 className="mt-8 font-display text-lg font-bold text-white">Alunos com acesso nesta turma <span className="text-sm font-normal text-slate-500">({(members ?? []).length})</span></h2>
+      <h2 className="mt-8 font-display text-lg font-bold text-tinta">Alunos com acesso nesta turma <span className="text-sm font-normal text-slate-500">({(members ?? []).length})</span></h2>
       <div className="mt-4 space-y-2">
-        {(members ?? []).length === 0 && <p className="rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-slate-500">Ninguém liberado ainda.</p>}
+        {(members ?? []).length === 0 && <p className="rounded-2xl border border-dashed border-tinta/10 px-4 py-10 text-center text-slate-500">Ninguém liberado ainda.</p>}
         {(members ?? []).map((m: any) => {
           const email = emailById[m.user_id] || "(sem e-mail)";
           const name = displayName(nameById, m.user_id);
           return (
-            <div key={m.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+            <div key={m.id} className="flex items-center justify-between gap-3 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3">
               <div className="flex items-center gap-3">
                 <Avatar name={name} size="xs" />
                 <div>
-                  <p className="font-medium text-white">{name}</p>
+                  <p className="font-medium text-tinta">{name}</p>
                   <p className="text-xs text-slate-500">{email}{m.expires_at ? ` · expira ${new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(m.expires_at))}` : " · sem expiração"}</p>
                 </div>
               </div>
               <form action={revokeFromTurma}>
                 <input type="hidden" name="membership_id" value={m.id} />
                 <input type="hidden" name="turma_id" value={turma.id} />
-                <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Revogar</button>
+                <button className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Revogar</button>
               </form>
             </div>
           );

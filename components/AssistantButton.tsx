@@ -47,7 +47,7 @@ function comNegrito(texto: string) {
     .split(/(\*\*[^*\n]+\*\*)/g)
     .map((parte, i) =>
       parte.length > 4 && parte.startsWith("**") && parte.endsWith("**") ? (
-        <strong key={i} className="font-semibold text-white">{parte.slice(2, -2)}</strong>
+        <strong key={i} className="font-semibold text-tinta">{parte.slice(2, -2)}</strong>
       ) : (
         <span key={i}>{parte}</span>
       ),
@@ -195,9 +195,9 @@ export default function AssistantButton() {
             <div className="relative flex items-center gap-3">
               <div className={panelStyles.portrait}><Mascot realistic className="h-16 w-16 drop-shadow" /></div>
               <div className="flex-1">
-                <p className={panelStyles.brand}>DRIVEDATA ACADEMY</p>
+                <p className={panelStyles.brand}>{tr("Assistente da DriveData Academy")}</p>
                 <p className={panelStyles.title}>Nexo</p>
-                <p className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-300"><span className="h-1.5 w-1.5 rounded-full bg-brand-green" /> {tr("Online agora")}</p>
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-[#c3cddb]"><span className="h-1.5 w-1.5 rounded-full bg-marca-verde" /> {tr("Online agora")}</p>
               </div>
               <button ref={closeRef} onClick={closeChat} aria-label={tr("Fechar")} className={panelStyles.close}>✕</button>
             </div>
@@ -212,13 +212,13 @@ export default function AssistantButton() {
                   <div className="max-w-[82%]">
                     <div className={panelStyles.message}>{comNegrito(m.content)}</div>
                     {m.link && (
-                      <Link href={m.link.href} onClick={() => setOpen(false)} className="mt-1.5 inline-flex items-center gap-1 rounded-lg border border-brand-teal/40 px-3 py-1.5 text-xs font-medium text-brand-teal hover:bg-brand-teal/10">{m.link.label} →</Link>
+                      <Link href={m.link.href} onClick={() => setOpen(false)} className="mt-1.5 inline-flex items-center gap-1 rounded-full border border-marca px-3 py-1.5 text-xs font-semibold text-marca hover:bg-marca-nevoa">{m.link.label} →</Link>
                     )}
                   </div>
                 </div>
               ) : (
                 <div key={i} className="flex justify-end">
-                  <div className="max-w-[82%] rounded-2xl rounded-br-sm bg-gradient-to-br from-brand-green to-brand-blue px-3.5 py-2.5 text-sm leading-relaxed text-ink-900 whitespace-pre-line">{m.content}</div>
+                  <div className="max-w-[82%] whitespace-pre-line rounded-[18px] rounded-br-[4px] bg-marca px-4 py-2.5 text-sm leading-relaxed text-white">{m.content}</div>
                 </div>
               )
             )}
@@ -235,7 +235,7 @@ export default function AssistantButton() {
             {loading && (
               <div className="flex items-end gap-2">
                 <Mascot realistic className="h-7 w-7 shrink-0" />
-                <div className="flex items-center gap-1 rounded-2xl rounded-bl-sm border border-white/8 bg-white/[0.04] px-4 py-3">
+                <div className="flex items-center gap-1 rounded-[18px] rounded-bl-[4px] bg-fog px-4 py-3">
                   {[0, 150, 300].map((d) => (
                     <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400" style={{ animationDelay: `${d}ms` }} />
                   ))}
@@ -256,13 +256,13 @@ export default function AssistantButton() {
                 aria-label={tr("Escreva sua mensagem...")}
                 className={panelStyles.input}
               />
-              <button onClick={() => sendText(input)} disabled={loading || !input.trim()} aria-label={tr("Enviar")} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-r from-brand-green to-brand-blue text-ink-900 transition-transform hover:scale-105 disabled:opacity-40">
+              <button onClick={() => sendText(input)} disabled={loading || !input.trim()} aria-label={tr("Enviar")} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-marca-verde text-marca transition-[filter] hover:brightness-95 disabled:opacity-40">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             </div>
             <div className="mt-2 flex items-center justify-between px-1">
               <span className="text-[0.65rem] text-slate-500">{tr("IA · pode conter imprecisões")}</span>
-              <button onClick={talkToTeam} disabled={loading || escalated} className="text-[0.72rem] font-medium text-brand-teal hover:underline disabled:opacity-50">
+              <button onClick={talkToTeam} disabled={loading || escalated} className="text-xs font-semibold text-marca underline decoration-marca/30 underline-offset-2 hover:decoration-marca disabled:opacity-50">
                 {escalated ? "Time acionado ✓" : tr("Falar com uma pessoa")}
               </button>
             </div>
@@ -274,23 +274,23 @@ export default function AssistantButton() {
       {/* Balão do mascote: convite, dica da plataforma ou piada de tech. */}
       {showHint && !open && !hintDismissed && balao && (
         <div className="absolute bottom-5 right-[116px] w-64 max-w-[calc(100vw-164px)]" role="status" aria-live="polite">
-          <div className="relative rounded-2xl border border-white/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
-            <button onClick={calar} aria-label={tr("Não mostrar mais balões nesta sessão")} title={tr("Não mostrar mais nesta sessão")} className="absolute right-2 top-2 text-slate-500 hover:text-white">✕</button>
+          <div className="relative rounded-2xl border border-tinta/10 bg-ink-800/95 px-4 py-3 shadow-xl backdrop-blur">
+            <button onClick={calar} aria-label={tr("Não mostrar mais balões nesta sessão")} title={tr("Não mostrar mais nesta sessão")} className="absolute right-2 top-2 text-slate-500 hover:text-tinta">✕</button>
 
             {balao.tipo === "ajuda" && (
               <button onClick={openChat} className="block pr-4 text-left">
-                <p className="text-sm font-semibold text-white">{tr("Oi, eu sou o Nexo. Precisa de ajuda?")}</p>
+                <p className="text-sm font-semibold text-tinta">{tr("Oi, eu sou o Nexo. Precisa de ajuda?")}</p>
                 <p className="mt-0.5 text-xs text-slate-300">{tr("Fale comigo, respondo na hora.")}</p>
               </button>
             )}
 
             {balao.tipo === "dica" && (
               <div className="pr-4">
-                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-brand-green">{tr("Dica")}</p>
-                <p className="mt-0.5 text-sm font-semibold text-white">{tr(balao.titulo)}</p>
+                <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-acento">{tr("Dica")}</p>
+                <p className="mt-0.5 text-sm font-semibold text-tinta">{tr(balao.titulo)}</p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-300">{tr(balao.texto)}</p>
                 {!pathname.startsWith(balao.href) && (
-                  <Link href={balao.href} onClick={() => setShowHint(false)} className="mt-2 inline-block text-xs font-semibold text-brand-green hover:underline">
+                  <Link href={balao.href} onClick={() => setShowHint(false)} className="mt-2 inline-block text-xs font-semibold text-acento hover:underline">
                     {tr(balao.acao)} →
                   </Link>
                 )}
@@ -300,17 +300,17 @@ export default function AssistantButton() {
             {balao.tipo === "piada" && (
               <div className="pr-4">
                 <p className="text-[0.62rem] font-semibold uppercase tracking-wider text-amber-300">{tr("Piada de dev")}</p>
-                <p className="mt-0.5 text-sm text-white">{tr(balao.texto)}</p>
+                <p className="mt-0.5 text-sm text-tinta">{tr(balao.texto)}</p>
                 {balao.final && (
-                  <p className={`mt-1 text-xs font-semibold text-brand-green transition-opacity duration-500 ${revelado ? "opacity-100" : "opacity-0"}`}>
+                  <p className={`mt-1 text-xs font-semibold text-acento transition-opacity duration-500 ${revelado ? "opacity-100" : "opacity-0"}`}>
                     {tr(balao.final)}
                   </p>
                 )}
-                <button onClick={openChat} className="mt-2 text-[0.7rem] text-slate-400 hover:text-white">{tr("Posso ajudar em algo? →")}</button>
+                <button onClick={openChat} className="mt-2 text-[0.7rem] text-slate-400 hover:text-tinta">{tr("Posso ajudar em algo? →")}</button>
               </div>
             )}
 
-            <span className="absolute -right-1.5 bottom-4 h-3 w-3 rotate-45 border-b border-r border-white/10 bg-ink-800" />
+            <span className="absolute -right-1.5 bottom-4 h-3 w-3 rotate-45 border-b border-r border-tinta/10 bg-ink-800" />
           </div>
         </div>
       )}

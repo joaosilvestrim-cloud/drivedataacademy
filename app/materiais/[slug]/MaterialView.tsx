@@ -20,7 +20,7 @@ type Material = {
 type Utm = { source: string; medium: string; campaign: string };
 
 const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 
 export default function MaterialView({ material, utm }: { material: Material; utm: Utm }) {
   const tr = usarTraducao();
@@ -56,17 +56,17 @@ export default function MaterialView({ material, utm }: { material: Material; ut
     <main className="relative mx-auto flex min-h-screen max-w-5xl flex-col px-6 py-10">
       <a href="/" className="w-fit transition-transform hover:scale-[1.03]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-10 w-auto" />
+        <img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-10 w-auto" />
       </a>
 
       <div className="mt-10 grid flex-1 items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
         {/* Conteúdo */}
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{tr("Material gratuito")}</p>
+          <p className="text-sm font-semibold text-marca">{tr("Material gratuito")}</p>
           <h1 className="mt-3 font-display text-3xl font-bold leading-tight sm:text-4xl">{material.title}</h1>
           {material.subtitle && <p className="mt-4 text-lg text-slate-300/90">{material.subtitle}</p>}
           {material.cover_url && (
-            <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-tinta/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={material.cover_url} alt={material.title} className="w-full object-cover" />
             </div>
@@ -83,12 +83,12 @@ export default function MaterialView({ material, utm }: { material: Material; ut
             <div className="glass-strong relative rounded-[2rem] p-7 sm:p-9">
               {done ? (
                 <div className="text-center">
-                  <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-brand-green/20 text-brand-green">
+                  <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-brand-green/20 text-acento">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                       <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
-                  <h2 className="mt-4 font-display text-2xl font-bold text-white">{tr("Tudo certo! 🎉")}</h2>
+                  <h2 className="mt-4 font-display text-2xl font-bold text-tinta">{tr("Tudo certo! 🎉")}</h2>
                   <p className="mt-2 text-sm text-slate-300">
                     {done.emailed
                       ? tr("Enviamos o material para o seu e-mail. Confira a caixa de entrada (e o spam).")
@@ -99,7 +99,7 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                       href={done.fileUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+                      className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
                     >
                       {tr("Acessar o material")}
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -110,7 +110,7 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                 </div>
               ) : (
                 <>
-                  <h2 className="font-display text-xl font-bold text-white">{tr("Receba o material gratuito")}</h2>
+                  <h2 className="font-display text-xl font-bold text-tinta">{tr("Receba o material gratuito")}</h2>
                   <p className="mt-1 text-sm text-slate-400">{tr("Preencha e enviamos para o seu e-mail.")}</p>
                   <form onSubmit={handleSubmit} className="mt-5 space-y-3">
                     <input name="name" required placeholder={tr("Seu nome")} className={field} />
@@ -122,7 +122,7 @@ export default function MaterialView({ material, utm }: { material: Material; ut
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+                      className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {loading ? "Enviando..." : material.cta_text || "Quero receber"}
                     </button>

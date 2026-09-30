@@ -53,7 +53,7 @@ function Cartaz({ e, className = "" }: { e: Evento; className?: string }) {
     // eslint-disable-next-line @next/next/no-img-element
     <img src={e.cover_url} alt="" className={`h-full w-full object-cover ${className}`} loading="lazy" />
   ) : (
-    <span className={`flex h-full w-full items-end bg-[linear-gradient(135deg,#0d2b3f,#071019_60%,#0a1f2e)] p-4 font-display text-lg font-bold leading-tight text-white ${className}`}>{e.title}</span>
+    <span className={`flex h-full w-full items-end bg-marca p-4 text-lg font-bold leading-tight text-marca-verde ${className}`}>{e.title}</span>
   );
 }
 
@@ -85,7 +85,7 @@ export default async function LancamentoHoje() {
   const comCertificado = eventos.some((e) => e.certificate_enabled);
 
   return (
-    <section id="inicio" className="relative mx-auto max-w-7xl scroll-mt-28 overflow-x-clip px-6 pb-12 pt-32 sm:pt-40">
+    <section id="inicio" className="relative mx-auto max-w-[1200px] scroll-mt-28 overflow-x-clip px-6 pb-16 pt-32 sm:pt-36">
       <div id="ao-vivo" className="absolute -top-4" aria-hidden />
       <style>{`
         .leque { perspective: 1400px; }
@@ -101,51 +101,51 @@ export default async function LancamentoHoje() {
         @media (prefers-reduced-motion: reduce) { .leque .cartaz { transition: none; } }
       `}</style>
 
-      <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
+      {/* Manchete: a voz da marca, em bloco, antes de tudo. */}
+      <h1 className="grito max-w-[15ch] text-[2.9rem] text-obsidian sm:text-[4.6rem] lg:max-w-none lg:text-[5.9rem]">
+        {tr("Aula ao vivo toda semana,")} <span className="text-marca-azul">{tr("dentro da Academy.")}</span>
+      </h1>
+
+      <div className="mt-12 grid grid-cols-1 items-start gap-12 lg:grid-cols-[1fr_1.05fr]">
         <div>
-          {/* O convite para assinar vem antes do título: a live é a porta de
-              entrada, e ela agora fica dentro da plataforma. */}
-          <a
-            href="/matricula"
-            className="group inline-flex rounded-2xl bg-gradient-to-r from-brand-green via-brand-teal to-brand-blue p-[2px] shadow-[0_18px_44px_-20px_rgba(52,232,160,0.85)] transition-transform duration-300 hover:scale-[1.02]"
-          >
-            <span className="inline-flex items-center gap-3 rounded-[14px] bg-ink-900 px-8 py-4 text-base font-bold text-white transition-colors duration-300 group-hover:bg-transparent group-hover:text-ink-900 sm:text-lg">
-              {tr("Faça parte da Academy")}
-              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-            </span>
-          </a>
-          <p className="mt-3 text-sm text-slate-400">{tr("Comunidade, lives, gravações e biblioteca de materiais no mesmo lugar.")}</p>
-
-          {/* Cupom de lançamento: sai sozinho da home quando vence. */}
-          <CupomDestaque />
-
-          <h1 className="mt-10 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
-            {tr("Aula ao vivo toda semana,")} <span className="text-brand-green">{tr("dentro da Academy.")}</span>
-          </h1>
-          <p className="mt-5 max-w-lg text-lg text-slate-300/90">
+          <p className="max-w-lg text-lg leading-relaxed text-charcoal">
             {comCertificado
               ? tr("Lives e mentorias com quem faz dados de verdade. Você assiste pela plataforma, pergunta ao vivo e fica com a gravação e o certificado de participação.")
               : tr("Lives e mentorias com quem faz dados de verdade. Você assiste pela plataforma, pergunta ao vivo e fica com a gravação.")}
           </p>
 
-          <div className="mt-8 border-t border-white/10 pt-6">
-            <p className="text-sm text-slate-400">
+          {/* Uma pílula verde e um link sublinhado: nunca dois botões cheios lado a lado. */}
+          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <a
+              href="/matricula"
+              className="group inline-flex items-center gap-2 rounded-full bg-marca-verde px-7 py-3.5 text-base font-semibold text-marca transition-[filter] hover:brightness-95"
+            >
+              {tr("Faça parte da Academy")}
+              <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </a>
+            <a href="/conta/agenda" className="text-base font-medium text-marca underline decoration-marca/40 underline-offset-4 hover:decoration-marca">
+              {tr("Já é assinante? Entre pela sua agenda")}
+            </a>
+          </div>
+          <p className="mt-3 text-sm text-slate-500">{tr("Comunidade, lives, gravações e biblioteca de materiais no mesmo lugar.")}</p>
+
+          {/* Cupom de lançamento: sai sozinho da home quando vence. */}
+          <CupomDestaque />
+
+          {/* O próximo encontro num bloco azul-noite: a faixa escura é a ênfase do sistema. */}
+          <div className="escuro mt-10 rounded-grande bg-marca p-7 sm:p-8">
+            <p className="text-sm text-slate-300">
               {rotuloDia(destaque.starts_at, agora) === "Hoje" ? tr("Hoje às") : `${rotuloDia(destaque.starts_at, agora)} às`}{" "}
               <span className="font-mono tabular-nums text-white">{hora(destaque.starts_at)}</span>
-              <span className="text-slate-500"> · {tipo(destaque.kind)}{destaque.mentor_nome ? ` com ${destaque.mentor_nome}` : ""}</span>
+              <span className="text-slate-400"> · {tipo(destaque.kind)}{destaque.mentor_nome ? ` com ${destaque.mentor_nome}` : ""}</span>
             </p>
-            <p className="mt-1 font-display text-2xl font-semibold leading-snug text-white">{destaque.title}</p>
-            {subtitulo(destaque.description) && <p className="mt-1 text-slate-400">{subtitulo(destaque.description)}</p>}
-            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-4">
+            <p className="mt-2 text-2xl font-bold leading-snug tracking-tight text-marca-verde sm:text-[1.7rem]">{destaque.title}</p>
+            {subtitulo(destaque.description) && <p className="mt-2 line-clamp-3 text-slate-300">{subtitulo(destaque.description)}</p>}
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
               <Cronometro inicio={destaque.starts_at} duracaoMin={destaque.duration_min} agoraInicial={agoraMs} />
-              <div className="flex flex-col gap-1.5">
-                <a href="/matricula" className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-brand-green">
-                  {tr("Assine para entrar na live")}
-                </a>
-                <a href="/conta/agenda" className="text-xs text-slate-400 underline decoration-white/20 underline-offset-4 hover:text-white">
-                  {tr("Já é assinante? Entre pela sua agenda")}
-                </a>
-              </div>
+              <a href="/matricula" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-marca transition-colors hover:bg-marca-nevoa">
+                {tr("Assine para entrar na live")}
+              </a>
             </div>
           </div>
         </div>
@@ -160,11 +160,11 @@ export default async function LancamentoHoje() {
               .map((e) => {
                 const i = leque.indexOf(e);
                 return (
-                  <span key={e.id} className={`cartaz c${i} absolute inset-0 overflow-hidden rounded-2xl border border-white/10 bg-ink-800 shadow-[0_30px_60px_-30px_rgba(0,0,0,.9)]`}>
+                  <span key={e.id} className={`cartaz c${i} absolute inset-0 overflow-hidden rounded-grande bg-marca shadow-overlay`}>
                     <Cartaz e={e} />
                     {i === 0 && (
-                      <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-ink-900/95 via-ink-900/50 to-transparent px-5 pb-4 pt-16">
-                        <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/85">
+                      <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-6 pb-5 pt-16">
+                        <span className="rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-marca">
                           {rotuloDia(e.starts_at, agora)} · {hora(e.starts_at)} · {tr("na plataforma")}
                         </span>
                       </span>
@@ -186,7 +186,7 @@ export default async function LancamentoHoje() {
       {eventos.length > 1 && (
         <div id="temporada" className="mt-16 scroll-mt-28">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-display text-xl font-semibold text-white">{tr("A temporada")}</h2>
+            <h2 className="text-[1.75rem] font-bold tracking-tight text-obsidian">{tr("A temporada")}</h2>
             <p className="text-sm text-slate-400">{tr("Toda semana às")} {hora(destaque.starts_at)}, {tr("ao vivo para assinantes")}</p>
           </div>
           <ol className="mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 [scrollbar-width:thin]">
@@ -196,19 +196,19 @@ export default async function LancamentoHoje() {
                 <li key={e.id} className="flex shrink-0 snap-start gap-4">
                   {novoMes && (
                     <span className="flex w-8 shrink-0 items-end justify-center pb-2">
-                      <span className="whitespace-nowrap font-mono text-xs uppercase tracking-[0.2em] text-brand-green [writing-mode:vertical-rl] rotate-180">{mes(e.starts_at)}</span>
+                      <span className="whitespace-nowrap font-mono text-xs text-marca [writing-mode:vertical-rl] rotate-180">{mes(e.starts_at)}</span>
                     </span>
                   )}
                   <a href={i === 0 ? "#inicio" : "/matricula"} className="group block w-[17rem] sm:w-[19rem]">
-                    <span className="block aspect-[16/10] overflow-hidden rounded-xl border border-white/10 bg-ink-800 transition-transform duration-300 group-hover:-translate-y-1">
+                    <span className="block aspect-[16/10] overflow-hidden rounded-srf bg-marca transition-transform duration-300 group-hover:-translate-y-1">
                       <Cartaz e={e} className="transition-transform duration-500 group-hover:scale-[1.04]" />
                     </span>
                     <span className="mt-3 flex items-baseline gap-2 text-sm">
-                      <span className="font-mono text-brand-green">{rotuloDia(e.starts_at, agora)}</span>
+                      <span className="font-semibold text-marca">{rotuloDia(e.starts_at, agora)}</span>
                       <span className="font-mono tabular-nums text-slate-400">{hora(e.starts_at)}</span>
                       <span className="text-slate-500">· {tipo(e.kind)}</span>
                     </span>
-                    <span className="mt-1 block font-medium leading-snug text-white">{e.title}</span>
+                    <span className="mt-1 block font-medium leading-snug text-tinta">{e.title}</span>
                     {e.mentor_nome && <span className="mt-0.5 block text-sm text-slate-400">{tr("com")} {e.mentor_nome}</span>}
                   </a>
                 </li>

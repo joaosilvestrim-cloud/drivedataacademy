@@ -25,7 +25,7 @@ import TourForja, { tourForjaJaVisto } from "@/components/forja/TourForja";
 const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 const rotulo = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400";
 
 function Copiar({ texto }: { texto: string }) {
@@ -44,7 +44,7 @@ function Copiar({ texto }: { texto: string }) {
         }
       }}
       className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
-        copiado ? "border-brand-green/50 bg-brand-green/10 text-brand-green" : "border-white/10 text-slate-300 hover:border-white/30 hover:text-white"
+        copiado ? "border-acento/50 bg-brand-green/10 text-acento" : "border-tinta/10 text-slate-300 hover:border-tinta/30 hover:text-tinta"
       }`}
     >
       {copiado ? (
@@ -119,9 +119,9 @@ export default function Forja() {
   return (
     <div className="mt-8 grid gap-6 lg:grid-cols-[22rem_1fr] lg:items-start">
       {/* Escolhas */}
-      <div className="flex flex-col gap-6 rounded-3xl border border-white/8 bg-white/[0.02] p-5">
+      <div className="flex flex-col gap-6 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
         <div data-tour="forja-modelo">
-          <h2 className="font-display text-base font-bold text-white">{tr("O seu modelo")}</h2>
+          <h2 className="font-display text-base font-bold text-tinta">{tr("O seu modelo")}</h2>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <label className="col-span-2">
               <span className={rotulo}>{tr("Nome da tabela de calendário")}</span>
@@ -153,7 +153,7 @@ export default function Forja() {
                 type="button"
                 onClick={() => muda({ origem: o.chave as "fato" | "anos" })}
                 className={`flex-1 rounded-xl border px-3 py-2 text-xs font-medium transition-colors ${
-                  cal.origem === o.chave ? "border-brand-green/50 bg-brand-green/10 text-white" : "border-white/10 text-slate-400 hover:text-white"
+                  cal.origem === o.chave ? "border-acento/50 bg-brand-green/10 text-tinta" : "border-tinta/10 text-slate-400 hover:text-tinta"
                 }`}
               >
                 {o.texto}
@@ -220,7 +220,7 @@ export default function Forja() {
               className="mt-0.5 h-4 w-4 shrink-0 accent-[#34e8a0]"
             />
             <span>
-              <span className="block text-sm font-medium text-white">{tr("Feriados nacionais")}</span>
+              <span className="block text-sm font-medium text-tinta">{tr("Feriados nacionais")}</span>
               <span className="block text-[0.7rem] text-slate-500">
                 {tr("Gera a tabela de feriados com Carnaval, Sexta-feira Santa e Corpus Christi calculados pela Páscoa de cada ano, e uma coluna de dia útil que leva isso em conta.")}
               </span>
@@ -234,8 +234,8 @@ export default function Forja() {
           )}
         </div>
 
-        <div data-tour="forja-medidas" className="border-t border-white/8 pt-5">
-          <h2 className="font-display text-base font-bold text-white">{tr("Medidas de tempo")}</h2>
+        <div data-tour="forja-medidas" className="border-t border-tinta/8 pt-5">
+          <h2 className="font-display text-base font-bold text-tinta">{tr("Medidas de tempo")}</h2>
           <div className="mt-3 grid gap-3">
             <label>
               <span className={rotulo}>{tr("Nome da medida base")}</span>
@@ -261,10 +261,10 @@ export default function Forja() {
                   onClick={() => setEscolhas((e) => (marcado ? e.filter((x) => x !== p.chave) : [...e, p.chave]))}
                   aria-pressed={marcado}
                   className={`rounded-xl border px-3 py-2 text-left transition-colors ${
-                    marcado ? "border-brand-green/45 bg-brand-green/[0.08]" : "border-white/10 hover:border-white/25"
+                    marcado ? "border-acento/45 bg-brand-green/[0.08]" : "border-tinta/10 hover:border-tinta/25"
                   }`}
                 >
-                  <span className={`block text-sm font-medium ${marcado ? "text-white" : "text-slate-300"}`}>{p.nome}</span>
+                  <span className={`block text-sm font-medium ${marcado ? "text-tinta" : "text-slate-300"}`}>{p.nome}</span>
                   <span className="block text-[0.7rem] text-slate-500">{p.desc}</span>
                 </button>
               );
@@ -282,7 +282,7 @@ export default function Forja() {
         <button
           type="button"
           onClick={() => setTour(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-tinta/10 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
           {tr("Tour guiado")}
@@ -293,7 +293,7 @@ export default function Forja() {
               type="button"
               onClick={() => setAba(b.chave)}
               className={`rounded-xl border px-3.5 py-2 text-sm font-medium transition-colors ${
-                atual?.chave === b.chave ? "border-brand-green/50 bg-brand-green/[0.10] text-white" : "border-white/10 bg-white/[0.02] text-slate-400 hover:text-white"
+                atual?.chave === b.chave ? "border-acento/50 bg-brand-green/[0.10] text-tinta" : "border-tinta/10 bg-tinta/[0.02] text-slate-400 hover:text-tinta"
               }`}
             >
               {b.nome}
@@ -303,8 +303,8 @@ export default function Forja() {
         </div>
 
         {atual && (
-          <div className="mt-4 overflow-hidden rounded-3xl border border-white/8 bg-[#070d14]">
-            <div className="flex items-center justify-between gap-3 border-b border-white/8 px-4 py-2.5">
+          <div className="mt-4 overflow-hidden rounded-3xl border border-tinta/8 bg-ink-700">
+            <div className="flex items-center justify-between gap-3 border-b border-tinta/8 px-4 py-2.5">
               <span className="font-mono text-xs text-slate-400">
                 {atual.linguagem === "DAX" ? "Modelagem, Nova tabela" : tr("Transformar dados, Editor avançado")}
               </span>
@@ -316,8 +316,8 @@ export default function Forja() {
           </div>
         )}
 
-        <div className="mt-5 rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-          <h2 className="font-display text-base font-bold text-white">{tr("Onde colar, na ordem")}</h2>
+        <div className="mt-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+          <h2 className="font-display text-base font-bold text-tinta">{tr("Onde colar, na ordem")}</h2>
           <ol className="mt-3 flex flex-col gap-3">
             {passos.map((p, i) => (
               <li key={i} className="grid grid-cols-[1.5rem_1fr] gap-3">

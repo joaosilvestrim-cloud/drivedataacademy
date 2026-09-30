@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import CampoSenha from "@/components/CampoSenha";
 
 const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 
 export default function EntrarPage() {
   const tr = usarTraducao();
@@ -47,23 +47,23 @@ export default function EntrarPage() {
         <div className="w-full max-w-sm">
           <Link href="/" className="mx-auto mb-8 block w-fit">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-10 w-auto" />
+            <img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-10 w-auto" />
           </Link>
-          <div className="glass-strong rounded-3xl border border-white/10 p-8">
-            <h1 className="font-display text-2xl font-bold text-white">{tr("Entrar")}</h1>
+          <div className="glass-strong rounded-3xl border border-tinta/10 p-8">
+            <h1 className="font-display text-2xl font-bold text-tinta">{tr("Entrar")}</h1>
             <p className="mt-1 text-sm text-slate-400">{tr("Acesse seus cursos e certificados.")}</p>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-3">
               <input required type="email" placeholder={tr("E-mail")} value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
               <CampoSenha required autoComplete="current-password" placeholder={tr("Senha")} value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
               <div className="text-right">
-                <Link href="/esqueci-senha" className="text-xs text-slate-400 hover:text-brand-green">{tr("Esqueci minha senha")}</Link>
+                <Link href="/esqueci-senha" className="text-xs text-slate-400 hover:text-acento">{tr("Esqueci minha senha")}</Link>
               </div>
               {error && <p className="text-xs text-red-400">{error}</p>}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? "Entrando..." : "Entrar"}
               </button>
@@ -71,7 +71,7 @@ export default function EntrarPage() {
 
             <p className="mt-5 text-center text-sm text-slate-400">
               {tr("Ainda não tem conta?")}{" "}
-              <Link href="/criar-conta" className="font-medium text-brand-green hover:underline">
+              <Link href="/criar-conta" className="font-medium text-acento hover:underline">
                 {tr("Criar conta")}
               </Link>
             </p>

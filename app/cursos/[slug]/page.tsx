@@ -76,35 +76,35 @@ export default async function CoursePage({ params, searchParams }: { params: { s
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start">
           <div>
             {emBreve && (
-              <p className="mb-3 inline-block rounded-full bg-amber-400/90 px-3 py-1 text-[0.7rem] font-semibold text-ink-900">{tr("Em breve")}</p>
+              <p className="mb-3 inline-block rounded-full bg-amber-400/90 px-3 py-1 text-[0.7rem] font-semibold text-sobre-acento">{tr("Em breve")}</p>
             )}
-            {course.level && <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{course.level}</p>}
+            {course.level && <p className="text-sm font-semibold text-marca">{course.level}</p>}
             <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">{course.title}</h1>
             {course.subtitle && <p className="mt-3 text-lg text-slate-300/90">{course.subtitle}</p>}
             {course.description && <p className="mt-5 whitespace-pre-line text-slate-300/90">{course.description}</p>}
-            {course.instructor_name && <p className="mt-5 text-sm text-slate-400">{tr("Com")} <strong className="text-white">{course.instructor_name}</strong></p>}
+            {course.instructor_name && <p className="mt-5 text-sm text-slate-400">{tr("Com")} <strong className="text-tinta">{course.instructor_name}</strong></p>}
 
             {/* Currículo */}
             <div className="mt-10">
-              <h2 className="font-display text-lg font-bold text-white">{tr("Conteúdo do curso")}</h2>
+              <h2 className="font-display text-lg font-bold text-tinta">{tr("Conteúdo do curso")}</h2>
               <p className="mt-1 text-sm text-slate-500">{modules.length} módulo(s) · {lessonCount} aula(s)</p>
               <div className="mt-4 space-y-3">
                 {modules.map((m: any, mi: number) => (
-                  <details key={m.id} className="glass overflow-hidden rounded-2xl border border-white/8" open={mi === 0}>
+                  <details key={m.id} className="glass overflow-hidden rounded-2xl border border-tinta/8" open={mi === 0}>
                     <summary className="flex cursor-pointer items-center justify-between gap-3 px-5 py-4">
                       <span className="flex items-center gap-3">
-                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-white/5 text-xs font-bold text-brand-green">{mi + 1}</span>
-                        <span className="font-semibold text-white">{m.title}</span>
+                        <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-tinta/5 text-xs font-bold text-acento">{mi + 1}</span>
+                        <span className="font-semibold text-tinta">{m.title}</span>
                       </span>
                       <span className="shrink-0 text-xs text-slate-500">{m.lessons.length} aula(s)</span>
                     </summary>
-                    <ul className="space-y-2 border-t border-white/5 px-5 py-4">
+                    <ul className="space-y-2 border-t border-tinta/5 px-5 py-4">
                       {m.lessons.map((l: any) => (
                         <li key={l.id} className="flex items-center justify-between gap-3 text-sm text-slate-300">
                           <span className="flex items-center gap-2">
                             <span className="text-slate-500">▶</span>
                             {l.title}
-                            {l.is_preview && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">{tr("grátis")}</span>}
+                            {l.is_preview && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-acento">{tr("grátis")}</span>}
                           </span>
                           {l.duration && <span className="shrink-0 text-xs text-slate-500">{l.duration}</span>}
                         </li>
@@ -121,21 +121,21 @@ export default async function CoursePage({ params, searchParams }: { params: { s
             <div className="glow-border overflow-hidden rounded-[2rem]">
               <div className="glass-strong rounded-[2rem] p-6 sm:p-7">
                 {course.cover_url && (
-                  <div className="mb-5 aspect-[16/9] overflow-hidden rounded-xl border border-white/10">
+                  <div className="mb-5 aspect-[16/9] overflow-hidden rounded-xl border border-tinta/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={course.cover_url} alt={course.title} className="h-full w-full object-cover" />
                   </div>
                 )}
                 {/* Preço: o do assinante em destaque, o cheio riscado ao lado. */}
                 {incluso ? (
-                  <p className="font-display text-2xl font-bold text-white">{tr("Incluído na assinatura")}</p>
+                  <p className="font-display text-2xl font-bold text-tinta">{tr("Incluído na assinatura")}</p>
                 ) : aVenda ? (
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Preço para assinantes")}</p>
                     <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <span className="font-display text-3xl font-bold text-white">{brl(precoAss!)}</span>
+                      <span className="font-display text-3xl font-bold text-tinta">{brl(precoAss!)}</span>
                       {desconto > 0 && <span className="text-sm text-slate-500 line-through">{brl(precoCheio)}</span>}
-                      {desconto > 0 && <span className="rounded-full bg-brand-green/15 px-2.5 py-0.5 text-xs font-semibold text-brand-green">{desconto}% OFF</span>}
+                      {desconto > 0 && <span className="rounded-full bg-brand-green/15 px-2.5 py-0.5 text-xs font-semibold text-acento">{desconto}% OFF</span>}
                     </div>
                     {parcelasPossiveis(precoAss!) > 1 && (
                       <p className="mt-1 text-sm text-slate-400">
@@ -144,7 +144,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                     )}
                   </div>
                 ) : (
-                  <p className="font-display text-2xl font-bold text-white">{tr("Exclusivo para assinantes")}</p>
+                  <p className="font-display text-2xl font-bold text-tinta">{tr("Exclusivo para assinantes")}</p>
                 )}
 
                 {searchParams?.erro && (
@@ -155,7 +155,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                   {/* Matrícula vem antes do Em breve: marcar um curso como Em breve fecha a
                       venda, mas não tira o acesso de quem já estava matriculado. */}
                   {enrolled ? (
-                    <Link href={`/aprender/${course.slug}`} className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                    <Link href={`/aprender/${course.slug}`} className="block rounded-xl bg-marca-verde px-6 py-3.5 text-center text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                       {soArquivos ? "Abrir biblioteca" : "Continuar curso"}
                     </Link>
                   ) : emBreve ? (
@@ -163,17 +163,17 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                       {tr("Em breve")}
                     </button>
                   ) : !user ? (
-                    <Link href="/entrar" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                    <Link href="/entrar" className="block rounded-xl bg-marca-verde px-6 py-3.5 text-center text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                       {tr("Entre para comprar")}
                     </Link>
                   ) : !assinaturaAtiva ? (
-                    <Link href="/matricula" className="block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-center text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                    <Link href="/matricula" className="block rounded-xl bg-marca-verde px-6 py-3.5 text-center text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                       {tr("Assine para comprar com desconto")}
                     </Link>
                   ) : incluso ? (
                     <form action={enrollFree}>
                       <input type="hidden" name="slug" value={course.slug} />
-                      <button className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                      <button className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                         {tr("Liberar no meu acesso")}
                       </button>
                     </form>
@@ -182,11 +182,11 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                       <input type="hidden" name="slug" value={course.slug} />
                       <div className="space-y-1.5">
                         <label htmlFor="compra-cpf" className="block text-sm font-medium text-slate-300">{tr("CPF para a cobrança")}</label>
-                        <input id="compra-cpf" name="cpf" required inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
+                        <input id="compra-cpf" name="cpf" required inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
                       </div>
                       <div className="space-y-1.5">
                         <label htmlFor="compra-pagamento" className="block text-sm font-medium text-slate-300">{tr("Forma de pagamento")}</label>
-                        <select id="compra-pagamento" name="pagamento" defaultValue="pix" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-green/60 [&>option]:bg-ink-900">
+                        <select id="compra-pagamento" name="pagamento" defaultValue="pix" className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta outline-none focus:border-acento/60 [&>option]:bg-ink-900">
                           <option value="pix">{tr("Pix à vista ·")} {brl(precoAss!)}</option>
                           <option value="cartao-1">{tr("Cartão de crédito à vista ·")} {brl(precoAss!)}</option>
                           {Array.from({ length: parcelasPossiveis(precoAss!) - 1 }, (_, i) => i + 2).map((n) => (
@@ -195,12 +195,12 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                         </select>
                         <p className="text-xs text-slate-500">{tr("Parcelado sem juros. O acesso libera na confirmação da primeira parcela.")}</p>
                       </div>
-                      <button className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                      <button className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                         {tr("Comprar por")} {brl(precoAss!)}
                       </button>
                     </form>
                   ) : (
-                    <button disabled className="w-full cursor-not-allowed rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-semibold text-slate-400">
+                    <button disabled className="w-full cursor-not-allowed rounded-xl border border-tinta/10 bg-tinta/5 px-6 py-3.5 text-sm font-semibold text-slate-400">
                       {tr("Venda em breve")}
                     </button>
                   )}
@@ -220,7 +220,7 @@ export default async function CoursePage({ params, searchParams }: { params: { s
                 </p>
 
                 {/* O que você recebe */}
-                <div className="mt-6 space-y-2.5 border-t border-white/10 pt-5">
+                <div className="mt-6 space-y-2.5 border-t border-tinta/10 pt-5">
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{tr("Este curso inclui")}</p>
                   {[
                     soArquivos ? { icon: "📁", label: tr("Arquivos prontos para download") } : { icon: "🎬", label: carga ? `${lessonCount} aula(s) · ${carga} de conteúdo` : `${lessonCount} aula(s) em vídeo` },

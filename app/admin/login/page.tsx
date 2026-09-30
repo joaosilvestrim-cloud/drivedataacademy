@@ -36,8 +36,8 @@ export default function AdminLogin() {
   return (
     <main className="grid min-h-screen place-items-center px-6">
       <div className="w-full max-w-sm">
-        <div className="glass-strong rounded-3xl border border-white/10 p-8">
-          <h1 className="font-display text-2xl font-bold text-white">Portal DriveData</h1>
+        <div className="glass-strong rounded-3xl border border-tinta/10 p-8">
+          <h1 className="font-display text-2xl font-bold text-tinta">Portal DriveData</h1>
           <p className="mt-1 text-sm text-slate-400">Acesso restrito à equipe.</p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-3">
@@ -47,7 +47,7 @@ export default function AdminLogin() {
               placeholder="E-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
+              className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
             />
             <CampoSenha
               required
@@ -55,13 +55,13 @@ export default function AdminLogin() {
               placeholder="Senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
+              className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
             />
             {error && <p className="text-xs text-red-400">{error}</p>}
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Entrando..." : "Entrar"}
             </button>

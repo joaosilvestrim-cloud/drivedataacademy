@@ -76,7 +76,7 @@ function ContatoDoAluno({ nome, tipo, contato }: { nome: string; tipo: string; c
   const assunto = ASSUNTO[tipo] || "sua solicitação";
   const texto = `Oi${primeiro ? ", " + primeiro : ""}! Aqui é da DriveData Academy. Recebemos seu interesse em ${assunto} pela área do aluno e queria conversar com você sobre isso.`;
   const wa = whatsappDe(contato.telefone);
-  const botao = "inline-flex items-center gap-1.5 rounded-ctl border border-ds-line px-2.5 py-1.5 text-caption font-medium text-ds-text-2 transition-colors hover:border-ds-accent hover:text-ds-text";
+  const botao = "inline-flex items-center gap-1.5 rounded-ctl border border-ds-line px-2.5 py-1.5 text-caption font-medium text-ds-text-2 transition-colors hover:border-acento hover:text-ds-text";
 
   if (!contato.email && !contato.telefone && !contato.linkedin) {
     return <p className="text-caption text-ds-text-3">Sem contato cadastrado além da conta.</p>;
@@ -152,7 +152,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Parceria & Negócios</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Parceria & Negócios</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL de rep_requests no Supabase."} /></div>
       </div>
     );
@@ -160,7 +160,7 @@ export default async function AdminRepresentacao({ searchParams }: { searchParam
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Parceria & Negócios</h1>
+      <h1 className="font-display text-2xl font-bold text-tinta">Parceria & Negócios</h1>
       <p className="mt-1 text-sm text-slate-400">Solicitações dos alunos: revenda do Portal, parcerias, mentorias, candidaturas e marketplace.</p>
 
       <div className="mt-6">

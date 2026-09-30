@@ -43,18 +43,18 @@ export default function BlogSectionView({ posts }: { posts: Post[] }) {
   };
 
   return (
-    <section id="blog" className="relative mx-auto max-w-7xl px-6 py-24 scroll-mt-24">
+    <section id="blog" className="relative mx-auto max-w-[1200px] scroll-mt-24 px-6 py-24">
       <Reveal>
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{t.blog.eyebrow}</p>
-            <h2 className="mt-3 font-display text-3xl font-bold sm:text-5xl">
-              {t.blog.titlePre} <span className="text-gradient-blue">{t.blog.titleGrad}</span>
+            <p className="text-sm font-semibold text-marca">{t.blog.eyebrow}</p>
+            <h2 className="mt-3 text-[2.25rem] font-bold leading-[1.1] text-obsidian sm:text-[2.8rem]">
+              {t.blog.titlePre} <span className="text-marca-azul">{t.blog.titleGrad}</span>
             </h2>
           </div>
           <a
             href="/blog"
-            className="rounded-full border border-white/10 px-5 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+            className="rounded-full border border-marca px-5 py-2.5 text-sm font-semibold text-marca transition-colors hover:bg-marca-nevoa"
           >
             {t.blog.seeAll}
           </a>
@@ -68,25 +68,24 @@ export default function BlogSectionView({ posts }: { posts: Post[] }) {
           const category = pick(p.category, p.category_en, p.category_es);
           return (
           <Reveal key={p.id} delay={i * 0.08}>
-            <a href={`/blog/${p.slug}`} className="card-hover glass group flex h-full flex-col overflow-hidden rounded-3xl border border-white/8">
+            <a href={`/blog/${p.slug}`} className="card-hover group flex h-full flex-col overflow-hidden rounded-grande bg-fog">
               <div className="relative aspect-[16/9] overflow-hidden">
                 {p.cover_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={p.cover_url} alt={title} className="absolute inset-0 h-full w-full object-cover" />
                 ) : (
                   <>
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 via-ink-700 to-brand-blue/20" />
-                    <div className="absolute inset-0 grid-bg opacity-50" />
+                    <div className="absolute inset-0 bg-marca" />
                   </>
                 )}
                 {category && (
-                  <span className="absolute left-4 top-4 rounded-full bg-ink-900/80 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-brand-teal backdrop-blur">
+                  <span className="absolute left-4 top-4 rounded-full bg-marca-verde px-3 py-1 text-xs font-semibold text-marca">
                     {category}
                   </span>
                 )}
               </div>
               <div className="flex flex-1 flex-col p-6">
-                <h3 className="font-display text-lg font-bold leading-snug text-white transition-colors group-hover:text-brand-green">
+                <h3 className="font-display text-lg font-bold leading-snug text-tinta transition-colors group-hover:text-acento">
                   {title}
                 </h3>
                 <p className="mt-2 flex-1 text-sm text-slate-400">{excerpt}</p>

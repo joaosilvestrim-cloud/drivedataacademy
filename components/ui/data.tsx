@@ -98,7 +98,7 @@ export function FilterSelect({
         onChange={(e) => onChange(e.target.value)}
         className={cx(
           "h-10 rounded-ctl border bg-ds-surface px-2.5 text-body-sm text-ds-text transition-colors duration-fast ease-ds",
-          ativo ? "border-ds-accent/50" : "border-ds-line hover:border-ds-text-3"
+          ativo ? "border-acento/50" : "border-ds-line hover:border-ds-text-3"
         )}
       >
         {options.map((o) => (
@@ -136,7 +136,7 @@ export function FilterSummary({
       <button
         type="button"
         onClick={onClear}
-        className="text-label text-ds-accent underline-offset-4 hover:underline"
+        className="text-label text-acento underline-offset-4 hover:underline"
       >
         limpar
       </button>

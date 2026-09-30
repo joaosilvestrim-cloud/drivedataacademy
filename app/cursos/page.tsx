@@ -33,9 +33,9 @@ const passos = () => [
 ];
 
 const btnPrimario =
-  "inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-7 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]";
+  "inline-flex items-center justify-center gap-2 rounded-full bg-marca-verde px-7 py-3.5 text-sm font-semibold text-sobre-acento transition-[filter] hover:brightness-95";
 const btnSecundario =
-  "inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:border-brand-green/50 hover:text-brand-green";
+  "inline-flex items-center justify-center rounded-full border border-tinta/70 px-7 py-3.5 text-sm font-semibold text-tinta transition-colors hover:bg-tinta/5";
 
 export default function AssinaturaPage() {
   return (
@@ -56,13 +56,13 @@ export default function AssinaturaPage() {
             <p className="mt-3 max-w-md text-slate-400">{tr("Três passos entre você e o seu ingresso.")}</p>
           </Reveal>
           <div className="mt-10 grid gap-14 lg:grid-cols-[1fr_0.85fr] lg:items-center">
-          <ol className="border-t border-white/10">
+          <ol className="border-t border-tinta/10">
             {passos().map((p, i) => (
               <Reveal key={p.titulo} delay={i * 0.08}>
-                <li className="grid grid-cols-[3rem_1fr] gap-x-5 border-b border-white/10 py-7">
-                  <span className="font-mono text-sm tabular-nums text-brand-teal">0{i + 1}</span>
+                <li className="grid grid-cols-[3rem_1fr] gap-x-5 border-b border-tinta/10 py-7">
+                  <span className="font-mono text-sm tabular-nums text-marca-azul">0{i + 1}</span>
                   <div>
-                    <h3 className="font-display text-xl font-semibold text-white sm:text-2xl">{p.titulo}</h3>
+                    <h3 className="font-display text-xl font-semibold text-tinta sm:text-2xl">{p.titulo}</h3>
                     <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-400">{p.texto}</p>
                   </div>
                 </li>
@@ -78,8 +78,8 @@ export default function AssinaturaPage() {
         {/* Fechamento */}
         <section className="relative mx-auto max-w-5xl px-6 pb-24">
           <Reveal>
-            <div className="glow-border relative overflow-hidden rounded-[2.5rem]">
-              <div className="glass-strong relative rounded-[2.5rem] px-8 py-14 text-center sm:px-14">
+            <div className="relative overflow-hidden rounded-grande">
+              <div className="escuro relative rounded-grande bg-marca px-8 py-14 text-center sm:px-14">
                 <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-brand-green/20 blur-[100px]" />
                 <h2 className="relative font-display text-3xl font-bold sm:text-4xl">
                   {tr("Seu próximo nível em dados")}

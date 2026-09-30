@@ -78,8 +78,8 @@ export default async function PortfolioPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Portfólio")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("O que a turma construiu")}</h1>
+      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Portfólio")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("O que a turma construiu")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("Projeto pronto vale mais que certificado em entrevista. Publique o seu com a imagem, o problema que ele resolvia e o resultado. O time revisa e ele entra na vitrine, aqui e na página pública da Academy.")}
       </p>
@@ -112,21 +112,21 @@ export default async function PortfolioPage() {
         />
       )}
 
-      <section className="mt-12 grid gap-5 rounded-3xl border border-white/8 bg-white/[0.02] p-6 sm:grid-cols-3">
+      <section className="mt-12 grid gap-5 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6 sm:grid-cols-3">
         <div>
-          <p className="text-sm font-semibold text-brand-green">{tr("Serve qualquer projeto")}</p>
+          <p className="text-sm font-semibold text-acento">{tr("Serve qualquer projeto")}</p>
           <p className="mt-1 text-sm text-slate-400">
             {tr("Painel do trabalho, exercício da Academy que virou coisa séria, automação que economizou o seu dia. Se resolveu um problema real, entra.")}
           </p>
         </div>
         <div>
-          <p className="text-sm font-semibold text-brand-green">{tr("Conte o problema, não a ferramenta")}</p>
+          <p className="text-sm font-semibold text-acento">{tr("Conte o problema, não a ferramenta")}</p>
           <p className="mt-1 text-sm text-slate-400">
             {tr("Quem contrata quer saber o que estava quebrado e o que mudou depois. A lista de ferramentas é o detalhe, não a história.")}
           </p>
         </div>
         <div>
-          <p className="text-sm font-semibold text-brand-green">{tr("Você controla a exposição")}</p>
+          <p className="text-sm font-semibold text-acento">{tr("Você controla a exposição")}</p>
           <p className="mt-1 text-sm text-slate-400">
             {tr("Dá para deixar o projeto só para a turma. Dado de cliente nunca deve aparecer no print: troque nome e número antes de publicar.")}
           </p>

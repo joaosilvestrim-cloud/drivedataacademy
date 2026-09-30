@@ -65,23 +65,23 @@ export default function FaixaEventos({ eventos, idioma = IDIOMA_PADRAO }: { even
         href="/conta/agenda"
         tabIndex={oculto ? -1 : undefined}
         aria-hidden={oculto || undefined}
-        className="group flex shrink-0 items-center gap-2.5 whitespace-nowrap px-5 text-[0.8rem] text-slate-300 outline-none transition-colors hover:text-white focus-visible:text-white"
+        className="group flex shrink-0 items-center gap-2.5 whitespace-nowrap px-5 text-[0.8rem] text-slate-300 outline-none transition-colors hover:text-tinta focus-visible:text-tinta"
       >
-        <span className={`rounded px-1.5 py-0.5 font-mono text-[0.68rem] font-semibold uppercase tabular-nums ${q?.destaque ? "bg-brand-green/20 text-brand-green" : "bg-white/[0.06] text-slate-400"}`}>
+        <span className={`rounded px-1.5 py-0.5 font-mono text-[0.68rem] font-semibold uppercase tabular-nums ${q?.destaque ? "bg-brand-green/20 text-acento" : "bg-tinta/[0.06] text-slate-400"}`}>
           {q?.texto ?? t.faixa.emBreve}
         </span>
         <span className="font-medium">{e.title}</span>
         <span className="text-[0.65rem] uppercase tracking-wide text-slate-500">{e.kind === "mentoria" ? t.faixa.mentoria : t.faixa.live}</span>
-        <span aria-hidden="true" className="ml-3 h-1 w-1 rounded-full bg-white/20" />
+        <span aria-hidden="true" className="ml-3 h-1 w-1 rounded-full bg-tinta/20" />
       </Link>
     );
   };
 
   return (
-    <div className="faixa-eventos relative flex h-9 items-stretch overflow-hidden border-b border-white/10 bg-ink-900/85 backdrop-blur" role="region" aria-label={t.faixa.regiao}>
+    <div className="faixa-eventos relative flex h-9 items-stretch overflow-hidden border-b border-tinta/10 bg-ink-900/85 backdrop-blur" role="region" aria-label={t.faixa.regiao}>
       <Link
         href="/conta/agenda"
-        className="relative z-10 flex shrink-0 items-center gap-2 border-r border-white/10 bg-ink-900 px-3 text-[0.7rem] font-semibold uppercase tracking-wider text-brand-green hover:text-white"
+        className="relative z-10 flex shrink-0 items-center gap-2 border-r border-tinta/10 bg-ink-900 px-3 text-[0.7rem] font-semibold uppercase tracking-wider text-acento hover:text-tinta"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v13a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />

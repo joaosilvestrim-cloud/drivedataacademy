@@ -96,9 +96,9 @@ function Selos({ m }: { m: Membro }) {
 function BarraDePontos({ pts, lider }: { pts: number; lider: number }) {
   const pct = lider > 0 ? Math.max(3, Math.round((pts / lider) * 100)) : 0;
   return (
-    <span className="mt-2 block h-1 w-full overflow-hidden rounded-full bg-white/8" aria-hidden="true">
+    <span className="mt-2 block h-1 w-full overflow-hidden rounded-full bg-tinta/8" aria-hidden="true">
       <span
-        className="block h-full rounded-full bg-gradient-to-r from-brand-green to-brand-teal"
+        className="block h-full rounded-full bg-marca-verde"
         style={{ width: `${pts > 0 ? pct : 0}%` }}
       />
     </span>
@@ -154,16 +154,16 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               <Link
                 key={m.id}
                 href={`/conta/vitrine/${m.id}`}
-                className="glass group flex items-center gap-4 rounded-2xl border border-white/8 p-4 transition-colors hover:border-brand-green/40"
+                className="glass group flex items-center gap-4 rounded-2xl border border-tinta/8 p-4 transition-colors hover:border-acento/40"
               >
                 <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-display text-sm font-bold text-white transition-colors group-hover:text-brand-green">
+                  <p className="truncate font-display text-sm font-bold text-tinta transition-colors group-hover:text-acento">
                     {m.full_name}
-                    {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">{tr("(você)")}</span>}
+                    {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-acento">{tr("(você)")}</span>}
                   </p>
                   <p className="text-[0.7rem] text-slate-400">
-                    {m.rank}º lugar · <span className="font-mono tabular-nums text-brand-green">{m.pts}</span> pts
+                    {m.rank}º lugar · <span className="font-mono tabular-nums text-acento">{m.pts}</span> pts
                   </p>
                   <BarraDePontos pts={m.pts} lider={lider} />
                 </div>
@@ -187,7 +187,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               onChange={(e) => setBusca(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Escape") setBusca(""); }}
               placeholder={tr("Buscar por nome, título ou especialidade")}
-              className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-11 pr-4 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
+              className="w-full rounded-xl border border-tinta/10 bg-tinta/5 py-3 pl-11 pr-4 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60"
             />
           </div>
           <div>
@@ -196,7 +196,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               id="vitrine-skill"
               value={skill}
               onChange={(e) => setSkill(e.target.value)}
-              className={`w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-white outline-none [&>option]:bg-ink-900 sm:w-56 ${skill ? "border-brand-green/50" : "border-white/10"}`}
+              className={`w-full rounded-xl border bg-tinta/5 px-4 py-3 text-sm text-tinta outline-none [&>option]:bg-ink-900 sm:w-56 ${skill ? "border-acento/50" : "border-tinta/10"}`}
             >
               <option value="">{tr("Todas as especialidades")}</option>
               {habilidades.map(([s, n]) => (
@@ -210,7 +210,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
               id="vitrine-ordem"
               value={ordem}
               onChange={(e) => setOrdem(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none [&>option]:bg-ink-900 sm:w-44"
+              className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta outline-none [&>option]:bg-ink-900 sm:w-44"
             >
               {ORDENS.map((o) => (
                 <option key={o.key} value={o.key}>{tr(o.label)}</option>
@@ -234,8 +234,8 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
                   aria-pressed={ativo}
                   className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 transition-colors ${
                     ativo
-                      ? "border-brand-green/60 bg-brand-green/15 text-white"
-                      : "border-white/10 bg-white/[0.03] text-slate-300 hover:border-brand-teal/40 hover:text-white"
+                      ? "border-acento/60 bg-brand-green/15 text-tinta"
+                      : "border-tinta/10 bg-tinta/[0.03] text-slate-300 hover:border-brand-teal/40 hover:text-tinta"
                   }`}
                   style={{ fontSize: `${0.68 + peso * 0.22}rem` }}
                 >
@@ -250,7 +250,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
         {filtrando && (
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
             <span>
-              <span className="font-semibold text-white">{filtrados.length}</span> {tr("de")} {membros.length}{" "}
+              <span className="font-semibold text-tinta">{filtrados.length}</span> {tr("de")} {membros.length}{" "}
               {membros.length === 1 ? "aluno" : "alunos"}
             </span>
             <button
@@ -271,23 +271,23 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
             href={`/conta/vitrine/${m.id}`}
             className={`glass group relative flex flex-col overflow-hidden rounded-2xl border p-5 transition-colors ${
               m.portfolio
-                ? "border-brand-green/45 shadow-[0_0_0_1px_rgba(21,196,126,.12),0_18px_40px_-24px_rgba(21,196,126,.6)] hover:border-brand-green/80"
+                ? "border-acento/45 hover:border-acento/80"
                 : m.casa
-                  ? "border-[#f6d68c]/35 hover:border-[#f6d68c]/60"
-                  : "border-white/8 hover:border-brand-green/40"
+                  ? "border-amber-300/35 hover:border-amber-300/60"
+                  : "border-tinta/8 hover:border-acento/40"
             }`}
           >
             {/* Portfólio no ar: a faixa de destaque no topo do card, com o
                 resumo do que o site prova e o botão para abrir. */}
             {m.portfolio && (
-              <div className="-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 border-b border-brand-green/20 bg-[radial-gradient(120%_160%_at_0%_0%,rgba(21,196,126,.22),transparent_60%)] px-5 py-2.5">
+              <div className="-mx-5 -mt-5 mb-4 flex items-center justify-between gap-3 border-b border-acento/20 bg-[radial-gradient(120%_160%_at_0%_0%,rgba(21,196,126,.22),transparent_60%)] px-5 py-2.5">
                 <span className="flex min-w-0 items-center gap-2">
                   <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true" className="shrink-0">
                     <path d="M2 12 L7 5 L13 9 L20 3" stroke="#6ce6c7" strokeWidth="1" fill="none" opacity=".7" />
                     {[[2, 12], [7, 5], [13, 9], [20, 3]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="1.8" fill="#15c47e" />)}
                   </svg>
                   <span className="min-w-0">
-                    <span className="block text-xs font-semibold text-white">{tr("Portfólio no ar")}</span>
+                    <span className="block text-xs font-semibold text-tinta">{tr("Portfólio no ar")}</span>
                     <span className="block truncate text-[0.68rem] text-slate-400">
                       {m.portfolio.projetos} {m.portfolio.projetos === 1 ? tr("projeto") : tr("projetos")}
                       {m.portfolio.competencias > 0 && ` · ${m.portfolio.competencias} ${tr("competências provadas")}`}
@@ -297,7 +297,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
                 <button
                   type="button"
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(`/portfolio/${m.portfolio!.slug}`, "_blank", "noopener"); }}
-                  className="shrink-0 rounded-lg bg-brand-green px-2.5 py-1 text-[0.7rem] font-semibold text-ink-900 transition-colors hover:bg-white"
+                  className="shrink-0 rounded-lg bg-brand-green px-2.5 py-1 text-[0.7rem] font-semibold text-sobre-acento transition-colors hover:bg-white"
                 >
                   {tr("Ver portfólio")} ↗
                 </button>
@@ -307,16 +307,16 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
             <span
               aria-hidden="true"
               className={`absolute inset-y-0 left-0 w-[3px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-                m.casa ? "bg-gradient-to-b from-[#f6d68c] to-brand-green" : "bg-gradient-to-b from-brand-green to-brand-blue"
+                m.casa ? "bg-gradient-to-b from-amber-300 to-brand-green" : "bg-marca-verde"
               }`}
             />
 
             <div className="flex items-center gap-3">
               <MedalAvatar name={m.full_name} src={m.avatar_url} rank={m.rank} casa={m.casa} size="md" />
               <div className="min-w-0">
-                <p className={`truncate font-display text-base font-bold transition-colors ${m.casa === "Oficial" ? "text-[#9fd3ff]" : m.casa === "Equipe" ? "text-[#6ce6c7]" : m.casa ? "text-[#f6d68c]" : "text-white group-hover:text-brand-green"}`}>
+                <p className={`truncate font-display text-base font-bold transition-colors ${m.casa === "Oficial" ? "text-sky-300" : m.casa === "Equipe" ? "text-teal-300" : m.casa ? "text-amber-300" : "text-tinta group-hover:text-acento"}`}>
                   {m.full_name}
-                  {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-brand-green">{tr("(você)")}</span>}
+                  {m.id === meuId && <span className="ml-1.5 text-xs font-normal text-acento">{tr("(você)")}</span>}
                 </p>
                 {m.headline && <p className="truncate text-xs text-slate-400">{m.headline}</p>}
                 <p className="text-[0.7rem] text-slate-500">{tr("na comunidade")} {tempo(m.since)}</p>
@@ -333,7 +333,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
                   </span>
                 ))}
                 {m.skills.length > 4 && (
-                  <span className="rounded-md border border-white/10 px-2 py-0.5 text-[0.68rem] font-medium text-slate-400">
+                  <span className="rounded-md border border-tinta/10 px-2 py-0.5 text-[0.68rem] font-medium text-slate-400">
                     +{m.skills.length - 4}
                   </span>
                 )}
@@ -342,14 +342,14 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
 
             <Selos m={m} />
 
-            <div className="mt-auto border-t border-white/8 pt-4">
+            <div className="mt-auto border-t border-tinta/8 pt-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm">
-                  <span className="font-display text-lg font-bold text-brand-green">{m.pts}</span>{" "}
+                  <span className="font-display text-lg font-bold text-acento">{m.pts}</span>{" "}
                   <span className="text-xs text-slate-400">pts</span>
                   {m.rank && <span className="ml-2 font-mono text-[0.68rem] text-slate-500">{m.rank}º</span>}
                 </span>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors group-hover:text-brand-green">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 transition-colors group-hover:text-acento">
                   {tr("Ver perfil")}
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
@@ -361,7 +361,7 @@ export default function VitrineClient({ membros, meuId, lider }: { membros: Memb
       </div>
 
       {filtrados.length === 0 && (
-        <p className="mt-6 rounded-2xl border border-dashed border-white/10 px-4 py-12 text-center text-slate-500">
+        <p className="mt-6 rounded-2xl border border-dashed border-tinta/10 px-4 py-12 text-center text-slate-500">
           {membros.length === 0
             ? tr("Ainda não há alunos na vitrine.")
             : tr("Nenhum aluno encontrado com esses termos. Tente outra busca ou limpe o filtro.")}

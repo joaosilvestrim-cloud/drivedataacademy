@@ -59,19 +59,19 @@ export default function ContactsTable({ rows }: { rows: Contact[] }) {
     <>
       <div className="mt-6 flex flex-wrap items-center gap-2">
         {FILTERS.map((f) => (
-          <button key={f.key} onClick={() => setFilter(f.key)} className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${filter === f.key ? "border-brand-green/50 bg-brand-green/10 text-brand-green" : "border-white/10 text-slate-300 hover:border-white/30"}`}>{f.label}</button>
+          <button key={f.key} onClick={() => setFilter(f.key)} className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${filter === f.key ? "border-acento/50 bg-brand-green/10 text-acento" : "border-tinta/10 text-slate-300 hover:border-tinta/30"}`}>{f.label}</button>
         ))}
         <div className="ml-auto flex items-center gap-2">
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp..." className="w-64 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60" />
-          <button onClick={download} className="rounded-lg border border-white/10 px-3 py-2 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">Exportar CSV</button>
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar nome, e-mail, WhatsApp..." className="w-64 rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60" />
+          <button onClick={download} className="rounded-lg border border-tinta/10 px-3 py-2 text-xs font-medium text-slate-300 hover:border-acento/50 hover:text-acento">Exportar CSV</button>
         </div>
       </div>
 
       <p className="mt-3 text-sm text-slate-400">{filtered.length} contato(s){filtered.length !== rows.length ? ` de ${rows.length}` : ""}</p>
 
-      <div className="mt-3 overflow-x-auto rounded-2xl border border-white/8">
+      <div className="mt-3 overflow-x-auto rounded-2xl border border-tinta/8">
         <table className="w-full min-w-[820px] text-left text-sm">
-          <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
+          <thead className="bg-tinta/[0.03] text-xs uppercase tracking-wide text-slate-400">
             <tr>
               <th className="px-4 py-3">Nome</th>
               <th className="px-4 py-3">E-mail</th>
@@ -80,16 +80,16 @@ export default function ContactsTable({ rows }: { rows: Contact[] }) {
               <th className="px-4 py-3">Último contato</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-tinta/5">
             {filtered.map((r) => (
-              <tr key={r.email} className="text-slate-200 hover:bg-white/[0.02]">
-                <td className="px-4 py-3 font-medium text-white">{r.name || "—"}</td>
+              <tr key={r.email} className="text-slate-200 hover:bg-tinta/[0.02]">
+                <td className="px-4 py-3 font-medium text-tinta">{r.name || "—"}</td>
                 <td className="px-4 py-3 text-slate-300">{r.email}</td>
                 <td className="px-4 py-3 text-slate-400">{r.phone || "—"}</td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1">
                     {r.inWaitlist && <span className="rounded-full bg-brand-blue/15 px-2 py-0.5 text-[0.6rem] font-semibold text-brand-cyan">Lista de espera</span>}
-                    {r.inMaterial && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold text-brand-green">{r.materials} material(is)</span>}
+                    {r.inMaterial && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold text-acento">{r.materials} material(is)</span>}
                   </div>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-slate-400">{fmt(r.last)}</td>

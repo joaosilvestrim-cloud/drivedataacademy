@@ -112,13 +112,13 @@ export default async function ProgressoPage({ searchParams }: { searchParams: { 
 
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Progresso dos treinamentos</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Progresso dos treinamentos</h1>
         <p className="mt-1 text-sm text-slate-400">Quem está fazendo, quanto avançou e quem concluiu. Clique num curso para ver aluno por aluno.</p>
 
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {kpis.map((k) => (
-            <div key={k.label} className="glass rounded-2xl border border-white/8 p-4">
-              <p className="font-display text-2xl font-bold text-white">{k.value}</p>
+            <div key={k.label} className="glass rounded-2xl border border-tinta/8 p-4">
+              <p className="font-display text-2xl font-bold text-tinta">{k.value}</p>
               <p className="text-xs text-slate-400">{k.label}</p>
             </div>
           ))}
@@ -294,7 +294,7 @@ export default async function ProgressoPage({ searchParams }: { searchParams: { 
           </section>
         )}
 
-        <div className="mt-6 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-xs text-slate-400">
+        <div className="mt-6 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3 text-xs text-slate-400">
           "Começaram" = concluiu ao menos 1 aula. "Progresso médio" e "Última atividade" usam as aulas marcadas como concluídas (inclui o automático do vídeo).
         </div>
       </div>
@@ -302,7 +302,7 @@ export default async function ProgressoPage({ searchParams }: { searchParams: { 
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Progresso dos treinamentos</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Progresso dos treinamentos</h1>
         <div className="mt-6"><AdminError message={e instanceof Error ? e.message : "Erro ao carregar."} /></div>
       </div>
     );

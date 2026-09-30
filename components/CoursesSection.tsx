@@ -15,46 +15,42 @@ export default function CoursesSection() {
   const cards = t.courses.cards.map((c, i) => ({ ...c, ...CARD_META[i] }));
 
   return (
-    <section id="cursos" className="relative mx-auto max-w-7xl px-6 py-24 scroll-mt-24">
+    <section id="cursos" className="relative mx-auto max-w-[1200px] scroll-mt-24 px-6 py-24">
       <span id="marketplace" className="absolute -top-24" aria-hidden />
       <Reveal>
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{t.courses.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-bold sm:text-5xl">
-            {t.courses.titlePre} <span className="text-gradient">{t.courses.titleGrad}</span>
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold text-marca">{t.courses.eyebrow}</p>
+          <h2 className="mt-3 text-[2.25rem] font-bold leading-[1.1] text-obsidian sm:text-[2.8rem]">
+            {t.courses.titlePre} <span className="text-marca-azul">{t.courses.titleGrad}</span>
           </h2>
-          <p className="mt-4 text-slate-300/90">{t.courses.subtitle}</p>
+          <p className="mt-4 max-w-2xl text-lg text-charcoal">{t.courses.subtitle}</p>
         </div>
       </Reveal>
 
-      <div className="mt-14 grid gap-6 md:grid-cols-3">
+      {/* Três cartões; o do meio é a faixa escura, o destaque do sistema. */}
+      <div className="mt-12 grid gap-5 md:grid-cols-3">
         {cards.map((c, i) => (
           <Reveal key={c.tag} delay={i * 0.08}>
             <article
-              className={`card-hover relative flex h-full flex-col rounded-3xl border p-7 ${
-                c.featured ? "glass-strong border-brand-green/30" : "glass border-white/8"
+              className={`card-hover relative flex h-full flex-col rounded-grande p-8 ${
+                c.featured ? "escuro bg-marca" : "bg-fog"
               }`}
             >
-              {c.featured && (
-                <span className="absolute -top-3 left-7 rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1 text-[0.7rem] font-bold uppercase tracking-wide text-ink-900">
-                  {t.courses.featured}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${c.featured ? "bg-marca-verde text-marca" : "bg-white text-marca"}`}>
+                  {c.tag}
                 </span>
-              )}
-              <span className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-brand-teal">
-                {c.tag}
-              </span>
+                {c.featured && <span className="text-xs font-medium text-slate-300">{t.courses.featured}</span>}
+              </div>
 
-              <h3 className="mt-5 font-display text-xl font-bold leading-snug text-white">
+              <h3 className={`mt-6 text-2xl font-bold leading-snug tracking-tight ${c.featured ? "text-marca-verde" : "text-obsidian"}`}>
                 {c.headline}
               </h3>
-              <p className="mt-3 text-sm text-slate-300/90">{c.desc}</p>
+              <p className={`mt-3 text-[15px] leading-relaxed ${c.featured ? "text-slate-200" : "text-charcoal"}`}>{c.desc}</p>
 
-              <ul className="mt-5 space-y-2.5">
+              <ul className={`mt-6 border-b ${c.featured ? "border-white/15" : "border-obsidian/10"}`}>
                 {c.topics.map((topic) => (
-                  <li key={topic} className="flex items-start gap-2.5 text-sm text-slate-300">
-                    <svg className="mt-0.5 shrink-0 text-brand-green" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                  <li key={topic} className={`border-t py-2.5 text-sm font-medium ${c.featured ? "border-white/15 text-white" : "border-obsidian/10 text-obsidian"}`}>
                     {topic}
                   </li>
                 ))}
@@ -62,12 +58,12 @@ export default function CoursesSection() {
 
               <a
                 href={c.href}
-                className="mt-7 inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition-colors hover:border-brand-green/50 hover:text-brand-green"
+                className={`mt-8 inline-flex w-fit items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors ${
+                  c.featured ? "bg-marca-verde text-marca hover:brightness-95" : "border border-marca text-marca hover:bg-white"
+                }`}
               >
                 {c.cta}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <span aria-hidden>→</span>
               </a>
             </article>
           </Reveal>

@@ -1,8 +1,7 @@
 /* Menu imersivo da assinatura. Portado do protótipo do Codex (2026-09-08),
    com as onze cenas em CSS 3D. Seletores ficam sob #dd-universe de propósito:
    o script do componente busca os elementos por classe. */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap');
-#dd-universe { --dd-bg:#060c13; --dd-panel:#0c1621; --dd-text:#edf6ff; --dd-muted:#99afc1; --dd-accent:#36ebba; --dd-blue:#299bff; --dd-depth:1; color-scheme:dark; color:var(--dd-text); background:radial-gradient(ellipse at 52% 36%,#0b2633 0%,transparent 53%),var(--dd-bg);font-family:'DM Sans',sans-serif; overflow:hidden; border-radius:24px; position:relative; isolation:isolate; }
+#dd-universe { --dd-bg:#061a33; --dd-panel:#0a2647; --dd-text:#edf6ff; --dd-muted:#99afc1; --dd-accent:#5fe06a; --dd-blue:#13b8ef; --dd-depth:1; color-scheme:dark; color:var(--dd-text); background:radial-gradient(ellipse at 52% 36%,#0b2633 0%,transparent 53%),var(--dd-bg);font-family:var(--font-sans),system-ui,sans-serif; overflow:hidden; border-radius:24px; position:relative; isolation:isolate; }
 #dd-universe * {box-sizing:border-box;}
 #dd-universe a {color:inherit;text-decoration:none;}
 #dd-universe button {font:inherit;color:inherit;cursor:pointer;}
@@ -10,8 +9,8 @@
 #dd-universe .dd-intro {display:flex;align-items:flex-end;justify-content:space-between;gap:24px;position:relative;z-index:1;}
 #dd-universe .dd-eyebrow {display:flex;gap:9px;align-items:center;color:#91b9c7;font-size:10px;letter-spacing:2.3px;}
 #dd-universe .dd-eyebrow span {width:5px;height:5px;border-radius:50%;background:var(--dd-accent);box-shadow:0 0 12px var(--dd-accent);}
-#dd-universe .dd-h1 {font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,4.1vw,44px);font-weight:500;letter-spacing:-1.8px;line-height:1.07;margin:13px 0 0;}
-#dd-universe .dd-h1 em {font-style:normal;background:linear-gradient(90deg,#61f1c0,#3ba8ff);background-clip:text;-webkit-background-clip:text;color:transparent;}
+#dd-universe .dd-h1 {font-family:var(--font-sans),system-ui,sans-serif;font-size:clamp(30px,4.1vw,44px);font-weight:500;letter-spacing:-1.8px;line-height:1.07;margin:13px 0 0;}
+#dd-universe .dd-h1 em {font-style:normal;color:#5fe06a;}
 #dd-universe .dd-intro-side {padding-bottom:3px;}
 #dd-universe .dd-intro-side p {color:var(--dd-muted);font-size:12px;line-height:1.7;margin:0 0 12px;}
 #dd-universe .dd-motion {display:flex;align-items:center;gap:7px;border:0;background:none;padding:5px 0;color:#b3cad7;font-size:11px;}
@@ -79,7 +78,7 @@
 #dd-universe .dd-core-caption small {display:none;}
 #dd-universe .dd-scene {position:absolute;inset:0;transform-style:preserve-3d;filter:drop-shadow(0 23px 13px #0008);font-family:'Space Grotesk',sans-serif;}
 #dd-universe .dd-scene * {position:absolute;}
-#dd-universe .dd-scene span,#dd-universe .dd-scene small {font-family:'DM Sans',sans-serif;letter-spacing:1.5px;font-size:9px;font-weight:500;}
+#dd-universe .dd-scene span,#dd-universe .dd-scene small {font-family:var(--font-sans),system-ui,sans-serif;letter-spacing:1.5px;font-size:9px;font-weight:500;}
 #dd-universe .dd-scene strong {font-size:39px;line-height:.93;letter-spacing:-2px;font-weight:600;}
 #dd-universe .dd-scene b {font-weight:500;}
 #dd-universe .dd-vinyl {width:171px;height:171px;top:8px;right:4px;border-radius:50%;background:repeating-radial-gradient(circle,#10262c 0px,#10262c 2px,#304d53 3px,#112c33 4px);border:2px solid #456f71;box-shadow:8px 7px 0 #05131b,inset 0 0 24px #000;transform:rotateX(12deg) rotateY(-15deg);}
@@ -178,19 +177,19 @@
 @media(prefers-reduced-motion:reduce){#dd-universe .dd-waveform b {animation:none;}}
 
 /* ---- Tela cheia: o menu vira o herói da página /cursos ---- */
-#dd-universe.dd-full {border-radius:0;background:radial-gradient(ellipse at 50% 42%,#0b2633 0%,transparent 48%),transparent;min-height:100vh;display:flex;flex-direction:column;justify-content:center;}
+#dd-universe.dd-full {border-radius:0;background:radial-gradient(ellipse at 50% 42%,#12396b 0%,transparent 55%),#061a33;min-height:100vh;display:flex;flex-direction:column;justify-content:center;}
 #dd-universe.dd-full main {width:100%;max-width:1440px;margin:0 auto;padding:124px clamp(24px,5vw,72px) 12px;}
 #dd-universe.dd-full .dd-intro {align-items:flex-end;gap:32px;}
 #dd-universe.dd-full .dd-hero {max-width:640px;}
 #dd-universe.dd-full .dd-eyebrow {display:flex;align-items:center;gap:9px;margin:0 0 14px;color:#8fd8c4;font-size:11px;font-weight:600;letter-spacing:2.6px;text-transform:uppercase;}
 #dd-universe.dd-full .dd-eyebrow span {width:6px;height:6px;border-radius:50%;background:var(--dd-accent);box-shadow:0 0 12px var(--dd-accent);}
-#dd-universe.dd-full .dd-h1 {font-size:clamp(38px,5.2vw,66px);letter-spacing:-2.4px;font-weight:500;}
+#dd-universe.dd-full .dd-h1 {font-size:clamp(40px,5.6vw,76px);letter-spacing:-0.04em;font-weight:900;line-height:.92;}
 #dd-universe.dd-full .dd-lead {margin:18px 0 0;max-width:560px;color:#b7c9d4;font-size:15px;line-height:1.7;}
 #dd-universe.dd-full .dd-ctas {display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;}
-#dd-universe.dd-full .dd-cta-primary {display:inline-flex;align-items:center;gap:10px;border-radius:12px;background:linear-gradient(110deg,#31e4ad,#39a9f5);color:#041b21;padding:13px 22px;font-size:13px;font-weight:700;box-shadow:0 8px 30px #25d7b52a;transition:transform .2s;}
-#dd-universe.dd-full .dd-cta-primary:hover {transform:translateY(-2px) scale(1.02);}
+#dd-universe.dd-full .dd-cta-primary {display:inline-flex;align-items:center;gap:10px;border-radius:9999px;background:#5fe06a;color:#0a2647;padding:14px 26px;font-size:15px;font-weight:600;transition:filter .2s;}
+#dd-universe.dd-full .dd-cta-primary:hover {filter:brightness(.95);}
 #dd-universe.dd-full .dd-cta-primary svg {width:15px;height:15px;}
-#dd-universe.dd-full .dd-cta-secondary {display:inline-flex;align-items:center;border-radius:12px;border:1px solid #2b4350;background:#0c1a2466;padding:13px 22px;font-size:13px;font-weight:600;transition:border-color .2s,color .2s;}
+#dd-universe.dd-full .dd-cta-secondary {display:inline-flex;align-items:center;border-radius:9999px;border:1px solid #ffffffb3;background:transparent;padding:14px 26px;font-size:15px;font-weight:600;transition:border-color .2s,color .2s;}
 #dd-universe.dd-full .dd-cta-secondary:hover {border-color:#63d5d57d;color:var(--dd-accent);}
 #dd-universe.dd-full .dd-intro-side p {font-size:13px;}
 #dd-universe.dd-full .dd-space {min-height:min(600px,72vh);gap:26px;padding:34px 0 20px;}
@@ -224,12 +223,12 @@
 .dd-ticket {position:absolute;left:8%;top:8%;width:78%;height:76%;border-radius:4px;transform-style:preserve-3d;}
 .dd-ticket-back {background:#20546b;border:1px solid #376372;transform:rotateZ(11deg) translateZ(-40px);box-shadow:6px 8px 0 #061e26;}
 .dd-ticket-mid {background:#287e91;border:1px solid #4d95a4;transform:rotateZ(4deg) translateZ(-12px);box-shadow:6px 8px 0 #061e26;}
-.dd-ticket-mid span {position:absolute;right:16px;top:14px;font-family:'DM Sans',sans-serif;font-size:9px;letter-spacing:1.8px;color:#bcebee;}
+.dd-ticket-mid span {position:absolute;right:16px;top:14px;font-family:var(--font-sans),system-ui,sans-serif;font-size:9px;letter-spacing:1.8px;color:#bcebee;}
 .dd-ticket-front {background:#b8efe7;color:#0a3b3d;padding:22px 24px 20px;transform:rotateZ(-7deg) rotateY(-9deg) translateZ(30px);box-shadow:0 6px 0 #497d72,0 16px 36px #0008;display:flex;flex-direction:column;transition:transform .5s cubic-bezier(.22,.72,.2,1);}
 .dd-ticket-stage:hover .dd-ticket-front {transform:rotateZ(-4deg) rotateY(-3deg) translateZ(40px);}
-.dd-ticket-top {display:flex;justify-content:space-between;font-family:'DM Sans',sans-serif;font-size:9px;letter-spacing:1.8px;font-weight:600;color:#126253;}
+.dd-ticket-top {display:flex;justify-content:space-between;font-family:var(--font-sans),system-ui,sans-serif;font-size:9px;letter-spacing:1.8px;font-weight:600;color:#126253;}
 .dd-ticket-front strong {display:block;margin-top:22px;font-size:clamp(40px,5vw,58px);line-height:.92;letter-spacing:-2.6px;font-weight:600;}
-.dd-ticket-front p {margin:16px 0 0;font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.55;color:#1d5a52;max-width:26ch;}
+.dd-ticket-front p {margin:16px 0 0;font-family:var(--font-sans),system-ui,sans-serif;font-size:12px;line-height:1.55;color:#1d5a52;max-width:26ch;}
 .dd-ticket-cut {margin:auto -24px 14px;height:0;border-top:2px dashed #7fc4b6;position:relative;}
 .dd-ticket-cut:before,.dd-ticket-cut:after {content:'';position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:#060c13;}
 .dd-ticket-cut:before {left:-10px;} .dd-ticket-cut:after {right:-10px;}
@@ -237,7 +236,7 @@
 .dd-ticket-barcode {display:flex;align-items:flex-end;gap:2px;height:28px;}
 .dd-ticket-barcode b {display:block;height:100%;background:#0b322d;}
 .dd-ticket-barcode b:nth-child(5n) {height:70%;}
-.dd-ticket-foot > span {font-family:'DM Sans',sans-serif;font-size:8px;letter-spacing:1.4px;font-weight:600;color:#126253;}
+.dd-ticket-foot > span {font-family:var(--font-sans),system-ui,sans-serif;font-size:8px;letter-spacing:1.4px;font-weight:600;color:#126253;}
 .dd-ticket-stamp {position:absolute;right:18px;top:44%;padding:6px 12px;border:3px double #c8473f;border-radius:6px;color:#c8473f;font-style:normal;font-weight:600;font-size:15px;letter-spacing:3px;transform:rotate(-16deg) translateZ(10px);opacity:.85;mix-blend-mode:multiply;}
 @media(max-width:600px){.dd-ticket-front {padding:18px 18px 16px;} .dd-ticket-cut {margin-left:-18px;margin-right:-18px;}}
 @media(prefers-reduced-motion:reduce){.dd-ticket-front {transition:none;}}

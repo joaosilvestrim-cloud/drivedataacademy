@@ -239,7 +239,7 @@ export default function EditorClient({ inicial, auth }: Props) {
               <LayoutTemplate className={ico} /> {tr("Template")}
             </button>
           )}
-          <button onClick={salvar} disabled={salvando} className={`relative flex items-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-medium text-white transition-colors disabled:opacity-60 ${naoSalvo && auth.logado ? "bg-amber-500 hover:bg-amber-600" : "bg-viz hover:bg-viz-dark"}`}>
+          <button onClick={salvar} disabled={salvando} className={`relative flex items-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-medium text-tinta transition-colors disabled:opacity-60 ${naoSalvo && auth.logado ? "bg-amber-500 hover:bg-amber-600" : "bg-viz hover:bg-viz-dark"}`}>
             <Save className={ico} /> {salvando ? "..." : "Salvar"}
           </button>
         </div>

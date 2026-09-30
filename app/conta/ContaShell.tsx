@@ -26,7 +26,7 @@ function WhatsAppGroupLink({ onNavigate, idioma = IDIOMA_PADRAO }: { onNavigate?
       target="_blank"
       rel="noreferrer"
       onClick={onNavigate}
-      className="flex items-center gap-3 rounded-lg border border-[#25D366]/30 bg-[#25D366]/[0.08] px-3 py-2 text-sm text-white transition-colors hover:border-[#25D366]/50 hover:bg-[#25D366]/[0.14]"
+      className="flex items-center gap-3 rounded-lg border border-[#25D366]/30 bg-[#25D366]/[0.08] px-3 py-2 text-sm text-tinta transition-colors hover:border-[#25D366]/50 hover:bg-[#25D366]/[0.14]"
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-[#25D366]"><path d="M12 2a10 10 0 00-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1012 2zm0 2a8 8 0 11-4.2 14.8l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 0112 4zm-3.5 4c-.2 0-.5 0-.7.4-.2.4-.9.9-.9 2.2s.9 2.5 1 2.7c.2.2 1.9 3 4.7 4.1 2.3.9 2.8.7 3.3.7.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.1-1.3l-.6-.3s-1.5-.7-1.7-.8c-.2-.1-.4-.1-.6.1l-.8 1c-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.5-1.9-.1-.2 0-.4.1-.5l.4-.5.3-.5c.1-.2 0-.3 0-.5l-.8-1.9c-.2-.4-.4-.4-.6-.4h-.4z"/></svg>
       <span className="leading-tight">{t.menu.grupoWhats}<span className="block text-[0.65rem] text-slate-400">{t.menu.grupoWhatsSub}</span></span>
@@ -168,7 +168,7 @@ function BarraInferior({ avisoComunidade, idioma }: { avisoComunidade?: Aviso; i
   return (
     <nav
       aria-label={t.menu.buscarTela}
-      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-white/10 bg-ink-900/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex border-t border-tinta/10 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       {BARRA.map((it) => {
         const on = ativo(it.href, it.exact);
@@ -178,14 +178,14 @@ function BarraInferior({ avisoComunidade, idioma }: { avisoComunidade?: Aviso; i
             key={it.href}
             href={it.href}
             aria-current={on ? "page" : undefined}
-            className={`relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.62rem] transition-colors ${on ? "text-brand-green" : "text-slate-400"}`}
+            className={`relative flex flex-1 flex-col items-center gap-0.5 py-2 text-[0.62rem] transition-colors ${on ? "font-semibold text-marca" : "text-slate-400"}`}
           >
             <span className="relative">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {aviso && (
-                <span className={`absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full px-1 text-[0.55rem] font-bold ${avisoComunidade!.urgente ? "bg-red-500 text-white" : "bg-brand-green text-ink-900"}`}>
+                <span className={`absolute -right-1.5 -top-1 grid h-3.5 min-w-3.5 place-items-center rounded-full px-1 text-[0.55rem] font-bold ${avisoComunidade!.urgente ? "bg-alarm-red text-white" : "bg-marca text-marca-verde"}`}>
                   {avisoComunidade!.n > 9 ? "9+" : avisoComunidade!.n}
                 </span>
               )}
@@ -209,23 +209,23 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { on
       {/* Atalho para quem já sabe aonde vai. O mesmo botão serve de dica do Ctrl+K. */}
       <button
         onClick={() => window.dispatchEvent(new Event("abrir-paleta"))}
-        className="flex w-full items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-left text-sm text-slate-400 transition-colors hover:border-brand-green/40 hover:text-white"
+        className="flex w-full items-center gap-2 rounded-full border border-tinta/15 bg-white px-4 py-2 text-left text-sm text-slate-400 transition-colors hover:border-marca hover:text-tinta"
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
         </svg>
         {t.menu.buscarTela}
-        <kbd className="ml-auto rounded border border-white/10 px-1.5 text-[0.62rem] text-slate-500">{tr("Ctrl K")}</kbd>
+        <kbd className="ml-auto rounded border border-tinta/10 px-1.5 text-[0.62rem] text-slate-500">{tr("Ctrl K")}</kbd>
       </button>
 
       {GROUPS.map((group, gi) => (
         <div key={gi}>
-          {group.title && <p className="mb-2 px-3 text-[0.65rem] font-semibold uppercase tracking-wider text-slate-500">{t.menu.grupos[group.title]}</p>}
+          {group.title && <p className="mb-1.5 px-3 text-xs font-semibold text-slate-500">{t.menu.grupos[group.title]}</p>}
           <ul className="space-y-0.5">
             {group.items.map((it) => {
               const active = isActive(it.href, it.exact);
               const icone = (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={active && !it.emBreve ? "text-brand-green" : "text-slate-500"}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className={active && !it.emBreve ? "text-marca" : "text-slate-500"}>
                   <path d={ICONS[it.icon]} stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               );
@@ -234,7 +234,7 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { on
                   {it.emBreve ? (
                     <span
                       aria-disabled="true"
-                      className="flex cursor-default items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-500"
+                      className="flex cursor-default items-center gap-3 rounded-full px-3 py-2 text-sm text-slate-500"
                     >
                       {icone}
                       {t.menu.itens[it.chave]}
@@ -245,24 +245,23 @@ function NavList({ onNavigate, cursosAVenda = 0, avisoComunidade, idioma }: { on
                       href={it.href}
                       onClick={onNavigate}
                       aria-current={active ? "page" : undefined}
-                      className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all ${active ? "bg-white/10 font-medium text-white" : "text-slate-300 hover:bg-white/5 hover:pl-3.5 hover:text-white"}`}
+                      className={`group relative flex items-center gap-3 rounded-full px-3 py-2 text-sm transition-colors ${active ? "bg-marca-nevoa font-semibold text-marca" : "text-slate-300 hover:bg-fog hover:text-tinta"}`}
                     >
                       {/* Trilho do item aberto: diz onde você está sem depender só do fundo. */}
-                      {active && <span aria-hidden="true" className="absolute -left-1 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r bg-brand-green" />}
                       {icone}
                       {t.menu.itens[it.chave]}
                       {/* Treinamento aberto para compra: o número chama, o
                           aluno decide. Some sozinho quando não há nenhum. */}
                       {it.href === "/conta/comunidade" && avisoComunidade && avisoComunidade.n > 0 && !active && (
                         <span
-                          className={`ml-auto rounded-full px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums ${avisoComunidade.urgente ? "bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,.5)]" : "bg-brand-green text-ink-900"}`}
+                          className={`ml-auto rounded-full px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums ${avisoComunidade.urgente ? "bg-alarm-red text-white" : "bg-marca text-marca-verde"}`}
                           title={avisoComunidade.urgente ? t.menu.avisoComunidade.aguardando(avisoComunidade.n) : t.menu.avisoComunidade.naoLidas(avisoComunidade.n)}
                         >
                           {avisoComunidade.n > 99 ? "99+" : avisoComunidade.n}
                         </span>
                       )}
                       {it.href === "/conta/cursos" && cursosAVenda > 0 && (
-                        <span className="ml-auto rounded-full bg-brand-green/15 px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-brand-green" title={t.menu.cursosAVenda(cursosAVenda)}>
+                        <span className="ml-auto rounded-full bg-marca-verde px-2 py-0.5 font-mono text-[0.65rem] font-bold tabular-nums text-marca" title={t.menu.cursosAVenda(cursosAVenda)}>
                           {cursosAVenda}
                         </span>
                       )}
@@ -290,16 +289,16 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
   return (
     <div className="relative min-h-screen">
       {/* Topo (mobile) */}
-      <header data-demo-nav className="sticky top-0 z-40 flex items-center justify-between border-b border-white/10 bg-ink-900/80 px-4 py-3 backdrop-blur lg:hidden">
-        <button onClick={() => setOpen(true)} aria-label={tr("Menu")} className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-white">
+      <header data-demo-nav className="sticky top-0 z-40 flex items-center justify-between border-b border-tinta/10 bg-white px-4 py-3 lg:hidden">
+        <button onClick={() => setOpen(true)} aria-label={tr("Menu")} className="grid h-9 w-9 place-items-center rounded-full border border-tinta/15 text-tinta">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" /></svg>
         </button>
-        <Link href="/"><img src="/logo.png" alt={tr("Drive Data Academy")} className="h-8 w-auto" /></Link>
+        <Link href="/"><img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-8 w-auto" /></Link>
         <div className="flex items-center gap-2">
           <button
             onClick={() => window.dispatchEvent(new Event("abrir-paleta"))}
             aria-label={t.menu.buscarTela}
-            className="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-slate-300"
+            className="grid h-9 w-9 place-items-center rounded-full border border-tinta/15 text-slate-300"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
@@ -312,17 +311,17 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
       {/* Drawer (mobile) */}
       {open && (
         <div data-demo-nav className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
-          <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto border-r border-white/10 bg-ink-900 p-4">
+          <div className="absolute inset-0 bg-obsidian/40" onClick={() => setOpen(false)} />
+          <div className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto bg-white p-4">
             <div className="mb-6 flex items-center justify-between">
-              <Link href="/" onClick={() => setOpen(false)}><img src="/logo.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" /></Link>
-              <button onClick={() => setOpen(false)} aria-label={tr("Fechar")} className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 text-slate-400">✕</button>
+              <Link href="/" onClick={() => setOpen(false)}><img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" /></Link>
+              <button onClick={() => setOpen(false)} aria-label={tr("Fechar")} className="grid h-8 w-8 place-items-center rounded-full border border-tinta/15 text-slate-400">✕</button>
             </div>
             <NavList onNavigate={() => setOpen(false)} cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} idioma={idioma} />
-            <div className="mt-6 border-t border-white/10 pt-4">
+            <div className="mt-6 border-t border-tinta/10 pt-4">
               <WhatsAppGroupLink onNavigate={() => setOpen(false)} idioma={idioma} />
             </div>
-            <div className="mt-4 border-t border-white/10 pt-4">
+            <div className="mt-4 border-t border-tinta/10 pt-4">
               <SeletorDeIdioma atual={idioma} />
             </div>
           </div>
@@ -330,17 +329,17 @@ export default function ContaShell({ email, children, cursosAVenda = 0, eventos 
       )}
 
       {/* Sidebar (desktop) */}
-      <aside data-demo-nav className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-white/10 bg-ink-900/70 p-4 backdrop-blur lg:flex">
+      <aside data-demo-nav className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-tinta/10 bg-white p-4 lg:flex">
         <Link href="/" className="mb-8 block px-2">
-          <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" />
+          <img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-9 w-auto" />
         </Link>
         <div className="flex-1 overflow-y-auto">
           <NavList cursosAVenda={cursosAVenda} avisoComunidade={avisoComunidade} idioma={idioma} />
         </div>
-        <div className="mt-4 border-t border-white/10 pt-4">
+        <div className="mt-4 border-t border-tinta/10 pt-4">
           <WhatsAppGroupLink idioma={idioma} />
         </div>
-        <div className="mt-4 border-t border-white/10 pt-4">
+        <div className="mt-4 border-t border-tinta/10 pt-4">
           <p className="truncate px-2 text-xs text-slate-500">{email}</p>
           <div className="mt-2 flex items-center justify-between gap-2 px-2">
             <SignOutButton rotulo={t.menu.sair} />

@@ -219,14 +219,14 @@ export default function RoteiroDaCarreira({
 
   const tipos = new Set(capitulos.flatMap((c) => c.linhas.map((l) => l.tipo)));
   const atual = quadro >= 0 ? capitulos[quadro] : null;
-  const botao = "grid h-8 w-8 place-items-center rounded-lg border border-white/15 text-slate-200 hover:border-white/40 disabled:opacity-30";
+  const botao = "grid h-8 w-8 place-items-center rounded-lg border border-tinta/15 text-slate-200 hover:border-tinta/40 disabled:opacity-30";
 
   return (
     <aside
       aria-label="Roteiro da carreira"
-      className="absolute bottom-3 left-3 right-3 flex max-h-[46%] flex-col rounded-2xl border border-white/10 bg-[#0a1428]/92 backdrop-blur sm:bottom-5 sm:left-auto sm:right-5 sm:top-5 sm:max-h-none sm:w-[23.5rem]"
+      className="absolute bottom-3 left-3 right-3 flex max-h-[46%] flex-col rounded-2xl border border-tinta/10 bg-ink-800/92 backdrop-blur sm:bottom-5 sm:left-auto sm:right-5 sm:top-5 sm:max-h-none sm:w-[23.5rem]"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-white/10 px-3 py-2 sm:px-4 sm:py-3">
+      <div className="flex items-center justify-between gap-3 border-b border-tinta/10 px-3 py-2 sm:px-4 sm:py-3">
         <div className="min-w-0">
           <p className="truncate font-display text-sm font-bold sm:text-base">Roteiro<span className="hidden sm:inline"> da carreira</span></p>
           <p className="font-mono text-xs tabular-nums text-slate-400">
@@ -236,7 +236,7 @@ export default function RoteiroDaCarreira({
         <div className="flex shrink-0 items-center gap-1.5">
           <button className={botao} onClick={() => onIr(Math.max(0, quadro - 1))} disabled={quadro <= 0} aria-label="Capítulo anterior">‹</button>
           <button
-            className="h-8 rounded-lg bg-white px-3 text-xs font-semibold text-[#0a1428] hover:bg-slate-200"
+            className="h-8 rounded-lg bg-white px-3 text-xs font-semibold text-ink-800 hover:bg-slate-200"
             onClick={tocando ? onPausar : onTocar}
           >
             {tocando ? "Pausar" : quadro >= capitulos.length - 1 ? "Do início" : "Continuar"}
@@ -256,13 +256,13 @@ export default function RoteiroDaCarreira({
               <li key={c.at + i} ref={(el) => { itens.current[i] = el; }} className={aqui ? "" : "hidden sm:block"}>
                 <button
                   onClick={() => onIr(i)}
-                  className={`flex w-full items-baseline gap-3 border-l-2 px-2 py-1.5 text-left ${aqui ? "border-brand-green" : "border-transparent hover:border-white/20"}`}
+                  className={`flex w-full items-baseline gap-3 border-l-2 px-2 py-1.5 text-left ${aqui ? "border-acento" : "border-transparent hover:border-tinta/20"}`}
                 >
-                  <span className={`w-16 shrink-0 font-mono text-xs tabular-nums ${aqui ? "text-brand-green" : i < quadro ? "text-slate-400" : "text-slate-600"}`}>{rotulo(c.at)}</span>
-                  <span className={`min-w-0 text-sm leading-snug ${aqui ? "font-semibold text-white" : i < quadro ? "text-slate-300" : "text-slate-500"}`}>{c.titulo}</span>
+                  <span className={`w-16 shrink-0 font-mono text-xs tabular-nums ${aqui ? "text-acento" : i < quadro ? "text-slate-400" : "text-slate-600"}`}>{rotulo(c.at)}</span>
+                  <span className={`min-w-0 text-sm leading-snug ${aqui ? "font-semibold text-tinta" : i < quadro ? "text-slate-300" : "text-slate-500"}`}>{c.titulo}</span>
                 </button>
                 {aqui && c.linhas.length > 0 && (
-                  <ul key={`linhas-${i}`} className="surgir mb-2 ml-[1.1rem] flex flex-col gap-2.5 border-l border-white/10 py-1 pl-3">
+                  <ul key={`linhas-${i}`} className="surgir mb-2 ml-[1.1rem] flex flex-col gap-2.5 border-l border-tinta/10 py-1 pl-3">
                     {c.linhas.map((l, k) => (
                       <li key={k}>
                         <button
@@ -273,7 +273,7 @@ export default function RoteiroDaCarreira({
                         >
                           <Simbolo tipo={l.tipo} />
                           <span className="min-w-0">
-                            <span className="block text-sm font-medium text-slate-100 group-hover:text-brand-green">
+                            <span className="block text-sm font-medium text-slate-100 group-hover:text-acento">
                               {l.texto === c.titulo ? NOME_DO_TIPO[l.tipo] : l.texto}
                             </span>
                             <span className="block text-xs leading-relaxed text-slate-400">{l.explica}</span>
@@ -289,10 +289,10 @@ export default function RoteiroDaCarreira({
         </ol>
       </div>
 
-      {atual && <p className="hidden border-t border-white/10 px-4 py-2 text-[0.72rem] text-slate-500 sm:block">Toque numa linha para ver o objeto de perto.</p>}
+      {atual && <p className="hidden border-t border-tinta/10 px-4 py-2 text-[0.72rem] text-slate-500 sm:block">Toque numa linha para ver o objeto de perto.</p>}
 
-      <details className="hidden border-t border-white/10 px-4 py-2.5 sm:block">
-        <summary className="cursor-pointer text-xs font-semibold text-slate-300 hover:text-white">Como ler o espaço</summary>
+      <details className="hidden border-t border-tinta/10 px-4 py-2.5 sm:block">
+        <summary className="cursor-pointer text-xs font-semibold text-slate-300 hover:text-tinta">Como ler o espaço</summary>
         <ul className="mt-2 flex flex-col gap-1.5">
           {LEGENDA.filter((l) => tipos.has(l.tipo) || l.tipo === "estrela" || l.tipo === "constelacao" || (l.tipo === "ecliptica" && tipos.has("planeta"))).map((l) => (
             <li key={l.tipo} className="flex items-start gap-2 text-xs text-slate-400">

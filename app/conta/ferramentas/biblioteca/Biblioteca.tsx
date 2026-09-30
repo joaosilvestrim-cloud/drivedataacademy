@@ -126,7 +126,7 @@ export default function Biblioteca() {
   return (
     <div className="mt-6">
       {/* 1. Barra de comando: busca e linguagem, sempre no mesmo lugar. */}
-      <div data-tour="bib-busca" className="sticky top-[61px] z-20 -mx-4 border-b border-white/8 bg-ink-900/92 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:top-0">
+      <div data-tour="bib-busca" className="sticky top-[61px] z-20 -mx-4 border-b border-tinta/8 bg-ink-900/92 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6 lg:top-0">
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative min-w-[13rem] flex-1">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
@@ -138,22 +138,22 @@ export default function Biblioteca() {
               onChange={(e) => setBusca(e.target.value)}
               placeholder={tr("Buscar pelo problema: não bate, duplicata, mês anterior...")}
               aria-label={tr("Buscar na biblioteca")}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 pl-9 pr-16 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
+              className="w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] py-2.5 pl-9 pr-16 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
             />
             <span className="absolute right-2.5 top-1/2 flex -translate-y-1/2 items-center gap-1.5">
               {busca ? (
-                <button onClick={() => setBusca("")} aria-label={tr("Limpar busca")} className="rounded-md px-1.5 text-slate-500 hover:text-white">✕</button>
+                <button onClick={() => setBusca("")} aria-label={tr("Limpar busca")} className="rounded-md px-1.5 text-slate-500 hover:text-tinta">✕</button>
               ) : (
-                <kbd className="rounded border border-white/10 px-1.5 text-[0.65rem] text-slate-500">/</kbd>
+                <kbd className="rounded border border-tinta/10 px-1.5 text-[0.65rem] text-slate-500">/</kbd>
               )}
               <span className="font-mono text-[0.7rem] tabular-nums text-slate-500">{resultado.length}</span>
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1 rounded-xl bg-white/[0.04] p-1">
+          <div className="flex flex-wrap items-center gap-1 rounded-xl bg-tinta/[0.04] p-1">
             <button
               onClick={() => { setLinguagem("todas"); setTag(""); }}
-              className={`rounded-lg px-2.5 py-1.5 text-xs transition-colors ${linguagem === "todas" ? "bg-white/10 font-semibold text-white" : "text-slate-400 hover:text-white"}`}
+              className={`rounded-lg px-2.5 py-1.5 text-xs transition-colors ${linguagem === "todas" ? "bg-tinta/10 font-semibold text-tinta" : "text-slate-400 hover:text-tinta"}`}
             >
               {tr("Todas")} <span className="font-mono tabular-nums opacity-60">{ITENS.length}</span>
             </button>
@@ -161,7 +161,7 @@ export default function Biblioteca() {
               <button
                 key={l}
                 onClick={() => { setLinguagem(linguagem === l ? "todas" : l); setTag(""); }}
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${linguagem === l ? "bg-white/10 font-semibold text-white" : "text-slate-400 hover:text-white"}`}
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs transition-colors ${linguagem === l ? "bg-tinta/10 font-semibold text-tinta" : "text-slate-400 hover:text-tinta"}`}
               >
                 <span className={`h-1.5 w-1.5 rounded-full ${COR[l].ponto}`} aria-hidden="true" />
                 {NOME_LINGUAGEM[l]} <span className="font-mono tabular-nums opacity-60">{porLinguagem.get(l) ?? 0}</span>
@@ -172,14 +172,14 @@ export default function Biblioteca() {
           <button
             onClick={() => setVerAssuntos((v) => !v)}
             aria-expanded={verAssuntos}
-            className={`rounded-xl border px-3 py-2 text-xs transition-colors ${tag ? "border-brand-green/50 text-brand-green" : "border-white/10 text-slate-300 hover:text-white"}`}
+            className={`rounded-xl border px-3 py-2 text-xs transition-colors ${tag ? "border-acento/50 text-acento" : "border-tinta/10 text-slate-300 hover:text-tinta"}`}
           >
             {tag ? `Assunto: ${tag}` : "Assunto"}
             <span aria-hidden="true" className="ml-1.5 opacity-60">{verAssuntos ? "▲" : "▼"}</span>
           </button>
 
           {filtrando && (
-            <button onClick={limparTudo} className="text-xs text-slate-400 underline underline-offset-4 hover:text-white">{tr("limpar")}</button>
+            <button onClick={limparTudo} className="text-xs text-slate-400 underline underline-offset-4 hover:text-tinta">{tr("limpar")}</button>
           )}
         </div>
 
@@ -189,7 +189,7 @@ export default function Biblioteca() {
               <button
                 key={t}
                 onClick={() => setTag(tag === t ? "" : t)}
-                className={`rounded-md px-2 py-0.5 text-[0.72rem] transition-colors ${tag === t ? "bg-brand-green/20 font-semibold text-brand-green" : "bg-white/[0.05] text-slate-400 hover:text-white"}`}
+                className={`rounded-md px-2 py-0.5 text-[0.72rem] transition-colors ${tag === t ? "bg-brand-green/20 font-semibold text-acento" : "bg-tinta/[0.05] text-slate-400 hover:text-tinta"}`}
               >
                 {tr(t)} <span className="font-mono tabular-nums opacity-60">{n}</span>
               </button>
@@ -224,10 +224,10 @@ export default function Biblioteca() {
                           onClick={() => { setSelecionado(i.id); setAbertoNoCelular(true); }}
                           aria-current={ativo ? "true" : undefined}
                           className={`w-full rounded-xl border px-3 py-2.5 text-left transition-colors ${
-                            ativo ? `${COR[i.linguagem].borda} bg-white/[0.06]` : "border-transparent hover:bg-white/[0.03]"
+                            ativo ? `${COR[i.linguagem].borda} bg-tinta/[0.06]` : "border-transparent hover:bg-tinta/[0.03]"
                           }`}
                         >
-                          <span className={`block text-sm font-medium ${ativo ? "text-white" : "text-slate-200"}`}>{tr(i.titulo)}</span>
+                          <span className={`block text-sm font-medium ${ativo ? "text-tinta" : "text-slate-200"}`}>{tr(i.titulo)}</span>
                           <span className="mt-0.5 block text-xs leading-snug text-slate-500">{tr(i.quando)}</span>
                         </button>
                       </li>
@@ -238,12 +238,12 @@ export default function Biblioteca() {
             ))}
 
             {!resultado.length && (
-              <li className="rounded-xl border border-white/8 bg-white/[0.02] px-4 py-8 text-center">
+              <li className="rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-8 text-center">
                 <p className="text-sm text-slate-300">{tr("Nada com esse termo.")}</p>
                 <p className="mx-auto mt-1 max-w-xs text-xs text-slate-500">
                   {tr("Tente pelo problema, não pela função: “não bate”, “duplicata”, “mês anterior”, “filial”.")}
                 </p>
-                {filtrando && <button onClick={limparTudo} className="mt-3 text-xs text-brand-green hover:underline">{tr("limpar os filtros")}</button>}
+                {filtrando && <button onClick={limparTudo} className="mt-3 text-xs text-acento hover:underline">{tr("limpar os filtros")}</button>}
               </li>
             )}
           </ul>
@@ -252,31 +252,31 @@ export default function Biblioteca() {
         {/* 3. Verbete. No computador fica ao lado; no celular vira folha por cima. */}
         <div className={`min-w-0 ${abertoNoCelular ? "fixed inset-0 z-40 overflow-y-auto bg-ink-900 p-4 lg:static lg:z-auto lg:overflow-visible lg:bg-transparent lg:p-0" : "hidden lg:block"}`}>
           {item ? (
-            <article className="rounded-3xl border border-white/8 bg-white/[0.02] p-5 sm:p-6 lg:sticky lg:top-[7.5rem]">
+            <article className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5 sm:p-6 lg:sticky lg:top-[7.5rem]">
               <div className="flex flex-wrap items-center gap-2">
-                <button onClick={() => setAbertoNoCelular(false)} className="mr-1 rounded-lg border border-white/10 px-2 py-1 text-xs text-slate-300 lg:hidden">
+                <button onClick={() => setAbertoNoCelular(false)} className="mr-1 rounded-lg border border-tinta/10 px-2 py-1 text-xs text-slate-300 lg:hidden">
                   {tr("← Lista")}
                 </button>
                 <span className={`rounded px-1.5 py-0.5 font-mono text-[0.65rem] font-bold uppercase ${COR[item.linguagem].chip}`}>
                   {NOME_LINGUAGEM[item.linguagem]}
                 </span>
-                <span className="rounded bg-white/[0.06] px-2 py-0.5 text-[0.65rem] text-slate-300">{tr(item.nivel)}</span>
+                <span className="rounded bg-tinta/[0.06] px-2 py-0.5 text-[0.65rem] text-slate-300">{tr(item.nivel)}</span>
                 {item.tags.map((t) => (
-                  <button key={t} onClick={() => { setTag(t); setVerAssuntos(true); }} className="rounded px-1 text-[0.68rem] text-slate-500 transition-colors hover:text-white">
+                  <button key={t} onClick={() => { setTag(t); setVerAssuntos(true); }} className="rounded px-1 text-[0.68rem] text-slate-500 transition-colors hover:text-tinta">
                     #{tr(t)}
                   </button>
                 ))}
                 <span className="ml-auto flex items-center gap-1 text-[0.7rem] text-slate-500">
-                  <button onClick={() => andar(-1)} disabled={posicao <= 0} aria-label={tr("Verbete anterior")} className="rounded px-1.5 py-0.5 hover:text-white disabled:opacity-30">↑</button>
+                  <button onClick={() => andar(-1)} disabled={posicao <= 0} aria-label={tr("Verbete anterior")} className="rounded px-1.5 py-0.5 hover:text-tinta disabled:opacity-30">↑</button>
                   <span className="font-mono tabular-nums">{posicao + 1}/{resultado.length}</span>
-                  <button onClick={() => andar(1)} disabled={posicao >= resultado.length - 1} aria-label={tr("Próximo verbete")} className="rounded px-1.5 py-0.5 hover:text-white disabled:opacity-30">↓</button>
+                  <button onClick={() => andar(1)} disabled={posicao >= resultado.length - 1} aria-label={tr("Próximo verbete")} className="rounded px-1.5 py-0.5 hover:text-tinta disabled:opacity-30">↓</button>
                 </span>
               </div>
 
-              <h2 className="mt-3 font-display text-2xl font-bold text-white">{tr(item.titulo)}</h2>
+              <h2 className="mt-3 font-display text-2xl font-bold text-tinta">{tr(item.titulo)}</h2>
 
-              <div data-tour="bib-quando" className="mt-3 border-l-2 border-brand-green/50 pl-3">
-                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">{tr("Quando usar")}</p>
+              <div data-tour="bib-quando" className="mt-3 border-l-2 border-acento/50 pl-3">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-acento">{tr("Quando usar")}</p>
                 <p className="mt-0.5 text-sm text-slate-200">{tr(item.quando)}</p>
               </div>
 
@@ -286,13 +286,13 @@ export default function Biblioteca() {
                   <button
                     onClick={copiar}
                     className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
-                      copiado ? "border-brand-green/60 text-brand-green" : "border-white/10 text-slate-300 hover:border-brand-green/50 hover:text-white"
+                      copiado ? "border-acento/60 text-acento" : "border-tinta/10 text-slate-300 hover:border-acento/50 hover:text-tinta"
                     }`}
                   >
                     {copiado ? "Copiado" : "Copiar"}
                   </button>
                 </div>
-                <pre className="mt-2 overflow-x-auto rounded-xl border border-white/10 bg-[#0b1020] p-4 text-[0.8rem] leading-relaxed text-slate-200">
+                <pre className="mt-2 overflow-x-auto rounded-xl border border-tinta/10 bg-ink-800 p-4 text-[0.8rem] leading-relaxed text-slate-200">
                   <code>{item.codigo}</code>
                 </pre>
               </div>
@@ -310,13 +310,13 @@ export default function Biblioteca() {
               )}
 
               <p className="mt-4 hidden text-[0.7rem] text-slate-600 lg:block">
-                Atalhos: <kbd className="rounded border border-white/10 px-1">/</kbd> busca ·{" "}
-                <kbd className="rounded border border-white/10 px-1">↑</kbd>{" "}
-                <kbd className="rounded border border-white/10 px-1">↓</kbd> {tr("andam na lista")}
+                Atalhos: <kbd className="rounded border border-tinta/10 px-1">/</kbd> busca ·{" "}
+                <kbd className="rounded border border-tinta/10 px-1">↑</kbd>{" "}
+                <kbd className="rounded border border-tinta/10 px-1">↓</kbd> {tr("andam na lista")}
               </p>
             </article>
           ) : (
-            <div className="rounded-3xl border border-dashed border-white/10 p-10 text-center text-sm text-slate-400">
+            <div className="rounded-3xl border border-dashed border-tinta/10 p-10 text-center text-sm text-slate-400">
               {tr("Escolha um verbete na lista.")}
             </div>
           )}

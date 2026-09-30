@@ -1,6 +1,6 @@
 import { tr } from "@/lib/i18n/traduzir-servidor";
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { TAG_HTML } from "@/lib/i18n/idioma";
@@ -8,20 +8,12 @@ import { idiomaAtual } from "@/lib/i18n/idioma-servidor";
 import RastreioDeUso from "@/components/RastreioDeUso";
 import AvisoMateriaisLiberados from "@/components/AvisoMateriaisLiberados";
 
-// Três papéis, um sistema. Archivo carrega os títulos, Plex Sans o texto lido,
-// Plex Mono todo número medido. Antes o produto não carregava fonte nenhuma:
-// as variáveis apontavam para Inter e Sora, que nunca eram servidas, então
-// tudo caía em Segoe UI. Daí a sensação de tipografia sem personalidade.
-const display = Archivo({
+// Tema claro (set/2026): Inter faz tudo. O peso 900 bem fechado faz a
+// manchete (.grito), no lugar da Wise Sans, que é proprietária; 600 e 700 os
+// títulos de seção; 400 e 500 o texto. Plex Mono segue só para número medido.
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-  fallback: ["system-ui", "Segoe UI", "sans-serif"],
-});
-const sans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700", "900"],
   variable: "--font-sans",
   display: "swap",
   fallback: ["system-ui", "Segoe UI", "sans-serif"],
@@ -60,7 +52,7 @@ export default function RootLayout({
 }) {
   const idioma = idiomaAtual();
   return (
-    <html lang={TAG_HTML[idioma]} className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang={TAG_HTML[idioma]} className={`${inter.variable} ${mono.variable}`}>
       <body className="font-sans antialiased">
         <LanguageProvider inicial={idioma}>{children}</LanguageProvider>
         <RastreioDeUso />

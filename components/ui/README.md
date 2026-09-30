@@ -1,5 +1,36 @@
 # Design System — Academy
 
+## Tema claro com as cores do logo (set/2026)
+
+A fundação foi reaberta por pedido do João: o produto saiu do tema escuro
+azul-marinho para um tema claro. A estrutura vem de um sistema de referência
+(fundo Paper, cartões Fog, botões e selos em pílula, manchete em Inter 900,
+faixas escuras para dar ritmo). A paleta é a do logo DriveData:
+
+| Papel | Token | Valor |
+|---|---|---|
+| Ação principal, estado ativo (preenchimento) | `marca-verde` / `ds-accent` | `#5fe06a` |
+| Faixa escura, menu, texto sobre o verde | `marca` / `sobre-acento` | `#0a2647` |
+| Link e destaque em texto | `marca-azul` / `text-acento` | `#0b62cf` |
+| Detalhe (nunca texto no claro) | `marca-ciano` | `#13b8ef` |
+| Selo, hover, bloco de destaque | `marca-nevoa` | `#e6f8e8` |
+| Cartão, faixa clara | `fog` | `#e9edf2` |
+
+Como o tema foi trocado sem reescrever as telas:
+
+- As cores que as telas antigas usam (`slate`, `ink`, `brand`, `red`, `amber`...)
+  viraram variáveis em `tailwind.config.ts`. No claro a escala inverte
+  (`text-slate-300` passa a ser texto escuro); dentro de `.escuro` volta o valor
+  original, sobre azul-noite.
+- `text-white` virou `text-tinta` (quase preto no claro, branco no escuro).
+- Texto verde virou `text-acento`: verde sobre branco não passa em contraste.
+- Faixa escura: basta a classe `escuro` no contêiner (rodapé, método, 4D, menu do admin).
+- Manchete: classe `.grito` (Inter 900, tracking -0.04em). Só hero e abertura de seção.
+- Uma pílula verde por bloco; a ação secundária é link sublinhado ou pílula contornada.
+- Sem gradiente, brilho ou bolha desfocada.
+
+---
+
 Direção **Instrumento**. A Academy mede conhecimento com evidência rastreável
 que decai no tempo. A interface deve ser lida como um instrumento: cada número
 aparece porque é possível dizer de onde ele veio.

@@ -78,17 +78,17 @@ export default function ModoDemo({ ate }: { ate: string }) {
 
   return (
     <>
-      <div data-demo-livre className="fixed inset-x-0 bottom-0 z-[60] border-t border-amber-300/30 bg-[#1a1407]/95 px-4 py-2.5 backdrop-blur lg:left-60">
+      <div data-demo-livre className="fixed inset-x-0 bottom-0 z-[60] border-t border-amber-300/30 bg-amber-950/95 px-4 py-2.5 backdrop-blur lg:left-60">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2">
           <p className="min-w-0 flex-1 text-[0.82rem] text-amber-100">
             <b className="font-semibold text-amber-300">{tr("Modo demonstração")}</b> {tr("até")} {fim.replace(",", " às")}. Você está vendo a área do assinante; só o{" "}
-            <b className="font-semibold text-white">{tr("DriveCanvas")}</b> {tr("está liberado para usar.")}
+            <b className="font-semibold text-tinta">{tr("DriveCanvas")}</b> {tr("está liberado para usar.")}
           </p>
           <div className="flex shrink-0 items-center gap-2">
-            <Link href="/ferramenta" className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-3.5 py-1.5 text-[0.8rem] font-semibold text-ink-900">
+            <Link href="/ferramenta" className="rounded-lg bg-marca-verde px-3.5 py-1.5 text-[0.8rem] font-semibold text-sobre-acento">
               {tr("Abrir o DriveCanvas")}
             </Link>
-            <Link href="/matricula" className="rounded-lg border border-amber-300/40 px-3.5 py-1.5 text-[0.8rem] font-semibold text-amber-200 hover:text-white">
+            <Link href="/matricula" className="rounded-lg border border-amber-300/40 px-3.5 py-1.5 text-[0.8rem] font-semibold text-amber-200 hover:text-tinta">
               {tr("Assinar")}
             </Link>
           </div>
@@ -96,8 +96,8 @@ export default function ModoDemo({ ate }: { ate: string }) {
       </div>
 
       {aviso && (
-        <div role="status" className="fixed left-1/2 top-16 z-[70] -translate-x-1/2 rounded-xl border border-amber-300/40 bg-[#1a1407] px-4 py-2.5 text-[0.85rem] text-amber-100 shadow-2xl">
-          {tr("Na demonstração só o")} <b className="text-white">{tr("DriveCanvas")}</b> {tr("está liberado. Assine para usar tudo.")}
+        <div role="status" className="fixed left-1/2 top-16 z-[70] -translate-x-1/2 rounded-xl border border-amber-300/40 bg-amber-950 px-4 py-2.5 text-[0.85rem] text-amber-100 shadow-2xl">
+          {tr("Na demonstração só o")} <b className="text-tinta">{tr("DriveCanvas")}</b> {tr("está liberado. Assine para usar tudo.")}
         </div>
       )}
     </>

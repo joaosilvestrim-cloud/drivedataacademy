@@ -18,11 +18,11 @@ export default async function DiagnosticoPage() {
   if (!liberado) {
     return (
       <div className="max-w-xl">
-        <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">{tr("&larr; Knowledge Universe")}</Link>
-      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Diagnóstico")}</p>
-        <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Diagnóstico de entrada")}</h1>
+        <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-acento">{tr("&larr; Knowledge Universe")}</Link>
+      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-acento">{tr("Diagnóstico")}</p>
+        <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Diagnóstico de entrada")}</h1>
         <p className="mt-3 text-sm text-slate-400">{tr("Faz parte do Knowledge Universe, incluído na assinatura ativa.")}</p>
-        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Conhecer a assinatura")}</Link>
+        <Link href="/matricula" className="mt-6 inline-block rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Conhecer a assinatura")}</Link>
       </div>
     );
   }
@@ -35,7 +35,7 @@ export default async function DiagnosticoPage() {
     if (error instanceof KnowledgeSetupError) {
       return (
         <div className="max-w-xl">
-          <h1 className="font-display text-3xl font-bold text-white">{tr("Em preparação")}</h1>
+          <h1 className="font-display text-3xl font-bold text-tinta">{tr("Em preparação")}</h1>
           <p className="mt-3 text-sm text-slate-400">{tr("A estrutura de conhecimento ainda está sendo montada.")}</p>
         </div>
       );
@@ -49,9 +49,9 @@ export default async function DiagnosticoPage() {
 
   const header = (
     <>
-      <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-brand-green">{tr("&larr; Knowledge Universe")}</Link>
-      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Diagnóstico")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Diagnóstico de entrada")}</h1>
+      <Link href="/conta/universo" className="text-sm text-slate-400 hover:text-acento">{tr("&larr; Knowledge Universe")}</Link>
+      <p className="mt-3 text-sm font-medium uppercase tracking-wide text-acento">{tr("Diagnóstico")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Diagnóstico de entrada")}</h1>
     </>
   );
 
@@ -66,11 +66,11 @@ export default async function DiagnosticoPage() {
         </p>
         <div className="mt-6 space-y-2">
           {linhas.map(([competency, r]) => (
-            <div key={competency} className="flex items-center gap-4 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
-              <span className="min-w-0 flex-1 truncate text-sm text-white">{nameByCompetency[competency] || competency}</span>
+            <div key={competency} className="flex items-center gap-4 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3">
+              <span className="min-w-0 flex-1 truncate text-sm text-tinta">{nameByCompetency[competency] || competency}</span>
               <span className="text-xs text-slate-400">{r.acertos}/{r.total}</span>
-              <div className="h-2 w-24 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-gradient-to-r from-brand-green to-brand-blue" style={{ width: `${Math.round(r.quality * 100)}%` }} />
+              <div className="h-2 w-24 overflow-hidden rounded-full bg-tinta/10">
+                <div className="h-full rounded-full bg-marca-verde" style={{ width: `${Math.round(r.quality * 100)}%` }} />
               </div>
             </div>
           ))}
@@ -79,8 +79,8 @@ export default async function DiagnosticoPage() {
           {tr("Daqui pra frente seu mapa cresce com aulas, avaliações e desafios entregues.")}
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Ver meu universo ↗")}</Link>
-          <Link href="/conta/desafios" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-slate-200 hover:border-brand-green/50 hover:text-brand-green">{tr("Ir para os desafios")}</Link>
+          <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Ver meu universo ↗")}</Link>
+          <Link href="/conta/desafios" className="rounded-xl border border-tinta/10 px-5 py-2.5 text-sm text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Ir para os desafios")}</Link>
         </div>
       </div>
     );

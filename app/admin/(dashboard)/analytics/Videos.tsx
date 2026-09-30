@@ -95,7 +95,7 @@ export default async function Videos({ dias, cursoSel }: { dias: number; cursoSe
           colunas={["Curso", "Matriculados", "Assistiram no período", "Horas assistidas", "Progresso médio", "Concluíram tudo"]}
           vazio="Nenhum curso com aula em vídeo."
           linhas={porCurso.map((c) => [
-            <Link key="a" href={`/admin/analytics?aba=videos&periodo=${dias}&curso=${c.id}`} className={`hover:underline ${c.id === sel?.id ? "font-semibold text-ds-accent" : "text-ds-text"}`}>
+            <Link key="a" href={`/admin/analytics?aba=videos&periodo=${dias}&curso=${c.id}`} className={`hover:underline ${c.id === sel?.id ? "font-semibold text-acento" : "text-ds-text"}`}>
               {c.titulo}{!c.publicado && <span className="ml-1.5 text-caption text-ds-text-3">(rascunho)</span>}
             </Link>,
             <span key="b" className="font-mono tabular-nums">{c.matriculados}</span>,
@@ -119,7 +119,7 @@ export default async function Videos({ dias, cursoSel }: { dias: number; cursoSe
               <span key="c" className="font-mono tabular-nums">{l.vs.length ? `${Math.round(l.media * 100)}%` : "—"}</span>,
               l.vs.length ? <Curva key="d" valores={l.curva} /> : <span key="d" className="text-ds-text-3">sem dados ainda</span>,
               <span key="e" className="font-mono tabular-nums">
-                {l.queda < 0 ? (l.vs.length ? <span className="text-ds-accent">não cai</span> : "—") : (
+                {l.queda < 0 ? (l.vs.length ? <span className="text-acento">não cai</span> : "—") : (
                   <span className={l.queda < 6 ? "text-ds-danger" : "text-ds-attention"}>
                     {l.duracao ? `${Math.floor((l.duracao * l.queda) / 20 / 60)}:${String(Math.floor(((l.duracao * l.queda) / 20) % 60)).padStart(2, "0")}` : `${l.queda * 5}%`}
                   </span>

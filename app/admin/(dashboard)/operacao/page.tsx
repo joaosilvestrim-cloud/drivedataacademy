@@ -43,7 +43,7 @@ function Tile({ label, valor, detalhe, href, tom }: { label: string; valor: stri
   const corpo = (
     <>
       <span className="block text-meta uppercase tracking-wide text-ds-text-3">{label}</span>
-      <span className={`mt-1 block font-mono text-heading-sm tabular-nums ${tom === "danger" ? "text-ds-danger" : tom === "accent" ? "text-ds-accent" : "text-ds-text"}`}>{valor}</span>
+      <span className={`mt-1 block font-mono text-heading-sm tabular-nums ${tom === "danger" ? "text-ds-danger" : tom === "accent" ? "text-acento" : "text-ds-text"}`}>{valor}</span>
       {detalhe && <span className="mt-0.5 block text-caption text-ds-text-3">{detalhe}</span>}
     </>
   );
@@ -141,7 +141,7 @@ export default async function OperacaoAdmin({
   const comEstado = (chave: string) =>
     `/admin/operacao?${new URLSearchParams([["estado", chave], ...Object.entries(filtroAtual).filter(([, v]) => v)] as string[][]).toString()}`;
 
-  const campo = "rounded-ctl border border-ds-line bg-ds-surface px-3 py-2 text-body-sm text-ds-text outline-none focus:border-ds-accent";
+  const campo = "rounded-ctl border border-ds-line bg-ds-surface px-3 py-2 text-body-sm text-ds-text outline-none focus:border-acento";
 
   return (
     <div className="flex max-w-6xl flex-col gap-10">

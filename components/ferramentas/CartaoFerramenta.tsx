@@ -63,7 +63,7 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
       <div className="relative flex h-full flex-col">
         <div className="flex items-start justify-between gap-3">
           <span
-            className="relative grid h-12 w-12 place-items-center rounded-2xl text-ink-900 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105"
+            className="relative grid h-12 w-12 place-items-center rounded-2xl text-sobre-acento transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-105"
             style={{ backgroundImage: `linear-gradient(135deg, ${t.from}, ${t.to})`, boxShadow: `0 12px 30px -12px ${t.from}` }}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -80,22 +80,21 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
           </span>
 
           {t.novo ? (
-            <span className="relative overflow-hidden rounded-full px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-ink-900" style={{ backgroundImage: `linear-gradient(135deg, ${t.from}, ${t.to})` }}>
+            <span className="relative overflow-hidden rounded-full px-2.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-sobre-acento" style={{ backgroundImage: `linear-gradient(135deg, ${t.from}, ${t.to})` }}>
               {tr(t.tag)}
               {/* Brilho que atravessa o selo de tempos em tempos. */}
-              <span aria-hidden="true" className="absolute inset-0 -translate-x-full animate-brilho bg-gradient-to-r from-transparent via-white/70 to-transparent motion-reduce:hidden" />
             </span>
           ) : (
-            <span className={`rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase ${t.available ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{tr(t.tag)}</span>
+            <span className={`rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold uppercase ${t.available ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>{tr(t.tag)}</span>
           )}
         </div>
 
-        <h2 className="mt-4 font-display text-lg font-bold text-white">{tr(t.name)}</h2>
+        <h2 className="mt-4 font-display text-lg font-bold text-tinta">{tr(t.name)}</h2>
         <p className="mt-1 flex-1 text-sm text-slate-400">{tr(t.desc)}</p>
 
         {usavel ? (
           <span
-            className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-ink-900 transition-all duration-300 group-hover:gap-3"
+            className="mt-4 inline-flex w-fit items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-sobre-acento transition-all duration-300 group-hover:gap-3"
             style={{ backgroundImage: `linear-gradient(135deg, ${t.from}, ${t.to})`, boxShadow: `0 14px 34px -18px ${t.from}` }}
           >
             {t.cta}
@@ -104,7 +103,7 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
             </svg>
           </span>
         ) : (
-          <span className="mt-4 inline-flex w-fit items-center rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-500">{tr("Em breve")}</span>
+          <span className="mt-4 inline-flex w-fit items-center rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-500">{tr("Em breve")}</span>
         )}
       </div>
     </>
@@ -125,7 +124,7 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
         usavel ? "hover:shadow-[0_30px_70px_-40px_rgba(0,0,0,0.9)]" : "opacity-70"
       }`}
     >
-      <div className="relative h-full overflow-hidden rounded-[calc(1.5rem-1px)] border border-white/8 bg-ink-900/85 p-6">
+      <div className="relative h-full overflow-hidden rounded-[calc(1.5rem-1px)] border border-tinta/8 bg-ink-900/85 p-6">
         {conteudo}
       </div>
     </div>
@@ -137,7 +136,7 @@ export default function CartaoFerramenta({ t, ordem }: { t: Ferramenta; ordem: n
     <a
       href={t.href}
       {...(t.sameTab ? {} : { target: "_blank", rel: "noreferrer" })}
-      className="block h-full rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-brand-green/70"
+      className="block h-full rounded-3xl outline-none focus-visible:ring-2 focus-visible:ring-acento/70"
     >
       {corpo}
     </a>

@@ -35,7 +35,7 @@ function ListaChecks({ checks }: { checks: Check[] }) {
 }
 
 function Numero({ rotulo, valor, apoio, tom = "neutral", href }: { rotulo: string; valor: string | number; apoio?: string; tom?: "neutral" | "danger" | "attention" | "accent"; href?: string }) {
-  const cor = tom === "danger" ? "text-ds-danger" : tom === "attention" ? "text-ds-attention" : tom === "accent" ? "text-ds-accent" : "text-ds-text";
+  const cor = tom === "danger" ? "text-ds-danger" : tom === "attention" ? "text-ds-attention" : tom === "accent" ? "text-acento" : "text-ds-text";
   const corpo = (
     <>
       <span className="block text-meta uppercase text-ds-text-3">{rotulo}</span>

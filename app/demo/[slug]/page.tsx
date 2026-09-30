@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
    e a palavra que está na tela. */
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3.5 text-base text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3.5 text-base text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 
 export default async function DemoPage({
   params, searchParams,
@@ -29,15 +29,15 @@ export default async function DemoPage({
     const codigo = searchParams.codigo || "";
     return (
       <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-12">
-        <p className="text-sm font-semibold uppercase tracking-wide text-brand-green">Acesso liberado</p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-white">
+        <p className="text-sm font-semibold uppercase tracking-wide text-acento">Acesso liberado</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-tinta">
           {c.dias} dias de DriveCanvas são seus.
         </h1>
 
         {nova && codigo ? (
           <>
             <p className="mt-5 text-slate-300">Guarde este código. Ele cria a sua senha:</p>
-            <p className="mt-3 rounded-2xl border border-brand-green/40 bg-brand-green/10 px-6 py-6 text-center font-mono text-4xl font-bold tracking-[0.2em] text-brand-green">
+            <p className="mt-3 rounded-2xl border border-acento/40 bg-brand-green/10 px-6 py-6 text-center font-mono text-4xl font-bold tracking-[0.2em] text-acento">
               {codigo}
             </p>
             <p className="mt-3 text-sm text-slate-400">
@@ -45,7 +45,7 @@ export default async function DemoPage({
             </p>
             <a
               href="/redefinir-senha"
-              className="mt-6 block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-4 text-center text-base font-semibold text-ink-900"
+              className="mt-6 block rounded-xl bg-marca-verde px-6 py-4 text-center text-base font-semibold text-sobre-acento"
             >
               Criar minha senha
             </a>
@@ -57,7 +57,7 @@ export default async function DemoPage({
             </p>
             <a
               href="/entrar"
-              className="mt-6 block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-4 text-center text-base font-semibold text-ink-900"
+              className="mt-6 block rounded-xl bg-marca-verde px-6 py-4 text-center text-base font-semibold text-sobre-acento"
             >
               Entrar agora
             </a>
@@ -74,8 +74,8 @@ export default async function DemoPage({
 
   return (
     <main className="mx-auto flex min-h-screen max-w-lg flex-col justify-center px-6 py-12">
-      <p className="text-sm font-semibold uppercase tracking-wide text-brand-green">{c.titulo}</p>
-      <h1 className="mt-2 font-display text-3xl font-bold leading-tight text-white">
+      <p className="text-sm font-semibold uppercase tracking-wide text-acento">{c.titulo}</p>
+      <h1 className="mt-2 font-display text-3xl font-bold leading-tight text-tinta">
         {c.dias} dias de DriveCanvas, de graça.
       </h1>
       <p className="mt-3 text-slate-400">
@@ -111,12 +111,12 @@ export default async function DemoPage({
             />
           )}
           <label className="flex cursor-pointer items-start gap-3 pt-1 text-sm text-slate-400">
-            <input type="checkbox" name="consent" defaultChecked className="mt-1 h-4 w-4 shrink-0 accent-brand-green" />
+            <input type="checkbox" name="consent" defaultChecked className="mt-1 h-4 w-4 shrink-0 accent-acento" />
             <span>Aceito receber novidades da DriveData Academy.</span>
           </label>
           <button
             type="submit"
-            className="mt-2 w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-4 text-base font-semibold text-ink-900"
+            className="mt-2 w-full rounded-xl bg-marca-verde px-6 py-4 text-base font-semibold text-sobre-acento"
           >
             Liberar meu acesso
           </button>

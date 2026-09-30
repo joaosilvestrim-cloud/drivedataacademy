@@ -51,13 +51,13 @@ async function cadastro(): Promise<{ ok: true; cat: Opcao[]; cc: Opcao[]; serv: 
 }
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white outline-none focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-3.5 py-2.5 text-sm text-tinta outline-none focus:border-acento/60";
 
 function Seletor({ nome, label, opcoes, atual, ajuda }: { nome: string; label: string; opcoes: Opcao[]; atual: string; ajuda: string }) {
   const sumiu = atual && !opcoes.some((o) => o.id === atual);
   return (
     <label className="block">
-      <span className="text-sm font-medium text-white">{label}</span>
+      <span className="text-sm font-medium text-tinta">{label}</span>
       <select name={nome} defaultValue={atual} className={`mt-1.5 ${campo}`}>
         <option value="">Não definido</option>
         {opcoes.map((o) => (
@@ -84,23 +84,23 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
 
   return (
     <div className="max-w-3xl">
-      <h1 className="font-display text-2xl font-bold text-white">Integrações</h1>
+      <h1 className="font-display text-2xl font-bold text-tinta">Integrações</h1>
       <p className="mt-1 text-sm text-slate-400">
         Conexões com sistemas de fora. Cada venda paga no Asaas vira uma venda no Conta Azul, pronta para
         a nota ser emitida lá.
       </p>
 
       {searchParams.ok && (
-        <p className="mt-5 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">{searchParams.ok}</p>
+        <p className="mt-5 rounded-xl border border-acento/30 bg-brand-green/10 px-4 py-3 text-sm text-acento">{searchParams.ok}</p>
       )}
       {searchParams.erro && (
         <p className="mt-5 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{searchParams.erro}</p>
       )}
 
-      <section className="glass mt-6 rounded-2xl border border-white/8 p-5">
+      <section className="glass mt-6 rounded-2xl border border-tinta/8 p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-sm font-semibold text-white">Conta Azul</p>
+            <p className="text-sm font-semibold text-tinta">Conta Azul</p>
             <p className="mt-0.5 text-xs text-slate-400">
               {conectado ? `Conectado em ${fmt(conexao!.conectado_em)}` : "Nunca conectado."}
               {conexao?.expira_em && conectado ? ` · token renova até ${fmt(conexao.expira_em)}` : ""}
@@ -108,14 +108,14 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
           </div>
           {conectado ? (
             <form action={desconectarContaAzul}>
-              <button className="rounded-xl border border-white/12 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-red-400/50 hover:text-red-300">
+              <button className="rounded-xl border border-tinta/12 px-4 py-2 text-sm text-slate-300 transition-colors hover:border-red-400/50 hover:text-red-300">
                 Desconectar
               </button>
             </form>
           ) : (
             <Link
               href="/api/oauth/conta-azul"
-              className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+              className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
             >
               Conectar
             </Link>
@@ -158,8 +158,8 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
               ajuda="O item que vai na venda e na NFS-e. Precisa ser um serviço de ensino, com o código de tributação certo."
             />
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/8 bg-white/[0.03] p-4">
-              <input type="checkbox" name="ca_ativo" defaultChecked={cfg.ca_ativo === "true"} className="mt-0.5 h-4 w-4 shrink-0 accent-brand-green" />
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-tinta/8 bg-tinta/[0.03] p-4">
+              <input type="checkbox" name="ca_ativo" defaultChecked={cfg.ca_ativo === "true"} className="mt-0.5 h-4 w-4 shrink-0 accent-acento" />
               <span className="text-sm text-slate-300">
                 Criar a venda no Conta Azul quando o pagamento confirmar
                 <span className="mt-0.5 block text-xs text-slate-500">
@@ -169,7 +169,7 @@ export default async function IntegracoesPage({ searchParams }: { searchParams: 
               </span>
             </label>
 
-            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+            <button className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
               Salvar
             </button>
           </form>
@@ -201,10 +201,10 @@ async function Pendentes() {
   const travadas = lista.filter((p) => p.motivo);
 
   return (
-    <section className="glass mt-6 rounded-2xl border border-white/8 p-5">
+    <section className="glass mt-6 rounded-2xl border border-tinta/8 p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-white">Já vendido, ainda não enviado</p>
+          <p className="text-sm font-semibold text-tinta">Já vendido, ainda não enviado</p>
           <p className="mt-0.5 text-xs text-slate-400">
             Cobranças pagas no Asaas que ainda não viraram venda no Conta Azul, inclusive as de antes
             desta integração existir.
@@ -212,7 +212,7 @@ async function Pendentes() {
         </div>
         {prontas.length > 0 && (
           <form action={enviarPendentesCA}>
-            <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+            <button className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
               Enviar {Math.min(prontas.length, 25)}
             </button>
           </form>
@@ -230,7 +230,7 @@ async function Pendentes() {
       )}
 
       {prontas.length > 0 && (
-        <ul className="mt-4 divide-y divide-white/5 rounded-xl border border-white/8">
+        <ul className="mt-4 divide-y divide-tinta/5 rounded-xl border border-tinta/8">
           {prontas.slice(0, 40).map((p) => (
             <li key={p.paymentId} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2.5 text-sm">
               <span className="w-20 shrink-0 font-mono text-xs text-slate-500">{p.pagoEm.slice(0, 10)}</span>
@@ -243,7 +243,7 @@ async function Pendentes() {
                 <input type="hidden" name="motivo" value="Dispensada no painel" />
                 <button
                   title="Nunca virar venda: teste, estorno, cobranca duplicada"
-                  className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-amber-400/50 hover:text-amber-300"
+                  className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-amber-400/50 hover:text-amber-300"
                 >
                   Dispensar
                 </button>

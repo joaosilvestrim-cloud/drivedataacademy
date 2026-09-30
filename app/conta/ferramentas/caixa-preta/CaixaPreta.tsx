@@ -22,7 +22,7 @@ import TourCaixaPreta, { tourCaixaPretaJaVisto } from "@/components/caixapreta/T
 const CORES = ["#34e8a0", "#3b9dff", "#a78bfa", "#fbbf24", "#2ee6d6", "#f6d68c", "#f0abfc"];
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 const rotulo = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400";
 
 /** Espaço vira ponto médio para o aluno ver que o espaço faz parte do token. */
@@ -63,9 +63,9 @@ function Fichas({ tokens }: { tokens: string[] }) {
 
 function Numero({ valor, rotulo: r, tom }: { valor: string | number; rotulo: string; tom?: string }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-white/[0.02] px-4 py-3">
+    <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3">
       <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{r}</p>
-      <p className={`mt-0.5 font-display text-xl font-bold tabular-nums ${tom || "text-white"}`}>{valor}</p>
+      <p className={`mt-0.5 font-display text-xl font-bold tabular-nums ${tom || "text-tinta"}`}>{valor}</p>
     </div>
   );
 }
@@ -140,7 +140,7 @@ export default function CaixaPreta() {
               type="button"
               onClick={() => setEstacao(e.id as typeof estacao)}
               className={`rounded-xl border px-4 py-2 text-sm font-medium transition-colors ${
-                estacao === e.id ? "border-brand-green/50 bg-brand-green/[0.10] text-white" : "border-white/10 bg-white/[0.02] text-slate-400 hover:text-white"
+                estacao === e.id ? "border-acento/50 bg-brand-green/[0.10] text-tinta" : "border-tinta/10 bg-tinta/[0.02] text-slate-400 hover:text-tinta"
               }`}
             >
               {e.nome}
@@ -150,7 +150,7 @@ export default function CaixaPreta() {
         <button
           type="button"
           onClick={() => setTour(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-tinta/10 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
           {tr("Tour guiado")}
@@ -158,7 +158,7 @@ export default function CaixaPreta() {
       </div>
 
       {/* Corpus, comum às duas estações */}
-      <div data-tour="cp-corpus" className="mt-4 rounded-3xl border border-white/8 bg-white/[0.02] p-5">
+      <div data-tour="cp-corpus" className="mt-4 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
         <div className="grid gap-4 sm:grid-cols-[1fr_1fr]">
           <label>
             <span className={rotulo}>{tr("Corpus de treino")}</span>
@@ -178,7 +178,7 @@ export default function CaixaPreta() {
       {estacao === "tokenizar" ? (
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_18rem] lg:items-start">
           <div>
-            <div data-tour="cp-texto" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
+            <div data-tour="cp-texto" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
               <span className={rotulo}>{tr("Seu texto")}</span>
               <textarea
                 value={texto}
@@ -196,16 +196,16 @@ export default function CaixaPreta() {
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <Numero rotulo={tr("Tokens")} valor={stats.tokens} tom="text-brand-green" />
+              <Numero rotulo={tr("Tokens")} valor={stats.tokens} tom="text-acento" />
               <Numero rotulo={tr("Caracteres")} valor={stats.caracteres} />
               <Numero rotulo={tr("Palavras")} valor={stats.palavras} />
               <Numero rotulo={tr("Tokens por palavra")} valor={stats.porPalavra.toFixed(2)} />
             </div>
 
             <div className="mt-4 rounded-3xl border border-brand-blue/25 bg-brand-blue/[0.06] p-5">
-              <p className="font-display text-base font-bold text-white">{tr("O mesmo texto, outro corpus")}</p>
+              <p className="font-display text-base font-bold text-tinta">{tr("O mesmo texto, outro corpus")}</p>
               <p className="mt-1 text-sm text-slate-300">
-                {tr("Treinado em")} <b className="text-white">{corpus.nome}</b>{tr(", o seu texto custa")} <b className="text-brand-green">{stats.tokens} {tr("tokens")}</b>{tr(". Treinado em")} <b className="text-white">{comparacao.nome}</b>{tr(", custa")} <b className="text-amber-300">{comparacao.tokens}</b>.
+                {tr("Treinado em")} <b className="text-tinta">{corpus.nome}</b>{tr(", o seu texto custa")} <b className="text-acento">{stats.tokens} {tr("tokens")}</b>{tr(". Treinado em")} <b className="text-tinta">{comparacao.nome}</b>{tr(", custa")} <b className="text-amber-300">{comparacao.tokens}</b>.
               </p>
               <p className="mt-2 text-sm text-slate-400">
                 {tr("O tokenizador não é neutro: ele é barato no assunto em que foi treinado e caro fora dele. É por isso que português custa mais token que inglês nos modelos grandes, e por que texto técnico do seu domínio consome mais contexto do que você espera.")}
@@ -213,8 +213,8 @@ export default function CaixaPreta() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-            <p className="font-display text-base font-bold text-white">{tr("O que está acontecendo")}</p>
+          <div className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+            <p className="font-display text-base font-bold text-tinta">{tr("O que está acontecendo")}</p>
             <div className="mt-3 flex flex-col gap-3 text-sm leading-relaxed text-slate-400">
               <p><b className="text-slate-200">{tr("1. Pré-corte.")}</b> {tr("O texto é quebrado em palavras, pontuação e dígitos soltos, com o espaço colado na palavra seguinte.")}</p>
               <p><b className="text-slate-200">{tr("2. Bytes.")}</b> {tr("Cada pedaço vira bytes. Acento e emoji ocupam mais de um, e é aí que o português começa a ficar caro.")}</p>
@@ -228,7 +228,7 @@ export default function CaixaPreta() {
       ) : (
         <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_20rem] lg:items-start">
           <div>
-            <div data-tour="cp-prompt" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
+            <div data-tour="cp-prompt" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
               <div className="grid gap-4 sm:grid-cols-[1fr_9rem]">
                 <label>
                   <span className={rotulo}>{tr("Comece uma frase")}</span>
@@ -245,7 +245,7 @@ export default function CaixaPreta() {
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {COMECOS.map((c) => (
-                  <button key={c} type="button" onClick={() => setPrompt(c)} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-brand-teal/40 hover:text-white">
+                  <button key={c} type="button" onClick={() => setPrompt(c)} className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-brand-teal/40 hover:text-tinta">
                     {c}
                   </button>
                 ))}
@@ -266,26 +266,26 @@ export default function CaixaPreta() {
               </div>
             </div>
 
-            <div data-tour="cp-saida" className="mt-4 overflow-hidden rounded-3xl border border-white/8 bg-[#070d14]">
-              <div className="flex items-center justify-between gap-3 border-b border-white/8 px-4 py-2.5">
+            <div data-tour="cp-saida" className="mt-4 overflow-hidden rounded-3xl border border-tinta/8 bg-ink-700">
+              <div className="flex items-center justify-between gap-3 border-b border-tinta/8 px-4 py-2.5">
                 <span className="font-mono text-xs text-slate-400">{tr("saída ·")} {gerados.length} tokens gerados</span>
-                <span className={`rounded-full border px-2 py-0.5 text-[0.65rem] ${origem.geral ? "border-red-500/40 bg-red-500/10 text-red-300" : "border-brand-green/40 bg-brand-green/10 text-brand-green"}`}>
+                <span className={`rounded-full border px-2 py-0.5 text-[0.65rem] ${origem.geral ? "border-red-500/40 bg-red-500/10 text-red-300" : "border-acento/40 bg-brand-green/10 text-acento"}`}>
                   {origem.geral ? "contexto desconhecido" : `contexto de ${origem.tamanho} token${origem.tamanho > 1 ? "s" : ""}`}
                 </span>
               </div>
               <p className="px-4 py-4 text-[0.95rem] leading-relaxed">
                 <span className="text-slate-500">{prompt}</span>
-                <span className="text-brand-green">{textoGerado}</span>
-                <span className="animate-pulse text-brand-green">▍</span>
+                <span className="text-acento">{textoGerado}</span>
+                <span className="animate-pulse text-acento">▍</span>
               </p>
-              <div className="flex flex-wrap items-center gap-2 border-t border-white/8 px-4 py-3">
-                <button type="button" onClick={() => passo(1)} className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-brand-green/50 hover:text-brand-green">
+              <div className="flex flex-wrap items-center gap-2 border-t border-tinta/8 px-4 py-3">
+                <button type="button" onClick={() => passo(1)} className="rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-acento/50 hover:text-acento">
                   {tr("Gerar 1 token")}
                 </button>
-                <button type="button" onClick={() => passo(40)} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+                <button type="button" onClick={() => passo(40)} className="rounded-xl bg-marca-verde px-5 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                   {tr("Gerar 40")}
                 </button>
-                <button type="button" onClick={() => setGerados([])} className="rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-400 transition-colors hover:text-white">
+                <button type="button" onClick={() => setGerados([])} className="rounded-xl border border-tinta/10 px-4 py-2 text-sm text-slate-400 transition-colors hover:text-tinta">
                   {tr("Recomeçar")}
                 </button>
               </div>
@@ -299,8 +299,8 @@ export default function CaixaPreta() {
           </div>
 
           <div className="flex flex-col gap-4 lg:sticky lg:top-6">
-            <div data-tour="cp-candidatos" className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-              <p className="font-display text-base font-bold text-white">{tr("O próximo token")}</p>
+            <div data-tour="cp-candidatos" className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+              <p className="font-display text-base font-bold text-tinta">{tr("O próximo token")}</p>
               <p className="mt-1 text-[0.7rem] text-slate-500">{tr("O que o modelo considera agora, e com que chance.")}</p>
               <div className="mt-3 flex flex-col gap-2">
                 {proximos.length === 0 && <p className="text-sm text-slate-500">{tr("Sem candidatos para este contexto.")}</p>}
@@ -314,7 +314,7 @@ export default function CaixaPreta() {
                         {(c.probabilidade * 100).toFixed(1)}% · {c.contagem}x
                       </span>
                     </div>
-                    <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-white/8">
+                    <span className="mt-1 block h-1.5 w-full overflow-hidden rounded-full bg-tinta/8">
                       <span className="block h-full rounded-full" style={{ width: `${c.probabilidade * 100}%`, backgroundColor: i === 0 ? "#34e8a0" : CORES[i % CORES.length] }} />
                     </span>
                   </div>
@@ -322,8 +322,8 @@ export default function CaixaPreta() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-white/8 bg-white/[0.02] p-5">
-              <p className="font-display text-base font-bold text-white">{tr("O modelo")}</p>
+            <div className="rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5">
+              <p className="font-display text-base font-bold text-tinta">{tr("O modelo")}</p>
               <div className="mt-3 flex flex-col gap-1.5 text-sm text-slate-400">
                 <p>{tr("Vocabulário:")} <b className="text-slate-200">{vocab.tokens.length.toLocaleString("pt-BR")}</b> {tr("tokens")}</p>
                 <p>Corpus: <b className="text-slate-200">{modelo.totalTokens.toLocaleString("pt-BR")}</b> {tr("tokens")}</p>

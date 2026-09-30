@@ -71,7 +71,7 @@ export default async function PresencasPage({ searchParams }: { searchParams: { 
               key={l.id}
               href={`/admin/presencas?live=${l.id}`}
               className={`rounded-ctl border px-3 py-1.5 text-body-sm transition-colors ${
-                l.id === live.id ? "border-ds-accent text-ds-text" : "border-ds-line text-ds-text-2 hover:border-ds-accent"
+                l.id === live.id ? "border-acento text-ds-text" : "border-ds-line text-ds-text-2 hover:border-acento"
               }`}
             >
               {l.title}

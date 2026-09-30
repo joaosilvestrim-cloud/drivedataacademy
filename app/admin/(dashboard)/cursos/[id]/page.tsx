@@ -56,18 +56,18 @@ export default async function EditCoursePage({ params, searchParams }: { params:
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <Link href="/admin/cursos" className="text-xs text-slate-500 hover:text-white">← Cursos</Link>
-          <h1 className="mt-1 font-display text-2xl font-bold text-white">Editar curso</h1>
+          <Link href="/admin/cursos" className="text-xs text-slate-500 hover:text-tinta">← Cursos</Link>
+          <h1 className="mt-1 font-display text-2xl font-bold text-tinta">Editar curso</h1>
         </div>
         {course.published && (
-          <a href={`/cursos/${course.slug}`} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">
+          <a href={`/cursos/${course.slug}`} target="_blank" rel="noreferrer" className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-acento/50 hover:text-acento">
             Ver página do curso ↗
           </a>
         )}
       </div>
 
       {searchParams?.ok && (
-        <div className="mt-5 flex items-center gap-2 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm font-medium text-brand-green">
+        <div className="mt-5 flex items-center gap-2 rounded-xl border border-acento/30 bg-brand-green/10 px-4 py-3 text-sm font-medium text-acento">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
           {searchParams.ok}
         </div>
@@ -78,12 +78,12 @@ export default async function EditCoursePage({ params, searchParams }: { params:
 
       <div className="mt-6">
         {/* Carga horária calculada das aulas. O botão some quando todas já têm duração. */}
-        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm">
-          <span className="text-slate-300">Conteúdo somado das aulas: <strong className="text-white">{minutos ? textoDosMinutos(minutos) : "sem duração"}</strong>{minutos ? ` · no certificado: ${course.workload || cargaHoraria(minutos)}` : ""}</span>
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3 text-sm">
+          <span className="text-slate-300">Conteúdo somado das aulas: <strong className="text-tinta">{minutos ? textoDosMinutos(minutos) : "sem duração"}</strong>{minutos ? ` · no certificado: ${course.workload || cargaHoraria(minutos)}` : ""}</span>
           {semDuracao > 0 && (
             <form action={recalcularDuracoes}>
               <input type="hidden" name="course_id" value={course.id} />
-              <button className="rounded-lg border border-brand-green/40 px-3 py-1.5 text-xs font-semibold text-brand-green hover:bg-brand-green/10">Buscar duração de {semDuracao} aula(s) no YouTube e Panda</button>
+              <button className="rounded-lg border border-acento/40 px-3 py-1.5 text-xs font-semibold text-acento hover:bg-brand-green/10">Buscar duração de {semDuracao} aula(s) no YouTube e Panda</button>
             </form>
           )}
         </div>
@@ -97,10 +97,10 @@ export default async function EditCoursePage({ params, searchParams }: { params:
 
       <CourseStudents courseId={course.id} totalLessons={(lessons ?? []).length} />
 
-      <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-white/8 pt-6">
+      <div className="mt-12 flex flex-wrap items-center gap-3 border-t border-tinta/8 pt-6">
         <form action={duplicarCurso}>
           <input type="hidden" name="id" value={course.id} />
-          <button className="rounded-lg border border-white/15 px-4 py-2 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">
+          <button className="rounded-lg border border-tinta/15 px-4 py-2 text-xs font-medium text-slate-300 hover:border-acento/50 hover:text-acento">
             Duplicar curso
           </button>
         </form>
@@ -109,7 +109,7 @@ export default async function EditCoursePage({ params, searchParams }: { params:
         </span>
       </div>
 
-      <form action={deleteCourse} className="mt-6 border-t border-white/8 pt-6">
+      <form action={deleteCourse} className="mt-6 border-t border-tinta/8 pt-6">
         <input type="hidden" name="id" value={course.id} />
         <button className="rounded-lg border border-red-400/20 px-4 py-2 text-xs font-medium text-red-400/80 hover:border-red-400/50 hover:text-red-400">
           Excluir curso

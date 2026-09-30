@@ -24,14 +24,14 @@ import { assinarCapaDoProjeto, curtirProjeto, excluirProjeto, organizarComIA, pr
 export type Autor = { nome: string; avatar: string | null; casa: string | null; headline: string | null };
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2.5 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 const rotulo = "block text-[0.72rem] font-semibold uppercase tracking-wide text-slate-400";
 
 function Chip({ children, ativo, onClick }: { children: React.ReactNode; ativo?: boolean; onClick?: () => void }) {
   const base = "rounded-full px-2.5 py-1 text-[0.7rem] transition-colors";
-  if (!onClick) return <span className={`${base} bg-white/[0.06] text-slate-300`}>{children}</span>;
+  if (!onClick) return <span className={`${base} bg-tinta/[0.06] text-slate-300`}>{children}</span>;
   return (
-    <button type="button" onClick={onClick} className={`${base} ${ativo ? "bg-brand-green/20 font-semibold text-brand-green" : "bg-white/5 text-slate-400 hover:text-white"}`}>
+    <button type="button" onClick={onClick} className={`${base} ${ativo ? "bg-brand-green/20 font-semibold text-acento" : "bg-tinta/5 text-slate-400 hover:text-tinta"}`}>
       {children}
     </button>
   );
@@ -41,7 +41,7 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
   const tr = usarTraducao();
   const st = STATUS[p.status];
   return (
-    <article className={`group flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] transition-colors hover:border-brand-green/30 ${grande ? "sm:col-span-2 xl:col-span-2" : ""}`}>
+    <article className={`group flex flex-col overflow-hidden rounded-2xl border border-tinta/8 bg-tinta/[0.02] transition-colors hover:border-acento/30 ${grande ? "sm:col-span-2 xl:col-span-2" : ""}`}>
       <div className={`relative overflow-hidden bg-ink-800 ${grande ? "aspect-[21/9]" : "aspect-video"} ${aoAbrir ? "cursor-zoom-in" : ""}`} onClick={aoAbrir}>
         {p.cover_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -50,7 +50,7 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
           <div className="grid h-full place-items-center text-xs text-slate-600">{tr("sem imagem")}</div>
         )}
         {p.destaque && p.status === "aprovado" && (
-          <span className="absolute left-3 top-3 rounded-full bg-[#f6d68c] px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-ink-900">{tr("Destaque")}</span>
+          <span className="absolute left-3 top-3 rounded-full bg-amber-300 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-sobre-acento">{tr("Destaque")}</span>
         )}
         {meu && p.status !== "aprovado" && (
           <span className={`absolute right-3 top-3 rounded-full bg-ink-900/90 px-2 py-0.5 text-[0.65rem] font-semibold ${st.cor}`}>{st.rotulo}</span>
@@ -61,10 +61,10 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
         <div>
           {aoAbrir ? (
             <button onClick={aoAbrir} className="text-left">
-              <h3 className={`font-display font-bold leading-snug text-white transition-colors group-hover:text-brand-green ${grande ? "text-2xl" : "text-lg"}`}>{p.titulo}</h3>
+              <h3 className={`font-display font-bold leading-snug text-tinta transition-colors group-hover:text-acento ${grande ? "text-2xl" : "text-lg"}`}>{p.titulo}</h3>
             </button>
           ) : (
-            <h3 className="font-display text-lg font-bold leading-snug text-white">{p.titulo}</h3>
+            <h3 className="font-display text-lg font-bold leading-snug text-tinta">{p.titulo}</h3>
           )}
           <p className="mt-1 text-sm leading-relaxed text-slate-400">{p.resumo}</p>
           {grande && p.resultado && <p className="mt-2 text-sm text-brand-teal">{p.resultado}</p>}
@@ -85,7 +85,7 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
             <span className="flex min-w-0 items-center gap-2">
               <MedalAvatar name={autor.nome} src={autor.avatar} casa={autor.casa} size="xs" />
               <span className="min-w-0">
-                <span className={`block truncate text-xs ${autor.casa ? "font-semibold text-[#f6d68c]" : "text-slate-300"}`}>{autor.nome}</span>
+                <span className={`block truncate text-xs ${autor.casa ? "font-semibold text-amber-300" : "text-slate-300"}`}>{autor.nome}</span>
                 {autor.headline && <span className="block truncate text-[0.65rem] text-slate-500">{autor.headline}</span>}
               </span>
               <SeloCasa label={autor.casa} />
@@ -94,22 +94,22 @@ function Cartao({ p, autor, curtido, total, aoCurtir, aoEditar, aoAbrir, meu, gr
 
           <span className="ml-auto flex items-center gap-2">
             {aoCurtir && (
-              <button onClick={aoCurtir} aria-pressed={!!curtido} className={`flex items-center gap-1 rounded-lg px-2 py-1 text-xs transition-colors ${curtido ? "text-brand-green" : "text-slate-400 hover:text-white"}`}>
+              <button onClick={aoCurtir} aria-pressed={!!curtido} className={`flex items-center gap-1 rounded-lg px-2 py-1 text-xs transition-colors ${curtido ? "text-acento" : "text-slate-400 hover:text-tinta"}`}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill={curtido ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8"><path d="M20.8 6.6a5 5 0 00-7.1 0L12 8.3l-1.7-1.7a5 5 0 10-7.1 7.1L12 22l8.8-8.3a5 5 0 000-7.1z" /></svg>
                 {total ?? p.curtidas ?? 0}
               </button>
             )}
             {p.link_url && (
-              <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">{tr("Ver projeto ↗")}</a>
+              <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs text-slate-200 hover:border-acento/50 hover:text-tinta">{tr("Ver projeto ↗")}</a>
             )}
             {p.repo_url && (
-              <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-300 hover:text-white">{tr("Código ↗")}</a>
+              <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs text-slate-300 hover:text-tinta">{tr("Código ↗")}</a>
             )}
             {aoAbrir && (
-              <button onClick={aoAbrir} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">{tr("Ver detalhes")}</button>
+              <button onClick={aoAbrir} className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs text-slate-200 hover:border-acento/50 hover:text-tinta">{tr("Ver detalhes")}</button>
             )}
             {aoEditar && (
-              <button onClick={aoEditar} className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-200 hover:border-brand-green/50 hover:text-white">{tr("Editar")}</button>
+              <button onClick={aoEditar} className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs text-slate-200 hover:border-acento/50 hover:text-tinta">{tr("Editar")}</button>
             )}
           </span>
         </div>
@@ -202,7 +202,7 @@ export default function Portfolio({
             <button
               key={a}
               onClick={() => setAba(a)}
-              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${aba === a ? "bg-brand-green/20 font-semibold text-brand-green" : "bg-white/5 text-slate-400 hover:text-white"}`}
+              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${aba === a ? "bg-brand-green/20 font-semibold text-acento" : "bg-tinta/5 text-slate-400 hover:text-tinta"}`}
             >
               {a === "vitrine" ? `Projetos da turma (${vitrine.length})` : `Meus projetos (${meus.length})`}
             </button>
@@ -210,7 +210,7 @@ export default function Portfolio({
         </div>
         <button
           onClick={() => setEditando("novo")}
-          className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+          className="rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
         >
           {tr("Publicar um projeto")}
         </button>
@@ -228,7 +228,7 @@ export default function Portfolio({
                 onChange={(e) => setBusca(e.target.value)}
                 placeholder={tr("buscar por projeto, ferramenta ou pessoa")}
                 aria-label={tr("Buscar projeto")}
-                className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-2 pl-9 pr-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
+                className="w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] py-2 pl-9 pr-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60"
               />
             </div>
             <div className="flex gap-1.5">
@@ -250,13 +250,13 @@ export default function Portfolio({
           )}
 
           {lista.length === 0 && (busca || filtro) ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center">
-              <p className="font-medium text-white">{tr("Nenhum projeto com esse recorte")}</p>
-              <button onClick={() => { setBusca(""); setFiltro(""); }} className="mt-3 text-sm text-brand-green hover:underline">{tr("Limpar a busca e o filtro")}</button>
+            <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-12 text-center">
+              <p className="font-medium text-tinta">{tr("Nenhum projeto com esse recorte")}</p>
+              <button onClick={() => { setBusca(""); setFiltro(""); }} className="mt-3 text-sm text-acento hover:underline">{tr("Limpar a busca e o filtro")}</button>
             </div>
           ) : lista.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
-              <p className="font-medium text-white">{tr("Ainda não tem projeto publicado aqui")}</p>
+            <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-16 text-center">
+              <p className="font-medium text-tinta">{tr("Ainda não tem projeto publicado aqui")}</p>
               <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
                 {tr("Seja o primeiro. Um dashboard que você montou no trabalho, um exercício da Academy que virou coisa séria, uma automação que economizou o seu dia: tudo conta.")}
               </p>
@@ -279,12 +279,12 @@ export default function Portfolio({
           )}
         </>
       ) : meus.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
-          <p className="font-medium text-white">{tr("Você ainda não publicou nada")}</p>
+        <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-16 text-center">
+          <p className="font-medium text-tinta">{tr("Você ainda não publicou nada")}</p>
           <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
             {tr("Portfólio é o que abre porta. Publique um projeto com a imagem, o problema que ele resolve e o resultado, e ele passa a aparecer para a turma e para quem visita o site.")}
           </p>
-          <button onClick={() => setEditando("novo")} className="mt-6 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">
+          <button onClick={() => setEditando("novo")} className="mt-6 rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">
             {tr("Publicar meu primeiro projeto")}
           </button>
         </div>
@@ -322,7 +322,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm" onClick={aoFechar} role="dialog" aria-modal="true" aria-label={p.titulo}>
-      <article onClick={(e) => e.stopPropagation()} className="my-8 w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-ink-900 shadow-2xl">
+      <article onClick={(e) => e.stopPropagation()} className="my-8 w-full max-w-3xl overflow-hidden rounded-3xl border border-tinta/10 bg-ink-900 shadow-2xl">
         {p.cover_url && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={p.cover_url} alt="" className="max-h-[60vh] w-full object-contain bg-ink-800" />
@@ -330,17 +330,17 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
         <div className="flex flex-col gap-4 p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <h2 className="font-display text-2xl font-bold text-white">{p.titulo}</h2>
+              <h2 className="font-display text-2xl font-bold text-tinta">{p.titulo}</h2>
               <p className="mt-1 text-sm text-slate-400">{p.resumo}</p>
             </div>
-            <button onClick={aoFechar} aria-label={tr("Fechar")} className="shrink-0 rounded-lg px-2 py-1 text-slate-400 hover:text-white">✕</button>
+            <button onClick={aoFechar} aria-label={tr("Fechar")} className="shrink-0 rounded-lg px-2 py-1 text-slate-400 hover:text-tinta">✕</button>
           </div>
 
           {autor && (
-            <div className="flex items-center gap-2.5 border-y border-white/8 py-3">
+            <div className="flex items-center gap-2.5 border-y border-tinta/8 py-3">
               <MedalAvatar name={autor.nome} src={autor.avatar} casa={autor.casa} size="sm" />
               <div className="min-w-0">
-                <p className={`truncate text-sm ${autor.casa ? "font-semibold text-[#f6d68c]" : "text-slate-200"}`}>{autor.nome}</p>
+                <p className={`truncate text-sm ${autor.casa ? "font-semibold text-amber-300" : "text-slate-200"}`}>{autor.nome}</p>
                 {autor.headline && <p className="truncate text-xs text-slate-500">{autor.headline}</p>}
               </div>
               <SeloCasa label={autor.casa} className="ml-1" />
@@ -355,7 +355,7 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
           )}
           {p.resultado && (
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-brand-green">{tr("O resultado")}</p>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wide text-acento">{tr("O resultado")}</p>
               <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-200">{p.resultado}</p>
             </div>
           )}
@@ -373,8 +373,8 @@ function Detalhe({ p, autor, aoFechar }: { p: Projeto; autor?: Autor; aoFechar: 
           )}
 
           <div className="flex flex-wrap gap-3 pt-1">
-            {p.link_url && <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900">{tr("Ver o projeto ↗")}</a>}
-            {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 px-4 py-2 text-sm text-slate-200 hover:border-brand-green/50">{tr("Código ↗")}</a>}
+            {p.link_url && <a href={p.link_url} target="_blank" rel="noreferrer" className="rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento">{tr("Ver o projeto ↗")}</a>}
+            {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer" className="rounded-xl border border-tinta/10 px-4 py-2 text-sm text-slate-200 hover:border-acento/50">{tr("Código ↗")}</a>}
           </div>
         </div>
       </article>
@@ -507,20 +507,20 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
         ref={form}
         onClick={(e) => e.stopPropagation()}
         onSubmit={enviar}
-        className="my-8 w-full max-w-2xl rounded-3xl border border-white/10 bg-ink-900 p-6 shadow-2xl"
+        className="my-8 w-full max-w-2xl rounded-3xl border border-tinta/10 bg-ink-900 p-6 shadow-2xl"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="font-display text-2xl font-bold text-white">{projeto ? "Editar projeto" : "Publicar projeto"}</h2>
+            <h2 className="font-display text-2xl font-bold text-tinta">{projeto ? "Editar projeto" : "Publicar projeto"}</h2>
             <p className="mt-1 text-sm text-slate-400">{tr("O time revisa antes de publicar na vitrine. Costuma sair em até dois dias úteis.")}</p>
           </div>
-          <button type="button" onClick={aoFechar} aria-label={tr("Fechar")} className="rounded-lg px-2 py-1 text-slate-400 hover:text-white">✕</button>
+          <button type="button" onClick={aoFechar} aria-label={tr("Fechar")} className="rounded-lg px-2 py-1 text-slate-400 hover:text-tinta">✕</button>
         </div>
 
         {projeto && <input type="hidden" name="id" value={projeto.id} />}
 
-        <details open={!projeto} className="group mt-5 rounded-2xl border border-brand-green/25 bg-brand-green/[0.04] p-4">
-          <summary className="cursor-pointer list-none text-sm font-semibold text-white">
+        <details open={!projeto} className="group mt-5 rounded-2xl border border-acento/25 bg-brand-green/[0.04] p-4">
+          <summary className="cursor-pointer list-none text-sm font-semibold text-tinta">
             {tr("Organizar com IA")}
             <span className="ml-2 text-xs font-normal text-slate-400">{tr("conte do seu jeito, a IA distribui nos campos")}</span>
           </summary>
@@ -538,7 +538,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
                 type="button"
                 onClick={organizar}
                 disabled={organizando || relato.trim().length < 40}
-                className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-40"
+                className="rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento disabled:opacity-40"
               >
                 {organizando ? tr("Organizando...") : tr("Organizar nos campos")}
               </button>
@@ -585,7 +585,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
           {/* O planeta do projeto no 4D: tamanho pela duração, anéis pelo time.
               E o papel responde a primeira pergunta de qualquer entrevista. */}
           {comDetalhes && (
-            <div className="flex flex-col gap-4 rounded-2xl border border-white/8 bg-white/[0.02] p-4">
+            <div className="flex flex-col gap-4 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-4">
               <div>
                 <label className={rotulo} htmlFor="p-papel">{tr("Seu papel no projeto")}</label>
                 <textarea id="p-papel" name="papel" defaultValue={detalhe?.papel ?? ""} rows={2} maxLength={600} placeholder={tr("O que foi seu e o que foi do time. Ex: conduzi o levantamento e modelei os dados; o time cuidou da integração.")} className={`${campo} mt-1 resize-y`} />
@@ -611,7 +611,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
           <div>
             <span className={rotulo}>{tr("Imagem do projeto")}</span>
             <div className="mt-1 flex items-start gap-4">
-              <div className="grid aspect-video w-40 shrink-0 place-items-center overflow-hidden rounded-xl border border-white/10 bg-ink-800">
+              <div className="grid aspect-video w-40 shrink-0 place-items-center overflow-hidden rounded-xl border border-tinta/10 bg-ink-800">
                 {capa ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={capa} alt="" className="h-full w-full object-cover" />
@@ -620,7 +620,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
                 )}
               </div>
               <div className="min-w-0 flex-1 space-y-2">
-                <input type="file" accept="image/*" onChange={subirCapa} disabled={subindo} className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-sm file:text-white" />
+                <input type="file" accept="image/*" onChange={subirCapa} disabled={subindo} className="block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-tinta/10 file:px-3 file:py-1.5 file:text-sm file:text-tinta" />
                 {subindo && <p className="text-xs text-brand-teal">Subindo...</p>}
                 <p className="text-xs text-slate-500">{tr("Um print do painel já resolve. Proporção 16:9 fica melhor no cartão.")}</p>
               </div>
@@ -641,7 +641,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
               <button
                 type="button"
                 onClick={() => { const f = nova.trim(); if (f && !ferramentas.includes(f) && ferramentas.length < LIMITES.ferramentas) setFerramentas((a) => [...a, f]); setNova(""); }}
-                className="shrink-0 rounded-xl border border-white/10 px-3 text-sm text-slate-200 hover:border-brand-green/50"
+                className="shrink-0 rounded-xl border border-tinta/10 px-3 text-sm text-slate-200 hover:border-acento/50"
               >
                 {tr("Adicionar")}
               </button>
@@ -690,7 +690,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
                 {cursos.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
               </select>
             </div>
-            <label className="flex items-start gap-2.5 rounded-xl border border-white/8 bg-white/[0.02] p-3 text-sm text-slate-300">
+            <label className="flex items-start gap-2.5 rounded-xl border border-tinta/8 bg-tinta/[0.02] p-3 text-sm text-slate-300">
               <input type="checkbox" name="publico" defaultChecked={projeto?.publico ?? true} className="mt-0.5 h-4 w-4 accent-[#15c47e]" />
               <span>
                 {tr("Pode aparecer na página pública da Academy")}
@@ -702,10 +702,10 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
           {/* A constelação se formando: cada competência com o trecho do
               próprio projeto que a prova. É o mesmo "por que" que o visitante
               vai ler no 4D do site. */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+          <div className="rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-white">{tr("O que este projeto acende no seu Universo 4D")}</p>
-              <button type="button" onClick={lerCompetencias} disabled={lendo} className="text-xs text-brand-green hover:underline disabled:opacity-50">
+              <p className="text-sm font-semibold text-tinta">{tr("O que este projeto acende no seu Universo 4D")}</p>
+              <button type="button" onClick={lerCompetencias} disabled={lendo} className="text-xs text-acento hover:underline disabled:opacity-50">
                 {lendo ? tr("Lendo o projeto...") : provadas ? tr("Ler de novo") : tr("Ver agora")}
               </button>
             </div>
@@ -717,7 +717,7 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
               <ul className="mt-2 flex flex-col gap-2">
                 {provadas.map((c) => (
                   <li key={c.id} className="text-sm">
-                    <span className="font-semibold text-brand-green">{c.nome}</span>
+                    <span className="font-semibold text-acento">{c.nome}</span>
                     <span className="block text-xs text-slate-400">&ldquo;{c.trecho}&rdquo;</span>
                   </li>
                 ))}
@@ -727,12 +727,12 @@ function Formulario({ projeto, cursos, aoFechar, detalhe = null, comDetalhes = f
 
           {erro && <p className="rounded-xl border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-200" role="alert">{erro}</p>}
 
-          <div className="flex flex-wrap items-center gap-3 border-t border-white/10 pt-4">
-            <button type="submit" onClick={() => (acao.current = "enviar")} disabled={salvando || subindo} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-50">
+          <div className="flex flex-wrap items-center gap-3 border-t border-tinta/10 pt-4">
+            <button type="submit" onClick={() => (acao.current = "enviar")} disabled={salvando || subindo} className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-50">
               {salvando ? "Enviando..." : tr("Publicar projeto")}
             </button>
             {/* Rascunho não exige campo obrigatório: a pessoa salva o que tem e volta depois. */}
-            <button type="submit" formNoValidate onClick={() => (acao.current = "rascunho")} disabled={salvando} className="rounded-xl border border-white/10 px-4 py-2.5 text-sm text-slate-200 hover:border-brand-green/50">
+            <button type="submit" formNoValidate onClick={() => (acao.current = "rascunho")} disabled={salvando} className="rounded-xl border border-tinta/10 px-4 py-2.5 text-sm text-slate-200 hover:border-acento/50">
               {tr("Salvar rascunho")}
             </button>
             {projeto && (

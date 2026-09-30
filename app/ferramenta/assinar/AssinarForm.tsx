@@ -6,7 +6,7 @@ import { useState } from "react";
 import { assinarFerramenta, type AssinaturaResult } from "../actions";
 
 const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 
 export default function AssinarForm({ turmaNome = "Ferramenta de Visuais" }: { turmaNome?: string }) {
   const tr = usarTraducao();
@@ -26,11 +26,11 @@ export default function AssinarForm({ turmaNome = "Ferramenta de Visuais" }: { t
     const digits = (result.whatsapp || "").replace(/\D/g, "");
     const msg = encodeURIComponent(`Olá! Quero assinar a ${turmaNome} da DriveData Academy.`);
     return (
-      <div className="rounded-2xl border border-brand-green/30 bg-brand-green/10 p-6 text-center">
-        <p className="text-lg font-semibold text-white">{tr("Recebemos seu pedido!")}</p>
+      <div className="rounded-2xl border border-acento/30 bg-brand-green/10 p-6 text-center">
+        <p className="text-lg font-semibold text-tinta">{tr("Recebemos seu pedido!")}</p>
         <p className="mt-2 text-sm text-slate-300">{tr("Fale com a gente pelo WhatsApp pra finalizar a assinatura. O acesso libera assim que confirmarmos.")}</p>
         {digits && (
-          <a href={`https://wa.me/${digits}?text=${msg}`} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900">{tr("Falar no WhatsApp")}</a>
+          <a href={`https://wa.me/${digits}?text=${msg}`} target="_blank" rel="noreferrer" className="mt-5 inline-block rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento">{tr("Falar no WhatsApp")}</a>
         )}
       </div>
     );
@@ -43,7 +43,7 @@ export default function AssinarForm({ turmaNome = "Ferramenta de Visuais" }: { t
       {result && !result.ok && (
         <p className="rounded-lg border border-red-400/30 bg-red-400/10 px-3 py-2 text-sm text-red-200">{result.error}</p>
       )}
-      <button disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02] disabled:opacity-60">
+      <button disabled={loading} className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:opacity-60">
         {loading ? tr("Gerando pagamento...") : "Assinar agora"}
       </button>
       <p className="text-center text-xs text-slate-500">{tr("Assinatura mensal. Cancele quando quiser. O acesso libera após o primeiro pagamento.")}</p>

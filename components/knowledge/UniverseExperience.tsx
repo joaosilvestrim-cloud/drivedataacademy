@@ -130,7 +130,7 @@ export default function UniverseExperience({data}:{data?:UniverseData}) {
     <span className={styles.listOrb} /><span><strong>{tr(c.name)}</strong><small>{tr(scores[c.id].level)}</small></span><b>{scores[c.id].score}<small>/100</small></b><ChevronRight size={16} />
   </button>) : <p className={styles.empty}>{tr("Nenhuma competência corresponde aos filtros.")} <button onClick={() => { setSearch(''); setArea('all'); setOpportunities(true); }}>{tr("Limpar filtros")}</button></p>}</div>;
 
-  return <div className={styles.app}>
+  return <div className={`${styles.app} escuro`}>
     <header className={styles.header}>
       <Link href="/conta/ferramentas" className={styles.brand} aria-label={tr("DriveData Academy — voltar às ferramentas")}><Image className={styles.brandLogo} src="/drivedata-symbol.png" alt="" width={40} height={40} priority/><span>{tr("DriveData")}<span className={styles.academy}>ACADEMY</span></span></Link>
       <span className={styles.headerDivider} /><span className={styles.productName}>{tr("Knowledge Universe")} <b>4D</b></span>

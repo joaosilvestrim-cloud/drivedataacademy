@@ -44,18 +44,18 @@ export default function Navbar() {
   const links = NAV_HREFS.map((href, i) => ({ href: resolverAncora(href, pathname), label: t.nav.links[i] }));
 
   return (
-    <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
-      <nav
-        className={`glass flex w-full max-w-6xl items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500 sm:px-6 ${
-          scrolled ? "shadow-[0_8px_40px_-12px_rgba(52,232,160,0.25)]" : ""
-        }`}
-      >
+    <header
+      className={`fixed inset-x-0 top-0 z-50 flex justify-center border-b bg-white/95 px-4 backdrop-blur transition-colors duration-300 ${
+        scrolled ? "border-tinta/10" : "border-transparent"
+      }`}
+    >
+      <nav className="flex h-[72px] w-full max-w-[1200px] items-center justify-between">
         <a href={resolverAncora("#inicio", pathname)} className="transition-transform hover:scale-[1.03]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt={tr("Drive Data Academy")} className="h-12 w-auto sm:h-14" />
+          <img src="/logo-claro.png" alt={tr("Drive Data Academy")} className="h-8 w-auto sm:h-11" />
         </a>
 
-        <ul className="hidden items-center gap-0.5 lg:flex">
+        <ul className="hidden items-center gap-1 lg:flex">
           {links.map((l) => (
             <li key={l.href}>
               {l.href === DESTAQUE ? (
@@ -63,17 +63,17 @@ export default function Navbar() {
                   href={assinaturaAberta ? l.href : undefined}
                   aria-disabled={assinaturaAberta ? undefined : true}
                   title={assinaturaAberta ? undefined : tr("Liberamos nos próximos dias")}
-                  className={`relative inline-flex items-baseline gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-semibold transition-colors after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:rounded-full ${
-                    pathname === DESTAQUE ? "after:bg-brand-green" : "after:bg-transparent"
-                  } ${assinaturaAberta ? "text-white hover:text-brand-green" : "cursor-default text-white/80"}`}
+                  className={`inline-flex items-baseline gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-[15px] font-semibold transition-colors ${
+                    pathname === DESTAQUE ? "bg-marca text-white" : assinaturaAberta ? "text-marca hover:bg-marca-nevoa" : "cursor-default text-marca/70"
+                  }`}
                 >
                   {l.label}
-                  {!assinaturaAberta && <span className="text-[0.7rem] font-normal text-slate-400">{EM_BREVE[l.label] || tr("em breve")}</span>}
+                  {!assinaturaAberta && <span className="text-[0.7rem] font-normal opacity-70">{EM_BREVE[l.label] || tr("em breve")}</span>}
                 </a>
               ) : (
                 <a
                   href={l.href}
-                  className="whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-brand-green"
+                  className="whitespace-nowrap rounded-full px-4 py-2 text-[15px] font-medium text-marca transition-colors hover:bg-marca-nevoa"
                 >
                   {l.label}
                 </a>
@@ -87,13 +87,13 @@ export default function Navbar() {
           <LangSwitcher className="hidden sm:flex" />
           <a
             href={resolverAncora("#ao-vivo", pathname)}
-            className="rounded-full bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 shadow-[0_0_24px_-4px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.03]"
+            className="whitespace-nowrap rounded-full bg-marca-verde px-4 py-2 text-sm font-semibold text-marca transition-[filter] hover:brightness-95 sm:px-5 sm:py-2.5 sm:text-[15px]"
           >
             {t.nav.cta}
           </a>
           <button
             onClick={() => setOpen((o) => !o)}
-            className="ml-1 grid h-9 w-9 place-items-center rounded-full border border-white/10 lg:hidden"
+            className="ml-1 grid h-9 w-9 place-items-center rounded-full border border-tinta/10 lg:hidden"
             aria-label={tr("Menu")}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -104,7 +104,7 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="glass absolute top-20 w-[92%] max-w-6xl rounded-2xl p-3 lg:hidden">
+        <div className="absolute top-[76px] w-[92%] max-w-6xl rounded-srf bg-white p-3 shadow-overlay lg:hidden">
           {links.map((l) => (
             <a
               key={l.href}
@@ -113,13 +113,13 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={
                 l.href === DESTAQUE
-                  ? "block rounded-xl px-4 py-3 font-semibold text-white hover:bg-white/5"
-                  : "block rounded-xl px-4 py-3 text-slate-200 hover:bg-white/5"
+                  ? "block rounded-xl px-4 py-3 font-semibold text-tinta hover:bg-tinta/5"
+                  : "block rounded-xl px-4 py-3 text-slate-200 hover:bg-tinta/5"
               }
             >
               {l.href === DESTAQUE ? (
                 <>
-                  <span className={`border-b-2 pb-0.5 ${assinaturaAberta ? "border-brand-green" : "border-brand-green/40"}`}>{l.label}</span>
+                  <span className={`border-b-2 pb-0.5 ${assinaturaAberta ? "border-acento" : "border-acento/40"}`}>{l.label}</span>
                   {!assinaturaAberta && <span className="ml-2 text-xs font-normal text-slate-400">{EM_BREVE[l.label] || tr("em breve")}</span>}
                 </>
               ) : (
@@ -127,7 +127,7 @@ export default function Navbar() {
               )}
             </a>
           ))}
-          <div className="mt-2 border-t border-white/10 px-2 pt-3 sm:hidden">
+          <div className="mt-2 border-t border-tinta/10 px-2 pt-3 sm:hidden">
             <LangSwitcher />
           </div>
         </div>

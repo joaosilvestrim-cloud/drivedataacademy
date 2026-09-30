@@ -36,7 +36,7 @@ export default async function LeadsAnalyticsPage() {
   } catch (err) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Analytics de Leads</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Analytics de Leads</h1>
         <div className="mt-6"><AdminError message={err instanceof Error ? err.message : "Erro."} /></div>
       </div>
     );
@@ -94,7 +94,7 @@ export default async function LeadsAnalyticsPage() {
 
   const recent = [...all].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 15);
 
-  const Bars = ({ rows, max, tint = "bg-gradient-to-r from-brand-green to-brand-blue" }: { rows: [string, number][]; max: number; tint?: string }) => (
+  const Bars = ({ rows, max, tint = "bg-marca-verde" }: { rows: [string, number][]; max: number; tint?: string }) => (
     <div className="space-y-2.5">
       {rows.map(([name, val]) => (
         <div key={name}>
@@ -102,7 +102,7 @@ export default async function LeadsAnalyticsPage() {
             <span className="truncate pr-2 text-slate-200">{name}</span>
             <span className="shrink-0 font-medium text-slate-300">{val}</span>
           </div>
-          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/8">
+          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-tinta/8">
             <div className={`h-full rounded-full ${tint}`} style={{ width: `${Math.max(4, (val / max) * 100)}%` }} />
           </div>
         </div>
@@ -115,40 +115,40 @@ export default async function LeadsAnalyticsPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold text-white">Analytics de Leads</h1>
+          <h1 className="font-display text-2xl font-bold text-tinta">Analytics de Leads</h1>
           <p className="mt-1 text-sm text-slate-400">Visão consolidada de todas as fontes de captação.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/admin/leads-analytics/consolidado" className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1.5 text-xs font-semibold text-ink-900">Contatos consolidados</Link>
-          <Link href="/admin/materiais/leads" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">Leads de materiais</Link>
-          <Link href="/admin/waitlist" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">Lista de espera</Link>
+          <Link href="/admin/leads-analytics/consolidado" className="rounded-lg bg-marca-verde px-3 py-1.5 text-xs font-semibold text-sobre-acento">Contatos consolidados</Link>
+          <Link href="/admin/materiais/leads" className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-acento/50 hover:text-acento">Leads de materiais</Link>
+          <Link href="/admin/waitlist" className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-acento/50 hover:text-acento">Lista de espera</Link>
         </div>
       </div>
 
       {/* KPIs */}
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {kpis.map((k) => (
-          <div key={k.label} className="glass rounded-2xl border border-white/8 p-4">
+          <div key={k.label} className="glass rounded-2xl border border-tinta/8 p-4">
             <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-green/10">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-green"><path d={ICONS[k.icon]} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-acento"><path d={ICONS[k.icon]} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </div>
-            <p className="mt-3 font-display text-2xl font-bold text-white">{k.value}</p>
+            <p className="mt-3 font-display text-2xl font-bold text-tinta">{k.value}</p>
             <p className="text-xs text-slate-400">{k.label}</p>
           </div>
         ))}
       </div>
 
       {/* Série diária */}
-      <div className="mt-6 glass rounded-2xl border border-white/8 p-5">
+      <div className="mt-6 glass rounded-2xl border border-tinta/8 p-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold text-white">Leads por dia</h2>
+          <h2 className="font-display text-lg font-bold text-tinta">Leads por dia</h2>
           <span className="text-xs text-slate-500">últimos 30 dias</span>
         </div>
         <div className="mt-5 flex h-40 items-end gap-1">
           {days.map((d, i) => (
             <div key={d.key} className="group relative flex-1">
               <div className="w-full rounded-t bg-gradient-to-t from-brand-green/70 to-brand-blue/70 transition-all hover:from-brand-green hover:to-brand-blue" style={{ height: `${(d.count / maxDay) * 100}%`, minHeight: d.count ? "3px" : "0" }} />
-              <div className="pointer-events-none absolute -top-7 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-ink-900 px-2 py-1 text-[0.65rem] text-white shadow group-hover:block">{label(d.key)}: {d.count}</div>
+              <div className="pointer-events-none absolute -top-7 left-1/2 hidden -translate-x-1/2 whitespace-nowrap rounded bg-ink-900 px-2 py-1 text-[0.65rem] text-tinta shadow group-hover:block">{label(d.key)}: {d.count}</div>
             </div>
           ))}
         </div>
@@ -160,37 +160,37 @@ export default async function LeadsAnalyticsPage() {
 
       {/* Breakdowns */}
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div className="glass rounded-2xl border border-white/8 p-5">
-          <h2 className="mb-4 font-display text-lg font-bold text-white">Por fonte</h2>
+        <div className="glass rounded-2xl border border-tinta/8 p-5">
+          <h2 className="mb-4 font-display text-lg font-bold text-tinta">Por fonte</h2>
           <Bars rows={bySource.map((s) => [s.name, s.value]) as [string, number][]} max={maxSource} />
         </div>
-        <div className="glass rounded-2xl border border-white/8 p-5">
-          <h2 className="mb-4 font-display text-lg font-bold text-white">Por campanha (UTM)</h2>
+        <div className="glass rounded-2xl border border-tinta/8 p-5">
+          <h2 className="mb-4 font-display text-lg font-bold text-tinta">Por campanha (UTM)</h2>
           <Bars rows={campaigns.slice(0, 8)} max={Math.max(1, ...campaigns.map((c) => c[1]))} tint="bg-gradient-to-r from-brand-blue to-brand-cyan" />
         </div>
       </div>
 
       {/* Por material */}
-      <div className="mt-6 glass rounded-2xl border border-white/8 p-5">
-        <h2 className="mb-4 font-display text-lg font-bold text-white">Por material</h2>
-        <Bars rows={materials} max={Math.max(1, ...materials.map((m) => m[1]))} tint="bg-gradient-to-r from-brand-green to-brand-teal" />
+      <div className="mt-6 glass rounded-2xl border border-tinta/8 p-5">
+        <h2 className="mb-4 font-display text-lg font-bold text-tinta">Por material</h2>
+        <Bars rows={materials} max={Math.max(1, ...materials.map((m) => m[1]))} tint="bg-marca-verde" />
       </div>
 
       {/* Recentes */}
-      <h2 className="mt-8 font-display text-lg font-bold text-white">Últimos leads</h2>
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
+      <h2 className="mt-8 font-display text-lg font-bold text-tinta">Últimos leads</h2>
+      <div className="mt-4 overflow-x-auto rounded-2xl border border-tinta/8">
         <table className="w-full min-w-[640px] text-left text-sm">
-          <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
+          <thead className="bg-tinta/[0.03] text-xs uppercase tracking-wide text-slate-400">
             <tr><th className="px-4 py-3">Nome</th><th className="px-4 py-3">Fonte</th><th className="px-4 py-3">Detalhe</th><th className="px-4 py-3">Data</th></tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-tinta/5">
             {recent.map((r, i) => (
               <tr key={i} className="text-slate-200">
                 <td className="px-4 py-3">
-                  <div className="font-medium text-white">{r.name || "—"}</div>
+                  <div className="font-medium text-tinta">{r.name || "—"}</div>
                   {r.email && <div className="text-xs text-slate-500">{r.email}</div>}
                 </td>
-                <td className="px-4 py-3"><span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-300">{r.source}</span></td>
+                <td className="px-4 py-3"><span className="rounded-full bg-tinta/5 px-2.5 py-1 text-xs text-slate-300">{r.source}</span></td>
                 <td className="px-4 py-3 text-slate-400">{r.detail}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-slate-400">{fmt(r.created_at)}</td>
               </tr>

@@ -19,23 +19,23 @@ export default function InstructorSection() {
   }));
 
   return (
-    <section id="instrutora" className="relative mx-auto max-w-7xl px-6 py-24 scroll-mt-24">
+    <section id="instrutora" className="relative mx-auto max-w-[1200px] scroll-mt-24 px-6 py-24">
       <Reveal>
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{t.instructor.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl font-bold sm:text-5xl">
-            {t.instructor.titlePre} <span className="text-gradient">{t.instructor.titleGrad}</span>
+          <p className="text-sm font-semibold text-marca">{t.instructor.eyebrow}</p>
+          <h2 className="mt-3 text-[2.25rem] font-bold leading-[1.1] text-obsidian sm:text-[2.8rem]">
+            {t.instructor.titlePre} <span className="text-marca-azul">{t.instructor.titleGrad}</span>
           </h2>
-          <p className="mt-5 text-slate-300/90">{t.instructor.intro}</p>
+          <p className="mt-5 text-lg text-charcoal">{t.instructor.intro}</p>
         </div>
       </Reveal>
 
       <Reveal delay={0.1}>
-        <div className="mx-auto mt-10 grid max-w-2xl gap-4 sm:grid-cols-3">
+        <div className="mx-auto mt-12 grid max-w-3xl gap-8 sm:grid-cols-3">
           {stats.map((s) => (
-            <div key={s.l} className="glass rounded-2xl border border-white/8 px-4 py-5 text-center">
-              <p className="font-display text-2xl font-bold text-gradient-blue">{s.v}</p>
-              <p className="mt-1 text-xs text-slate-400">{s.l}</p>
+            <div key={s.l} className="border-t-2 border-marca pt-4 text-center">
+              <p className="grito text-[3.2rem] text-obsidian">{s.v}</p>
+              <p className="mt-2 text-sm text-charcoal">{s.l}</p>
             </div>
           ))}
         </div>
@@ -45,7 +45,7 @@ export default function InstructorSection() {
       <div className="mt-20">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">
+            <p className="text-sm font-semibold text-marca">
               {t.instructor.foundersEyebrow}
             </p>
             <h3 className="mt-3 font-display text-2xl font-bold sm:text-4xl">
@@ -57,27 +57,26 @@ export default function InstructorSection() {
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
           {founders.map((f, i) => (
             <Reveal key={f.name} delay={i * 0.1}>
-              <article className="glass card-hover flex h-full flex-col gap-5 rounded-3xl border border-white/8 p-7 sm:flex-row sm:items-start">
+              <article className="flex h-full flex-col gap-6 rounded-grande bg-fog p-8 sm:flex-row sm:items-start">
                 <div className="relative mx-auto shrink-0 sm:mx-0">
-                  <div className="pointer-events-none absolute -inset-2 rounded-2xl bg-gradient-to-br from-brand-green/30 to-brand-blue/30 blur-xl" />
                   {f.photo ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={f.photo}
                       alt={f.name}
                       style={{ objectPosition: f.objectPosition ?? "center" }}
-                      className="relative aspect-[3/4] w-28 rounded-2xl border border-white/10 object-cover"
+                      className="relative aspect-[3/4] w-32 rounded-srf object-cover"
                     />
                   ) : (
-                    <div className="relative grid aspect-[3/4] w-28 place-items-center rounded-2xl border border-white/10 bg-gradient-to-br from-brand-green to-brand-blue font-display text-3xl font-bold text-ink-900">
+                    <div className="relative grid aspect-[3/4] w-28 place-items-center rounded-2xl border border-tinta/10 bg-marca-verde font-display text-3xl font-bold text-sobre-acento">
                       {f.initials}
                     </div>
                   )}
                 </div>
                 <div>
-                  <p className="font-display text-xl font-bold text-white">{f.name}</p>
-                  <p className="mt-1 text-sm font-medium text-brand-green">{f.role}</p>
-                  <p className="mt-3 text-sm text-slate-300/90">{f.bio}</p>
+                  <p className="font-display text-xl font-bold text-tinta">{f.name}</p>
+                  <p className="mt-1 text-sm font-semibold text-marca">{f.role}</p>
+                  <p className="mt-3 text-[15px] leading-relaxed text-charcoal">{f.bio}</p>
                 </div>
               </article>
             </Reveal>

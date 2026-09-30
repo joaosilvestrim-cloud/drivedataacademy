@@ -20,7 +20,7 @@ import TourConciliacao, { tourConciliacaoJaVisto } from "@/components/conciliaca
    nunca é o do colega. */
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 const rotulo = "block text-[0.7rem] font-semibold uppercase tracking-wide text-slate-400";
 
 const SITUACAO: Record<string, { texto: string; cor: string }> = {
@@ -77,17 +77,17 @@ export default function Conciliacao({ semente }: { semente: number }) {
   return (
     <div className="mt-8">
       {/* Caso */}
-      <div className="flex flex-wrap items-start justify-between gap-4 rounded-3xl border border-white/8 bg-white/[0.02] p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6">
         <div className="min-w-0 flex-1">
-          <p className="text-[0.7rem] uppercase tracking-wider text-brand-green">{tr("Chamado do dia")}</p>
-          <h2 className="mt-1 font-display text-2xl font-bold text-white">{caso.titulo}</h2>
+          <p className="text-[0.7rem] uppercase tracking-wider text-acento">{tr("Chamado do dia")}</p>
+          <h2 className="mt-1 font-display text-2xl font-bold text-tinta">{caso.titulo}</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">{caso.contexto}</p>
         </div>
         <div className="flex shrink-0 gap-2">
           <button
             type="button"
             onClick={() => setTour(true)}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+            className="inline-flex items-center gap-2 rounded-xl border border-tinta/10 bg-tinta/[0.03] px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
             {tr("Tour guiado")}
@@ -95,7 +95,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           <button
             type="button"
             onClick={() => setRodada((r) => r + 1)}
-            className="rounded-xl border border-white/10 px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-teal/50 hover:text-brand-teal"
+            className="rounded-xl border border-tinta/10 px-3.5 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-brand-teal/50 hover:text-brand-teal"
           >
             {tr("Outro chamado")}
           </button>
@@ -105,11 +105,11 @@ export default function Conciliacao({ semente }: { semente: number }) {
       {/* Passo 1: o total */}
       <div data-tour="conc-totais" className="mt-4 grid gap-3 sm:grid-cols-3">
         {[
-          { nome: tr("Extrato do sistema"), valor: recorte.origem, linhas: recorte.linhasOrigem, tom: "text-white" },
-          { nome: tr("O que o painel mostra"), valor: recorte.painel, linhas: recorte.linhasPainel, tom: "text-white" },
+          { nome: tr("Extrato do sistema"), valor: recorte.origem, linhas: recorte.linhasOrigem, tom: "text-tinta" },
+          { nome: tr("O que o painel mostra"), valor: recorte.painel, linhas: recorte.linhasPainel, tom: "text-tinta" },
           { nome: tr("Diferença"), valor: recorte.diferenca, linhas: null, tom: cor(recorte.diferenca) },
         ].map((c) => (
-          <div key={c.nome} className="rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-4">
+          <div key={c.nome} className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-4">
             <p className="text-[0.65rem] uppercase tracking-wider text-slate-500">{c.nome}</p>
             <p className={`mt-1 font-display text-xl font-bold tabular-nums ${c.tom}`}>{moeda(c.valor)}</p>
             {c.linhas !== null && <p className="text-[0.7rem] text-slate-500">{c.linhas} {tr("lançamentos")}</p>}
@@ -147,7 +147,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
               type="button"
               onClick={() => { setDimensao(d.chave); setQuebras((q) => q + 1); }}
               className={`rounded-xl border px-3 py-1.5 text-sm font-medium transition-colors ${
-                dimensao === d.chave ? "border-brand-green/50 bg-brand-green/[0.10] text-white" : "border-white/10 bg-white/[0.02] text-slate-400 hover:text-white"
+                dimensao === d.chave ? "border-acento/50 bg-brand-green/[0.10] text-tinta" : "border-tinta/10 bg-tinta/[0.02] text-slate-400 hover:text-tinta"
               }`}
             >
               {d.nome}
@@ -155,10 +155,10 @@ export default function Conciliacao({ semente }: { semente: number }) {
           ))}
         </div>
 
-        <div className="mt-3 overflow-hidden rounded-3xl border border-white/8 bg-[#070d14]">
+        <div className="mt-3 overflow-hidden rounded-3xl border border-tinta/8 bg-ink-700">
           <table className="w-full min-w-[34rem] border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-tinta/10">
                 <th className="px-4 py-2.5 text-[0.7rem] uppercase tracking-wide text-slate-400">{nomeDaDimensao(dimensao)}</th>
                 <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Sistema")}</th>
                 <th className="px-4 py-2.5 text-right text-[0.7rem] uppercase tracking-wide text-slate-400">{tr("Painel")}</th>
@@ -168,7 +168,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
             </thead>
             <tbody>
               {linhas.map((l) => (
-                <tr key={l.grupo} className={`border-b border-white/[0.04] ${Math.abs(l.diferenca) > 0.01 ? "bg-red-500/[0.04]" : ""}`}>
+                <tr key={l.grupo} className={`border-b border-tinta/[0.04] ${Math.abs(l.diferenca) > 0.01 ? "bg-red-500/[0.04]" : ""}`}>
                   <td className="px-4 py-2 text-slate-200">{l.grupo}</td>
                   <td className="px-4 py-2 text-right font-mono tabular-nums text-slate-300">{moeda(l.origem)}</td>
                   <td className="px-4 py-2 text-right font-mono tabular-nums text-slate-300">{moeda(l.painel)}</td>
@@ -179,7 +179,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
                     <button
                       type="button"
                       onClick={() => setFiltro((f) => ({ ...f, [dimensao]: l.grupo }))}
-                      className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-brand-teal/50 hover:text-brand-teal"
+                      className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs text-slate-400 transition-colors hover:border-brand-teal/50 hover:text-brand-teal"
                     >
                       {tr("isolar")}
                     </button>
@@ -196,17 +196,17 @@ export default function Conciliacao({ semente }: { semente: number }) {
         <button
           type="button"
           onClick={() => setVerRegistros((v) => !v)}
-          className="rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-brand-green/50 hover:text-brand-green"
+          className="rounded-xl border border-tinta/10 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:border-acento/50 hover:text-acento"
         >
           {verRegistros ? tr("Esconder os lançamentos") : tr("Abrir os lançamentos deste recorte")}
         </button>
 
         {verRegistros && (
-          <div className="mt-3 overflow-hidden rounded-3xl border border-white/8 bg-[#070d14]">
+          <div className="mt-3 overflow-hidden rounded-3xl border border-tinta/8 bg-ink-700">
             <div className="max-h-96 overflow-auto">
               <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
-                <thead className="sticky top-0 bg-[#070d14]">
-                  <tr className="border-b border-white/10">
+                <thead className="sticky top-0 bg-ink-700">
+                  <tr className="border-b border-tinta/10">
                     {["Lançamento", "Data", "Filial", "Status", "Sistema", "Painel", "Situação"].map((h) => (
                       <th key={h} className="px-3 py-2 text-[0.7rem] uppercase tracking-wide text-slate-400">{h}</th>
                     ))}
@@ -217,7 +217,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
                     const ref = r.origem[0] ?? r.painel[0];
                     const s = SITUACAO[r.situacao];
                     return (
-                      <tr key={r.id} className={`border-b border-white/[0.04] ${r.situacao === "igual" ? "" : "bg-white/[0.02]"}`}>
+                      <tr key={r.id} className={`border-b border-tinta/[0.04] ${r.situacao === "igual" ? "" : "bg-tinta/[0.02]"}`}>
                         <td className="px-3 py-1.5 font-mono text-[0.8rem] text-slate-300">{r.id}{r.origem.length > 1 ? ` (${r.origem.length}x)` : ""}</td>
                         <td className="px-3 py-1.5 text-slate-400">{ref?.data}</td>
                         <td className="px-3 py-1.5 text-slate-400">{ref?.filial}</td>
@@ -237,8 +237,8 @@ export default function Conciliacao({ semente }: { semente: number }) {
       </div>
 
       {/* Resposta */}
-      <div data-tour="conc-resposta" className="mt-6 rounded-3xl border border-white/8 bg-white/[0.02] p-6">
-        <h3 className="font-display text-lg font-bold text-white">{tr("Seu laudo")}</h3>
+      <div data-tour="conc-resposta" className="mt-6 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-6">
+        <h3 className="font-display text-lg font-bold text-tinta">{tr("Seu laudo")}</h3>
         <p className="mt-1 text-sm text-slate-400">{caso.pergunta}</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-[14rem_1fr_auto] sm:items-end">
           <label>
@@ -255,7 +255,7 @@ export default function Conciliacao({ semente }: { semente: number }) {
           <button
             type="button"
             onClick={responder}
-            className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+            className="rounded-xl bg-marca-verde px-6 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
           >
             {tr("Entregar o laudo")}
           </button>
@@ -263,10 +263,10 @@ export default function Conciliacao({ semente }: { semente: number }) {
         {classe && <p className="mt-2 text-xs text-slate-500">{CAUSAS.find((c) => c.classe === classe)?.descricao}</p>}
 
         {veredito && (
-          <div className={`mt-5 rounded-2xl border p-5 ${veredito.acertouValor && veredito.acertouClasse ? "border-brand-green/40 bg-brand-green/[0.07]" : "border-amber-400/35 bg-amber-400/[0.06]"}`}>
-            <p className={`font-display text-lg font-bold ${veredito.acertouValor && veredito.acertouClasse ? "text-brand-green" : "text-white"}`}>{veredito.titulo}</p>
+          <div className={`mt-5 rounded-2xl border p-5 ${veredito.acertouValor && veredito.acertouClasse ? "border-acento/40 bg-brand-green/[0.07]" : "border-amber-400/35 bg-amber-400/[0.06]"}`}>
+            <p className={`font-display text-lg font-bold ${veredito.acertouValor && veredito.acertouClasse ? "text-acento" : "text-tinta"}`}>{veredito.titulo}</p>
             <p className="mt-1 text-sm leading-relaxed text-slate-300">{veredito.detalhe}</p>
-            <p className="mt-3 border-t border-white/10 pt-3 text-sm leading-relaxed text-slate-400">
+            <p className="mt-3 border-t border-tinta/10 pt-3 text-sm leading-relaxed text-slate-400">
               <span className="font-semibold text-slate-200">{tr("Como reconhecer da próxima vez:")} </span>
               {veredito.metodo}
             </p>

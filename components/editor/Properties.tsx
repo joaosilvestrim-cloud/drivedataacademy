@@ -258,7 +258,7 @@ function PropsCard() {
             </button>
           ))}
         </div>
-        <button onClick={aplicarPaletaCard} className="rounded-md bg-viz py-2 text-xs font-medium text-white hover:bg-viz-dark">
+        <button onClick={aplicarPaletaCard} className="rounded-md bg-viz py-2 text-xs font-medium text-tinta hover:bg-viz-dark">
           {tr("Aplicar paleta ao fundo")}
         </button>
       </Secao>
@@ -654,7 +654,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
           )}
           <div className="flex gap-0.5 rounded-md bg-background p-0.5">
             <button onClick={() => patchBinding(el.id, { dinamico: false })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!el.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Fixo")}</button>
-            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>{tr("Dinâmico")}</button>
+            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-tinta" : "text-muted"}`}>{tr("Dinâmico")}</button>
           </div>
           {el.binding.dinamico ? (
             <input value={el.binding.ref} onFocus={commit} onChange={(e) => patchBinding(el.id, { ref: e.target.value })} placeholder={ehMedidor || ehPictograma ? "[Atingimento %]" : ehImagem ? "[URL_Imagem]" : "[Minha Medida]"} className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />
@@ -730,7 +730,7 @@ function PropsElemento({ el }: { el: SceneElement }) {
         <Secao titulo="Mini-gráfico">
           <div className="flex gap-0.5 rounded-md bg-background p-0.5">
             <button onClick={() => patchBinding(el.id, { dinamico: false })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!el.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Valores fixos")}</button>
-            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>{tr("Da tabela")}</button>
+            <button onClick={() => patchBinding(el.id, { dinamico: true })} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${el.binding.dinamico ? "bg-viz text-tinta" : "text-muted"}`}>{tr("Da tabela")}</button>
           </div>
           {el.binding.dinamico ? (
             <>
@@ -1233,7 +1233,7 @@ function MedidasEditor({ el, bloqueado, rotuloEditavel = false, addLabel = "Adic
           </div>
           <div className="flex gap-0.5 rounded-md bg-background p-0.5">
             <button onClick={() => { commit(); patchBind(i, { dinamico: false }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${!m.binding.dinamico ? "bg-surface shadow-sm" : "text-muted"}`}>{tr("Fixo")}</button>
-            <button onClick={() => { commit(); patchBind(i, { dinamico: true }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${m.binding.dinamico ? "bg-viz text-white" : "text-muted"}`}>{tr("Dinâmico")}</button>
+            <button onClick={() => { commit(); patchBind(i, { dinamico: true }); }} className={`flex-1 rounded px-2 py-1 text-xs font-medium ${m.binding.dinamico ? "bg-viz text-tinta" : "text-muted"}`}>{tr("Dinâmico")}</button>
           </div>
           {m.binding.dinamico ? (
             <input value={m.binding.ref} onFocus={commit} onChange={(ev) => patchBind(i, { ref: ev.target.value })} placeholder="[Minha Medida]" className="rounded-md border border-border bg-surface px-2 py-1.5 font-mono text-xs focus:border-viz focus:outline-none" />

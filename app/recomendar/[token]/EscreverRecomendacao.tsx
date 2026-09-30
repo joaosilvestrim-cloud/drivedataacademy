@@ -4,7 +4,7 @@ import { useState } from "react";
 import { escreverRecomendacao } from "./actions";
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2.5 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
 
 export default function EscreverRecomendacao({ token, primeiroNome }: { token: string; primeiroNome: string }) {
   const [d, setD] = useState({ nome: "", cargo: "", relacao: "", email: "", texto: "" });
@@ -25,8 +25,8 @@ export default function EscreverRecomendacao({ token, primeiroNome }: { token: s
 
   if (feito) {
     return (
-      <div className="mt-8 rounded-2xl border border-brand-green/30 bg-brand-green/[0.06] p-5">
-        <p className="font-semibold text-white">Falta um passo: confirme seu e-mail.</p>
+      <div className="mt-8 rounded-2xl border border-acento/30 bg-brand-green/[0.06] p-5">
+        <p className="font-semibold text-tinta">Falta um passo: confirme seu e-mail.</p>
         <p className="mt-1 text-sm text-slate-300">Mandamos um link para {d.email}. Depois da confirmação, a recomendação vai para {primeiroNome} aprovar.</p>
       </div>
     );
@@ -50,7 +50,7 @@ export default function EscreverRecomendacao({ token, primeiroNome }: { token: s
         <span className="mt-1 block text-right text-xs text-slate-500">{d.texto.length}/1500</span>
       </label>
       {erro && <p className="text-sm text-red-300">{erro}</p>}
-      <button disabled={enviando} className="self-start rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 disabled:opacity-50">
+      <button disabled={enviando} className="self-start rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento disabled:opacity-50">
         {enviando ? "Enviando..." : "Enviar recomendação"}
       </button>
     </form>

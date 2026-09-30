@@ -36,7 +36,7 @@ export default function Avatar({ name, size = "sm", className = "", src }: { nam
   const [a, b] = GRADIENTS[hash % GRADIENTS.length];
   return (
     <span
-      className={`grid shrink-0 place-items-center rounded-full font-bold text-ink-900 shadow-sm ${SIZES[size]} ${className}`}
+      className={`grid shrink-0 place-items-center rounded-full font-bold text-sobre-acento shadow-sm ${SIZES[size]} ${className}`}
       style={{ backgroundImage: `linear-gradient(135deg, ${a}, ${b})` }}
       aria-hidden
     >

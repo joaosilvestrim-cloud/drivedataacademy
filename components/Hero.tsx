@@ -1,88 +1,35 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useT } from "@/lib/i18n/LanguageProvider";
 
+/* "Sobre": a faixa Fog depois da abertura branca. Título em Inter 700 à
+   esquerda, os benefícios à direita como linhas separadas por fio, sem
+   cartão de checks. */
 export default function Hero() {
   const t = useT();
   return (
-    <section id="sobre" className="relative mx-auto max-w-7xl scroll-mt-28 px-6 py-16">
-      <div className="max-w-3xl">
-        {/* Left — copy + CTA */}
+    <section id="sobre" className="scroll-mt-28 bg-fog">
+      <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-20 lg:grid-cols-[1.1fr_1fr] lg:py-24">
         <div>
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.05 }}
-            className="mt-6 font-display text-4xl font-bold leading-[1.08] tracking-tight sm:text-6xl"
-          >
+          <h2 className="text-[2.25rem] font-bold leading-[1.1] tracking-[-0.02em] text-obsidian sm:text-[2.8rem]">
             {t.hero.title1}
             <br />
-            {t.hero.title2pre}{" "}
-            <span className="text-gradient">{t.hero.title2grad}</span>.
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.12 }}
-            className="mt-6 max-w-xl text-lg text-slate-300/90"
-          >
-            {t.hero.p1}
-          </motion.p>
-
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className="mt-4 max-w-xl text-lg text-slate-300/90"
-          >
-            {t.hero.p2pre} <strong className="text-white">{t.hero.p2strong}</strong>{" "}
-            {t.hero.p2post}
-          </motion.p>
-
-          {/* Benefit bullets — destaque */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.18 }}
-            className="mt-8 rounded-2xl border border-brand-green/25 bg-gradient-to-br from-white/[0.07] to-white/[0.02] p-5 shadow-[0_0_50px_-22px_rgba(52,232,160,0.55)]"
-          >
-            <ul className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-              {t.hero.benefits.map((b, i) => (
-                <motion.li
-                  key={b}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.35 + i * 0.13, ease: "easeOut" }}
-                  className="group flex items-center gap-3 text-sm font-semibold text-slate-100"
-                >
-                  <motion.span
-                    initial={{ scale: 0, rotate: -30 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 320, damping: 15, delay: 0.42 + i * 0.13 }}
-                    className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue text-ink-900 shadow-[0_0_18px_-4px_rgba(52,232,160,0.7)] transition-transform duration-300 group-hover:scale-110"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </motion.span>
-                  {b}
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.21 }}
-            className="mt-6 max-w-xl text-base font-medium text-white"
-          >
-            {t.hero.closing}
-          </motion.p>
+            {t.hero.title2pre} <span className="text-marca-azul">{t.hero.title2grad}</span>.
+          </h2>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-charcoal">{t.hero.p1}</p>
+          <p className="mt-4 max-w-xl text-lg leading-relaxed text-charcoal">
+            {t.hero.p2pre} <strong className="font-semibold text-obsidian">{t.hero.p2strong}</strong> {t.hero.p2post}
+          </p>
+          <p className="mt-6 max-w-xl text-base font-semibold text-marca">{t.hero.closing}</p>
         </div>
 
+        <ul className="self-end border-b border-obsidian/15">
+          {t.hero.benefits.map((b) => (
+            <li key={b} className="border-t border-obsidian/15 py-5 text-xl font-semibold tracking-tight text-obsidian">
+              {b}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

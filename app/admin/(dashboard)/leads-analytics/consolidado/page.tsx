@@ -19,7 +19,7 @@ export default async function ConsolidadoPage() {
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Contatos consolidados</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Contatos consolidados</h1>
         <div className="mt-6"><AdminError message={e instanceof Error ? e.message : "Erro."} /></div>
       </div>
     );
@@ -63,16 +63,16 @@ export default async function ConsolidadoPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <Link href="/admin/leads-analytics" className="text-xs text-slate-500 hover:text-white">← Analytics</Link>
-          <h1 className="mt-1 font-display text-2xl font-bold text-white">Contatos consolidados</h1>
+          <Link href="/admin/leads-analytics" className="text-xs text-slate-500 hover:text-tinta">← Analytics</Link>
+          <h1 className="mt-1 font-display text-2xl font-bold text-tinta">Contatos consolidados</h1>
           <p className="mt-1 text-sm text-slate-400">Lista de espera + leads de materiais, unificados por e-mail (sem duplicar).</p>
         </div>
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {kpis.map((k) => (
-          <div key={k.label} className="glass rounded-2xl border border-white/8 p-4">
-            <p className="font-display text-2xl font-bold text-white">{k.value}</p>
+          <div key={k.label} className="glass rounded-2xl border border-tinta/8 p-4">
+            <p className="font-display text-2xl font-bold text-tinta">{k.value}</p>
             <p className="text-xs text-slate-400">{k.label}</p>
           </div>
         ))}

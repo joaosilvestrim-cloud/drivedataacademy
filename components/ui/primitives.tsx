@@ -19,19 +19,21 @@ type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 const BTN_BASE =
-  "inline-flex items-center justify-center gap-2 rounded-ctl font-medium transition-colors duration-fast ease-ds disabled:cursor-not-allowed disabled:opacity-45";
+  "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors duration-fast ease-ds disabled:cursor-not-allowed disabled:opacity-45";
 
 const BTN_VARIANT: Record<ButtonVariant, string> = {
-  primary: "bg-ds-accent text-ds-accent-ink hover:brightness-110",
-  secondary: "border border-ds-line text-ds-text hover:border-ds-text-3 hover:bg-ds-raised",
+  // Pílula verde (verde do logo): a ação principal. Uma por bloco, nunca duas lado a lado.
+  primary: "bg-ds-accent text-ds-accent-ink hover:brightness-95",
+  // Pílula contornada em azul-noite (no .escuro, em branco).
+  secondary: "border border-ds-text/80 text-ds-text hover:bg-ds-raised",
   ghost: "text-ds-text-2 hover:bg-ds-raised hover:text-ds-text",
   danger: "border border-ds-danger/40 text-ds-danger hover:bg-ds-danger/10",
 };
 
 // Três tamanhos. O md respeita 40px de altura, que é o mínimo confortável de toque.
 const BTN_SIZE: Record<ButtonSize, string> = {
-  sm: "h-8 px-3 text-caption",
-  md: "h-10 px-4 text-label",
+  sm: "h-8 px-4 text-caption",
+  md: "h-10 px-5 text-label",
   lg: "h-12 px-6 text-body-sm",
 };
 
@@ -106,12 +108,13 @@ export function Divider({ className }: { className?: string }) {
 /* ----------------------------------- Badge -------------------------------- */
 type BadgeTone = "neutral" | "accent" | "info" | "attention" | "danger";
 
+// Selo é pílula chapada: verde bem claro com azul-noite no destaque.
 const BADGE: Record<BadgeTone, string> = {
-  neutral: "border-ds-line text-ds-text-2",
-  accent: "border-ds-accent/35 text-ds-accent",
-  info: "border-ds-info/35 text-ds-info",
-  attention: "border-ds-attention/35 text-ds-attention",
-  danger: "border-ds-danger/35 text-ds-danger",
+  neutral: "bg-ds-raised text-ds-text-2",
+  accent: "bg-marca-nevoa text-marca",
+  info: "bg-ds-info/10 text-ds-info",
+  attention: "bg-ds-attention/10 text-ds-attention",
+  danger: "bg-ds-danger/10 text-ds-danger",
 };
 
 export function Badge({
@@ -126,7 +129,7 @@ export function Badge({
   return (
     <span
       className={cx(
-        "inline-flex items-center gap-1.5 rounded-ctl border px-2 py-0.5 font-mono text-meta uppercase",
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-caption font-medium",
         BADGE[tone],
         className
       )}

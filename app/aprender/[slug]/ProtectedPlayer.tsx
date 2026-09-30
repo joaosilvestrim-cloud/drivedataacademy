@@ -64,8 +64,8 @@ export default function ProtectedPlayer({
       {covered && (
         <div className="absolute inset-0 z-10 grid place-items-center rounded-2xl bg-ink-900/95 px-6 text-center">
           <div>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="mx-auto text-brand-green"><path d="M12 1l9 4v6c0 5-3.8 9-9 11-5.2-2-9-6-9-11V5l9-4zM9.5 12l1.8 1.8L15 10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <p className="mt-3 text-sm font-medium text-white">{tr("Aula oculta")}</p>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="mx-auto text-acento"><path d="M12 1l9 4v6c0 5-3.8 9-9 11-5.2-2-9-6-9-11V5l9-4zM9.5 12l1.8 1.8L15 10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <p className="mt-3 text-sm font-medium text-tinta">{tr("Aula oculta")}</p>
             <p className="mt-1 text-xs text-slate-400">{tr("Volte para esta aba para continuar assistindo.")}</p>
           </div>
         </div>

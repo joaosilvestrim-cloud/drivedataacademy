@@ -65,9 +65,9 @@ export default function IconePicker({ valorAtual, cor, stroke, onPick }: Props) 
       {/* categorias — faixa de rolagem horizontal (economiza altura) */}
       {!busca && (
         <div className="-mx-0.5 flex gap-1 overflow-x-auto px-0.5 pb-1 [scrollbar-width:thin]">
-          <button onClick={() => setCat("todos")} className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${cat === "todos" ? "bg-viz text-white" : "bg-background text-muted hover:text-foreground"}`}>{tr("Todos")}</button>
+          <button onClick={() => setCat("todos")} className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${cat === "todos" ? "bg-viz text-tinta" : "bg-background text-muted hover:text-foreground"}`}>{tr("Todos")}</button>
           {CATEGORIAS_ICONE.map((c) => (
-            <button key={c.id} onClick={() => setCat(c.id)} className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${cat === c.id ? "bg-viz text-white" : "bg-background text-muted hover:text-foreground"}`}>{c.label}</button>
+            <button key={c.id} onClick={() => setCat(c.id)} className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${cat === c.id ? "bg-viz text-tinta" : "bg-background text-muted hover:text-foreground"}`}>{c.label}</button>
           ))}
         </div>
       )}

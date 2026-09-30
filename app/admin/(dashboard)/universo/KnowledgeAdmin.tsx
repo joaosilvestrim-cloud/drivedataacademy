@@ -12,8 +12,8 @@ import { Field, TextareaField, SelectField, CheckboxField, FormSection, FormActi
 import { grantKnowledgeAccess, publishKnowledgeDraft, recordPracticalEvidence, retractPracticalEvidence, revokeKnowledgeAccess, saveKnowledgeDraft, simulateKnowledgeDraft } from './actions';
 
 const button='rounded-lg bg-teal-200 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-40';
-const secondary='rounded-lg border border-white/15 px-3 py-2 text-sm text-slate-300 hover:border-teal-300/40 disabled:opacity-40';
-const panel='rounded-xl border border-white/10 bg-white/[.02] p-5';
+const secondary='rounded-lg border border-tinta/15 px-3 py-2 text-sm text-slate-300 hover:border-teal-300/40 disabled:opacity-40';
+const panel='rounded-xl border border-tinta/10 bg-tinta/[.02] p-5';
 // Seletor de cor: continua nativo e continua local. Virar campo de texto
 // tiraria o seletor do sistema operacional e a operação por teclado que o
 // input color já entrega de graça. O que muda é só a moldura, que passa a ser
@@ -42,10 +42,10 @@ export default function KnowledgeAdmin({initial,revision:initialRevision,courses
   function competency(event:FormEvent<HTMLFormElement>){event.preventDefault();const f=new FormData(event.currentTarget);const a=doc.areas.find(a=>a.id===str(f,'area'));if(!a){setNotice('Cadastre uma macroárea primeiro.');return;}
     const id=editing||crypto.randomUUID();mutate(d=>{const next={id,name:str(f,'name'),description:str(f,'description'),area:a.id,parent:str(f,'parent')||undefined,position:selected?.position??positionFor(id,a.position,d.competencies.filter(c=>c.area===a.id).length),halfLifeDays:num(f,'freshness'),targets:Object.fromEntries(Object.keys(WEIGHTS).map(k=>[k,num(f,k)])) as Record<Dimension,number>};const at=d.competencies.findIndex(c=>c.id===id);if(at<0)d.competencies.push(next);else d.competencies[at]=next;});setEditing('');event.currentTarget.reset();}
   const options=doc.competencies.map(c=><option key={c.id} value={c.id}>{c.name}</option>);
-  return <div className="space-y-6"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs uppercase tracking-widest text-brand-green">Administração acadêmica</p><h1 className="mt-1 text-3xl font-semibold">Knowledge Universe 4D</h1><p className="mt-2 text-sm text-slate-400">Defina competências, treinamentos e critérios de domínio. Nenhuma IA participa dos cálculos.</p></div><Link href="/universo" className={secondary}>Ver meu universo ↗</Link></div>
+  return <div className="space-y-6"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs text-marca">Administração acadêmica</p><h1 className="mt-1 text-3xl font-semibold">Knowledge Universe 4D</h1><p className="mt-2 text-sm text-slate-400">Defina competências, treinamentos e critérios de domínio. Nenhuma IA participa dos cálculos.</p></div><Link href="/universo" className={secondary}>Ver meu universo ↗</Link></div>
     <div className="flex flex-wrap items-center gap-3"><button disabled={busy} onClick={save} className={button}>{busy?'Processando…':'Salvar rascunho'}</button><button disabled={busy||dirty} onClick={publish} className={secondary}>Publicar versão</button><button disabled={busy} className={secondary} onClick={async()=>{setBusy(true);const r=await simulateKnowledgeDraft(doc);setBusy(false);setNotice(r.ok?`Configuração válida: ${r.competencies} competências e ${r.mappedCourses} treinamentos associados. Sem evidências, todos os scores são zero.`:r.error);}}>Validar configuração</button><span className="text-xs text-slate-500">Revisão {revision} · {dirty?'Alterações não salvas':versions.length?'Catálogo com versão publicada':'Ainda sem publicação'}</span></div>
     {notice&&<p role="status" className="rounded-lg border border-teal-200/20 bg-teal-950/30 p-3 text-sm text-teal-100">{notice}</p>}
-    <nav aria-label="Configurações do universo" className="flex flex-wrap gap-2">{[['catalogo','Áreas e competências'],['cursos','Treinamentos e pesos'],['regras','Relações e regras'],['pratica','Evidências práticas'],['acessos','Acesso e versões']].map(([id,name])=><button key={id} onClick={()=>setTab(id)} aria-pressed={tab===id} className={`${secondary} ${tab===id?'bg-white/10 text-teal-200':''}`}>{name}</button>)}</nav>
+    <nav aria-label="Configurações do universo" className="flex flex-wrap gap-2">{[['catalogo','Áreas e competências'],['cursos','Treinamentos e pesos'],['regras','Relações e regras'],['pratica','Evidências práticas'],['acessos','Acesso e versões']].map(([id,name])=><button key={id} onClick={()=>setTab(id)} aria-pressed={tab===id} className={`${secondary} ${tab===id?'bg-tinta/10 text-teal-200':''}`}>{name}</button>)}</nav>
     <fieldset disabled={busy} className="space-y-6">
     {tab==='catalogo'&&<>
       {!doc.areas.length&&<div className={panel}><h2 className="text-lg font-medium">Comece pelo catálogo</h2><p className="mt-2 text-sm text-slate-400">Cadastre suas próprias áreas ou use Dados, Gestão e IA como ponto de partida. O modelo não contém scores nem atividades de alunos.</p><button className={`${secondary} mt-4`} onClick={()=>mutate(d=>{d.areas=structuredClone(DEMO_CATALOG.areas);d.competencies=structuredClone(DEMO_CATALOG.competencies);d.relations=structuredClone(DEMO_CATALOG.relations);d.unlocks=structuredClone(DEMO_CATALOG.unlocks);d.path=[...DEMO_CATALOG.path];})}>Usar catálogo inicial</button></div>}
@@ -57,7 +57,7 @@ export default function KnowledgeAdmin({initial,revision:initialRevision,courses
             <Button type="submit">Adicionar área</Button>
           </div>
           {/* Lista das áreas já criadas: outra família, markup preservado. */}
-          <div className="mt-4 flex flex-wrap gap-2">{doc.areas.map(a=><span key={a.id} className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs"><i className="h-2 w-2 rounded-full" style={{background:a.color}}/>{a.name}<button type="button" aria-label={`Remover área ${a.name}`} onClick={()=>{if(doc.competencies.some(c=>c.area===a.id)){setNotice('Mova ou remova as competências desta área antes de removê-la.');return;}mutate(d=>{d.areas=d.areas.filter(x=>x.id!==a.id);});}}>×</button></span>)}</div>
+          <div className="mt-4 flex flex-wrap gap-2">{doc.areas.map(a=><span key={a.id} className="inline-flex items-center gap-2 rounded-lg border border-tinta/10 px-3 py-2 text-xs"><i className="h-2 w-2 rounded-full" style={{background:a.color}}/>{a.name}<button type="button" aria-label={`Remover área ${a.name}`} onClick={()=>{if(doc.competencies.some(c=>c.area===a.id)){setNotice('Mova ou remova as competências desta área antes de removê-la.');return;}mutate(d=>{d.areas=d.areas.filter(x=>x.id!==a.id);});}}>×</button></span>)}</div>
         </FormSection>
       </form>
       <form key={editing||'new'} className="flex flex-col gap-5" onSubmit={competency}>
@@ -105,7 +105,7 @@ export default function KnowledgeAdmin({initial,revision:initialRevision,courses
         </form>
       </FormSection>
       {/* Lista dos mapeamentos já criados: outra família, markup preservado. */}
-      <div className="mt-6 space-y-3">{doc.mappings.filter(m=>m.courseId===courseId).map(m=><div key={m.competency} className="flex items-center justify-between border-t border-white/10 py-3 text-sm"><span>{doc.competencies.find(c=>c.id===m.competency)?.name} · {(m.weight*100).toFixed(1)}% · {m.credits} créditos · {m.group}</span><button className="text-red-300" onClick={()=>mutate(d=>{d.mappings=d.mappings.filter(x=>x!==d.mappings.find(x=>x.courseId===m.courseId&&x.competency===m.competency));})}>Remover</button></div>)}</div>
+      <div className="mt-6 space-y-3">{doc.mappings.filter(m=>m.courseId===courseId).map(m=><div key={m.competency} className="flex items-center justify-between border-t border-tinta/10 py-3 text-sm"><span>{doc.competencies.find(c=>c.id===m.competency)?.name} · {(m.weight*100).toFixed(1)}% · {m.credits} créditos · {m.group}</span><button className="text-red-300" onClick={()=>mutate(d=>{d.mappings=d.mappings.filter(x=>x!==d.mappings.find(x=>x.courseId===m.courseId&&x.competency===m.competency));})}>Remover</button></div>)}</div>
       <p className="text-body-sm text-ds-text-2">Total: <span className="font-mono tabular-nums text-ds-text">{(doc.mappings.filter(m=>m.courseId===courseId).reduce((sum,m)=>sum+m.weight,0)*100).toFixed(2)}%</span></p>
       {courseId&&<Link className="mt-4 inline-block text-xs text-slate-400" href={`/admin/cursos/${courseId}`}>Abrir cadastro do treinamento →</Link>}
     </div>}
@@ -140,7 +140,7 @@ export default function KnowledgeAdmin({initial,revision:initialRevision,courses
           </div>
           <div><Button type="submit">Adicionar requisito</Button></div>
           {/* Requisitos já criados: outra família, markup preservado. */}
-          {doc.unlocks.map(u=><div key={u.target} className="mt-4 border-t border-white/10 pt-3 text-sm"><strong>{doc.competencies.find(c=>c.id===u.target)?.name}</strong><p className="mt-1 text-slate-400">{requirements(u.rule).map(r=>`${doc.competencies.find(c=>c.id===r.competency)?.name} ≥ ${r.minimum}`).join(' + ')}</p><button type="button" className="mt-2 text-xs text-red-300" onClick={()=>mutate(d=>{d.unlocks=d.unlocks.filter(x=>x.target!==u.target);})}>Remover requisitos</button></div>)}
+          {doc.unlocks.map(u=><div key={u.target} className="mt-4 border-t border-tinta/10 pt-3 text-sm"><strong>{doc.competencies.find(c=>c.id===u.target)?.name}</strong><p className="mt-1 text-slate-400">{requirements(u.rule).map(r=>`${doc.competencies.find(c=>c.id===r.competency)?.name} ≥ ${r.minimum}`).join(' + ')}</p><button type="button" className="mt-2 text-xs text-red-300" onClick={()=>mutate(d=>{d.unlocks=d.unlocks.filter(x=>x.target!==u.target);})}>Remover requisitos</button></div>)}
         </FormSection>
       </form>
       <form className="flex flex-col gap-4" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);mutate(d=>{const id=str(f,'step');if(!d.path.includes(id))d.path.push(id);});}}>
@@ -184,7 +184,7 @@ export default function KnowledgeAdmin({initial,revision:initialRevision,courses
         <FormActions><Button type="submit" disabled={busy}>Liberar acesso</Button></FormActions>
       </form>
       {/* Histórico de publicações: outra família, markup preservado. */}
-      <div className={panel}><h2 className="text-lg font-medium">Publicações recentes</h2><p className="mt-2 text-sm text-slate-400">Os registros antigos permanecem associados às suas versões.</p>{versions.map((v,i)=><p key={v.id} className="mt-3 border-t border-white/10 pt-3 text-sm">{i===0?'Versão atual':'Versão anterior'} · {new Date(v.published_at).toLocaleString('pt-BR')}</p>)}</div>
+      <div className={panel}><h2 className="text-lg font-medium">Publicações recentes</h2><p className="mt-2 text-sm text-slate-400">Os registros antigos permanecem associados às suas versões.</p>{versions.map((v,i)=><p key={v.id} className="mt-3 border-t border-tinta/10 pt-3 text-sm">{i===0?'Versão atual':'Versão anterior'} · {new Date(v.published_at).toLocaleString('pt-BR')}</p>)}</div>
     </div>}
     {tab==='pratica'&&practical.length>0&&<form className="flex flex-col gap-5" onSubmit={async e=>{e.preventDefault();const f=new FormData(e.currentTarget);setBusy(true);const r=await retractPracticalEvidence(str(f,'event'),str(f,'reason'));setBusy(false);setNotice(r.ok?'Correção registrada. A evidência original permanece na auditoria e deixa de contar a partir de agora.':r.error);if(r.ok)router.refresh();}}>
       <FormSection title="Corrigir uma evidência prática" description="A correção não apaga nem edita o registro original. Ela acrescenta um evento de retratação, e a evidência deixa de contar a partir de agora.">

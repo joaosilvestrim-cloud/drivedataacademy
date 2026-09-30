@@ -68,7 +68,7 @@ export default function Cronometro({
 
   if (compacto) {
     return (
-      <span className="font-mono text-xs font-semibold tabular-nums text-brand-cyan" aria-label={`Começa em ${falta}`}>
+      <span className="font-mono text-xs font-semibold tabular-nums text-acento" aria-label={`Começa em ${falta}`}>
         {d > 0 && `${d}d `}
         {dois(h)}:{dois(m)}:{dois(s)}
       </span>
@@ -86,7 +86,7 @@ export default function Cronometro({
     <span className="inline-flex items-end gap-1.5" role="timer" aria-label={`Começa em ${falta}`}>
       {blocos.map((b, i) => (
         <span key={i} className="flex flex-col items-center">
-          <span className="min-w-[2.1rem] rounded-md border border-brand-cyan/25 bg-brand-cyan/10 px-1.5 py-1 text-center font-mono text-sm font-bold tabular-nums text-white" aria-hidden="true">
+          <span className="min-w-[2.1rem] rounded-md bg-tinta/10 px-1.5 py-1 text-center font-mono text-sm font-bold tabular-nums text-tinta" aria-hidden="true">
             {b.r === "dia" || b.r === "dias" ? b.v : dois(b.v)}
           </span>
           <span className="mt-0.5 text-[0.58rem] uppercase tracking-wider text-slate-500" aria-hidden="true">{b.r}</span>

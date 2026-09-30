@@ -35,15 +35,15 @@ export default async function CourseStudents({ courseId, totalLessons }: { cours
 
   return (
     <div className="mt-10">
-      <h2 className="font-display text-lg font-bold text-white">Alunos matriculados</h2>
+      <h2 className="font-display text-lg font-bold text-tinta">Alunos matriculados</h2>
       <p className="mt-1 text-sm text-slate-400">{rows.length} aluno(s) neste curso.</p>
 
       {/* Alocar aluno na hora (busca + dropdown) */}
       <AllocateStudent courseId={courseId} students={available} />
 
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
+      <div className="mt-4 overflow-x-auto rounded-2xl border border-tinta/8">
         <table className="w-full text-sm">
-          <thead className="bg-white/5 text-left text-slate-400">
+          <thead className="bg-tinta/5 text-left text-slate-400">
             <tr>
               <th className="px-4 py-3 font-medium">Aluno</th>
               <th className="px-4 py-3 font-medium">Progresso</th>
@@ -56,15 +56,15 @@ export default async function CourseStudents({ courseId, totalLessons }: { cours
               const done = doneBy[e.user_id] || 0;
               const pct = totalLessons ? Math.round((done / totalLessons) * 100) : 0;
               return (
-                <tr key={e.user_id} className="border-t border-white/5 text-slate-200">
+                <tr key={e.user_id} className="border-t border-tinta/5 text-slate-200">
                   <td className="px-4 py-3">
                     <p className="font-medium">{nameById[e.user_id] || "—"}</p>
                     <p className="text-xs text-slate-500">{emailById[e.user_id]}</p>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/10">
-                        <div className="h-full bg-gradient-to-r from-brand-green to-brand-blue" style={{ width: `${pct}%` }} />
+                      <div className="h-1.5 w-24 overflow-hidden rounded-full bg-tinta/10">
+                        <div className="h-full bg-marca-verde" style={{ width: `${pct}%` }} />
                       </div>
                       <span className="text-xs text-slate-400">{done}/{totalLessons}</span>
                     </div>
@@ -72,7 +72,7 @@ export default async function CourseStudents({ courseId, totalLessons }: { cours
                   <td className="whitespace-nowrap px-4 py-3 text-slate-400">{fmt(e.created_at)} {e.source === "admin" ? "· cortesia" : ""}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-3">
-                      <Link href={`/admin/alunos/${e.user_id}`} className="text-xs text-brand-green hover:underline">Ver aluno</Link>
+                      <Link href={`/admin/alunos/${e.user_id}`} className="text-xs text-acento hover:underline">Ver aluno</Link>
                       <form action={unenrollFromCourse} className="inline">
                         <input type="hidden" name="course_id" value={courseId} />
                         <input type="hidden" name="user_id" value={e.user_id} />

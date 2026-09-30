@@ -293,21 +293,21 @@ function Review({ sub }: { sub: Submission }) {
     setStatus(decision);
   }
 
-  const tone = status === "approved" ? "border-brand-green/40 bg-brand-green/[0.06]"
+  const tone = status === "approved" ? "border-acento/40 bg-brand-green/[0.06]"
     : status === "rejected" ? "border-red-400/30 bg-red-400/[0.05]"
-    : "border-white/8 bg-white/[0.02]";
+    : "border-tinta/8 bg-tinta/[0.02]";
 
   return (
     <div className={`rounded-2xl border p-5 ${tone}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="font-semibold text-white">{sub.studentName}</p>
+          <p className="font-semibold text-tinta">{sub.studentName}</p>
           <p className="text-xs text-slate-400">{sub.challengeTitle}</p>
         </div>
         <span className="text-xs text-slate-500">{new Date(sub.created_at).toLocaleDateString("pt-BR")}</span>
       </div>
 
-      <p className="mt-3 whitespace-pre-line rounded-xl border border-white/8 bg-ink-900/40 p-3 text-sm text-slate-300">{sub.content}</p>
+      <p className="mt-3 whitespace-pre-line rounded-xl border border-tinta/8 bg-ink-900/40 p-3 text-sm text-slate-300">{sub.content}</p>
       {sub.link && <a href={sub.link} target="_blank" rel="noreferrer" className="mt-2 inline-block text-sm text-brand-teal hover:underline">Abrir entrega ↗</a>}
 
       {status === "pending" ? (
@@ -371,14 +371,14 @@ export default function DesafiosAdmin({ competencies, challenges, submissions, d
 
   return (
     <div className="max-w-4xl">
-      <p className="text-xs uppercase tracking-widest text-brand-green">Knowledge Universe</p>
-      <h1 className="mt-2 font-display text-3xl font-bold text-white">Desafios</h1>
+      <p className="text-xs text-marca">Knowledge Universe</p>
+      <h1 className="mt-2 font-display text-3xl font-bold text-tinta">Desafios</h1>
       <p className="mt-2 text-sm text-slate-400">Aprovar uma entrega registra a evidência prática no universo do aluno.</p>
 
       <div className="mt-6 flex gap-2">
         {(["correcao", "catalogo", "diagnostico"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={`rounded-xl px-4 py-2 text-sm font-medium transition-colors ${tab === t ? "bg-white/10 text-white" : "text-slate-400 hover:text-white"}`}>
+            className={`rounded-xl px-4 py-2 text-sm font-medium transition-colors ${tab === t ? "bg-tinta/10 text-tinta" : "text-slate-400 hover:text-tinta"}`}>
             {t === "correcao" ? `Correção${pending.length ? ` (${pending.length})` : ""}` : t === "catalogo" ? "Desafios" : "Diagnóstico"}
           </button>
         ))}
@@ -386,7 +386,7 @@ export default function DesafiosAdmin({ competencies, challenges, submissions, d
 
       {tab === "diagnostico" ? (
         <div className="mt-6 space-y-5">
-          <p className="rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-xs leading-relaxed text-slate-400">
+          <p className="rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3 text-xs leading-relaxed text-slate-400">
             O diagnóstico é respondido uma vez por aluno e corrigido no servidor. Acertos viram evidência
             na dimensão Exercícios, no grupo <code className="text-slate-300">diagnostico</code>, nunca como avançado.
             Erro não registra nada.
@@ -394,13 +394,13 @@ export default function DesafiosAdmin({ competencies, challenges, submissions, d
           <QuestionEditor competencies={competencies} editing={editingQuestion} onDone={() => setEditingQuestion(null)} />
           <div className="space-y-3">
             {diagnostic.map((q) => (
-              <div key={q.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+              <div key={q.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-white">{q.prompt}</p>
+                  <p className="truncate text-sm font-medium text-tinta">{q.prompt}</p>
                   <p className="text-xs text-slate-500">{competencies.find((x) => x.id === q.competency)?.name ?? q.competency} · {q.options.length} alternativas · ordem {q.position}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold ${q.published ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{q.published ? "Publicada" : "Rascunho"}</span>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold ${q.published ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>{q.published ? "Publicada" : "Rascunho"}</span>
                   <button onClick={() => setEditingQuestion(q)} className="text-xs text-brand-teal hover:underline">editar</button>
                   <button onClick={() => { if (confirm("Excluir esta pergunta?")) act(deleteDiagnosticQuestion(q.id)); }} className="text-xs text-slate-500 hover:text-red-300">excluir</button>
                 </div>
@@ -411,7 +411,7 @@ export default function DesafiosAdmin({ competencies, challenges, submissions, d
         </div>
       ) : tab === "correcao" ? (
         <div className="mt-6 space-y-4">
-          {pending.length === 0 && <p className="rounded-2xl border border-dashed border-white/10 px-6 py-12 text-center text-sm text-slate-400">Nenhuma entrega aguardando correção.</p>}
+          {pending.length === 0 && <p className="rounded-2xl border border-dashed border-tinta/10 px-6 py-12 text-center text-sm text-slate-400">Nenhuma entrega aguardando correção.</p>}
           {pending.map((s) => <Review key={s.id} sub={s} />)}
           {reviewed.length > 0 && (
             <>
@@ -425,15 +425,15 @@ export default function DesafiosAdmin({ competencies, challenges, submissions, d
           <NewChallenge competencies={competencies} editing={editing} onDone={() => setEditing(null)} />
           <div className="space-y-3">
             {challenges.map((c) => (
-              <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+              <div key={c.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3">
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-white">{c.title}</p>
+                  <p className="truncate text-sm font-medium text-tinta">{c.title}</p>
                   <p className="text-xs text-slate-500">{competencies.find((x) => x.id === c.competency)?.name ?? c.competency} · {c.credits} créditos · grupo {c.group_key}{c.advanced ? " · avançado" : ""}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold ${c.published ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>{c.published ? "Publicado" : "Rascunho"}</span>
+                  <span className={`rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold ${c.published ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>{c.published ? "Publicado" : "Rascunho"}</span>
                   <button onClick={() => setEditing(c)} className="text-xs text-brand-teal hover:underline">editar</button>
-                  <button onClick={() => act(toggleChallengePublished(c.id, !c.published))} className="text-xs text-slate-400 hover:text-white">{c.published ? "despublicar" : "publicar"}</button>
+                  <button onClick={() => act(toggleChallengePublished(c.id, !c.published))} className="text-xs text-slate-400 hover:text-tinta">{c.published ? "despublicar" : "publicar"}</button>
                   <button onClick={() => { if (confirm(`Excluir "${c.title}"?`)) act(deleteChallenge(c.id)); }} className="text-xs text-slate-500 hover:text-red-300">excluir</button>
                 </div>
               </div>

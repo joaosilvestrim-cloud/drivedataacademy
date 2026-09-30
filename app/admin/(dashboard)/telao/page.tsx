@@ -58,11 +58,11 @@ export default async function TelaoPage({ searchParams }: { searchParams: { live
   if (!live && !demo) {
     return (
       <div className="mx-auto max-w-xl py-16 text-center">
-        <h1 className="font-display text-2xl font-bold text-white">Telão da live</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Telão da live</h1>
         <p className="mt-3 text-sm text-slate-400">
           Ainda não há live com certificado nem campanha de demonstração. Crie em{" "}
-          <Link href="/admin/lives" className="text-brand-green underline underline-offset-4">Lives</Link> ou em{" "}
-          <Link href="/admin/acessos" className="text-brand-green underline underline-offset-4">Acessos</Link>.
+          <Link href="/admin/lives" className="text-acento underline underline-offset-4">Lives</Link> ou em{" "}
+          <Link href="/admin/acessos" className="text-acento underline underline-offset-4">Acessos</Link>.
         </p>
       </div>
     );
@@ -72,7 +72,7 @@ export default async function TelaoPage({ searchParams }: { searchParams: { live
     <div>
       {/* Barra de controle: some na projeção porque fica acima da dobra. */}
       <div className="mb-8 flex flex-wrap items-center gap-3 print:hidden">
-        <h1 className="font-display text-xl font-bold text-white">Telão da live</h1>
+        <h1 className="font-display text-xl font-bold text-tinta">Telão da live</h1>
         <p className="text-xs text-slate-500">Compartilhe esta tela na transmissão. Os números atualizam ao recarregar.</p>
       </div>
 
@@ -83,7 +83,7 @@ export default async function TelaoPage({ searchParams }: { searchParams: { live
               <span className="text-slate-500">Live:</span>
               {lives.map((l) => (
                 <Link key={l.id} href={`/admin/telao?live=${l.id}&demo=${demo?.slug ?? ""}`}
-                  className={`rounded-lg px-2.5 py-1 ${l.id === live?.id ? "bg-white/10 text-white" : "text-slate-400 hover:text-white"}`}>
+                  className={`rounded-lg px-2.5 py-1 ${l.id === live?.id ? "bg-tinta/10 text-tinta" : "text-slate-400 hover:text-tinta"}`}>
                   {l.title.slice(0, 26)}
                 </Link>
               ))}
@@ -94,7 +94,7 @@ export default async function TelaoPage({ searchParams }: { searchParams: { live
               <span className="text-slate-500">Demo:</span>
               {(campanhas ?? []).map((c) => (
                 <Link key={c.slug} href={`/admin/telao?live=${live?.id ?? ""}&demo=${c.slug}`}
-                  className={`rounded-lg px-2.5 py-1 ${c.slug === demo?.slug ? "bg-white/10 text-white" : "text-slate-400 hover:text-white"}`}>
+                  className={`rounded-lg px-2.5 py-1 ${c.slug === demo?.slug ? "bg-tinta/10 text-tinta" : "text-slate-400 hover:text-tinta"}`}>
                   {c.titulo.slice(0, 26)}
                 </Link>
               ))}
@@ -147,7 +147,7 @@ function Cartao({
   palavra: string | null; rotuloPalavra: string; rodape: string; url: string;
 }) {
   return (
-    <section className="rounded-3xl bg-white p-8 text-ink-900">
+    <section className="rounded-3xl bg-white p-8 text-sobre-acento">
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-emerald-700">{eyebrow}</p>
       <h2 className="mt-1 font-display text-4xl font-bold leading-none">{titulo}</h2>
 
@@ -156,7 +156,7 @@ function Cartao({
       {palavra && (
         <div className="mt-6 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">{rotuloPalavra}</p>
-          <p className="mt-1 font-mono text-3xl font-bold tracking-[0.18em] text-ink-900">{palavra}</p>
+          <p className="mt-1 font-mono text-3xl font-bold tracking-[0.18em] text-sobre-acento">{palavra}</p>
         </div>
       )}
 

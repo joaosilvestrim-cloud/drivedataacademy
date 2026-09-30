@@ -47,8 +47,8 @@ export default async function Confirmar({ params, searchParams }: { params: { to
   }
 
   return (
-    <main className="mx-auto max-w-xl px-6 py-24 text-white">
-      <p className="text-sm text-brand-green">DriveData Academy</p>
+    <main className="mx-auto max-w-xl px-6 py-24 text-tinta">
+      <p className="text-sm text-acento">DriveData Academy</p>
       <h1 className="mt-2 font-display text-3xl font-bold">{titulo}</h1>
       <p className="mt-4 text-slate-300">{texto}</p>
     </main>

@@ -86,7 +86,7 @@ export default async function VotacoesPage({ searchParams }: { searchParams: { v
               key={p.id}
               href={`/admin/votacoes?v=${p.id}`}
               className={`rounded-ctl border px-3 py-1.5 text-body-sm transition-colors ${
-                p.id === atual?.id ? "border-ds-accent text-ds-text" : "border-ds-line text-ds-text-2 hover:border-ds-accent"
+                p.id === atual?.id ? "border-acento text-ds-text" : "border-ds-line text-ds-text-2 hover:border-acento"
               }`}
             >
               {p.title}

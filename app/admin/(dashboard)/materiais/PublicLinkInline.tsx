@@ -10,7 +10,7 @@ export default function PublicLinkInline({ slug }: { slug: string }) {
 
   return (
     <div className="mt-2 flex flex-wrap items-center gap-2">
-      <code className="truncate rounded-md border border-white/10 bg-ink-900/60 px-2 py-1 text-xs text-brand-teal">
+      <code className="truncate rounded-md border border-tinta/10 bg-ink-900/60 px-2 py-1 text-xs text-brand-teal">
         /materiais/{slug}
       </code>
       <CopyButton text={url} label="Copiar link" />
@@ -18,7 +18,7 @@ export default function PublicLinkInline({ slug }: { slug: string }) {
         href={`/materiais/${slug}`}
         target="_blank"
         rel="noreferrer"
-        className="rounded-lg border border-white/10 px-3 py-1 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white"
+        className="rounded-lg border border-tinta/10 px-3 py-1 text-xs font-medium text-slate-300 hover:border-tinta/30 hover:text-tinta"
       >
         Abrir
       </a>

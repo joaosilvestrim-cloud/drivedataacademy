@@ -138,7 +138,7 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
           que não pede login. Preenchido aqui, o link só aparece na agenda do
           aluno, e ele vence o link público quando os dois existem. */}
       <div className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
-        <p className="text-sm font-semibold text-white">Encontro fechado (só aluno)</p>
+        <p className="text-sm font-semibold text-tinta">Encontro fechado (só aluno)</p>
         <p className="-mt-2 text-xs text-slate-400">
           Para Teams, Zoom ou Meet com senha. Aparece apenas em /conta/agenda, atrás do login.
           Se preencher, este link substitui o público na agenda.
@@ -229,7 +229,7 @@ function LiveForm({ scope, live, sold = 0, pandaHost = null }: { scope: string; 
             responde pela live; este é quem veio de fora ensinar. Juntar os
             dois faria o sócio aparecer duas vezes no mesmo papel. */}
         <div className="flex flex-col gap-4 rounded-srf border border-ds-line p-4">
-          <p className="text-sm font-semibold text-white">Mentor convidado</p>
+          <p className="text-sm font-semibold text-tinta">Mentor convidado</p>
           <p className="-mt-2 text-xs text-slate-400">
             Quem veio de fora dar a aula. Preenchido, entra como terceira assinatura no certificado, ao lado
             das duas da escola. Vale só para os certificados emitidos a partir de agora: os já emitidos
@@ -326,7 +326,7 @@ function AvisoDaLive({ live, enviados }: { live: any; enviados: any[] }) {
 
   return (
     <div className="flex flex-col gap-3 rounded-srf border border-ds-line p-4">
-      <p className="text-sm font-semibold text-white">Aviso aos assinantes</p>
+      <p className="text-sm font-semibold text-tinta">Aviso aos assinantes</p>
 
       {!temLink ? (
         <p className="text-xs text-slate-400">

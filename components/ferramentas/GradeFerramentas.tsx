@@ -52,8 +52,8 @@ export default function GradeFerramentas({ ferramentas }: { ferramentas: Ferrame
               aria-pressed={ativa}
               className={`inline-flex items-baseline gap-2 rounded-xl border px-3.5 py-2 text-sm font-medium transition-colors ${
                 ativa
-                  ? "border-brand-green/50 bg-brand-green/[0.10] text-white"
-                  : "border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/25 hover:text-white"
+                  ? "border-acento/50 bg-brand-green/[0.10] text-tinta"
+                  : "border-tinta/10 bg-tinta/[0.02] text-slate-400 hover:border-tinta/25 hover:text-tinta"
               }`}
             >
               {a.chave === "novidades" && (
@@ -75,7 +75,7 @@ export default function GradeFerramentas({ ferramentas }: { ferramentas: Ferrame
       </div>
 
       {visiveis.length === 0 && (
-        <p className="mt-6 rounded-2xl border border-dashed border-white/10 px-4 py-10 text-center text-sm text-slate-500">
+        <p className="mt-6 rounded-2xl border border-dashed border-tinta/10 px-4 py-10 text-center text-sm text-slate-500">
           {tr("Nenhuma ferramenta nesta categoria por enquanto.")}
         </p>
       )}

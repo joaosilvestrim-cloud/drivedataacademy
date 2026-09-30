@@ -20,14 +20,14 @@ export type Campanha = {
 };
 
 const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-3.5 py-2.5 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 
 export default function CampanhaDemo({ campanhas }: { campanhas: Campanha[] }) {
   return (
-    <div className="glass rounded-2xl border border-brand-green/20 p-5">
+    <div className="glass rounded-2xl border border-acento/20 p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <p className="text-sm font-semibold text-white">Demonstração por QR code (live)</p>
-        <Link href="/admin/telao" className="text-xs text-brand-green underline underline-offset-4">
+        <p className="text-sm font-semibold text-tinta">Demonstração por QR code (live)</p>
+        <Link href="/admin/telao" className="text-xs text-acento underline underline-offset-4">
           Abrir o telão →
         </Link>
       </div>
@@ -41,7 +41,7 @@ export default function CampanhaDemo({ campanhas }: { campanhas: Campanha[] }) {
         <input name="palavra" placeholder="Palavra-chave" autoCapitalize="characters" className={field} />
         <input name="dias" type="number" min={1} max={90} defaultValue={7} title="Dias de acesso" className={field} />
         <input name="limite" type="number" min={1} placeholder="Limite" title="Máximo de cadastros. Vazio = sem teto." className={field} />
-        <button className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+        <button className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
           Criar
         </button>
       </form>
@@ -51,11 +51,11 @@ export default function CampanhaDemo({ campanhas }: { campanhas: Campanha[] }) {
       </p>
 
       {campanhas.length > 0 && (
-        <ul className="mt-5 divide-y divide-white/5 rounded-xl border border-white/8">
+        <ul className="mt-5 divide-y divide-tinta/5 rounded-xl border border-tinta/8">
           {campanhas.map((c) => (
             <li key={c.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-white">{c.titulo}</span>
+                <span className="block truncate text-tinta">{c.titulo}</span>
                 <span className="block font-mono text-[0.7rem] text-slate-500">
                   /demo/{c.slug}
                   {c.palavra ? ` · palavra: ${c.palavra}` : " · sem palavra-chave"} · {c.dias} dias
@@ -70,8 +70,8 @@ export default function CampanhaDemo({ campanhas }: { campanhas: Campanha[] }) {
                 <input type="hidden" name="ativo" value={c.ativo ? "0" : "1"} />
                 <button className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                   c.ativo
-                    ? "border-white/12 text-slate-300 hover:border-red-400/50 hover:text-red-300"
-                    : "border-brand-green/40 text-brand-green"
+                    ? "border-tinta/12 text-slate-300 hover:border-red-400/50 hover:text-red-300"
+                    : "border-acento/40 text-acento"
                 }`}>
                   {c.ativo ? "Encerrar" : "Reabrir"}
                 </button>

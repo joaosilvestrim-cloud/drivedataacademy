@@ -23,18 +23,18 @@ import {
    bloco diz isso, para o aluno entender o que está construindo. */
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60";
-const botao = "rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 disabled:opacity-40";
-const botaoLeve = "rounded-lg border border-white/15 px-3 py-1.5 text-sm text-white disabled:opacity-40";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-3 py-2 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60";
+const botao = "rounded-xl bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento disabled:opacity-40";
+const botaoLeve = "rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-tinta disabled:opacity-40";
 
 const mesAno = (d: string | null) =>
   d ? new Date(`${d.slice(0, 7)}-15T12:00:00Z`).toLocaleDateString("pt-BR", { month: "short", year: "numeric", timeZone: "UTC" }).replace(/\./g, "") : "";
 
 function Bloco({ titulo, espaco, children, aberto = false }: { titulo: string; espaco: string; children: React.ReactNode; aberto?: boolean }) {
   return (
-    <details open={aberto} className="group rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+    <details open={aberto} className="group rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-4">
       <summary className="flex cursor-pointer list-none flex-wrap items-baseline justify-between gap-2">
-        <span className="font-semibold text-white">{titulo}</span>
+        <span className="font-semibold text-tinta">{titulo}</span>
         <span className="text-xs text-slate-400">no seu 4D: {espaco}</span>
       </summary>
       <div className="mt-4">{children}</div>
@@ -92,8 +92,8 @@ export default function CarreiraDoAluno({
   const siteBase = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
-    <section className="mt-8 rounded-3xl border border-white/10 bg-white/[0.02] p-5 sm:p-7">
-      <h2 className="font-display text-2xl font-bold text-white">Sua carreira no universo</h2>
+    <section className="mt-8 rounded-3xl border border-tinta/10 bg-tinta/[0.02] p-5 sm:p-7">
+      <h2 className="font-display text-2xl font-bold text-tinta">Sua carreira no universo</h2>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">
         Os projetos acendem as estrelas. Estes blocos contam o resto da história: para onde você vai, por onde passou, o que conquistou e quem confirma o seu trabalho.
       </p>
@@ -128,7 +128,7 @@ export default function CarreiraDoAluno({
                   const tem = provadasSet.has(r.id);
                   return (
                     <li key={r.id} className="text-sm">
-                      <span className={tem ? "font-semibold text-brand-green" : "font-semibold text-slate-200"}>{tem ? "✓ " : "○ "}{nomes[r.id] ?? r.id}</span>
+                      <span className={tem ? "font-semibold text-acento" : "font-semibold text-slate-200"}>{tem ? "✓ " : "○ "}{nomes[r.id] ?? r.id}</span>
                       <span className="text-slate-400"> · {r.motivo}</span>
                       {!tem && (cursos[r.id] ?? []).length > 0 && (
                         <span className="block text-xs text-slate-400">
@@ -151,7 +151,7 @@ export default function CarreiraDoAluno({
               {carreira.experiencias.map((e) => (
                 <li key={e.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
                   <span className="min-w-0">
-                    <span className="font-semibold text-white">{e.cargo}</span>
+                    <span className="font-semibold text-tinta">{e.cargo}</span>
                     {e.organizacao && <span className="text-slate-300"> · {e.organizacao}</span>}
                     <span className="block text-xs text-slate-400">{mesAno(e.inicio)}{e.inicio ? " a " : ""}{e.fim ? mesAno(e.fim) : e.inicio ? "hoje" : ""}{e.setor ? ` · ${e.setor}` : ""}</span>
                   </span>
@@ -176,7 +176,7 @@ export default function CarreiraDoAluno({
             {lendo ? "Lendo..." : "Organizar com IA"}
           </button>
           {lidas && (
-            <div className="mt-3 rounded-xl border border-white/10 p-3">
+            <div className="mt-3 rounded-xl border border-tinta/10 p-3">
               {lidas.length === 0 ? (
                 <p className="text-sm text-slate-400">Não encontrei experiências com cargo e datas no texto.</p>
               ) : (
@@ -184,7 +184,7 @@ export default function CarreiraDoAluno({
                   <ul className="flex flex-col gap-1.5 text-sm">
                     {lidas.map((e, i) => (
                       <li key={i}>
-                        <span className="text-white">{e.cargo}</span>{e.organizacao && <span className="text-slate-300"> · {e.organizacao}</span>}
+                        <span className="text-tinta">{e.cargo}</span>{e.organizacao && <span className="text-slate-300"> · {e.organizacao}</span>}
                         <span className="text-xs text-slate-400"> · {e.inicio ?? "?"} a {e.fim ?? "hoje"}</span>
                       </li>
                     ))}
@@ -211,7 +211,7 @@ export default function CarreiraDoAluno({
               {carreira.conquistas.map((c) => (
                 <li key={c.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm">
                   <span>
-                    <span className="font-semibold text-white">{c.titulo}</span>
+                    <span className="font-semibold text-tinta">{c.titulo}</span>
                     <span className="text-xs text-slate-400"> {mesAno(c.data)}</span>
                     {c.link_prova && <a href={c.link_prova} target="_blank" rel="noopener" className="ml-2 text-xs text-brand-teal hover:underline">prova</a>}
                   </span>
@@ -260,8 +260,8 @@ export default function CarreiraDoAluno({
             </button>
           </div>
           {convite && (
-            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-brand-green/30 bg-brand-green/[0.06] p-3">
-              <span className="min-w-0 flex-1 truncate font-mono text-xs text-brand-green">{convite}</span>
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-acento/30 bg-brand-green/[0.06] p-3">
+              <span className="min-w-0 flex-1 truncate font-mono text-xs text-acento">{convite}</span>
               <button onClick={() => copiar(convite, "convite")} className={botaoLeve}>{copiado === "convite" ? "Copiado" : "Copiar"}</button>
               <a href={`https://wa.me/?text=${encodeURIComponent(`Oi! Estou montando meu portfólio. Você escreveria uma recomendação sobre o nosso trabalho juntos? É rapidinho: ${convite}`)}`} target="_blank" rel="noopener" className={botaoLeve}>Mandar no WhatsApp</a>
             </div>
@@ -269,9 +269,9 @@ export default function CarreiraDoAluno({
 
           {recsPendentes.length > 0 && (
             <div className="mt-4 flex flex-col gap-3">
-              <p className="text-sm font-semibold text-white">Esperando você aprovar</p>
+              <p className="text-sm font-semibold text-tinta">Esperando você aprovar</p>
               {recsPendentes.map((r) => (
-                <div key={r.id} className="rounded-xl border border-white/10 p-3">
+                <div key={r.id} className="rounded-xl border border-tinta/10 p-3">
                   <p className="text-sm text-slate-200">&ldquo;{r.texto}&rdquo;</p>
                   <p className="mt-1 text-xs text-slate-400">{r.autor_nome}{r.autor_cargo ? `, ${r.autor_cargo}` : ""}{r.relacao ? ` · ${r.relacao}` : ""} · e-mail confirmado</p>
                   <div className="mt-2 flex gap-2">
@@ -285,7 +285,7 @@ export default function CarreiraDoAluno({
 
           {recsAprovadas.length > 0 && (
             <div className="mt-4 flex flex-col gap-2">
-              <p className="text-sm font-semibold text-white">No seu portfólio</p>
+              <p className="text-sm font-semibold text-tinta">No seu portfólio</p>
               {recsAprovadas.map((r) => (
                 <div key={r.id} className="flex items-baseline justify-between gap-2 text-sm">
                   <span className="text-slate-300">{r.autor_nome}{r.autor_cargo ? `, ${r.autor_cargo}` : ""}</span>
@@ -331,13 +331,13 @@ export default function CarreiraDoAluno({
           </button>
           {vaga?.ok && (
             <div className="mt-4">
-              <p className="text-sm text-white">
+              <p className="text-sm text-tinta">
                 <span className="font-display text-2xl font-bold">{vaga.tem}</span> de {vaga.total} competências pedidas já provadas por projeto.
               </p>
               <ul className="mt-2 flex flex-col gap-2">
                 {vaga.itens.map((i) => (
                   <li key={i.id} className="text-sm">
-                    <span className={i.tem ? "font-semibold text-brand-green" : "font-semibold text-slate-200"}>{i.tem ? "✓ " : "○ "}{i.nome}</span>
+                    <span className={i.tem ? "font-semibold text-acento" : "font-semibold text-slate-200"}>{i.tem ? "✓ " : "○ "}{i.nome}</span>
                     <span className="block text-xs text-slate-400">A vaga: &ldquo;{i.trecho}&rdquo;</span>
                     {i.tem && (
                       <span className="block text-xs text-slate-300">

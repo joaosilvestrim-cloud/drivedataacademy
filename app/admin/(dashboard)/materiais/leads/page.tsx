@@ -18,7 +18,7 @@ export default async function MaterialLeadsPage() {
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Leads de materiais</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Leads de materiais</h1>
         <div className="mt-6">
           <AdminError message={e instanceof Error ? e.message : "Erro desconhecido."} />
         </div>
@@ -30,8 +30,8 @@ export default async function MaterialLeadsPage() {
     <div>
       <div className="flex items-center justify-between gap-3">
         <div>
-          <Link href="/admin/materiais" className="text-xs text-slate-500 hover:text-white">← Materiais</Link>
-          <h1 className="mt-1 font-display text-2xl font-bold text-white">Leads de materiais</h1>
+          <Link href="/admin/materiais" className="text-xs text-slate-500 hover:text-tinta">← Materiais</Link>
+          <h1 className="mt-1 font-display text-2xl font-bold text-tinta">Leads de materiais</h1>
           <p className="mt-1 text-sm text-slate-400">{rows.length} lead(s) capturado(s).</p>
         </div>
         <ExportCsv rows={rows} filename="leads-materiais.csv" />

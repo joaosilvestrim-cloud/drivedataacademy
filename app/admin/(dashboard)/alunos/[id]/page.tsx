@@ -39,19 +39,19 @@ export default async function AlunoDetail({ params }: { params: { id: string } }
 
   return (
     <div>
-      <Link href="/admin/alunos" className="text-xs text-slate-500 hover:text-white">← Alunos</Link>
-      <h1 className="mt-1 font-display text-2xl font-bold text-white">{profile?.full_name || user.user_metadata?.full_name || "Aluno"}</h1>
+      <Link href="/admin/alunos" className="text-xs text-slate-500 hover:text-tinta">← Alunos</Link>
+      <h1 className="mt-1 font-display text-2xl font-bold text-tinta">{profile?.full_name || user.user_metadata?.full_name || "Aluno"}</h1>
       <p className="mt-1 text-sm text-slate-400">{user.email}</p>
-      <Link href="/admin/downloads" className="mt-3 inline-flex rounded-lg border border-brand-green/30 px-4 py-2 text-sm text-brand-green">Acompanhar liberação dos downloads →</Link>
+      <Link href="/admin/downloads" className="mt-3 inline-flex rounded-lg border border-acento/30 px-4 py-2 text-sm text-acento">Acompanhar liberação dos downloads →</Link>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="glass rounded-2xl border border-white/8 p-4"><p className="text-xs text-slate-500">Telefone</p><p className="mt-1 text-sm text-white">{profile?.phone || "—"}</p></div>
-        <div className="glass rounded-2xl border border-white/8 p-4"><p className="text-xs text-slate-500">País</p><p className="mt-1 text-sm text-white">{profile?.country || "—"}</p></div>
-        <div className="glass rounded-2xl border border-white/8 p-4"><p className="text-xs text-slate-500">Cadastro</p><p className="mt-1 text-sm text-white">{fmt(user.created_at)}</p></div>
+        <div className="glass rounded-2xl border border-tinta/8 p-4"><p className="text-xs text-slate-500">Telefone</p><p className="mt-1 text-sm text-tinta">{profile?.phone || "—"}</p></div>
+        <div className="glass rounded-2xl border border-tinta/8 p-4"><p className="text-xs text-slate-500">País</p><p className="mt-1 text-sm text-tinta">{profile?.country || "—"}</p></div>
+        <div className="glass rounded-2xl border border-tinta/8 p-4"><p className="text-xs text-slate-500">Cadastro</p><p className="mt-1 text-sm text-tinta">{fmt(user.created_at)}</p></div>
       </div>
 
       {/* Cursos matriculados */}
-      <h2 className="mt-8 font-display text-lg font-bold text-white">Cursos matriculados</h2>
+      <h2 className="mt-8 font-display text-lg font-bold text-tinta">Cursos matriculados</h2>
       <div className="mt-3 space-y-2">
         {(enrolls ?? []).map((e: any) => {
           const c = courseById[e.course_id];
@@ -59,15 +59,15 @@ export default async function AlunoDetail({ params }: { params: { id: string } }
           const done = doneByCourse[e.course_id] || 0;
           const pct = total ? Math.round((done / total) * 100) : 0;
           return (
-            <div key={e.course_id} className="glass flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 p-4">
+            <div key={e.course_id} className="glass flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-tinta/8 p-4">
               <div>
-                <p className="font-medium text-white">{c?.title || "Curso removido"}</p>
+                <p className="font-medium text-tinta">{c?.title || "Curso removido"}</p>
                 <p className="mt-0.5 text-xs text-slate-500">{done}/{total} aulas · {pct}% · matriculado {fmt(e.created_at)} {e.source === "admin" ? "(cortesia)" : ""}</p>
               </div>
               <form action={unenrollStudent}>
                 <input type="hidden" name="user_id" value={params.id} />
                 <input type="hidden" name="course_id" value={e.course_id} />
-                <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Remover acesso</button>
+                <button className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Remover acesso</button>
               </form>
             </div>
           );
@@ -76,15 +76,15 @@ export default async function AlunoDetail({ params }: { params: { id: string } }
       </div>
 
       {/* Matricular manualmente */}
-      <div className="mt-6 glass rounded-2xl border border-brand-green/20 p-5">
-        <p className="text-sm font-semibold text-white">Dar acesso a um curso (cortesia)</p>
+      <div className="mt-6 glass rounded-2xl border border-acento/20 p-5">
+        <p className="text-sm font-semibold text-tinta">Dar acesso a um curso (cortesia)</p>
         <form action={enrollStudent} className="mt-3 flex flex-wrap items-center gap-2">
           <input type="hidden" name="user_id" value={params.id} />
-          <select name="course_id" required defaultValue="" className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none focus:border-brand-green/60 [&>option]:bg-ink-900">
+          <select name="course_id" required defaultValue="" className="flex-1 rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-2.5 text-sm text-tinta outline-none focus:border-acento/60 [&>option]:bg-ink-900">
             <option value="" disabled>Escolha um curso...</option>
             {notEnrolled.map((c: any) => <option key={c.id} value={c.id}>{c.title}</option>)}
           </select>
-          <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2.5 text-sm font-semibold text-ink-900">Matricular</button>
+          <button className="rounded-lg bg-marca-verde px-4 py-2.5 text-sm font-semibold text-sobre-acento">Matricular</button>
         </form>
       </div>
     </div>

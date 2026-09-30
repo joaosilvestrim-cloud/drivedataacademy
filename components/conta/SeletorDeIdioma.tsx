@@ -55,7 +55,7 @@ export default function SeletorDeIdioma({ atual, compacto }: { atual: Idioma; co
   }
 
   return (
-    <div className={`flex items-center gap-1 ${compacto ? "" : "rounded-lg bg-white/[0.04] p-1"}`} role="group" aria-label={tr("Idioma")}>
+    <div className={`flex items-center gap-1 ${compacto ? "" : "rounded-lg bg-tinta/[0.04] p-1"}`} role="group" aria-label={tr("Idioma")}>
       {IDIOMAS.map((l) => (
         <button
           key={l}
@@ -68,7 +68,7 @@ export default function SeletorDeIdioma({ atual, compacto }: { atual: Idioma; co
              em cinza vira um retângulo sem identidade nenhuma. */
           className={`rounded-md p-1 transition-all ${
             idioma === l
-              ? "bg-white/10 ring-1 ring-white/25"
+              ? "bg-tinta/10 ring-1 ring-tinta/25"
               : "opacity-55 hover:opacity-100"
           } ${pendente && idioma === l ? "animate-pulse" : ""}`}
         >

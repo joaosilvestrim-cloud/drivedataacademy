@@ -61,9 +61,9 @@ export default function MaterialUpload({ scope, lessonId, courseId }: { scope: s
     <div className="flex flex-col gap-2">
       <label
         htmlFor={id}
-        className={`flex cursor-pointer flex-col items-center gap-2 rounded-srf border border-dashed border-ds-line bg-ds-surface px-4 py-6 text-center transition-colors hover:border-ds-accent ${enviando ? "pointer-events-none opacity-60" : ""}`}
+        className={`flex cursor-pointer flex-col items-center gap-2 rounded-srf border border-dashed border-ds-line bg-ds-surface px-4 py-6 text-center transition-colors hover:border-acento ${enviando ? "pointer-events-none opacity-60" : ""}`}
       >
-        <UploadCloud size={ICON.lg} strokeWidth={ICON.stroke} aria-hidden="true" className="text-ds-accent" />
+        <UploadCloud size={ICON.lg} strokeWidth={ICON.stroke} aria-hidden="true" className="text-acento" />
         <span className="text-body-sm font-medium text-ds-text">Escolher arquivos para esta aula</span>
         <span className="text-caption text-ds-text-3">.pbix, .pbit, .zip, .xlsx, .csv, .pdf e outros. Pode escolher vários. Cada um entra na aula assim que termina de subir.</span>
       </label>
@@ -83,7 +83,7 @@ export default function MaterialUpload({ scope, lessonId, courseId }: { scope: s
           {enviando}
         </p>
       )}
-      {ok && !enviando && <p className="text-caption text-ds-accent" role="status">{ok}</p>}
+      {ok && !enviando && <p className="text-caption text-acento" role="status">{ok}</p>}
       {erro && <p className="text-caption text-ds-danger" role="alert">{erro}</p>}
     </div>
   );

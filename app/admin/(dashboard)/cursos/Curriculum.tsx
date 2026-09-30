@@ -40,7 +40,7 @@ type Lesson = {
 type Module = { id: string; title: string; available_at?: string | null; lessons: Lesson[] };
 
 const smallBtn =
-  "rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white";
+  "rounded-lg border border-tinta/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-tinta/30 hover:text-tinta";
 
 function MoveButtons({ table, col, val, id, courseId }: { table: string; col: string; val: string; id: string; courseId: string }) {
   return (
@@ -77,17 +77,17 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
     <div className="mt-10">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="font-display text-lg font-bold text-white">Currículo</h2>
+          <h2 className="font-display text-lg font-bold text-tinta">Currículo</h2>
           <p className="mt-1 text-sm text-slate-400">{modules.length} módulo(s) · {totalLessons} aula(s). Use ↑ ↓ para ordenar.</p>
         </div>
       </div>
 
       <div className="mt-5 space-y-5">
         {modules.map((m, mi) => (
-          <div key={m.id} className="glass rounded-2xl border border-white/8 p-5">
+          <div key={m.id} className="glass rounded-2xl border border-tinta/8 p-5">
             {/* Cabeçalho do módulo */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/5 font-display text-sm font-bold text-brand-green">{mi + 1}</span>
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-tinta/5 font-display text-sm font-bold text-acento">{mi + 1}</span>
               {/* Renomear é edição no lugar, dentro do cabeçalho do módulo. O rótulo
                   existe e é lido, mas fica oculto: torná-lo visível empurraria a
                   linha para baixo e redesenharia a árvore, que está fora do lote. */}
@@ -103,12 +103,12 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                 />
                 <Button type="submit" variant="secondary" size="sm">Renomear</Button>
               </form>
-              <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-400">{m.lessons.length} aula(s)</span>
+              <span className="rounded-full bg-tinta/5 px-2.5 py-1 text-xs text-slate-400">{m.lessons.length} aula(s)</span>
               <MoveButtons table="course_modules" col="course_id" val={courseId} id={m.id} courseId={courseId} />
               <form action={deleteModule}>
                 <input type="hidden" name="id" value={m.id} />
                 <input type="hidden" name="course_id" value={courseId} />
-                <button className="rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir</button>
+                <button className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs font-medium text-slate-300 hover:border-red-400/40 hover:text-red-400">Excluir</button>
               </form>
             </div>
 
@@ -132,21 +132,21 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
             {/* Aulas */}
             <div className="mt-4 space-y-2">
               {m.lessons.map((l, li) => (
-                <details key={l.id} className="rounded-xl border border-white/8 bg-white/[0.02]">
+                <details key={l.id} className="rounded-xl border border-tinta/8 bg-tinta/[0.02]">
                   <summary className="flex cursor-pointer items-center justify-between gap-2 px-4 py-3 text-sm text-slate-200">
                     <span className="flex min-w-0 items-center gap-2.5">
                       <span className="text-slate-600">{li + 1}.</span>
-                      <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-md ${l.type === "text" ? "bg-brand-blue/15 text-brand-blue" : l.type === "materiais" ? "bg-amber-400/15 text-amber-300" : "bg-brand-green/15 text-brand-green"}`}>
+                      <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-md ${l.type === "text" ? "bg-brand-blue/15 text-brand-blue" : l.type === "materiais" ? "bg-amber-400/15 text-amber-300" : "bg-brand-green/15 text-acento"}`}>
                         {l.type === "text" ? <TextIcon /> : l.type === "materiais" ? <DownloadIcon /> : <VideoIcon />}
                       </span>
-                      <span className="truncate font-medium text-white">{l.title}</span>
+                      <span className="truncate font-medium text-tinta">{l.title}</span>
                       {(l.arquivos ?? []).length > 0 && (
-                        <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-slate-400">{(l.arquivos ?? []).length} arquivo(s)</span>
+                        <span className="shrink-0 rounded-full bg-tinta/5 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-slate-400">{(l.arquivos ?? []).length} arquivo(s)</span>
                       )}
                       {l.type === "video" && l.video_id && (
-                        <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-slate-400">{l.video_provider === "panda" ? "Panda" : "YouTube"}</span>
+                        <span className="shrink-0 rounded-full bg-tinta/5 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-slate-400">{l.video_provider === "panda" ? "Panda" : "YouTube"}</span>
                       )}
-                      {l.is_preview && <span className="shrink-0 rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-brand-green">preview</span>}
+                      {l.is_preview && <span className="shrink-0 rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase text-acento">preview</span>}
                     </span>
                     <span className="flex shrink-0 items-center gap-1.5">
                       {l.duration && <span className="text-xs text-slate-500">{l.duration}</span>}
@@ -243,7 +243,7 @@ export default function Curriculum({ courseId, modules }: { courseId: string; mo
                 </details>
               ))}
               {m.lessons.length === 0 && (
-                <p className="rounded-xl border border-dashed border-white/10 px-4 py-6 text-center text-xs text-slate-500">Nenhuma aula neste módulo. Adicione a primeira abaixo.</p>
+                <p className="rounded-xl border border-dashed border-tinta/10 px-4 py-6 text-center text-xs text-slate-500">Nenhuma aula neste módulo. Adicione a primeira abaixo.</p>
               )}
             </div>
 

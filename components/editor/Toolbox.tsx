@@ -171,7 +171,7 @@ function HoverPreview({ it, rect }: { it: Item; rect: DOMRect }) {
   return (
     <div style={{ position: "fixed", left, top, width: PREV_W, zIndex: 60 }} className="pointer-events-none overflow-hidden rounded-xl border border-viz/40 bg-[#0b1220] shadow-2xl">
       <iframe title={`${tr("Prévia de")} ${tr(it.rotulo)}`} sandbox="" srcDoc={srcDoc} style={{ width: PREV_W, height: PREV_H, background: "transparent", border: 0 }} />
-      <div className="border-t border-white/10 px-2 py-1 text-center text-[10px] font-medium text-slate-300">{tr(it.rotulo)}</div>
+      <div className="border-t border-tinta/10 px-2 py-1 text-center text-[10px] font-medium text-slate-300">{tr(it.rotulo)}</div>
     </div>
   );
 }

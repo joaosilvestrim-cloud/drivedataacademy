@@ -65,10 +65,10 @@ export default function ProductForm({ product, courses }: { product?: Product; c
                 aria-checked={ativo}
                 onClick={() => setKind(o.k)}
                 className={`rounded-srf border p-3 text-left transition-colors duration-fast ease-ds ${
-                  ativo ? "border-ds-accent/50 bg-ds-accent/[0.07]" : "border-ds-line hover:border-ds-text-3"
+                  ativo ? "border-acento/50 bg-ds-accent/[0.07]" : "border-ds-line hover:border-ds-text-3"
                 }`}
               >
-                <span className={`block text-label font-medium ${ativo ? "text-ds-accent" : "text-ds-text"}`}>{o.label}</span>
+                <span className={`block text-label font-medium ${ativo ? "text-acento" : "text-ds-text"}`}>{o.label}</span>
                 <span className="mt-0.5 block text-caption leading-snug text-ds-text-3">{o.desc}</span>
               </button>
             );

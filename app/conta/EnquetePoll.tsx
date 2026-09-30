@@ -30,7 +30,7 @@ export default function EnquetePoll({
   const maior = Math.max(1, ...opcoes.map((o) => contagem[o.id] || 0));
 
   return (
-    <div className="rounded-srf border border-ds-accent/30 bg-ds-accent/[0.04] p-5 tablet:p-6">
+    <div className="rounded-srf border border-acento/30 bg-ds-accent/[0.04] p-5 tablet:p-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
         <h2 className="font-display text-section font-semibold text-ds-text">{titulo}</h2>
         <span className="text-meta uppercase text-ds-text-3">
@@ -52,7 +52,7 @@ export default function EnquetePoll({
               <button
                 aria-pressed={minha}
                 className={`relative block w-full overflow-hidden rounded-ctl border px-4 py-3 text-left transition-colors duration-fast ease-ds ${
-                  minha ? "border-ds-accent bg-ds-accent/10" : "border-ds-line hover:border-ds-accent/50"
+                  minha ? "border-acento bg-ds-accent/10" : "border-ds-line hover:border-acento/50"
                 }`}
               >
                 <span

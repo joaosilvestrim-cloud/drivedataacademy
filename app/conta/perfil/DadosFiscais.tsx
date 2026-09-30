@@ -12,7 +12,7 @@ import { consultarCep, salvarDadosFiscais } from "../actions";
 type Dados = { cpf: string; rg: string; cep: string; logradouro: string; numero: string; complemento: string; bairro: string; cidade: string; uf: string };
 
 const campo =
-  "w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors hover:border-white/20 focus:border-brand-green/70 focus:bg-white/[0.06]";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/[0.04] px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors hover:border-tinta/20 focus:border-acento/70 focus:bg-tinta/[0.06]";
 const rotulo = "block text-sm font-medium text-slate-200";
 
 const mascaraCep = (v: string) => v.replace(/\D/g, "").slice(0, 8).replace(/^(\d{5})(\d)/, "$1-$2");
@@ -66,9 +66,9 @@ export default function DadosFiscais({
   const quando = enviadoEm ? new Date(enviadoEm).toLocaleDateString("pt-BR") : null;
 
   return (
-    <section id="nota-fiscal" className="mt-8 scroll-mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-7 lg:max-w-[calc(100%-21.5rem)]">
+    <section id="nota-fiscal" className="mt-8 scroll-mt-6 rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-5 sm:p-7 lg:max-w-[calc(100%-21.5rem)]">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-display text-lg font-bold text-white">Dados para nota fiscal</h2>
+        <h2 className="font-display text-lg font-bold text-tinta">Dados para nota fiscal</h2>
         {quando && !erroEnvio && <span className="text-xs text-slate-400">enviados para a emissão em {quando}</span>}
       </div>
       <p className="mt-1 max-w-2xl text-sm text-slate-400">
@@ -80,7 +80,7 @@ export default function DadosFiscais({
           <div className="space-y-1.5">
             <label className={rotulo} htmlFor="nf-cpf">CPF</label>
             {cpfDoPagamento ? (
-              <p className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3 font-mono text-sm text-slate-300">{cpfDoPagamento}</p>
+              <p className="rounded-xl border border-tinta/10 bg-tinta/[0.02] px-4 py-3 font-mono text-sm text-slate-300">{cpfDoPagamento}</p>
             ) : (
               <input id="nf-cpf" value={d.cpf} onChange={set("cpf")} inputMode="numeric" placeholder="000.000.000-00" className={campo} />
             )}
@@ -131,10 +131,10 @@ export default function DadosFiscais({
         </div>
 
         <div className="flex flex-wrap items-center gap-3 pt-1">
-          <button type="submit" disabled={salvando} className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-2.5 text-sm font-semibold text-ink-900 disabled:opacity-50">
+          <button type="submit" disabled={salvando} className="rounded-xl bg-marca-verde px-6 py-2.5 text-sm font-semibold text-sobre-acento disabled:opacity-50">
             {salvando ? "Salvando..." : "Salvar dados da nota"}
           </button>
-          {resposta && <span className={`text-sm ${resposta.ok ? "text-brand-green" : "text-red-300"}`}>{resposta.texto}</span>}
+          {resposta && <span className={`text-sm ${resposta.ok ? "text-acento" : "text-red-300"}`}>{resposta.texto}</span>}
         </div>
         <p className="text-xs text-slate-500">Usamos estes dados só para emitir a sua nota fiscal. Eles não aparecem para outros alunos.</p>
       </form>

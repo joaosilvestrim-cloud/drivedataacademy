@@ -45,9 +45,9 @@ export default function CancelarForm({
   return (
     <form
       action={(fd) => { setEnviando(true); return cancelarAssinatura(fd); }}
-      className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6"
+      className="rounded-2xl border border-tinta/10 bg-tinta/[0.02] p-5 sm:p-6"
     >
-      <h2 className="font-display text-lg font-bold text-white">{tr("Cancelar a assinatura")}</h2>
+      <h2 className="font-display text-lg font-bold text-tinta">{tr("Cancelar a assinatura")}</h2>
 
       <p className="mt-2 text-sm leading-relaxed text-slate-400">
         {recorrente
@@ -59,14 +59,14 @@ export default function CancelarForm({
       </p>
 
       <fieldset className="mt-5">
-        <legend className="text-sm font-medium text-white">{tr("O que te fez decidir isso?")}</legend>
+        <legend className="text-sm font-medium text-tinta">{tr("O que te fez decidir isso?")}</legend>
         <p className="mt-1 text-xs text-slate-500">{tr("Ninguém responde por você. Isso vai direto para quem cuida da Academy.")}</p>
         <div className="mt-3 space-y-1">
           {MOTIVOS.map((m) => (
             <label
               key={m.id}
               className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                motivo === m.id ? "bg-white/[0.07] text-white" : "text-slate-300 hover:bg-white/[0.04]"
+                motivo === m.id ? "bg-tinta/[0.07] text-tinta" : "text-slate-300 hover:bg-tinta/[0.04]"
               }`}
             >
               <input
@@ -75,7 +75,7 @@ export default function CancelarForm({
                 value={m.id}
                 checked={motivo === m.id}
                 onChange={() => setMotivo(m.id)}
-                className="h-4 w-4 shrink-0 accent-brand-green"
+                className="h-4 w-4 shrink-0 accent-acento"
                 required
               />
               {tr(m.label)}
@@ -85,7 +85,7 @@ export default function CancelarForm({
       </fieldset>
 
       <label className="mt-4 block">
-        <span className="text-sm font-medium text-white">
+        <span className="text-sm font-medium text-tinta">
           {motivo === "outro" ? tr("Conte o que aconteceu") : tr("Quer contar mais? (opcional)")}
         </span>
         <textarea
@@ -93,12 +93,12 @@ export default function CancelarForm({
           rows={3}
           required={motivo === "outro"}
           placeholder={tr("O que faltou para a Academy valer a pena para você?")}
-          className="mt-2 w-full rounded-xl border border-white/10 bg-ink-900 px-3.5 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-brand-green/50 focus:outline-none"
+          className="mt-2 w-full rounded-xl border border-tinta/10 bg-ink-900 px-3.5 py-3 text-sm text-slate-200 placeholder:text-slate-600 focus:border-acento/50 focus:outline-none"
         />
       </label>
 
       <label className="mt-4 flex cursor-pointer items-start gap-3 text-sm text-slate-300">
-        <input type="checkbox" name="confirma" value="sim" required className="mt-0.5 h-4 w-4 shrink-0 accent-brand-green" />
+        <input type="checkbox" name="confirma" value="sim" required className="mt-0.5 h-4 w-4 shrink-0 accent-acento" />
         <span>
           {ate
             ? tr("Entendi que não serei cobrado de novo e que meu acesso vai até") + ` ${ate}.`
@@ -117,7 +117,7 @@ export default function CancelarForm({
         <button
           type="button"
           onClick={() => setAberto(false)}
-          className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900"
+          className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento"
         >
           {tr("Continuar assinante")}
         </button>

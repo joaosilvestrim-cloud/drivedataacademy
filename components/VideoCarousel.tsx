@@ -146,7 +146,7 @@ export default function VideoCarousel({ ids }: { ids: string[] }) {
               aria-hidden
             >
               <div className="grid-bg absolute inset-0 opacity-20" />
-              <span className="relative h-9 w-9 animate-spin rounded-full border-2 border-white/15 border-t-brand-green" />
+              <span className="relative h-9 w-9 animate-spin rounded-full border-2 border-tinta/15 border-t-acento" />
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@ export default function VideoCarousel({ ids }: { ids: string[] }) {
             <button
               onClick={prev}
               aria-label={tr("Vídeo anterior")}
-              className="absolute left-2 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-ink-900/70 text-white backdrop-blur transition-colors hover:border-brand-green/60 hover:text-brand-green sm:-left-5"
+              className="absolute left-2 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-tinta/15 bg-ink-900/70 text-tinta backdrop-blur transition-colors hover:border-acento/60 hover:text-acento sm:-left-5"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                 <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -165,7 +165,7 @@ export default function VideoCarousel({ ids }: { ids: string[] }) {
             <button
               onClick={next}
               aria-label={tr("Próximo vídeo")}
-              className="absolute right-2 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-ink-900/70 text-white backdrop-blur transition-colors hover:border-brand-green/60 hover:text-brand-green sm:-right-5"
+              className="absolute right-2 top-1/2 z-30 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-tinta/15 bg-ink-900/70 text-tinta backdrop-blur transition-colors hover:border-acento/60 hover:text-acento sm:-right-5"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                 <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
@@ -183,7 +183,7 @@ export default function VideoCarousel({ ids }: { ids: string[] }) {
               onClick={() => go(idx)}
               aria-label={`Ir para o vídeo ${idx + 1}`}
               className={`h-2 rounded-full transition-all ${
-                idx === i ? "w-6 bg-brand-green" : "w-2 bg-white/20 hover:bg-white/40"
+                idx === i ? "w-6 bg-brand-green" : "w-2 bg-tinta/20 hover:bg-tinta/40"
               }`}
             />
           ))}

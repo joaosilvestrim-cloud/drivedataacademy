@@ -186,7 +186,7 @@ export default async function ContaHome() {
       <header>
         <p className="text-meta uppercase text-ds-text-3">
           {hoje(new Date().toISOString())}
-          {full && <> · <span className="text-ds-accent">{tr("assinatura ativa")}</span></>}
+          {full && <> · <span className="text-acento">{tr("assinatura ativa")}</span></>}
         </p>
         <h1 className="mt-2.5 text-balance font-display text-title font-semibold text-ds-text">
           {tr("Olá")}{firstName ? `, ${firstName}` : ""}
@@ -195,7 +195,7 @@ export default async function ContaHome() {
       </header>
 
       {/* ── 2 · Próximo passo. O elemento mais forte da página. ──────── */}
-      <section aria-labelledby="passo" className="border-l-2 border-ds-accent pl-5 tablet:pl-6">
+      <section aria-labelledby="passo" className="border-l-2 border-acento pl-5 tablet:pl-6">
         <p id="passo" className="text-meta uppercase text-ds-text-3">{tr("Próximo passo")}</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-x-8 gap-y-5">
           <div className="min-w-0 max-w-lg">
@@ -242,7 +242,7 @@ export default async function ContaHome() {
           <EvidenceBar parts={resumo.top.parts} className="mt-4 max-w-2xl" />
           <Link
             href="/conta/universo"
-            className="group mt-4 inline-flex items-center gap-1.5 text-label text-ds-text-2 transition-colors duration-fast ease-ds hover:text-ds-accent"
+            className="group mt-4 inline-flex items-center gap-1.5 text-label text-ds-text-2 transition-colors duration-fast ease-ds hover:text-acento"
           >
             {tr("Ver todas as competências")}
             <ChevronRight size={ICON.sm} strokeWidth={ICON.stroke} aria-hidden="true" className="transition-transform duration-fast ease-ds group-hover:translate-x-0.5" />
@@ -254,7 +254,7 @@ export default async function ContaHome() {
         <section aria-labelledby="frescor">
           <SectionHeader
             title={tr("Hora de revisar")}
-            action={<Link href="/conta/desafios" className="text-label text-ds-accent hover:underline">{tr("Ver desafios")}</Link>}
+            action={<Link href="/conta/desafios" className="text-label text-acento hover:underline">{tr("Ver desafios")}</Link>}
           />
           <p className="mt-3 max-w-xl text-body-sm text-ds-text-2">
             {tr("O conhecimento continua seu. O que caiu foi o frescor, por falta de prática recente.")}
@@ -321,7 +321,7 @@ export default async function ContaHome() {
                     <Thumb url={c.cover_url} title={c.title} />
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                        <span className="truncate font-display text-component font-medium text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
+                        <span className="truncate font-display text-component font-medium text-ds-text transition-colors duration-fast group-hover:text-acento">
                           {c.title}
                         </span>
                         {completo && <Badge tone="accent">{tr("concluído")}</Badge>}
@@ -384,7 +384,7 @@ export default async function ContaHome() {
                 >
                   <span className="min-w-0">
                     <span className="flex min-w-0 items-center gap-2">
-                      <span className="truncate text-body-sm text-ds-text transition-colors duration-fast group-hover:text-ds-accent">
+                      <span className="truncate text-body-sm text-ds-text transition-colors duration-fast group-hover:text-acento">
                         {c.title}
                       </span>
                       {c.coming_soon && <Status tone="attention">{tr("Em breve")}</Status>}
@@ -393,7 +393,7 @@ export default async function ContaHome() {
                   </span>
                   <span className="flex shrink-0 items-center gap-2">
                     {c.subscriber_price != null && (
-                      <span className="font-mono text-caption tabular-nums text-ds-accent">
+                      <span className="font-mono text-caption tabular-nums text-acento">
                         {Number(c.subscriber_price) === 0 ? "Incluso" : brl(Number(c.subscriber_price))}
                       </span>
                     )}
@@ -413,7 +413,7 @@ export default async function ContaHome() {
             href={COMMUNITY_WHATSAPP_URL}
             target="_blank"
             rel="noreferrer"
-            className="text-ds-text-2 underline decoration-ds-line underline-offset-4 transition-colors duration-fast ease-ds hover:text-ds-accent hover:decoration-ds-accent"
+            className="text-ds-text-2 underline decoration-ds-line underline-offset-4 transition-colors duration-fast ease-ds hover:text-acento hover:decoration-acento"
           >
             {tr("grupo do WhatsApp")}
           </a>

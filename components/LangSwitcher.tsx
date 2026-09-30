@@ -12,7 +12,7 @@ export default function LangSwitcher({ className = "" }: { className?: string })
 
   return (
     <div
-      className={`flex items-center gap-0.5 rounded-full border border-white/10 bg-white/5 p-0.5 ${className}`}
+      className={`flex items-center gap-0.5 rounded-full border border-tinta/10 bg-tinta/5 p-0.5 ${className}`}
       role="group"
       aria-label={tr("Idioma")}
     >
@@ -24,7 +24,7 @@ export default function LangSwitcher({ className = "" }: { className?: string })
           aria-label={LANG_LABEL[l]}
           title={LANG_LABEL[l]}
           className={`rounded-full p-1 transition-all ${
-            lang === l ? "bg-white/15 ring-1 ring-white/30" : "opacity-55 hover:opacity-100"
+            lang === l ? "bg-tinta/15 ring-1 ring-tinta/30" : "opacity-55 hover:opacity-100"
           }`}
         >
           <Bandeira idioma={l} tamanho={20} />

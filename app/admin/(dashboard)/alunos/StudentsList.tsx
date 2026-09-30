@@ -142,7 +142,7 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
                         <div className="min-w-0">
                           <Link
                             href={`/admin/alunos/${r.id}`}
-                            className="block truncate text-body-sm font-medium text-ds-text transition-colors duration-fast ease-ds hover:text-ds-accent"
+                            className="block truncate text-body-sm font-medium text-ds-text transition-colors duration-fast ease-ds hover:text-acento"
                           >
                             {r.name || "Sem nome"}
                           </Link>

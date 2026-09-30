@@ -41,14 +41,14 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
 
   if (sent) {
     return (
-      <div className="flex items-center gap-3 rounded-2xl border border-brand-green/30 bg-brand-green/10 px-5 py-6 text-sm text-slate-200">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-green/20 text-brand-green">
+      <div className="flex items-center gap-3 rounded-2xl border border-acento/30 bg-brand-green/10 px-5 py-6 text-sm text-slate-200">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-green/20 text-acento">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
         <div>
-          <p className="font-semibold text-white">{t.waitlist.okTitle}</p>
+          <p className="font-semibold text-tinta">{t.waitlist.okTitle}</p>
           <p className="text-slate-400">{t.waitlist.okText}</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         placeholder={t.waitlist.name}
         value={form.name}
         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
+        className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
       />
       <input
         required
@@ -71,14 +71,14 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
         placeholder={t.waitlist.email}
         value={form.email}
         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-        className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
+        className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
       />
       <div className="flex items-stretch gap-2">
         <select
           value={ddi}
           onChange={(e) => setDdi(e.target.value)}
           aria-label={tr("Código do país")}
-          className="shrink-0 rounded-xl border border-white/10 bg-white/5 px-2 text-sm text-slate-200 outline-none focus:border-brand-green/60 [&>option]:bg-ink-900"
+          className="shrink-0 rounded-xl border border-tinta/10 bg-tinta/5 px-2 text-sm text-slate-200 outline-none focus:border-acento/60 [&>option]:bg-ink-900"
         >
           <option value="+55">{tr("🇧🇷 +55 Brasil")}</option>
           <option value="+351">{tr("🇵🇹 +351 Portugal")}</option>
@@ -122,7 +122,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
           placeholder={t.waitlist.whatsapp}
           value={form.whatsapp}
           onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
-          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition-colors focus:border-brand-green/60"
+          className="w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none transition-colors focus:border-acento/60"
         />
       </div>
       {ddi === "+" && <p className="text-xs text-slate-500">Selecionou "outro": digite o número completo com o código do país (ex.: +244 923 000 000).</p>}
@@ -130,7 +130,7 @@ export default function WaitlistForm({ compact = false }: { compact?: boolean })
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3.5 text-sm font-semibold text-ink-900 shadow-[0_0_30px_-6px_rgba(52,232,160,0.6)] transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-xl bg-marca-verde px-6 py-3.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? t.waitlist.sending : t.waitlist.submit}
       </button>

@@ -22,16 +22,16 @@ export default async function FerramentaPage() {
     const price = (Number(cfg?.value || "19.90") || 19.9).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
     return (
       <main className="grid min-h-screen place-items-center bg-ink-900 px-6">
-        <div className="max-w-md rounded-3xl border border-white/10 bg-white/[0.02] p-8 text-center">
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-green to-brand-blue text-ink-900">
+        <div className="max-w-md rounded-3xl border border-tinta/10 bg-tinta/[0.02] p-8 text-center">
+          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-marca-verde text-sobre-acento">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v10H4zM2 19h20M9 9l2 2 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </div>
-          <h1 className="font-display text-2xl font-bold text-white">{nome}</h1>
+          <h1 className="font-display text-2xl font-bold text-tinta">{nome}</h1>
           <p className="mt-2 text-slate-300">{tr("Crie cards em HTML/SVG para o Power BI e gere a medida DAX pronta, sem escrever código.")}</p>
-          <p className="mt-3 text-sm text-slate-400"><span className="font-semibold text-brand-green">{tr("Incluída na assinatura da Academy.")}</span> {tr("Assine e use a ferramenta e todos os cursos.")}</p>
-          <Link href="/matricula" className="mt-6 inline-block w-full rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-6 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">{tr("Assinar a Academy")}</Link>
+          <p className="mt-3 text-sm text-slate-400"><span className="font-semibold text-acento">{tr("Incluída na assinatura da Academy.")}</span> {tr("Assine e use a ferramenta e todos os cursos.")}</p>
+          <Link href="/matricula" className="mt-6 inline-block w-full rounded-xl bg-marca-verde px-6 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">{tr("Assinar a Academy")}</Link>
           <Link href="/ferramenta/assinar" className="mt-3 block text-sm text-brand-teal hover:underline">ou assinar só a ferramenta ({price}/mês)</Link>
-          <Link href="/conta" className="mt-3 block text-sm text-slate-400 hover:text-white">{tr("Voltar ao portal")}</Link>
+          <Link href="/conta" className="mt-3 block text-sm text-slate-400 hover:text-tinta">{tr("Voltar ao portal")}</Link>
         </div>
       </main>
     );

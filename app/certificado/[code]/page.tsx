@@ -33,7 +33,7 @@ export default async function CertificatePage({ params }: { params: { code: stri
     return (
       <main className="grid min-h-screen place-items-center bg-ink-900 px-6 text-center">
         <div>
-          <p className="font-display text-2xl font-bold text-white">{tr("Certificado não encontrado")}</p>
+          <p className="font-display text-2xl font-bold text-tinta">{tr("Certificado não encontrado")}</p>
           <p className="mt-2 text-slate-400">{tr("O código")} <strong>{params.code}</strong> {tr("não corresponde a nenhum certificado.")}</p>
         </div>
       </main>
@@ -63,10 +63,10 @@ export default async function CertificatePage({ params }: { params: { code: stri
       <div className="certificate-page-inner mx-auto max-w-6xl">
         {/* Quem chega pelo e-mail ou pelo QR precisa de porta de saída. */}
         <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-4">
-          <Link href="/conta/certificados" className="text-sm text-slate-400 transition-colors hover:text-white">
+          <Link href="/conta/certificados" className="text-sm text-slate-400 transition-colors hover:text-tinta">
             {tr("← Voltar para a plataforma")}
           </Link>
-          <div className={`flex w-fit items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold ${valid ? "border-brand-green/40 bg-brand-green/10 text-brand-green" : "border-red-400/40 bg-red-400/10 text-red-300"}`}>
+          <div className={`flex w-fit items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold ${valid ? "border-acento/40 bg-brand-green/10 text-acento" : "border-red-400/40 bg-red-400/10 text-red-300"}`}>
             <span>{valid ? "✓" : "✕"}</span>
             {valid ? tr("Certificado válido") : cert.revoked ? "Certificado revogado" : "Certificado expirado"}
           </div>

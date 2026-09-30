@@ -19,20 +19,20 @@ function Passo({
   const feito = estado === "feito";
   const agora = estado === "agora";
   const anel = feito
-    ? "border-brand-green/40 bg-brand-green/[0.06]"
+    ? "border-acento/40 bg-brand-green/[0.06]"
     : agora
-    ? "border-white/15 bg-white/[0.04]"
-    : "border-white/8 bg-white/[0.02]";
+    ? "border-tinta/15 bg-tinta/[0.04]"
+    : "border-tinta/8 bg-tinta/[0.02]";
   const bola = feito
-    ? "bg-brand-green text-ink-900"
+    ? "bg-brand-green text-sobre-acento"
     : agora
-    ? "bg-gradient-to-br from-brand-green to-brand-blue text-ink-900"
-    : "bg-white/10 text-slate-400";
+    ? "bg-marca-verde text-sobre-acento"
+    : "bg-tinta/10 text-slate-400";
   const botao = feito
-    ? "border border-white/12 text-slate-300 hover:border-brand-green/50 hover:text-brand-green"
+    ? "border border-tinta/12 text-slate-300 hover:border-acento/50 hover:text-acento"
     : agora
-    ? "bg-gradient-to-r from-brand-green to-brand-blue text-ink-900"
-    : "border border-white/12 text-slate-300 hover:border-white/25 hover:text-white";
+    ? "bg-marca-verde text-sobre-acento"
+    : "border border-tinta/12 text-slate-300 hover:border-tinta/25 hover:text-tinta";
 
   return (
     <div className={`flex gap-4 rounded-2xl border p-5 transition-colors ${anel}`}>
@@ -43,9 +43,9 @@ function Passo({
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="font-display text-lg font-bold text-white">{titulo}</h3>
-          {feito && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-bold uppercase text-brand-green">{tr("Concluído")}</span>}
-          {agora && <span className="rounded-full bg-white/10 px-2 py-0.5 text-[0.6rem] font-bold uppercase text-slate-200">{tr("Comece por aqui")}</span>}
+          <h3 className="font-display text-lg font-bold text-tinta">{titulo}</h3>
+          {feito && <span className="rounded-full bg-brand-green/15 px-2 py-0.5 text-[0.6rem] font-bold uppercase text-acento">{tr("Concluído")}</span>}
+          {agora && <span className="rounded-full bg-tinta/10 px-2 py-0.5 text-[0.6rem] font-bold uppercase text-slate-200">{tr("Comece por aqui")}</span>}
         </div>
         <div className="mt-1.5 text-sm leading-relaxed text-slate-400">{children}</div>
         <Link
@@ -71,14 +71,14 @@ export default async function UniversoHub() {
   if (!liberado) {
     return (
       <div className="max-w-xl">
-        <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Knowledge Universe 4D")}</p>
-        <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Seu mapa de competências")}</h1>
+        <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Knowledge Universe 4D")}</p>
+        <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Seu mapa de competências")}</h1>
         <p className="mt-3 text-sm leading-relaxed text-slate-400">
           {tr("Está incluído na assinatura ativa da Academy. Enquanto isso, você pode explorar a demonstração.")}
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/matricula" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Conhecer a assinatura")}</Link>
-          <Link href="/universo/demo" target="_blank" rel="noreferrer" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-slate-200 hover:border-brand-green/50 hover:text-brand-green">{tr("Ver a demonstração")}</Link>
+          <Link href="/matricula" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Conhecer a assinatura")}</Link>
+          <Link href="/universo/demo" target="_blank" rel="noreferrer" className="rounded-xl border border-tinta/10 px-5 py-2.5 text-sm text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Ver a demonstração")}</Link>
         </div>
       </div>
     );
@@ -103,8 +103,8 @@ export default async function UniversoHub() {
 
   return (
     <div className="max-w-3xl">
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Knowledge Universe 4D")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Seu mapa de competências")}</h1>
+      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Knowledge Universe 4D")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Seu mapa de competências")}</h1>
       <p className="mt-3 max-w-2xl text-[0.95rem] leading-relaxed text-slate-300">
         {tr("Tudo que você faz na Academy vira um mapa em 3D do seu conhecimento. Cada estrela é uma competência, e ela cresce conforme você acumula evidências: aulas assistidas, avaliações feitas e desafios entregues.")}
       </p>
@@ -114,22 +114,22 @@ export default async function UniversoHub() {
 
       {temEvidencia && (
         <div className="mt-6 flex flex-wrap gap-3">
-          <div className="rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-3">
-            <p className="font-display text-2xl font-bold text-white">{resumo.developed}</p>
+          <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3">
+            <p className="font-display text-2xl font-bold text-tinta">{resumo.developed}</p>
             <p className="text-xs text-slate-400">{tr("competências com evidência")}</p>
           </div>
-          <div className="rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-3">
-            <p className="font-display text-2xl font-bold text-white">{resumo.advanced}</p>
+          <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3">
+            <p className="font-display text-2xl font-bold text-tinta">{resumo.advanced}</p>
             <p className="text-xs text-slate-400">{tr("em nível avançado")}</p>
           </div>
-          <div className="rounded-2xl border border-white/8 bg-white/[0.02] px-5 py-3">
-            <p className="font-display text-2xl font-bold text-white">{aprovadas}</p>
+          <div className="rounded-2xl border border-tinta/8 bg-tinta/[0.02] px-5 py-3">
+            <p className="font-display text-2xl font-bold text-tinta">{aprovadas}</p>
             <p className="text-xs text-slate-400">{tr("desafios aprovados")}</p>
           </div>
         </div>
       )}
 
-      <h2 className="mt-10 font-display text-lg font-bold text-white">{tr("Como começar")}</h2>
+      <h2 className="mt-10 font-display text-lg font-bold text-tinta">{tr("Como começar")}</h2>
       <div className="mt-4 space-y-3">
         <Passo numero={1} titulo={tr("Faça o diagnóstico")} estado={passo1}
           acao={fezDiagnostico ? "Ver meu resultado" : tr("Começar o diagnóstico")} href="/conta/diagnostico">
@@ -155,14 +155,14 @@ export default async function UniversoHub() {
         </Passo>
       </div>
 
-      <h2 className="mt-10 font-display text-lg font-bold text-white">{tr("Como a pontuação funciona")}</h2>
-      <div className="mt-4 space-y-3 rounded-2xl border border-white/8 bg-white/[0.02] p-5 text-sm leading-relaxed text-slate-400">
+      <h2 className="mt-10 font-display text-lg font-bold text-tinta">{tr("Como a pontuação funciona")}</h2>
+      <div className="mt-4 space-y-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5 text-sm leading-relaxed text-slate-400">
         <p>
           {tr("Cada competência vai de 0 a 100 e soma cinco tipos de evidência:")}
           <span className="text-slate-200"> {tr("aulas (25), avaliações (35), exercícios (15), desafios (20) e revisões (5)")}</span>.
         </p>
         <p>
-          <span className="text-white">{tr("Concluir um curso contribui, mas não significa dominar o assunto.")}</span> {tr("Por isso uma competência só passa de 79 pontos quando você tem também uma avaliação avançada aprovada e um desafio avançado com boa qualidade. É proposital: o número precisa significar alguma coisa.")}
+          <span className="text-tinta">{tr("Concluir um curso contribui, mas não significa dominar o assunto.")}</span> {tr("Por isso uma competência só passa de 79 pontos quando você tem também uma avaliação avançada aprovada e um desafio avançado com boa qualidade. É proposital: o número precisa significar alguma coisa.")}
         </p>
         <p>
           {tr("O tempo derruba o")} <span className="text-slate-200">{tr("frescor")}</span>{tr(", não a sua pontuação. Uma competência parada há meses continua sua, mas aparece esfriando na sua home como lembrete de revisar.")}
@@ -173,8 +173,8 @@ export default async function UniversoHub() {
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
-        <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2.5 text-sm font-semibold text-ink-900">{tr("Abrir meu universo ↗")}</Link>
-        <Link href="/conta/ranking" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm text-slate-200 hover:border-brand-green/50 hover:text-brand-green">{tr("Ver meus pontos")}</Link>
+        <Link href="/universo" target="_blank" rel="noreferrer" className="rounded-xl bg-marca-verde px-5 py-2.5 text-sm font-semibold text-sobre-acento">{tr("Abrir meu universo ↗")}</Link>
+        <Link href="/conta/ranking" className="rounded-xl border border-tinta/10 px-5 py-2.5 text-sm text-slate-200 hover:border-acento/50 hover:text-acento">{tr("Ver meus pontos")}</Link>
       </div>
     </div>
   );

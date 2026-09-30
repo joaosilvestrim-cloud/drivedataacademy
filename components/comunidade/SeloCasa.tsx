@@ -12,7 +12,7 @@ export default function SeloCasa({ label, className = "" }: { label?: string | n
   if (label === "Oficial") {
     return (
       <span
-        className={`inline-flex items-center gap-1 rounded-full border border-[#7cc4ff]/50 bg-gradient-to-r from-[#3b9dff]/20 to-[#a78bfa]/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-[#9fd3ff] ${className}`}
+        className={`inline-flex items-center gap-1 rounded-full border border-sky-400/50 bg-gradient-to-r from-sky-500/20 to-violet-400/15 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-sky-300 ${className}`}
         title={tr("Conta oficial da DriveData Academy")}
       >
         <Escudo size={9} />
@@ -23,7 +23,7 @@ export default function SeloCasa({ label, className = "" }: { label?: string | n
   if (label === "Equipe") {
     return (
       <span
-        className={`inline-flex items-center gap-1 rounded-full border border-[#6ce6c7]/50 bg-gradient-to-r from-brand-green/20 to-[#6ce6c7]/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-[#6ce6c7] ${className}`}
+        className={`inline-flex items-center gap-1 rounded-full border border-teal-300/50 bg-gradient-to-r from-brand-green/20 to-teal-300/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-teal-300 ${className}`}
         title={tr("Equipe da DriveData Academy")}
       >
         <Insignia size={9} />
@@ -33,7 +33,7 @@ export default function SeloCasa({ label, className = "" }: { label?: string | n
   }
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border border-[#f6d68c]/45 bg-gradient-to-r from-[#f6d68c]/18 to-brand-green/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-[#f6d68c] ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full border border-amber-300/45 bg-gradient-to-r from-amber-300/18 to-brand-green/10 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-amber-300 ${className}`}
       title={`${label} da DriveData Academy`}
     >
       <Coroa size={9} />

@@ -61,8 +61,8 @@ export default function PaletaDeComandos({ destinos, idioma = IDIOMA_PADRAO }: {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-start justify-center bg-black/70 p-4 pt-[12vh] backdrop-blur-sm" onClick={() => setAberta(false)}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-2xl" role="dialog" aria-modal="true" aria-label={t.menu.buscarTela}>
-        <div className="flex items-center gap-2 border-b border-white/8 px-4">
+      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-lg overflow-hidden rounded-2xl border border-tinta/10 bg-ink-900 shadow-2xl" role="dialog" aria-modal="true" aria-label={t.menu.buscarTela}>
+        <div className="flex items-center gap-2 border-b border-tinta/8 px-4">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-slate-500">
             <path d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
@@ -77,9 +77,9 @@ export default function PaletaDeComandos({ destinos, idioma = IDIOMA_PADRAO }: {
             }}
             placeholder={t.menu.paleta.titulo}
             aria-label={t.menu.buscarTela}
-            className="w-full bg-transparent py-3.5 text-sm text-white placeholder:text-slate-500 outline-none"
+            className="w-full bg-transparent py-3.5 text-sm text-tinta placeholder:text-slate-500 outline-none"
           />
-          <kbd className="rounded border border-white/10 px-1.5 text-[0.65rem] text-slate-500">esc</kbd>
+          <kbd className="rounded border border-tinta/10 px-1.5 text-[0.65rem] text-slate-500">esc</kbd>
         </div>
 
         <ul className="max-h-[50vh] overflow-y-auto p-2">
@@ -88,7 +88,7 @@ export default function PaletaDeComandos({ destinos, idioma = IDIOMA_PADRAO }: {
               <button
                 onMouseEnter={() => setMarcado(i)}
                 onClick={() => ir(d)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${i === marcado ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5"}`}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${i === marcado ? "bg-tinta/10 text-tinta" : "text-slate-300 hover:bg-tinta/5"}`}
               >
                 <span className="min-w-0 flex-1 truncate">{d.label}</span>
                 <span className="shrink-0 text-[0.68rem] text-slate-500">{d.grupo}</span>

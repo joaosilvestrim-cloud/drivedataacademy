@@ -54,7 +54,7 @@ export default function CodeModal({ open, onClose }: { open: boolean; onClose: (
           <ol className="flex flex-col gap-1.5">
             {PASSOS.map((p, i) => (
               <li key={i} className="flex gap-2 text-xs leading-relaxed text-foreground">
-                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-viz text-[10px] font-bold text-white">{i + 1}</span>
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-viz text-[10px] font-bold text-tinta">{i + 1}</span>
                 <span>{p}</span>
               </li>
             ))}
@@ -67,7 +67,7 @@ export default function CodeModal({ open, onClose }: { open: boolean; onClose: (
           <button onClick={() => baixar("txt")} className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-background">
             <Download className="h-4 w-4" /> .txt
           </button>
-          <button onClick={copiar} className="flex items-center gap-1.5 rounded-lg bg-viz px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-viz-dark">
+          <button onClick={copiar} className="flex items-center gap-1.5 rounded-lg bg-viz px-4 py-2 text-sm font-medium text-tinta transition-colors hover:bg-viz-dark">
             {copiado ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             {copiado ? "Copiado!" : "Copiar DAX"}
           </button>

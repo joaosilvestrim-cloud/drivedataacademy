@@ -7,10 +7,10 @@ import ToolGrantForm from "./ToolGrantForm";
 export const dynamic = "force-dynamic";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
-  active: { label: "Ativa", cls: "bg-brand-green/15 text-brand-green" },
+  active: { label: "Ativa", cls: "bg-brand-green/15 text-acento" },
   pending: { label: "Pendente", cls: "bg-amber-400/15 text-amber-300" },
   overdue: { label: "Atrasada", cls: "bg-red-400/15 text-red-300" },
-  canceled: { label: "Cancelada", cls: "bg-white/5 text-slate-400" },
+  canceled: { label: "Cancelada", cls: "bg-tinta/5 text-slate-400" },
 };
 
 function fmt(iso: string | null) {
@@ -49,13 +49,13 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Ferramenta de Visuais</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Ferramenta de Visuais</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL de tool_subscriptions/saved_visuals no Supabase."} /></div>
       </div>
     );
   }
 
-  const field = "w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-brand-green/60";
+  const field = "w-full rounded-lg border border-tinta/10 bg-tinta/5 px-3 py-2 text-sm text-tinta outline-none focus:border-acento/60";
   const stats = [
     { label: "Assinaturas ativas", value: activeCount, d: "M20 6L9 17l-5-5" },
     { label: "Visuais salvos", value: visualCount, d: "M4 5h16v10H4zM2 19h20" },
@@ -64,25 +64,25 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Ferramenta de Visuais</h1>
+      <h1 className="font-display text-2xl font-bold text-tinta">Ferramenta de Visuais</h1>
       <p className="mt-1 text-sm text-slate-400">Já <b className="text-slate-200">incluída na assinatura da Academy</b>. Aqui você gerencia a assinatura <b className="text-slate-200">avulsa</b> (só a ferramenta), preço, vídeo da landing, cortesias e uso.</p>
 
-      {searchParams?.ok && <div className="mt-5 rounded-xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm text-brand-green">Salvo!</div>}
+      {searchParams?.ok && <div className="mt-5 rounded-xl border border-acento/30 bg-brand-green/10 px-4 py-3 text-sm text-acento">Salvo!</div>}
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {stats.map((s) => (
-          <div key={s.label} className="glass rounded-2xl border border-white/8 p-4">
+          <div key={s.label} className="glass rounded-2xl border border-tinta/8 p-4">
             <div className="grid h-9 w-9 place-items-center rounded-full bg-brand-green/10">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-brand-green"><path d={s.d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-acento"><path d={s.d} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </div>
-            <p className="mt-3 font-display text-2xl font-bold text-white">{s.value}</p>
+            <p className="mt-3 font-display text-2xl font-bold text-tinta">{s.value}</p>
             <p className="text-xs text-slate-400">{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Preço */}
-      <form action={saveToolPrice} className="mt-6 flex flex-wrap items-end gap-3 rounded-2xl border border-white/8 bg-white/[0.02] p-5">
+      <form action={saveToolPrice} className="mt-6 flex flex-wrap items-end gap-3 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5">
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-slate-300">Preço da assinatura (R$/mês)</label>
           <input name="tool_price" defaultValue={price} inputMode="decimal" className={`${field} w-40`} />
@@ -91,7 +91,7 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
           <label className="block text-sm font-medium text-slate-300">Vídeo da landing (URL de embed)</label>
           <input name="tool_video_url" defaultValue={videoUrl} placeholder="https://www.youtube.com/embed/..." className={field} />
         </div>
-        <button className="rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-5 py-2 text-sm font-semibold text-ink-900">Salvar</button>
+        <button className="rounded-lg bg-marca-verde px-5 py-2 text-sm font-semibold text-sobre-acento">Salvar</button>
         <p className="w-full text-xs text-slate-500">A ferramenta é um produto à parte. Quem assina usa em /ferramenta, independente de ter comprado o curso. Admin sempre tem acesso.</p>
       </form>
 
@@ -99,13 +99,13 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
       <ToolGrantForm students={students} />
 
       {/* Assinantes */}
-      <h2 className="mt-8 font-display text-lg font-bold text-white">Assinantes</h2>
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
+      <h2 className="mt-8 font-display text-lg font-bold text-tinta">Assinantes</h2>
+      <div className="mt-4 overflow-x-auto rounded-2xl border border-tinta/8">
         <table className="w-full min-w-[640px] text-left text-sm">
-          <thead className="bg-white/[0.03] text-xs uppercase tracking-wide text-slate-400">
+          <thead className="bg-tinta/[0.03] text-xs uppercase tracking-wide text-slate-400">
             <tr><th className="px-4 py-3">Aluno</th><th className="px-4 py-3">E-mail</th><th className="px-4 py-3">Origem</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Válido até</th><th className="px-4 py-3 text-right">Ação</th></tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-tinta/5">
             {subs.length === 0 && <tr><td colSpan={6} className="px-4 py-12 text-center text-slate-500">Nenhuma assinatura ainda.</td></tr>}
             {subs.map((x) => {
               const st = STATUS[x.status] || STATUS.pending;
@@ -115,7 +115,7 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
                   <td className="px-4 py-3">{displayName(nameById, x.user_id)}</td>
                   <td className="px-4 py-3 text-slate-400">{x.email || "—"}</td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${cortesia ? "bg-brand-blue/15 text-brand-teal" : "bg-white/5 text-slate-400"}`}>{cortesia ? "cortesia" : "assinatura"}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${cortesia ? "bg-brand-blue/15 text-brand-teal" : "bg-tinta/5 text-slate-400"}`}>{cortesia ? "cortesia" : "assinatura"}</span>
                   </td>
                   <td className="px-4 py-3"><span className={`rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase ${st.cls}`}>{st.label}</span></td>
                   <td className="px-4 py-3 text-slate-400">{fmt(x.current_period_end)}</td>
@@ -123,7 +123,7 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
                     {x.status === "active" && (
                       <form action={revokeToolAccess} className="inline">
                         <input type="hidden" name="user_id" value={x.user_id} />
-                        <button className="rounded-lg border border-white/10 px-2.5 py-1 text-xs font-medium text-slate-400 hover:border-red-400/40 hover:text-red-400">Revogar</button>
+                        <button className="rounded-lg border border-tinta/10 px-2.5 py-1 text-xs font-medium text-slate-400 hover:border-red-400/40 hover:text-red-400">Revogar</button>
                       </form>
                     )}
                   </td>
@@ -134,7 +134,7 @@ export default async function AdminFerramentaPage({ searchParams }: { searchPara
         </table>
       </div>
 
-      <div className="mt-6 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-xs text-slate-400">
+      <div className="mt-6 rounded-xl border border-tinta/8 bg-tinta/[0.02] px-4 py-3 text-xs text-slate-400">
         Próximas fases da ferramenta: salvar visual como <span className="text-slate-200">template</span> e <span className="text-slate-200">galeria da comunidade</span> com moderação (hoje estão como "em breve").
       </div>
     </div>

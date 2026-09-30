@@ -16,7 +16,7 @@ const CLASSE: Record<Classe, { rotulo: string; cor: string; ordem: number }> = {
   atrasada: { rotulo: "Atrasada", cor: "text-ds-attention", ordem: 1 },
   cancelada: { rotulo: "Cancelada", cor: "text-ds-text-3", ordem: 2 },
   nunca_pagou: { rotulo: "Não pagou a 1ª (checkout abandonado)", cor: "text-ds-text-3", ordem: 3 },
-  em_dia: { rotulo: "Em dia", cor: "text-ds-accent", ordem: 4 },
+  em_dia: { rotulo: "Em dia", cor: "text-acento", ordem: 4 },
 };
 
 export default async function Pagamentos() {

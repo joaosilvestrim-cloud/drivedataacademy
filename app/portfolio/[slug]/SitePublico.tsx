@@ -60,17 +60,17 @@ export default function SitePublico({
   }, []);
 
   return (
-    <div className="flex h-[100dvh] flex-col bg-[#050b18]">
-      <div className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-white/10 px-4 text-white">
+    <div className="flex h-[100dvh] flex-col bg-ink-800">
+      <div className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-tinta/10 px-4 text-tinta">
         <a href="/" className="flex min-w-0 items-center gap-2.5" title="DriveData Academy">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="DriveData Academy" className="h-6 w-auto shrink-0" />
+          <img src="/logo-claro.png" alt="DriveData Academy" className="h-6 w-auto shrink-0" />
           <span className="hidden truncate text-xs text-slate-400 sm:inline">Portfólio de {nome}</span>
         </a>
         {mostrarUniverso && (
           <button
             onClick={() => setUniverso(true)}
-            className="shrink-0 rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-3 py-1.5 text-xs font-semibold text-ink-900 sm:text-sm"
+            className="shrink-0 rounded-lg bg-marca-verde px-3 py-1.5 text-xs font-semibold text-sobre-acento sm:text-sm"
           >
             Ver universo de competências 4D
           </button>

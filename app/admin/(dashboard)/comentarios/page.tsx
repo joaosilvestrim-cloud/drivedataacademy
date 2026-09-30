@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 const STATUS: Record<string, { label: string; cls: string }> = {
   pending: { label: "Pendente", cls: "bg-amber-400/15 text-amber-300" },
-  approved: { label: "Aprovado", cls: "bg-brand-green/15 text-brand-green" },
+  approved: { label: "Aprovado", cls: "bg-brand-green/15 text-acento" },
   rejected: { label: "Recusado", cls: "bg-red-400/15 text-red-300" },
 };
 
@@ -51,7 +51,7 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Comentários</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Comentários</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL de lesson_comments no Supabase."} /></div>
       </div>
     );
@@ -59,7 +59,7 @@ export default async function ComentariosPage({ searchParams }: { searchParams: 
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Comentários das aulas</h1>
+      <h1 className="font-display text-2xl font-bold text-tinta">Comentários das aulas</h1>
       <p className="mt-1 text-sm text-slate-400">Aprove ou recuse os comentários dos alunos antes de aparecerem na aula.</p>
 
       <div className="mt-6">

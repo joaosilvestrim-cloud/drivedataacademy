@@ -45,14 +45,14 @@ export default async function EbooksPage() {
 
   return (
     <div>
-      <p className="text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Biblioteca")}</p>
-      <h1 className="mt-1 font-display text-3xl font-bold text-white">{tr("Ebooks")}</h1>
+      <p className="text-sm font-medium uppercase tracking-wide text-acento">{tr("Biblioteca")}</p>
+      <h1 className="mt-1 font-display text-3xl font-bold text-tinta">{tr("Ebooks")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-slate-400">
         {tr("Material de leitura para levar junto: o método por escrito, para consultar no meio do projeto. Incluído na assinatura.")}
       </p>
 
       {lista.length === 0 ? (
-        <div className="mt-10 rounded-3xl border border-white/8 bg-white/[0.02] p-10 text-center">
+        <div className="mt-10 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-10 text-center">
           <p className="text-sm text-slate-400">{tr("Assim que o time publicar o primeiro ebook, ele aparece aqui.")}</p>
         </div>
       ) : (
@@ -64,12 +64,12 @@ export default async function EbooksPage() {
             return (
               <li
                 key={e.id}
-                className="flex flex-col gap-4 rounded-3xl border border-white/8 bg-white/[0.02] p-5 transition-colors hover:border-brand-green/30 sm:flex-row"
+                className="flex flex-col gap-4 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-5 transition-colors hover:border-acento/30 sm:flex-row"
               >
                 <Capa ebook={e} />
 
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <h2 className="font-display text-lg font-bold leading-tight text-white">{e.title}</h2>
+                  <h2 className="font-display text-lg font-bold leading-tight text-tinta">{e.title}</h2>
                   {e.subtitle && <p className="mt-1 text-sm text-slate-400">{e.subtitle}</p>}
                   {e.description && <p className="mt-3 text-sm leading-relaxed text-slate-400">{e.description}</p>}
 
@@ -83,7 +83,7 @@ export default async function EbooksPage() {
                     {principal && (
                       <a
                         href={`/conta/ebooks/${e.slug}/baixar?lang=${principal.idioma}`}
-                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2.5 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]"
+                        className="inline-flex items-center gap-2 rounded-xl bg-marca-verde px-4 py-2.5 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]"
                       >
                         <Bandeira idioma={principal.idioma} tamanho={18} />
                         {tr("Baixar o PDF")}
@@ -94,7 +94,7 @@ export default async function EbooksPage() {
                         key={a.idioma}
                         href={`/conta/ebooks/${e.slug}/baixar?lang=${a.idioma}`}
                         title={`${tr("Baixar em")} ${NOME_DO_IDIOMA[a.idioma]}`}
-                        className="inline-flex items-center gap-2 rounded-xl border border-white/10 px-3 py-2.5 text-xs text-slate-300 transition-colors hover:border-brand-green/50 hover:text-white"
+                        className="inline-flex items-center gap-2 rounded-xl border border-tinta/10 px-3 py-2.5 text-xs text-slate-300 transition-colors hover:border-acento/50 hover:text-tinta"
                       >
                         <Bandeira idioma={a.idioma} tamanho={16} />
                         {NOME_DO_IDIOMA[a.idioma]}
@@ -117,12 +117,12 @@ export default async function EbooksPage() {
 function Capa({ ebook }: { ebook: Ebook }) {
   if (ebook.cover_url) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={ebook.cover_url} alt="" className="h-44 w-32 shrink-0 rounded-xl border border-white/10 object-cover" />;
+    return <img src={ebook.cover_url} alt="" className="h-44 w-32 shrink-0 rounded-xl border border-tinta/10 object-cover" />;
   }
   return (
-    <div className="flex h-44 w-32 shrink-0 flex-col justify-between rounded-xl border border-brand-green/25 bg-gradient-to-br from-brand-green/15 via-ink-800 to-ink-900 p-3">
-      <span className="text-[0.55rem] font-semibold uppercase tracking-[.18em] text-brand-green">Ebook</span>
-      <span className="font-display text-[0.8rem] font-bold leading-tight text-white line-clamp-5">{ebook.title}</span>
+    <div className="flex h-44 w-32 shrink-0 flex-col justify-between rounded-xl border border-acento/25 bg-gradient-to-br from-brand-green/15 via-ink-800 to-ink-900 p-3">
+      <span className="text-[0.55rem] font-semibold text-marca">Ebook</span>
+      <span className="font-display text-[0.8rem] font-bold leading-tight text-tinta line-clamp-5">{ebook.title}</span>
     </div>
   );
 }

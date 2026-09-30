@@ -18,7 +18,7 @@ export default function AvisoLegendas({ idiomas }: { idiomas?: string[] | null }
   if (lista.length === 0) return null;
 
   return (
-    <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-l-2 border-brand-green/50 py-1 pl-4 text-xs leading-relaxed text-slate-400">
+    <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 border-l-2 border-acento/50 py-1 pl-4 text-xs leading-relaxed text-slate-400">
       <span
         aria-hidden="true"
         className="grid h-[1.15rem] w-7 shrink-0 place-items-center rounded-[3px] border border-slate-500 font-mono text-[0.58rem] font-bold tracking-tight text-slate-300"

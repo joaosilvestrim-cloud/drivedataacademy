@@ -39,14 +39,14 @@ function Campo({
     <label className="flex flex-col gap-1.5">
       <span className="text-sm font-medium text-slate-200">
         {label}
-        {required && <span className="text-brand-green"> *</span>}
+        {required && <span className="text-acento"> *</span>}
       </span>
       <input
         name={name}
         type={type}
         required={required}
         autoComplete={autoComplete}
-        className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors placeholder:text-slate-600 focus:border-brand-green"
+        className="rounded-xl border border-tinta/10 bg-ink-800 px-4 py-3 text-tinta outline-none transition-colors placeholder:text-slate-600 focus:border-acento"
       />
       {ajuda && <span className="text-xs text-slate-500">{ajuda}</span>}
     </label>
@@ -62,7 +62,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
       <Aviso titulo={tr("Nenhuma live com certificado no momento")}>
         <p className="mt-3 text-slate-400">
           {tr("A confirmação de presença abre meia hora antes da transmissão. Veja a próxima na")}{" "}
-          <Link href="/#ao-vivo" className="text-brand-green underline underline-offset-4">{tr("grade de transmissões")}</Link>.
+          <Link href="/#ao-vivo" className="text-acento underline underline-offset-4">{tr("grade de transmissões")}</Link>.
         </p>
       </Aviso>
     );
@@ -72,11 +72,11 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
     return (
       <Aviso titulo={tr("O prazo deste certificado terminou")}>
         <p className="mt-3 text-slate-400">
-          {tr("O certificado de")} <span className="text-white">{live.title}</span> {tr("podia ser emitido até")} {dia(prazoDaLive(live))}. São {PRAZO_DIAS} {tr("dias corridos depois da transmissão.")}
+          {tr("O certificado de")} <span className="text-tinta">{live.title}</span> {tr("podia ser emitido até")} {dia(prazoDaLive(live))}. São {PRAZO_DIAS} {tr("dias corridos depois da transmissão.")}
         </p>
         <p className="mt-3 text-slate-400">
           {tr("Nas próximas lives, emita o seu no mesmo dia. A grade está na")}{" "}
-          <Link href="/#ao-vivo" className="text-brand-green underline underline-offset-4">{tr("página inicial")}</Link>.
+          <Link href="/#ao-vivo" className="text-acento underline underline-offset-4">{tr("página inicial")}</Link>.
         </p>
       </Aviso>
     );
@@ -86,7 +86,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
     return (
       <Aviso titulo={tr("A presença ainda não abriu")}>
         <p className="mt-3 text-slate-400">
-          <span className="text-white">{live.title}</span> {tr("começa")} {quando(live.starts_at)}{tr(". Leia o QR code de novo quando a transmissão estiver no ar.")}
+          <span className="text-tinta">{live.title}</span> {tr("começa")} {quando(live.starts_at)}{tr(". Leia o QR code de novo quando a transmissão estiver no ar.")}
         </p>
       </Aviso>
     );
@@ -100,26 +100,26 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
         <div>
           <Link href="/" aria-label={tr("DriveData Academy")}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt={tr("DriveData Academy")} className="h-9 w-auto" />
+            <img src="/logo-claro.png" alt={tr("DriveData Academy")} className="h-9 w-auto" />
           </Link>
           <p className="mt-10 text-sm text-slate-400">{quando(live.starts_at)} {tr("· ao vivo")}</p>
-          <h1 className="mt-2 font-display text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">{live.title}</h1>
+          <h1 className="mt-2 font-display text-3xl font-bold leading-tight tracking-tight text-tinta sm:text-4xl">{live.title}</h1>
           <p className="mt-4 max-w-md text-slate-300/90">
             {tr("Confirme sua presença e receba o certificado de participação no seu nome, com código de validação.")}
             {carga ? ` Carga horária de ${carga}.` : ""}
           </p>
 
-          <ol className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-slate-400">
+          <ol className="mt-10 flex flex-col gap-4 border-t border-tinta/10 pt-6 text-sm text-slate-400">
             <li className="flex gap-3">
-              <span className="font-mono text-brand-green">1</span>
+              <span className="font-mono text-acento">1</span>
               <span>{tr("Preencha o formulário com o nome que deve sair no certificado.")}</span>
             </li>
             <li className="flex gap-3">
-              <span className="font-mono text-brand-green">2</span>
+              <span className="font-mono text-acento">2</span>
               <span>{live.attendance_code ? tr("Digite a palavra-chave dita na transmissão.") : tr("Confirme o envio.")}</span>
             </li>
             <li className="flex gap-3">
-              <span className="font-mono text-brand-green">3</span>
+              <span className="font-mono text-acento">3</span>
               <span>{tr("O certificado abre na hora e também vai para o seu e-mail.")}</span>
             </li>
           </ol>
@@ -129,7 +129,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
           </p>
         </div>
 
-        <form action={registrarPresenca} className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-ink-800/60 p-6 sm:p-8">
+        <form action={registrarPresenca} className="flex flex-col gap-5 rounded-2xl border border-tinta/10 bg-ink-800/60 p-6 sm:p-8">
           <input type="hidden" name="live_id" value={live.id} />
 
           {searchParams.erro && (
@@ -152,7 +152,7 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
             <textarea
               name="goal"
               rows={3}
-              className="rounded-xl border border-white/10 bg-ink-800 px-4 py-3 text-white outline-none transition-colors placeholder:text-slate-600 focus:border-brand-green"
+              className="rounded-xl border border-tinta/10 bg-ink-800 px-4 py-3 text-tinta outline-none transition-colors placeholder:text-slate-600 focus:border-acento"
             />
             <span className="text-xs text-slate-500">{tr("Opcional. Ajuda a escolher os próximos temas.")}</span>
           </label>
@@ -162,13 +162,13 @@ export default async function PresencaPage({ searchParams }: { searchParams: { l
           )}
 
           <label className="flex items-start gap-3 text-sm text-slate-300">
-            <input type="checkbox" name="consent" defaultChecked className="mt-1 h-4 w-4 accent-brand-green" />
+            <input type="checkbox" name="consent" defaultChecked className="mt-1 h-4 w-4 accent-acento" />
             <span>{tr("Quero receber os avisos das próximas lives e materiais da DriveData Academy.")}</span>
           </label>
 
           <button
             type="submit"
-            className="rounded-xl bg-brand-green px-6 py-3.5 font-semibold text-ink-900 transition-colors hover:bg-white"
+            className="rounded-xl bg-brand-green px-6 py-3.5 font-semibold text-sobre-acento transition-colors hover:bg-white"
           >
             {tr("Emitir meu certificado")}
           </button>
@@ -183,8 +183,8 @@ function Aviso({ titulo, children }: { titulo: string; children: React.ReactNode
     <main className="grid min-h-screen place-items-center bg-ink-900 px-6 text-center">
       <div className="max-w-md">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt={tr("DriveData Academy")} className="mx-auto h-9 w-auto" />
-        <h1 className="mt-8 font-display text-2xl font-bold text-white">{titulo}</h1>
+        <img src="/logo-claro.png" alt={tr("DriveData Academy")} className="mx-auto h-9 w-auto" />
+        <h1 className="mt-8 font-display text-2xl font-bold text-tinta">{titulo}</h1>
         {children}
       </div>
     </main>

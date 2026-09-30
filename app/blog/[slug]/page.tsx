@@ -53,11 +53,11 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
       <Background />
       <Navbar />
       <main className="relative mx-auto max-w-6xl px-6 pb-24 pt-32 sm:pt-40">
-        <Link href="/blog" className="text-sm text-slate-400 transition-colors hover:text-brand-green">{tr("← Todos os artigos")}</Link>
+        <Link href="/blog" className="text-sm text-slate-400 transition-colors hover:text-acento">{tr("← Todos os artigos")}</Link>
 
         <header className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div>
-            {post.category && <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-green">{post.category}</p>}
+            {post.category && <p className="text-sm font-semibold text-marca">{post.category}</p>}
             <h1 className="mt-3 font-display text-3xl font-bold leading-[1.1] tracking-tight sm:text-5xl">{post.title}</h1>
             {post.excerpt && <p className="mt-5 max-w-2xl text-lg text-slate-300/90">{post.excerpt}</p>}
             <p className="mt-6 text-sm text-slate-500">
@@ -65,7 +65,7 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
             </p>
           </div>
           {post.cover_url && (
-            <div className="overflow-hidden rounded-3xl border border-white/10">
+            <div className="overflow-hidden rounded-3xl border border-tinta/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={post.cover_url} alt="" className="aspect-[16/9] w-full object-cover" />
             </div>
@@ -76,22 +76,22 @@ export default async function ArtigoPage({ params }: { params: { slug: string } 
           <article className="artigo max-w-[68ch]" dangerouslySetInnerHTML={{ __html: html }} />
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="glass rounded-3xl border border-white/8 p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">{tr("Aprenda na prática")}</p>
-              <p className="mt-3 font-display text-xl font-bold text-white">{tr("Lives, gravações, ferramentas e treinamentos com preço de assinante.")}</p>
-              <Link href="/cursos" className="mt-5 inline-block rounded-xl bg-gradient-to-r from-brand-green to-brand-blue px-5 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+            <div className="glass rounded-3xl border border-tinta/8 p-6">
+              <p className="text-xs font-semibold text-marca">{tr("Aprenda na prática")}</p>
+              <p className="mt-3 font-display text-xl font-bold text-tinta">{tr("Lives, gravações, ferramentas e treinamentos com preço de assinante.")}</p>
+              <Link href="/cursos" className="mt-5 inline-block rounded-xl bg-marca-verde px-5 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
                 {tr("Conhecer a assinatura")}
               </Link>
             </div>
             {(outros ?? []).length > 0 && (
               <div className="mt-8">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{tr("Leia também")}</p>
-                <ul className="mt-4 divide-y divide-white/5">
+                <ul className="mt-4 divide-y divide-tinta/5">
                   {(outros ?? []).map((o: any) => (
                     <li key={o.id} className="py-3">
                       <Link href={`/blog/${o.slug}`} className="group block">
                         <span className="block text-[0.7rem] font-semibold uppercase tracking-wide text-brand-teal">{o.category}</span>
-                        <span className="mt-1 block text-sm font-medium text-slate-200 transition-colors group-hover:text-brand-green">{o.title}</span>
+                        <span className="mt-1 block text-sm font-medium text-slate-200 transition-colors group-hover:text-acento">{o.title}</span>
                       </Link>
                     </li>
                   ))}

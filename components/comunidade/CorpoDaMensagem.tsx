@@ -19,13 +19,13 @@ export default function CorpoDaMensagem({ texto }: { texto: string }) {
     if (inicio > ultimo) partes.push(texto.slice(ultimo, inicio));
     if (m[1]) {
       partes.push(
-        <a key={i++} href={m[1]} target="_blank" rel="noopener noreferrer" className="break-all text-brand-green underline decoration-brand-green/40 underline-offset-2 hover:decoration-brand-green">
+        <a key={i++} href={m[1]} target="_blank" rel="noopener noreferrer" className="break-all text-acento underline decoration-acento/40 underline-offset-2 hover:decoration-acento">
           {m[1].replace(/^https?:\/\//, "")}
         </a>,
       );
     } else if (m[2]) {
       partes.push(
-        <strong key={i++} className="font-semibold text-white">
+        <strong key={i++} className="font-semibold text-tinta">
           {m[2].slice(2, -2)}
         </strong>,
       );

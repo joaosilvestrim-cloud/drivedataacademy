@@ -38,12 +38,12 @@ export default function MaterialLeadsList({ rows }: { rows: Lead[] }) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Buscar por conteúdo, nome, e-mail, empresa, campanha..."
-        className="mt-6 w-full max-w-md rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60"
+        className="mt-6 w-full max-w-md rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-2.5 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60"
       />
 
-      <div className="mt-4 overflow-x-auto rounded-2xl border border-white/8">
+      <div className="mt-4 overflow-x-auto rounded-2xl border border-tinta/8">
         <table className="w-full text-sm">
-          <thead className="bg-white/5 text-left text-slate-400">
+          <thead className="bg-tinta/5 text-left text-slate-400">
             <tr>
               <th className="px-4 py-3 font-medium">Data</th>
               <th className="px-4 py-3 font-medium">Conteúdo baixado</th>
@@ -56,7 +56,7 @@ export default function MaterialLeadsList({ rows }: { rows: Lead[] }) {
           </thead>
           <tbody>
             {filtered.map((r, i) => (
-              <tr key={i} className="border-t border-white/5 text-slate-200 hover:bg-white/[0.02]">
+              <tr key={i} className="border-t border-tinta/5 text-slate-200 hover:bg-tinta/[0.02]">
                 <td className="whitespace-nowrap px-4 py-3 text-slate-400">{fmt(r.created_at)}</td>
                 <td className="px-4 py-3">{r.material_title || "—"}</td>
                 <td className="px-4 py-3 font-medium">{r.name}</td>

@@ -261,11 +261,11 @@ export default function UniversoPublico({
   const sc = comp ? scores[comp.id] : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#050b18] text-white" role="dialog" aria-modal="true" aria-label={`Universo de competências de ${nome}`}>
+    <div className="escuro fixed inset-0 z-50 flex flex-col bg-ink-900 text-tinta" role="dialog" aria-modal="true" aria-label={`Universo de competências de ${nome}`}>
       <style>{`@keyframes surgir{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}.surgir{animation:surgir .7s cubic-bezier(.2,.8,.2,1) both}@media (prefers-reduced-motion:reduce){.surgir{animation:none}}`}</style>
-      <header className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-8">
+      <header className="flex items-start justify-between gap-4 border-b border-tinta/10 px-5 py-4 sm:px-8">
         <div>
-          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-brand-green">Knowledge Universe 4D</p>
+          <p className="text-[0.7rem] font-semibold text-marca">Knowledge Universe 4D</p>
           {/* No celular o título curto: a constelação precisa da altura. */}
           <h2 className="mt-1 font-display text-lg font-bold sm:text-2xl">
             <span className="sm:hidden">Universo de {primeiro}</span>
@@ -275,7 +275,7 @@ export default function UniversoPublico({
             Cada competência acende porque um projeto de {primeiro} a demonstra. Toque numa esfera para ver qual, e aperte play para ver a carreira crescer.
           </p>
         </div>
-        <button onClick={aoFechar} className="shrink-0 rounded-lg border border-white/15 px-3 py-1.5 text-sm text-slate-300 hover:text-white" aria-label="Fechar o universo">
+        <button onClick={aoFechar} className="shrink-0 rounded-lg border border-tinta/15 px-3 py-1.5 text-sm text-slate-300 hover:text-tinta" aria-label="Fechar o universo">
           Fechar
         </button>
       </header>
@@ -317,7 +317,7 @@ export default function UniversoPublico({
 
             {/* A data grande ao fundo e a legenda da carreira, só durante o play. */}
             {tocando && atual && (
-              <p key={`data-${quadro}`} className="surgir pointer-events-none absolute inset-x-0 top-4 text-center font-display text-5xl font-bold tracking-tight text-white/[0.09] sm:top-6 sm:text-8xl">
+              <p key={`data-${quadro}`} className="surgir pointer-events-none absolute inset-x-0 top-4 text-center font-display text-5xl font-bold tracking-tight text-tinta/[0.09] sm:top-6 sm:text-8xl">
                 {rotulo(atual.at, dados.passo)}
               </p>
             )}
@@ -336,7 +336,7 @@ export default function UniversoPublico({
             )}
 
             {/* Painel: a competência tocada, ou o resumo quando nada está tocado. */}
-            {!tocando && !mostraRoteiro && <aside className="absolute bottom-3 left-3 right-3 max-h-[42%] overflow-y-auto rounded-2xl border border-white/10 bg-[#0a1428]/90 p-3 backdrop-blur sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:max-h-[calc(100%-2.5rem)] sm:w-72 sm:p-4">
+            {!tocando && !mostraRoteiro && <aside className="absolute bottom-3 left-3 right-3 max-h-[42%] overflow-y-auto rounded-2xl border border-tinta/10 bg-ink-800/90 p-3 backdrop-blur sm:bottom-auto sm:left-auto sm:right-5 sm:top-5 sm:max-h-[calc(100%-2.5rem)] sm:w-72 sm:p-4">
               {vaga ? (
                 <PainelDaVaga vaga={vaga} aoFechar={() => setVaga(null)} aoCompetencia={(id) => { setExtra(null); setSelecionada(id); }} />
               ) : vagaAberta ? (
@@ -349,14 +349,14 @@ export default function UniversoPublico({
                     rows={7}
                     maxLength={9000}
                     placeholder="Responsabilidades, requisitos, ferramentas..."
-                    className="mt-3 w-full resize-y rounded-lg border border-white/15 bg-black/30 p-2 text-sm text-slate-100 outline-none focus:border-brand-green/60"
+                    className="mt-3 w-full resize-y rounded-lg border border-tinta/15 bg-black/30 p-2 text-sm text-slate-100 outline-none focus:border-acento/60"
                   />
                   {vagaErro && <p className="mt-2 text-xs text-red-300">{vagaErro}</p>}
                   <div className="mt-3 flex gap-2">
                     <button disabled={vagaLendo || vagaTexto.trim().length < 80} onClick={compararVaga} className="h-9 rounded-lg bg-brand-green px-4 text-sm font-semibold text-slate-900 disabled:opacity-40">
                       {vagaLendo ? "Lendo a vaga..." : "Comparar"}
                     </button>
-                    <button onClick={() => setVagaAberta(false)} className="h-9 px-3 text-sm text-slate-400 hover:text-white">Cancelar</button>
+                    <button onClick={() => setVagaAberta(false)} className="h-9 px-3 text-sm text-slate-400 hover:text-tinta">Cancelar</button>
                   </div>
                 </>
               ) : extra ? (
@@ -385,12 +385,12 @@ export default function UniversoPublico({
                     </ul>
                   )}
                   {conectadas.length > 0 && (
-                    <div className="mt-3 border-t border-white/10 pt-3">
+                    <div className="mt-3 border-t border-tinta/10 pt-3">
                       <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">Conecta com</p>
                       <ul className="mt-1.5 flex flex-col gap-1.5">
                         {conectadas.map((c) => (
                           <li key={c.id} className="text-xs">
-                            <button onClick={() => setSelecionada(c.id)} className="text-left text-slate-200 hover:text-brand-green">
+                            <button onClick={() => setSelecionada(c.id)} className="text-left text-slate-200 hover:text-acento">
                               <span className="font-semibold">{c.nome}</span>
                               <span className="text-slate-400"> pelo projeto {c.projetos.join(", ")}</span>
                             </button>
@@ -399,7 +399,7 @@ export default function UniversoPublico({
                       </ul>
                     </div>
                   )}
-                  <button onClick={() => setSelecionada(null)} className="mt-3 text-xs text-slate-400 hover:text-white">Ver resumo</button>
+                  <button onClick={() => setSelecionada(null)} className="mt-3 text-xs text-slate-400 hover:text-tinta">Ver resumo</button>
                 </>
               ) : (
                 <>
@@ -413,7 +413,7 @@ export default function UniversoPublico({
                     . Toque numa esfera, num planeta ou na nave para ver o detalhe.
                   </p>
                   {capitulos.length > 1 && (
-                    <button onClick={() => setRoteiro(true)} className="mt-3 w-full rounded-lg border border-white/15 px-3 py-2 text-left text-sm hover:border-white/40">
+                    <button onClick={() => setRoteiro(true)} className="mt-3 w-full rounded-lg border border-tinta/15 px-3 py-2 text-left text-sm hover:border-tinta/40">
                       <span className="font-semibold">Ler o roteiro da carreira</span>
                       <span className="block text-xs text-slate-400">{capitulos.length} capítulos, do primeiro fato até hoje</span>
                     </button>
@@ -423,7 +423,7 @@ export default function UniversoPublico({
                       const cor = dados.catalog.areas.find((a) => a.id === c.area)?.color;
                       return (
                         <li key={c.id}>
-                          <button onClick={() => setSelecionada(c.id)} className="flex w-full items-center justify-between gap-3 text-left text-sm hover:text-brand-green">
+                          <button onClick={() => setSelecionada(c.id)} className="flex w-full items-center justify-between gap-3 text-left text-sm hover:text-acento">
                             <span className="flex min-w-0 items-center gap-2">
                               <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: cor }} />
                               <span className="truncate">{c.name}</span>
@@ -439,13 +439,13 @@ export default function UniversoPublico({
             </aside>}
 
             <div className="absolute left-3 top-3 flex gap-1.5 sm:left-5 sm:top-5">
-              <button onClick={() => setZoom((z) => z + 1)} className="h-8 w-8 rounded-lg border border-white/15 bg-black/30 text-slate-200" aria-label="Aproximar">+</button>
-              <button onClick={() => setZoom((z) => z - 1)} className="h-8 w-8 rounded-lg border border-white/15 bg-black/30 text-slate-200" aria-label="Afastar">−</button>
-              <button onClick={() => { setReset((r) => r + 1); setSelecionada(null); setExtra(null); }} className="h-8 rounded-lg border border-white/15 bg-black/30 px-2.5 text-xs text-slate-200">Centralizar</button>
+              <button onClick={() => setZoom((z) => z + 1)} className="h-8 w-8 rounded-lg border border-tinta/15 bg-black/30 text-slate-200" aria-label="Aproximar">+</button>
+              <button onClick={() => setZoom((z) => z - 1)} className="h-8 w-8 rounded-lg border border-tinta/15 bg-black/30 text-slate-200" aria-label="Afastar">−</button>
+              <button onClick={() => { setReset((r) => r + 1); setSelecionada(null); setExtra(null); }} className="h-8 rounded-lg border border-tinta/15 bg-black/30 px-2.5 text-xs text-slate-200">Centralizar</button>
               {!tocando && !autoplay && (
                 <button
                   onClick={() => { setVaga(null); setExtra(null); setSelecionada(null); setVagaAberta(true); }}
-                  className="h-8 rounded-lg border border-brand-green/40 bg-black/30 px-2.5 text-xs font-semibold text-brand-green"
+                  className="h-8 rounded-lg border border-acento/40 bg-black/30 px-2.5 text-xs font-semibold text-acento"
                 >
                   Comparar com vaga
                 </button>
@@ -458,17 +458,17 @@ export default function UniversoPublico({
       {/* O final da revelação. Sem universo para tocar (aluno sem projeto
           provado, ou que desligou o 4D), aparece direto. */}
       {final && (terminou || estado === "vazio" || estado === "erro") && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#050b18]/70 p-4 backdrop-blur-sm">
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-ink-800/70 p-4 backdrop-blur-sm">
           <div className="surgir w-full max-w-lg">{final}</div>
         </div>
       )}
 
       {/* A quarta dimensão. */}
       {estado === "ok" && dados && dados.quadros.length > 1 && (
-        <footer className="flex items-center gap-3 border-t border-white/10 px-5 py-3 sm:gap-4 sm:px-8">
+        <footer className="flex items-center gap-3 border-t border-tinta/10 px-5 py-3 sm:gap-4 sm:px-8">
           <button
             onClick={() => (tocando ? setTocando(false) : comecar())}
-            className="shrink-0 rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900"
+            className="shrink-0 rounded-lg bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento"
           >
             {tocando ? "Pausar" : "Ver a evolução"}
           </button>
@@ -506,7 +506,7 @@ function PainelDaCarreira({
   const Rotulo = ({ children }: { children: React.ReactNode }) => <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-slate-400">{children}</p>;
   const Titulo = ({ children }: { children: React.ReactNode }) => <p className="mt-1 font-display text-lg font-bold leading-snug">{children}</p>;
   const Campo = ({ r, v }: { r: string; v: React.ReactNode }) => (v ? <div className="mt-2 text-sm"><span className="text-xs text-slate-400">{r}</span><p className="text-slate-200">{v}</p></div> : null);
-  const voltar = <button onClick={aoVoltar} className="mt-3 text-xs text-slate-400 hover:text-white">Ver resumo</button>;
+  const voltar = <button onClick={aoVoltar} className="mt-3 text-xs text-slate-400 hover:text-tinta">Ver resumo</button>;
 
   if (extra.tipo === "planeta") {
     const p = (dados.planetas ?? []).find((x) => x.id === extra.id);
@@ -525,12 +525,12 @@ function PainelDaCarreira({
         {p.competencias.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {p.competencias.map((c) => (
-              <button key={c} onClick={() => aoCompetencia(c)} className="rounded-full border border-white/15 px-2 py-0.5 text-xs text-slate-200 hover:border-brand-green/60">{nome(c)}</button>
+              <button key={c} onClick={() => aoCompetencia(c)} className="rounded-full border border-tinta/15 px-2 py-0.5 text-xs text-slate-200 hover:border-acento/60">{nome(c)}</button>
             ))}
           </div>
         )}
         {recs.map((r) => (
-          <div key={r.id} className="mt-3 border-t border-white/10 pt-3 text-xs">
+          <div key={r.id} className="mt-3 border-t border-tinta/10 pt-3 text-xs">
             <p className="text-slate-200">&ldquo;{r.texto}&rdquo;</p>
             <p className="mt-1 text-slate-400">{r.autor}{r.cargo ? `, ${r.cargo}` : ""}</p>
           </div>
@@ -548,7 +548,7 @@ function PainelDaCarreira({
         <Rotulo>Certificado · {mesAno(l.at)}</Rotulo>
         <Titulo>{l.titulo}</Titulo>
         <p className="mt-1 text-xs text-slate-400">Orbita {nome(l.competencia)}, a competência que ele trabalha.</p>
-        <a href={l.verificacao} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-brand-green hover:underline">Verificar o certificado</a>
+        <a href={l.verificacao} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-acento hover:underline">Verificar o certificado</a>
         {voltar}
       </>
     );
@@ -576,7 +576,7 @@ function PainelDaCarreira({
         <Rotulo>Conquista · {mesAno(c.at)}</Rotulo>
         <Titulo>{c.titulo}</Titulo>
         {c.descricao && <p className="mt-1 text-sm text-slate-300">{c.descricao}</p>}
-        {c.link && <a href={c.link} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-brand-green hover:underline">Ver a prova</a>}
+        {c.link && <a href={c.link} target="_blank" rel="noopener" className="mt-3 inline-block text-sm text-acento hover:underline">Ver a prova</a>}
         {voltar}
       </>
     );
@@ -622,7 +622,7 @@ function PainelDaCarreira({
       <ul className="mt-3 flex flex-col gap-2">
         {g.requeridas.map((r) => (
           <li key={r.id} className="text-sm">
-            <button onClick={() => r.tem && aoCompetencia(r.id)} className={r.tem ? "font-semibold text-brand-green hover:underline" : "font-semibold text-slate-300"}>
+            <button onClick={() => r.tem && aoCompetencia(r.id)} className={r.tem ? "font-semibold text-acento hover:underline" : "font-semibold text-slate-300"}>
               {r.tem ? "✓ " : "○ "}{nome(r.id)}
             </button>
             <p className="text-xs text-slate-400">{r.motivo}</p>
@@ -658,7 +658,7 @@ function PainelDaVaga({ vaga, aoFechar, aoCompetencia }: { vaga: Aderencia; aoFe
       <ul className="mt-3 flex flex-col gap-2.5">
         {vaga.itens.map((i) => (
           <li key={i.id} className="text-sm">
-            <button onClick={() => i.tem && aoCompetencia(i.id)} className={i.tem ? "font-semibold text-brand-green hover:underline" : "font-semibold text-orange-200"}>
+            <button onClick={() => i.tem && aoCompetencia(i.id)} className={i.tem ? "font-semibold text-acento hover:underline" : "font-semibold text-orange-200"}>
               {i.tem ? "✓ " : "○ "}{i.nome}
             </button>
             <p className="text-xs text-slate-400">A vaga: &ldquo;{i.trecho}&rdquo;</p>
@@ -674,7 +674,7 @@ function PainelDaVaga({ vaga, aoFechar, aoCompetencia }: { vaga: Aderencia; aoFe
         ))}
       </ul>
       <p className="mt-3 text-[0.7rem] text-slate-500">Leitura feita por IA a partir do texto da vaga. Confira os trechos.</p>
-      <button onClick={aoFechar} className="mt-2 text-xs text-slate-400 hover:text-white">Fechar comparação</button>
+      <button onClick={aoFechar} className="mt-2 text-xs text-slate-400 hover:text-tinta">Fechar comparação</button>
     </>
   );
 }

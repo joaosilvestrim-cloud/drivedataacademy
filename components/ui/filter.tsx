@@ -57,7 +57,7 @@ export function LinkFilter({
             aria-current={atual ? "page" : undefined}
             className={`inline-flex items-baseline gap-2 rounded-ctl border px-3 py-1.5 text-label font-medium transition-colors duration-fast ease-ds ${
               atual
-                ? "border-ds-accent/50 bg-ds-accent/[0.07] text-ds-accent"
+                ? "border-acento/50 bg-ds-accent/[0.07] text-acento"
                 : "border-ds-line text-ds-text-2 hover:border-ds-text-3 hover:text-ds-text"
             }`}
           >

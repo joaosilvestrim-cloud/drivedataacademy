@@ -29,8 +29,8 @@ export default function CopyButton({
       onClick={copy}
       className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
         copied
-          ? "border-brand-green/50 text-brand-green"
-          : "border-white/10 text-slate-300 hover:border-white/30 hover:text-white"
+          ? "border-acento/50 text-acento"
+          : "border-tinta/10 text-slate-300 hover:border-tinta/30 hover:text-tinta"
       } ${className}`}
     >
       {copied ? (

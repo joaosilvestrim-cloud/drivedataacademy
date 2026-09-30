@@ -35,14 +35,14 @@ export default async function AssinarFerramentaPage() {
     <main className="relative min-h-screen bg-ink-900 px-6 py-16">
       <div className="mx-auto grid max-w-4xl items-start gap-10 lg:grid-cols-2">
         <div>
-          <Link href="/conta" className="text-sm text-slate-400 hover:text-white">{tr("← Voltar ao portal")}</Link>
-          <p className="mt-4 text-sm font-medium uppercase tracking-wide text-brand-green">{tr("Ferramenta de Visuais")}</p>
-          <h1 className="mt-2 font-display text-4xl font-bold text-white">{tr("Crie visuais de Power BI sem código")}</h1>
+          <Link href="/conta" className="text-sm text-slate-400 hover:text-tinta">{tr("← Voltar ao portal")}</Link>
+          <p className="mt-4 text-sm font-medium uppercase tracking-wide text-acento">{tr("Ferramenta de Visuais")}</p>
+          <h1 className="mt-2 font-display text-4xl font-bold text-tinta">{tr("Crie visuais de Power BI sem código")}</h1>
           <p className="mt-4 text-lg text-slate-300">{tr("Monte cards em HTML/SVG e leve a medida DAX pronta pro seu relatório.")}</p>
           <ul className="mt-8 space-y-3">
             {beneficios.map((b) => (
               <li key={b} className="flex items-start gap-3 text-slate-200">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="mt-0.5 shrink-0 text-brand-green"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="mt-0.5 shrink-0 text-acento"><path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 {b}
               </li>
             ))}
@@ -52,7 +52,7 @@ export default async function AssinarFerramentaPage() {
         <div className="glow-border rounded-2xl">
           <div className="glass rounded-2xl p-6 sm:p-8">
             <div className="flex items-end gap-2">
-              <span className="font-display text-4xl font-bold text-white">{brl(price)}</span>
+              <span className="font-display text-4xl font-bold text-tinta">{brl(price)}</span>
               <span className="pb-1 text-sm text-slate-400">{tr("/mês")}</span>
             </div>
             <p className="mt-1 text-sm text-slate-400">{tr("Assinatura mensal, cancele quando quiser.")}</p>

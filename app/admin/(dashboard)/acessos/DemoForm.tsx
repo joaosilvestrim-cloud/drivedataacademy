@@ -1,7 +1,7 @@
 import { criarDemonstracao, encerrarDemonstracao } from "./actions";
 
 const field =
-  "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none focus:border-brand-green/60";
+  "w-full rounded-xl border border-tinta/10 bg-tinta/5 px-4 py-3 text-sm text-tinta placeholder:text-slate-500 outline-none focus:border-acento/60";
 
 export type Demo = { user_id: string; email: string; nome: string; expires_at: string; ativo: boolean };
 
@@ -13,7 +13,7 @@ const quando = (iso: string) =>
 export default function DemoForm({ demos }: { demos: Demo[] }) {
   return (
     <div className="glass rounded-2xl border border-amber-300/20 p-5">
-      <p className="text-sm font-semibold text-white">Acesso de demonstração (DriveCanvas)</p>
+      <p className="text-sm font-semibold text-tinta">Acesso de demonstração (DriveCanvas)</p>
       <p className="mt-1 text-xs text-slate-400">
         Login temporário: a pessoa vê a área completa do assinante, mas nada pode ser clicado. Só o DriveCanvas funciona. Se ela não tiver conta,
         a conta é criada e ela recebe um e-mail com o código para criar a senha. Quando o prazo acaba, a conta vira uma conta comum, sem acesso.
@@ -30,16 +30,16 @@ export default function DemoForm({ demos }: { demos: Demo[] }) {
           <option value="168">7 dias (padrão)</option>
           <option value="336">14 dias</option>
         </select>
-        <button className="rounded-xl bg-gradient-to-r from-amber-300 to-brand-green px-5 py-3 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+        <button className="rounded-xl bg-gradient-to-r from-amber-300 to-brand-green px-5 py-3 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
           Liberar demonstração
         </button>
       </form>
 
       {demos.length > 0 && (
-        <ul className="mt-5 divide-y divide-white/5 rounded-xl border border-white/8">
+        <ul className="mt-5 divide-y divide-tinta/5 rounded-xl border border-tinta/8">
           {demos.map((d) => (
             <li key={d.user_id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2.5 text-sm">
-              <span className="min-w-0 flex-1 truncate text-white">
+              <span className="min-w-0 flex-1 truncate text-tinta">
                 {d.nome ? `${d.nome} · ` : ""}
                 <span className="text-slate-400">{d.email}</span>
               </span>

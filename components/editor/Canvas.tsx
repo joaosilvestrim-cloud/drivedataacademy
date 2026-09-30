@@ -824,7 +824,7 @@ export default function Canvas({
       <ContextMenu menu={menu} onClose={() => setMenu(null)} />
       <div style={{ width: doc.card.w * zoom, height: doc.card.h * zoom }} className="relative shrink-0">
         {/* rótulo de tamanho + alça para redimensionar o canvas */}
-        <span className="absolute -top-6 left-0 rounded bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-white" style={{ pointerEvents: "none" }}>
+        <span className="absolute -top-6 left-0 rounded bg-black/50 px-1.5 py-0.5 font-mono text-[10px] text-tinta" style={{ pointerEvents: "none" }}>
           {doc.card.w} × {doc.card.h}
         </span>
         <div

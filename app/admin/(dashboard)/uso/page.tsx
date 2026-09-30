@@ -50,10 +50,10 @@ function agrupa(eventos: Evento[], tipo: string) {
 
 function Tendencia({ agora, antes }: { agora: number; antes: number }) {
   if (!antes && !agora) return <span className="text-ds-text-3">—</span>;
-  if (!antes) return <span className="text-ds-accent">novo</span>;
+  if (!antes) return <span className="text-acento">novo</span>;
   const pct = Math.round(((agora - antes) / antes) * 100);
   if (pct === 0) return <span className="text-ds-text-3">0%</span>;
-  return <span className={pct > 0 ? "text-ds-accent" : "text-ds-danger"}>{pct > 0 ? "▲" : "▼"} {Math.abs(pct)}%</span>;
+  return <span className={pct > 0 ? "text-acento" : "text-ds-danger"}>{pct > 0 ? "▲" : "▼"} {Math.abs(pct)}%</span>;
 }
 
 function Ranking({ titulo, linhas, rotuloExtra, vazio }: { titulo: string; linhas: Linha[]; rotuloExtra?: string; vazio: string }) {

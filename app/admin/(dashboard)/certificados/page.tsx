@@ -107,7 +107,7 @@ export default async function CertificadosPage({
               name="q"
               defaultValue={searchParams.q || ""}
               placeholder="nome, e-mail, título ou código"
-              className="w-64 rounded-ctl border border-ds-line bg-ds-surface px-3 py-2 text-body-sm text-ds-text outline-none focus:border-ds-accent"
+              className="w-64 rounded-ctl border border-ds-line bg-ds-surface px-3 py-2 text-body-sm text-ds-text outline-none focus:border-acento"
             />
           </label>
           <Button type="submit" size="sm">Buscar</Button>
@@ -173,7 +173,7 @@ export default async function CertificadosPage({
                       <input type="hidden" name="revogar" value={l.revoked ? "false" : "true"} />
                       <button
                         type="submit"
-                        className="rounded-ctl border border-ds-line px-2.5 py-1 text-caption text-ds-text-2 transition-colors hover:border-ds-accent hover:text-ds-text"
+                        className="rounded-ctl border border-ds-line px-2.5 py-1 text-caption text-ds-text-2 transition-colors hover:border-acento hover:text-ds-text"
                       >
                         {l.revoked ? "Reativar" : "Revogar"}
                       </button>

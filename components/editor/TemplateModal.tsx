@@ -45,7 +45,7 @@ export default function TemplateModal({ open, onClose }: { open: boolean; onClos
           <CheckCircle2 className="h-10 w-10 text-emerald-500" />
           <p className="text-base font-semibold">{tr("Template criado!")}</p>
           <p className="max-w-xs text-sm text-muted">{tr("Já aparece na galeria para os alunos começarem a partir dele.")}</p>
-          <button onClick={onClose} className="mt-1 rounded-lg bg-viz px-4 py-2 text-sm font-medium text-white hover:bg-viz-dark">{tr("Fechar")}</button>
+          <button onClick={onClose} className="mt-1 rounded-lg bg-viz px-4 py-2 text-sm font-medium text-tinta hover:bg-viz-dark">{tr("Fechar")}</button>
         </div>
       ) : (
         <div className="flex flex-col gap-4 p-4 sm:flex-row">
@@ -74,7 +74,7 @@ export default function TemplateModal({ open, onClose }: { open: boolean; onClos
 
             {erro && <p className="text-sm text-red-600">{erro}</p>}
 
-            <button onClick={criar} disabled={enviando || !nome.trim()} className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-viz py-2.5 font-medium text-white transition-colors hover:bg-viz-dark disabled:opacity-50">
+            <button onClick={criar} disabled={enviando || !nome.trim()} className="mt-auto flex items-center justify-center gap-2 rounded-lg bg-viz py-2.5 font-medium text-tinta transition-colors hover:bg-viz-dark disabled:opacity-50">
               <LayoutTemplate className="h-4 w-4" /> {enviando ? "Criando…" : "Criar template"}
             </button>
           </div>

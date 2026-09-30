@@ -39,7 +39,7 @@ function BotaoLido({ id, voltar }: { id: string; voltar: string }) {
       <input type="hidden" name="voltar" value={voltar} />
       <button
         type="submit"
-        className="whitespace-nowrap rounded-ctl border border-ds-line px-2.5 py-1 text-caption text-ds-text-2 transition-colors hover:border-ds-accent hover:text-ds-text"
+        className="whitespace-nowrap rounded-ctl border border-ds-line px-2.5 py-1 text-caption text-ds-text-2 transition-colors hover:border-acento hover:text-ds-text"
       >
         Marcar como lido
       </button>
@@ -67,7 +67,7 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Suporte</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Suporte</h1>
         <div className="mt-6"><AdminError message={(e instanceof Error ? e.message : "Erro.") + " — rode o SQL de suporte no Supabase."} /></div>
       </div>
     );
@@ -75,7 +75,7 @@ export default async function SuportePage({ searchParams }: { searchParams: { st
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-bold text-white">Suporte</h1>
+      <h1 className="font-display text-2xl font-bold text-tinta">Suporte</h1>
       <p className="mt-1 text-sm text-slate-400">Chamados dos alunos. Quando a IA não resolver, cai aqui para o time.</p>
 
       <div className="mt-6">

@@ -29,7 +29,7 @@ export default async function MaterialsPage() {
   } catch (e) {
     return (
       <div>
-        <h1 className="font-display text-2xl font-bold text-white">Materiais</h1>
+        <h1 className="font-display text-2xl font-bold text-tinta">Materiais</h1>
         <div className="mt-6">
           <AdminError message={e instanceof Error ? e.message : "Erro desconhecido."} />
         </div>
@@ -41,16 +41,16 @@ export default async function MaterialsPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-2xl font-bold text-white">Materiais</h1>
+          <h1 className="font-display text-2xl font-bold text-tinta">Materiais</h1>
           <p className="mt-1 text-sm text-slate-400">
             Páginas que capturam leads em troca de um conteúdo ({materials.length}).
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/admin/materiais/leads" className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white hover:border-brand-green/50 hover:text-brand-green">
+          <Link href="/admin/materiais/leads" className="rounded-lg border border-tinta/10 bg-tinta/5 px-4 py-2 text-sm font-medium text-tinta hover:border-acento/50 hover:text-acento">
             Ver leads
           </Link>
-          <Link href="/admin/materiais/new" className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-brand-green to-brand-blue px-4 py-2 text-sm font-semibold text-ink-900 transition-transform hover:scale-[1.02]">
+          <Link href="/admin/materiais/new" className="inline-flex items-center gap-2 rounded-lg bg-marca-verde px-4 py-2 text-sm font-semibold text-sobre-acento transition-transform hover:scale-[1.02]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
             Novo material
           </Link>
@@ -60,10 +60,10 @@ export default async function MaterialsPage() {
       {/* Guia rápido */}
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         {STEPS.map((s) => (
-          <div key={s.n} className="glass rounded-2xl border border-white/8 p-4">
+          <div key={s.n} className="glass rounded-2xl border border-tinta/8 p-4">
             <div className="flex items-center gap-2">
-              <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-brand-green to-brand-blue text-xs font-bold text-ink-900">{s.n}</span>
-              <p className="text-sm font-semibold text-white">{s.t}</p>
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-marca-verde text-xs font-bold text-sobre-acento">{s.n}</span>
+              <p className="text-sm font-semibold text-tinta">{s.t}</p>
             </div>
             <p className="mt-1.5 text-xs text-slate-400">{s.d}</p>
           </div>
@@ -72,18 +72,18 @@ export default async function MaterialsPage() {
 
       <div className="mt-6 space-y-3">
         {materials.map((m) => (
-          <div key={m.id} className="glass rounded-2xl border border-white/8 p-5">
+          <div key={m.id} className="glass rounded-2xl border border-tinta/8 p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide ${m.published ? "bg-brand-green/15 text-brand-green" : "bg-white/5 text-slate-400"}`}>
+                  <span className={`rounded-full px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide ${m.published ? "bg-brand-green/15 text-acento" : "bg-tinta/5 text-slate-400"}`}>
                     {m.published ? "Publicado" : "Rascunho"}
                   </span>
-                  <span className="rounded-full border border-white/10 px-2 py-0.5 text-[0.65rem] font-medium text-slate-300">
+                  <span className="rounded-full border border-tinta/10 px-2 py-0.5 text-[0.65rem] font-medium text-slate-300">
                     {counts[m.id] || 0} lead(s)
                   </span>
                 </div>
-                <Link href={`/admin/materiais/${m.id}`} className="mt-2 block truncate font-display text-lg font-bold text-white hover:text-brand-green">
+                <Link href={`/admin/materiais/${m.id}`} className="mt-2 block truncate font-display text-lg font-bold text-tinta hover:text-acento">
                   {m.title}
                 </Link>
                 {m.published ? (
@@ -97,17 +97,17 @@ export default async function MaterialsPage() {
                 <form action={togglePublishMaterial}>
                   <input type="hidden" name="id" value={m.id} />
                   <input type="hidden" name="next" value={(!m.published).toString()} />
-                  <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-brand-green/50 hover:text-brand-green">
+                  <button className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-acento/50 hover:text-acento">
                     {m.published ? "Despublicar" : "Publicar"}
                   </button>
                 </form>
                 <form action={duplicateMaterial}>
                   <input type="hidden" name="id" value={m.id} />
-                  <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white">
+                  <button className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-tinta/30 hover:text-tinta">
                     Duplicar
                   </button>
                 </form>
-                <Link href={`/admin/materiais/${m.id}`} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-white/30 hover:text-white">
+                <Link href={`/admin/materiais/${m.id}`} className="rounded-lg border border-tinta/10 px-3 py-1.5 text-xs font-medium text-slate-300 hover:border-tinta/30 hover:text-tinta">
                   Editar
                 </Link>
                 <ConfirmDeleteMaterial id={m.id} title={m.title} />
@@ -116,9 +116,9 @@ export default async function MaterialsPage() {
           </div>
         ))}
         {materials.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-white/10 px-4 py-16 text-center">
+          <div className="rounded-2xl border border-dashed border-tinta/10 px-4 py-16 text-center">
             <p className="text-slate-400">Nenhum material ainda.</p>
-            <Link href="/admin/materiais/new" className="mt-3 inline-block text-sm font-medium text-brand-green hover:underline">
+            <Link href="/admin/materiais/new" className="mt-3 inline-block text-sm font-medium text-acento hover:underline">
               Criar o primeiro material →
             </Link>
           </div>

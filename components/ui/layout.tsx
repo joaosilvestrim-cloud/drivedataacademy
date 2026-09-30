@@ -104,7 +104,7 @@ export function ErrorState({
 // Faixa lateral em vez de caixa colorida: informa sem competir com o conteúdo.
 const ALERT_TONE = {
   info: "border-ds-info",
-  accent: "border-ds-accent",
+  accent: "border-acento",
   attention: "border-ds-attention",
   danger: "border-ds-danger",
 } as const;

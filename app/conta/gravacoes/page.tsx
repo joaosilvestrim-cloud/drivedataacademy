@@ -39,17 +39,17 @@ export default async function GravacoesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-white">{tr("Gravações")}</h1>
+      <h1 className="font-display text-3xl font-bold text-tinta">{tr("Gravações")}</h1>
       <p className="mt-1 text-sm text-slate-400">
         {tr("As lives e mentorias que já aconteceram, para assistir quando der. Incluídas na assinatura.")}
       </p>
 
       {gravacoes.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-white/10 px-6 py-16 text-center">
-          <p className="font-medium text-white">{tr("Nenhuma gravação publicada ainda")}</p>
+        <div className="mt-8 rounded-2xl border border-dashed border-tinta/10 px-6 py-16 text-center">
+          <p className="font-medium text-tinta">{tr("Nenhuma gravação publicada ainda")}</p>
           <p className="mt-2 text-sm text-slate-400">
             {tr("Assim que o time subir a gravação de um encontro, ela aparece aqui.")}{" "}
-            <Link href="/conta/agenda" className="text-brand-green underline underline-offset-4">{tr("Ver a agenda")}</Link>
+            <Link href="/conta/agenda" className="text-acento underline underline-offset-4">{tr("Ver a agenda")}</Link>
           </p>
         </div>
       ) : (
@@ -58,7 +58,7 @@ export default async function GravacoesPage() {
             <li key={l.id}>
               <Link
                 href={`/conta/gravacoes/${l.id}`}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-colors hover:border-brand-green/40 hover:bg-white/[0.04]"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-tinta/10 bg-tinta/[0.02] transition-colors hover:border-acento/40 hover:bg-tinta/[0.04]"
               >
                 <span className="relative block aspect-video bg-ink-800">
                   {l.cover_url ? (
@@ -66,7 +66,7 @@ export default async function GravacoesPage() {
                     <img src={l.cover_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
                   ) : null}
                   <span className="absolute inset-0 grid place-items-center">
-                    <span className="grid h-12 w-12 place-items-center rounded-full bg-white/90 text-ink-900 transition-transform group-hover:scale-105">
+                    <span className="grid h-12 w-12 place-items-center rounded-full bg-tinta/90 text-sobre-acento transition-transform group-hover:scale-105">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                     </span>
                   </span>
@@ -77,11 +77,11 @@ export default async function GravacoesPage() {
                     {l.kind === "mentoria" ? " · Mentoria" : " · Live"}
                     {l.duration_min ? ` · ${l.duration_min} min` : ""}
                   </span>
-                  <span className="mt-1 font-display text-lg font-bold leading-snug text-white">{l.title}</span>
+                  <span className="mt-1 font-display text-lg font-bold leading-snug text-tinta">{l.title}</span>
                   {primeiraLinha(l.description) && (
                     <span className="mt-1 text-sm text-slate-400">{primeiraLinha(l.description)}</span>
                   )}
-                  <span className="mt-3 text-sm font-semibold text-brand-green group-hover:underline">{tr("Assistir →")}</span>
+                  <span className="mt-3 text-sm font-semibold text-acento group-hover:underline">{tr("Assistir →")}</span>
                 </span>
               </Link>
             </li>

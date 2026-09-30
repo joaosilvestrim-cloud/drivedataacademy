@@ -135,7 +135,7 @@ export default function StartModal({ open, onClose }: { open: boolean; onClose: 
               <p className="text-xs text-muted">{tr("Tamanho sugerido do card")}</p>
               <p className="font-mono text-lg font-bold text-viz-dark">{cardW} × {cardH}px</p>
             </div>
-            <button onClick={() => aplicar(cardW, cardH)} className="rounded-lg bg-viz py-2.5 text-sm font-medium text-white transition-colors hover:bg-viz-dark">
+            <button onClick={() => aplicar(cardW, cardH)} className="rounded-lg bg-viz py-2.5 text-sm font-medium text-tinta transition-colors hover:bg-viz-dark">
               {tr("Usar esse tamanho")}
             </button>
           </div>

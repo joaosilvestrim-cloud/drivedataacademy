@@ -121,7 +121,7 @@ export default function CourseForm({ course, cargaCalculada }: { course?: Course
         </div>
         {course && descontoCurso(Number(course.price) || 0, course.subscriber_price ?? null) > 0 && (
           <p className="text-body-sm text-ds-text-2">
-            O assinante vê <strong className="text-ds-accent">{descontoCurso(Number(course.price) || 0, course.subscriber_price ?? null)}% OFF</strong> na página do curso.
+            O assinante vê <strong className="text-acento">{descontoCurso(Number(course.price) || 0, course.subscriber_price ?? null)}% OFF</strong> na página do curso.
           </p>
         )}
       </FormSection>

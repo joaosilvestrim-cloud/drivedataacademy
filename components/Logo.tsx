@@ -60,9 +60,9 @@ export default function Logo({ size = 34, withWordmark = true, className = "", g
       <LogoMark size={size} glow={glow} />
       {withWordmark && (
         <span className="font-display text-xl font-bold leading-none tracking-tight">
-          <span className="text-white">{tr("Drive")}</span>
+          <span className="text-tinta">{tr("Drive")}</span>
           <span className="text-gradient-blue">{tr("Data")}</span>
-          <span className="ml-1.5 align-middle text-[0.62rem] font-semibold uppercase tracking-[0.32em] text-brand-green/90">
+          <span className="ml-1.5 align-middle text-[0.62rem] font-semibold text-marca/90">
             {tr("Academy")}
           </span>
         </span>
