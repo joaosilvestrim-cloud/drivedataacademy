@@ -229,6 +229,11 @@ export default function CoursePlayer({
             <p className="mt-5 text-xs font-medium text-marca">{tr("Aula")} {idx + 1} de {flatIds.length}</p>
             <h1 className="mt-1 text-[1.75rem] font-bold leading-tight tracking-tight text-obsidian">{current.title}</h1>
 
+            {/* Descritivo da aula de vídeo: o que ela cobre. Os links ficam em "Links de apoio". */}
+            {current.type === "video" && current.content && (
+              <p className="mt-3 max-w-3xl whitespace-pre-line text-[0.95rem] leading-relaxed text-charcoal">{current.content}</p>
+            )}
+
             {current.type === "materiais" && (
               <div className="mt-5">
                 {current.content && <p className="whitespace-pre-line text-[0.95rem] leading-relaxed text-slate-300">{current.content}</p>}
