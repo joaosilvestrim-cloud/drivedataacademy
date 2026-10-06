@@ -123,6 +123,14 @@ async function main() {
      traduções junto custa a metade, mas troca o português atual, que teve
      correção de termo técnico, pelo do Panda. Por isso é opção, não padrão. */
   const economizar = process.argv.includes("--refazer-base");
+  /* --pular arquivo.txt: um título por linha. Serve para a rodada seguinte a
+     um envio: o trabalho entra na fila do Panda e leva uns 30 min, e até lá a
+     legenda não existe. Sem isso o vídeo voltaria ao plano e seria cobrado
+     duas vezes. */
+  const iPular = process.argv.indexOf("--pular");
+  const pular = new Set(
+    iPular > 0 ? fs.readFileSync(process.argv[iPular + 1], "utf8").split(/\r?\n/).map((t) => t.trim()).filter(Boolean) : [],
+  );
 
   const usados = await emUso();
   const videos: any[] = [];
@@ -139,6 +147,9 @@ async function main() {
     /* Os dois ids do Panda: `id` é o da API e `video_external_id` é o do
        player, que é o que a plataforma guarda dentro do iframe colado. */
     if (!usados.has(v.id) && !usados.has(v.video_external_id)) continue;
+    // Por começo do título também: o log de envio corta o título em 48 letras.
+    const tituloLimpo = String(v.title || "").replace(/\.(mp4|mov)$/i, "").trim();
+    if ([...pular].some((t) => tituloLimpo === t || (t.length >= 20 && tituloLimpo.startsWith(t)))) continue;
     const duracao = Number(v.length || 0);
     if (!duracao) continue;
 
@@ -209,7 +220,9 @@ async function main() {
 
          O DELETE exige corpo, mesmo não tendo o que receber: sem ele responde
          "# must be object", porque o cabeçalho anuncia JSON e nada chega. */
-      for (const lang of p.apagar) await api(`/subtitles/${p.videoId}/${lang}`, { method: "DELETE", body: "{}" });
+      /* Desde 06/10/2026 o corpo precisa dizer o idioma ("must have required
+         property 'srclang'"), mesmo ele já estando no caminho. */
+      for (const lang of p.apagar) await api(`/subtitles/${p.videoId}/${lang}`, { method: "DELETE", body: JSON.stringify({ srclang: lang }) });
 
       if (p.refazerBase) {
         await api("/aiworkflow", {
@@ -220,7 +233,9 @@ async function main() {
         for (const lang of p.traduzir) {
           await api("/aiworkflow", {
             method: "POST",
-            body: JSON.stringify({ video_id: p.videoId, type: "TRANSLATE", from_lang: BASE, to_lang: lang, tier: "essential" }),
+            // O Panda renomeou o tipo: era "TRANSLATE", hoje só aceita "TRANSLATION"
+            // (erro 400 "should be equal to one of the allowed values", 06/10/2026).
+            body: JSON.stringify({ video_id: p.videoId, type: "TRANSLATION", from_lang: BASE, to_lang: lang, to_langs: [lang], tier: "essential" }),
           });
         }
       }
