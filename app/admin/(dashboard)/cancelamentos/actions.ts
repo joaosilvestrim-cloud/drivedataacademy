@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { assinaturasAtivasNoAsaas } from "@/lib/assinatura";
+import { reembolsadaNoAsaas, registrarReembolso } from "@/lib/reembolso";
 
 /* Cancelamento que não saiu no Asaas e foi resolvido à mão no painel de lá.
 
@@ -38,4 +39,33 @@ export async function conferirNoAsaas(formData: FormData) {
 
   revalidatePath("/admin/cancelamentos");
   redirect("/admin/cancelamentos?ok=" + encodeURIComponent(`Conferido: ${c!.email} não tem mais cobrança recorrente no Asaas.`));
+}
+
+/* Reembolso feito no painel do Asaas antes de o webhook saber tratar o aviso:
+   pergunta ao Asaas cobrança por cobrança, e o que voltou reembolsado vira
+   reembolso aqui (pedido "refunded" e acesso cortado). Não reembolsa nada. */
+export async function conferirReembolsos() {
+  const admin = await getAdminUser();
+  if (!admin) redirect("/admin/login");
+  const db = createAdminClient();
+  const { data: cancelamentos } = await db.from("subscription_cancellations").select("order_id, email").limit(400);
+  const ids = Array.from(new Set((cancelamentos ?? []).map((c: any) => c.order_id).filter(Boolean)));
+  const emails = Array.from(new Set((cancelamentos ?? []).filter((c: any) => !c.order_id).map((c: any) => c.email).filter(Boolean)));
+  const [porId, porEmail] = await Promise.all([
+    ids.length ? db.from("orders").select("*").in("id", ids).eq("status", "paid") : Promise.resolve({ data: [] as any[] }),
+    emails.length ? db.from("orders").select("*").in("email", emails).eq("status", "paid") : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const pedidos = [...(porId.data ?? []), ...(porEmail.data ?? [])];
+  const feitos: string[] = [];
+  for (const p of pedidos) {
+    if (await reembolsadaNoAsaas(String(p.gateway_id || ""))) {
+      if (await registrarReembolso(db, p)) feitos.push(p.email);
+    }
+  }
+  revalidatePath("/admin/cancelamentos");
+  revalidatePath("/admin/operacao");
+  redirect(
+    "/admin/cancelamentos?ok=" +
+      encodeURIComponent(feitos.length ? `Reembolso registrado: ${feitos.join(", ")}. Pedido marcado como reembolsado e acesso encerrado.` : `Conferi ${pedidos.length} pagamentos no Asaas: nenhum reembolso novo.`),
+  );
 }

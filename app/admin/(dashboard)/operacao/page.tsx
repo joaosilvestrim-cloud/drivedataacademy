@@ -6,6 +6,8 @@ import { DataTable, Tr, Cell } from "@/components/ui/data";
 import { LinkFilter } from "@/components/ui/filter";
 import ExportCsv from "../ExportCsv";
 import { liberarPedido, consultarAsaas, reenviarCodigo } from "./actions";
+import { acessoVigente } from "@/lib/acesso-vigente";
+import { diaCurto, prazoDeReembolso } from "@/lib/dias-uteis";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +73,11 @@ export default async function OperacaoAdmin({
     ? await supabase.from("memberships").select("user_id, status, expires_at").in("user_id", userIds)
     : { data: [] as any[] };
   const agora = Date.now();
-  const ativo = new Set((memberships ?? []).filter((m: any) => m.status === "active" && (!m.expires_at || Date.parse(m.expires_at) > agora)).map((m: any) => m.user_id));
+  /* Vigente: ativa, ou cancelada com o mês já pago correndo (lib/acesso-vigente.ts).
+     Quem cancelou não é "pago sem acesso": a assinatura existe e só não renova. */
+  const ativo = new Set((memberships ?? []).filter((m: any) => acessoVigente(m, agora)).map((m: any) => m.user_id));
+  const cancelouAte = new Map<string, string | null>();
+  for (const m of memberships ?? []) if (m.status === "canceled") cancelouAte.set(m.user_id, m.expires_at);
   const emailPorPedido = new Map<string, any>();
   const emailPorDestino = new Map<string, any>();
   for (const e of emails) {
@@ -81,15 +87,20 @@ export default async function OperacaoAdmin({
 
   const linhas = pedidos.map((p: any) => {
     const pago = p.status === "paid";
+    const reembolsado = p.status === "refunded";
     const temConta = !!p.user_id;
     const temAcesso = temConta && ativo.has(p.user_id);
+    const cancelou = temConta && cancelouAte.has(p.user_id);
+    const acessoAte = cancelou ? cancelouAte.get(p.user_id) ?? null : null;
+    // Prazo de reembolso: só faz sentido para o que foi pago e não devolvido.
+    const prazo = pago ? prazoDeReembolso(p.created_at) : null;
     const naoPrecisaAcesso = p.product === "workshop" || p.product === "curso";
     const envio = emailPorPedido.get(p.id) || emailPorDestino.get(p.email) || null;
     let problema: Problema | null = null;
     if (!pago && p.status === "pending" && !p.gateway_id) problema = { chave: "sem_cobranca", label: "Cobrança não gerada" };
-    else if (pago && !naoPrecisaAcesso && !temAcesso) problema = { chave: "sem_acesso", label: "Pago sem acesso" };
+    else if (pago && !naoPrecisaAcesso && !temAcesso && !cancelou) problema = { chave: "sem_acesso", label: "Pago sem acesso" };
     else if (pago && envio && envio.status !== "sent") problema = { chave: "email_falhou", label: "E-mail falhou" };
-    return { ...p, pago, temConta, temAcesso, naoPrecisaAcesso, envio, problema };
+    return { ...p, pago, reembolsado, temConta, temAcesso, cancelou, acessoAte, prazo, naoPrecisaAcesso, envio, problema };
   });
 
   // Os alertas contam sobre todos os pedidos, nunca sobre o filtro da tela.
@@ -122,6 +133,7 @@ export default async function OperacaoAdmin({
   );
 
   const recebido = base.filter((l) => l.pago).reduce((soma, l) => soma + Number(l.amount || 0), 0);
+  const reembolsados = base.filter((l) => l.reembolsado).length;
   const emAberto = base.filter(aguardando).reduce((soma, l) => soma + Number(l.amount || 0), 0);
 
   const csv = filtradas.map((l) => ({
@@ -130,10 +142,11 @@ export default async function OperacaoAdmin({
     email: l.email,
     produto: PRODUTO[l.product] || l.product,
     valor: Number(l.amount || 0).toFixed(2).replace(".", ","),
-    situacao: l.pago ? "pago" : l.status,
+    situacao: l.pago ? "pago" : l.reembolsado ? "reembolsado" : l.status,
     cobranca: l.gateway_id || "",
     cupom: l.coupon_code || "",
-    acesso: l.naoPrecisaAcesso ? "n/a" : l.temAcesso ? "ativo" : l.pago ? "faltando" : "",
+    acesso: l.naoPrecisaAcesso ? "n/a" : l.cancelou ? (l.temAcesso ? "cancelada, com acesso" : "encerrada") : l.temAcesso ? "ativo" : l.pago ? "faltando" : "",
+    dias_uteis_desde_compra: l.prazo ? String(l.prazo.decorridos) : "",
     problema: l.problema?.label || "",
   }));
 
@@ -179,7 +192,7 @@ export default async function OperacaoAdmin({
         <SectionHeader title="Pedidos" action={csv.length > 0 ? <ExportCsv rows={csv} filename="pedidos.csv" /> : undefined} />
 
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          <Tile label="Recebido" valor={brl(recebido)} detalhe={`${contagem.pagos} ${contagem.pagos === 1 ? "pedido pago" : "pedidos pagos"}`} tom="accent" href={comEstado("pagos")} />
+          <Tile label="Recebido" valor={brl(recebido)} detalhe={`${contagem.pagos} ${contagem.pagos === 1 ? "pedido pago" : "pedidos pagos"}${reembolsados ? ` · ${reembolsados} ${reembolsados === 1 ? "reembolsado" : "reembolsados"}` : ""}`} tom="accent" href={comEstado("pagos")} />
           <Tile label="Aguardando" valor={brl(emAberto)} detalhe={`${contagem.pendentes} com link gerado`} href={comEstado("pendentes")} />
           <Tile label="Cobrança não gerada" valor={String(semCobranca.length)} detalhe="checkout travou" tom={semCobranca.length ? "danger" : undefined} href={comEstado("problemas")} />
           <Tile label="Pago sem acesso" valor={String(pagosSemAcesso.length)} detalhe="precisa liberar" tom={pagosSemAcesso.length ? "danger" : undefined} href={comEstado("problemas")} />
@@ -241,7 +254,17 @@ export default async function OperacaoAdmin({
               <tbody>
                 {filtradas.map((p: any) => (
                   <Tr key={p.id}>
-                    <Cell className="whitespace-nowrap text-caption text-ds-text-3">{quando(p.created_at)}</Cell>
+                    <Cell className="whitespace-nowrap text-caption text-ds-text-3">
+                      {quando(p.created_at)}
+                      {p.prazo && (
+                        <span className="mt-1 block">
+                          há {p.prazo.decorridos} {p.prazo.decorridos === 1 ? "dia útil" : "dias úteis"}
+                          {p.prazo.dentro && !p.naoPrecisaAcesso && (
+                            <span className="mt-0.5 block font-semibold text-amber-300">reembolso até {diaCurto(p.prazo.ultimo)}</span>
+                          )}
+                        </span>
+                      )}
+                    </Cell>
                     <Cell>
                       <span className="block text-body-sm text-ds-text">{p.name || "—"}</span>
                       <span className="block font-mono text-caption text-ds-text-3">{p.email}</span>
@@ -251,7 +274,7 @@ export default async function OperacaoAdmin({
                       <span className="block text-caption text-ds-text-3">{brl(p.amount)}{p.coupon_code ? ` · ${p.coupon_code}` : ""}</span>
                     </Cell>
                     <Cell>
-                      <Status tone={p.pago ? "accent" : p.status === "pending" ? "attention" : "neutral"}>{p.pago ? "Pago" : p.status === "pending" ? "Pendente" : p.status}</Status>
+                      <Status tone={p.pago ? "accent" : p.status === "pending" ? "attention" : "neutral"}>{p.pago ? "Pago" : p.reembolsado ? "Reembolsado" : p.status === "pending" ? "Pendente" : p.status}</Status>
                       {/* Pedido sem cobrança no gateway: o checkout falhou antes de
                           gerar o link, então essa pessoa nunca viu como pagar. */}
                       {p.problema && (
@@ -259,7 +282,18 @@ export default async function OperacaoAdmin({
                       )}
                     </Cell>
                     <Cell><Badge tone={p.temConta ? "info" : "neutral"}>{p.temConta ? "Criada" : "Sem conta"}</Badge></Cell>
-                    <Cell>{p.naoPrecisaAcesso ? <span className="text-caption text-ds-text-3">n/a</span> : <Status tone={p.temAcesso ? "accent" : p.pago ? "danger" : "neutral"}>{p.temAcesso ? "Ativa" : p.pago ? "Faltando" : "—"}</Status>}</Cell>
+                    <Cell>
+                      {p.naoPrecisaAcesso ? (
+                        <span className="text-caption text-ds-text-3">n/a</span>
+                      ) : p.cancelou ? (
+                        <span className="block">
+                          <Status tone={p.temAcesso ? "attention" : "neutral"}>{p.temAcesso ? "Cancelada" : "Encerrada"}</Status>
+                          {p.temAcesso && p.acessoAte && <span className="mt-1 block text-caption text-ds-text-3">acesso até {quando(p.acessoAte).slice(0, 10)}</span>}
+                        </span>
+                      ) : (
+                        <Status tone={p.temAcesso ? "accent" : p.pago ? "danger" : "neutral"}>{p.temAcesso ? "Ativa" : p.pago ? "Faltando" : "—"}</Status>
+                      )}
+                    </Cell>
                     <Cell>
                       {!logDisponivel ? <span className="text-caption text-ds-text-3">sem registro</span> : p.envio ? (
                         <span className="block">
@@ -273,7 +307,7 @@ export default async function OperacaoAdmin({
                         {!p.pago && p.gateway_id && (
                           <form action={consultarAsaas}><input type="hidden" name="id" value={p.id} /><Button type="submit" variant="secondary" size="sm">Consultar Asaas</Button></form>
                         )}
-                        {p.pago && !p.naoPrecisaAcesso && !p.temAcesso && (
+                        {p.pago && !p.naoPrecisaAcesso && !p.temAcesso && !p.cancelou && (
                           <form action={liberarPedido}><input type="hidden" name="id" value={p.id} /><Button type="submit" size="sm">Liberar acesso</Button></form>
                         )}
                         {p.temConta && (

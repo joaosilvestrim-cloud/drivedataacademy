@@ -1,9 +1,10 @@
+import { acessoVigente } from "./acesso-vigente";
 export const DIAS_CARENCIA=7;
 export type AssinaturaCarencia={status:string;starts_at:string;expires_at:string|null};
 export type Liberacao={liberado:boolean;liberaEm:string|null};
 export function calcularCarencia(assinaturas:AssinaturaCarencia[],matriculado:boolean,agora:number):Liberacao {
   if(matriculado)return {liberado:true,liberaEm:null};
-  const ativa=assinaturas.filter(m=>m.status==="active"&&Number.isFinite(Date.parse(m.starts_at))&&Date.parse(m.starts_at)<=agora&&(!m.expires_at||Date.parse(m.expires_at)>agora)).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at))[0];
+  const ativa=assinaturas.filter(m=>acessoVigente(m,agora)&&Number.isFinite(Date.parse(m.starts_at))&&Date.parse(m.starts_at)<=agora).sort((a,b)=>Date.parse(a.starts_at)-Date.parse(b.starts_at))[0];
   if(!ativa)return {liberado:false,liberaEm:null};
   const alvo=Date.parse(ativa.starts_at)+DIAS_CARENCIA*86400000;
   return {liberado:agora>=alvo,liberaEm:new Date(alvo).toISOString()};

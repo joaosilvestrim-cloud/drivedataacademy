@@ -1,6 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { calcularCarencia, type Liberacao } from "./carencia-core";
+import { STATUS_COM_ACESSO } from "./acesso-vigente";
 export { DIAS_CARENCIA, type Liberacao } from "./carencia-core";
 
 /* Carência dos materiais.
@@ -33,7 +34,7 @@ export async function liberacaoDeMateriais(
     .from("memberships")
     .select("status, starts_at, expires_at")
     .eq("user_id", userId)
-    .eq("status", "active")
+    .in("status", STATUS_COM_ACESSO)
     .order("starts_at");
 
   return calcularCarencia(assinaturas ?? [],false,Date.now());

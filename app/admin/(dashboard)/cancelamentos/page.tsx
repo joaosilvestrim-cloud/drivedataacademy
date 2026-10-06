@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { MOTIVOS } from "@/lib/assinatura-motivos";
-import { conferirNoAsaas } from "./actions";
+import { conferirNoAsaas, conferirReembolsos } from "./actions";
+import { diaCurto, prazoDeReembolso, PRAZO_REEMBOLSO_DIAS_UTEIS } from "@/lib/dias-uteis";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +24,24 @@ export default async function CancelamentosPage({ searchParams }: { searchParams
   const admin = createAdminClient();
   const { data: linhas } = await admin
     .from("subscription_cancellations")
-    .select("id, email, plano, motivo, detalhe, acesso_ate, asaas_ok, asaas_resposta, asaas_subscription_id, created_at")
+    .select("id, email, order_id, plano, motivo, detalhe, acesso_ate, asaas_ok, asaas_resposta, asaas_subscription_id, created_at")
     .order("created_at", { ascending: false })
     .limit(400);
 
   const lista = linhas ?? [];
+
+  /* A compra de cada cancelamento, para o prazo de reembolso: 7 dias úteis
+     depois da compra (lib/dias-uteis.ts). Cancelamento antigo pode não ter
+     order_id; aí vale o último pedido de assinatura pago com o mesmo e-mail. */
+  const idsPedido = Array.from(new Set(lista.map((c) => c.order_id).filter(Boolean)));
+  const semPedido = Array.from(new Set(lista.filter((c) => !c.order_id).map((c) => c.email).filter(Boolean)));
+  const [{ data: pedidosPorId }, { data: pedidosPorEmail }] = await Promise.all([
+    idsPedido.length ? admin.from("orders").select("id, email, created_at, status, amount").in("id", idsPedido) : Promise.resolve({ data: [] as any[] }),
+    semPedido.length
+      ? admin.from("orders").select("id, email, created_at, status, amount").in("email", semPedido).in("product", ["subscription", "subscription_annual"]).in("status", ["paid", "refunded"]).order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] as any[] }),
+  ]);
+  const pedidoDe = (c: any) => (pedidosPorId ?? []).find((o: any) => o.id === c.order_id) || (pedidosPorEmail ?? []).find((o: any) => o.email === c.email) || null;
   const presos = lista.filter((c) => c.asaas_ok === false);
 
   const trintaDias = Date.now() - 30 * 864e5;
@@ -42,9 +56,17 @@ export default async function CancelamentosPage({ searchParams }: { searchParams
     <div>
       <p className="text-sm font-medium text-ds-text-3">Assinatura</p>
       <h1 className="mt-1 font-display text-3xl font-bold text-tinta">Cancelamentos</h1>
-      <p className="mt-2 max-w-2xl text-sm text-slate-400">
-        O aluno cancela pela própria tela e o Asaas é avisado na hora. Aqui fica o registro, com o motivo que ele deu.
-      </p>
+      <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
+        <p className="max-w-2xl text-sm text-slate-400">
+          O aluno cancela pela própria tela e o Asaas é avisado na hora. Aqui fica o registro, com o motivo e o prazo de reembolso: até {PRAZO_REEMBOLSO_DIAS_UTEIS} dias úteis depois da compra.
+          O reembolso em si é feito no painel do Asaas; depois, Conferir reembolsos marca o pedido e encerra o acesso.
+        </p>
+        <form action={conferirReembolsos}>
+          <button type="submit" className="rounded-full border border-tinta/25 px-4 py-2 text-sm font-semibold text-tinta hover:border-tinta/50">
+            Conferir reembolsos no Asaas
+          </button>
+        </form>
+      </div>
 
       {searchParams?.ok && (
         <div className="mt-5 rounded-xl border border-acento/30 bg-brand-green/10 px-4 py-3 text-sm text-acento">{searchParams.ok}</div>
@@ -113,8 +135,32 @@ export default async function CancelamentosPage({ searchParams }: { searchParams
               <p className="mt-1 text-sm text-slate-300">
                 {ROTULO[c.motivo] ?? c.motivo}
                 {c.plano ? <span className="text-slate-500"> · {c.plano}</span> : null}
-                {c.acesso_ate ? <span className="text-slate-500"> · acesso até {c.acesso_ate.slice(0, 10)}</span> : null}
               </p>
+              {(() => {
+                const pedido = pedidoDe(c);
+                if (!pedido) return <p className="mt-2 text-xs text-slate-500">Pedido de compra não encontrado para calcular o prazo.</p>;
+                const noPedido = prazoDeReembolso(pedido.created_at, c.created_at);
+                const hoje = prazoDeReembolso(pedido.created_at);
+                const reembolsado = pedido.status === "refunded";
+                return (
+                  <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs">
+                    <span className="text-slate-400">
+                      Comprou em {data(pedido.created_at)} · pediu para sair{" "}
+                      {noPedido.decorridos === 0 ? "no mesmo dia útil da compra" : `${noPedido.decorridos} ${noPedido.decorridos === 1 ? "dia útil" : "dias úteis"} depois`}
+                    </span>
+                    {reembolsado ? (
+                      <span className="rounded-full bg-fog px-2.5 py-0.5 font-semibold text-charcoal">Reembolsado · acesso encerrado</span>
+                    ) : hoje.dentro ? (
+                      <span className="rounded-full bg-amber-400/15 px-2.5 py-0.5 font-semibold text-amber-300">Pode pedir reembolso até {diaCurto(hoje.ultimo)}</span>
+                    ) : noPedido.dentro ? (
+                      <span className="rounded-full bg-amber-400/15 px-2.5 py-0.5 font-semibold text-amber-300">Pediu dentro do prazo (até {diaCurto(noPedido.ultimo)})</span>
+                    ) : (
+                      <span className="rounded-full bg-fog px-2.5 py-0.5 font-semibold text-charcoal">Fora do prazo de reembolso</span>
+                    )}
+                    {!reembolsado && c.acesso_ate && <span className="text-slate-500">acesso até {data(c.acesso_ate).slice(0, 10)}</span>}
+                  </div>
+                );
+              })()}
               {c.detalhe && (
                 <p className="mt-2 border-l-2 border-tinta/10 pl-3 text-sm leading-relaxed text-slate-400">{c.detalhe}</p>
               )}

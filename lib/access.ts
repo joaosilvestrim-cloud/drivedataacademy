@@ -1,16 +1,18 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { STATUS_COM_ACESSO, acessoVigente } from "./acesso-vigente";
 
-// Tem assinatura ativa? Dá comunidade, lives, gravações e o preço de assinante nos treinamentos.
+// Tem assinatura vigente? Dá comunidade, lives, gravações e o preço de assinante nos treinamentos.
+// Quem cancelou continua até o fim do período pago (ver lib/acesso-vigente.ts).
 export async function hasFullAccess(admin: SupabaseClient, userId: string): Promise<boolean> {
   const { data } = await admin
     .from("memberships")
-    .select("expires_at")
+    .select("status, expires_at")
     .eq("user_id", userId)
-    .eq("status", "active");
+    .in("status", STATUS_COM_ACESSO);
   if (!data?.length) return false;
-  const now = Date.now();
-  return data.some((m: any) => !m.expires_at || new Date(m.expires_at).getTime() > now);
+  const agora = Date.now();
+  return data.some((m: any) => acessoVigente(m, agora));
 }
 
 /* Pode abrir as aulas deste curso?

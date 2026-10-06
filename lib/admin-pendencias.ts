@@ -1,5 +1,6 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { acessoVigente } from "./acesso-vigente";
 
 /* O que o time precisa ver, por item do menu do admin. A chave é o href.
 
@@ -81,7 +82,8 @@ async function pagosSemAcesso(admin: SupabaseClient): Promise<number> {
   const ativos = new Set<string>();
   if (ids.length) {
     const { data: m } = await admin.from("memberships").select("user_id, status, expires_at").in("user_id", ids);
-    for (const x of m ?? []) if (x.status === "active" && (!x.expires_at || Date.parse(x.expires_at) > agora)) ativos.add(x.user_id);
+    // Quem cancelou não é "pago sem acesso": a assinatura existe, só não renova.
+    for (const x of m ?? []) if (acessoVigente(x, agora) || x.status === "canceled") ativos.add(x.user_id);
   }
   return lista.filter((o: any) => !o.user_id || !ativos.has(o.user_id)).length;
 }

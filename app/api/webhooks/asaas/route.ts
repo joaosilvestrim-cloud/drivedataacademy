@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendAccessGrantedEmail, sendAccountSetupEmail, sendCoursePurchasedEmail, sendWorkshopEmail } from "@/lib/email";
 import { enviarCobrancaDoWebhook } from "@/lib/conta-azul-venda";
 import { grantOffer } from "@/lib/offers";
+import { pedidoDaCobranca, registrarReembolso } from "@/lib/reembolso";
 
 async function findUserIdByEmail(admin: ReturnType<typeof createAdminClient>, email: string): Promise<string | null> {
   const target = (email || "").toLowerCase();
@@ -60,8 +61,19 @@ export async function POST(req: Request) {
 
   const admin = createAdminClient();
 
-  // Assinatura da Ferramenta de Visuais (externalReference = "tool:<userId>")
   const extRef = (payment.externalReference as string | undefined) || "";
+
+  /* Reembolso e estorno: o pedido vira "refunded" e o acesso cai na hora.
+     Antes este evento era ignorado, e quem recebia o dinheiro de volta seguia
+     aparecendo como pago (lib/reembolso.ts). */
+  if ((event === "PAYMENT_REFUNDED" || event === "PAYMENT_CHARGEBACK_REQUESTED") && !extRef.startsWith("tool:")) {
+    const pedido = await pedidoDaCobranca(admin, payment);
+    if (!pedido) return NextResponse.json({ ok: true, note: "pedido não encontrado" });
+    const feito = await registrarReembolso(admin, pedido);
+    return NextResponse.json({ ok: true, reembolso: feito ? "registrado" : "já registrado" });
+  }
+
+  // Assinatura da Ferramenta de Visuais (externalReference = "tool:<userId>")
   if (extRef.startsWith("tool:")) {
     const userId = extRef.slice(5);
     if (paidEvents.includes(event)) {
@@ -204,7 +216,14 @@ export async function POST(req: Request) {
     }
 
     if (event === "PAYMENT_OVERDUE") {
-      if (order.user_id) await admin.from("memberships").update({ status: "canceled" }).eq("user_id", order.user_id).eq("source", "subscription");
+      // Atraso corta na hora (expires_at = agora). Só "canceled" com data no
+      // futuro manteria o acesso: essa regra é para quem cancelou e já pagou o mês.
+      if (order.user_id)
+        await admin
+          .from("memberships")
+          .update({ status: "canceled", expires_at: new Date().toISOString() })
+          .eq("user_id", order.user_id)
+          .eq("source", "subscription");
       return NextResponse.json({ ok: true, sub: "overdue" });
     }
     return NextResponse.json({ ok: true, ignored: event });

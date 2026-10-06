@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "./supabase/admin";
 import { agendaDeMateriais, type MaterialAgenda, type ItemLiberacao } from "./carencia-core";
+import { STATUS_COM_ACESSO } from "./acesso-vigente";
 
 export type LinhaLiberacao=ItemLiberacao & {userId:string;aluno:string;email:string};
 async function todasAsPaginas(criarConsulta:()=>any):Promise<any[]> {
@@ -15,7 +16,7 @@ async function todasAsPaginas(criarConsulta:()=>any):Promise<any[]> {
 }
 export async function consultarLiberacoes(userId?:string) {
   const db=createAdminClient();
-  const memberships=()=>{const q=db.from("memberships").select("user_id,status,starts_at,expires_at").eq("status","active");return userId?q.eq("user_id",userId):q;};
+  const memberships=()=>{const q=db.from("memberships").select("user_id,status,starts_at,expires_at").in("status",STATUS_COM_ACESSO);return userId?q.eq("user_id",userId):q;};
   const enrollments=()=>{const q=db.from("enrollments").select("user_id,course_id,source,created_at").neq("source","free");return userId?q.eq("user_id",userId):q;};
   const [materiaisRows,membros,matriculas]=await Promise.all([
     todasAsPaginas(()=>db.from("ready_materials").select("id,title,created_at,file_path,external_url,lessons!inner(id,course_id,course_modules!inner(available_at),courses!inner(id,title,slug,subscriber_price,access_mode))").eq("published",true)),
