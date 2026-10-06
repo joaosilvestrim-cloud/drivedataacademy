@@ -79,6 +79,9 @@
   "A demanda está estável. Seu desafio é vender com margem e preservar o atendimento.": [
     "lib\\decision-lab\\engine.ts"
   ],
+  "A devolução automática não conseguiu concluir agora. O time faz o reembolso em até 1 dia útil e te avisa por e-mail.": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "A diferença fica inteira em um grupo que existe de um lado só. Antes de caçar defeito, confirme se os dois lados estão falando do mesmo universo.": [
     "lib\\conciliacao\\tipos.ts"
   ],
@@ -277,6 +280,9 @@
   ],
   "Análise cancelada. O resultado anterior foi mantido.": [
     "app\\conta\\ferramentas\\raio-x\\RaioX.tsx"
+  ],
+  "Ao pedir, a assinatura é encerrada e o acesso termina na hora.": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
   ],
   "Aparece no seu cartão e entra no prompt do seu site de portfólio.": [
     "app/conta/perfil/ProfileForm.tsx"
@@ -652,6 +658,9 @@
   "Confirmar cancelamento": [
     "app/conta/assinatura/CancelarForm.tsx"
   ],
+  "Confirmar reembolso": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
+  ],
   "Confirme o envio.": [
     "app\\presenca\\page.tsx"
   ],
@@ -939,6 +948,9 @@
   ],
   "Entendi que não serei cobrado de novo.": [
     "app/conta/assinatura/CancelarForm.tsx"
+  ],
+  "Entendi que vou receber de volta": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
   ],
   "Entrar agora": [
     "app\\demo\\[slug]\\page.tsx"
@@ -1890,6 +1902,9 @@
   "O valor está certo, a causa não": [
     "lib\\conciliacao\\motor.ts"
   ],
+  "O valor volta pelo mesmo meio de pagamento. No Pix costuma cair em poucos minutos; no cartão, o estorno pode aparecer em até duas faturas. Mandamos a confirmação por e-mail.": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Objetivo": [
     "components\\knowledge\\UniversoPublico.tsx"
   ],
@@ -1992,6 +2007,12 @@
   ],
   "Pedidos sem cliente são preservados com campos vazios.": [
     "lib\\dataflow\\engine.ts"
+  ],
+  "Pedindo reembolso...": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
+  ],
+  "Pedir reembolso": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
   ],
   "Pelo menos 3 habilidades": [
     "app/conta/perfil/ProfileForm.tsx"
@@ -2237,6 +2258,9 @@
   "Raio-X do portfólio": [
     "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
   ],
+  "Recebemos seu pedido de reembolso.": [
+    "app/conta/assinatura/page.tsx"
+  ],
   "Receita aplicada. Os dados nao sao salvos: importe seu CSV ou use o caso de exemplo.": [
     "components\\dataflow\\DataFlowLab.tsx"
   ],
@@ -2254,6 +2278,12 @@
   ],
   "Reconhecimento na comunidade": [
     "components/ranking/MedalCatalog.tsx"
+  ],
+  "Reembolso": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
+  ],
+  "Reembolso solicitado.": [
+    "app/conta/assinatura/page.tsx"
   ],
   "Refinar com a IA": [
     "app\\conta\\portfolio\\SiteDoPortfolio.tsx"
@@ -2782,6 +2812,9 @@
   "Você ainda não tem acesso": [
     "app\\conta\\page.tsx"
   ],
+  "Você está dentro do prazo de 7 dias úteis da compra. Pode pedir o reembolso integral até": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
+  ],
   "Você já pagou por esse período e ele é seu.": [
     "app/conta/assinatura/CancelarForm.tsx"
   ],
@@ -3071,6 +3104,9 @@
   "o que mudou changelog": [
     "app\\conta\\ContaShell.tsx"
   ],
+  "o valor pago": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
+  ],
   "observacao": [
     "app\\conta\\_funis\\definicoes.ts"
   ],
@@ -3088,6 +3124,9 @@
   ],
   "pediu sua recomendação": [
     "app\\recomendar\\[token]\\page.tsx"
+  ],
+  "pelo mesmo meio de pagamento e que meu acesso termina agora.": [
+    "app/conta/assinatura/ReembolsoForm.tsx"
   ],
   "prazo": [
     "app\\conta\\_funis\\definicoes.ts"

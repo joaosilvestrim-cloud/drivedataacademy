@@ -1,5 +1,7 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { acessoVigente } from "./acesso-vigente";
+import { prazoDeReembolso } from "./dias-uteis";
 
 /* O que o aluno assina, do jeito que ele precisa ver.
 
@@ -32,6 +34,9 @@ export type Assinatura = {
   recorrente: boolean;
   /* Já pediu cancelamento e ainda está no período pago. */
   cancelamentoPedidoEm: string | null;
+  /* Direito de arrependimento: reembolso integral em até 7 dias úteis depois
+     da compra (lib/dias-uteis.ts). Passado o prazo, some e fica só cancelar. */
+  reembolso: { pode: boolean; ate: string | null; pagamentoId: string | null };
 };
 
 const PRODUTOS_ASSINATURA = ["subscription", "subscription_annual", "full_access"];
@@ -48,7 +53,7 @@ export async function assinaturaDoAluno(admin: SupabaseClient, userId: string): 
   const vazia: Assinatura = {
     ativa: false, plano: null, rotulo: rotuloDoPlano(null), status: "sem assinatura",
     acessoAte: null, valor: null, desde: null, orderId: null, asaasSubscriptionId: null,
-    recorrente: false, cancelamentoPedidoEm: null,
+    recorrente: false, cancelamentoPedidoEm: null, reembolso: { pode: false, ate: null, pagamentoId: null },
   };
 
   const { data: m } = await admin
@@ -61,7 +66,8 @@ export async function assinaturaDoAluno(admin: SupabaseClient, userId: string): 
   if (!m) return vazia;
 
   const agora = Date.now();
-  const ativa = m.status === "active" && (!m.expires_at || Date.parse(m.expires_at) > agora);
+  // Cancelada com o mês pago correndo continua ativa para o acesso (lib/acesso-vigente.ts).
+  const ativa = acessoVigente(m, agora);
 
   /* O pedido pago mais recente diz qual plano e quanto custa. O membership
      sozinho não guarda valor nem o id do Asaas. */
@@ -93,19 +99,32 @@ export async function assinaturaDoAluno(admin: SupabaseClient, userId: string): 
   // Só a mensal no Asaas tem o que cancelar lá.
   const recorrente = plano === "mensal" && pedido?.gateway === "asaas" && !!idAssinatura;
 
+  // Só vale o cancelamento desta compra: quem saiu e assinou de novo não pode
+  // ficar sem o botão por causa do cancelamento antigo.
   const { data: cancel } = await admin
     .from("subscription_cancellations")
     .select("created_at")
     .eq("user_id", userId)
+    .gte("created_at", pedido?.created_at || m.starts_at || "1970-01-01")
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();
+
+  /* O prazo conta da compra (o pedido nasce na primeira cobrança; renovação
+     só troca gateway_id). Precisa de cobrança do Asaas para devolver. */
+  const pagamentoId = String(pedido?.gateway_id || "").startsWith("pay_") ? (pedido!.gateway_id as string) : null;
+  const prazo = pedido ? prazoDeReembolso(pedido.created_at) : null;
+  const reembolso = {
+    pode: !!(ativa && pedido && pedido.gateway === "asaas" && pagamentoId && prazo?.dentro && (plano === "mensal" || plano === "anual")),
+    ate: prazo?.ultimo ?? null,
+    pagamentoId,
+  };
 
   return {
     ativa,
     plano,
     rotulo: rotuloDoPlano(plano),
-    status: ativa ? "ativa" : m.status === "canceled" ? "cancelada" : "expirada",
+    status: m.status === "canceled" && ativa ? "cancelada" : ativa ? "ativa" : "expirada",
     acessoAte: m.expires_at ?? null,
     valor: pedido?.amount ?? null,
     desde: m.starts_at ?? pedido?.created_at ?? null,
@@ -113,6 +132,7 @@ export async function assinaturaDoAluno(admin: SupabaseClient, userId: string): 
     asaasSubscriptionId: idAssinatura,
     recorrente,
     cancelamentoPedidoEm: cancel?.created_at ?? null,
+    reembolso,
   };
 }
 

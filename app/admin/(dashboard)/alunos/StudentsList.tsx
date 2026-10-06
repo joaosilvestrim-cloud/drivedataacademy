@@ -15,7 +15,9 @@ type Student = {
   created_at: string;
   enrollments: number;
   linkedin_url?: string | null;
-  access: "ativo" | "sem";
+  access: "ativo" | "cancelado" | "encerrado" | "reembolsado" | "reembolso_pendente" | "sem";
+  /* Detalhe curto ao lado do status: até quando vai o acesso, quando pediu reembolso. */
+  nota?: string | null;
 };
 
 const fmt = (iso: string) => new Intl.DateTimeFormat("pt-BR", { dateStyle: "short" }).format(new Date(iso));
@@ -23,8 +25,24 @@ const fmt = (iso: string) => new Intl.DateTimeFormat("pt-BR", { dateStyle: "shor
 const ACESSO = [
   { value: "todos", label: "Todos" },
   { value: "ativo", label: "Com acesso" },
+  { value: "cancelados", label: "Cancelados" },
+  { value: "reembolsados", label: "Reembolsados" },
   { value: "sem", label: "Sem acesso" },
 ];
+
+// Cada filtro agrupa os estados que o time procura junto.
+const NO_FILTRO: Record<string, Student["access"][]> = {
+  ativo: ["ativo", "cancelado"],
+  cancelados: ["cancelado", "encerrado"],
+  reembolsados: ["reembolsado", "reembolso_pendente"],
+  sem: ["sem", "encerrado", "reembolsado", "reembolso_pendente"],
+};
+const ROTULO_FILTRO: Record<string, string> = {
+  ativo: "com acesso",
+  cancelados: "cancelados",
+  reembolsados: "reembolsados",
+  sem: "sem acesso",
+};
 const MATRICULA = [
   { value: "todos", label: "Todas" },
   { value: "com", label: "Com curso" },
@@ -49,7 +67,7 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
     const t = termo.toLowerCase();
     const out = rows.filter((r) => {
       if (t && !(r.name?.toLowerCase().includes(t) || r.email?.toLowerCase().includes(t))) return false;
-      if (acesso !== "todos" && r.access !== acesso) return false;
+      if (acesso !== "todos" && !NO_FILTRO[acesso]?.includes(r.access)) return false;
       if (matricula === "com" && r.enrollments === 0) return false;
       if (matricula === "sem" && r.enrollments > 0) return false;
       return true;
@@ -79,7 +97,7 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
 
   const razoes = [
     termo && `buscando “${termo}”`,
-    acesso !== "todos" && (acesso === "ativo" ? "com acesso ativo" : "sem acesso"),
+    acesso !== "todos" && ROTULO_FILTRO[acesso],
     matricula !== "todos" && (matricula === "com" ? "com curso" : "sem curso"),
   ].filter(Boolean) as string[];
 
@@ -91,8 +109,22 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
       ? { title: `Ninguém encontrado para “${termo}”`, description: "A busca cobre nome e e-mail. Confira a grafia ou limpe a busca." }
       : { title: "Nenhum aluno nestes filtros", description: "Ajuste os filtros de acesso ou de matrícula para ampliar o resultado." };
 
-  const AcessoStatus = ({ v }: { v: Student["access"] }) =>
-    v === "ativo" ? <Status tone="accent">Ativo</Status> : <Status tone="neutral">Sem acesso</Status>;
+  const AcessoStatus = ({ v, nota }: { v: Student["access"]; nota?: string | null }) => {
+    const selo =
+      v === "ativo" ? <Status tone="accent">Ativo</Status>
+      : v === "cancelado" ? <Status tone="attention">Cancelado</Status>
+      : v === "encerrado" ? <Status tone="neutral">Cancelado</Status>
+      : v === "reembolsado" ? <Status tone="info">Reembolsado</Status>
+      : v === "reembolso_pendente" ? <Status tone="danger">Reembolso pendente</Status>
+      : <Status tone="neutral">Sem acesso</Status>;
+    if (!nota) return selo;
+    return (
+      <span className="inline-flex flex-col gap-0.5">
+        {selo}
+        <span className="text-caption text-ds-text-3">{nota}</span>
+      </span>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -163,7 +195,7 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
                         </div>
                       </div>
                     </Cell>
-                    <Cell className="whitespace-nowrap"><AcessoStatus v={r.access} /></Cell>
+                    <Cell className="whitespace-nowrap"><AcessoStatus v={r.access} nota={r.nota} /></Cell>
                     <Cell numeric muted={r.enrollments === 0}>{r.enrollments}</Cell>
                     <Cell muted className="hidden whitespace-nowrap lg:table-cell">{fmt(r.created_at)}</Cell>
                     <Cell className="pr-0 text-right">
@@ -195,7 +227,7 @@ export default function StudentsList({ rows }: { rows: Student[] }) {
                     <span className="block truncate text-body-sm font-medium text-ds-text">{r.name || "Sem nome"}</span>
                     <span className="block truncate text-caption text-ds-text-3">{r.email}</span>
                     <span className="mt-1 flex items-center gap-3">
-                      <AcessoStatus v={r.access} />
+                      <AcessoStatus v={r.access} nota={r.nota} />
                       <span className="text-caption text-ds-text-3">
                         <span className="font-mono tabular-nums">{r.enrollments}</span>{" "}
                         {r.enrollments === 1 ? "curso" : "cursos"}

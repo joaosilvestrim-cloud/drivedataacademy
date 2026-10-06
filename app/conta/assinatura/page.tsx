@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { usuarioAtual } from "@/lib/sessao";
 import { assinaturaDoAluno } from "@/lib/assinatura";
 import CancelarForm from "./CancelarForm";
+import ReembolsoForm from "./ReembolsoForm";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ function dinheiro(v: number | null) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
 }
 
-export default async function AssinaturaPage({ searchParams }: { searchParams: { erro?: string; cancelada?: string } }) {
+export default async function AssinaturaPage({ searchParams }: { searchParams: { erro?: string; cancelada?: string; reembolsada?: string; reembolso_pendente?: string } }) {
   const user = await usuarioAtual();
   if (!user) redirect("/entrar");
 
@@ -54,7 +55,25 @@ export default async function AssinaturaPage({ searchParams }: { searchParams: {
         </div>
       )}
 
+      {searchParams.reembolsada && (
+        <div className="mt-5 rounded-[20px] border border-tinta/10 bg-papel p-5">
+          <p className="text-sm font-semibold text-obsidian">{tr("Reembolso solicitado.")}</p>
+          <p className="mt-2 text-sm leading-relaxed text-charcoal">
+            {tr("O valor volta pelo mesmo meio de pagamento. No Pix costuma cair em poucos minutos; no cartão, o estorno pode aparecer em até duas faturas. Mandamos a confirmação por e-mail.")}
+          </p>
+        </div>
+      )}
+      {searchParams.reembolso_pendente && (
+        <div className="mt-5 rounded-[20px] border border-amber-400/40 bg-amber-400/[0.08] p-5">
+          <p className="text-sm font-semibold text-obsidian">{tr("Recebemos seu pedido de reembolso.")}</p>
+          <p className="mt-2 text-sm leading-relaxed text-charcoal">
+            {tr("A devolução automática não conseguiu concluir agora. O time faz o reembolso em até 1 dia útil e te avisa por e-mail.")}
+          </p>
+        </div>
+      )}
+
       {!a.ativa && !searchParams.cancelada ? (
+        searchParams.reembolsada ? null : (
         <div className="mt-8 rounded-3xl border border-tinta/8 bg-tinta/[0.02] p-8 text-center">
           <p className="text-sm text-slate-400">{tr("Esta conta não tem assinatura ativa.")}</p>
           <Link
@@ -64,6 +83,7 @@ export default async function AssinaturaPage({ searchParams }: { searchParams: {
             {tr("Ver os planos")}
           </Link>
         </div>
+        )
       ) : (
         <>
           <div className="mt-6 rounded-2xl border border-tinta/8 bg-tinta/[0.02] p-5 sm:p-6">
@@ -97,6 +117,14 @@ export default async function AssinaturaPage({ searchParams }: { searchParams: {
 
           {/* Quem já cancelou não vê o formulário de novo: não há o que cancelar
               duas vezes, e repetir o botão sugere que o primeiro não funcionou. */}
+          {/* Dentro de 7 dias úteis da compra, o aluno pode pedir o dinheiro de
+              volta sozinho. Depois do prazo este bloco some e fica só cancelar. */}
+          {a.reembolso.pode && a.reembolso.ate && (
+            <div className="mt-6">
+              <ReembolsoForm ate={a.reembolso.ate} valor={dinheiro(a.valor)} />
+            </div>
+          )}
+
           {a.ativa && !a.cancelamentoPedidoEm && (
             <div className="mt-6">
               <CancelarForm acessoAte={a.acessoAte} recorrente={a.recorrente} />

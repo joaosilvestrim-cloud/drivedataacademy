@@ -68,3 +68,33 @@ export async function reembolsadaNoAsaas(paymentId: string): Promise<boolean | n
     return null;
   }
 }
+
+/* Pede ao Asaas o reembolso integral da cobrança.
+
+   Só a ação "Pedir reembolso" do aluno chama isto, e só dentro do prazo de
+   7 dias úteis (conferido de novo no servidor). Parcelado no cartão devolve
+   pelo parcelamento inteiro; à vista, pela cobrança. Devolve o que aconteceu
+   em vez de lançar erro: quem decide o que mostrar é a ação. */
+export async function reembolsarNoAsaas(paymentId: string): Promise<{ ok: boolean; resposta: string }> {
+  const chave = process.env.ASAAS_API_KEY;
+  if (!chave) return { ok: false, resposta: "ASAAS_API_KEY não configurada" };
+  const base = process.env.ASAAS_BASE_URL || "https://api.asaas.com/v3";
+  const h = { access_token: chave, "User-Agent": "drivedata-academy", "Content-Type": "application/json" };
+  try {
+    const consulta = await fetch(`${base}/payments/${paymentId}`, { headers: h, cache: "no-store" });
+    if (!consulta.ok) return { ok: false, resposta: `consulta ${consulta.status} ${(await consulta.text()).slice(0, 200)}` };
+    const pagamento = await consulta.json();
+    if (pagamento?.status === "REFUNDED") return { ok: true, resposta: "já estava reembolsada no Asaas" };
+    const caminho = pagamento?.installment ? `/installments/${pagamento.installment}/refund` : `/payments/${paymentId}/refund`;
+    const r = await fetch(`${base}${caminho}`, {
+      method: "POST",
+      headers: h,
+      body: JSON.stringify({ description: "Reembolso pedido pelo aluno dentro de 7 dias úteis da compra" }),
+      cache: "no-store",
+    });
+    const corpo = await r.text();
+    return { ok: r.ok, resposta: `${r.status} ${corpo.slice(0, 300)}` };
+  } catch (e: any) {
+    return { ok: false, resposta: `sem resposta do Asaas: ${String(e?.message || e).slice(0, 200)}` };
+  }
+}

@@ -509,6 +509,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Demand is stable. Your challenge is to sell with margin and preserve service.",
     "es": "La demanda está estable. Tu desafío es vender con margen y preservar el servicio."
   },
+  "A devolução automática não conseguiu concluir agora. O time faz o reembolso em até 1 dia útil e te avisa por e-mail.": {
+    "en": "The automatic refund couldn't finish now. The team will refund within 1 business day and notify you by email.",
+    "es": "La devolución automática no pudo concluir ahora. El equipo procesa el reembolso en hasta 1 día útil y te avisa por correo electrónico."
+  },
   "A diferença fica inteira em um grupo que existe de um lado só. Antes de caçar defeito, confirme se os dois lados estão falando do mesmo universo.": {
     "en": "The difference stays whole in a group that exists on one side only. Before hunting for defects, confirm both sides are talking about the same universe.",
     "es": "La diferencia queda íntegra en un grupo que existe solo de un lado. Antes de buscar defecto, confirma que ambos lados hablan del mismo universo."
@@ -1428,6 +1432,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Análise no navegador": {
     "en": "Analysis in browser",
     "es": "Análisis en el navegador"
+  },
+  "Ao pedir, a assinatura é encerrada e o acesso termina na hora.": {
+    "en": "When you request it, the subscription ends immediately and access stops.",
+    "es": "Al solicitarlo, la suscripción se cancela y el acceso termina al instante."
   },
   "Ao selecionar uma competência, abra": {
     "en": "When selecting a skill, open",
@@ -3289,6 +3297,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "Confirm and simulate 5 days",
     "es": "Confirmar y simular 5 días"
   },
+  "Confirmar reembolso": {
+    "en": "Confirm refund",
+    "es": "Confirmar reembolso"
+  },
   "Confirme o envio.": {
     "en": "Confirm submission.",
     "es": "Confirme el envío."
@@ -4720,6 +4732,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Entendi que não serei cobrado de novo.": {
     "en": "I understand I will not be charged again.",
     "es": "Entiendo que no seré cobrado de nuevo."
+  },
+  "Entendi que vou receber de volta": {
+    "en": "I understand I will get my money back",
+    "es": "Entiendo que recibiré el dinero de vuelta"
   },
   "Entendi, explorar meu universo": {
     "en": "Got it, explore my universe",
@@ -8765,6 +8781,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "The value ranges from 0 to the maximum.",
     "es": "El valor va de 0 hasta el máximo."
   },
+  "O valor volta pelo mesmo meio de pagamento. No Pix costuma cair em poucos minutos; no cartão, o estorno pode aparecer em até duas faturas. Mandamos a confirmação por e-mail.": {
+    "en": "The amount is returned via the same payment method. With Pix it usually arrives in a few minutes; with a card, the refund may appear in up to two invoices. We’ll send confirmation by email.",
+    "es": "El valor se devuelve por el mismo medio de pago. En Pix suele caer en pocos minutos; en tarjeta, el estorno puede aparecer en hasta dos facturas. Enviamos la confirmación por correo electrónico."
+  },
   "O vendedor que mais vendeu": {
     "en": "Top‑selling salesperson",
     "es": "El vendedor que más vendió"
@@ -9312,6 +9332,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Pedidos sem cliente são preservados com campos vazios.": {
     "en": "Orders with no customer are kept, with empty fields.",
     "es": "Los pedidos sin cliente se conservan con campos vacíos."
+  },
+  "Pedindo reembolso...": {
+    "en": "Requesting refund…",
+    "es": "Solicitando reembolso..."
+  },
+  "Pedir reembolso": {
+    "en": "Request refund",
+    "es": "Solicitar reembolso"
   },
   "Pegar o registro mais recente por cliente, produto ou contrato.": {
     "en": "Get the most recent record per customer, product or contract.",
@@ -10337,6 +10365,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "We received your request",
     "es": "Hemos recibido su pedido"
   },
+  "Recebemos seu pedido de reembolso.": {
+    "en": "We received your refund request.",
+    "es": "Hemos recibido tu solicitud de reembolso."
+  },
   "Recebemos seu pedido!": {
     "en": "We received your request!",
     "es": "¡Hemos recibido su pedido!"
@@ -10440,6 +10472,14 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "Reduzir o volume antes de carregar, quando o detalhe não vai ser usado.": {
     "en": "Reduce volume before loading when detail won’t be used.",
     "es": "Reducir el volumen antes de cargar, cuando el detalle no se usará."
+  },
+  "Reembolso": {
+    "en": "Refund",
+    "es": "Reembolso"
+  },
+  "Reembolso solicitado.": {
+    "en": "Refund requested.",
+    "es": "Reembolso solicitado."
   },
   "Refazer": {
     "en": "Redo",
@@ -12989,6 +13029,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "You decide.",
     "es": "Tú decides."
   },
+  "Você está dentro do prazo de 7 dias úteis da compra. Pode pedir o reembolso integral até": {
+    "en": "You are within the 7 business day period from purchase. You can request a full refund until",
+    "es": "Estás dentro del plazo de 7 días hábiles de la compra. Puedes solicitar el reembolso integral hasta"
+  },
   "Você está na demonstração: o perfil e as atividades são fictícios. Aqui, experimentar não altera seu histórico acadêmico.": {
     "en": "You are in the demo: the profile and activities are fictional. Here, experimenting does not change your academic record.",
     "es": "Estás en la demostración: el perfil y las actividades son ficticios. Aquí, experimentar no altera tu historial académico."
@@ -14237,6 +14281,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
     "en": "what changed changelog",
     "es": "lo que cambió changelog"
   },
+  "o valor pago": {
+    "en": "the amount paid",
+    "es": "el valor pagado"
+  },
   "obrigatório": {
     "en": "required",
     "es": "obligatorio"
@@ -14320,6 +14368,10 @@ export const GERADAS: Record<string, { en: string; es: string }> = {
   "pediu sua recomendação": {
     "en": "requested your recommendation",
     "es": "pedió tu recomendación"
+  },
+  "pelo mesmo meio de pagamento e que meu acesso termina agora.": {
+    "en": "by the same payment method and my access ends now.",
+    "es": "por el mismo medio de pago y que mi acceso termina ahora."
   },
   "pelo período seguinte e": {
     "en": "for the next period and",
