@@ -155,7 +155,10 @@ export async function completarPessoa(pessoaId: string, d: DadosFiscais): Promis
   if (temEndereco && cepGravado !== digitos(d.cep)) {
     throw new Error("o Conta Azul aceitou o endereço mas não gravou. O contrato de escrita pode ter mudado: ver docs/CONTA-AZUL-API.md.");
   }
-  if (corpo.rg && so(depois?.rg) !== corpo.rg) {
+  // O Conta Azul tira espaço e pontuação do RG ("5961812 SSP/GO" vira
+  // "5961812SSPGO"): compara só letras e números.
+  const rgLimpo = (t: unknown) => so(t).replace(/[^0-9a-z]/gi, "").toUpperCase();
+  if (corpo.rg && rgLimpo(depois?.rg) !== rgLimpo(corpo.rg)) {
     throw new Error("o Conta Azul aceitou o RG mas não gravou.");
   }
 }
